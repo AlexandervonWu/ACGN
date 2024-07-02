@@ -1,0 +1,35 @@
+package is.fivefivefive.ACGN.alloy;
+
+import is.fivefivefive.ACGN.asg.AugmentedNode;
+
+public class RefSymbol implements Symbol {
+    private AugmentedNode node;
+    private String name;
+    private String type;
+    private boolean isEnd;
+    public RefSymbol(AugmentedNode n, String nm) {
+        node = n;
+        name = nm;
+        type = ""; // TODO: get type from node
+    }
+    public RefSymbol(boolean end) {
+        isEnd = end;
+        node = new AugmentedNode(-1, 0);
+        name = "<END>";
+    }
+    @Override
+    public String getName() {
+        return name;
+    }
+    @Override
+    public String getType() {
+        return type;
+    }
+    @Override
+    public boolean isEndSymbol() {
+        return isEnd;
+    }
+    public AugmentedNode getNode() {
+        return node;
+    }
+}
