@@ -25,6 +25,9 @@ public class RefSymbol implements Symbol {
     public String getType() {
         return type;
     }
+    public void setType(String t) {
+        type = t;
+    }
     @Override
     public boolean isEndSymbol() {
         return isEnd;

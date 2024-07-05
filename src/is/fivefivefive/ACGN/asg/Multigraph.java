@@ -33,6 +33,9 @@ public class Multigraph {
         }
         return null;
     }
+    public int size() {
+        return vertices.size();
+    }
     public static Multigraph fromAST(ASGVisitor<Object> visitor, int root) {
         // TODO: Implement this method
         return null;
