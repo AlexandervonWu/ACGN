@@ -24,9 +24,11 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 public class Multigraph {
     private Set<AugmentedNode> vertices;
     private List<MASGEdge> edges;
-    public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e) {
+    private AugmentedNode root;
+    public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r) {
         vertices = v;
         edges = e;
+        root = r;
     }
     public Set<AugmentedNode> getVertices() {
         return vertices;
@@ -34,12 +36,27 @@ public class Multigraph {
     public List<MASGEdge> getEdges() {
         return edges;
     }
-    public void connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
+    public AugmentedNode getRoot() {
+        return root;
+    }
+    public void addVertex(AugmentedNode v) {
+        vertices.add(v);
+    }
+    public void removeVertex(AugmentedNode v) {
+        if (v.equals(root)) {
+            throw new IllegalArgumentException("Cannot remove the root node.");
+        }
+        vertices.remove(v);
+    }
+    public void connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) throws IllegalArgumentException {
+        if (!vertices.contains(source) || !vertices.contains(target)) {
+            throw new IllegalArgumentException("Source and target must be in the graph.");
+        }
         edges.add(new MASGEdge(source, target, position, timeOfVisit));
     }
-    public MASGEdge edgeBetween(AugmentedNode source, AugmentedNode target) {
+    public MASGEdge edgeBetween(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         for (MASGEdge e : edges) {
-            if (e.getSource().equals(source) && e.getTarget().equals(target)) {
+            if (e.getSource().equals(source) && e.getTarget().equals(target) && e.getPosition() == position && e.getTimeOfVisit() == timeOfVisit) {
                 return e;
             }
         }
@@ -86,6 +103,6 @@ public class Multigraph {
                 }
             }
         }
-        return new Multigraph(vertices, edges);
+        return new Multigraph(vertices, edges, rootAug);
     }
 }
