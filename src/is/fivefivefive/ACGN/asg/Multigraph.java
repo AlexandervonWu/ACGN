@@ -16,6 +16,7 @@ import is.fivefivefive.alloyasg.exceptions.ScopeNotFoundException;
 import is.fivefivefive.alloyasg.exceptions.UnsupportedConstantException;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 import parser.ast.nodes.Node;
+import parser.ast.nodes.UnaryExpr;
 import is.fivefivefive.ACGN.asg.Multigraph;
 
 /*
@@ -82,8 +83,12 @@ public class Multigraph {
             double[] rootRow = ast.getRow(localRoot);
             for (int i = 0; i < rootRow.length; i++) {
                 Node n = nodeMap.get(i);
-                NodeRepresentation nr = new NodeRepresentation(visitor, n);
+                // TODO: Skip the nonsemantic nodes like NOOP and Paragraph; then determine if a node is nominal;
+                if (isNOOP(n) || n instanceof parser.ast.nodes.Paragraph) {
+                    // SKIP AND DIRECTLY FIND ITS CHILDREN
+                }
                 if (rootRow[i] > 0) {
+                    NodeRepresentation nr = new NodeRepresentation(visitor, n);
                     if (timeOfVisit.containsKey(nr)) {
                         timeOfVisit.put(nr, timeOfVisit.get(nr) + 1);
                     } else {
@@ -104,5 +109,9 @@ public class Multigraph {
             }
         }
         return new Multigraph(vertices, edges, rootAug);
+    }
+    private static boolean isNOOP(Node node) {
+        return (node instanceof UnaryExpr &&
+            (((UnaryExpr) node).getOp() == parser.ast.nodes.UnaryExpr.UnaryOp.NOOP));
     }
 }
