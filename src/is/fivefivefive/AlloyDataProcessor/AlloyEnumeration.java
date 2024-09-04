@@ -1,4 +1,3 @@
-package is.fivefivefive.AlloyDataProcessor;
 import java.io.PrintWriter;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -57,8 +56,21 @@ public class AlloyEnumeration {
         //Iterating over instances
         while(instance.satisfiable()) {
         	instance.next(); //get next instance - for check commands this is counterexamples, for run commands this is scenarios
+        	//Check if valid for a predicate
+        	//If you know the name of the predicate:
+        	String pred = "inv1";
+        	boolean result = (boolean) instance.eval(CompUtil.parseOneExpression_fromString(world, pred));
+        	System.out.println(result);
+        	
+        	//Using the API to get the predicate names in the model:
+        	for(Func predicate : world.getAllFunc()) {
+        		if(predicate.isPred) {
+        			pred = predicate.label;
+        			result = (boolean) instance.eval(CompUtil.parseOneExpression_fromString(world, pred));
+                	System.out.println(result);
+        		}
+            }
         }
-        
 	}
 
 }
