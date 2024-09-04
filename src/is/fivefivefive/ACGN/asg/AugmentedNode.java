@@ -13,15 +13,23 @@ public class AugmentedNode {
     private double signature;
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
+    private boolean isShadow;
     public AugmentedNode(int syntactic, int semantic) {
         this.syntactic = syntactic;
         this.semantic = semantic;
         this.signature = 0.0;
+        this.isShadow = false;
         uplinks = new ArrayList<>();
         downlinks = new ArrayList<>();
     }
     public AugmentedNode(NodeRepresentation nr) {
         this(nr.getSyntacticRepresentation(), (int) nr.getSemanticRepresentation());
+    }
+    // Create a shadow node to resolve self loops
+    public AugmentedNode(AugmentedNode original) {
+        this.syntactic = original.getSyntactic();
+        this.semantic = original.getSemantic();
+        this.isShadow = true;
     }
     public int getSyntactic() {
         return syntactic;
@@ -43,6 +51,9 @@ public class AugmentedNode {
     }
     public void initSignature() {
         this.signature = 0.0;
+    }
+    public boolean isShadow() {
+        return isShadow;
     }
     @Override
     public boolean equals(Object o) {
