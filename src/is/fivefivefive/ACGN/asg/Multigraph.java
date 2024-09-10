@@ -83,9 +83,16 @@ public class Multigraph {
             double[] rootRow = ast.getRow(localRoot);
             for (int i = 0; i < rootRow.length; i++) {
                 Node n = nodeMap.get(i);
-                // TODO: Skip the nonsemantic nodes like NOOP and Paragraph; then determine if a node is nominal;
-                if (isNOOP(n) || n instanceof parser.ast.nodes.Paragraph) {
+                // Skip NOOPs and Body nodes
+                if (isNOOP(n) || n instanceof parser.ast.nodes.Body) {
                     // SKIP AND DIRECTLY FIND ITS CHILDREN
+                    List<Node> children = n.getChildren();
+                    for (Node child : children) {
+                        if (child != null) {
+                            nodeQueue.add(nodeMap.rget(child));
+                        }
+                    }
+                    continue;
                 }
                 if (rootRow[i] > 0) {
                     NodeRepresentation nr = new NodeRepresentation(visitor, n);
