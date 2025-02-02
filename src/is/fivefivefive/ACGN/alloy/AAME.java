@@ -13,7 +13,7 @@ public class AAME {
 
     public AAME(ASGVisitor<Object> asgv) {
         //TODO: Find all of the nonpredicate symbols in the Alloy environment and put into the AAME
-
+        
     }
     public void fetchFromCloud(String cloud) {
         // TODO: Setup a database
