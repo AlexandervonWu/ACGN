@@ -80,14 +80,21 @@ public class Multigraph {
         Map<NodeRepresentation, Integer> timeOfVisit = new HashMap<NodeRepresentation, Integer>();
         while (!nodeQueue.isEmpty()) {
             int localRoot = nodeQueue.poll();
+            NodeRepresentation localRootRep = new NodeRepresentation(visitor, nodeMap.get(localRoot));
+            AugmentedNode localRootAug = new AugmentedNode(localRootRep);
             double[] rootRow = ast.getRow(localRoot);
             for (int i = 0; i < rootRow.length; i++) {
                 Node n = nodeMap.get(i);
-                // TODO: Skip the nonsemantic nodes like NOOP and Paragraph; then determine if a node is nominal;
+                // boolean flagNonSemantic = false;
+                int indexOfRealChild = i;
                 if (isNOOP(n) || n instanceof parser.ast.nodes.Paragraph) {
                     // SKIP AND DIRECTLY FIND ITS CHILDREN
+                    Node child = n.getChildren().get(0); // only one child
+                    indexOfRealChild = nodeMap.rget(child);
+                    n = child;
+                    // flagNonSemantic = true;
                 }
-                if (rootRow[i] > 0) {
+                if (rootRow[indexOfRealChild] > 0) {
                     NodeRepresentation nr = new NodeRepresentation(visitor, n);
                     if (timeOfVisit.containsKey(nr)) {
                         timeOfVisit.put(nr, timeOfVisit.get(nr) + 1);
@@ -95,16 +102,16 @@ public class Multigraph {
                         timeOfVisit.put(nr, 1);
                     }
                     if (i == localRoot) {
-                        AugmentedNode shadow = new AugmentedNode(rootAug);
+                        AugmentedNode shadow = new AugmentedNode(localRootRep);
                         vertices.add(shadow);
-                        edges.add(new MASGEdge(rootAug, shadow, i, timeOfVisit.get(nr)));
+                        edges.add(new MASGEdge(localRootAug, shadow, indexOfRealChild, timeOfVisit.get(nr)));
                         continue;
                     }
 
                     AugmentedNode an = new AugmentedNode(nr);
                     vertices.add(an);
-                    nodeQueue.add(i);
-                    edges.add(new MASGEdge(rootAug, an, i, timeOfVisit.get(nr)));
+                    nodeQueue.add(indexOfRealChild);
+                    edges.add(new MASGEdge(localRootAug, an, indexOfRealChild, timeOfVisit.get(nr)));
                 }
             }
         }
