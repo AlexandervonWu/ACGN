@@ -83,9 +83,13 @@ public class Multigraph {
             NodeRepresentation localRootRep = new NodeRepresentation(visitor, nodeMap.get(localRoot));
             AugmentedNode localRootAug = new AugmentedNode(localRootRep);
             double[] rootRow = ast.getRow(localRoot);
+            Node localRootNode = nodeMap.get(localRoot);
+            if (localRootNode.getChildren().size() == 0) {
+                // leaf node, we skip the iteration
+                continue;
+            }
             for (int i = 0; i < rootRow.length; i++) {
                 Node n = nodeMap.get(i);
-<<<<<<< HEAD
                 // boolean flagNonSemantic = false;
                 int indexOfRealChild = i;
                 if (isNOOP(n) || n instanceof parser.ast.nodes.Paragraph) {
@@ -94,18 +98,6 @@ public class Multigraph {
                     indexOfRealChild = nodeMap.rget(child);
                     n = child;
                     // flagNonSemantic = true;
-=======
-                // Skip NOOPs and Body nodes
-                if (isNOOP(n) || n instanceof parser.ast.nodes.Body) {
-                    // SKIP AND DIRECTLY FIND ITS CHILDREN
-                    List<Node> children = n.getChildren();
-                    for (Node child : children) {
-                        if (child != null) {
-                            nodeQueue.add(nodeMap.rget(child));
-                        }
-                    }
-                    continue;
->>>>>>> 0010f0839ff9483d6a3215cf4f77c9aa008009b1
                 }
                 if (rootRow[indexOfRealChild] > 0) {
                     NodeRepresentation nr = new NodeRepresentation(visitor, n);
