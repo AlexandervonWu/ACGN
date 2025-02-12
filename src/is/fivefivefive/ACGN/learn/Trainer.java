@@ -1,3 +1,5 @@
+// TODO: Before refractoring, write a statistics class to get the scopes under each token. 
+
 package is.fivefivefive.ACGN.learn;
 
 import java.util.List;
@@ -22,9 +24,13 @@ import is.fivefivefive.ACGN.asg.Multigraph;
  */
 public class Trainer {
     public static List<Double> pretrain(List<Multigraph> trainSet, List<Multigraph> validation, List<Double> init, double lrInit, double lrDecay) {
-        // TODO: AI generated the basis, refactor. 
+        // TODO: AI generated the basis, refactor. REFACTOR: MUST USE SOFTMAX
         double lr = lrInit;
         List<Double> signatures = new ArrayList<Double>(init);
+        List<Double> losses = new ArrayList<Double>();
+        // TODO: Compute initial individual losses
+        // loss_i = sum(1 - softmax(sig_i - sig_j))
+
         for (Multigraph model : trainSet) {
             AugmentedNode root = model.getRoot();
             Queue<MASGEdge> edgeQueue = new LinkedList<MASGEdge>();
@@ -35,12 +41,34 @@ public class Trainer {
                 double targetSig = target.getSignature();
                 double sourceSig = edge.getSource().getSignature();
                 double diff = targetSig - sourceSig;
-                double newSig = sourceSig + lr * diff;
-                edge.getSource().setSignature(newSig);
-                edgeQueue.addAll(target.getDownlinks());
+                double expDiff = Math.exp(diff);
+
+                // double newSig = sourceSig + lr * diff;
+                // edge.getSource().setSignature(newSig);
+                // edgeQueue.addAll(target.getDownlinks());
             }
             lr *= lrDecay;
         }
+        
         return signatures;
+    }
+    public static List<Double> individualizedLoss(List<Multigraph> trainSet, List<Double> signatures) {
+        List<Double> losses = new ArrayList<Double>();
+        for (Multigraph model : trainSet) {
+            AugmentedNode root = model.getRoot();
+            Queue<MASGEdge> edgeQueue = new LinkedList<MASGEdge>();
+            edgeQueue.addAll(root.getDownlinks());
+            while (!edgeQueue.isEmpty()) {
+                MASGEdge edge = edgeQueue.poll();
+                AugmentedNode target = edge.getTarget();
+                double targetSig = target.getSignature();
+                double sourceSig = edge.getSource().getSignature();
+                double diff = targetSig - sourceSig;
+                double expDiff = Math.exp(diff);
+                double loss = 1 - expDiff / (1 + expDiff);
+                losses.add(loss);
+            }
+        }
+        return losses;
     }
 }
