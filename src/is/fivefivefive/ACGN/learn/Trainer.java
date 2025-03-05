@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.ArrayList;
-
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.locks.ReentrantLock;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -23,11 +25,11 @@ import is.fivefivefive.ACGN.asg.Multigraph;
  * @return The final signatures.
  */
 public class Trainer {
-    public static List<Double> pretrain(List<Multigraph> trainSet, List<Multigraph> validation, List<Double> init, double lrInit, double lrDecay) {
+    public static List<Double> pretrainNaive(List<Multigraph> trainSet, List<Double> init, double lrInit, double lrDecay) {
         // TODO: AI generated the basis, refactor. REFACTOR: MUST USE SOFTMAX
         double lr = lrInit;
         List<Double> signatures = new ArrayList<Double>(init);
-        List<Double> losses = new ArrayList<Double>();
+        // List<Double> losses = new ArrayList<Double>();
         // TODO: Compute initial individual losses
         // loss_i = sum(1 - softmax(sig_i - sig_j))
 
@@ -41,11 +43,11 @@ public class Trainer {
                 double targetSig = target.getSignature();
                 double sourceSig = edge.getSource().getSignature();
                 double diff = targetSig - sourceSig;
-                double expDiff = Math.exp(diff);
+                // double expDiff = Math.exp(diff);
 
-                // double newSig = sourceSig + lr * diff;
-                // edge.getSource().setSignature(newSig);
-                // edgeQueue.addAll(target.getDownlinks());
+                double newSig = sourceSig + lr * diff;
+                edge.getSource().setSignature(newSig);
+                edgeQueue.addAll(target.getDownlinks());
             }
             lr *= lrDecay;
         }
@@ -70,5 +72,14 @@ public class Trainer {
             }
         }
         return losses;
+    }
+    public static List<Double> pretrainByEnthalpy(List<Multigraph> trainSet, List<Double> init, double lrInit, double lrDecay) {
+        // TODO
+        List<MASGEdge> edges = new ArrayList<>();
+        for (Multigraph model : trainSet) {
+            edges.addAll(model.getEdges());
+        }
+        
+        return null;
     }
 }

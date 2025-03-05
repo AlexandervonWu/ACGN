@@ -6,6 +6,7 @@ import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 
 /*
  * A node in the Abstract Semantic Graph.
+ * NOTE THAT SIGNATURE DOES NOT RELATED TO THE SEMANTIC AND SYNTACTIC PREASSIGNED CODES ANYMORE! 
  */
 public class AugmentedNode {
     private int syntactic;
