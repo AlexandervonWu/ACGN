@@ -27,4 +27,13 @@ public final class GlobalVariables {
     public void addEdge(MASGEdge edge) {
         addEdge(edge.getSource(), edge.getTarget());
     }
+    public void combine(GlobalVariables another) {
+        // Combine the edgeMaps
+        for (AugmentedNode source : another.getEdgeMap().keySet()) {
+            if (!edgeMap.containsKey(source)) {
+                edgeMap.put(source, new HashSet<AugmentedNode>());
+            }
+            edgeMap.get(source).addAll(another.getEdgeMap().get(source));
+        }
+    }
 }

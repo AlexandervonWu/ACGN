@@ -134,6 +134,11 @@ public class Multigraph {
         }
         return new Multigraph(vertices, edges, rootAug, gv);
     }
+    public static Multigraph fromAST(ASGVisitor<Object> visitor, int root, GlobalVariables gv) throws ScopeNotFoundException, UnsupportedConstantException {
+        Multigraph mg = fromAST(visitor, root);
+        mg.globalVariables.combine(gv);
+        return mg;
+    }
     private static boolean isNOOP(Node node) {
         return (node instanceof UnaryExpr &&
             (((UnaryExpr) node).getOp() == parser.ast.nodes.UnaryExpr.UnaryOp.NOOP));

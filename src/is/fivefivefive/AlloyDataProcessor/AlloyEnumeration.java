@@ -1,3 +1,5 @@
+package is.fivefivefive.AlloyDataProcessor;
+
 import java.io.PrintWriter;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
