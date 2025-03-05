@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.util.GlobalVariables;
 
 /**
  * Trainer for the ASG.
@@ -73,12 +74,13 @@ public class Trainer {
         }
         return losses;
     }
-    public static List<Double> pretrainByEnthalpy(List<Multigraph> trainSet, List<Double> init, double lrInit, double lrDecay) {
-        // TODO
-        List<MASGEdge> edges = new ArrayList<>();
-        for (Multigraph model : trainSet) {
-            edges.addAll(model.getEdges());
-        }
+    public static List<Double> pretrainByEnthalpy(List<Multigraph> trainSet, List<Double> init, 
+            double lrInit, double lrDecay, double temp, double tolerance, 
+            GlobalVariables gv) {
+        // TODO after creating a new Visitor
+        Map<AugmentedNode, Set<AugmentedNode>> edgeMap = gv.getEdgeMap();
+        double lr = lrInit;
+        
         
         return null;
     }
