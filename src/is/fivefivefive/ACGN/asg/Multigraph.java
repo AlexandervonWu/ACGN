@@ -18,6 +18,7 @@ import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.UnaryExpr;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.util.GlobalVariables;
 
 /*
  * A naive, intermediate multigraph representation of the Multi-ASG.
@@ -25,11 +26,19 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 public class Multigraph {
     private Set<AugmentedNode> vertices;
     private List<MASGEdge> edges;
+    private GlobalVariables globalVariables;
     private AugmentedNode root;
     public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r) {
         vertices = v;
         edges = e;
         root = r;
+        globalVariables = new GlobalVariables();
+    }
+    public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r, GlobalVariables gv) {
+        vertices = v;
+        edges = e;
+        root = r;
+        globalVariables = gv;
     }
     public Set<AugmentedNode> getVertices() {
         return vertices;
@@ -68,6 +77,7 @@ public class Multigraph {
     }
     public static Multigraph fromAST(ASGVisitor<Object> visitor, int root) throws ScopeNotFoundException, UnsupportedConstantException {
         ASGraph ast = visitor.getGraph();
+        GlobalVariables gv = new GlobalVariables();
         DoubleMap<Integer, Node> nodeMap = visitor.getNodeMap();
         Node rootNode = nodeMap.get(root);
         NodeRepresentation rootRep = new NodeRepresentation(visitor, rootNode);
@@ -109,7 +119,9 @@ public class Multigraph {
                     if (i == localRoot) {
                         AugmentedNode shadow = new AugmentedNode(localRootRep);
                         vertices.add(shadow);
-                        edges.add(new MASGEdge(localRootAug, shadow, indexOfRealChild, timeOfVisit.get(nr)));
+                        MASGEdge edge = new MASGEdge(localRootAug, shadow, indexOfRealChild, timeOfVisit.get(nr));
+                        edges.add(edge);
+                        gv.addEdge(edge);
                         continue;
                     }
 
@@ -120,7 +132,7 @@ public class Multigraph {
                 }
             }
         }
-        return new Multigraph(vertices, edges, rootAug);
+        return new Multigraph(vertices, edges, rootAug, gv);
     }
     private static boolean isNOOP(Node node) {
         return (node instanceof UnaryExpr &&
