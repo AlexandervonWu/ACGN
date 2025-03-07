@@ -40,6 +40,29 @@ public class Multigraph {
         root = r;
         globalVariables = gv;
     }
+    public Multigraph() {
+        vertices = new HashSet<AugmentedNode>();
+        edges = new ArrayList<MASGEdge>();
+        globalVariables = new GlobalVariables();
+    }
+    public Multigraph subgraph(AugmentedNode localRoot) {
+        Set<AugmentedNode> newVertices = new HashSet<AugmentedNode>();
+        List<MASGEdge> newEdges = new ArrayList<MASGEdge>();
+        newVertices.add(localRoot);
+        Queue<AugmentedNode> nodeQueue = new LinkedList<AugmentedNode>();
+        nodeQueue.add(localRoot);
+        while (!nodeQueue.isEmpty()) {
+            AugmentedNode current = nodeQueue.poll();
+            for (MASGEdge e : edges) {
+                if (e.getSource().equals(current)) {
+                    newVertices.add(e.getTarget());
+                    newEdges.add(e);
+                    nodeQueue.add(e.getTarget());
+                }
+            }
+        }
+        return new Multigraph(newVertices, newEdges, localRoot);
+    }
     public Set<AugmentedNode> getVertices() {
         return vertices;
     }

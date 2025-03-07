@@ -18,4 +18,8 @@ public class AAME {
     public void fetchFromCloud(String cloud) {
         // TODO: Setup a database
     }
+    // TODO: IMPLEMENT FACTS AND FIELD IMPLICIT FACTS. 
+    public List<Symbol> getSymbols() {
+        return symbols;
+    }
 }
