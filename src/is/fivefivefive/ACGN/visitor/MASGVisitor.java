@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.alloy.AAME;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
-
+import parser.ast.nodes.SigDecl;
 import parser.ast.visitor.VoidVisitorAdapter;
 public class MASGVisitor<A> extends VoidVisitorAdapter<A> {
     // forest: the ASG forest of the predicates within the model
@@ -41,6 +42,13 @@ public class MASGVisitor<A> extends VoidVisitorAdapter<A> {
             demoGraph.addVertex(oNode);
             demoGraph.connect(mu, oNode, 1, 1);
         }
-        // SigDecl: 
+        // SigDecl: non-mod, syn == 0, sem == 3; defines a new symbol in scope.
+        for (SigDecl sd : n.getSigDeclList()) {
+            AugmentedNode sdNode = new AugmentedNode(0, 3);
+            demoGraph.addVertex(sdNode);
+            demoGraph.connect(mu, sdNode, 2, 1);
+            SigSymbol sigsy = new SigSymbol(sd.getName());
+            aame.addSymbol(sigsy);
+        }
     }
 }

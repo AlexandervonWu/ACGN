@@ -1,5 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
 
+import java.util.ArrayList;
 import java.util.List;
 import is.fivefivefive.alloyasg.asg.ASGVisitor;
 
@@ -15,7 +16,10 @@ public class AAME {
         //TODO: Find all of the nonpredicate symbols in the Alloy environment and put into the AAME
         
     }
-    public AAME() {}
+    public AAME() {
+        symbols = new ArrayList<>();
+        facts = new ArrayList<>();
+    }
     public void fetchFromCloud(String cloud) {
         // TODO: Setup a database
     }
