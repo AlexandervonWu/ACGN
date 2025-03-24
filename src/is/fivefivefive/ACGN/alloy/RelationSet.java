@@ -4,9 +4,9 @@ import java.util.List;
 
 public abstract class RelationSet implements Symbol {
     private String name;
-    private SigSet source;
-    private List<SigSet> targets;
-    public RelationSet(String n, SigSet s, List<SigSet> t) {
+    private SigSymbol source;
+    private List<SigSymbol> targets;
+    public RelationSet(String n, SigSymbol s, List<SigSymbol> t) {
         name = n;
         source = s;
         targets = t;
@@ -23,10 +23,10 @@ public abstract class RelationSet implements Symbol {
     public boolean isEndSymbol() {
         return false;
     }
-    public SigSet getSource() {
+    public SigSymbol getSource() {
         return source;
     }
-    public List<SigSet> getTargets() {
+    public List<SigSymbol> getTargets() {
         return targets;
     }
 }
