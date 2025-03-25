@@ -76,13 +76,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
         AugmentedNode mu = new AugmentedNode(0, 1);
         Multigraph demoGraph = forest.get(0);
         demoGraph.addVertex(mu);
-        // Open: non-modificable, syn == 0, sem == 2;
+        AugmentedNode md = n.getModuleDecl().accept(this, arg);
+        demoGraph.connect(mu, md, 0, 1);
+        demoGraph.addVertex(md);
+        // Open: non-modificable, syn == 0, sem == 3;
         for (OpenDecl o : n.getOpenDeclList()) {
-            AugmentedNode oNode = new AugmentedNode(0, 2);
-            demoGraph.addVertex(oNode);
+            AugmentedNode oNode = o.accept(this, arg);
             demoGraph.connect(mu, oNode, 1, 1);
+            demoGraph.addVertex(oNode);
         }
-        // SigDecl: non-mod, syn == 0, sem == 3; defines a new symbol in scope.
+        // SigDecl: non-mod, syn == 0, sem == 4; defines a new symbol in scope.
         for (SigDecl sd : n.getSigDeclList()) {
             AugmentedNode sdNode = new AugmentedNode(0, 3);
             demoGraph.addVertex(sdNode);
@@ -92,7 +95,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
             sd.accept(this, arg);
         }
 
-        // Predicate : each creates a tree in the forest. syn = 0, sem == 4; define a new predicate, which is a subtree. 
+        // Predicate : each creates a tree in the forest. syn = 0, sem == 5; define a new predicate, which is a subtree. 
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = new AugmentedNode(0, 4);
             demoGraph.addVertex(pNode);
@@ -274,20 +277,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
 
     @Override
     public AugmentedNode visit(SigDecl n, Object arg) {
-        // Implementation here
-        return null;
+        return new AugmentedNode(0, 4);
     }
 
     @Override
     public AugmentedNode visit(OpenDecl n, Object arg) {
-        // Implementation here
-        return null;
+        return new AugmentedNode(0, 3);
     }
 
     @Override
     public AugmentedNode visit(ModuleDecl n, Object arg) {
-        // Implementation here
-        return null;
+        return new AugmentedNode(0, 2);
     }
 
     
