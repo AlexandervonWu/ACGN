@@ -48,7 +48,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
     // TODO: A fix, such that the recursive returns of the nodes connects with each other. 
     private List<Multigraph> forest;
     private AAME aame;
-    private Map<AugmentedNode, Integer> timeOfVisit;
+    private Map<AugmentedNode, Integer> timeOfVisitMap; // TODO: TRACK THIS.
     private GlobalVariables globalVariables;
     private long numPredicates;
 
@@ -77,32 +77,26 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
         Multigraph demoGraph = forest.get(0);
         demoGraph.addVertex(mu);
         AugmentedNode md = n.getModuleDecl().accept(this, arg);
-        demoGraph.connect(mu, md, 0, 1);
+        demoGraph.connect(mu, md, 1, 1);
         demoGraph.addVertex(md);
         // Open: non-modificable, syn == 0, sem == 3;
         for (OpenDecl o : n.getOpenDeclList()) {
             AugmentedNode oNode = o.accept(this, arg);
-            demoGraph.connect(mu, oNode, 1, 1);
+            demoGraph.connect(mu, oNode, 2, 1);
             demoGraph.addVertex(oNode);
         }
         // SigDecl: non-mod, syn == 0, sem == 4; defines a new symbol in scope.
         for (SigDecl sd : n.getSigDeclList()) {
-            AugmentedNode sdNode = new AugmentedNode(0, 3);
+            AugmentedNode sdNode = sd.accept(this, arg);
             demoGraph.addVertex(sdNode);
-            demoGraph.connect(mu, sdNode, 2, 1);
-            SigSymbol sigsy = new SigSymbol(sd.getName());
-            aame.addSymbol(sigsy);
-            sd.accept(this, arg);
+            demoGraph.connect(mu, sdNode, 3, 1);
         }
 
         // Predicate : each creates a tree in the forest. syn = 0, sem == 5; define a new predicate, which is a subtree. 
         for (Predicate p : n.getPredDeclList()) {
-            AugmentedNode pNode = new AugmentedNode(0, 4);
+            AugmentedNode pNode = p.accept(this, arg);
             demoGraph.addVertex(pNode);
-            demoGraph.connect(mu, pNode, 3, 1);
-            Multigraph newTree = new Multigraph(pNode, GV);
-            forest.add(newTree);
-            p.accept(this, arg);
+            demoGraph.connect(mu, pNode, 4, 1);
         }
         return mu;
     }
@@ -139,8 +133,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
 
     @Override
     public AugmentedNode visit(Predicate n, Object arg) {
-        // Implementation here
-        return null;
+        AugmentedNode predNode = new AugmentedNode(0, 5);
+        forest.add(new Multigraph(predNode, globalVariables));
+        int iter = 1;
+        for (ParamDecl pd : n.getParamList()) {
+            AugmentedNode pdNode = pd.accept(this, arg);
+            Multigraph predGraph = forest.get(numPredicates);
+            predGraph.addVertex(pdNode);
+            predGraph.connect(predNode, pdNode, iter, 1);
+            iter++;
+        }
+        // TODO : What is under a predicate?
+        return predNode;
     }
 
     @Override
@@ -277,6 +281,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
 
     @Override
     public AugmentedNode visit(SigDecl n, Object arg) {
+        SigSymbol sigsy = new SigSymbol(sd.getName());
+        aame.addSymbol(sigsy);
         return new AugmentedNode(0, 4);
     }
 
