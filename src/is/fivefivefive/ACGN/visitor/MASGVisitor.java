@@ -3,10 +3,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
@@ -41,21 +45,27 @@ import parser.ast.nodes.VarDecl;
 import parser.ast.nodes.ParamDecl;
 import parser.ast.nodes.FieldDecl;
 import parser.ast.nodes.ModuleDecl;
+import parser.ast.nodes.Node;
 import parser.ast.visitor.GenericVisitor;
-public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
+public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     // forest: the ASG forest of the predicates within the model
     // TODO: A fix, such that the recursive returns of the nodes connects with each other. 
     private List<Multigraph> forest;
     private AAME aame;
+    // timeOfVisitMap is for concrete nodes only, tracking the nodes that we actually consider to visit. 
+    // ATTENTION: this means the time of visit of the SOURCE node. 
     private Map<AugmentedNode, Integer> timeOfVisitMap; // TODO: TRACK THIS.
+    // ATTENTION: GlobalVariables is not the "global variables" within the model, but describing the global properties under each node.
     private GlobalVariables globalVariables;
-    private long numPredicates;
+    private int numPredicates;
+    // store local symbols within the scope of each predicate.
+    private DoubleMap<Multigraph, Set<Symbol>> localSymbols;
 
     public MASGVisitor() {
         forest = new ArrayList<Multigraph>();
         aame = new AAME();
-        timeOfVisit = new HashMap<>();
+        timeOfVisitMap = new HashMap<>();
         forest.add(new Multigraph()); // zero-th tree in the forest is the main AST/G
         numPredicates = 0;
         globalVariables = new GlobalVariables();
@@ -66,13 +76,19 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
     public AAME getAAME() {
         return aame;
     }
+    public int numPredicates() {
+        return numPredicates;
+    }
+    public GlobalVariables getGlobalVariables() {
+        return globalVariables;
+    }
     // visits, all non-predicates are discarded. 
     // consider AAME into it. 
     
     // syn == 0, sem == 0 reserved for dummy roots of each non-global ASG. 
     // ModelUnit; the concrete "root". Syntactic == 0 for Non-modificable. Semantic == 1
     @Override
-    public AugmentedNode visit(ModelUnit n, Object arg) {
+    public AugmentedNode visit(ModelUnit n, Multigraph arg) {
         AugmentedNode mu = new AugmentedNode(0, 1);
         Multigraph demoGraph = forest.get(0);
         demoGraph.addVertex(mu);
@@ -102,199 +118,202 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Object> {
     }
 
     @Override
-    public AugmentedNode visit(Check n, Object arg) {
-        // Implementation here
-        return null;
+    public AugmentedNode visit(ModuleDecl n, Multigraph arg) {
+        return new AugmentedNode(0, 2);
     }
 
     @Override
-    public AugmentedNode visit(Run n, Object arg) {
-        // Implementation here
-        return null;
+    public AugmentedNode visit(OpenDecl n, Multigraph arg) {
+        return new AugmentedNode(0, 3);
     }
 
     @Override
-    public AugmentedNode visit(Assertion n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(Fact n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(Function n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(Predicate n, Object arg) {
-        AugmentedNode predNode = new AugmentedNode(0, 5);
-        forest.add(new Multigraph(predNode, globalVariables));
-        int iter = 1;
-        for (ParamDecl pd : n.getParamList()) {
-            AugmentedNode pdNode = pd.accept(this, arg);
-            Multigraph predGraph = forest.get(numPredicates);
-            predGraph.addVertex(pdNode);
-            predGraph.connect(predNode, pdNode, iter, 1);
-            iter++;
-        }
-        // TODO : What is under a predicate?
-        return predNode;
-    }
-
-    @Override
-    public AugmentedNode visit(Body n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ConstExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(LetExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ITEFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ITEExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(QtFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(QtExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(CallFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(CallExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ListFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ListExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(BinaryFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(BinaryExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(UnaryFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(UnaryExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(VarExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(FieldExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(SigExpr n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ExprOrFormula n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(VarDecl n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(ParamDecl n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(FieldDecl n, Object arg) {
-        // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(SigDecl n, Object arg) {
-        SigSymbol sigsy = new SigSymbol(sd.getName());
+    public AugmentedNode visit(SigDecl n, Multigraph arg) {
+        SigSymbol sigsy = new SigSymbol(n.getName());
         aame.addSymbol(sigsy);
         return new AugmentedNode(0, 4);
     }
 
     @Override
-    public AugmentedNode visit(OpenDecl n, Object arg) {
-        return new AugmentedNode(0, 3);
+    public AugmentedNode visit(Predicate n, Multigraph arg) {
+        AugmentedNode predNode = new AugmentedNode(0, 5);
+        numPredicates++;
+        Multigraph predGraph = new Multigraph(predNode, globalVariables);
+        int iter = 2;
+        for (ParamDecl pd : n.getParamList()) {
+            // From here, we need to pass the subgraph into the child nodes.
+            AugmentedNode pdNode = pd.accept(this, predGraph);
+            predGraph.addVertex(pdNode);
+            predGraph.connect(predNode, pdNode, iter, 1);
+            iter++;
+        }
+        AugmentedNode bodyNode = n.getBody().accept(this, predGraph);
+        predGraph.addVertex(bodyNode);
+        predGraph.connect(predNode, bodyNode, 1, 1);
+        forest.add(predGraph);
+        return predNode;
     }
 
     @Override
-    public AugmentedNode visit(ModuleDecl n, Object arg) {
-        return new AugmentedNode(0, 2);
+    public AugmentedNode visit(ParamDecl n, Multigraph arg) {
+        // TODO: Parameter scopes? First concrete symbol to consider. 
+        return null;
     }
 
-    
+    @Override
+    public AugmentedNode visit(Body n, Multigraph arg) {
+        // not a concrete node, bypass
+        Node bodyChild = n.getChildren().get(0);
+        return bodyChild.accept(this, arg);
+    }
+
+    @Override
+    public AugmentedNode visit(Check n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(Run n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(Assertion n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(Fact n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(Function n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ConstExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(LetExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ITEFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ITEExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(QtFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(QtExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(CallFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(CallExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ListFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ListExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(BinaryFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(BinaryExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(UnaryFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(UnaryExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(VarExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(FieldExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(SigExpr n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(ExprOrFormula n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(VarDecl n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
+
+    @Override
+    public AugmentedNode visit(FieldDecl n, Multigraph arg) {
+        // Implementation here
+        return null;
+    }
 }
