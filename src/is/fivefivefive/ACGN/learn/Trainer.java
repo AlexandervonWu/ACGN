@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.alloyasg.etc.DoubleMap;
 
 /**
  * Trainer for the ASG.

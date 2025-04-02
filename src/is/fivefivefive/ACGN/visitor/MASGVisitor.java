@@ -10,6 +10,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
@@ -28,6 +29,7 @@ import parser.ast.nodes.LetExpr;
 import parser.ast.nodes.ITEFormula;
 import parser.ast.nodes.ITEExpr;
 import parser.ast.nodes.QtFormula;
+import parser.ast.nodes.RelDecl;
 import parser.ast.nodes.QtExpr;
 import parser.ast.nodes.CallFormula;
 import parser.ast.nodes.CallExpr;
@@ -139,6 +141,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         AugmentedNode predNode = new AugmentedNode(0, 5);
         numPredicates++;
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
+        localSymbols.put(predGraph, new HashSet<Symbol>());
         int iter = 2;
         for (ParamDecl pd : n.getParamList()) {
             // From here, we need to pass the subgraph into the child nodes.
@@ -154,10 +157,31 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         return predNode;
     }
 
-    @Override
-    public AugmentedNode visit(ParamDecl n, Multigraph arg) {
-        // TODO: Parameter scopes? First concrete symbol to consider. 
+    // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
+    private AugmentedNode visitRelDecl(RelDecl n, Multigraph arg) {
+        // TODO: All real decls goes to this. Concrete symbol to consider. 
+        Set<Symbol> localSyms = localSymbols.get(arg);
+        Symbol sigsy = getSigSymbolByExpr(n.getExpr());
+        int isVar = n.isVariable() ? 1 : 0;
+        int isDisj = n.isDisjoint() ? 1 : 0;
+        int syntactic = 1 + isVar << 1 + isDisj; // class of the decl;
+        // Semantic == sum of the shifted values of the list of declarations. 
+        n.getVariables().forEach(v -> {
+            Symbol varsy = new VarSymbol(sigsy.getName(), v.getName(), 0);
+            localSyms.add(varsy);
+        });
+        // AugmentedNode relNode = new AugmentedNode(syntactic, semantic);
         return null;
+    }
+
+    private SigSymbol getSigSymbolByExpr(ExprOrFormula n) {
+        // Question: what is the ** signature ** type of the paramater? The expr of the ParamDecl is an arbitrary Expr. 
+        return null;
+    }
+
+    @Override 
+    public AugmentedNode visit(ParamDecl n, Multigraph arg) {
+        return visitRelDecl(n, arg);
     }
 
     @Override
