@@ -164,16 +164,24 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         Symbol sigsy = getSigSymbolByExpr(n.getExpr());
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
-        int syntactic = 1 + isVar << 1 + isDisj; // class of the decl;
+        // TODO: semantic: according to the signature type and the confiners. 
+        AugmentedNode declRoot = new AugmentedNode(-1, 0); // a virtual root node of the decl set. 
+        // int syntactic = 1 + isVar << 1 + isDisj; // class of the decl;
         // Semantic == sum of the shifted values of the list of declarations. 
+        for (String names : n.getNames()) {
+            // localSyms.add(new Var)
+        }
         n.getVariables().forEach(v -> {
-            Symbol varsy = new VarSymbol(sigsy.getName(), v.getName(), 0);
+            AugmentedNode varNode = v.accept(this, arg);
+            
+            // String varName = varNode.
+            // Symbol varsy = new VarSymbol(sigsy.getName(), , 0);
             localSyms.add(varsy);
         });
         // AugmentedNode relNode = new AugmentedNode(syntactic, semantic);
         return null;
     }
-
+ 
     private SigSymbol getSigSymbolByExpr(ExprOrFormula n) {
         // Question: what is the ** signature ** type of the paramater? The expr of the ParamDecl is an arbitrary Expr. 
         return null;
