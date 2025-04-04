@@ -56,6 +56,24 @@ public class AugmentedNode {
     public boolean isShadow() {
         return isShadow;
     }
+    public MASGEdge connect(AugmentedNode target, int position, int timeOfVisit) {
+        MASGEdge e = new MASGEdge(this, target, position, timeOfVisit);
+        downlinks.add(e);
+        target.uplinks.add(e);
+        return e;
+    }
+    public MASGEdge inverseConnect(AugmentedNode source, int position, int timeOfVisit) {
+        MASGEdge e = new MASGEdge(source, this, position, timeOfVisit);
+        uplinks.add(e);
+        source.downlinks.add(e);
+        return e;
+    }
+    public static MASGEdge connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
+        MASGEdge e = new MASGEdge(source, target, position, timeOfVisit);
+        source.downlinks.add(e);
+        target.uplinks.add(e);
+        return e;
+    }
     @Override
     public boolean equals(Object o) {
         if (o instanceof AugmentedNode) {
@@ -63,5 +81,9 @@ public class AugmentedNode {
             return n.getSyntactic() == syntactic && n.getSemantic() == semantic;
         }
         return false;
+    }
+    @Override 
+    public int hashCode() {
+        return (int) (syntactic + semantic);
     }
 }

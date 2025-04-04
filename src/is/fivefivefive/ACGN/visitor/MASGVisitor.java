@@ -157,6 +157,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         return predNode;
     }
 
+    private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, Multigraph arg) {
+        int timeOfVisit = 1;
+        if (!timeOfVisitMap.containsKey(parent)) {
+            timeOfVisitMap.put(parent, 1);
+        } else {
+            timeOfVisit = timeOfVisitMap.get(parent);
+            timeOfVisitMap.put(parent,  + 1);
+        }
+        arg.addVertex(child);
+        arg.connect(parent, child, position, timeOfVisit);
+    }
+
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     private AugmentedNode visitRelDecl(RelDecl n, Multigraph arg) {
         // TODO: All real decls goes to this. Concrete symbol to consider. 
@@ -164,10 +176,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         Symbol sigsy = getSigSymbolByExpr(n.getExpr());
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
-        // TODO: semantic: according to the signature type and the confiners. 
-        AugmentedNode declRoot = new AugmentedNode(-1, 0); // a virtual root node of the decl set. 
-        // int syntactic = 1 + isVar << 1 + isDisj; // class of the decl;
-        // Semantic == sum of the shifted values of the list of declarations. 
+        // TODO: syntactic: according to the signature type and the confiners. 
+        
+        int semantic = 1 + isVar << 1 + isDisj; // class of the decl;
+        AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
+        arg.addVertex(declRoot);
+        ExprOrFormula expr = n.getExpr(); // the type with constraints. 
+        AugmentedNode exprNode = expr.accept(this, arg);
+        visitAndConnect(declRoot, exprNode, 2, arg);
         for (String names : n.getNames()) {
             // localSyms.add(new Var)
         }
