@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
+
 import java.util.HashSet;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -13,6 +14,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
+import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -49,6 +51,7 @@ import parser.ast.nodes.FieldDecl;
 import parser.ast.nodes.ModuleDecl;
 import parser.ast.nodes.Node;
 import parser.ast.visitor.GenericVisitor;
+import parser.etc.Pair;
 public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     // forest: the ASG forest of the predicates within the model
@@ -71,6 +74,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         forest.add(new Multigraph()); // zero-th tree in the forest is the main AST/G
         numPredicates = 0;
         globalVariables = new GlobalVariables();
+        localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
     }
     public List<Multigraph> getForest() {
         return forest;
@@ -131,8 +135,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     @Override
     public AugmentedNode visit(SigDecl n, Multigraph arg) {
-        SigSymbol sigsy = new SigSymbol(n.getName());
-        aame.addSymbol(sigsy);
+        String nameKey = n.getName();
+        SigSymbol sigsy = new SigSymbol(nameKey);
+        aame.addSymbol(nameKey, sigsy);
         return new AugmentedNode(0, 4);
     }
 
@@ -173,7 +178,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
     private AugmentedNode visitRelDecl(RelDecl n, Multigraph arg) {
         // TODO: All real decls goes to this. Concrete symbol to consider. 
         Set<Symbol> localSyms = localSymbols.get(arg);
-        Symbol sigsy = getSigSymbolByExpr(n.getExpr());
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         // TODO: syntactic: according to the signature type and the confiners. 
@@ -183,24 +187,67 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         arg.addVertex(declRoot);
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         AugmentedNode exprNode = expr.accept(this, arg);
-        visitAndConnect(declRoot, exprNode, 2, arg);
-        for (String names : n.getNames()) {
-            // localSyms.add(new Var)
+        visitAndConnect(declRoot, exprNode, 1, arg);
+        Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
+        SigSymbol sigSymbol = sigPair.a;
+        Set<FieldConfiner> confiners = sigPair.b;
+        for (String name : n.getNames()) {
+            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.indexOf(arg));
+            varSym.setFieldConfinerSet(confiners);
+            localSyms.add(varSym);
         }
+        int iter = 2;
         n.getVariables().forEach(v -> {
             AugmentedNode varNode = v.accept(this, arg);
-            
-            // String varName = varNode.
-            // Symbol varsy = new VarSymbol(sigsy.getName(), , 0);
-            localSyms.add(varsy);
+            visitAndConnect(declRoot, varNode, iter, arg);
         });
-        // AugmentedNode relNode = new AugmentedNode(syntactic, semantic);
-        return null;
+        return declRoot;
     }
  
-    private SigSymbol getSigSymbolByExpr(ExprOrFormula n) {
+    private Pair<SigSymbol, Set<FieldConfiner>> getSigSymbolByExpr(ExprOrFormula n) {
         // Question: what is the ** signature ** type of the paramater? The expr of the ParamDecl is an arbitrary Expr. 
-        return null;
+        try {
+            Set<FieldConfiner> confiners = new HashSet<>();
+            Node iter = n;
+            while (iter instanceof UnaryExpr) {
+                UnaryExpr unIter = (UnaryExpr) iter;
+                switch (unIter.getOp()) {
+                    case SET:
+                        confiners.add(FieldConfiner.SET);
+                        break;
+                    case LONE:
+                        confiners.add(FieldConfiner.LONE);
+                        break;
+                    case ONE:
+                        confiners.add(FieldConfiner.ONE);
+                        break;
+                    case SOME:
+                        confiners.add(FieldConfiner.SOME);
+                        break;
+                    case EXACTLYOF:
+                        confiners.add(FieldConfiner.EXACTLY);
+                        break;
+                    default:
+                        throw new Exception("Unknown unary operator: " + unIter.getOp());
+                }
+                iter = unIter.getChildren().get(0);
+            }
+            if (iter instanceof SigExpr) {
+                SigExpr sigExpr = (SigExpr) iter;
+                String sigName = sigExpr.getName();
+                Symbol sigSymbol = aame.getSymbol(sigName);
+                if (sigSymbol == null || !(sigSymbol instanceof SigSymbol)) {
+                    throw new Exception("Unknown signature: " + sigName);
+                }
+                SigSymbol concSigSymbol = (SigSymbol) sigSymbol;
+                return Pair.of(concSigSymbol, confiners);
+            } else {
+                throw new Exception("Unknown expression type: " + iter.getClass());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @Override 

@@ -21,4 +21,8 @@ public class SigSymbol implements Symbol {
     public boolean isEndSymbol() {
         return false;
     }
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

@@ -2,6 +2,8 @@ package is.fivefivefive.ACGN.alloy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import is.fivefivefive.alloyasg.asg.ASGVisitor;
 
 /*
@@ -10,34 +12,37 @@ import is.fivefivefive.alloyasg.asg.ASGVisitor;
  */
 public class AAME {
     // TODO
-    private List<Symbol> symbols;
+    private Map<String, Symbol> symbols;
     private List<ExtFact> facts;
     public AAME(ASGVisitor<Object> asgv) {
         //TODO: Find all of the nonpredicate symbols in the Alloy environment and put into the AAME
         
     }
     public AAME() {
-        symbols = new ArrayList<>();
+        symbols = new HashMap<>();
         facts = new ArrayList<>();
     }
     public void fetchFromCloud(String cloud) {
         // TODO: Setup a database
     }
     // TODO: IMPLEMENT FACTS AND FIELD IMPLICIT FACTS. 
-    public List<Symbol> getSymbols() {
+    public Map<String, Symbol> getSymbols() {
         return symbols;
     }
     public List<ExtFact> getFacts() {
         return facts;
     }
-    public void setSymbols(List<Symbol> symbols) {
-        this.symbols = symbols;
-    }
     public void setFacts(List<ExtFact> facts) {
         this.facts = facts;
     }
-    public void addSymbol(Symbol s) {
-        symbols.add(s);
+    public void addSymbol(String key, Symbol s) {
+        symbols.put(key, s);
+    }
+    public Symbol getSymbol(String key) {
+        return symbols.get(key);
+    }
+    public Symbol getSymbol(int key) {
+        return symbols.get(String.valueOf(key));
     }
     public void addFact(ExtFact f) {
         facts.add(f);
