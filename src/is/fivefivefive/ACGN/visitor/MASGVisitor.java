@@ -176,15 +176,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     private AugmentedNode visitRelDecl(RelDecl n, Multigraph arg) {
-        // TODO: All real decls goes to this. Concrete symbol to consider. 
+        // All real decls goes to this. Concrete symbol to consider. 
         Set<Symbol> localSyms = localSymbols.get(arg);
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
-        // TODO: syntactic: according to the signature type and the confiners. 
-        
+        // syntactic: according to the signature type and the confiners. 
         int semantic = 1 + isVar << 1 + isDisj; // class of the decl;
         AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
-        arg.addVertex(declRoot);
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         AugmentedNode exprNode = expr.accept(this, arg);
         visitAndConnect(declRoot, exprNode, 1, arg);
