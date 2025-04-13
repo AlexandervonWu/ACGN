@@ -15,6 +15,7 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
+import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -59,7 +60,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
     private List<Multigraph> forest;
     private AAME aame;
     // timeOfVisitMap is for concrete nodes only, tracking the nodes that we actually consider to visit. 
-    // ATTENTION: this means the time of visit of the SOURCE node. 
+    // ATTENTION: this means the time of visit of the SOURCE node. Only nonleaf nodes need it. 
     private Map<AugmentedNode, Integer> timeOfVisitMap; // TODO: TRACK THIS.
     // ATTENTION: GlobalVariables is not the "global variables" within the model, but describing the global properties under each node.
     private GlobalVariables globalVariables;
@@ -93,6 +94,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
     
     // syn == 0, sem == 0 reserved for dummy roots of each non-global ASG. 
     // ModelUnit; the concrete "root". Syntactic == 0 for Non-modificable. Semantic == 1
+    /*
+     * An explanation of the Syntactic and Semantic identifiers: 
+     * Syn := the identifiers of "what it does" in a concrete tree; Interchangable
+     * Sem := what exactly it is.
+     * Special case: all non-changing nodes got assigned with zero syntactic. 
+     * Dictionary of Syntactics: 
+     *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
+     *   1 = block starters, such as a Predicate or Function;
+     *   -1 = dummy node for the list of declarations;
+     *   ...
+     *   127 = leaf symbols such as an invocation of a VarExpr or SigExpr. 
+     */
     @Override
     public AugmentedNode visit(ModelUnit n, Multigraph arg) {
         AugmentedNode mu = new AugmentedNode(0, 1);
@@ -114,7 +127,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
             demoGraph.connect(mu, sdNode, 3, 1);
         }
 
-        // Predicate : each creates a tree in the forest. syn = 0, sem == 5; define a new predicate, which is a subtree. 
+        // Predicate : each creates a tree in the forest. syn = 1, sem == 0; define a new predicate, which is a subtree. 
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = p.accept(this, arg);
             demoGraph.addVertex(pNode);
@@ -141,9 +154,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         return new AugmentedNode(0, 4);
     }
 
+    /*
+     * TODO: Remember that predicates and similar items are called in CallExprOrFormula. Update the timeOfVisit there. 
+     */
     @Override
     public AugmentedNode visit(Predicate n, Multigraph arg) {
-        AugmentedNode predNode = new AugmentedNode(0, 5);
+        AugmentedNode predNode = new AugmentedNode(1,numPredicates);
+        numPredicates++; 
+        timeOfVisitMap.put(predNode, 1);
+        String predName = n.getName();
+        Symbol predSymbol = new RefSymbol(predNode, predName);
+        aame.addSymbol(predName, predSymbol);
         numPredicates++;
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
         localSymbols.put(predGraph, new HashSet<Symbol>());
@@ -182,8 +203,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
-        int semantic = 1 + isVar << 1 + isDisj; // class of the decl;
+        int semantic = 1 + isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
         AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
+        if (timeOfVisitMap.containsKey(declRoot)) {
+            int prevValue = timeOfVisitMap.get(declRoot);
+            timeOfVisitMap.put(declRoot, prevValue + 1);
+        } else {
+            timeOfVisitMap.put(declRoot, 1);
+        }
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
