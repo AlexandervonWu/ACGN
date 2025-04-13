@@ -57,7 +57,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     // forest: the ASG forest of the predicates within the model
     // TODO: A fix, such that the recursive returns of the nodes connects with each other. 
-    private List<Multigraph> forest;
+    private DoubleMap<Integer, Multigraph> forest;
     private AAME aame;
     // timeOfVisitMap is for concrete nodes only, tracking the nodes that we actually consider to visit. 
     // ATTENTION: this means the time of visit of the SOURCE node. Only nonleaf nodes need it. 
@@ -66,18 +66,21 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
     private GlobalVariables globalVariables;
     private int numPredicates;
     // store local symbols within the scope of each predicate.
+    // TODO: We may need more branching for localSymbols. Consider a ``scope tree''. 
     private DoubleMap<Multigraph, Set<Symbol>> localSymbols;
+    private DoubleMap<Symbol, AugmentedNode> uniqueNode;
 
     public MASGVisitor() {
-        forest = new ArrayList<Multigraph>();
+        forest = new DoubleMap<>();
         aame = new AAME();
         timeOfVisitMap = new HashMap<>();
-        forest.add(new Multigraph()); // zero-th tree in the forest is the main AST/G
+        forest.put(0, new Multigraph()); // zero-th tree in the forest is the main AST/G
         numPredicates = 0;
         globalVariables = new GlobalVariables();
         localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
+        uniqueNode = new DoubleMap<>();
     }
-    public List<Multigraph> getForest() {
+    public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
     }
     public AAME getAAME() {
@@ -128,10 +131,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         }
 
         // Predicate : each creates a tree in the forest. syn = 1, sem == 0; define a new predicate, which is a subtree. 
+        int predId = 0;
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = p.accept(this, arg);
             demoGraph.addVertex(pNode);
-            demoGraph.connect(mu, pNode, 4, 1);
+            demoGraph.connect(mu, pNode, 4 + predId, 1);
+            predId++;
         }
         return mu;
     }
@@ -151,6 +156,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         String nameKey = n.getName();
         SigSymbol sigsy = new SigSymbol(nameKey);
         aame.addSymbol(nameKey, sigsy);
+        AugmentedNode sigExprNode = new AugmentedNode(127, aame.symbolsSize());
+        uniqueNode.put(sigsy, sigExprNode);
         return new AugmentedNode(0, 4);
     }
 
@@ -159,13 +166,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
      */
     @Override
     public AugmentedNode visit(Predicate n, Multigraph arg) {
-        AugmentedNode predNode = new AugmentedNode(1,numPredicates);
         numPredicates++; 
+        AugmentedNode predNode = new AugmentedNode(1,numPredicates);
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
         Symbol predSymbol = new RefSymbol(predNode, predName);
         aame.addSymbol(predName, predSymbol);
-        numPredicates++;
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
         localSymbols.put(predGraph, new HashSet<Symbol>());
         int iter = 2;
@@ -180,7 +186,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         AugmentedNode bodyNode = n.getBody().accept(this, predGraph);
         predGraph.addVertex(bodyNode);
         predGraph.connect(predNode, bodyNode, 1, 1);
-        forest.add(predGraph);
+        forest.put(numPredicates, predGraph);
         return predNode;
     }
 
@@ -219,7 +225,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         SigSymbol sigSymbol = sigPair.a;
         Set<FieldConfiner> confiners = sigPair.b;
         for (String name : n.getNames()) {
-            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.indexOf(arg));
+            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(arg));
             varSym.setFieldConfinerSet(confiners);
             localSyms.add(varSym);
         }
@@ -403,10 +409,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         return null;
     }
 
+    // TODO: Singular exprs starting here. 
+
+    private AugmentedNode visitAbsorbing(ExprOrFormula n, Multigraph arg, String name) {
+        if (aame.hasSymbol(name)) {
+            return uniqueNode.get(aame.getSymbol(name)); // a global var
+        } else {
+            int graphId = forest.rget(arg);
+            
+        }
+        return null;
+    }
+
     @Override
     public AugmentedNode visit(VarExpr n, Multigraph arg) {
-        // Implementation here
-        return null;
+        String name = n.getName();
+        return visitAbsorbing(n, arg, name);
     }
 
     @Override
@@ -423,8 +441,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     @Override
     public AugmentedNode visit(ExprOrFormula n, Multigraph arg) {
-        // Implementation here
-        return null;
+        AugmentedNode undefinedExpr = new AugmentedNode(-128, 0);
+        return undefinedExpr;
     }
 
     @Override
