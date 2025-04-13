@@ -185,6 +185,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
         int semantic = 1 + isVar << 1 + isDisj; // class of the decl;
         AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
+        // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
         visitAndConnect(declRoot, exprNode, 1, arg);
         Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
@@ -401,8 +402,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, Multigraph> {
 
     @Override
     public AugmentedNode visit(VarDecl n, Multigraph arg) {
-        // Implementation here
-        return null;
+        return visitRelDecl(n, arg);
     }
 
     @Override
