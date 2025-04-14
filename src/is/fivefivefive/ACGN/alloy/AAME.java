@@ -44,6 +44,15 @@ public class AAME {
     public Symbol getSymbol(int key) {
         return symbols.get(String.valueOf(key));
     }
+    public boolean hasSymbol(String key) {
+        return symbols.containsKey(key);
+    }
+    public boolean hasSymbol(Symbol sym) {
+        return symbols.containsValue(sym);
+    }
+    public int symbolsSize() {
+        return symbols.size();
+    }
     public void addFact(ExtFact f) {
         facts.add(f);
     }
