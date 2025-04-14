@@ -18,6 +18,7 @@ import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.UnaryExpr;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 
 /*
@@ -28,6 +29,7 @@ public class Multigraph {
     private List<MASGEdge> edges;
     private GlobalVariables globalVariables;
     private AugmentedNode root;
+    private ScopeTreeNode scope;
     public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r) {
         vertices = v;
         edges = e;
@@ -64,6 +66,12 @@ public class Multigraph {
         vertices = new HashSet<AugmentedNode>();
         edges = new ArrayList<MASGEdge>();
         globalVariables = new GlobalVariables();
+    }
+    public void setScope(ScopeTreeNode scope) {
+        this.scope = scope;
+    }
+    public ScopeTreeNode getScope() {
+        return scope;
     }
     public Multigraph subgraph(AugmentedNode localRoot) {
         Set<AugmentedNode> newVertices = new HashSet<AugmentedNode>();
