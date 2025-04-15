@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
+import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
@@ -70,6 +71,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private ScopeTreeNode rootScope;
     // Unique (leaf) nodes with user-defined names. 
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
+    private final Symbol END_SYMBOL = new EndSymbol();
+    private final AugmentedNode END_NODE = new AugmentedNode(-128, 0);
+
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -81,6 +85,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         globalVariables = new GlobalVariables();
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
         uniqueNode = new DoubleMap<>();
+        uniqueNode.put(END_SYMBOL, END_NODE);
     }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
@@ -107,7 +112,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
      *   1 = block starters, such as a Predicate or Function;
-     *   -1 = dummy node for the list of declarations;localSyms.size()VarExpr. 
+     *   -1 = dummy node for the list of declarations;
+     *   -128 = the End Symbol (predefined);
+     *   126 - SigSymbols;
+     *   127 - VarSymbols;
      */
     @Override
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
@@ -132,11 +140,20 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
 
         // Predicate : each creates a tree in the forest. syn = 1, sem == 0; define a new predicate, which is a subtree. 
+        // the foci of learning
         int predId = 0;
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = p.accept(this, rootScope);
             demoGraph.addVertex(pNode);
             demoGraph.connect(mu, pNode, 4 + predId, 1);
+            predId++;
+        }
+
+        // Function : a callable symbol, unchanged in operation
+        for (Function f : n.getFunDeclList()) {
+            AugmentedNode fNode = f.accept(this, rootScope);
+            demoGraph.addVertex(fNode);
+            demoGraph.connect(mu, fNode, 4 + predId, 1);
             predId++;
         }
         return mu;
@@ -170,6 +187,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode visit(Predicate n, ScopeTreeNode arg) {
         numPredicates++; 
         scopeNodeId++;
+        // Once declared, the PredNode when called is just a leaf node symbol. 
         AugmentedNode predNode = new AugmentedNode(1,numPredicates);
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
@@ -195,19 +213,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         return predNode;
     }
 
-    private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
-        int timeOfVisit = 1;
-        if (!timeOfVisitMap.containsKey(parent)) {
-            timeOfVisitMap.put(parent, 1);
-        } else {
-            timeOfVisit = timeOfVisitMap.get(parent);
-            timeOfVisitMap.put(parent,  + 1);
-        }
-        Multigraph graph = arg.getAffliation();
-        graph.addVertex(child);
-        graph.connect(parent, child, position, timeOfVisit);
-    }
-
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     private AugmentedNode visitRelDecl(RelDecl n, ScopeTreeNode arg) {
         // All real decls goes to this. Concrete symbol to consider. 
@@ -217,6 +222,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // syntactic: according to the signature type and the confiners. 
         int semantic = 1 + isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
         AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
+        Multigraph graph = arg.getAffliation();
+        graph.addVertex(declRoot);
         if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
             timeOfVisitMap.put(declRoot, prevValue + 1);
@@ -230,7 +237,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
         SigSymbol sigSymbol = sigPair.a;
         Set<FieldConfiner> confiners = sigPair.b;
-        Multigraph graph = arg.getAffliation();
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph));
             varSym.setFieldConfinerSet(confiners);
@@ -238,13 +244,29 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size()));
         }
         int iter = 2;
-        n.getVariables().forEach(v -> {
+        for (ExprOrFormula v : n.getVariables()) {
             AugmentedNode varNode = v.accept(this, arg);
             visitAndConnect(declRoot, varNode, iter, arg);
-        });
+            iter++;
+        }
+        graph.addVertex(END_NODE);
+        visitAndConnect(declRoot, END_NODE, iter + 1, arg);
         return declRoot;
     }
- 
+
+    private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
+        int timeOfVisit = 1;
+        if (!timeOfVisitMap.containsKey(parent)) {
+            timeOfVisitMap.put(parent, 1);
+        } else {
+            timeOfVisit = timeOfVisitMap.get(parent);
+            timeOfVisitMap.put(parent, timeOfVisit + 1);
+        }
+        Multigraph graph = arg.getAffliation();
+        graph.addVertex(child);
+        graph.connect(parent, child, position, timeOfVisit);
+    }
+
     private Pair<SigSymbol, Set<FieldConfiner>> getSigSymbolByExpr(ExprOrFormula n) {
         // Question: what is the ** signature ** type of the paramater? The expr of the ParamDecl is an arbitrary Expr. 
         try {

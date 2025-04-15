@@ -13,6 +13,6 @@ public class FieldRelation extends RelationSet {
     }
     @Override
     public String getType() {
-        return "FieldRelation";
+        return "FieldRelation :" + confiners.toString();
     }
 }

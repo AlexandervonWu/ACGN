@@ -28,7 +28,7 @@ public class VarSymbol implements Symbol {
         return node;
     }
     public boolean isEndSymbol() {
-        return true;
+        return false;
     }
     public int getScopeId() {
         return treeIdScope;

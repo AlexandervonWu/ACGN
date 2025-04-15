@@ -9,14 +9,17 @@ import is.fivefivefive.alloyasg.representations.NodeRepresentation;
  * NOTE THAT SIGNATURE DOES NOT RELATED TO THE SEMANTIC AND SYNTACTIC PREASSIGNED CODES ANYMORE! 
  */
 public class AugmentedNode {
-    private int syntactic;
-    private double semantic;
+    private byte syntactic;
+    private int semantic;
     private double signature;
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
     private boolean isShadow;
-    public AugmentedNode(int syntactic, int semantic) {
-        this.syntactic = syntactic;
+    public AugmentedNode(int syntactic, int semantic) throws IllegalArgumentException {
+        if (syntactic > 127 || syntactic < -128) {
+            throw new IllegalArgumentException("Syntactic is a single byte! ");
+        }
+        this.syntactic = (byte) syntactic;
         this.semantic = semantic;
         this.signature = 0.0;
         this.isShadow = false;
@@ -24,15 +27,16 @@ public class AugmentedNode {
         downlinks = new ArrayList<>();
     }
     public AugmentedNode(NodeRepresentation nr) {
-        this(nr.getSyntacticRepresentation(), (int) nr.getSemanticRepresentation());
+        this((byte) nr.getSyntacticRepresentation(), (int) nr.getSemanticRepresentation());
     }
     // Create a shadow node to resolve self loops
     public AugmentedNode(AugmentedNode original) {
         this.syntactic = original.getSyntactic();
-        this.semantic = original.getSemantic();
+        this.semantic = (int) Math.round(original.getSemantic());
+        // TODO: Exponential forms must be removed! What are exponential? 
         this.isShadow = true;
     }
-    public int getSyntactic() {
+    public byte getSyntactic() {
         return syntactic;
     }
     public double getSemantic() {
@@ -82,8 +86,10 @@ public class AugmentedNode {
         }
         return false;
     }
+    // hashCode by the Cantor formula
     @Override 
     public int hashCode() {
-        return (int) (syntactic + semantic);
+        int synPositive = syntactic + 128;
+        return (int) (0.5 * (synPositive + semantic) * (synPositive + semantic + 1)  + semantic);
     }
 }
