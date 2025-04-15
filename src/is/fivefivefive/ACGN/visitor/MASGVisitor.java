@@ -68,6 +68,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // TODO: We may need more branching for localSymbols. Consider a ``scope tree''. 
     // private DoubleMap<Multigraph, Set<Symbol>> localSymbols;
     private ScopeTreeNode rootScope;
+    // Unique (leaf) nodes with user-defined names. 
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
 
     public MASGVisitor() {
@@ -101,14 +102,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     /*
      * An explanation of the Syntactic and Semantic identifiers: 
      * Syn := the identifiers of "what it does" in a concrete tree; Interchangable
-     * Sem := what exactly it is.
+     * Sem := what exactly it is. leaf symbols starts at 1. 
      * Special case: all non-changing nodes got assigned with zero syntactic. 
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
      *   1 = block starters, such as a Predicate or Function;
-     *   -1 = dummy node for the list of declarations;
-     *   ...
-     *   127 = leaf symbols such as an invocation of a VarExpr or SigExpr. 
+     *   -1 = dummy node for the list of declarations;localSyms.size()VarExpr. 
      */
     @Override
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
@@ -159,7 +158,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         SigSymbol sigsy = new SigSymbol(nameKey);
         aame.addSymbol(nameKey, sigsy);
         rootScope.addSymbol(sigsy);
-        AugmentedNode sigExprNode = new AugmentedNode(127, aame.symbolsSize());
+        AugmentedNode sigExprNode = new AugmentedNode(127, uniqueNode.size());
         uniqueNode.put(sigsy, sigExprNode);
         return new AugmentedNode(0, 4);
     }
@@ -212,7 +211,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     private AugmentedNode visitRelDecl(RelDecl n, ScopeTreeNode arg) {
         // All real decls goes to this. Concrete symbol to consider. 
-        Set<Symbol> localSyms = arg.getSymbols();
+        // Set<Symbol> localSyms = arg.getSymbols();
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
@@ -235,7 +234,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph));
             varSym.setFieldConfinerSet(confiners);
-            localSyms.add(varSym);
+            arg.addSymbol(varSym);
+            uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size()));
         }
         int iter = 2;
         n.getVariables().forEach(v -> {
@@ -418,15 +418,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     // TODO: Singular exprs starting here. 
-
+    // Only invoked when the symbol was already declared and now used. 
     private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {
         if (aame.hasSymbol(name)) {
             return uniqueNode.get(aame.getSymbol(name)); // a global var
         } else {
-            int graphId = forest.rget(arg.getAffliation());
-            
+            return uniqueNode.get(arg.getSymbol(name)); // recursively find the unique node
         }
-        return null;
     }
 
     @Override
@@ -435,6 +433,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         return visitAbsorbing(n, arg, name);
     }
 
+    // TODO: How about fields? 
     @Override
     public AugmentedNode visit(FieldExpr n, ScopeTreeNode arg) {
         // Implementation here
@@ -443,8 +442,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(SigExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String name = n.getName();
+        return visitAbsorbing(n, arg, name);
     }
 
     @Override

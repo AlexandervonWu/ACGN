@@ -2,20 +2,20 @@ package is.fivefivefive.ACGN.structure;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.Multigraph;
-import java.util.Set;
-import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.List;
 import java.util.LinkedList;
 
 public class ScopeTreeNode {
     private int id;
-    private Set<Symbol> symbols;
+    private Map<String, Symbol> symbols;
     private List<ScopeTreeNode> children;
     private ScopeTreeNode parent;
     private Multigraph affliation;
     public ScopeTreeNode(int id, ScopeTreeNode parent, Multigraph affl) {
         this.id = id;
-        symbols = new HashSet<>();
+        symbols = new HashMap<>();
         children = new LinkedList<>();
         this.parent = parent;
         affliation = affl;
@@ -23,7 +23,7 @@ public class ScopeTreeNode {
             parent.addChildren(this);
         }
     }
-    public ScopeTreeNode(int id, Set<Symbol> symbols, ScopeTreeNode parent, Multigraph affl) {
+    public ScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl) {
         this.id = id;
         this.symbols = symbols;
         children = new LinkedList<>();
@@ -42,11 +42,20 @@ public class ScopeTreeNode {
     public void addChildren(ScopeTreeNode next) {
         children.add(next);
     }
-    public Set<Symbol> getSymbols() {
+    public Map<String, Symbol> getSymbols() {
         return symbols;
     }
+    public Symbol getSymbol(String name) {
+        if (!symbols.containsKey(name)) {
+            if (parent == null) {
+                return null;
+            }
+            return parent.getSymbol(name);
+        }
+        return symbols.get(name);
+    }
     public boolean containsSymbol(Symbol sym) {
-        return symbols.contains(sym);
+        return symbols.containsValue(sym);
     }
     public int getId() {
         return id;
@@ -55,16 +64,39 @@ public class ScopeTreeNode {
         return parent;
     }
     public void addSymbol(Symbol next) {
-        symbols.add(next);
+        symbols.put(next.getName(), next);
     }
-    public Set<Symbol> symbolsAvailable() {
-        Set<Symbol> result = new HashSet<>();
-        result.addAll(symbols);
+    public Map<String, Symbol> symbolsAvailable() {
+        Map<String, Symbol> result = new HashMap<>();
         ScopeTreeNode current = this;
+        int lvl = 0;
         while (current.parent != null) {
+            Map<String, Symbol> currMap = current.getSymbols();
+            for (String key : currMap.keySet()) {
+                String newKey = lvl + "_" + key;
+                result.put(newKey, currMap.get(key));
+            }
+            lvl += 1;
             current = current.parent;
-            result.addAll(current.getSymbols());
         }
         return result;
+    }
+    public Map<String, Symbol> symbolsAvailableInSubgraph() {
+        Map<String, Symbol> result = new HashMap<>();
+        ScopeTreeNode current = this;
+        int lvl = 0;
+        while (current.parent != null && current.parent.getAffliation() == this.affliation) {
+            Map<String, Symbol> currMap = current.getSymbols();
+            for (String key : currMap.keySet()) {
+                String newKey = lvl + "_" + key;
+                result.put(newKey, currMap.get(key));
+            }
+            lvl += 1;
+            current = current.parent;
+        }
+        return result;
+    }
+    public int size() {
+        return symbols.size();
     }
 }
