@@ -1,14 +1,14 @@
 package is.fivefivefive.ACGN.alloy;
 
-import java.util.List;
+import java.util.Set;
 
 public class FieldRelation extends RelationSet {
-    private List<String> confiners; // one, lone, some, ...
-    public FieldRelation(String n, SigSymbol s, List<SigSymbol> t, List<String> conf) {
+    private Set<FieldConfiner> confiners; // one, lone, some, ...
+    public FieldRelation(String n, SigSymbol s, SigSymbol t, Set<FieldConfiner> conf) {
         super(n, s, t);
         confiners = conf;
     }
-    public List<String> getConfiners() {
+    public Set<FieldConfiner> getConfiners() {
         return confiners;
     }
     @Override

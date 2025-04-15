@@ -15,6 +15,7 @@ import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
+import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
@@ -114,6 +115,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *   1 = block starters, such as a Predicate or Function;
      *   -1 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
+     *   125 - FieldSymbols;
      *   126 - SigSymbols;
      *   127 - VarSymbols;
      */
@@ -177,7 +179,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         rootScope.addSymbol(sigsy);
         AugmentedNode sigExprNode = new AugmentedNode(127, uniqueNode.size());
         uniqueNode.put(sigsy, sigExprNode);
-        return new AugmentedNode(0, 4);
+        for (FieldDecl f : n.getFieldList()) {
+            f.accept(this, arg); // register the symbols, but not use here
+        }
+        return sigExprNode;
     }
 
     /*
@@ -214,13 +219,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
+    // RelDecls here except Fields.
     private AugmentedNode visitRelDecl(RelDecl n, ScopeTreeNode arg) {
         // All real decls goes to this. Concrete symbol to consider. 
         // Set<Symbol> localSyms = arg.getSymbols();
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
-        int semantic = 1 + isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
+        int semantic = isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
         AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
@@ -255,6 +261,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
+        int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
+        Multigraph graph = arg.getAffliation();
+        graph.addVertex(child);
+        graph.connect(parent, child, position, timeOfVisit);
+    }
+
+    private void updateTimeOfVisit(AugmentedNode parent) {
         int timeOfVisit = 1;
         if (!timeOfVisitMap.containsKey(parent)) {
             timeOfVisitMap.put(parent, 1);
@@ -262,9 +275,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             timeOfVisit = timeOfVisitMap.get(parent);
             timeOfVisitMap.put(parent, timeOfVisit + 1);
         }
-        Multigraph graph = arg.getAffliation();
-        graph.addVertex(child);
-        graph.connect(parent, child, position, timeOfVisit);
     }
 
     private Pair<SigSymbol, Set<FieldConfiner>> getSigSymbolByExpr(ExprOrFormula n) {
@@ -458,8 +468,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // TODO: How about fields? 
     @Override
     public AugmentedNode visit(FieldExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String name = n.getName();
+        return visitAbsorbing(n, arg, name);
     }
 
     @Override
@@ -481,7 +491,35 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(FieldDecl n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        SigDecl sig = (SigDecl) n.getParent();
+        String sigName = sig.getName();
+        int isVar = n.isVariable() ? 1 : 0;
+        int isDisj = n.isDisjoint() ? 1 : 0;
+        int semantic = isVar << 1 + isDisj;
+        AugmentedNode declRoot = new AugmentedNode(-2, semantic);
+        if (timeOfVisitMap.containsKey(declRoot)) {
+            int prevValue = timeOfVisitMap.get(declRoot);
+            timeOfVisitMap.put(declRoot, prevValue + 1);
+        } else {
+            timeOfVisitMap.put(declRoot, 1);
+        }
+        if (!aame.hasSymbol(sigName)) {
+            throw new RuntimeException("No signature found in AAME for signature " + sigName + " of field " + n.getNames().toString());
+        }
+        ExprOrFormula fieldRelType = n.getExpr();
+        Pair<SigSymbol, Set<FieldConfiner>> targetPair = getSigSymbolByExpr(fieldRelType);
+        SigSymbol targetSymbol = targetPair.a;
+        Set<FieldConfiner> confiners = targetPair.b;
+        SigSymbol sourceSymbol = (SigSymbol) aame.getSymbol(sigName);
+        int iter = 2;
+        for (String fieldName : n.getNames()) {
+            Symbol fieldSymbol = new FieldRelation(fieldName, sourceSymbol, targetSymbol, confiners);
+            AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size());
+            uniqueNode.put(fieldSymbol, fieldNode);
+            // TODO: Name problem? Consider same-name nodes...
+            visitAndConnect(declRoot, fieldNode, iter, arg);
+            iter++;
+        }
+        return declRoot;
     }
 }
