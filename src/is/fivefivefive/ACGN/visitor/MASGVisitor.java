@@ -1,9 +1,11 @@
 package is.fivefivefive.ACGN.visitor;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
 import java.util.HashSet;
+import java.util.List;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -14,6 +16,7 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
+import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
@@ -49,10 +52,12 @@ import parser.ast.nodes.SigExpr;
 import parser.ast.nodes.ExprOrFormula;
 import parser.ast.nodes.VarDecl;
 import parser.ast.nodes.ParamDecl;
+import parser.ast.nodes.PredOrFun;
 import parser.ast.nodes.FieldDecl;
 import parser.ast.nodes.ModuleDecl;
 import parser.ast.nodes.Node;
 import parser.ast.visitor.GenericVisitor;
+import parser.ast.visitor.PrettyStringVisitor;
 import parser.etc.Pair;
 public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode> {
 
@@ -74,7 +79,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
     private final Symbol END_SYMBOL = new EndSymbol();
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0);
-
+    private List<ExtFact> facts;
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -87,6 +92,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
         uniqueNode = new DoubleMap<>();
         uniqueNode.put(END_SYMBOL, END_NODE);
+        facts = new ArrayList<>();
     }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
@@ -158,6 +164,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             demoGraph.connect(mu, fNode, 4 + predId, 1);
             predId++;
         }
+        // Facts can be directly stored in AAME. 
+        for (Fact f : n.getFactDeclList()) {
+            AugmentedNode fNode = f.accept(this, rootScope);
+            demoGraph.addVertex(fNode);
+            demoGraph.connect(mu, fNode, 4 + predId, 1);
+            predId++;
+        }
         return mu;
     }
 
@@ -190,6 +203,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      */
     @Override
     public AugmentedNode visit(Predicate n, ScopeTreeNode arg) {
+        return visitPredOrFun(n, arg);
+    }
+
+    @Override
+    public AugmentedNode visit(Function n, ScopeTreeNode arg) {
+        return visitPredOrFun(n, arg);
+    }
+
+    private AugmentedNode visitPredOrFun(PredOrFun n, ScopeTreeNode arg) {
         numPredicates++; 
         scopeNodeId++;
         // Once declared, the PredNode when called is just a leaf node symbol. 
@@ -267,6 +289,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         graph.connect(parent, child, position, timeOfVisit);
     }
 
+    // TODO: We have not touched internal nodes yet. 
     private void updateTimeOfVisit(AugmentedNode parent) {
         int timeOfVisit = 1;
         if (!timeOfVisitMap.containsKey(parent)) {
@@ -352,17 +375,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // Implementation here
         return null;
     }
-
+    
+    // catch the explicit facts
     @Override
     public AugmentedNode visit(Fact n, ScopeTreeNode arg) {
         // Implementation here
-        return null;
-    }
-
-    @Override
-    public AugmentedNode visit(Function n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        PrettyStringVisitor psv = new PrettyStringVisitor();
+        String code = psv.visit(n, null);
+        ExtFact fact = new ExtFact(true, code);
+        facts.add(fact);
+        return new AugmentedNode(0, 5);
     }
 
     @Override
@@ -496,7 +518,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         int semantic = isVar << 1 + isDisj;
-        AugmentedNode declRoot = new AugmentedNode(-2, semantic);
+        AugmentedNode declRoot = new AugmentedNode(-1, semantic);
         if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
             timeOfVisitMap.put(declRoot, prevValue + 1);
