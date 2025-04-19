@@ -121,6 +121,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *   1 = block starters, such as a Predicate or Function;
      *   -1 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
+     *   123 - Integer Constants;
+     *   124 - Boolean Constants;
      *   125 - FieldSymbols;
      *   126 - SigSymbols;
      *   127 - VarSymbols;
@@ -361,25 +363,26 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(Check n, ScopeTreeNode arg) {
         // Implementation here
-        return null;
+        return new AugmentedNode(0, 101);
     }
 
     @Override
     public AugmentedNode visit(Run n, ScopeTreeNode arg) {
         // Implementation here
-        return null;
+        return new AugmentedNode(0, 102);
     }
 
+    // Assertion is also a paragraph to be checked
     @Override
     public AugmentedNode visit(Assertion n, ScopeTreeNode arg) {
         // Implementation here
+
         return null;
     }
     
     // catch the explicit facts
     @Override
     public AugmentedNode visit(Fact n, ScopeTreeNode arg) {
-        // Implementation here
         PrettyStringVisitor psv = new PrettyStringVisitor();
         String code = psv.visit(n, null);
         ExtFact fact = new ExtFact(true, code);
@@ -389,13 +392,32 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(ConstExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        if (n.isBoolean()) {
+            String val = n.getValue();
+            if (val.equalsIgnoreCase("true")) {
+                return new AugmentedNode(124, 1);
+            } else {
+                return new AugmentedNode(124, 0);
+            }
+        } else {
+            try {
+                int semantic = Integer.parseInt(n.getValue());
+                return new AugmentedNode(123, semantic);
+            } catch (Exception e) {
+                System.out.println("Type of constant not supported! ");
+                throw e;
+            }
+        }
     }
 
+    // A new symbol, a new scope
     @Override
     public AugmentedNode visit(LetExpr n, ScopeTreeNode arg) {
-        // Implementation here
+        // TODO: Implementation here
+        scopeNodeId++;
+        ScopeTreeNode child = new ScopeTreeNode(scopeNodeId, arg, arg.getAffliation());
+        Node var = n.getVar();
+        
         return null;
     }
 
