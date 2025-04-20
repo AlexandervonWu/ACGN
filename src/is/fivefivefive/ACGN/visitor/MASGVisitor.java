@@ -35,6 +35,7 @@ import parser.ast.nodes.ConstExpr;
 import parser.ast.nodes.LetExpr;
 import parser.ast.nodes.ITEFormula;
 import parser.ast.nodes.ITEExpr;
+import parser.ast.nodes.ITEExprOrFormula;
 import parser.ast.nodes.QtFormula;
 import parser.ast.nodes.RelDecl;
 import parser.ast.nodes.QtExpr;
@@ -118,9 +119,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      * Special case: all non-changing nodes got assigned with zero syntactic. 
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
-     *   1 = block starters, such as a Predicate or Function;
+     *   1 = block starters, such as a Predicate, Let or Function;
+     *   2 = dummy node for ITE / => ELSE; 
      *   -1 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
+     *   122 - Let Expressions; 
      *   123 - Integer Constants;
      *   124 - Boolean Constants;
      *   125 - FieldSymbols;
@@ -413,24 +416,52 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // A new symbol, a new scope
     @Override
     public AugmentedNode visit(LetExpr n, ScopeTreeNode arg) {
-        // TODO: Implementation here
         scopeNodeId++;
         ScopeTreeNode child = new ScopeTreeNode(scopeNodeId, arg, arg.getAffliation());
-        Node var = n.getVar();
-        
-        return null;
+        // Question: Is the 'var' here a VarExpr? Does it allow further cons? 
+        ExprOrFormula var = n.getVar();
+        ExprOrFormula bound = n.getBound();
+        Body body = n.getBody();
+        arg.addChildren(child);
+        if (var instanceof VarExpr) { 
+            VarExpr varExpr = (VarExpr) var;
+            AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
+            Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
+            uniqueNode.put(varSymbol, letNode);
+            child.addSymbol(varSymbol);
+            AugmentedNode boundNode = bound.accept(this, arg); 
+            AugmentedNode bodyNode = body.accept(this, child);
+            letNode.connect(boundNode, 1, 1);
+            letNode.connect(bodyNode, 2, 1);
+            return letNode;
+        } else {
+            throw new RuntimeException("Implicit let not supported! ");
+        }
+    }
+
+    private AugmentedNode visitITE(ITEExprOrFormula n, ScopeTreeNode arg) {
+        AugmentedNode ITEDummy = new AugmentedNode(2, 1);
+        updateTimeOfVisit(ITEDummy);
+        ExprOrFormula condition = n.getCondition();
+        ExprOrFormula thenClause = n.getThenClause();
+        ExprOrFormula elseClause = n.getElseClause();
+        AugmentedNode condNode = condition.accept(this, arg);
+        AugmentedNode thenNode = thenClause.accept(this, arg);
+        AugmentedNode elseNode = elseClause.accept(this, arg);
+        ITEDummy.connect(condNode, 1, timeOfVisitMap.get(ITEDummy));
+        ITEDummy.connect(thenNode, 2, timeOfVisitMap.get(ITEDummy));
+        ITEDummy.connect(elseNode, 3, timeOfVisitMap.get(ITEDummy));
+        return ITEDummy;
     }
 
     @Override
     public AugmentedNode visit(ITEFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        return visitITE(n, arg);
     }
 
     @Override
     public AugmentedNode visit(ITEExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        return visitITE(n, arg);
     }
 
     @Override
