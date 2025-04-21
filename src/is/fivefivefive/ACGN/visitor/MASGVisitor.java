@@ -39,6 +39,7 @@ import parser.ast.nodes.ITEExprOrFormula;
 import parser.ast.nodes.QtFormula;
 import parser.ast.nodes.RelDecl;
 import parser.ast.nodes.QtExpr;
+import parser.ast.nodes.QtExprOrFormula;
 import parser.ast.nodes.CallFormula;
 import parser.ast.nodes.CallExpr;
 import parser.ast.nodes.ListFormula;
@@ -121,6 +122,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
      *   1 = block starters, such as a Predicate, Let or Function;
      *   2 = dummy node for ITE / => ELSE; 
+     *   3 = dummy node for the root of a quantifier; 
      *   -1 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
      *   122 - Let Expressions; 
@@ -234,7 +236,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // From here, we need to pass the subgraph into the child nodes.
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
-            predGraph.addVertex(pdNode);
             predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
@@ -282,7 +283,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnect(declRoot, varNode, iter, arg);
             iter++;
         }
-        graph.addVertex(END_NODE);
+        // graph.addVertex(END_NODE);
         visitAndConnect(declRoot, END_NODE, iter + 1, arg);
         return declRoot;
     }
@@ -417,7 +418,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(LetExpr n, ScopeTreeNode arg) {
         scopeNodeId++;
-        ScopeTreeNode child = new ScopeTreeNode(scopeNodeId, arg, arg.getAffliation());
+        ScopeTreeNode child = new ScopeTreeNode(scopeNodeId, arg);
         // Question: Is the 'var' here a VarExpr? Does it allow further cons? 
         ExprOrFormula var = n.getVar();
         ExprOrFormula bound = n.getBound();
@@ -431,8 +432,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             child.addSymbol(varSymbol);
             AugmentedNode boundNode = bound.accept(this, arg); 
             AugmentedNode bodyNode = body.accept(this, child);
-            letNode.connect(boundNode, 1, 1);
-            letNode.connect(bodyNode, 2, 1);
+            visitAndConnect(letNode, boundNode, 1, arg);
+            visitAndConnect(letNode, bodyNode, 2, arg);
             return letNode;
         } else {
             throw new RuntimeException("Implicit let not supported! ");
@@ -440,7 +441,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private AugmentedNode visitITE(ITEExprOrFormula n, ScopeTreeNode arg) {
-        AugmentedNode ITEDummy = new AugmentedNode(2, 1);
+        int semantic = n instanceof ITEExpr ? 1 : 2;
+        AugmentedNode ITEDummy = new AugmentedNode(2, semantic);
         updateTimeOfVisit(ITEDummy);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
@@ -448,9 +450,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode condNode = condition.accept(this, arg);
         AugmentedNode thenNode = thenClause.accept(this, arg);
         AugmentedNode elseNode = elseClause.accept(this, arg);
-        ITEDummy.connect(condNode, 1, timeOfVisitMap.get(ITEDummy));
-        ITEDummy.connect(thenNode, 2, timeOfVisitMap.get(ITEDummy));
-        ITEDummy.connect(elseNode, 3, timeOfVisitMap.get(ITEDummy));
+        visitAndConnect(ITEDummy, condNode, 1, arg);
+        visitAndConnect(ITEDummy, thenNode, 2, arg);
+        visitAndConnect(ITEDummy, elseNode, 3, arg);
         return ITEDummy;
     }
 
@@ -464,16 +466,35 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         return visitITE(n, arg);
     }
 
+    // A list of Var Decls with confiners, usually the actual root under a predicate
+    private AugmentedNode visitQt(QtExprOrFormula n, ScopeTreeNode arg) {
+        int semantic = n instanceof QtExpr ? 1 : 2;
+        List<VarDecl> varDecls = n.getVarDecls();
+        scopeNodeId++;
+        ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg);
+        Body body = n.getBody();
+        Multigraph graph = arg.getAffliation();
+        AugmentedNode qtRoot = new AugmentedNode(3, semantic);
+        graph.addVertex(qtRoot);
+        int iter = 2;
+        for (VarDecl var : varDecls) {
+            AugmentedNode varDeclNode = visitRelDecl(var, subscope);
+            graph.connect(qtRoot, varDeclNode, iter, 1);
+            iter++;
+        }
+        AugmentedNode bodyNode = body.accept(this, subscope);
+        visitAndConnect(qtRoot, bodyNode, 1, subscope);
+        return qtRoot;
+    }
+
     @Override
     public AugmentedNode visit(QtFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        return visitQt(n, arg);
     }
 
     @Override
     public AugmentedNode visit(QtExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        return visitQt(n, arg);
     }
 
     @Override

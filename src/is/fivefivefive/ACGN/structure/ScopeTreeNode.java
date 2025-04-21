@@ -23,6 +23,9 @@ public class ScopeTreeNode {
             parent.addChildren(this);
         }
     }
+    public ScopeTreeNode(int id, ScopeTreeNode parent) {
+        this(id, parent, parent.getAffliation());
+    }
     public ScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl) {
         this.id = id;
         this.symbols = symbols;
