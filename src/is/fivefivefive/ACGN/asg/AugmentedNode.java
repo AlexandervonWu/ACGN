@@ -2,6 +2,8 @@ package is.fivefivefive.ACGN.asg;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import is.fivefivefive.ACGN.util.Hasher;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 
 /*
@@ -90,6 +92,6 @@ public class AugmentedNode {
     @Override 
     public int hashCode() {
         int synPositive = syntactic + 128;
-        return (int) (0.5 * (synPositive + semantic) * (synPositive + semantic + 1)  + semantic);
+        return Hasher.hashByTwo(synPositive, semantic);
     }
 }

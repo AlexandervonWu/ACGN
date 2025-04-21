@@ -15,6 +15,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
+import is.fivefivefive.ACGN.alloy.AssertSymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
@@ -120,7 +121,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      * Special case: all non-changing nodes got assigned with zero syntactic. 
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
-     *   1 = block starters, such as a Predicate, Let or Function;
+     *   1 = block starters, such as a Predicate or Function;
      *   2 = dummy node for ITE / => ELSE; 
      *   3 = dummy node for the root of a quantifier; 
      *   -1 = dummy node for the list of declarations;
@@ -366,22 +367,29 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(Check n, ScopeTreeNode arg) {
-        // Implementation here
         return new AugmentedNode(0, 101);
     }
 
     @Override
     public AugmentedNode visit(Run n, ScopeTreeNode arg) {
-        // Implementation here
         return new AugmentedNode(0, 102);
     }
 
     // Assertion is also a paragraph to be checked
     @Override
     public AugmentedNode visit(Assertion n, ScopeTreeNode arg) {
-        // Implementation here
-
-        return null;
+        String name = n.getName();
+        AugmentedNode assertionRoot = new AugmentedNode(1, 3);
+        Multigraph subgraph = new Multigraph(assertionRoot, globalVariables);
+        Symbol assertionSym = new AssertSymbol(name, subgraph);
+        arg.addSymbol(assertionSym);
+        uniqueNode.put(assertionSym, assertionRoot);
+        aame.addSymbol(name, assertionSym);
+        scopeNodeId++;
+        ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg, subgraph);
+        AugmentedNode body = n.getBody().accept(this, subscope);
+        visitAndConnect(assertionRoot, body, 1, subscope);
+        return assertionRoot;
     }
     
     // catch the explicit facts
@@ -476,12 +484,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Multigraph graph = arg.getAffliation();
         AugmentedNode qtRoot = new AugmentedNode(3, semantic);
         graph.addVertex(qtRoot);
+        updateTimeOfVisit(qtRoot);
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = visitRelDecl(var, subscope);
-            graph.connect(qtRoot, varDeclNode, iter, 1);
+            visitAndConnect(qtRoot, varDeclNode, iter, subscope);
             iter++;
         }
+        visitAndConnect(qtRoot, END_NODE, iter, subscope);
         AugmentedNode bodyNode = body.accept(this, subscope);
         visitAndConnect(qtRoot, bodyNode, 1, subscope);
         return qtRoot;
@@ -497,16 +507,37 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         return visitQt(n, arg);
     }
 
+    // Calling a predicate or function
     @Override
     public AugmentedNode visit(CallFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        Symbol predOrFunSymbol = aame.getSymbol(n.getName());
+        AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
+        arg.getAffliation().addVertex(calledNode);
+        updateTimeOfVisit(calledNode);
+        int iter = 1;
+        for (ExprOrFormula param : n.getArguments()) {
+            AugmentedNode paramAug = param.accept(this, arg);
+            visitAndConnect(calledNode, paramAug, iter, arg);
+            iter++;
+        }
+        visitAndConnect(calledNode, END_NODE, iter, arg);
+        return calledNode;
     }
 
     @Override
     public AugmentedNode visit(CallExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        Symbol predOrFunSymbol = aame.getSymbol(n.getName());
+        AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
+        arg.getAffliation().addVertex(calledNode);
+        updateTimeOfVisit(calledNode);
+        int iter = 1;
+        for (ExprOrFormula param : n.getArguments()) {
+            AugmentedNode paramAug = param.accept(this, arg);
+            visitAndConnect(calledNode, paramAug, iter, arg);
+            iter++;
+        }
+        visitAndConnect(calledNode, END_NODE, iter, arg);
+        return calledNode;
     }
 
     @Override
