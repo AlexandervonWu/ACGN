@@ -62,6 +62,8 @@ import parser.ast.nodes.Node;
 import parser.ast.visitor.GenericVisitor;
 import parser.ast.visitor.PrettyStringVisitor;
 import parser.etc.Pair;
+
+// TODO : RESTRUCTURE: Get rid of all unnecessary new objects by looking for the nodes first. 
 public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode> {
 
     // forest: the ASG forest of the predicates within the model
@@ -82,7 +84,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
     private final Symbol END_SYMBOL = new EndSymbol();
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0);
-    private List<ExtFact> facts;
+    private Map<Integer, AugmentedNode> nodeDict;
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -95,7 +97,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
         uniqueNode = new DoubleMap<>();
         uniqueNode.put(END_SYMBOL, END_NODE);
-        facts = new ArrayList<>();
+        nodeDict = new HashMap<>();
+        nodeDict.put(0, END_NODE);
     }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
@@ -224,7 +227,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private AugmentedNode visitPredOrFun(PredOrFun n, ScopeTreeNode arg) {
         numPredicates++; 
         scopeNodeId++;
-        // Once declared, the PredNode when called is just a leaf node symbol. 
+        // Once declared, the PredNode when called is just a near-leaf (d=1) node symbol. 
         AugmentedNode predNode = new AugmentedNode(1,numPredicates);
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
@@ -400,7 +403,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         PrettyStringVisitor psv = new PrettyStringVisitor();
         String code = psv.visit(n, null);
         ExtFact fact = new ExtFact(true, code);
-        facts.add(fact);
+        aame.addFact(fact);
         return new AugmentedNode(0, 5);
     }
 
