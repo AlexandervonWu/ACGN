@@ -121,9 +121,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      * Special case: all non-changing nodes got assigned with zero syntactic. 
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
-     *   1 = block starters, such as a Predicate or Function;
+     *   1 = block starters, such as a Predicate, Assertion or Function;
      *   2 = dummy node for ITE / => ELSE; 
      *   3 = dummy node for the root of a quantifier; 
+     *   4 = starter of a ListFormula;
+     *   5 = starter of a ListExpr;
      *   -1 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
      *   122 - Let Expressions; 
@@ -542,8 +544,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(ListFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        int semantics;
+        switch (n.getOp()) {
+            case AND: semantics = 1; break;
+            case OR: semantics = 2; break;
+            default: throw new RuntimeException("Custom labeled list not supported");
+        }
+        AugmentedNode opNode = new AugmentedNode(4, semantics);
+        updateTimeOfVisit(opNode);
+        int iter = 1;
+        for (ExprOrFormula child : n.getArguments()) {
+            AugmentedNode argChildNode = child.accept(this, arg);
+            visitAndConnect(opNode, argChildNode, iter, arg);
+            iter++;
+        }
+        visitAndConnect(opNode, END_NODE, iter, arg);
+        return opNode;
     }
 
     @Override
@@ -575,7 +591,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // Implementation here
         return null;
     }
-
+            
     // TODO: Singular exprs starting here. 
     // Only invoked when the symbol was already declared and now used. 
     private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {

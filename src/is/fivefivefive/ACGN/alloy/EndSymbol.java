@@ -11,4 +11,10 @@ public final class EndSymbol implements Symbol {
     public boolean isEndSymbol() {
         return true;
     }
+    public boolean equals(EndSymbol another) {
+        return true;
+    }
+    public int hashCode() {
+        return 0;
+    }
 }
