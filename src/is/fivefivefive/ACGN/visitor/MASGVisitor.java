@@ -887,14 +887,146 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(UnaryFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String symbolLabel = "UNOPF_";
+        int syntactic = -6;
+        int semantic = 0;
+        switch (n.getOp()) {
+            case LONE:
+                symbolLabel = "UNOPF_LONE";
+                semantic = 1;
+                break;
+            case ONE:
+                symbolLabel = "UNOPF_ONE";
+                semantic = 2;
+                break;
+            case SOME:
+                symbolLabel = "UNOPF_SOME";
+                semantic = 3;
+                break;
+            case NO:
+                symbolLabel = "UNOPF_NO";
+                semantic = 4;
+                break;
+            case NOT:
+                symbolLabel = "UNOPF_NOT";
+                semantic = 5;
+                break;
+            case BEFORE:
+                symbolLabel = "UNOPF_BEFORE";
+                semantic = 6;
+                break;
+            case HISTORICALLY:
+                symbolLabel = "UNOPF_HISTORICALLY";
+                semantic = 7;
+                break;
+            case ONCE:
+                symbolLabel = "UNOPF_ONCE";
+                semantic = 8;
+                break;
+            case ALWAYS:
+                symbolLabel = "UNOPF_ALWAYS";
+                semantic = 9;
+                break;
+            case EVENTUALLY:
+                symbolLabel = "UNOPF_EVENTUALLY";
+                semantic = 10;
+                break;
+            case AFTER:
+                symbolLabel = "UNOPF_AFTER";
+                semantic = 11;
+                break;
+            default:
+                break;
+        }
+        MiddleSymbol unopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode unopNode;
+        if (uniqueNode.containsKey(unopSymbol)) {
+            unopNode = uniqueNode.get(unopSymbol);
+        } else {
+            unopNode = new AugmentedNode(syntactic, semantic);
+            uniqueNode.put(unopSymbol, unopNode);
+        }
+        arg.getAffliation().addVertex(unopNode);
+        updateTimeOfVisit(unopNode);
+        ExprOrFormula sub = n.getSub();
+        AugmentedNode subNode = sub.accept(this, arg);
+        visitAndConnect(unopNode, subNode, 1, arg);
+        return unopNode;
     }
 
     @Override
     public AugmentedNode visit(UnaryExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String symbolLabel = "UNOPE_";
+        int syntactic = 6;
+        int semantic = 0;
+        switch (n.getOp()) {
+            case NOOP:
+                return n.getSub().accept(this, arg);
+            case SET:
+                symbolLabel = "UNOPE_SET";
+                semantic = 1;
+                break;
+            case LONE:
+                symbolLabel = "UNOPE_LONE";
+                semantic = 2;
+                break;
+            case ONE:
+                symbolLabel = "UNOPE_ONE";
+                semantic = 3;
+                break;
+            case SOME:
+                symbolLabel = "UNOPE_SOME";
+                semantic = 4;
+                break;
+            case EXACTLYOF:
+                symbolLabel = "UNOPE_EXACTLYOF";
+                semantic = 5;
+                break;
+            case TRANSPOSE:
+                symbolLabel = "UNOPE_TRANSPOSE";
+                semantic = 6;
+                break;
+            case RCLOSURE:
+                symbolLabel = "UNOPE_RCLOSURE";
+                semantic = 7;
+                break;
+            case CLOSURE:
+                symbolLabel = "UNOPE_CLOSURE";
+                semantic = 8;
+                break;
+            case CARDINALITY:
+                symbolLabel = "UNOPE_CARDINALITY";
+                semantic = 9;
+                break;
+            case CAST2INT:
+                symbolLabel = "UNOPE_CAST2INT";
+                semantic = 10;
+                break;
+            case CAST2SIGINT:
+                symbolLabel = "UNOPE_CAST2SIGINT";
+                semantic = 11;
+                break;
+            case PRIME:
+                symbolLabel = "UNOPE_PRIME";
+                semantic = 12;
+                break;
+            default:
+                break;
+        }
+        MiddleSymbol unopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode unopNode;
+        if (uniqueNode.containsKey(unopSymbol)) {
+            unopNode = uniqueNode.get(unopSymbol);
+        } else {
+            unopNode = new AugmentedNode(syntactic, semantic);
+            uniqueNode.put(unopSymbol, unopNode);
+        }
+        arg.getAffliation().addVertex(unopNode);
+        updateTimeOfVisit(unopNode);
+        ExprOrFormula sub = n.getSub();
+        AugmentedNode subNode = sub.accept(this, arg);
+        visitAndConnect(unopNode, subNode, 1, arg);
+        return unopNode;
     }
             
     // TODO: Singular exprs starting here. 
