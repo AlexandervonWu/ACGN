@@ -20,6 +20,7 @@ import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
+import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
@@ -80,7 +81,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // TODO: We may need more branching for localSymbols. Consider a ``scope tree''. 
     // private DoubleMap<Multigraph, Set<Symbol>> localSymbols;
     private ScopeTreeNode rootScope;
-    // Unique (leaf) nodes with user-defined names. 
+    // Unique nodes with unique symbols to represent.
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
     private final Symbol END_SYMBOL = new EndSymbol();
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0);
@@ -455,7 +456,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     private AugmentedNode visitITE(ITEExprOrFormula n, ScopeTreeNode arg) {
         int semantic = n instanceof ITEExpr ? 1 : 2;
-        AugmentedNode ITEDummy = new AugmentedNode(2, semantic);
+        MiddleSymbol ITESymbol = new MiddleSymbol("ITE" + semantic);
+        AugmentedNode ITEDummy;
+        if (uniqueNode.containsKey(ITESymbol)) {
+            ITEDummy = uniqueNode.get(ITESymbol);
+        } else {
+            ITEDummy = new AugmentedNode(2, semantic);
+            uniqueNode.put(ITESymbol, ITEDummy);
+        }
         updateTimeOfVisit(ITEDummy);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
@@ -482,12 +490,19 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // A list of Var Decls with confiners, usually the actual root under a predicate
     private AugmentedNode visitQt(QtExprOrFormula n, ScopeTreeNode arg) {
         int semantic = n instanceof QtExpr ? 1 : 2;
+        MiddleSymbol qtSymbol = new MiddleSymbol("QT" + semantic);
         List<VarDecl> varDecls = n.getVarDecls();
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg);
         Body body = n.getBody();
         Multigraph graph = arg.getAffliation();
-        AugmentedNode qtRoot = new AugmentedNode(3, semantic);
+        AugmentedNode qtRoot;
+        if (uniqueNode.containsKey(qtSymbol)) {
+            qtRoot = uniqueNode.get(qtSymbol);
+        } else {
+            qtRoot = new AugmentedNode(3, semantic);
+            uniqueNode.put(qtSymbol, qtRoot);
+        }
         graph.addVertex(qtRoot);
         updateTimeOfVisit(qtRoot);
         int iter = 2;
@@ -553,7 +568,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             case OR: semantics = 2; break;
             default: throw new RuntimeException("Custom labeled list not supported");
         }
-        AugmentedNode opNode = new AugmentedNode(4, semantics);
+        MiddleSymbol opSymbol = new MiddleSymbol("LIST_FORMULA_" + semantics);
+        AugmentedNode opNode;
+        if (uniqueNode.containsKey(opSymbol)) {
+            opNode = uniqueNode.get(opSymbol);
+        } else {
+            opNode = new AugmentedNode(4, semantics);
+            uniqueNode.put(opSymbol, opNode);
+        }
+        arg.getAffliation().addVertex(opNode);
         updateTimeOfVisit(opNode);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
@@ -567,8 +590,29 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(ListExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        int semantics;
+        switch (n.getOp()) {
+            case DISJOINT: semantics = 1; break;
+            case TOTALORDER: semantics = 2; break;
+            default: throw new RuntimeException("Custom labeled list not supported");
+        }
+        MiddleSymbol opSymbol = new MiddleSymbol("LIST_EXPR_" + semantics);
+        AugmentedNode opNode;
+        if (uniqueNode.containsKey(opSymbol)) {
+            opNode = uniqueNode.get(opSymbol);
+        } else {
+            opNode = new AugmentedNode(4, semantics);
+            uniqueNode.put(opSymbol, opNode);
+        }
+        updateTimeOfVisit(opNode);
+        int iter = 1;
+        for (ExprOrFormula child : n.getArguments()) {
+            AugmentedNode argChildNode = child.accept(this, arg);
+            visitAndConnect(opNode, argChildNode, iter, arg);
+            iter++;
+        }
+        visitAndConnect(opNode, END_NODE, iter, arg);
+        return opNode;
     }
 
     @Override
