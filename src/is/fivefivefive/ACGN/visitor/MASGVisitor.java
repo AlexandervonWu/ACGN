@@ -1,6 +1,5 @@
 package is.fivefivefive.ACGN.visitor;
 import java.util.Map;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -125,12 +124,20 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      * Special case: all non-changing nodes got assigned with zero syntactic. 
      * Dictionary of Syntactics: 
      *   0 = non-changing nodes, such as "ModuleDecl", "Open", irrelevant to modeling;
-     *   1 = block starters, such as a Predicate, Assertion or Function;
-     *   2 = dummy node for ITE / => ELSE; 
-     *   3 = dummy node for the root of a quantifier; 
-     *   4 = starter of a ListFormula;
-     *   5 = starter of a ListExpr;
-     *   -1 = dummy node for the list of declarations;
+     *   1 = block starters of a FUNCTION (returns a set or element of a set);
+     *   -1 = block starters of a PREDICATE (returns a boolean);
+     *   21 = ASSERTIONS
+     *   2 = dummy node for ITE / => ELSE EXPRS (set);
+     *   -2 = dummy node for ITE / => ELSE FORMULAE (BOOLEAN) 
+     *   3 = dummy node for the root of a quantifier EXPR; 
+     *   -3 = dummy node for the root of a quantifier FORMULA;
+     *   4 = starter of a ListExpr;
+     *   -4 = starter of a ListFormula;
+     *   5 = starter of a BinaryExpr;
+     *   -5 = Binary Formula;
+     *   6 = Unary Expr;
+     *   -6 = Unary Formula;
+     *   -127 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
      *   122 - Let Expressions; 
      *   123 - Integer Constants;
@@ -229,7 +236,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         numPredicates++; 
         scopeNodeId++;
         // Once declared, the PredNode when called is just a near-leaf (d=1) node symbol. 
-        AugmentedNode predNode = new AugmentedNode(1,numPredicates);
+        int syn = n instanceof Function ? 1 : -1;
+        AugmentedNode predNode = new AugmentedNode(syn, numPredicates);
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
         Symbol predSymbol = new RefSymbol(predNode, predName);
@@ -262,7 +270,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
         int semantic = isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
-        AugmentedNode declRoot = new AugmentedNode(-1, semantic); // a virtual root node of the decl set. 
+        AugmentedNode declRoot = new AugmentedNode(-127, semantic); // a virtual root node of the decl set. 
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
         if (timeOfVisitMap.containsKey(declRoot)) {
@@ -385,7 +393,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(Assertion n, ScopeTreeNode arg) {
         String name = n.getName();
-        AugmentedNode assertionRoot = new AugmentedNode(1, 3);
+        AugmentedNode assertionRoot = new AugmentedNode(21, 1);
         Multigraph subgraph = new Multigraph(assertionRoot, globalVariables);
         Symbol assertionSym = new AssertSymbol(name, subgraph);
         arg.addSymbol(assertionSym);
@@ -455,13 +463,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private AugmentedNode visitITE(ITEExprOrFormula n, ScopeTreeNode arg) {
-        int semantic = n instanceof ITEExpr ? 1 : 2;
-        MiddleSymbol ITESymbol = new MiddleSymbol("ITE" + semantic);
+        int syntactic = n instanceof ITEExpr ? 2 : -2;
+        String label = n instanceof ITEExpr ? "ITE_EXPR" : "ITE_FORMULA";
+        MiddleSymbol ITESymbol = new MiddleSymbol(label);
         AugmentedNode ITEDummy;
         if (uniqueNode.containsKey(ITESymbol)) {
             ITEDummy = uniqueNode.get(ITESymbol);
         } else {
-            ITEDummy = new AugmentedNode(2, semantic);
+            ITEDummy = new AugmentedNode(syntactic, 1);
             uniqueNode.put(ITESymbol, ITEDummy);
         }
         updateTimeOfVisit(ITEDummy);
@@ -489,8 +498,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     // A list of Var Decls with confiners, usually the actual root under a predicate
     private AugmentedNode visitQt(QtExprOrFormula n, ScopeTreeNode arg) {
-        int semantic = n instanceof QtExpr ? 1 : 2;
-        MiddleSymbol qtSymbol = new MiddleSymbol("QT" + semantic);
+        int syntactic = n instanceof QtExpr ? 3 : -3;
+        String label = n instanceof QtExpr ? "QT_EXPR" : "QT_FORMULA";
+        MiddleSymbol qtSymbol = new MiddleSymbol(label);
         List<VarDecl> varDecls = n.getVarDecls();
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg);
@@ -500,7 +510,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(qtSymbol)) {
             qtRoot = uniqueNode.get(qtSymbol);
         } else {
-            qtRoot = new AugmentedNode(3, semantic);
+            qtRoot = new AugmentedNode(syntactic, 1);
             uniqueNode.put(qtSymbol, qtRoot);
         }
         graph.addVertex(qtRoot);
@@ -573,7 +583,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(opSymbol)) {
             opNode = uniqueNode.get(opSymbol);
         } else {
-            opNode = new AugmentedNode(4, semantics);
+            opNode = new AugmentedNode(-4, semantics);
             uniqueNode.put(opSymbol, opNode);
         }
         arg.getAffliation().addVertex(opNode);
@@ -617,8 +627,110 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(BinaryFormula n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String symbolLabel = "BOP_";
+        int semantic = 0;
+        int syntactic = -5;
+        switch (n.getOp()) {
+            case EQUALS: 
+                symbolLabel = "BOP_EQ"; 
+                semantic = 1;
+                break;
+            case NOT_EQUALS: 
+                symbolLabel = "BOP_NEQ"; 
+                semantic = 2;
+                break;
+            case AND:
+                symbolLabel = "BOP_AND";
+                semantic = 3;
+                break;
+            case GT:
+                symbolLabel = "BOP_GT";
+                semantic = 4;
+                break;
+            case GTE:
+                symbolLabel = "BOP_GTE";
+                semantic = 5;
+                break;
+            case IFF:
+                symbolLabel = "BOP_IFF";
+                semantic = 6;
+                break;
+            case IMPLIES:
+                symbolLabel = "BOP_IMPLIES";
+                semantic = 7;
+                break;
+            case IN:
+                symbolLabel = "BOP_IN";
+                semantic = 8;
+                break;
+            case LT:
+                symbolLabel = "BOP_LT";
+                semantic = 9;
+                break;
+            case LTE:
+                symbolLabel = "BOP_LTE";
+                semantic = 10;
+                break;
+            case NOT_GT:
+                symbolLabel = "BOP_NOT_GT";
+                semantic = 11;
+                break;
+            case NOT_GTE:
+                symbolLabel = "BOP_NOT_GTE";
+                semantic = 12;
+                break;
+            case NOT_IN:
+                symbolLabel = "BOP_NOT_IN";
+                semantic = 13;
+                break;
+            case NOT_LT:
+                symbolLabel = "BOP_NOT_LT";
+                semantic = 14;
+                break;
+            case NOT_LTE:
+                symbolLabel = "BOP_NOT_LTE";
+                semantic = 15;
+                break;
+            case OR:
+                symbolLabel = "BOP_OR";
+                semantic = 16;
+                break;
+            case RELEASES:
+                symbolLabel = "BOP_RELEASES";
+                semantic = 17;
+                break;
+            case SINCE:
+                symbolLabel = "BOP_SINCE";
+                semantic = 18;
+                break;
+            case TRIGGERED:
+                symbolLabel = "BOP_TRIGGERED";
+                semantic = 19;
+                break;
+            case UNTIL:
+                symbolLabel = "BOP_UNTIL";
+                semantic = 20;
+                break;
+            default:
+                break;
+        }
+        MiddleSymbol bopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode bopNode;
+        if (uniqueNode.containsKey(bopSymbol)) {
+            bopNode = uniqueNode.get(bopSymbol);
+        } else {
+            bopNode = new AugmentedNode(syntactic, semantic);
+            uniqueNode.put(bopSymbol, bopNode);
+        }
+        arg.getAffliation().addVertex(bopNode);
+        updateTimeOfVisit(bopNode);
+        ExprOrFormula left = n.getLeft();
+        ExprOrFormula right = n.getRight();
+        AugmentedNode leftNode = left.accept(this, arg);
+        AugmentedNode rightNode = right.accept(this, arg);
+        visitAndConnect(bopNode, leftNode, 1, arg);
+        visitAndConnect(bopNode, rightNode, 2, arg);
+        return bopNode;
     }
 
     @Override
