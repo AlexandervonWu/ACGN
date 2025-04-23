@@ -735,8 +735,154 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(BinaryExpr n, ScopeTreeNode arg) {
-        // Implementation here
-        return null;
+        String symbolLabel = "BOPEXPR_";
+        int syntactic = 5;
+        int semantic = 0;
+        switch (n.getOp()) {
+            case ARROW:
+                symbolLabel = "BOPEXPR_ARROW";
+                semantic = 1;
+                break;
+            case ANY_ARROW_SOME:
+                symbolLabel = "BOPEXPR_ANY_ARROW_SOME";
+                semantic = 2;
+                break;
+            case ANY_ARROW_ONE:
+                symbolLabel = "BOPEXPR_ANY_ARROW_ONE";
+                semantic = 3;
+                break;
+            case ANY_ARROW_LONE:
+                symbolLabel = "BOPEXPR_ANY_ARROW_LONE";
+                semantic = 4;
+                break;
+            case SOME_ARROW_ANY:
+                symbolLabel = "BOPEXPR_SOME_ARROW_ANY";
+                semantic = 5;
+                break;
+            case SOME_ARROW_SOME:
+                symbolLabel = "BOPEXPR_SOME_ARROW_SOME";
+                semantic = 6;
+                break;
+            case SOME_ARROW_ONE:
+                symbolLabel = "BOPEXPR_SOME_ARROW_ONE";
+                semantic = 7;
+                break;
+            case SOME_ARROW_LONE:
+                symbolLabel = "BOPEXPR_SOME_ARROW_LONE";
+                semantic = 8;
+                break;
+            case ONE_ARROW_ANY:
+                symbolLabel = "BOPEXPR_ONE_ARROW_ANY";
+                semantic = 9;
+                break;
+            case ONE_ARROW_SOME:
+                symbolLabel = "BOPEXPR_ONE_ARROW_SOME";
+                semantic = 10;
+                break;
+            case ONE_ARROW_ONE:
+                symbolLabel = "BOPEXPR_ONE_ARROW_ONE";
+                semantic = 11;
+                break;
+            case ONE_ARROW_LONE:
+                symbolLabel = "BOPEXPR_ONE_ARROW_LONE";
+                semantic = 12;
+                break;
+            case LONE_ARROW_ANY:
+                symbolLabel = "BOPEXPR_LONE_ARROW_ANY";
+                semantic = 13;
+                break;
+            case LONE_ARROW_SOME:
+                symbolLabel = "BOPEXPR_LONE_ARROW_SOME";
+                semantic = 14;
+                break;
+            case LONE_ARROW_ONE:
+                symbolLabel = "BOPEXPR_LONE_ARROW_ONE";
+                semantic = 15;
+                break;
+            case LONE_ARROW_LONE:
+                symbolLabel = "BOPEXPR_LONE_ARROW_LONE";
+                semantic = 16;
+                break;
+            case ISSEQ_ARROW_LONE:
+                symbolLabel = "BOPEXPR_ISSEQ_ARROW_LONE";
+                semantic = 17;
+                break;
+            case JOIN:
+                symbolLabel = "BOPEXPR_JOIN";
+                semantic = 18;
+                break;
+            case DOMAIN:
+                symbolLabel = "BOPEXPR_DOMAIN";
+                semantic = 19;
+                break;
+            case INTERSECT:
+                symbolLabel = "BOPEXPR_INTERSECT";
+                semantic = 20;
+                break;
+            case PLUSPLUS:
+                symbolLabel = "BOPEXPR_PLUSPLUS";
+                semantic = 21;
+                break;
+            case PLUS:
+                symbolLabel = "BOPEXPR_PLUS";
+                semantic = 22;
+                break;
+            case IPLUS:
+                symbolLabel = "BOPEXPR_IPLUS";
+                semantic = 23;
+                break;
+            case MINUS:
+                symbolLabel = "BOPEXPR_MINUS";
+                semantic = 24;
+                break;
+            case IMINUS:
+                symbolLabel = "BOPEXPR_IMINUS";
+                semantic = 25;
+                break;
+            case MUL:
+                symbolLabel = "BOPEXPR_MUL";
+                semantic = 26;
+                break;
+            case DIV:
+                symbolLabel = "BOPEXPR_DIV";
+                semantic = 27;
+                break;
+            case REM:
+                symbolLabel = "BOPEXPR_REM";
+                semantic = 28;
+                break;
+            case SHL:
+                symbolLabel = "BOPEXPR_SHL";
+                semantic = 29;
+                break;
+            case SHA:
+                symbolLabel = "BOPEXPR_SHA";
+                semantic = 30;
+                break;
+            case SHR:
+                symbolLabel = "BOPEXPR_SHR";
+                semantic = 31;
+                break;
+            default:
+                break;
+        }
+        MiddleSymbol bopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode bopNode;
+        if (uniqueNode.containsKey(bopSymbol)) {
+            bopNode = uniqueNode.get(bopSymbol);
+        } else {
+            bopNode = new AugmentedNode(syntactic, semantic);
+            uniqueNode.put(bopSymbol, bopNode);
+        }
+        arg.getAffliation().addVertex(bopNode);
+        updateTimeOfVisit(bopNode);
+        ExprOrFormula left = n.getLeft();
+        ExprOrFormula right = n.getRight();
+        AugmentedNode leftNode = left.accept(this, arg);
+        AugmentedNode rightNode = right.accept(this, arg);
+        visitAndConnect(bopNode, leftNode, 1, arg);
+        visitAndConnect(bopNode, rightNode, 2, arg);
+        return bopNode;
     }
 
     @Override
