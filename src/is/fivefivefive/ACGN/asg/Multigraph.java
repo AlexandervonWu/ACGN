@@ -114,6 +114,7 @@ public class Multigraph {
             throw new IllegalArgumentException("Source and target must be in the graph.");
         }
         edges.add(new MASGEdge(source, target, position, timeOfVisit));
+        source.connect(target, position, timeOfVisit);
     }
     public MASGEdge edgeBetween(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         for (MASGEdge e : edges) {
@@ -193,5 +194,18 @@ public class Multigraph {
     private static boolean isNOOP(Node node) {
         return (node instanceof UnaryExpr &&
             (((UnaryExpr) node).getOp() == parser.ast.nodes.UnaryExpr.UnaryOp.NOOP));
+    }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Multigraph: \n");
+        sb.append("Vertices: \n");
+        for (AugmentedNode v : vertices) {
+            sb.append(v.toString()).append("\n");
+        }
+        sb.append("Edges: \n");
+        for (MASGEdge e : edges) {
+            sb.append(e.toString()).append("\n");
+        }
+        return sb.toString();
     }
 }

@@ -41,4 +41,13 @@ public class MASGEdge {
         }
         return false;
     }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("MASGEdge: ");
+        sb.append("Position: ").append(position).append(", ");
+        sb.append("Source: ").append(source.getSyntactic()).append(", ").append(source.getSemantic()).append(", ");
+        sb.append("Target: ").append(target.getSyntactic()).append(", ").append(target.getSemantic()).append(", ");
+        sb.append("Time of Visit: ").append(timeOfVisit);
+        return sb.toString();
+    }
 }

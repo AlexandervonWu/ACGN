@@ -85,6 +85,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final Symbol END_SYMBOL = new EndSymbol();
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0);
     private Map<Integer, AugmentedNode> nodeDict;
+    private AugmentedNode overallRoot;
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -111,6 +112,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
     public GlobalVariables getGlobalVariables() {
         return globalVariables;
+    }
+    public AugmentedNode getOverallRoot() {
+        return overallRoot;
     }
     // visits, all non-predicates are discarded. 
     // consider AAME into it. 
@@ -149,17 +153,19 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
         AugmentedNode mu = new AugmentedNode(0, 1);
+        overallRoot = mu;
         Multigraph demoGraph = forest.get(0);
         rootScope = new ScopeTreeNode(0, null, demoGraph);
         demoGraph.addVertex(mu);
         AugmentedNode md = n.getModuleDecl().accept(this, rootScope);
-        demoGraph.connect(mu, md, 1, 1);
         demoGraph.addVertex(md);
+        demoGraph.connect(mu, md, 1, 1);
         // Open: non-modificable, syn == 0, sem == 3;
         for (OpenDecl o : n.getOpenDeclList()) {
             AugmentedNode oNode = o.accept(this, rootScope);
-            demoGraph.connect(mu, oNode, 2, 1);
             demoGraph.addVertex(oNode);
+            demoGraph.connect(mu, oNode, 2, 1);
+            
         }
         // SigDecl: non-mod, syn == 0, sem == 4; defines a new symbol in scope.
         for (SigDecl sd : n.getSigDeclList()) {
@@ -211,11 +217,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         SigSymbol sigsy = new SigSymbol(nameKey);
         aame.addSymbol(nameKey, sigsy);
         rootScope.addSymbol(sigsy);
-        AugmentedNode sigExprNode = new AugmentedNode(127, uniqueNode.size());
+        AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size());
         uniqueNode.put(sigsy, sigExprNode);
+        Multigraph graph = arg.getAffliation();
+        int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
-            f.accept(this, arg); // register the symbols, but not use here
+            AugmentedNode field = f.accept(this, arg);
+            visitAndConnect(sigExprNode, field, iter, arg);
+            iter++;
         }
+        visitAndConnect(sigExprNode, END_NODE, iter, arg);
         return sigExprNode;
     }
 
@@ -241,8 +252,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
         Symbol predSymbol = new RefSymbol(predNode, predName);
+        uniqueNode.put(predSymbol, predNode);
         aame.addSymbol(predName, predSymbol);
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
+        forest.put(numPredicates, predGraph);
         // localSymbols.put(predGraph, new HashSet<Symbol>());
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, rootScope, predGraph);
 
@@ -257,7 +270,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         predGraph.addVertex(bodyNode);
         predGraph.connect(predNode, bodyNode, 1, 1);
-        forest.put(numPredicates, predGraph);
+        
         return predNode;
     }
 
@@ -304,8 +317,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
+        if (child == null) {
+            return;
+        }
         int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
         Multigraph graph = arg.getAffliation();
+        graph.addVertex(parent);
         graph.addVertex(child);
         graph.connect(parent, child, position, timeOfVisit);
     }
@@ -343,6 +360,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                         break;
                     case EXACTLYOF:
                         confiners.add(FieldConfiner.EXACTLY);
+                        break;
+                    case NOOP:
                         break;
                     default:
                         throw new Exception("Unknown unary operator: " + unIter.getOp());
@@ -1076,7 +1095,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         int semantic = isVar << 1 + isDisj;
-        AugmentedNode declRoot = new AugmentedNode(-1, semantic);
+        AugmentedNode declRoot = new AugmentedNode(-127, semantic);
         if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
             timeOfVisitMap.put(declRoot, prevValue + 1);

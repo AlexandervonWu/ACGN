@@ -66,6 +66,7 @@ public class AugmentedNode {
         MASGEdge e = new MASGEdge(this, target, position, timeOfVisit);
         downlinks.add(e);
         target.uplinks.add(e);
+        System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time");
         return e;
     }
     public MASGEdge inverseConnect(AugmentedNode source, int position, int timeOfVisit) {
@@ -93,5 +94,17 @@ public class AugmentedNode {
     public int hashCode() {
         int synPositive = syntactic + 128;
         return Hasher.hashByTwo(synPositive, semantic);
+    }
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("AugmentedNode: ");
+        sb.append("Syntactic: ").append(syntactic).append(", ");
+        sb.append("Semantic: ").append(semantic).append(", ");
+        sb.append("Signature: ").append(signature).append(", ");
+        for (MASGEdge e : downlinks) {
+            sb.append('\n');
+            sb.append("Downlink: ").append(e).append(", ");
+        }
+        return sb.toString();
     }
 }
