@@ -334,7 +334,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             iter++;
         }
         // graph.addVertex(END_NODE);
-        visitAndConnect(declRoot, END_NODE, iter + 1, arg);
+        visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
     }
 
@@ -1141,6 +1141,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnect(declRoot, fieldNode, iter, arg);
             iter++;
         }
+        visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
     }
 }
