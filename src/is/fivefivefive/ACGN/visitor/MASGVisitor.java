@@ -167,20 +167,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             demoGraph.connect(mu, oNode, 2, 1);
             
         }
+        int predId = 0;
         // SigDecl: non-mod, syn == 0, sem == 4; defines a new symbol in scope.
         for (SigDecl sd : n.getSigDeclList()) {
             AugmentedNode sdNode = sd.accept(this, rootScope);
             demoGraph.addVertex(sdNode);
-            demoGraph.connect(mu, sdNode, 3, 1);
+            demoGraph.connect(mu, sdNode, 3 + predId, 1);
+            predId++;
         }
 
         // Predicate : each creates a tree in the forest. syn = 1, sem == 0; define a new predicate, which is a subtree. 
         // the foci of learning
-        int predId = 0;
+        
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = p.accept(this, rootScope);
             demoGraph.addVertex(pNode);
-            demoGraph.connect(mu, pNode, 4 + predId, 1);
+            demoGraph.connect(mu, pNode, 3 + predId, 1);
             predId++;
         }
 
@@ -188,14 +190,35 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (Function f : n.getFunDeclList()) {
             AugmentedNode fNode = f.accept(this, rootScope);
             demoGraph.addVertex(fNode);
-            demoGraph.connect(mu, fNode, 4 + predId, 1);
+            demoGraph.connect(mu, fNode, 3 + predId, 1);
             predId++;
         }
         // Facts can be directly stored in AAME. 
         for (Fact f : n.getFactDeclList()) {
             AugmentedNode fNode = f.accept(this, rootScope);
             demoGraph.addVertex(fNode);
-            demoGraph.connect(mu, fNode, 4 + predId, 1);
+            demoGraph.connect(mu, fNode, 3 + predId, 1);
+            predId++;
+        }
+        // Assertion: a non-modifiable node, syn == 0, sem == 21
+        for (Assertion a : n.getAssertDeclList()) {
+            AugmentedNode aNode = a.accept(this, rootScope);
+            demoGraph.addVertex(aNode);
+            demoGraph.connect(mu, aNode, 3 + predId, 1);
+            predId++;
+        }
+        // Check: a non-modifiable node, syn == 0, sem == 101
+        for (Check c : n.getCheckCmdList()) {
+            AugmentedNode cNode = c.accept(this, rootScope);
+            demoGraph.addVertex(cNode);
+            demoGraph.connect(mu, cNode, 3 + predId, 1);
+            predId++;
+        }
+        // Run: a non-modifiable node, syn == 0, sem == 102
+        for (Run r : n.getRunCmdList()) {
+            AugmentedNode rNode = r.accept(this, rootScope);
+            demoGraph.addVertex(rNode);
+            demoGraph.connect(mu, rNode, 3 + predId, 1);
             predId++;
         }
         return mu;
@@ -219,7 +242,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         rootScope.addSymbol(sigsy);
         AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size());
         uniqueNode.put(sigsy, sigExprNode);
-        Multigraph graph = arg.getAffliation();
         int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
             AugmentedNode field = f.accept(this, arg);
@@ -282,7 +304,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
-        int semantic = isVar << 1 + isDisj; // class of the decl; confined by property of the decl. 
+        int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
         AugmentedNode declRoot = new AugmentedNode(-127, semantic); // a virtual root node of the decl set. 
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
@@ -1094,7 +1116,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         String sigName = sig.getName();
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
-        int semantic = isVar << 1 + isDisj;
+        int semantic = isVar * 2 + isDisj + 4;
         AugmentedNode declRoot = new AugmentedNode(-127, semantic);
         if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
