@@ -6,30 +6,31 @@ import java.util.HashSet;
 import java.util.HashMap;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
+import parser.etc.Pair;
 
 public final class GlobalVariables {
-    private Map<AugmentedNode, Set<AugmentedNode>> edgeMap;
+    private Map<Pair<AugmentedNode, Integer>, Set<AugmentedNode>> edgeMap;
     public GlobalVariables() {
-        edgeMap = new HashMap<AugmentedNode, Set<AugmentedNode>>();
+        edgeMap = new HashMap<Pair<AugmentedNode, Integer>, Set<AugmentedNode>>();
     }
-    public Map<AugmentedNode, Set<AugmentedNode>> getEdgeMap() {
+    public Map<Pair<AugmentedNode, Integer>, Set<AugmentedNode>> getEdgeMap() {
         return edgeMap;
     }
-    public Set<AugmentedNode> getCandidates(AugmentedNode node) {
-        return edgeMap.get(node);
+    public Set<AugmentedNode> getCandidates(AugmentedNode node, int position) {
+        return edgeMap.get(Pair.of(node, position));
     }
-    public void addEdge(AugmentedNode source, AugmentedNode target) {
-        if (!edgeMap.containsKey(source)) {
-            edgeMap.put(source, new HashSet<AugmentedNode>());
+    public void addEdge(AugmentedNode source, AugmentedNode target, int position) {
+        if (!edgeMap.containsKey(Pair.of(source, position))) {
+            edgeMap.put(Pair.of(source, position), new HashSet<AugmentedNode>());
         }
-        edgeMap.get(source).add(target);
+        edgeMap.get(Pair.of(source, position)).add(target);
     }
-    public void addEdge(MASGEdge edge) {
-        addEdge(edge.getSource(), edge.getTarget());
+    public void addEdge(MASGEdge edge, int position) {
+        addEdge(edge.getSource(), edge.getTarget(), position);
     }
     public void combine(GlobalVariables another) {
         // Combine the edgeMaps
-        for (AugmentedNode source : another.getEdgeMap().keySet()) {
+        for (Pair<AugmentedNode, Integer> source : another.getEdgeMap().keySet()) {
             if (!edgeMap.containsKey(source)) {
                 edgeMap.put(source, new HashSet<AugmentedNode>());
             }

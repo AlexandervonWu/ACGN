@@ -141,6 +141,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *   -5 = Binary Formula;
      *   6 = Unary Expr;
      *   -6 = Unary Formula;
+     *   7 = CallExpr;
+     *  -7 = CallFormula;
      *   -127 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
      *   122 - Let Expressions; 
@@ -581,34 +583,53 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // Calling a predicate or function
     @Override
     public AugmentedNode visit(CallFormula n, ScopeTreeNode arg) {
+        Symbol callSymbol = new MiddleSymbol("CALL_FORMULA");
+        AugmentedNode callNode;
+        if (uniqueNode.containsKey(callSymbol)) {
+            callNode = uniqueNode.get(callSymbol);
+        } else {
+            callNode = new AugmentedNode(-7, 1);
+            uniqueNode.put(callSymbol, callNode);
+        }
+        arg.getAffliation().addVertex(callNode);
+        updateTimeOfVisit(callNode);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
-        arg.getAffliation().addVertex(calledNode);
-        updateTimeOfVisit(calledNode);
-        int iter = 1;
+        // connect the callNode to the calledNode at position 1
+        arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
+        int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            visitAndConnect(calledNode, paramAug, iter, arg);
+            visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
-        visitAndConnect(calledNode, END_NODE, iter, arg);
-        return calledNode;
+        visitAndConnect(callNode, END_NODE, iter, arg);
+        return callNode;
     }
 
     @Override
     public AugmentedNode visit(CallExpr n, ScopeTreeNode arg) {
+        Symbol callSymbol = new MiddleSymbol("CALL_EXPR");
+        AugmentedNode callNode;
+        if (uniqueNode.containsKey(callSymbol)) {
+            callNode = uniqueNode.get(callSymbol);
+        } else {
+            callNode = new AugmentedNode(7, 1);
+            uniqueNode.put(callSymbol, callNode);
+        }
+        arg.getAffliation().addVertex(callNode);
+        updateTimeOfVisit(callNode);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
-        arg.getAffliation().addVertex(calledNode);
-        updateTimeOfVisit(calledNode);
-        int iter = 1;
+        arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
+        int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            visitAndConnect(calledNode, paramAug, iter, arg);
+            visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
-        visitAndConnect(calledNode, END_NODE, iter, arg);
-        return calledNode;
+        visitAndConnect(callNode, END_NODE, iter, arg);
+        return callNode;
     }
 
     @Override
