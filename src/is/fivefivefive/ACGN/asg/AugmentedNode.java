@@ -5,6 +5,7 @@ import java.util.List;
 
 import is.fivefivefive.ACGN.util.Hasher;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
+import is.fivefivefive.ACGN.alloy.Symbol;
 
 /*
  * A node in the Abstract Semantic Graph.
@@ -17,7 +18,8 @@ public class AugmentedNode {
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
     private boolean isShadow;
-    public AugmentedNode(int syntactic, int semantic) throws IllegalArgumentException {
+    private Symbol symbol;
+    public AugmentedNode(int syntactic, int semantic, Symbol symbol) throws IllegalArgumentException {
         if (syntactic > 127 || syntactic < -128) {
             throw new IllegalArgumentException("Syntactic is a single byte! ");
         }
@@ -25,6 +27,7 @@ public class AugmentedNode {
         this.semantic = semantic;
         this.signature = 0.0;
         this.isShadow = false;
+        this.symbol = symbol;
         uplinks = new ArrayList<>();
         downlinks = new ArrayList<>();
     }
@@ -37,6 +40,15 @@ public class AugmentedNode {
         this.semantic = (int) Math.round(original.getSemantic());
         // TODO: Exponential forms must be removed! What are exponential? 
         this.isShadow = true;
+    }
+    public AugmentedNode(int syntactic, int semantic) {
+        this(syntactic, semantic, null);
+    }
+    public Symbol getSymbol() {
+        return symbol;
+    }
+    public void setSymbol(Symbol symbol) {
+        this.symbol = symbol;
     }
     public byte getSyntactic() {
         return syntactic;

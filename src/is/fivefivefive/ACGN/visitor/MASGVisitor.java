@@ -15,6 +15,7 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.AssertSymbol;
+import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
@@ -242,7 +243,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         SigSymbol sigsy = new SigSymbol(nameKey);
         aame.addSymbol(nameKey, sigsy);
         rootScope.addSymbol(sigsy);
-        AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size());
+        AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
         uniqueNode.put(sigsy, sigExprNode);
         int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
@@ -276,6 +277,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         timeOfVisitMap.put(predNode, 1);
         String predName = n.getName();
         Symbol predSymbol = new RefSymbol(predNode, predName);
+        predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);
         aame.addSymbol(predName, predSymbol);
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
@@ -307,7 +309,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
         int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
-        AugmentedNode declRoot = new AugmentedNode(-127, semantic); // a virtual root node of the decl set. 
+        Symbol declRootSym = new MiddleSymbol("RELDECL");
+        AugmentedNode declRoot = new AugmentedNode(-127, semantic, declRootSym); // a virtual root node of the decl set. 
+        updateTimeOfVisit(declRoot);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
         if (timeOfVisitMap.containsKey(declRoot)) {
@@ -327,7 +331,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph));
             varSym.setFieldConfinerSet(confiners);
             arg.addSymbol(varSym);
-            uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size()));
+            uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size(), varSym));
         }
         int iter = 2;
         for (ExprOrFormula v : n.getVariables()) {
@@ -441,6 +445,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Symbol assertionSym = new AssertSymbol(name, subgraph);
         arg.addSymbol(assertionSym);
         uniqueNode.put(assertionSym, assertionRoot);
+        assertionRoot.setSymbol(assertionSym);
         aame.addSymbol(name, assertionSym);
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg, subgraph);
@@ -464,14 +469,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (n.isBoolean()) {
             String val = n.getValue();
             if (val.equalsIgnoreCase("true")) {
-                return new AugmentedNode(124, 1);
+                Symbol boolSymbol = new ConstSymbol("true", true);
+                return new AugmentedNode(124, 1, boolSymbol);
             } else {
-                return new AugmentedNode(124, 0);
+                Symbol boolSymbol = new ConstSymbol("false", true);
+                return new AugmentedNode(124, 0, boolSymbol);
             }
         } else {
             try {
                 int semantic = Integer.parseInt(n.getValue());
-                return new AugmentedNode(123, semantic);
+                Symbol constSymbol = new ConstSymbol(n.getValue(), false);
+                return new AugmentedNode(123, semantic, constSymbol);
             } catch (Exception e) {
                 System.out.println("Type of constant not supported! ");
                 throw e;
@@ -495,6 +503,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
             uniqueNode.put(varSymbol, letNode);
             child.addSymbol(varSymbol);
+            letNode.setSymbol(varSymbol);
             AugmentedNode boundNode = bound.accept(this, arg); 
             AugmentedNode bodyNode = body.accept(this, child);
             visitAndConnect(letNode, boundNode, 1, arg);
@@ -513,7 +522,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(ITESymbol)) {
             ITEDummy = uniqueNode.get(ITESymbol);
         } else {
-            ITEDummy = new AugmentedNode(syntactic, 1);
+            ITEDummy = new AugmentedNode(syntactic, 1, ITESymbol);
             uniqueNode.put(ITESymbol, ITEDummy);
         }
         updateTimeOfVisit(ITEDummy);
@@ -553,7 +562,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(qtSymbol)) {
             qtRoot = uniqueNode.get(qtSymbol);
         } else {
-            qtRoot = new AugmentedNode(syntactic, 1);
+            qtRoot = new AugmentedNode(syntactic, 1, qtSymbol);
             uniqueNode.put(qtSymbol, qtRoot);
         }
         graph.addVertex(qtRoot);
@@ -588,7 +597,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(callSymbol)) {
             callNode = uniqueNode.get(callSymbol);
         } else {
-            callNode = new AugmentedNode(-7, 1);
+            callNode = new AugmentedNode(-7, 1, callSymbol);
             uniqueNode.put(callSymbol, callNode);
         }
         arg.getAffliation().addVertex(callNode);
@@ -614,7 +623,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(callSymbol)) {
             callNode = uniqueNode.get(callSymbol);
         } else {
-            callNode = new AugmentedNode(7, 1);
+            callNode = new AugmentedNode(7, 1, callSymbol);
             uniqueNode.put(callSymbol, callNode);
         }
         arg.getAffliation().addVertex(callNode);
@@ -645,7 +654,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(opSymbol)) {
             opNode = uniqueNode.get(opSymbol);
         } else {
-            opNode = new AugmentedNode(-4, semantics);
+            opNode = new AugmentedNode(-4, semantics, opSymbol);
             uniqueNode.put(opSymbol, opNode);
         }
         arg.getAffliation().addVertex(opNode);
@@ -673,7 +682,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(opSymbol)) {
             opNode = uniqueNode.get(opSymbol);
         } else {
-            opNode = new AugmentedNode(4, semantics);
+            opNode = new AugmentedNode(4, semantics, opSymbol);
             uniqueNode.put(opSymbol, opNode);
         }
         updateTimeOfVisit(opNode);
@@ -781,7 +790,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(bopSymbol)) {
             bopNode = uniqueNode.get(bopSymbol);
         } else {
-            bopNode = new AugmentedNode(syntactic, semantic);
+            bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
             uniqueNode.put(bopSymbol, bopNode);
         }
         arg.getAffliation().addVertex(bopNode);
@@ -933,7 +942,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(bopSymbol)) {
             bopNode = uniqueNode.get(bopSymbol);
         } else {
-            bopNode = new AugmentedNode(syntactic, semantic);
+            bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
             uniqueNode.put(bopSymbol, bopNode);
         }
         arg.getAffliation().addVertex(bopNode);
@@ -1005,7 +1014,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(unopSymbol)) {
             unopNode = uniqueNode.get(unopSymbol);
         } else {
-            unopNode = new AugmentedNode(syntactic, semantic);
+            unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
         arg.getAffliation().addVertex(unopNode);
@@ -1080,7 +1089,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(unopSymbol)) {
             unopNode = uniqueNode.get(unopSymbol);
         } else {
-            unopNode = new AugmentedNode(syntactic, semantic);
+            unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
         arg.getAffliation().addVertex(unopNode);
@@ -1138,7 +1147,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isVar = n.isVariable() ? 1 : 0;
         int isDisj = n.isDisjoint() ? 1 : 0;
         int semantic = isVar * 2 + isDisj + 4;
-        AugmentedNode declRoot = new AugmentedNode(-127, semantic);
+        Symbol declRootSym = new MiddleSymbol("FIELD_DECL");
+        AugmentedNode declRoot;
+        if (uniqueNode.containsKey(declRootSym)) {
+            declRoot = uniqueNode.get(declRootSym);
+        } else {
+            declRoot = new AugmentedNode(-127, semantic, declRootSym);
+            uniqueNode.put(declRootSym, declRoot);
+        }
         if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
             timeOfVisitMap.put(declRoot, prevValue + 1);
@@ -1156,8 +1172,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (String fieldName : n.getNames()) {
             Symbol fieldSymbol = new FieldRelation(fieldName, sourceSymbol, targetSymbol, confiners);
-            AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size());
+            AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size(), fieldSymbol);
             uniqueNode.put(fieldSymbol, fieldNode);
+            fieldNode.setSymbol(fieldSymbol);
             // TODO: Name problem? Consider same-name nodes...
             visitAndConnect(declRoot, fieldNode, iter, arg);
             iter++;
