@@ -290,18 +290,20 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // From here, we need to pass the subgraph into the child nodes.
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
+            globalVariables.addEdge(predNode, pdNode, 1);
             predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
+        globalVariables.addEdge(predNode, bodyNode, 1);
         predGraph.addVertex(bodyNode);
         predGraph.connect(predNode, bodyNode, 1, 1);
-        
         return predNode;
     }
 
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     // RelDecls here except Fields.
+    // TODO: How to capture the types of the RelDecls???
     private AugmentedNode visitRelDecl(RelDecl n, ScopeTreeNode arg) {
         // All real decls goes to this. Concrete symbol to consider. 
         // Set<Symbol> localSyms = arg.getSymbols();
@@ -309,7 +311,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
         int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
-        Symbol declRootSym = new MiddleSymbol("RELDECL");
+        Symbol declRootSym = new MiddleSymbol("RELDECL_" + semantic);
         AugmentedNode declRoot = new AugmentedNode(-127, semantic, declRootSym); // a virtual root node of the decl set. 
         updateTimeOfVisit(declRoot);
         Multigraph graph = arg.getAffliation();
@@ -323,6 +325,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
+        globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
         SigSymbol sigSymbol = sigPair.a;
@@ -336,6 +339,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (ExprOrFormula v : n.getVariables()) {
             AugmentedNode varNode = v.accept(this, arg);
+            globalVariables.addEdge(declRoot, varNode, iter);
             visitAndConnect(declRoot, varNode, iter, arg);
             iter++;
         }
@@ -343,6 +347,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
     }
+    // TODO: Down here we need more implementation of the gv augmentations.
 
     private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
         if (child == null) {
@@ -450,6 +455,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg, subgraph);
         AugmentedNode body = n.getBody().accept(this, subscope);
+        globalVariables.addEdge(assertionRoot, body, 1);
         visitAndConnect(assertionRoot, body, 1, subscope);
         return assertionRoot;
     }
@@ -505,7 +511,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             child.addSymbol(varSymbol);
             letNode.setSymbol(varSymbol);
             AugmentedNode boundNode = bound.accept(this, arg); 
+            globalVariables.addEdge(letNode, boundNode, 1);
             AugmentedNode bodyNode = body.accept(this, child);
+            globalVariables.addEdge(letNode, bodyNode, 2);
             visitAndConnect(letNode, boundNode, 1, arg);
             visitAndConnect(letNode, bodyNode, 2, arg);
             return letNode;
@@ -530,8 +538,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
         AugmentedNode condNode = condition.accept(this, arg);
+        globalVariables.addEdge(ITEDummy, condNode, 1);
         AugmentedNode thenNode = thenClause.accept(this, arg);
+        globalVariables.addEdge(ITEDummy, thenNode, 2);
         AugmentedNode elseNode = elseClause.accept(this, arg);
+        globalVariables.addEdge(ITEDummy, elseNode, 3);
         visitAndConnect(ITEDummy, condNode, 1, arg);
         visitAndConnect(ITEDummy, thenNode, 2, arg);
         visitAndConnect(ITEDummy, elseNode, 3, arg);
@@ -570,11 +581,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = visitRelDecl(var, subscope);
+            globalVariables.addEdge(qtRoot, varDeclNode, iter);
             visitAndConnect(qtRoot, varDeclNode, iter, subscope);
             iter++;
         }
         visitAndConnect(qtRoot, END_NODE, iter, subscope);
         AugmentedNode bodyNode = body.accept(this, subscope);
+        globalVariables.addEdge(qtRoot, bodyNode, 1);
         visitAndConnect(qtRoot, bodyNode, 1, subscope);
         return qtRoot;
     }
@@ -604,11 +617,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(callNode);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
+        globalVariables.addEdge(callNode, calledNode, 1);
         // connect the callNode to the calledNode at position 1
         arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
+            globalVariables.addEdge(callNode, calledNode, iter);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -630,10 +645,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(callNode);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
+        globalVariables.addEdge(callNode, calledNode, 1);
         arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
+            globalVariables.addEdge(callNode, calledNode, iter);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -662,9 +679,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
+            globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
+        globalVariables.addEdge(opNode, END_NODE, iter);
         visitAndConnect(opNode, END_NODE, iter, arg);
         return opNode;
     }
@@ -689,6 +708,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
+            globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
@@ -798,7 +818,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
+        globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
+        globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
         return bopNode;
@@ -950,7 +972,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
+        globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
+        globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
         return bopNode;
@@ -1021,6 +1045,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(unopNode);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
+        globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
         return unopNode;
     }
@@ -1096,6 +1121,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(unopNode);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
+        globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
         return unopNode;
     }

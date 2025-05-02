@@ -79,7 +79,7 @@ public class Trainer {
             double lrInit, double lrDecay, double temp, double tolerance, 
             GlobalVariables gv) {
         // TODO after creating a new Visitor
-        Map<AugmentedNode, Set<AugmentedNode>> edgeMap = gv.getEdgeMap();
+        // Map<AugmentedNode, Set<AugmentedNode>> edgeMap = gv.getEdgeMap();
         double lr = lrInit;
         
         
