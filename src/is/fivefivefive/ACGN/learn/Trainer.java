@@ -9,6 +9,9 @@ import java.util.ArrayList;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.sat4j.core.Vec;
+
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -84,5 +87,14 @@ public class Trainer {
         
         
         return null;
+    }
+    public static double crossEntropyLoss(Vector<Double> predictions, Vector<Double> targets) {
+        double loss = 0;
+        for (int i = 0; i < predictions.size(); i++) {
+            double pred = predictions.get(i);
+            double target = targets.get(i);
+            loss += -target * Math.log(pred) - (1 - target) * Math.log(1 - pred);
+        }
+        return loss / predictions.size();
     }
 }
