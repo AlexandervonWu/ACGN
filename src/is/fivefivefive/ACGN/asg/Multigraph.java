@@ -173,7 +173,7 @@ public class Multigraph {
                         vertices.add(shadow);
                         MASGEdge edge = new MASGEdge(localRootAug, shadow, indexOfRealChild, timeOfVisit.get(nr));
                         edges.add(edge);
-                        gv.addEdge(edge);
+                        gv.addEdge(edge, indexOfRealChild);
                         continue;
                     }
 

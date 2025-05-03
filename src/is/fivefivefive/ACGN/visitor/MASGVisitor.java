@@ -619,7 +619,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
         globalVariables.addEdge(callNode, calledNode, 1);
         // connect the callNode to the calledNode at position 1
-        arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
+        visitAndConnect(callNode, calledNode, 1, arg);
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
@@ -1200,6 +1200,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             Symbol fieldSymbol = new FieldRelation(fieldName, sourceSymbol, targetSymbol, confiners);
             AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size(), fieldSymbol);
             uniqueNode.put(fieldSymbol, fieldNode);
+            aame.addSymbol(fieldName, fieldSymbol);
             fieldNode.setSymbol(fieldSymbol);
             // TODO: Name problem? Consider same-name nodes...
             visitAndConnect(declRoot, fieldNode, iter, arg);

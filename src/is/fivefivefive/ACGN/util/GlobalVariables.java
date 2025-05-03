@@ -32,6 +32,7 @@ public final class GlobalVariables {
     }
     public void addEdge(AugmentedNode source, AugmentedNode target, int position) {
         addEdge(source.getSymbol(), target.getSymbol(), position);
+
     }
     public void combine(GlobalVariables another) {
         // Combine the edgeMaps
