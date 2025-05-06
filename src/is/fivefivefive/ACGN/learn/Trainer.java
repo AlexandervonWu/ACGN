@@ -98,6 +98,10 @@ public class Trainer {
         double result = expDiff /sum;
         return result;
     }
+    public static double localLoss(double ground, double predicted) {
+        return -1 * (ground * Math.log(predicted));
+    }
+    
     public static Vector<Double> softmax(Vector<Double> raw) {
         // generate the softmax
         double max = Double.NEGATIVE_INFINITY;

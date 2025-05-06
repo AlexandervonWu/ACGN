@@ -102,6 +102,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
     }
+    public MASGVisitor(GlobalVariables gv) {
+        this();
+        globalVariables = gv;
+    }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
     }
@@ -290,7 +294,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // From here, we need to pass the subgraph into the child nodes.
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
-            globalVariables.addEdge(predNode, pdNode, 1);
+            globalVariables.addEdge(predNode, pdNode, 2); // equivalent in infinity;
             predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
@@ -581,7 +585,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = visitRelDecl(var, subscope);
-            globalVariables.addEdge(qtRoot, varDeclNode, iter);
+            globalVariables.addEdge(qtRoot, varDeclNode, 2);
             visitAndConnect(qtRoot, varDeclNode, iter, subscope);
             iter++;
         }
@@ -623,7 +627,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            globalVariables.addEdge(callNode, calledNode, iter);
+            globalVariables.addEdge(callNode, calledNode, 2);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -650,7 +654,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            globalVariables.addEdge(callNode, calledNode, iter);
+            globalVariables.addEdge(callNode, calledNode, 2);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -679,7 +683,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, iter);
+            globalVariables.addEdge(opNode, argChildNode, 2);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
@@ -708,7 +712,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, iter);
+            globalVariables.addEdge(opNode, argChildNode, 2);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
