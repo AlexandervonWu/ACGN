@@ -1,6 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
 
-public class ConstSymbol implements Symbol {
+public class ConstSymbol extends AbstractSymbol {
     private String name;
     private boolean isBoolean;
 

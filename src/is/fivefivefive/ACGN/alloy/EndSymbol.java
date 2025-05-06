@@ -1,6 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
 
-public final class EndSymbol implements Symbol {
+public final class EndSymbol extends AbstractSymbol {
     public EndSymbol() {}
     public String getName() {
         return "<END>";

@@ -12,6 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.sat4j.core.Vec;
 
+import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -77,6 +78,43 @@ public class Trainer {
             }
         }
         return losses;
+    }
+    public static Vector<Double> forward(Vector<Double> predictions, Vector<Double> targets) {
+        // TODO: One step forward optimized with cross entropy loss
+        return null;
+    }
+    public static double prediction(GlobalVariables gv, AugmentedNode vi, AugmentedNode vj, int position, double temperature) {
+        double thetaI = vi.getSignature();
+        double thetaJ = vj.getSignature();
+        Symbol si = vi.getSymbol();
+        double diff = thetaJ - thetaI;
+        double expDiff = Math.exp(diff / temperature);
+        double sum = 0;
+        for (Symbol s : gv.getCandidates(si, position)) {
+            double thetaK = s.getSignature();
+            double expDiffK = Math.exp((thetaK - thetaI) / temperature);
+            sum += expDiffK;
+        }
+        double result = expDiff /sum;
+        return result;
+    }
+    public static Vector<Double> softmax(Vector<Double> raw) {
+        // generate the softmax
+        double max = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < raw.size(); i++) {
+            if (raw.get(i) > max) {
+                max = raw.get(i);
+            }
+        }
+        double sum = 0;
+        for (int i = 0; i < raw.size(); i++) {
+            sum += Math.exp(raw.get(i) - max);
+        }
+        Vector<Double> result = new Vector<Double>();
+        for (int i = 0; i < raw.size(); i++) {
+            result.add(Math.exp(raw.get(i) - max) / sum);
+        }
+        return result;
     }
     public static List<Double> pretrainByEnthalpy(List<Multigraph> trainSet, List<Double> init, 
             double lrInit, double lrDecay, double temp, double tolerance, 

@@ -200,7 +200,10 @@ public class Multigraph {
         sb.append("Multigraph: \n");
         sb.append("Vertices: \n");
         for (AugmentedNode v : vertices) {
-            sb.append(v.toString()).append("\n");
+            sb.append(v.getSymbol()).append("\n");
+            if (v.getSymbol() == null) {
+                sb.append(v.getSyntactic() + ", " + v.getSemantic()).append("\n");
+            }
         }
         sb.append("Edges: \n");
         for (MASGEdge e : edges) {

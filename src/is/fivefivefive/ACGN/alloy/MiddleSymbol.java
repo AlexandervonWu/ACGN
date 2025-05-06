@@ -1,6 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
 
-public class MiddleSymbol implements Symbol {
+public class MiddleSymbol extends AbstractSymbol {
     private String name;
     private boolean infiniteRoot;
     public MiddleSymbol(String name) {

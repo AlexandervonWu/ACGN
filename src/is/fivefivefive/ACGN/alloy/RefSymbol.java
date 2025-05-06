@@ -2,7 +2,7 @@ package is.fivefivefive.ACGN.alloy;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 
-public class RefSymbol implements Symbol {
+public class RefSymbol extends AbstractSymbol {
     private AugmentedNode node;
     private String name;
     private String type;

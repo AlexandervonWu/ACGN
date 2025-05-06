@@ -5,7 +5,7 @@ import java.util.Set;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 
-public class VarSymbol implements Symbol {
+public class VarSymbol extends AbstractSymbol {
     private String type; // signature that the variable is an element of 
     private String varName; // the name of the variable
     private int treeIdScope; // 0 for global symbols;

@@ -1,7 +1,7 @@
 package is.fivefivefive.ACGN.alloy;
 
 
-public abstract class RelationSet implements Symbol {
+public abstract class RelationSet extends AbstractSymbol {
     private String name;
     private SigSymbol source;
     private SigSymbol target;

@@ -14,7 +14,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 public class AugmentedNode {
     private byte syntactic;
     private int semantic;
-    private double signature;
+    // private double signature;
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
     private boolean isShadow;
@@ -25,7 +25,6 @@ public class AugmentedNode {
         }
         this.syntactic = (byte) syntactic;
         this.semantic = semantic;
-        this.signature = 0.0;
         this.isShadow = false;
         this.symbol = symbol;
         uplinks = new ArrayList<>();
@@ -57,7 +56,7 @@ public class AugmentedNode {
        return semantic;
     }
     public double getSignature() {
-        return signature;
+        return this.symbol.getSignature();
     }
     public List<MASGEdge> getUplinks() {
         return uplinks;
@@ -66,10 +65,10 @@ public class AugmentedNode {
         return downlinks;
     }
     public void setSignature(double signature) {
-        this.signature = signature;
+        this.symbol.setSignature(signature);
     }
     public void initSignature() {
-        this.signature = 0.0;
+        this.symbol.setSignature(0);
     }
     public boolean isShadow() {
         return isShadow;
@@ -112,7 +111,7 @@ public class AugmentedNode {
         sb.append("AugmentedNode: ");
         sb.append("Syntactic: ").append(syntactic).append(", ");
         sb.append("Semantic: ").append(semantic).append(", ");
-        sb.append("Signature: ").append(signature).append(", ");
+        sb.append("Signature: ").append(getSignature()).append(", ");
         for (MASGEdge e : downlinks) {
             sb.append('\n');
             sb.append("Downlink: ").append(e).append(", ");

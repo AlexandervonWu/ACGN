@@ -3,7 +3,7 @@ package is.fivefivefive.ACGN.alloy;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.Hasher;
 
-public class AssertSymbol implements Symbol {
+public class AssertSymbol extends AbstractSymbol {
     private String name;
     private Multigraph graph;
     public AssertSymbol(String name, Multigraph subgraph) {
