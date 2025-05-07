@@ -1,6 +1,6 @@
 package is.fivefivefive.ACGN.alloy;
 
-public class AbstractSymbol implements Symbol {
+public abstract class AbstractSymbol implements Symbol {
     private double signature;
     public AbstractSymbol() {}
     public String getName() {
