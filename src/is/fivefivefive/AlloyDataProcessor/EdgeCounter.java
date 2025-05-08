@@ -14,7 +14,6 @@ import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ public class EdgeCounter {
         File[] files = dirFile.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.isFile() && file.getName().endsWith(".ast")) {
+                if (file.isFile() && file.getName().endsWith(".als")) {
                     try {
                         CompModule module = AlloyUtil.compileAlloyModule(dir + "/" + file.getName());
                         ModelUnit mu = new ModelUnit(null, module);
