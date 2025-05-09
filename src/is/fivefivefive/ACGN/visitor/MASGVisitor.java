@@ -87,6 +87,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
+    private Map<String, SigSymbol> unfoundSigs;
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -101,6 +102,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         uniqueNode.put(END_SYMBOL, END_NODE);
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
+        unfoundSigs = new HashMap<>();
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -150,6 +152,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *  -7 = CallFormula;
      *   -127 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
+     *   121 - 'iden' constant
      *   122 - Let Expressions; 
      *   123 - Integer Constants;
      *   124 - Boolean Constants;
@@ -228,6 +231,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             demoGraph.connect(mu, rNode, 3 + predId, 1);
             predId++;
         }
+        if (!unfoundSigs.isEmpty()) {
+            throw new RuntimeException("Unfound sigs: " + unfoundSigs);
+        }
         return mu;
     }
 
@@ -245,6 +251,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode visit(SigDecl n, ScopeTreeNode arg) {
         String nameKey = n.getName();
         SigSymbol sigsy = new SigSymbol(nameKey);
+        if (unfoundSigs.containsKey(nameKey)) {
+            sigsy = unfoundSigs.get(nameKey);
+            unfoundSigs.remove(nameKey);
+        }
         aame.addSymbol(nameKey, sigsy);
         rootScope.addSymbol(sigsy);
         AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
@@ -410,7 +420,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 String sigName = sigExpr.getName();
                 Symbol sigSymbol = aame.getSymbol(sigName);
                 if (sigSymbol == null || !(sigSymbol instanceof SigSymbol)) {
-                    throw new Exception("Unknown signature: " + sigName);
+                    sigSymbol = new SigSymbol(sigName);
+                    unfoundSigs.put(sigName, (SigSymbol) sigSymbol);
                 }
                 SigSymbol concSigSymbol = (SigSymbol) sigSymbol;
                 return Pair.of(concSigSymbol, confiners);
@@ -476,19 +487,23 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     @Override
     public AugmentedNode visit(ConstExpr n, ScopeTreeNode arg) {
+        String val = n.getValue();
         if (n.isBoolean()) {
-            String val = n.getValue();
             if (val.equalsIgnoreCase("true")) {
-                Symbol boolSymbol = new ConstSymbol("true", true);
+                Symbol boolSymbol = new ConstSymbol("true", true, false);
                 return new AugmentedNode(124, 1, boolSymbol);
             } else {
-                Symbol boolSymbol = new ConstSymbol("false", true);
+                Symbol boolSymbol = new ConstSymbol("false", true, false);
                 return new AugmentedNode(124, 0, boolSymbol);
             }
         } else {
+            if (val.equalsIgnoreCase("iden")) {
+                Symbol constSymbol = new ConstSymbol("iden", false, true);
+                return new AugmentedNode(121, 1, constSymbol);
+            }
             try {
                 int semantic = Integer.parseInt(n.getValue());
-                Symbol constSymbol = new ConstSymbol(n.getValue(), false);
+                Symbol constSymbol = new ConstSymbol(n.getValue(), false, false);
                 return new AugmentedNode(123, semantic, constSymbol);
             } catch (Exception e) {
                 System.out.println("Type of constant not supported! ");

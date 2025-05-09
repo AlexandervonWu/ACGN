@@ -3,10 +3,12 @@ package is.fivefivefive.ACGN.alloy;
 public class ConstSymbol extends AbstractSymbol {
     private String name;
     private boolean isBoolean;
+    private boolean isIden;
 
-    public ConstSymbol(String n, boolean b) {
+    public ConstSymbol(String n, boolean b, boolean iden) {
         name = n;
         isBoolean = b;
+        isIden = iden;
     }
 
     @Override
@@ -16,7 +18,7 @@ public class ConstSymbol extends AbstractSymbol {
 
     @Override
     public String getType() {
-        return isBoolean ? "boolean" : "int";
+        return isBoolean ? "boolean" : isIden ? "iden" : "int";
     }
 
     @Override

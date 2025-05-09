@@ -50,6 +50,14 @@ public class EdgeCounter {
                         System.out.println("Error processing file: " + file.getName());
                         e.printStackTrace();
                     }
+                } else if (file.isDirectory()) {
+                    // Recursively process subdirectories
+                    Map<Triple<Symbol, Symbol, Integer>, Integer> subDirEdgeCount = countEdges(file.getAbsolutePath());
+                    if (subDirEdgeCount != null) {
+                        for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : subDirEdgeCount.entrySet()) {
+                            edgeCountMap.put(entry.getKey(), edgeCountMap.getOrDefault(entry.getKey(), 0) + entry.getValue());
+                        }
+                    }
                 }
             }
         }
@@ -68,6 +76,17 @@ public class EdgeCounter {
             return new DummySymbol("subset");
         } else {
             return original;
+        }
+    }
+    public static void main(String[] args) {
+        String dir = "classified-data"; // Replace with your directory path
+        Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
+        if (edgeCountMap != null) {
+            for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : edgeCountMap.entrySet()) {
+                System.out.println("Edge: " + entry.getKey() + ", Count: " + entry.getValue());
+            }
+        } else {
+            System.out.println("No edges found.");
         }
     }
 }
