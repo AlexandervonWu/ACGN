@@ -1,11 +1,11 @@
 package is.fivefivefive.ACGN.alloy;
 
 
-public abstract class RelationSet extends AbstractSymbol {
+public abstract class RelationSet extends SetSymbol {
     private String name;
     private SigSymbol source;
-    private SigSymbol target;
-    public RelationSet(String n, SigSymbol s, SigSymbol t) {
+    private SetSymbol target;
+    public RelationSet(String n, SigSymbol s, SetSymbol t) {
         name = n;
         source = s;
         target = t;
@@ -25,7 +25,7 @@ public abstract class RelationSet extends AbstractSymbol {
     public SigSymbol getSource() {
         return source;
     }
-    public SigSymbol getTarget() {
+    public SetSymbol getTarget() {
         return target;
     }
 }

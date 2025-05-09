@@ -22,6 +22,7 @@ import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
+import is.fivefivefive.ACGN.alloy.SetSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -51,6 +52,7 @@ import parser.ast.nodes.BinaryExpr;
 import parser.ast.nodes.UnaryFormula;
 import parser.ast.nodes.UnaryExpr;
 import parser.ast.nodes.VarExpr;
+import parser.ast.nodes.BinaryExpr.BinaryOp;
 import parser.ast.nodes.FieldExpr;
 import parser.ast.nodes.SigExpr;
 import parser.ast.nodes.ExprOrFormula;
@@ -341,8 +343,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode exprNode = expr.accept(this, arg);
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
-        Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
-        SigSymbol sigSymbol = sigPair.a;
+        Pair<SetSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
+        SetSymbol sigSymbol = sigPair.a;
         Set<FieldConfiner> confiners = sigPair.b;
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph));
@@ -385,7 +387,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
     }
 
-    private Pair<SigSymbol, Set<FieldConfiner>> getSigSymbolByExpr(ExprOrFormula n) {
+    private Pair<SetSymbol, Set<FieldConfiner>> getSigSymbolByExpr(ExprOrFormula n) {
         // Question: what is the ** signature ** type of the paramater? The expr of the ParamDecl is an arbitrary Expr. 
         try {
             Set<FieldConfiner> confiners = new HashSet<>();
@@ -426,6 +428,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 SigSymbol concSigSymbol = (SigSymbol) sigSymbol;
                 return Pair.of(concSigSymbol, confiners);
             } else {
+                if (iter instanceof BinaryExpr) {
+                    BinaryExpr binExpr = (BinaryExpr) iter;
+                    if (binExpr.getOp() == BinaryOp.JOIN) {
+                        FieldExpr fieldExpr = (FieldExpr) binExpr.getChildren().get(1);
+                        String fieldName = fieldExpr.getName();
+                        Symbol fieldSymbol = aame.getSymbol(fieldName);
+                        return Pair.of((FieldRelation) fieldSymbol, confiners);
+                    }
+                }
                 throw new Exception("Unknown expression type: " + iter.getClass());
             }
         } catch (Exception e) {
@@ -1210,8 +1221,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             throw new RuntimeException("No signature found in AAME for signature " + sigName + " of field " + n.getNames().toString());
         }
         ExprOrFormula fieldRelType = n.getExpr();
-        Pair<SigSymbol, Set<FieldConfiner>> targetPair = getSigSymbolByExpr(fieldRelType);
-        SigSymbol targetSymbol = targetPair.a;
+        Pair<SetSymbol, Set<FieldConfiner>> targetPair = getSigSymbolByExpr(fieldRelType);
+        SetSymbol targetSymbol = targetPair.a;
         Set<FieldConfiner> confiners = targetPair.b;
         SigSymbol sourceSymbol = (SigSymbol) aame.getSymbol(sigName);
         int iter = 2;

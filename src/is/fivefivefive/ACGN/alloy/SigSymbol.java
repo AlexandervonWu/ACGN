@@ -4,7 +4,7 @@ package is.fivefivefive.ACGN.alloy;
  * A signature in the Alloy model as a set. 
  * One of the symbols in the AAME.
  */
-public class SigSymbol extends AbstractSymbol {
+public class SigSymbol extends SetSymbol {
     private String name;
     public SigSymbol(String n) {
         name = n;

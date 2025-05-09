@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class FieldRelation extends RelationSet {
     private Set<FieldConfiner> confiners; // one, lone, some, ...
-    public FieldRelation(String n, SigSymbol s, SigSymbol t, Set<FieldConfiner> conf) {
+    public FieldRelation(String n, SigSymbol s, SetSymbol t, Set<FieldConfiner> conf) {
         super(n, s, t);
         confiners = conf;
     }

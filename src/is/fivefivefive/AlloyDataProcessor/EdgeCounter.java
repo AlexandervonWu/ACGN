@@ -49,6 +49,7 @@ public class EdgeCounter {
                     } catch (Exception e) {
                         System.out.println("Error processing file: " + file.getName());
                         e.printStackTrace();
+                        throw e;
                     }
                 } else if (file.isDirectory()) {
                     // Recursively process subdirectories
