@@ -53,7 +53,6 @@ import parser.ast.nodes.UnaryFormula;
 import parser.ast.nodes.UnaryExpr;
 import parser.ast.nodes.VarExpr;
 import parser.ast.nodes.BinaryExpr.BinaryOp;
-import parser.ast.nodes.UnaryFormula.UnaryOp;
 import parser.ast.nodes.FieldExpr;
 import parser.ast.nodes.SigExpr;
 import parser.ast.nodes.ExprOrFormula;
@@ -344,11 +343,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode exprNode = expr.accept(this, arg);
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
-        Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
-        SigSymbol sigSymbol = sigPair.a;
+        // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
+        // SigSymbol sigSymbol = sigPair.a;
+        SigSymbol sigSymbol = typeCheckExpr(expr);
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph), exprNode);
-            // varSym.setFieldConfinerSet(confiners);
             arg.addSymbol(varSym);
             uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size(), varSym));
         }
@@ -1265,5 +1264,87 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
+    }
+    private SigSymbol typeCheckExpr(ExprOrFormula e) {
+        // use this function to check the overall set / type of the expression
+        // System.out.println(e);
+        if (e instanceof SigExpr) {
+            SigExpr sigExpr = (SigExpr) e;
+            String sigName = sigExpr.getName();
+            Symbol sigSymbol = aame.getSymbol(sigName);
+            return (SigSymbol) sigSymbol;
+        }
+        if (e instanceof FieldExpr) {
+            FieldExpr fieldExpr = (FieldExpr) e;
+            String fieldName = fieldExpr.getName();
+            Symbol fieldSymbol = aame.getSymbol(fieldName);
+            if (fieldSymbol instanceof FieldRelation) {
+                FieldRelation fieldRel = (FieldRelation) fieldSymbol;
+                SetSymbol iterSym = fieldRel;
+                while (iterSym instanceof FieldRelation) {
+                    iterSym = ((FieldRelation) iterSym).getTarget();
+                }
+                return (SigSymbol) iterSym;
+            } else {
+                throw new RuntimeException("Field " + fieldName + " is not a field relation");
+            }
+        }
+        if (e instanceof UnaryExpr) {
+            UnaryExpr unaryExpr = (UnaryExpr) e;
+            ExprOrFormula sub = unaryExpr.getSub();
+            return typeCheckExpr(sub);
+        }
+        if (e instanceof BinaryExpr) {
+            BinaryExpr binaryExpr = (BinaryExpr) e;
+            if (binaryExpr.getOp() == BinaryOp.JOIN) {
+                // see if its left or right is a field. Fields first. 
+                ExprOrFormula left = binaryExpr.getLeft();
+                ExprOrFormula right = binaryExpr.getRight();
+                if (isSigOrField(right)) {
+                    return typeCheckExpr(right);
+                } else {
+                    return typeCheckExpr(left);
+                }
+            } else {
+                // select one branch and find its type
+                return typeCheckExpr(binaryExpr.getLeft());
+            }
+        }
+        if (e instanceof ITEExpr) {
+            // use its THEN branch\
+            return typeCheckExpr(((ITEExpr) e).getThenClause());
+        }
+        if (e instanceof VarExpr) {
+            VarExpr varExpr = (VarExpr) e;
+            String varName = varExpr.getName();
+            System.out.println("Unknown expression type: " + e.getClass() + " " + varName);
+        }
+        return null;
+    }
+    private boolean isSigOrField(ExprOrFormula e) {
+        if (e instanceof SigExpr) {
+            return true;
+        }
+        if (e instanceof FieldExpr) {
+            return true;
+        }
+        if (e instanceof UnaryExpr) {
+            UnaryExpr unaryExpr = (UnaryExpr) e;
+            ExprOrFormula sub = unaryExpr.getSub();
+            return isSigOrField(sub);
+        }
+        if (e instanceof BinaryExpr) {
+            BinaryExpr binaryExpr = (BinaryExpr) e;
+            if (binaryExpr.getOp() == BinaryOp.JOIN) {
+                // see if its left or right is a field. Fields first. 
+                ExprOrFormula left = binaryExpr.getLeft();
+                ExprOrFormula right = binaryExpr.getRight();
+                return isSigOrField(right) || isSigOrField(left);
+            } else {
+                // select one branch and find its type
+                return isSigOrField(binaryExpr.getLeft());
+            }
+        }
+        return false;
     }
 }
