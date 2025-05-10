@@ -697,6 +697,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(callNode);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
+        if (calledNode == null) {
+            // the node is a built-in function
+            calledNode = new AugmentedNode(7, 1, new RefSymbol(null, n.getName()));
+            uniqueNode.put(calledNode.getSymbol(), calledNode);
+        }
         globalVariables.addEdge(callNode, calledNode, 1);
         arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
         int iter = 2;
