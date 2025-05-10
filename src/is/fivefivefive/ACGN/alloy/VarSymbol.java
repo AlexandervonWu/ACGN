@@ -1,8 +1,8 @@
 package is.fivefivefive.ACGN.alloy;
-
+/* 
 import java.util.HashSet;
 import java.util.Set;
-
+*/
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 
 public class VarSymbol extends AbstractSymbol {
@@ -10,13 +10,15 @@ public class VarSymbol extends AbstractSymbol {
     private String varName; // the name of the variable
     private int treeIdScope; // 0 for global symbols;
     private AugmentedNode node; // the node that this symbol is associated with
-    private Set<FieldConfiner> fieldConfinerSet; // the set of field confiners that this variable is subject to
-    public VarSymbol(String sig, String varName, int treeId) {
+    // private Set<FieldConfiner> fieldConfinerSet; // the set of field confiners that this variable is subject to
+    private AugmentedNode confinerNode; 
+    public VarSymbol(String sig, String varName, int treeId, AugmentedNode confinerNode) {
         type = sig;
         this.varName = varName;
         treeIdScope = treeId;
         node = new AugmentedNode(-1, 0);
-        fieldConfinerSet = new HashSet<>();
+        // fieldConfinerSet = new HashSet<>();
+        this.confinerNode = confinerNode;
     }
     public String getType() {
         return type;
@@ -33,10 +35,16 @@ public class VarSymbol extends AbstractSymbol {
     public int getScopeId() {
         return treeIdScope;
     }
-    public Set<FieldConfiner> getFieldConfinerSet() {
-        return fieldConfinerSet;
+    /* public Set<FieldConfiner> getFieldConfinerSet() {
+         return fieldConfinerSet;
     }
     public void setFieldConfinerSet(Set<FieldConfiner> fieldConfinerSet) {
         this.fieldConfinerSet = fieldConfinerSet;
+    }*/ 
+    public AugmentedNode getConfinerNode() {
+        return confinerNode;
+    }
+    public void setConfinerNode(AugmentedNode confinerNode) {
+        this.confinerNode = confinerNode;
     }
 }

@@ -27,6 +27,7 @@ public class EdgeCounter {
             return null;
         }
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = new HashMap<>();
+        int modelCount = 0;
         File[] files = dirFile.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -46,9 +47,11 @@ public class EdgeCounter {
                                 edgeCountMap.put(edge, edgeCountMap.getOrDefault(edge, 0) + 1);
                             }
                         }
+                        modelCount++;
                     } catch (Exception e) {
                         System.out.println("Error processing file: " + file.getName());
                         e.printStackTrace();
+                        System.out.println("Count of models before this error: " + modelCount);
                         throw e;
                     }
                 } else if (file.isDirectory()) {
