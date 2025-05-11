@@ -89,6 +89,7 @@ public class EdgeCounter {
         String dir = "classified-data"; // Replace with your directory path
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
         if (edgeCountMap != null) {
+            // TODO:  combine the entries with the same key
             for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : edgeCountMap.entrySet()) {
                 
                 // write the data to a file
