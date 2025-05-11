@@ -9,6 +9,7 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.etc.Triple;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
@@ -96,6 +97,8 @@ public class EdgeCounter {
     public static void main(String[] args) {
         String dir = "classified-data"; // Replace with your directory path
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
+        int uniqueNodeCount = 0;
+        DoubleMap<Symbol, Integer> nodeId = new DoubleMap<>();
         if (edgeCountMap != null) {
             // TODO:  combine the entries with the same key
             for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : edgeCountMap.entrySet()) {
@@ -105,11 +108,21 @@ public class EdgeCounter {
                 int count = entry.getValue();
                 System.out.println("Edge: " + edge.x + " -> " + edge.y + " at position " + edge.z + " Count: " + count);
                 // write the data to a file， generate the CSV
+                if (!nodeId.containsKey(edge.x)) {
+                    nodeId.put(edge.x, uniqueNodeCount);
+                    uniqueNodeCount++;
+                }
+                if (!nodeId.containsKey(edge.y)) {
+                    nodeId.put(edge.y, uniqueNodeCount);
+                    uniqueNodeCount++;
+                }
                 String x = edge.x.getName();
+                int xId = nodeId.get(edge.x);
                 String y = edge.y.getName();
+                int yId = nodeId.get(edge.y);
                 int z = edge.z;
-                String csvLine = x + "," + y + "," + z + "," + count;
-                String csvFilePath = "edge_counts_str_dirty.csv"; // Replace with your desired CSV file path
+                String csvLine = x + "," + xId + "," + y + "," + yId + "," + z + "," + count;
+                String csvFilePath = "edge_counts_dirty_indiced.csv"; // Replace with your desired CSV file path
                 try (java.io.FileWriter writer = new java.io.FileWriter(csvFilePath, true)) {
                     writer.write(csvLine + "\n");
                 } catch (java.io.IOException e) {
