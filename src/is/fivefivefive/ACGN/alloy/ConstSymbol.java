@@ -26,4 +26,13 @@ public class ConstSymbol extends AbstractSymbol {
         return false;
     }
     
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ConstSymbol) {
+            ConstSymbol other = (ConstSymbol) o;
+            return this.name.equals(other.getName());
+        } else {
+            return false;
+        }
+    }
 }

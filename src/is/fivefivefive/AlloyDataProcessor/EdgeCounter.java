@@ -45,6 +45,14 @@ public class EdgeCounter {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
                                 Symbol target = getSymbolForPretrain(e.getTarget().getSymbol());
                                 int position = e.getPosition();
+                                /* 
+                                if (target == MASGVisitor.END_SYMBOL) {
+                                    continue; // Skip edges to the end symbol
+                                }
+                                int position = e.getPosition();
+                                if (position > 2 && (!source.getName().equals("ITE_EXPR") && !source.getName().equals("ITE_FORMULA"))) {
+                                    position = 2; // commute
+                                }*/
                                 Triple<Symbol, Symbol, Integer> edge = new Triple<>(source, target, position);
                                 edgeCountMap.put(edge, edgeCountMap.getOrDefault(edge, 0) + 1);
                             }
@@ -97,11 +105,11 @@ public class EdgeCounter {
                 int count = entry.getValue();
                 System.out.println("Edge: " + edge.x + " -> " + edge.y + " at position " + edge.z + " Count: " + count);
                 // write the data to a file， generate the CSV
-                int x = edge.x.hashCode();
-                int y = edge.y.hashCode();
+                String x = edge.x.getName();
+                String y = edge.y.getName();
                 int z = edge.z;
                 String csvLine = x + "," + y + "," + z + "," + count;
-                String csvFilePath = "edge_counts.csv"; // Replace with your desired CSV file path
+                String csvFilePath = "edge_counts_str_dirty.csv"; // Replace with your desired CSV file path
                 try (java.io.FileWriter writer = new java.io.FileWriter(csvFilePath, true)) {
                     writer.write(csvLine + "\n");
                 } catch (java.io.IOException e) {

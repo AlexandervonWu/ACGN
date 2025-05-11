@@ -85,8 +85,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private ScopeTreeNode rootScope;
     // Unique nodes with unique symbols to represent.
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
-    private final Symbol END_SYMBOL = new EndSymbol();
-    private final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
+    public static final Symbol END_SYMBOL = new EndSymbol();
+    public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
