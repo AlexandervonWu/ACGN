@@ -87,6 +87,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private DoubleMap<Symbol, AugmentedNode> uniqueNode;
     private final Symbol END_SYMBOL = new EndSymbol();
     private final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
+    private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
+    private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
@@ -102,9 +104,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
         uniqueNode = new DoubleMap<>();
         uniqueNode.put(END_SYMBOL, END_NODE);
+        uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
+        nodeDict.put(1, EMPTY_SET_NODE);
+        aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
+
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -168,6 +174,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         overallRoot = mu;
         Multigraph demoGraph = forest.get(0);
         rootScope = new ScopeTreeNode(0, null, demoGraph);
+        rootScope.addSymbol(EMPTY_SET_SYMBOL);
         demoGraph.addVertex(mu);
         AugmentedNode md = n.getModuleDecl().accept(this, rootScope);
         demoGraph.addVertex(md);
@@ -551,6 +558,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ScopeTreeNode child = new ScopeTreeNode(scopeNodeId, arg);
         // Question: Is the 'var' here a VarExpr? Does it allow further cons? 
         ExprOrFormula var = n.getVar();
+        if (var instanceof UnaryExpr) {
+            if (((UnaryExpr) var).getOp() == UnaryExpr.UnaryOp.NOOP) {
+                var = ((UnaryExpr) var).getSub();
+            }
+        }
         ExprOrFormula bound = n.getBound();
         Body body = n.getBody();
         arg.addChildren(child);
@@ -876,6 +888,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode leftNode = left.accept(this, arg);
         globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
+        /*()
+        if (rightNode == null) {
+            System.out.println("Right node : " + right);
+            System.out.println("RIGHT NODE CHILD: " + right.getChildren().get(0));
+            Node gc = right.getChildren().get(0);
+            if (gc instanceof SigExpr) {
+                SigExpr sigGC = (SigExpr) gc;
+                String sigName = sigGC.getName();
+                System.out.println(sigName);
+            }
+            throw new RuntimeException("Right node is null!");
+        } */
         globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);

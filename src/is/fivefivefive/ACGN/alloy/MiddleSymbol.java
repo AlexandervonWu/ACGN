@@ -38,4 +38,11 @@ public class MiddleSymbol extends AbstractSymbol {
     public int hashCode() {
         return name.hashCode() % 114493 + 114493; // closest prime number to 114514
     }
+    @Override
+    public String toString() {
+        return "MiddleSymbol{" +
+                "name='" + name + '\'' +
+                ", infiniteRoot=" + infiniteRoot +
+                '}';
+    }
 }

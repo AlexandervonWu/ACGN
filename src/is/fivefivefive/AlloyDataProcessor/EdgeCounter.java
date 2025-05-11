@@ -9,7 +9,7 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
-import is.fivefivefive.alloyasg.etc.Triple;
+import is.fivefivefive.ACGN.etc.Triple;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
 
@@ -20,6 +20,7 @@ import java.util.Map;
 import edu.mit.csail.sdg.parser.CompModule;
 
 public class EdgeCounter {
+    private static int modelCount = 0;
     public static Map<Triple<Symbol, Symbol, Integer>, Integer> countEdges(String dir) {
         File dirFile = new File(dir);
         if (!dirFile.isDirectory()) {
@@ -27,7 +28,6 @@ public class EdgeCounter {
             return null;
         }
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = new HashMap<>();
-        int modelCount = 0;
         File[] files = dirFile.listFiles();
         if (files != null) {
             for (File file : files) {
@@ -38,6 +38,7 @@ public class EdgeCounter {
                         MASGVisitor visitor = new MASGVisitor();
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
+                            if (id == 0) continue; // Skip the root node
                             Multigraph graph = visitor.getForest().get(id);
                             for (MASGEdge e : graph.getEdges()) {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
@@ -48,6 +49,7 @@ public class EdgeCounter {
                             }
                         }
                         modelCount++;
+                        System.out.println(modelCount + " models processed.");
                     } catch (Exception e) {
                         System.out.println("Error processing file: " + file.getName());
                         e.printStackTrace();
