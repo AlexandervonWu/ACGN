@@ -39,6 +39,7 @@ public class EdgeCounter {
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
                             if (id == 0) continue; // Skip the root node
+                            if (id > 2) continue; // Skip the checking predicates
                             Multigraph graph = visitor.getForest().get(id);
                             for (MASGEdge e : graph.getEdges()) {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
@@ -89,7 +90,23 @@ public class EdgeCounter {
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
         if (edgeCountMap != null) {
             for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : edgeCountMap.entrySet()) {
-                System.out.println("Edge: " + entry.getKey() + ", Count: " + entry.getValue());
+                
+                // write the data to a file
+                Triple<Symbol, Symbol, Integer> edge = entry.getKey();
+                int count = entry.getValue();
+                System.out.println("Edge: " + edge.x + " -> " + edge.y + " at position " + edge.z + " Count: " + count);
+                // write the data to a file， generate the CSV
+                int x = edge.x.hashCode();
+                int y = edge.y.hashCode();
+                int z = edge.z;
+                String csvLine = x + "," + y + "," + z + "," + count;
+                String csvFilePath = "edge_counts.csv"; // Replace with your desired CSV file path
+                try (java.io.FileWriter writer = new java.io.FileWriter(csvFilePath, true)) {
+                    writer.write(csvLine + "\n");
+                } catch (java.io.IOException e) {
+                    System.out.println("Error writing to CSV file: " + e.getMessage());
+                }
+                
             }
         } else {
             System.out.println("No edges found.");
