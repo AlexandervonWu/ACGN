@@ -169,6 +169,6 @@ public class TrainGround {
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
         int maxNodeId = edgeList.stream().flatMapToInt(e -> java.util.stream.IntStream.of(e.source, e.target)).max().orElse(0);
         int numNodes = maxNodeId + 1;
-        train(edgeList, numNodes, 200, Hyperparams.INITIAL_LEARNING_RATE, Hyperparams.TEMPERATURE, 14500, 12, "node_signatures.csv");
+        train(edgeList, numNodes, 2, Hyperparams.INITIAL_LEARNING_RATE, Hyperparams.TEMPERATURE, 10000, 12, "node_signatures.csv");
     }
 }
