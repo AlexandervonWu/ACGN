@@ -26,11 +26,13 @@ public class SGDEdgeTrainer {
         }
 
         float projectionScore(int i, int j) {
+            /*
             float cosI = (float) Math.cos(angle[i]);
             float sinI = (float) Math.sin(angle[i]);
             float cosJ = (float) Math.cos(angle[j]);
             float sinJ = (float) Math.sin(angle[j]);
-            return cosJ * cosI + sinJ * sinI; // Re(e^{iθ_j} * e^{-iθ_i}) = cos(θ_j − θ_i)
+            return cosJ * cosI + sinJ * sinI; // Re(e^{iθ_j} * e^{-iθ_i}) = cos(θ_j − θ_i)*/
+            return angle[j] - angle[i]; // Simplified for demonstration
         }
 
         void saveToCSV(String filename) throws IOException {
