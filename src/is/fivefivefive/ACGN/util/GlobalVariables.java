@@ -18,8 +18,8 @@ public final class GlobalVariables {
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
     }
-    public Set<Symbol> getCandidates(Symbol node, int position) {
-        return edgeMap.get(Pair.of(node, position));
+    public Set<Symbol> getCandidates(Symbol source, int position) {
+        return edgeMap.get(Pair.of(source, position));
     }
     public void addEdge(Symbol source, Symbol target, int position) {
         if (!edgeMap.containsKey(Pair.of(source, position))) {

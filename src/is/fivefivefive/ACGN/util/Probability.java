@@ -34,4 +34,17 @@ public class Probability {
 
         return null;
     }
+
+    public static float[] normalizeBySoftmax(float[] qValues) {
+        // calculate by the softmax function
+        double sum = 0;
+        for (float qValue : qValues) {
+            sum += Math.exp(qValue);
+        }
+        float[] probabilities = new float[qValues.length];
+        for (int i = 0; i < qValues.length; i++) {
+            probabilities[i] = (float) (Math.exp(qValues[i]) / sum);
+        }
+        return probabilities;
+    }
 }

@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import is.fivefivefive.ACGN.learn.Hyperparams;
+
 // TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
     public static final int END_SYMBOL_ID = 5;
@@ -234,6 +236,6 @@ public class SGDEdgeTrainer {
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
         int maxNodeId = edgeList.stream().flatMapToInt(e -> java.util.stream.IntStream.of(e.source, e.target)).max().orElse(0);
         int numNodes = maxNodeId + 1;
-        train(edgeList, numNodes, 0.01f, 0.7f, 1000, 12, "node_signatures_fixed.csv");
+        train(edgeList, numNodes, Hyperparams.INITIAL_LEARNING_RATE, Hyperparams.TEMPERATURE, 1000, 12, "node_signatures_fixed.csv");
     }
 }

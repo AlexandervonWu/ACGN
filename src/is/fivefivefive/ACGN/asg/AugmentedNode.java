@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import is.fivefivefive.ACGN.util.Hasher;
+import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
+import is.fivefivefive.ACGN.alloy.AssertSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 
 /*
@@ -37,6 +39,9 @@ public class AugmentedNode {
     public AugmentedNode(AugmentedNode original) {
         this.syntactic = original.getSyntactic();
         this.semantic = (int) Math.round(original.getSemantic());
+        this.symbol = MASGVisitor.SHADOW_SYMBOL;
+        this.uplinks = new ArrayList<>();
+        // NO DOWNLINKS FOR SHADOW NODES
         // TODO: Exponential forms must be removed! What are exponential? 
         this.isShadow = true;
     }
@@ -115,6 +120,27 @@ public class AugmentedNode {
         for (MASGEdge e : downlinks) {
             sb.append('\n');
             sb.append("Downlink: ").append(e).append(", ");
+        }
+        return sb.toString();
+    }
+    public String toCode() {
+        // TODO: Complete this. 
+        StringBuilder sb = new StringBuilder();
+        switch (getSymbol().getClass().getSimpleName()) {
+            case "AssertSymbol":
+                sb.append("assert ");
+                sb.append(getSymbol().getName());
+                sb.append(this.getDownlinks().get(0).getTarget().toCode());
+                break;
+            case "ConstSymbol":
+                sb.append(getSymbol().getName());
+                break;
+            case "EndSymbol":
+                break;
+            case "ExtFact":
+
+            default:
+                break;
         }
         return sb.toString();
     }

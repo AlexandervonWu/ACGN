@@ -23,6 +23,7 @@ import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SetSymbol;
+import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -89,6 +90,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
+    public static final Symbol SHADOW_SYMBOL = new ShadowSymbol();
+    private final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
@@ -105,9 +108,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         uniqueNode = new DoubleMap<>();
         uniqueNode.put(END_SYMBOL, END_NODE);
         uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
+        uniqueNode.put(SHADOW_SYMBOL, SHADOW_NODE);
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
         nodeDict.put(1, EMPTY_SET_NODE);
+        nodeDict.put(2, SHADOW_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
 
@@ -378,8 +383,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
         Multigraph graph = arg.getAffliation();
         graph.addVertex(parent);
-        graph.addVertex(child);
-        graph.connect(parent, child, position, timeOfVisit);
+        boolean flagEq = parent.equals(child);
+        if (flagEq) {
+            AugmentedNode shadow = new AugmentedNode(parent); // create a shadow node
+            graph.addVertex(shadow);
+            graph.connect(parent, shadow, position, timeOfVisit);
+            
+        } else {
+            graph.addVertex(child);
+            graph.connect(parent, child, position, timeOfVisit);
+        }
     }
 
     // TODO: We have not touched internal nodes yet. 
