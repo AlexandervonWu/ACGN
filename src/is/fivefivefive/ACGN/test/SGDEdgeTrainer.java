@@ -21,11 +21,11 @@ public class SGDEdgeTrainer {
 
     static class Embeddings {
         float[] angle;
-
+        
         Embeddings(int numNodes, Random rand) {
             angle = new float[numNodes];
             for (int i = 0; i < numNodes; i++) {
-                angle[i] = i == END_SYMBOL_ID ? (float) Math.PI : (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
+                angle[i] = i == END_SYMBOL_ID ? 0f : (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
             }
         }
 
@@ -230,7 +230,7 @@ public class SGDEdgeTrainer {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             args = new String[1];
-            args[0] = "edge_counts_num_only.csv";
+            args[0] = "edge_counts_num_wshadow.csv";
         }
         
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);

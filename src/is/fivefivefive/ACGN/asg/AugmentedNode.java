@@ -1,12 +1,13 @@
 package is.fivefivefive.ACGN.asg;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import is.fivefivefive.ACGN.util.Hasher;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
-import is.fivefivefive.ACGN.alloy.AssertSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 
 /*
@@ -19,6 +20,7 @@ public class AugmentedNode {
     // private double signature;
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
+    private Map<Integer, List<MASGEdge>> downlinkMapTOV; // map by time of visit
     private boolean isShadow;
     private Symbol symbol;
     public AugmentedNode(int syntactic, int semantic, Symbol symbol) throws IllegalArgumentException {
@@ -31,6 +33,7 @@ public class AugmentedNode {
         this.symbol = symbol;
         uplinks = new ArrayList<>();
         downlinks = new ArrayList<>();
+        downlinkMapTOV = new HashMap<>();
     }
     public AugmentedNode(NodeRepresentation nr) {
         this((byte) nr.getSyntacticRepresentation(), (int) nr.getSemanticRepresentation());
@@ -78,10 +81,18 @@ public class AugmentedNode {
     public boolean isShadow() {
         return isShadow;
     }
+    public Map<Integer, List<MASGEdge>> getDownlinkMapTOV() {
+        return downlinkMapTOV;
+    }
+    public List<MASGEdge> getDownlinksAtTimeOfVisit(int timeOfVisit) {
+        return downlinkMapTOV.get(timeOfVisit);
+    }
     public MASGEdge connect(AugmentedNode target, int position, int timeOfVisit) {
         MASGEdge e = new MASGEdge(this, target, position, timeOfVisit);
         downlinks.add(e);
         target.uplinks.add(e);
+        downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
+        downlinkMapTOV.get(timeOfVisit).add(e);
         //System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time");
         return e;
     }
@@ -89,11 +100,15 @@ public class AugmentedNode {
         MASGEdge e = new MASGEdge(source, this, position, timeOfVisit);
         uplinks.add(e);
         source.downlinks.add(e);
+        source.downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
+        source.downlinkMapTOV.get(timeOfVisit).add(e);
         return e;
     }
     public static MASGEdge connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         MASGEdge e = new MASGEdge(source, target, position, timeOfVisit);
         source.downlinks.add(e);
+        source.downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
+        source.downlinkMapTOV.get(timeOfVisit).add(e);
         target.uplinks.add(e);
         return e;
     }
@@ -120,27 +135,6 @@ public class AugmentedNode {
         for (MASGEdge e : downlinks) {
             sb.append('\n');
             sb.append("Downlink: ").append(e).append(", ");
-        }
-        return sb.toString();
-    }
-    public String toCode() {
-        // TODO: Complete this. 
-        StringBuilder sb = new StringBuilder();
-        switch (getSymbol().getClass().getSimpleName()) {
-            case "AssertSymbol":
-                sb.append("assert ");
-                sb.append(getSymbol().getName());
-                sb.append(this.getDownlinks().get(0).getTarget().toCode());
-                break;
-            case "ConstSymbol":
-                sb.append(getSymbol().getName());
-                break;
-            case "EndSymbol":
-                break;
-            case "ExtFact":
-
-            default:
-                break;
         }
         return sb.toString();
     }

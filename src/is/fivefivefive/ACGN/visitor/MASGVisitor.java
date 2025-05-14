@@ -115,7 +115,6 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         nodeDict.put(2, SHADOW_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
-
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -582,6 +581,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (var instanceof VarExpr) { 
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
+            updateTimeOfVisit(letNode);
             Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
             uniqueNode.put(varSymbol, letNode);
             child.addSymbol(varSymbol);
