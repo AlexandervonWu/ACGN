@@ -12,13 +12,16 @@ import is.fivefivefive.ACGN.util.GlobalVariables;
 public class Generator {
     // TODO: The main code generator
     private Map<AugmentedNode, Integer> tovTracker;
+
     public Generator() {
         tovTracker = new HashMap<AugmentedNode, Integer>();
     }
+
     public String toCode(AugmentedNode root, int tov) {
-        // TODO: Complete this. 
+        // TODO: Complete this.
         tovTracker.putIfAbsent(root, tov);
         StringBuilder sb = new StringBuilder();
+        sb.append(" (");
         switch (root.getSymbol().getClass().getSimpleName()) {
             case "AssertSymbol":
                 sb.append("assert ");
@@ -30,9 +33,9 @@ public class Generator {
                 sb.append(toCode(root.getDownlinks().get(0).getTarget(), tovAssertBody));
                 break;
             case "EndSymbol":
-                break;
+                return "";
             case "ShadowSymbol":
-                // sb.append(root.getUplinks().get(0).getSource().toCode(tov + 1)); 
+                // sb.append(root.getUplinks().get(0).getSource().toCode(tov + 1));
                 AugmentedNode explicit = root.getUplinks().get(0).getSource();
                 tovTracker.putIfAbsent(explicit, 1);
                 int tovExplicit = tovTracker.get(explicit) + 1;
@@ -72,90 +75,118 @@ public class Generator {
             case "MiddleSymbol":
                 // multiple cases
                 switch (root.getSyntactic()) {
-                    case -127: 
+                    case -127:
                         // RelDecl roots
-                        switch ((int)Math.round(root.getSemantic())) {
-                            case 0:
-                                // neither variable nor disjoint
-                                List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(tov);
-                                for (int i = 1; i < downlinksRD.size(); ++i) {
-                                    MASGEdge e = downlinksRD.get(i);
-                                    AugmentedNode relDecl = e.getTarget();
-                                    tovTracker.putIfAbsent(relDecl, 1);
-                                    int tovRelDecl = tovTracker.get(relDecl);
-                                    sb.append(toCode(relDecl, tovRelDecl));
-                                    if (i != downlinksRD.size() - 1) {
-                                        sb.append(", ");
-                                    }
-                                }
-                                sb.append(" : ");
-                                AugmentedNode relDeclBody = downlinksRD.get(0).getTarget();
-                                tovTracker.putIfAbsent(relDeclBody, 1);
-                                int tovRelDecl = tovTracker.get(relDeclBody);
-                                sb.append(toCode(relDeclBody, tovRelDecl));
+                        switch ((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                sb.append("disj ");
                                 break;
                             case 2:
-                            case -2:
-                                // ITEExprOrFormula
-                                List<MASGEdge> downlinksITE = root.getDownlinksAtTimeOfVisit(tov);
-                                AugmentedNode ifExpr = downlinksITE.get(0).getTarget();
-                                AugmentedNode thenExpr = downlinksITE.get(1).getTarget();
-                                AugmentedNode elseExpr = downlinksITE.get(2).getTarget();
-                                tovTracker.putIfAbsent(ifExpr, 1);
-                                int tovIfExpr = tovTracker.get(ifExpr);
-                                sb.append(toCode(ifExpr, tovIfExpr));
-                                sb.append(" => ");
-                                tovTracker.putIfAbsent(thenExpr, 1);
-                                int tovThenExpr = tovTracker.get(thenExpr);
-                                sb.append(toCode(thenExpr, tovThenExpr));
-                                sb.append(" else ");
-                                tovTracker.putIfAbsent(elseExpr, 1);
-                                int tovElseExpr = tovTracker.get(elseExpr);
-                                sb.append(toCode(elseExpr, tovElseExpr));
+                                sb.append("var ");
                                 break;
                             case 3:
-                            case -3:
-                                // QtExprOrFormula
-                                List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(tov);
-                                AugmentedNode QtBody = downlinksQT.get(0).getTarget();
-                                for (int i = 1; i < downlinksQT.size(); ++i) {
-                                    MASGEdge e = downlinksQT.get(i);
-                                    AugmentedNode QtVar = e.getTarget();
-                                    tovTracker.putIfAbsent(QtVar, 1);
-                                    int tovQtVar = tovTracker.get(QtVar);
-                                    sb.append(toCode(QtVar, tovQtVar));
-                                    if (i != downlinksQT.size() - 1) {
-                                        sb.append(", ");
-                                    }
-                                }
-                                sb.append(" | ");
-                                tovTracker.putIfAbsent(QtBody, 1);
-                                int tovQtBody = tovTracker.get(QtBody);
-                                sb.append(toCode(QtBody, tovQtBody));
-                                break;
-                            case 7:
-                            case -7:
-                                // TODO: CallExprOrFormula
-                                break;
-                            case 4:
-                            case -4:
-                                // TODO: ListExprOrFormula
-                                break;
-                            case 5:
-                            case -5:
-                                // TODO: BinaryExprOrFormula
-                                break;
-                            case 6:
-                            case -6:
-                                // TODO: UnaryExprOrFormula
+                                sb.append("disj var ");
                                 break;
                             default:
                                 break;
                         }
+                        List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(tov);
+                        for (int i = 1; i < downlinksRD.size(); ++i) {
+                            MASGEdge e = downlinksRD.get(i);
+                            AugmentedNode relDecl = e.getTarget();
+                            tovTracker.putIfAbsent(relDecl, 1);
+                            int tovRelDecl = tovTracker.get(relDecl);
+                            sb.append(toCode(relDecl, tovRelDecl));
+                            if (i != downlinksRD.size() - 1) {
+                                sb.append(", ");
+                            }
+                        }
+                        sb.append(" : ");
+                        AugmentedNode relDeclBody = downlinksRD.get(0).getTarget();
+                        tovTracker.putIfAbsent(relDeclBody, 1);
+                        int tovRelDecl = tovTracker.get(relDeclBody);
+                        sb.append(toCode(relDeclBody, tovRelDecl));
+                        break;
+                    case 2:
+                    case -2:
+                        // ITEExprOrFormula
+                        List<MASGEdge> downlinksITE = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode ifExpr = downlinksITE.get(0).getTarget();
+                        AugmentedNode thenExpr = downlinksITE.get(1).getTarget();
+                        AugmentedNode elseExpr = downlinksITE.get(2).getTarget();
+                        tovTracker.putIfAbsent(ifExpr, 1);
+                        int tovIfExpr = tovTracker.get(ifExpr);
+                        sb.append(toCode(ifExpr, tovIfExpr));
+                        sb.append(" => ");
+                        tovTracker.putIfAbsent(thenExpr, 1);
+                        int tovThenExpr = tovTracker.get(thenExpr);
+                        sb.append(toCode(thenExpr, tovThenExpr));
+                        sb.append(" else ");
+                        tovTracker.putIfAbsent(elseExpr, 1);
+                        int tovElseExpr = tovTracker.get(elseExpr);
+                        sb.append(toCode(elseExpr, tovElseExpr));
+                        break;
+                    case 3:
+                    case -3:
+                        // QtExprOrFormula
+                        List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode QtBody = downlinksQT.get(0).getTarget();
+                        for (int i = 1; i < downlinksQT.size(); ++i) {
+                            MASGEdge e = downlinksQT.get(i);
+                            AugmentedNode QtVar = e.getTarget();
+                            tovTracker.putIfAbsent(QtVar, 1);
+                            int tovQtVar = tovTracker.get(QtVar);
+                            sb.append(toCode(QtVar, tovQtVar));
+                            if (i != downlinksQT.size() - 1) {
+                                sb.append(", ");
+                            }
+                        }
+                        sb.append(" | ");
+                        tovTracker.putIfAbsent(QtBody, 1);
+                        int tovQtBody = tovTracker.get(QtBody);
+                        sb.append(toCode(QtBody, tovQtBody));
+                        break;
+                    case 7:
+                    case -7:
+                        // TODO: CallExprOrFormula
+                        List<MASGEdge> downlinksCall = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode calledNode = downlinksCall.get(0).getTarget();
+                        tovTracker.putIfAbsent(calledNode, 1);
+                        int tovCalledNode = tovTracker.get(calledNode);
+                        sb.append(toCode(calledNode, tovCalledNode));
+                        sb.append("[");
+                        for (int i = 1; i < downlinksCall.size(); ++i) {
+                            MASGEdge e = downlinksCall.get(i);
+                            AugmentedNode callParam = e.getTarget();
+                            tovTracker.putIfAbsent(callParam, 1);
+                            int tovCallParam = tovTracker.get(callParam);
+                            sb.append(toCode(callParam, tovCallParam));
+                            if (i != downlinksCall.size() - 1) {
+                                sb.append(", ");
+                            }
+                        }
+                        sb.append("]");
+                        break;
+                    case 4:
+                        switch ((int) Math.round(root.getSemantic())) {
+                            // TODO
+                        }
+                    case -4:
+                        // TODO: ListExprOrFormula
+                        break;
+                    case 5:
+                    case -5:
+                        // TODO: BinaryExprOrFormula
+                        break;
+                    case 6:
+                    case -6:
+                        // TODO: UnaryExprOrFormula
+                        break;
+                    default:
+                        break;
                 }
-            default:
-                break;
         }
+        sb.append(")");
         return sb.toString();
     }
 }
