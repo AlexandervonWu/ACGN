@@ -4,7 +4,9 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+// TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
+    public static final int END_SYMBOL_ID = 5;
     static class Edge {
         int source, target, position, count;
         Edge(int s, int t, int p, int c) {
@@ -21,7 +23,7 @@ public class SGDEdgeTrainer {
         Embeddings(int numNodes, Random rand) {
             angle = new float[numNodes];
             for (int i = 0; i < numNodes; i++) {
-                angle[i] = (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
+                angle[i] = i == END_SYMBOL_ID ? (float) Math.PI : (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
             }
         }
 
@@ -87,8 +89,8 @@ public class SGDEdgeTrainer {
                 for (int j = 0; j < numNodes; j++) {
                     float grad = (j == jTrue ? 1f : 0f) - probs[j];
                     float delta = lr * grad / T;
-                    emb.angle[j] += delta;
-                    emb.angle[i] -= delta;
+                    if (j != END_SYMBOL_ID) emb.angle[j] += delta;
+                    if (i != END_SYMBOL_ID) emb.angle[i] -= delta;
 
                     if (emb.angle[j] > Math.PI) emb.angle[j] -= 2 * (float) Math.PI;
                     if (emb.angle[j] < -Math.PI) emb.angle[j] += 2 * (float) Math.PI;
@@ -128,7 +130,7 @@ public class SGDEdgeTrainer {
     }
 
     public static void train(List<Edge> edges, int numNodes, float initialLr, float T, int epochs, int numThreads, String outputPath) throws Exception {
-        int restarts = 5;
+        int restarts = 500;
         Embeddings bestEmb = null;
         float bestLoss = Float.MAX_VALUE;
 
@@ -140,7 +142,7 @@ public class SGDEdgeTrainer {
             float previousLoss = Float.MAX_VALUE;
             final float minLr = 1e-7f;
             final float maxLr = 1e-2f;
-            int warmupEpochs = 3;
+            int warmupEpochs = 50;
 
             for (int epoch = 0; epoch < warmupEpochs; epoch++) {
                 Collections.shuffle(edges);
@@ -225,12 +227,13 @@ public class SGDEdgeTrainer {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
-            System.err.println("Usage: java SGDEdgeTrainer <csv_file_path>");
-            return;
+            args = new String[1];
+            args[0] = "edge_counts_num_only.csv";
         }
+        
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
         int maxNodeId = edgeList.stream().flatMapToInt(e -> java.util.stream.IntStream.of(e.source, e.target)).max().orElse(0);
         int numNodes = maxNodeId + 1;
-        train(edgeList, numNodes, 0.001f, 1.0f, 100, 1, "node_signatures.csv");
+        train(edgeList, numNodes, 0.01f, 0.7f, 1000, 12, "node_signatures_fixed.csv");
     }
 }
