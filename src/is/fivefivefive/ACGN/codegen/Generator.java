@@ -552,8 +552,140 @@ public class Generator {
                         }
                         break;
                     case 6:
+                        // UnaryExpr
+                        List<MASGEdge> downlinksUnary = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode unaryExprSub = downlinksUnary.get(0).getTarget();
+                        tovTracker.putIfAbsent(unaryExprSub, 1);
+                        int tovUnaryExprSub = tovTracker.get(unaryExprSub);
+                        switch((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                // SET
+                                sb.append("set ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 2:
+                                // lone
+                                sb.append("lone ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 3:
+                                // one
+                                sb.append("one ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 4:
+                                // some
+                                sb.append("some ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 5:
+                                // exactlyof
+                                sb.append("exactly ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 6:
+                                // transpose
+                                sb.append('~');
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 7:
+                                // Rclosure
+                                sb.append('*');
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 8:
+                                // closure
+                                sb.append('^');
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 9:
+                                // cardinality
+                                sb.append("#");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 10:
+                                // cast2int
+                                sb.append("Int->int ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 11:
+                                // cast2sigint
+                                sb.append("int->Int ");
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                break;
+                            case 12: 
+                                // prime
+                                sb.append(toCode(unaryExprSub, tovUnaryExprSub));
+                                sb.append("'");
+                                break;
+                            default:
+                                break;
+                        }
                     case -6:
-                        // TODO: UnaryExprOrFormula
+                        // UnaryFormula
+                        List<MASGEdge> downlinksUnaryFormula = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode unaryFormulaSub = downlinksUnaryFormula.get(0).getTarget();
+                        tovTracker.putIfAbsent(unaryFormulaSub, 1);
+                        int tovUnaryFormulaSub = tovTracker.get(unaryFormulaSub);
+                        switch((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                // lone
+                                sb.append("lone ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 2:
+                                // one
+                                sb.append("one ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 3:
+                                // some
+                                sb.append("some ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 4:
+                                // no
+                                sb.append("no ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 5:
+                                // not
+                                sb.append("!");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 6:
+                                // before
+                                sb.append("before ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 7:
+                                // historically
+                                sb.append("historically ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 8:
+                                // once
+                                sb.append("once ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 9:
+                                // always
+                                sb.append("always ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 10:
+                                // eventually
+                                sb.append("eventually ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            case 11:
+                                // after
+                                sb.append("after ");
+                                sb.append(toCode(unaryFormulaSub, tovUnaryFormulaSub));
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     default:
                         break;
