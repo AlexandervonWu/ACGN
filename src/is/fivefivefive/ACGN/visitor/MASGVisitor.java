@@ -318,13 +318,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
             globalVariables.addEdge(predNode, pdNode, 2); // equivalent in infinity;
-            predGraph.connect(predNode, pdNode, iter, 1);
+            visitAndConnect(predNode, pdNode, iter, arg);
+            // predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         globalVariables.addEdge(predNode, bodyNode, 1);
-        predGraph.addVertex(bodyNode);
-        predGraph.connect(predNode, bodyNode, 1, 1);
+        visitAndConnect(predNode, bodyNode, 1, arg);
+        // predGraph.addVertex(bodyNode);
+        // predGraph.connect(predNode, bodyNode, 1, 1);
         return predNode;
     }
 
