@@ -218,8 +218,338 @@ public class Generator {
                         }
                         break;
                     case 5:
+                        // BinaryExpr
+                        List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode leftExpr = downlinksBin.get(0).getTarget();
+                        AugmentedNode rightExpr = downlinksBin.get(1).getTarget();
+                        tovTracker.putIfAbsent(leftExpr, 1);
+                        int tovLeftExpr = tovTracker.get(leftExpr);
+                        tovTracker.putIfAbsent(rightExpr, 1);
+                        int tovRightExpr = tovTracker.get(rightExpr);
+                        switch((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                // ARROW
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" -> ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 2:
+                                // ANY_ARROW_SOME
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" ->some ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 3:
+                                // ANY_ARROW_ONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" ->one ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 4:
+                                // ANY_ARROW_LONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" ->lone ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 5:
+                                // SOME_ARROW_ANY
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" some-> ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 6:
+                                // SOME_ARROW_SOME
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" some->some ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 7:
+                                // SOME_ARROW_ONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" some->one ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 8:
+                                // SOME_ARROW_LONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" some->lone ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 9:
+                                // ONE_ARROW_ANY
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" one-> ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 10:
+                                // ONE_ARROW_SOME
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" one->some ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 11:
+                                // ONE_ARROW_ONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" one->one ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 12:
+                                // ONE_ARROW_LONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" one->lone ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 13:
+                                // LONE_ARROW_ANY
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" lone-> ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 14:
+                                // LONE_ARROW_SOME
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" lone->some ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 15:
+                                // LONE_ARROW_ONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" lone->one ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 16:
+                                // LONE_ARROW_LONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" lone->lone ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 17:
+                                // ISSEQ_ARROW_LONE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" isSeq->lone ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 18:
+                                // JOIN
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(".");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 19:
+                                // DOMAIN
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append("<:");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 20:
+                                // RANGE
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(":>");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 21:
+                                // INTERSECT
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" & ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 22:
+                                // PLUSPLUS
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" ++ ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 23:
+                                // PLUS
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" + ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 24:
+                                // IPLUS
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" @+ ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 25:
+                                // MINUS
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" - ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 26:
+                                // IMINUS
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" @- ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 27:
+                                // MUL
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" * ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 28:
+                                // DIV
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" / ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 29:
+                                // REM
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" % ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 30:
+                                // SHL
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" << ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            case 31:
+                                // SHR
+                                sb.append(toCode(leftExpr, tovLeftExpr));
+                                sb.append(" >> ");
+                                sb.append(toCode(rightExpr, tovRightExpr));
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
                     case -5:
-                        // TODO: BinaryExprOrFormula
+                        // BinaryFormula
+                        List<MASGEdge> downlinksBinFormula = root.getDownlinksAtTimeOfVisit(tov);
+                        AugmentedNode leftFormula = downlinksBinFormula.get(0).getTarget();
+                        AugmentedNode rightFormula = downlinksBinFormula.get(1).getTarget();
+                        tovTracker.putIfAbsent(leftFormula, 1);
+                        int tovLeftFormula = tovTracker.get(leftFormula);
+                        tovTracker.putIfAbsent(rightFormula, 1);
+                        int tovRightFormula = tovTracker.get(rightFormula);
+                        switch((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                // EQUALS
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" = ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 2:
+                                // NOT_EQUALS
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" != ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 3:
+                                // IMPLIES
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" => ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 4:
+                                // LT
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" < ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 5:
+                                // LTE
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" <= ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 6:
+                                // GT
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" > ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 7:
+                                // GTE
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" >= ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 8:
+                                // NOT_LT
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" !< ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 9:
+                                // NOT_LTE
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" !<= ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 10:
+                                // NOT_GT
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" !> ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 11:
+                                // NOT_GTE
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" !>= ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 12:
+                                // IN
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" in ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 13:
+                                // NOT_IN
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" !in ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 14:
+                                // AND
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" && ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 15:
+                                // OR
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" || ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 16:
+                                // IFF
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" <=> ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 17:
+                                // UNTIL
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" until ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 18:
+                                // RELEASES
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" releases ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 19:
+                                // SINCE
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" since ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            case 20:
+                                // TRIGGERED
+                                sb.append(toCode(leftFormula, tovLeftFormula));
+                                sb.append(" triggered ");
+                                sb.append(toCode(rightFormula, tovRightFormula));
+                                break;
+                            default:
+                                break;
+                        }
                         break;
                     case 6:
                     case -6:
