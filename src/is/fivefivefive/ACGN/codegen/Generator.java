@@ -66,20 +66,22 @@ public class Generator {
                         // TODO: PARAMS
                         sb.append(root.getSymbol().getName());
                         sb.append('[');
-                        for (int i = 1; i < root.getDownlinksAtTimeOfVisit(1).size(); ++i) {
+                        int i = 0;
+                        List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(1);
+                        for (i = 0; i < downlinks.size() - 1; ++i) {
                             MASGEdge e = root.getDownlinks().get(i);
                             AugmentedNode refSub = e.getTarget();
                             tovTracker.putIfAbsent(refSub, 1);
                             int tovRefSub = tovTracker.get(refSub);
                             sb.append(toCode(refSub, tovRefSub));
-                            if (i != root.getDownlinks().size() - 1) {
+                            if (i != root.getDownlinks().size() - 2) {
                                 sb.append(", ");
                             }
                         }
                         sb.append(']');
                         sb.append('\n');
                         sb.append('{');
-                        AugmentedNode refBody = root.getDownlinks().get(0).getTarget();
+                        AugmentedNode refBody = downlinks.get(i).getTarget();
                         tovTracker.putIfAbsent(refBody, 1);
                         int bodyTov = tovTracker.get(refBody);
                         sb.append(toCode(refBody, bodyTov));
@@ -713,7 +715,7 @@ public class Generator {
         } catch (Exception e) {
             System.out.println("Error in generating code for " + root.getSymbol().getName() + " at " + tov);
             e.printStackTrace();
-            return "";
+            return "<ERROR>";
         }
     }
 }
