@@ -148,7 +148,7 @@ public class Generator {
                         break;
                     case 7:
                     case -7:
-                        // TODO: CallExprOrFormula
+                        // CallExprOrFormula
                         List<MASGEdge> downlinksCall = root.getDownlinksAtTimeOfVisit(tov);
                         AugmentedNode calledNode = downlinksCall.get(0).getTarget();
                         tovTracker.putIfAbsent(calledNode, 1);
@@ -169,10 +169,53 @@ public class Generator {
                         break;
                     case 4:
                         switch ((int) Math.round(root.getSemantic())) {
-                            // TODO
+                            // ListExpr
+                            case 1:
+                                sb.append("disjoint [");
+                                break;
+                            case 2:
+                                sb.append("pred/totalorder [");
+                                break;
+                            default:
+                                break;
                         }
+                        List<MASGEdge> downlinksList = root.getDownlinksAtTimeOfVisit(tov);
+                        for (int i = 0; i < downlinksList.size(); ++i) {
+                            MASGEdge e = downlinksList.get(i);
+                            AugmentedNode listElem = e.getTarget();
+                            tovTracker.putIfAbsent(listElem, 1);
+                            int tovListElem = tovTracker.get(listElem);
+                            sb.append(toCode(listElem, tovListElem));
+                            if (i != downlinksList.size() - 1) {
+                                sb.append(", ");
+                            }
+                        }
+                        sb.append("]");
+                        break;
                     case -4:
-                        // TODO: ListExprOrFormula
+                        // ListFormula
+                        String listOp = " && ";
+                        switch((int) Math.round(root.getSemantic())) {
+                            case 1:
+                                listOp = " && ";
+                                break;
+                            case 2:
+                                listOp = " || ";
+                                break;
+                            default:
+                                break;
+                        }
+                        List<MASGEdge> downlinksListFormula = root.getDownlinksAtTimeOfVisit(tov);
+                        for (int i = 0; i < downlinksListFormula.size(); ++i) {
+                            MASGEdge e = downlinksListFormula.get(i);
+                            AugmentedNode listElemFormula = e.getTarget();
+                            tovTracker.putIfAbsent(listElemFormula, 1);
+                            int tovListElemFormula = tovTracker.get(listElemFormula);
+                            sb.append(toCode(listElemFormula, tovListElemFormula));
+                            if (i != downlinksListFormula.size() - 1) {
+                                sb.append(listOp);
+                            }
+                        }
                         break;
                     case 5:
                     case -5:
