@@ -19,6 +19,7 @@ public class Generator {
 
     public String toCode(AugmentedNode root, int tov) {
         // TODO: Complete this.
+        try {
         tovTracker.putIfAbsent(root, tov);
         StringBuilder sb = new StringBuilder();
         sb.append(" (");
@@ -91,6 +92,9 @@ public class Generator {
                                 break;
                         }
                         List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(tov);
+                        if (downlinksRD == null) {
+                            return "";
+                        }
                         for (int i = 1; i < downlinksRD.size(); ++i) {
                             MASGEdge e = downlinksRD.get(i);
                             AugmentedNode relDecl = e.getTarget();
@@ -693,5 +697,10 @@ public class Generator {
         }
         sb.append(")");
         return sb.toString();
+    } catch (Exception e) {
+            System.out.println("Error in generating code for " + root.getSymbol().getName() + " at " + tov);
+            e.printStackTrace();
+            return "";
+        }
     }
 }

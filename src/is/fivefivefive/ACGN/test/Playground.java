@@ -2,6 +2,7 @@ package is.fivefivefive.ACGN.test;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
@@ -22,6 +23,10 @@ public class Playground {
             Multigraph graph = map.get(i);
             System.out.println(graph);
         }
+        Generator generator = new Generator();
+        String code3 = generator.toCode(map.get(3).getRoot(), 1);
+        System.out.println("Generated code for graph 3:");
+        System.out.println(code3);
     }
 
 
