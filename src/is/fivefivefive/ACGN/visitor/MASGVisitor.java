@@ -272,6 +272,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         rootScope.addSymbol(sigsy);
         AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
         uniqueNode.put(sigsy, sigExprNode);
+        updateTimeOfVisit(sigExprNode);
         int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
             AugmentedNode field = f.accept(this, arg);
@@ -381,7 +382,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (child == null) {
             return;
         }
-        int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
+        // int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
+        int timeOfVisit = timeOfVisitMap.get(parent);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(parent);
         boolean flagEq = parent.equals(child);
@@ -918,6 +920,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
+        System.out.println("BOP: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
         return bopNode;
     }
 
@@ -1072,6 +1075,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
+        System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
+
         return bopNode;
     }
 

@@ -24,8 +24,8 @@ public class Playground {
             System.out.println(graph);
         }
         Generator generator = new Generator();
-        String code3 = generator.toCode(map.get(3).getRoot(), 1);
-        System.out.println("Generated code for graph 3:");
+        String code3 = generator.toCode(map.get(2).getRoot(), 1);
+        System.out.println("Generated code for graph 4:");
         System.out.println(code3);
     }
 

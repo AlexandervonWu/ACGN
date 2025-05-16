@@ -18,8 +18,9 @@ public class Generator {
     }
 
     public String toCode(AugmentedNode root, int tov) {
-        // TODO: Complete this.
+        // TODO: Rewrite to use the labels, not semantic IDs; these IDs are not corresponding. 
         try {
+            System.out.println("Generating code for " + root.getSymbol().getName() + " at TOV " + tov);
             tovTracker.putIfAbsent(root, tov);
             StringBuilder sb = new StringBuilder();
             sb.append(" (");
