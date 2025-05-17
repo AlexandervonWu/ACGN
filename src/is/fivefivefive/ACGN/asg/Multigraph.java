@@ -30,17 +30,20 @@ public class Multigraph {
     private GlobalVariables globalVariables;
     private AugmentedNode root;
     private ScopeTreeNode scope;
+    private Map<AugmentedNode, Integer> timeOfVisitMap;
     public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r) {
         vertices = v;
         edges = e;
         root = r;
         globalVariables = new GlobalVariables();
+        timeOfVisitMap = new HashMap<AugmentedNode, Integer>();
     }
     public Multigraph(Set<AugmentedNode> v, List<MASGEdge> e, AugmentedNode r, GlobalVariables gv) {
         vertices = v;
         edges = e;
         root = r;
         globalVariables = gv;
+        timeOfVisitMap = new HashMap<AugmentedNode, Integer>();
     }
     public Multigraph(AugmentedNode root, GlobalVariables gv) {
         vertices = new HashSet<AugmentedNode>();
@@ -61,17 +64,25 @@ public class Multigraph {
                 }
             }
         }
+        timeOfVisitMap = new HashMap<AugmentedNode, Integer>();
     }
     public Multigraph() {
         vertices = new HashSet<AugmentedNode>();
         edges = new ArrayList<MASGEdge>();
         globalVariables = new GlobalVariables();
+        timeOfVisitMap = new HashMap<AugmentedNode, Integer>();
     }
     public void setScope(ScopeTreeNode scope) {
         this.scope = scope;
     }
     public ScopeTreeNode getScope() {
         return scope;
+    }
+    public Map<AugmentedNode, Integer> getTimeOfVisitMap() {
+        return timeOfVisitMap;
+    }
+    public void updateTimeOfVisitMap(AugmentedNode node, int time) {
+        timeOfVisitMap.put(node, time);
     }
     public Multigraph subgraph(AugmentedNode localRoot) {
         Set<AugmentedNode> newVertices = new HashSet<AugmentedNode>();

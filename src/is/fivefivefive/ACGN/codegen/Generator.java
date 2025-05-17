@@ -240,6 +240,7 @@ public class Generator {
                         case 5:
                             // BinaryExpr
                             List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(tov);
+                            System.out.println(root.getDownlinkMapTOV().toString());
                             AugmentedNode leftExpr = downlinksBin.get(0).getTarget();
                             AugmentedNode rightExpr = downlinksBin.get(1).getTarget();
                             tovTracker.putIfAbsent(leftExpr, 1);

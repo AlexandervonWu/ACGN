@@ -76,7 +76,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private AAME aame;
     // timeOfVisitMap is for concrete nodes only, tracking the nodes that we actually consider to visit. 
     // ATTENTION: this means the time of visit of the SOURCE node. Only nonleaf nodes need it. 
-    private Map<AugmentedNode, Integer> timeOfVisitMap; // TODO: TRACK THIS.
+    private Map<AugmentedNode, Integer> timeOfVisitMap; // TODO: TRACK THIS. REFRACT IT INTO EACH SEPARATE MULTIGRAPH
     // ATTENTION: GlobalVariables is not the "global variables" within the model, but describing the global properties under each node.
     private GlobalVariables globalVariables;
     private int numPredicates, scopeNodeId;
@@ -272,7 +272,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         rootScope.addSymbol(sigsy);
         AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
         uniqueNode.put(sigsy, sigExprNode);
-        updateTimeOfVisit(sigExprNode);
+        updateTimeOfVisit(sigExprNode, arg);
         int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
             AugmentedNode field = f.accept(this, arg);
@@ -343,15 +343,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
         Symbol declRootSym = new MiddleSymbol("RELDECL_" + semantic);
         AugmentedNode declRoot = new AugmentedNode(-127, semantic, declRootSym); // a virtual root node of the decl set. 
-        updateTimeOfVisit(declRoot);
+        updateTimeOfVisit(declRoot, arg);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
-        if (timeOfVisitMap.containsKey(declRoot)) {
+        /*if (timeOfVisitMap.containsKey(declRoot)) {
             int prevValue = timeOfVisitMap.get(declRoot);
             timeOfVisitMap.put(declRoot, prevValue + 1);
         } else {
             timeOfVisitMap.put(declRoot, 1);
-        }
+        }*/
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
@@ -398,14 +398,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
     }
 
-    // TODO: We have not touched internal nodes yet. 
-    private void updateTimeOfVisit(AugmentedNode parent) {
-        int timeOfVisit = 1;
+    // TODO: We have not touched internal nodes yet. ALSO UPDATE THE INTERNAL TIME OF VISIT
+    private void updateTimeOfVisit(AugmentedNode parent, ScopeTreeNode arg) {
+
         if (!timeOfVisitMap.containsKey(parent)) {
             timeOfVisitMap.put(parent, 1);
         } else {
-            timeOfVisit = timeOfVisitMap.get(parent);
+            int timeOfVisit = timeOfVisitMap.get(parent);
             timeOfVisitMap.put(parent, timeOfVisit + 1);
+        }
+        Multigraph graph = arg.getAffliation();
+        Map<AugmentedNode, Integer> localTovMap = graph.getTimeOfVisitMap();
+        if (!localTovMap.containsKey(parent)) {
+            localTovMap.put(parent, 1);
+        } else {
+            int localTov = localTovMap.get(parent);
+            localTovMap.put(parent, localTov + 1);
         }
     }
 
@@ -585,7 +593,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (var instanceof VarExpr) { 
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
-            updateTimeOfVisit(letNode);
+            updateTimeOfVisit(letNode, arg);
             Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
             uniqueNode.put(varSymbol, letNode);
             child.addSymbol(varSymbol);
@@ -613,7 +621,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             ITEDummy = new AugmentedNode(syntactic, 1, ITESymbol);
             uniqueNode.put(ITESymbol, ITEDummy);
         }
-        updateTimeOfVisit(ITEDummy);
+        updateTimeOfVisit(ITEDummy, arg);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
@@ -657,7 +665,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(qtSymbol, qtRoot);
         }
         graph.addVertex(qtRoot);
-        updateTimeOfVisit(qtRoot);
+        updateTimeOfVisit(qtRoot, arg);
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = visitRelDecl(var, subscope);
@@ -694,7 +702,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(callSymbol, callNode);
         }
         arg.getAffliation().addVertex(callNode);
-        updateTimeOfVisit(callNode);
+        updateTimeOfVisit(callNode, arg);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
         globalVariables.addEdge(callNode, calledNode, 1);
@@ -722,7 +730,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(callSymbol, callNode);
         }
         arg.getAffliation().addVertex(callNode);
-        updateTimeOfVisit(callNode);
+        updateTimeOfVisit(callNode, arg);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
         if (calledNode == null) {
@@ -760,7 +768,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(opSymbol, opNode);
         }
         arg.getAffliation().addVertex(opNode);
-        updateTimeOfVisit(opNode);
+        updateTimeOfVisit(opNode, arg);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
@@ -789,7 +797,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             opNode = new AugmentedNode(4, semantics, opSymbol);
             uniqueNode.put(opSymbol, opNode);
         }
-        updateTimeOfVisit(opNode);
+        updateTimeOfVisit(opNode, arg);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
@@ -899,7 +907,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(bopSymbol, bopNode);
         }
         arg.getAffliation().addVertex(bopNode);
-        updateTimeOfVisit(bopNode);
+        updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1066,7 +1074,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(bopSymbol, bopNode);
         }
         arg.getAffliation().addVertex(bopNode);
-        updateTimeOfVisit(bopNode);
+        updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1142,7 +1150,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(unopSymbol, unopNode);
         }
         arg.getAffliation().addVertex(unopNode);
-        updateTimeOfVisit(unopNode);
+        updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         globalVariables.addEdge(unopNode, subNode, 1);
@@ -1218,7 +1226,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(unopSymbol, unopNode);
         }
         arg.getAffliation().addVertex(unopNode);
-        updateTimeOfVisit(unopNode);
+        updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         globalVariables.addEdge(unopNode, subNode, 1);
