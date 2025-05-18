@@ -8,6 +8,7 @@ import java.util.Map;
 import is.fivefivefive.ACGN.util.Hasher;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
+import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.Symbol;
 
 /*
@@ -20,7 +21,7 @@ public class AugmentedNode {
     // private double signature;
     private List<MASGEdge> uplinks;
     private List<MASGEdge> downlinks;
-    private Map<Integer, List<MASGEdge>> downlinkMapTOV; // map by time of visit
+    private Map<Pair<Multigraph, Integer>, List<MASGEdge>> downlinkMapTOV; // map by time of visit
     private boolean isShadow;
     private Symbol symbol;
     public AugmentedNode(int syntactic, int semantic, Symbol symbol) throws IllegalArgumentException {
@@ -81,34 +82,38 @@ public class AugmentedNode {
     public boolean isShadow() {
         return isShadow;
     }
-    public Map<Integer, List<MASGEdge>> getDownlinkMapTOV() {
+    public Map<Pair<Multigraph, Integer>, List<MASGEdge>> getDownlinkMapTOV() {
         return downlinkMapTOV;
     }
-    public List<MASGEdge> getDownlinksAtTimeOfVisit(int timeOfVisit) {
-        return downlinkMapTOV.get(timeOfVisit);
+    public List<MASGEdge> getDownlinksAtTimeOfVisit(Multigraph graph, int timeOfVisit) {
+        Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
+        return downlinkMapTOV.get(key);
     }
-    public MASGEdge connect(AugmentedNode target, int position, int timeOfVisit) {
+    public MASGEdge connect(AugmentedNode target, int position, Multigraph graph, int timeOfVisit) {
         MASGEdge e = new MASGEdge(this, target, position, timeOfVisit);
         downlinks.add(e);
         target.uplinks.add(e);
-        downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
-        downlinkMapTOV.get(timeOfVisit).add(e);
+        Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
+        downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
+        downlinkMapTOV.get(key).add(e);
         //System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time");
         return e;
     }
-    public MASGEdge inverseConnect(AugmentedNode source, int position, int timeOfVisit) {
+    public MASGEdge inverseConnect(AugmentedNode source, int position, Multigraph graph, int timeOfVisit) {
         MASGEdge e = new MASGEdge(source, this, position, timeOfVisit);
         uplinks.add(e);
         source.downlinks.add(e);
-        source.downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
-        source.downlinkMapTOV.get(timeOfVisit).add(e);
+        Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
+        source.downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
+        source.downlinkMapTOV.get(key).add(e);
         return e;
     }
-    public static MASGEdge connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
+    public static MASGEdge connect(AugmentedNode source, AugmentedNode target, Multigraph graph, int position, int timeOfVisit) {
         MASGEdge e = new MASGEdge(source, target, position, timeOfVisit);
         source.downlinks.add(e);
-        source.downlinkMapTOV.putIfAbsent(timeOfVisit, new ArrayList<MASGEdge>());
-        source.downlinkMapTOV.get(timeOfVisit).add(e);
+        Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
+        source.downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
+        source.downlinkMapTOV.get(key).add(e);
         target.uplinks.add(e);
         return e;
     }

@@ -120,12 +120,12 @@ public class Multigraph {
         }
         vertices.remove(v);
     }
-    public void connect(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) throws IllegalArgumentException {
+    public void connect(AugmentedNode source, AugmentedNode target, Multigraph graph, int position, int timeOfVisit) throws IllegalArgumentException {
         if (!vertices.contains(source) || !vertices.contains(target)) {
             throw new IllegalArgumentException("Source and target must be in the graph.");
         }
         edges.add(new MASGEdge(source, target, position, timeOfVisit));
-        source.connect(target, position, timeOfVisit);
+        source.connect(target, position, graph, timeOfVisit);
     }
     public MASGEdge edgeBetween(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         for (MASGEdge e : edges) {

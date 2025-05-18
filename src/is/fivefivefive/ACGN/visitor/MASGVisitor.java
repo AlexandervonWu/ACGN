@@ -182,12 +182,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         demoGraph.addVertex(mu);
         AugmentedNode md = n.getModuleDecl().accept(this, rootScope);
         demoGraph.addVertex(md);
-        demoGraph.connect(mu, md, 1, 1);
+        demoGraph.connect(mu, md, demoGraph, 1, 1);
         // Open: non-modificable, syn == 0, sem == 3;
         for (OpenDecl o : n.getOpenDeclList()) {
             AugmentedNode oNode = o.accept(this, rootScope);
             demoGraph.addVertex(oNode);
-            demoGraph.connect(mu, oNode, 2, 1);
+            demoGraph.connect(mu, oNode, demoGraph, 2, 1);
             
         }
         int predId = 0;
@@ -195,7 +195,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (SigDecl sd : n.getSigDeclList()) {
             AugmentedNode sdNode = sd.accept(this, rootScope);
             demoGraph.addVertex(sdNode);
-            demoGraph.connect(mu, sdNode, 3 + predId, 1);
+            demoGraph.connect(mu, sdNode, demoGraph, 3 + predId, 1);
             predId++;
         }
 
@@ -205,7 +205,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (Predicate p : n.getPredDeclList()) {
             AugmentedNode pNode = p.accept(this, rootScope);
             demoGraph.addVertex(pNode);
-            demoGraph.connect(mu, pNode, 3 + predId, 1);
+            demoGraph.connect(mu, pNode, demoGraph, 3 + predId, 1);
             predId++;
         }
 
@@ -213,35 +213,35 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (Function f : n.getFunDeclList()) {
             AugmentedNode fNode = f.accept(this, rootScope);
             demoGraph.addVertex(fNode);
-            demoGraph.connect(mu, fNode, 3 + predId, 1);
+            demoGraph.connect(mu, fNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         // Facts can be directly stored in AAME. 
         for (Fact f : n.getFactDeclList()) {
             AugmentedNode fNode = f.accept(this, rootScope);
             demoGraph.addVertex(fNode);
-            demoGraph.connect(mu, fNode, 3 + predId, 1);
+            demoGraph.connect(mu, fNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         // Assertion: a non-modifiable node, syn == 0, sem == 21
         for (Assertion a : n.getAssertDeclList()) {
             AugmentedNode aNode = a.accept(this, rootScope);
             demoGraph.addVertex(aNode);
-            demoGraph.connect(mu, aNode, 3 + predId, 1);
+            demoGraph.connect(mu, aNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         // Check: a non-modifiable node, syn == 0, sem == 101
         for (Check c : n.getCheckCmdList()) {
             AugmentedNode cNode = c.accept(this, rootScope);
             demoGraph.addVertex(cNode);
-            demoGraph.connect(mu, cNode, 3 + predId, 1);
+            demoGraph.connect(mu, cNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         // Run: a non-modifiable node, syn == 0, sem == 102
         for (Run r : n.getRunCmdList()) {
             AugmentedNode rNode = r.accept(this, rootScope);
             demoGraph.addVertex(rNode);
-            demoGraph.connect(mu, rNode, 3 + predId, 1);
+            demoGraph.connect(mu, rNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         if (!unfoundSigs.isEmpty()) {
@@ -355,6 +355,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
+        if (exprNode == null) {
+            exprNode = EMPTY_SET_NODE;
+        }
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
@@ -390,11 +393,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (flagEq) {
             AugmentedNode shadow = new AugmentedNode(parent); // create a shadow node
             graph.addVertex(shadow);
-            graph.connect(parent, shadow, position, timeOfVisit);
+            graph.connect(parent, shadow, graph, position, timeOfVisit);
             
         } else {
             graph.addVertex(child);
-            graph.connect(parent, child, position, timeOfVisit);
+            graph.connect(parent, child, graph, position, timeOfVisit);
         }
     }
 
@@ -739,7 +742,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(calledNode.getSymbol(), calledNode);
         }
         globalVariables.addEdge(callNode, calledNode, 1);
-        arg.getAffliation().connect(callNode, calledNode, 1, timeOfVisitMap.get(callNode));
+        visitAndConnect(callNode, calledNode, 1, arg);
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);

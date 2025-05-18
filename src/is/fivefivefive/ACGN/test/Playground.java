@@ -1,11 +1,16 @@
 package is.fivefivefive.ACGN.test;
 
+import java.util.List;
+
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
+import parser.ast.nodes.Node;
+import parser.ast.nodes.Predicate;
+import parser.ast.visitor.ASTNodeFinder;
 import parser.util.AlloyUtil;
 
 public class Playground {
@@ -14,6 +19,8 @@ public class Playground {
         String file = "dynamic_ball_graph.als";
         CompModule module = AlloyUtil.compileAlloyModule(file);
         ModelUnit mu = new ModelUnit(null, module);
+        List<Node> root = ASTNodeFinder.findNodesByTypeAndName(mu, Predicate.class, "moved", false);
+        Predicate rootMoved = (Predicate) root.get(0);
         MASGVisitor visitor = new MASGVisitor();
         visitor.visit(mu, null);
         System.out.println("Finished visiting the model unit.");
@@ -24,7 +31,7 @@ public class Playground {
             System.out.println(graph);
         }
         Generator generator = new Generator();
-        String code3 = generator.toCode(map.get(2).getRoot(), 1);
+        String code3 = generator.toCode(map.get(2), map.get(2).getRoot(), 1);
         System.out.println("Generated code for graph 4:");
         System.out.println(code3);
     }
