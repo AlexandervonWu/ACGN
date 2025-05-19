@@ -90,14 +90,23 @@ public class AugmentedNode {
         return downlinkMapTOV.get(key);
     }
     public MASGEdge connect(AugmentedNode target, int position, Multigraph graph, int timeOfVisit) {
+        System.out.println("Graph: " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
+        if (graph.getRoot() == null) {
+            throw new IllegalArgumentException("Graph root cannot be null");
+        }
         MASGEdge e = new MASGEdge(this, target, position, timeOfVisit);
         downlinks.add(e);
         target.uplinks.add(e);
         Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
         downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
         downlinkMapTOV.get(key).add(e);
+        System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time under the graph with root " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
         //System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time");
         return e;
+    }
+    public void initLocalTovAsRoot(Multigraph graph) {
+        Pair<Multigraph, Integer> key = Pair.of(graph, 1);
+        downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
     }
     public MASGEdge inverseConnect(AugmentedNode source, int position, Multigraph graph, int timeOfVisit) {
         MASGEdge e = new MASGEdge(source, this, position, timeOfVisit);
@@ -136,7 +145,7 @@ public class AugmentedNode {
         sb.append("AugmentedNode: ");
         sb.append("Syntactic: ").append(syntactic).append(", ");
         sb.append("Semantic: ").append(semantic).append(", ");
-        sb.append("Signature: ").append(getSignature()).append(", ");
+        // sb.append("Signature: ").append(getSignature()).append(", ");
         for (MASGEdge e : downlinks) {
             sb.append('\n');
             sb.append("Downlink: ").append(e).append(", ");

@@ -25,12 +25,13 @@ public class Playground {
         visitor.visit(mu, null);
         System.out.println("Finished visiting the model unit.");
         DoubleMap<Integer, Multigraph> map = visitor.getForest();
-        for (int i : map.keys()) {
+        /*for (int i : map.keys()) {
             System.out.println("Graph " + i + ":");
             Multigraph graph = map.get(i);
             System.out.println(graph);
-        }
+        }*/
         Generator generator = new Generator();
+        System.out.println(map.get(2).getRoot().getSyntactic() + " " + map.get(3).getRoot().getSemantic());
         String code3 = generator.toCode(map.get(2), map.get(2).getRoot(), 1);
         System.out.println("Generated code for graph 4:");
         System.out.println(code3);

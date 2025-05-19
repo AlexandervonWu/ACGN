@@ -100,7 +100,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         forest = new DoubleMap<>();
         aame = new AAME();
         timeOfVisitMap = new HashMap<>();
-        forest.put(0, new Multigraph()); // zero-th tree in the forest is the main AST/G
+        // forest.put(0, new Multigraph()); // zero-th tree in the forest is the main AST/G
         numPredicates = 0;
         scopeNodeId = 0;
         globalVariables = new GlobalVariables();
@@ -176,7 +176,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
         AugmentedNode mu = new AugmentedNode(0, 1);
         overallRoot = mu;
-        Multigraph demoGraph = forest.get(0);
+        Multigraph demoGraph = new Multigraph(mu, globalVariables);
+        forest.put(0, demoGraph);
         rootScope = new ScopeTreeNode(0, null, demoGraph);
         rootScope.addSymbol(EMPTY_SET_SYMBOL);
         demoGraph.addVertex(mu);
@@ -302,7 +303,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // Once declared, the PredNode when called is just a near-leaf (d=1) node symbol. 
         int syn = n instanceof Function ? 1 : -1;
         AugmentedNode predNode = new AugmentedNode(syn, numPredicates);
-        timeOfVisitMap.put(predNode, 1);
+        
         String predName = n.getName();
         Symbol predSymbol = new RefSymbol(predNode, predName);
         predNode.setSymbol(predSymbol);
@@ -312,20 +313,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         forest.put(numPredicates, predGraph);
         // localSymbols.put(predGraph, new HashSet<Symbol>());
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, rootScope, predGraph);
-
+        System.out.println("Scope affliation root: " + subscope.getAffliation().getRoot());
+        updateTimeOfVisit(predNode, subscope);
+        predNode.initLocalTovAsRoot(predGraph);
         int iter = 2;
         for (ParamDecl pd : n.getParamList()) {
             // From here, we need to pass the subgraph into the child nodes.
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
             globalVariables.addEdge(predNode, pdNode, 2); // equivalent in infinity;
-            visitAndConnect(predNode, pdNode, iter, arg);
+            visitAndConnect(predNode, pdNode, iter, subscope);
             // predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         globalVariables.addEdge(predNode, bodyNode, 1);
-        visitAndConnect(predNode, bodyNode, 1, arg);
+        visitAndConnect(predNode, bodyNode, 1, subscope);
         // predGraph.addVertex(bodyNode);
         // predGraph.connect(predNode, bodyNode, 1, 1);
         return predNode;
@@ -386,7 +389,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             return;
         }
         // int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
-        int timeOfVisit = timeOfVisitMap.get(parent);
+        // TODO: Retire global time of visit. 
+        int timeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(parent, 1);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(parent);
         boolean flagEq = parent.equals(child);

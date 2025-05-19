@@ -8,6 +8,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
+import parser.etc.Pair;
 
 public class Generator {
     // TODO: The main code generator
@@ -68,6 +69,10 @@ public class Generator {
                         sb.append(root.getSymbol().getName());
                         sb.append('[');
                         int i = 0;
+                        Map<Pair<Multigraph, Integer>, List<MASGEdge>> temp = root.getDownlinkMapTOV();
+                        for (Pair<Multigraph, Integer> key : temp.keySet()) {
+                            System.out.println(key.a.getRoot().getSyntactic() + " " + key.a.getRoot().getSemantic());
+                        }
                         List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, 1);
                         for (i = 0; i < downlinks.size() - 1; ++i) {
                             MASGEdge e = root.getDownlinks().get(i);
@@ -637,7 +642,7 @@ public class Generator {
                                 case 12:
                                     // prime
                                     sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
-                                    sb.append("'");
+                                    sb.append("\'");
                                     break;
                                 default:
                                     break;
