@@ -71,7 +71,13 @@ public class Generator {
                         int i = 0;
                         Map<Pair<Multigraph, Integer>, List<MASGEdge>> temp = root.getDownlinkMapTOV();
                         for (Pair<Multigraph, Integer> key : temp.keySet()) {
-                            System.out.println(key.a.getRoot().getSyntactic() + " " + key.a.getRoot().getSemantic());
+                            Multigraph g = key.a;
+                            int t = key.b;
+                            List<MASGEdge> downlinks = temp.get(key);
+                            System.out.println(g.getRoot().getSyntactic() + " " + g.getRoot().getSemantic());
+                            for (i = 0; i < downlinks.size() - 1; ++i) {
+                                System.out.println(downlinks.get(i));
+                            }
                         }
                         List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, 1);
                         for (i = 0; i < downlinks.size() - 1; ++i) {
@@ -155,17 +161,21 @@ public class Generator {
                         case -3:
                             // QtExprOrFormula
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            AugmentedNode QtBody = downlinksQT.get(0).getTarget();
-                            for (int i = 1; i < downlinksQT.size(); ++i) {
-                                MASGEdge e = downlinksQT.get(i);
+                            System.out.println(downlinksQT);
+                            int iter = 0;
+                            for (iter = 0; iter < downlinksQT.size() - 1; ++iter) {
+                                MASGEdge e = downlinksQT.get(iter);
                                 AugmentedNode QtVar = e.getTarget();
+                                System.out.println(QtVar.getSyntactic() + " " + QtVar.getSemantic());
                                 tovTracker.putIfAbsent(QtVar, 1);
                                 int tovQtVar = tovTracker.get(QtVar);
+                                System.out.println("Down this decl: " + QtVar.getDownlinkMapTOV());
                                 sb.append(toCode(graph, QtVar, tovQtVar));
-                                if (i != downlinksQT.size() - 1) {
+                                if (iter != downlinksQT.size() - 2) {
                                     sb.append(", ");
                                 }
                             }
+                            AugmentedNode QtBody = downlinksQT.get(iter).getTarget();
                             sb.append(" | ");
                             tovTracker.putIfAbsent(QtBody, 1);
                             int tovQtBody = tovTracker.get(QtBody);
@@ -245,7 +255,6 @@ public class Generator {
                         case 5:
                             // BinaryExpr
                             List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            System.out.println(root.getDownlinkMapTOV().toString());
                             AugmentedNode leftExpr = downlinksBin.get(0).getTarget();
                             AugmentedNode rightExpr = downlinksBin.get(1).getTarget();
                             tovTracker.putIfAbsent(leftExpr, 1);

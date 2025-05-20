@@ -675,9 +675,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(qtRoot, arg);
         int iter = 2;
         for (VarDecl var : varDecls) {
-            AugmentedNode varDeclNode = visitRelDecl(var, subscope);
+            AugmentedNode varDeclNode = var.accept(this, subscope);
             globalVariables.addEdge(qtRoot, varDeclNode, 2);
             visitAndConnect(qtRoot, varDeclNode, iter, subscope);
+            System.out.println("VarDecl at " + iter + ": " + var);
             iter++;
         }
         visitAndConnect(qtRoot, END_NODE, iter, subscope);
