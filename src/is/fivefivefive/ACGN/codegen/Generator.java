@@ -24,7 +24,6 @@ public class Generator {
             System.out.println("Generating code for " + root.getSymbol().getName() + " at TOV " + tov);
             tovTracker.putIfAbsent(root, tov);
             StringBuilder sb = new StringBuilder();
-            sb.append(" (");
             switch (root.getSymbol().getClass().getSimpleName()) {
                 case "AssertSymbol":
                     sb.append("assert ");
@@ -62,42 +61,38 @@ public class Generator {
                         int tovLetBody = tovTracker.get(letBody);
                         sb.append(" | ");
                         sb.append(toCode(graph, letBody, tovLetBody));
-                        break;
                     } else {
                         // references of predicates, functions, etc
-                        // TODO: PARAMS
-                        sb.append(root.getSymbol().getName());
-                        sb.append('[');
-                        int i = 0;
-                        Map<Pair<Multigraph, Integer>, List<MASGEdge>> temp = root.getDownlinkMapTOV();
-                        for (Pair<Multigraph, Integer> key : temp.keySet()) {
-                            Multigraph g = key.a;
-                            int t = key.b;
-                            List<MASGEdge> downlinks = temp.get(key);
-                            System.out.println(g.getRoot().getSyntactic() + " " + g.getRoot().getSemantic());
-                            for (i = 0; i < downlinks.size() - 1; ++i) {
-                                System.out.println(downlinks.get(i));
+                        List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, tov);
+                        if (downlinks != null && downlinks.size() > 0) {
+                            // This is a predicate definition - add pred keyword, parameters and body
+                            sb.append("pred ");
+                            sb.append(root.getSymbol().getName());
+                            sb.append("[");
+                            // Process parameters (if any)
+                            if (downlinks.size() > 1) {
+                                for (int i = 0; i < downlinks.size() - 1; ++i) {
+                                    MASGEdge e = downlinks.get(i);
+                                    AugmentedNode param = e.getTarget();
+                                    tovTracker.putIfAbsent(param, 1);
+                                    int tovParam = tovTracker.get(param);
+                                    sb.append(toCode(graph, param, tovParam));
+                                    if (i != downlinks.size() - 2) {
+                                        sb.append(", ");
+                                    }
+                                }
                             }
+                            sb.append("] {\n  ");
+                            // Process body
+                            AugmentedNode refBody = downlinks.get(downlinks.size() - 1).getTarget();
+                            tovTracker.putIfAbsent(refBody, 1);
+                            int bodyTov = tovTracker.get(refBody);
+                            sb.append(toCode(graph, refBody, bodyTov));
+                            sb.append("\n}");
+                        } else {
+                            // This is a function/predicate call - just output the name
+                            sb.append(root.getSymbol().getName());
                         }
-                        List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, 1);
-                        for (i = 0; i < downlinks.size() - 1; ++i) {
-                            MASGEdge e = root.getDownlinks().get(i);
-                            AugmentedNode refSub = e.getTarget();
-                            tovTracker.putIfAbsent(refSub, 1);
-                            int tovRefSub = tovTracker.get(refSub);
-                            sb.append(toCode(graph, refSub, tovRefSub));
-                            if (i != root.getDownlinks().size() - 2) {
-                                sb.append(", ");
-                            }
-                        }
-                        sb.append(']');
-                        sb.append('\n');
-                        sb.append('{');
-                        AugmentedNode refBody = downlinks.get(i).getTarget();
-                        tovTracker.putIfAbsent(refBody, 1);
-                        int bodyTov = tovTracker.get(refBody);
-                        sb.append(toCode(graph, refBody, bodyTov));
-                        sb.append('}');
                     }
                     break;
                 case "MiddleSymbol":
@@ -135,8 +130,8 @@ public class Generator {
                             sb.append(" : ");
                             AugmentedNode relDeclBody = downlinksRD.get(0).getTarget();
                             tovTracker.putIfAbsent(relDeclBody, 1);
-                            int tovRelDecl = tovTracker.get(relDeclBody);
-                            sb.append(toCode(graph, relDeclBody, tovRelDecl));
+                            int tovRelDeclBody = tovTracker.get(relDeclBody);
+                            sb.append(toCode(graph, relDeclBody, tovRelDeclBody));
                             break;
                         case 2:
                         case -2:
@@ -161,15 +156,32 @@ public class Generator {
                         case -3:
                             // QtExprOrFormula
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            System.out.println(downlinksQT);
+                            // Output quantifier keyword based on semantic value
+                            switch ((int) Math.round(root.getSemantic())) {
+                                case 1:
+                                    sb.append("all ");
+                                    break;
+                                case 2:
+                                    sb.append("no ");
+                                    break;
+                                case 3:
+                                    sb.append("some ");
+                                    break;
+                                case 4:
+                                    sb.append("lone ");
+                                    break;
+                                case 5:
+                                    sb.append("one ");
+                                    break;
+                                default:
+                                    break;
+                            }
                             int iter = 0;
                             for (iter = 0; iter < downlinksQT.size() - 1; ++iter) {
                                 MASGEdge e = downlinksQT.get(iter);
                                 AugmentedNode QtVar = e.getTarget();
-                                System.out.println(QtVar.getSyntactic() + " " + QtVar.getSemantic());
                                 tovTracker.putIfAbsent(QtVar, 1);
                                 int tovQtVar = tovTracker.get(QtVar);
-                                System.out.println("Down this decl: " + QtVar.getDownlinkMapTOV());
                                 sb.append(toCode(graph, QtVar, tovQtVar));
                                 if (iter != downlinksQT.size() - 2) {
                                     sb.append(", ");
@@ -656,6 +668,7 @@ public class Generator {
                                 default:
                                     break;
                             }
+                            break;
                         case -6:
                             // UnaryFormula
                             List<MASGEdge> downlinksUnaryFormula = root.getDownlinksAtTimeOfVisit(graph, tov);
@@ -725,8 +738,10 @@ public class Generator {
                         default:
                             break;
                     }
+                    break;
+                default:
+                    break;
             }
-            sb.append(")");
             return sb.toString();
         } catch (Exception e) {
             System.out.println("Error in generating code for " + root.getSymbol().getName() + " at " + tov);

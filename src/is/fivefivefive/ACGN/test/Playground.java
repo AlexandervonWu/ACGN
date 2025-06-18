@@ -31,9 +31,9 @@ public class Playground {
             System.out.println(graph);
         }*/
         Generator generator = new Generator();
-        System.out.println(map.get(4).getRoot().getSyntactic() + " " + map.get(4).getRoot().getSemantic());
-        String code3 = generator.toCode(map.get(4), map.get(4).getRoot(), 1);
-        System.out.println("Generated code for graph 4:");
+        System.out.println(map.get(2).getRoot().getSyntactic() + " " + map.get(2).getRoot().getSemantic());
+        String code3 = generator.toCode(map.get(2), map.get(2).getRoot(), 1);
+        System.out.println("Generated code for graph 2: ");
         System.out.println(code3);
     }
 
