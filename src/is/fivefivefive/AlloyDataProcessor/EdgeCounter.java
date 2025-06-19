@@ -8,9 +8,9 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
-import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.etc.Triple;
+import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
 

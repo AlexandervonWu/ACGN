@@ -115,6 +115,7 @@ public class Generator {
                             }
                             List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(graph, tov);
                             if (downlinksRD == null) {
+                                System.out.println("No downlinks for RelDecl at TOV " + tov);
                                 return "";
                             }
                             for (int i = 1; i < downlinksRD.size(); ++i) {
@@ -156,26 +157,6 @@ public class Generator {
                         case -3:
                             // QtExprOrFormula
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            // Output quantifier keyword based on semantic value
-                            switch ((int) Math.round(root.getSemantic())) {
-                                case 1:
-                                    sb.append("all ");
-                                    break;
-                                case 2:
-                                    sb.append("no ");
-                                    break;
-                                case 3:
-                                    sb.append("some ");
-                                    break;
-                                case 4:
-                                    sb.append("lone ");
-                                    break;
-                                case 5:
-                                    sb.append("one ");
-                                    break;
-                                default:
-                                    break;
-                            }
                             int iter = 0;
                             for (iter = 0; iter < downlinksQT.size() - 1; ++iter) {
                                 MASGEdge e = downlinksQT.get(iter);
