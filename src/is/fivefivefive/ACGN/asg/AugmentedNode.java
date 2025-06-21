@@ -10,6 +10,7 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.test.Playground;
 
 /*
  * A node in the Abstract Semantic Graph.
@@ -90,7 +91,8 @@ public class AugmentedNode {
         return downlinkMapTOV.get(key);
     }
     public MASGEdge connect(AugmentedNode target, int position, Multigraph graph, int timeOfVisit) {
-        System.out.println("Graph: " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
+        if (Playground.DEBUG) 
+            System.out.println("Graph: " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
         if (graph.getRoot() == null) {
             throw new IllegalArgumentException("Graph root cannot be null");
         }
@@ -100,7 +102,11 @@ public class AugmentedNode {
         Pair<Multigraph, Integer> key = Pair.of(graph, timeOfVisit);
         downlinkMapTOV.putIfAbsent(key, new ArrayList<MASGEdge>());
         downlinkMapTOV.get(key).add(e);
-        System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time under the graph with root " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
+        if (Playground.DEBUG) {
+            System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time under the graph with root " + graph.getRoot().getSyntactic() + " " + graph.getRoot().getSemantic());
+            System.out.println("key: " + key.a.getRoot().semantic + " " + key.b);
+            System.out.println(downlinkMapTOV.get(key));
+        }
         //System.out.println("Connecting " + this.syntactic + " " + this.semantic + " to " + target.syntactic + " " + target.semantic + " at " + position + ", for " + timeOfVisit + "-th time");
         return e;
     }

@@ -115,6 +115,7 @@ public class Generator {
                             }
                             List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(graph, tov);
                             if (downlinksRD == null) {
+                                System.out.println(root.getDownlinkMapTOV());
                                 System.out.println("No downlinks for RelDecl at TOV " + tov);
                                 return "";
                             }

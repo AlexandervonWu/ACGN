@@ -1,5 +1,8 @@
 package is.fivefivefive.ACGN.test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
@@ -15,7 +18,10 @@ import parser.util.AlloyUtil;
 
 public class Playground {
 
-    public static void main(String[] args) {
+    public static final boolean DEBUG = true;
+    public static void main(String[] args) throws FileNotFoundException {
+        PrintStream p = new PrintStream(new File("output.log"));
+        System.setOut(p);
         String file = "dynamic_ball_graph.als";
         CompModule module = AlloyUtil.compileAlloyModule(file);
         ModelUnit mu = new ModelUnit(null, module);

@@ -25,6 +25,7 @@ import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SetSymbol;
 import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
+import is.fivefivefive.ACGN.test.Playground;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
 import parser.ast.nodes.SigDecl;
@@ -345,7 +346,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // syntactic: according to the signature type and the confiners. 
         int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
         Symbol declRootSym = new MiddleSymbol("RELDECL_" + semantic);
-        AugmentedNode declRoot = new AugmentedNode(-127, semantic, declRootSym); // a virtual root node of the decl set. 
+        AugmentedNode declRoot; // a virtual root node of the decl set. 
+        if (!uniqueNode.containsKey(declRootSym)) {
+            uniqueNode.put(declRootSym, new AugmentedNode(-127, semantic, declRootSym));
+            declRoot = uniqueNode.get(declRootSym);
+        } else {
+            declRoot = uniqueNode.get(declRootSym);
+            if (declRoot.getSyntactic() != -127 || declRoot.getSemantic() != semantic) {
+                throw new RuntimeException("Inconsistent syntactic/semantic for " + declRootSym + ": " + declRoot);
+            }
+        }
+        declRoot = uniqueNode.get(declRootSym) == null ? 
+            declRoot : uniqueNode.get(declRootSym);
         updateTimeOfVisit(declRoot, arg);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
@@ -402,6 +414,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         } else {
             graph.addVertex(child);
             graph.connect(parent, child, graph, position, timeOfVisit);
+        }
+        if (Playground.DEBUG) {
+            System.out.println(parent.getDownlinksAtTimeOfVisit(graph, timeOfVisit));
+            System.out.println(parent.getDownlinks());
         }
     }
 
