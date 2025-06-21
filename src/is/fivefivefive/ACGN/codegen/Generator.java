@@ -7,6 +7,7 @@ import java.util.Map;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.test.Playground;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import parser.etc.Pair;
 
@@ -30,7 +31,8 @@ public class Generator {
                     sb.append(root.getSymbol().getName());
                     // sb.append(root.getDownlinks().get(0).getTarget().toCode(0));
                     AugmentedNode assertBody = root.getDownlinks().get(0).getTarget();
-                    tovTracker.putIfAbsent(assertBody, 1);
+                    tovTracker.putIfAbsent(assertBody, 0);
+                    tovTracker.put(assertBody, tovTracker.get(assertBody) + 1);
                     int tovAssertBody = tovTracker.get(assertBody);
                     sb.append(toCode(graph, root.getDownlinks().get(0).getTarget(), tovAssertBody));
                     break;
@@ -74,10 +76,14 @@ public class Generator {
                                 for (int i = 0; i < downlinks.size() - 1; ++i) {
                                     MASGEdge e = downlinks.get(i);
                                     AugmentedNode param = e.getTarget();
-                                    tovTracker.putIfAbsent(param, 1);
+                                    tovTracker.putIfAbsent(param, 0);
+                                    tovTracker.put(param, tovTracker.get(param) + 1);
                                     int tovParam = tovTracker.get(param);
+                                    if (Playground.DEBUG) {
+                                        System.out.println("Processing parameter " + param.getSymbol().getName() + " at TOV " + tovParam);
+                                    }
                                     sb.append(toCode(graph, param, tovParam));
-                                    if (i != downlinks.size() - 2) {
+                                    if (i < downlinks.size() - 2) {
                                         sb.append(", ");
                                     }
                                 }
@@ -85,7 +91,8 @@ public class Generator {
                             sb.append("] {\n  ");
                             // Process body
                             AugmentedNode refBody = downlinks.get(downlinks.size() - 1).getTarget();
-                            tovTracker.putIfAbsent(refBody, 1);
+                            tovTracker.putIfAbsent(refBody, 0);
+                            tovTracker.put(refBody, tovTracker.get(refBody) + 1);
                             int bodyTov = tovTracker.get(refBody);
                             sb.append(toCode(graph, refBody, bodyTov));
                             sb.append("\n}");
@@ -122,16 +129,18 @@ public class Generator {
                             for (int i = 1; i < downlinksRD.size(); ++i) {
                                 MASGEdge e = downlinksRD.get(i);
                                 AugmentedNode relDecl = e.getTarget();
-                                tovTracker.putIfAbsent(relDecl, 1);
+                                tovTracker.putIfAbsent(relDecl, 0);
+                                tovTracker.put(relDecl, tovTracker.get(relDecl) + 1);
                                 int tovRelDecl = tovTracker.get(relDecl);
                                 sb.append(toCode(graph, relDecl, tovRelDecl));
-                                if (i != downlinksRD.size() - 1) {
+                                if (i < downlinksRD.size() - 2) {
                                     sb.append(", ");
                                 }
                             }
                             sb.append(" : ");
                             AugmentedNode relDeclBody = downlinksRD.get(0).getTarget();
-                            tovTracker.putIfAbsent(relDeclBody, 1);
+                            tovTracker.putIfAbsent(relDeclBody, 0);
+                            tovTracker.put(relDeclBody, tovTracker.get(relDeclBody) + 1);
                             int tovRelDeclBody = tovTracker.get(relDeclBody);
                             sb.append(toCode(graph, relDeclBody, tovRelDeclBody));
                             break;
@@ -142,15 +151,18 @@ public class Generator {
                             AugmentedNode ifExpr = downlinksITE.get(0).getTarget();
                             AugmentedNode thenExpr = downlinksITE.get(1).getTarget();
                             AugmentedNode elseExpr = downlinksITE.get(2).getTarget();
-                            tovTracker.putIfAbsent(ifExpr, 1);
+                            tovTracker.putIfAbsent(ifExpr, 0);
+                            tovTracker.put(ifExpr, tovTracker.get(ifExpr) + 1);
                             int tovIfExpr = tovTracker.get(ifExpr);
                             sb.append(toCode(graph, ifExpr, tovIfExpr));
                             sb.append(" => ");
-                            tovTracker.putIfAbsent(thenExpr, 1);
+                            tovTracker.putIfAbsent(thenExpr, 0);
+                            tovTracker.put(thenExpr, tovTracker.get(thenExpr) + 1);
                             int tovThenExpr = tovTracker.get(thenExpr);
                             sb.append(toCode(graph, thenExpr, tovThenExpr));
                             sb.append(" else ");
-                            tovTracker.putIfAbsent(elseExpr, 1);
+                            tovTracker.putIfAbsent(elseExpr, 0);
+                            tovTracker.put(elseExpr, tovTracker.get(elseExpr) + 1);
                             int tovElseExpr = tovTracker.get(elseExpr);
                             sb.append(toCode(graph, elseExpr, tovElseExpr));
                             break;
@@ -162,16 +174,18 @@ public class Generator {
                             for (iter = 0; iter < downlinksQT.size() - 1; ++iter) {
                                 MASGEdge e = downlinksQT.get(iter);
                                 AugmentedNode QtVar = e.getTarget();
-                                tovTracker.putIfAbsent(QtVar, 1);
+                                tovTracker.putIfAbsent(QtVar, 0);
+                                tovTracker.put(QtVar, tovTracker.get(QtVar) + 1);
                                 int tovQtVar = tovTracker.get(QtVar);
                                 sb.append(toCode(graph, QtVar, tovQtVar));
-                                if (iter != downlinksQT.size() - 2) {
+                                if (iter < downlinksQT.size() - 2) {
                                     sb.append(", ");
                                 }
                             }
                             AugmentedNode QtBody = downlinksQT.get(iter).getTarget();
                             sb.append(" | ");
-                            tovTracker.putIfAbsent(QtBody, 1);
+                            tovTracker.putIfAbsent(QtBody, 0);
+                            tovTracker.put(QtBody, tovTracker.get(QtBody) + 1);
                             int tovQtBody = tovTracker.get(QtBody);
                             sb.append(toCode(graph, QtBody, tovQtBody));
                             break;
@@ -180,17 +194,19 @@ public class Generator {
                             // CallExprOrFormula
                             List<MASGEdge> downlinksCall = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode calledNode = downlinksCall.get(0).getTarget();
-                            tovTracker.putIfAbsent(calledNode, 1);
+                            tovTracker.putIfAbsent(calledNode, 0);
+                            tovTracker.put(calledNode, tovTracker.get(calledNode) + 1);
                             int tovCalledNode = tovTracker.get(calledNode);
                             sb.append(toCode(graph, calledNode, tovCalledNode));
                             sb.append("[");
                             for (int i = 1; i < downlinksCall.size(); ++i) {
                                 MASGEdge e = downlinksCall.get(i);
                                 AugmentedNode callParam = e.getTarget();
-                                tovTracker.putIfAbsent(callParam, 1);
+                                tovTracker.putIfAbsent(callParam, 0);
+                                tovTracker.put(callParam, tovTracker.get(callParam) + 1);
                                 int tovCallParam = tovTracker.get(callParam);
                                 sb.append(toCode(graph, callParam, tovCallParam));
-                                if (i != downlinksCall.size() - 1) {
+                                if (i < downlinksCall.size() - 2) {
                                     sb.append(", ");
                                 }
                             }
@@ -212,10 +228,11 @@ public class Generator {
                             for (int i = 0; i < downlinksList.size(); ++i) {
                                 MASGEdge e = downlinksList.get(i);
                                 AugmentedNode listElem = e.getTarget();
-                                tovTracker.putIfAbsent(listElem, 1);
+                                tovTracker.putIfAbsent(listElem, 0);
+                                tovTracker.put(listElem, tovTracker.get(listElem) + 1);
                                 int tovListElem = tovTracker.get(listElem);
                                 sb.append(toCode(graph, listElem, tovListElem));
-                                if (i != downlinksList.size() - 1) {
+                                if (i < downlinksList.size() - 2) {
                                     sb.append(", ");
                                 }
                             }
@@ -238,10 +255,11 @@ public class Generator {
                             for (int i = 0; i < downlinksListFormula.size(); ++i) {
                                 MASGEdge e = downlinksListFormula.get(i);
                                 AugmentedNode listElemFormula = e.getTarget();
-                                tovTracker.putIfAbsent(listElemFormula, 1);
+                                tovTracker.putIfAbsent(listElemFormula, 0);
+                                tovTracker.put(listElemFormula, tovTracker.get(listElemFormula) + 1);
                                 int tovListElemFormula = tovTracker.get(listElemFormula);
                                 sb.append(toCode(graph, listElemFormula, tovListElemFormula));
-                                if (i != downlinksListFormula.size() - 1) {
+                                if (i < downlinksListFormula.size() - 2) {
                                     sb.append(listOp);
                                 }
                             }
@@ -251,9 +269,11 @@ public class Generator {
                             List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode leftExpr = downlinksBin.get(0).getTarget();
                             AugmentedNode rightExpr = downlinksBin.get(1).getTarget();
-                            tovTracker.putIfAbsent(leftExpr, 1);
+                            tovTracker.putIfAbsent(leftExpr, 0);
+                            tovTracker.put(leftExpr, tovTracker.get(leftExpr) + 1);
                             int tovLeftExpr = tovTracker.get(leftExpr);
-                            tovTracker.putIfAbsent(rightExpr, 1);
+                            tovTracker.putIfAbsent(rightExpr, 0);
+                            tovTracker.put(rightExpr, tovTracker.get(rightExpr) + 1);
                             int tovRightExpr = tovTracker.get(rightExpr);
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
@@ -451,9 +471,11 @@ public class Generator {
                             List<MASGEdge> downlinksBinFormula = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode leftFormula = downlinksBinFormula.get(0).getTarget();
                             AugmentedNode rightFormula = downlinksBinFormula.get(1).getTarget();
-                            tovTracker.putIfAbsent(leftFormula, 1);
+                            tovTracker.putIfAbsent(leftFormula, 0);
+                            tovTracker.put(leftFormula, tovTracker.get(leftFormula) + 1);
                             int tovLeftFormula = tovTracker.get(leftFormula);
-                            tovTracker.putIfAbsent(rightFormula, 1);
+                            tovTracker.putIfAbsent(rightFormula, 0);
+                            tovTracker.put(rightFormula, tovTracker.get(rightFormula) + 1);
                             int tovRightFormula = tovTracker.get(rightFormula);
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
@@ -584,7 +606,8 @@ public class Generator {
                             // UnaryExpr
                             List<MASGEdge> downlinksUnary = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode unaryExprSub = downlinksUnary.get(0).getTarget();
-                            tovTracker.putIfAbsent(unaryExprSub, 1);
+                            tovTracker.putIfAbsent(unaryExprSub, 0);
+                            tovTracker.put(unaryExprSub, tovTracker.get(unaryExprSub) + 1);
                             int tovUnaryExprSub = tovTracker.get(unaryExprSub);
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
@@ -655,7 +678,8 @@ public class Generator {
                             // UnaryFormula
                             List<MASGEdge> downlinksUnaryFormula = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode unaryFormulaSub = downlinksUnaryFormula.get(0).getTarget();
-                            tovTracker.putIfAbsent(unaryFormulaSub, 1);
+                            tovTracker.putIfAbsent(unaryFormulaSub, 0);
+                            tovTracker.put(unaryFormulaSub, tovTracker.get(unaryFormulaSub) + 1);
                             int tovUnaryFormulaSub = tovTracker.get(unaryFormulaSub);
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
