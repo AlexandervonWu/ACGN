@@ -404,12 +404,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // TODO: Retire global time of visit. 
         int timeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(parent, 1);
         Multigraph graph = arg.getAffliation();
+        if (Playground.DEBUG) {
+            System.out.println("Visiting " + parent.getSymbol().getName() + " for " + child.getSymbol().getName() + " at time of visit " + timeOfVisit);
+        }
         graph.addVertex(parent);
         boolean flagEq = parent.equals(child);
         if (flagEq) {
-            AugmentedNode shadow = new AugmentedNode(parent); // create a shadow node
-            graph.addVertex(shadow);
-            graph.connect(parent, shadow, graph, position, timeOfVisit);
+            // create a shadow node
+            if (Playground.DEBUG) {
+                System.out.println("Shadow node created for " + parent.getSymbol().getName() + " at time of visit " + timeOfVisit);
+            }
+            graph.addVertex(SHADOW_NODE);
+            graph.connect(parent, SHADOW_NODE, graph, position, timeOfVisit);
             
         } else {
             graph.addVertex(child);
@@ -434,9 +440,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Map<AugmentedNode, Integer> localTovMap = graph.getTimeOfVisitMap();
         if (!localTovMap.containsKey(parent)) {
             localTovMap.put(parent, 1);
+            if (Playground.DEBUG) {
+                System.out.println("Time of visit for " + parent.getSymbol().getName() + " set to 1");
+            }
         } else {
             int localTov = localTovMap.get(parent);
             localTovMap.put(parent, localTov + 1);
+            if (Playground.DEBUG) {
+                System.out.println("Updated time of visit for " + parent.getSymbol().getName() + " to " + localTov);
+            }
         }
     }
 
@@ -1107,7 +1119,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
-        System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
+        // System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
 
         return bopNode;
     }

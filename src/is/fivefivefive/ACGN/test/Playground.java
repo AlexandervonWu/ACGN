@@ -37,9 +37,10 @@ public class Playground {
             System.out.println(graph);
         }*/
         Generator generator = new Generator();
-        System.out.println(map.get(2).getRoot().getSyntactic() + " " + map.get(2).getRoot().getSemantic());
-        String code3 = generator.toCode(map.get(2), map.get(2).getRoot(), 1);
-        System.out.println("Generated code for graph 2: ");
+        int graphId = 1;
+        System.out.println(map.get(graphId).getRoot().getSyntactic() + " " + map.get(graphId).getRoot().getSemantic());
+        String code3 = generator.toCode(map.get(graphId), map.get(graphId).getRoot(), 1);
+        System.out.println("Generated code for graph " + graphId + ": ");
         System.out.println(code3);
     }
 

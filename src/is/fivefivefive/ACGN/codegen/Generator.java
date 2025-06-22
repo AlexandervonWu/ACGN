@@ -741,6 +741,8 @@ public class Generator {
                                     break;
                             }
                             break;
+                        case -128:
+                            // handle the shadow
                         default:
                             break;
                     }
