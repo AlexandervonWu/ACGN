@@ -447,7 +447,27 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             int localTov = localTovMap.get(parent);
             localTovMap.put(parent, localTov + 1);
             if (Playground.DEBUG) {
-                System.out.println("Updated time of visit for " + parent.getSymbol().getName() + " to " + localTov);
+                System.out.println("Updated time of visit for " + parent.getSymbol().getName() + " to " + (localTov + 1));
+            }
+        }
+    }
+
+    private void downTimeOfVisit(AugmentedNode parent, ScopeTreeNode arg) {
+        if (!timeOfVisitMap.containsKey(parent)) {
+            throw new RuntimeException("Time of visit not supposed to downgrade here");
+        } else {
+            int timeOfVisit = timeOfVisitMap.get(parent);
+            timeOfVisitMap.put(parent, timeOfVisit - 1);
+        }
+        Multigraph graph = arg.getAffliation();
+        Map<AugmentedNode, Integer> localTovMap = graph.getTimeOfVisitMap();
+        if (!localTovMap.containsKey(parent)) {
+            throw new RuntimeException("Time of visit not supposed to downgrade here");
+        } else {
+            int localTov = localTovMap.get(parent);
+            localTovMap.put(parent, localTov - 1);
+            if (Playground.DEBUG) {
+                System.out.println("Updated time of visit for " + parent.getSymbol().getName() + " to " + (localTov - 1));
             }
         }
     }
@@ -661,14 +681,32 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
         AugmentedNode condNode = condition.accept(this, arg);
+        if (condNode == ITEDummy) {
+            downTimeOfVisit(ITEDummy, arg);
+        }
         globalVariables.addEdge(ITEDummy, condNode, 1);
         AugmentedNode thenNode = thenClause.accept(this, arg);
+        if (thenNode == ITEDummy) {
+            downTimeOfVisit(ITEDummy, arg);
+        }
         globalVariables.addEdge(ITEDummy, thenNode, 2);
         AugmentedNode elseNode = elseClause.accept(this, arg);
+        if (elseNode == ITEDummy) {
+            downTimeOfVisit(ITEDummy, arg);
+        }
         globalVariables.addEdge(ITEDummy, elseNode, 3);
         visitAndConnect(ITEDummy, condNode, 1, arg);
         visitAndConnect(ITEDummy, thenNode, 2, arg);
         visitAndConnect(ITEDummy, elseNode, 3, arg);
+        if (condNode == ITEDummy) {
+            updateTimeOfVisit(ITEDummy, arg);
+        }
+        if (thenNode == ITEDummy) {
+            updateTimeOfVisit(ITEDummy, arg);
+        }
+        if (elseNode == ITEDummy) {
+            updateTimeOfVisit(ITEDummy, arg);
+        }
         return ITEDummy;
     }
 
@@ -947,24 +985,27 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
+        if (leftNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
         globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
-        /*()
-        if (rightNode == null) {
-            System.out.println("Right node : " + right);
-            System.out.println("RIGHT NODE CHILD: " + right.getChildren().get(0));
-            Node gc = right.getChildren().get(0);
-            if (gc instanceof SigExpr) {
-                SigExpr sigGC = (SigExpr) gc;
-                String sigName = sigGC.getName();
-                System.out.println(sigName);
-            }
-            throw new RuntimeException("Right node is null!");
-        } */
+        if (rightNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
         globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
-        System.out.println("BOP: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
+        // update the shadow node time of visit back
+        if (leftNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
+        if (rightNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
+        // System.out.println("BOP: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
         return bopNode;
     }
 
@@ -1114,11 +1155,27 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
+        if (leftNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
         globalVariables.addEdge(bopNode, leftNode, 1);
-        AugmentedNode rightNode = right.accept(this, arg);
-        globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
+        AugmentedNode rightNode = right.accept(this, arg);
+        if (rightNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
+        globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, rightNode, 2, arg);
+        // update the shadow node time of visit back
+        // TODO: ALSO APPLY TO OTHER SHADOWY NODES
+        if (leftNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
+        if (rightNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
         // System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
 
         return bopNode;
@@ -1189,8 +1246,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
+        if (subNode == unopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(unopNode, arg);
+        }
         globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
+        // update the shadow node time of visit back
+        if (subNode == unopNode) {
+            updateTimeOfVisit(unopNode, arg);
+        }
         return unopNode;
     }
 
@@ -1265,8 +1330,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
+        if (subNode == unopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(unopNode, arg);
+        }
         globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
+        // update the shadow node time of visit back
+        if (subNode == unopNode) {
+            updateTimeOfVisit(unopNode, arg);
+        }
         return unopNode;
     }
             
