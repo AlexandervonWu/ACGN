@@ -1091,53 +1091,57 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 symbolLabel = "BOPEXPR_DOMAIN";
                 semantic = 19;
                 break;
+            case RANGE:
+                symbolLabel = "BOPEXPR_RANGE";
+                semantic = 20;
+                break;
             case INTERSECT:
                 symbolLabel = "BOPEXPR_INTERSECT";
-                semantic = 20;
+                semantic = 21;
                 break;
             case PLUSPLUS:
                 symbolLabel = "BOPEXPR_PLUSPLUS";
-                semantic = 21;
+                semantic = 22;
                 break;
             case PLUS:
                 symbolLabel = "BOPEXPR_PLUS";
-                semantic = 22;
+                semantic = 23;
                 break;
             case IPLUS:
                 symbolLabel = "BOPEXPR_IPLUS";
-                semantic = 23;
+                semantic = 24;
                 break;
             case MINUS:
                 symbolLabel = "BOPEXPR_MINUS";
-                semantic = 24;
+                semantic = 25;
                 break;
             case IMINUS:
                 symbolLabel = "BOPEXPR_IMINUS";
-                semantic = 25;
+                semantic = 26;
                 break;
             case MUL:
                 symbolLabel = "BOPEXPR_MUL";
-                semantic = 26;
+                semantic = 27;
                 break;
             case DIV:
                 symbolLabel = "BOPEXPR_DIV";
-                semantic = 27;
+                semantic = 28;
                 break;
             case REM:
                 symbolLabel = "BOPEXPR_REM";
-                semantic = 28;
+                semantic = 29;
                 break;
             case SHL:
                 symbolLabel = "BOPEXPR_SHL";
-                semantic = 29;
+                semantic = 30;
                 break;
             case SHA:
                 symbolLabel = "BOPEXPR_SHA";
-                semantic = 30;
+                semantic = 31;
                 break;
             case SHR:
                 symbolLabel = "BOPEXPR_SHR";
-                semantic = 31;
+                semantic = 32;
                 break;
             default:
                 break;

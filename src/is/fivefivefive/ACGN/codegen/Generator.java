@@ -457,9 +457,15 @@ public class Generator {
                                     sb.append(toCode(graph, rightExpr, tovRightExpr));
                                     break;
                                 case 31:
-                                    // SHR
+                                    // SHA
                                     sb.append(toCode(graph, leftExpr, tovLeftExpr));
                                     sb.append(" >> ");
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    break;
+                                case 32:
+                                    // SHR
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(" >>> ");
                                     sb.append(toCode(graph, rightExpr, tovRightExpr));
                                     break;
                                 default:
@@ -491,63 +497,63 @@ public class Generator {
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 3:
-                                    // IMPLIES
+                                    // AND
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" => ");
+                                    sb.append(" && ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 4:
-                                    // LT
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" < ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
-                                    break;
-                                case 5:
-                                    // LTE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" <= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
-                                    break;
-                                case 6:
                                     // GT
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" > ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 7:
+                                case 5:
                                     // GTE
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" >= ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 8:
-                                    // NOT_LT
+                                case 6:
+                                    // IFF
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" !< ");
+                                    sb.append(" <=> ");
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    break;
+                                case 7:
+                                    // IMPLIES
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(" => ");
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    break;
+                                case 8:
+                                    // IN
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(" in ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 9:
-                                    // NOT_LTE
+                                    // LT
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" !<= ");
+                                    sb.append(" < ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 10:
+                                    // LTE
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(" <= ");
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    break;
+                                case 11:
                                     // NOT_GT
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" !> ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 11:
+                                case 12:
                                     // NOT_GTE
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" !>= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
-                                    break;
-                                case 12:
-                                    // IN
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" in ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 13:
@@ -557,45 +563,45 @@ public class Generator {
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 14:
-                                    // AND
+                                    // NOT_LT
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" && ");
+                                    sb.append(" !< ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 case 15:
+                                    // NOT_LTE
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(" !<= ");
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    break;
+                                case 16:
                                     // OR
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" || ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 16:
-                                    // IFF
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" <=> ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
-                                    break;
                                 case 17:
-                                    // UNTIL
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
-                                    sb.append(" until ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
-                                    break;
-                                case 18:
                                     // RELEASES
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" releases ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 19:
+                                case 18:
                                     // SINCE
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" since ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
-                                case 20:
+                                case 19:
                                     // TRIGGERED
                                     sb.append(toCode(graph, leftFormula, tovLeftFormula));
                                     sb.append(" triggered ");
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    break;
+                                case 20:
+                                    // UNTIL
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(" until ");
                                     sb.append(toCode(graph, rightFormula, tovRightFormula));
                                     break;
                                 default:
