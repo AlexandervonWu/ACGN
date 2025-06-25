@@ -14,6 +14,7 @@ import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
 import parser.ast.visitor.ASTNodeFinder;
+import parser.ast.visitor.PrettyStringVisitor;
 import parser.util.AlloyUtil;
 
 public class Playground {
@@ -37,11 +38,17 @@ public class Playground {
             System.out.println(graph);
         }*/
         Generator generator = new Generator();
-        int graphId = 1;
+        int graphId = 5;
         System.out.println(map.get(graphId).getRoot().getSyntactic() + " " + map.get(graphId).getRoot().getSemantic());
         String code3 = generator.toCode(map.get(graphId), map.get(graphId).getRoot(), 1);
         System.out.println("Generated code for graph " + graphId + ": ");
         System.out.println(code3);
+        PrettyStringVisitor psv = new PrettyStringVisitor();
+        String str = psv.visit(mu, null);
+        System.out.println("Pretty String of the model unit: ");
+        System.out.println(str);
+        System.out.println("Done with Playground.");
+
     }
 
 

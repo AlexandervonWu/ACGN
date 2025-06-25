@@ -115,7 +115,7 @@ public class Generator {
                                     sb.append("var ");
                                     break;
                                 case 3:
-                                    sb.append("disj var ");
+                                    sb.append("var disj ");
                                     break;
                                 default:
                                     break;
@@ -170,6 +170,45 @@ public class Generator {
                         case -3:
                             // QtExprOrFormula
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
+                            if (root.getSyntactic() == 3) {
+                                switch ((int) Math.round(root.getSemantic())) {
+                                    case 1:
+                                        // summation
+                                        sb.append("all ");
+                                        break;
+                                    case 2:
+                                        // comprehension
+                                        sb.append("some ");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            } else {
+                                switch ((int) Math.round(root.getSemantic())) {
+                                    case 1:
+                                        // all
+                                        sb.append("all ");
+                                        break;
+                                    case 2:
+                                        // some
+                                        sb.append("some ");
+                                        break;
+                                    case 3:
+                                        // no
+                                        sb.append("no ");
+                                        break;
+                                    case 4:
+                                        // lone
+                                        sb.append("lone ");
+                                        break;
+                                    case 5:
+                                        // one
+                                        sb.append("one ");
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
                             int iter = 0;
                             for (iter = 0; iter < downlinksQT.size() - 1; ++iter) {
                                 MASGEdge e = downlinksQT.get(iter);
@@ -178,7 +217,7 @@ public class Generator {
                                 tovTracker.put(QtVar, tovTracker.get(QtVar) + 1);
                                 int tovQtVar = tovTracker.get(QtVar);
                                 sb.append(toCode(graph, QtVar, tovQtVar));
-                                if (iter < downlinksQT.size() - 2) {
+                                if (iter < downlinksQT.size() - 3) {
                                     sb.append(", ");
                                 }
                             }

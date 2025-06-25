@@ -386,6 +386,24 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (ExprOrFormula v : n.getVariables()) {
             AugmentedNode varNode = v.accept(this, arg);
+            if (Playground.DEBUG) {
+                PrettyStringVisitor psv = new PrettyStringVisitor();
+                String varStr = psv.visit(v, null);
+                psv = new PrettyStringVisitor();
+                if (n instanceof ParamDecl) {
+                    ParamDecl pd = (ParamDecl) n;
+                    psv = new PrettyStringVisitor();
+                    String paramStr = psv.visit(pd, null);
+                    System.out.println("Visiting variable " + varStr + " in parameter declaration " + paramStr);
+                } else if (n instanceof VarDecl) {
+                    VarDecl vd = (VarDecl) n;
+                    psv = new PrettyStringVisitor();
+                    String varDeclStr = psv.visit(vd, null);
+                    System.out.println("Visiting variable " + varStr + " in variable declaration " + varDeclStr);
+                } else {
+                    System.out.println("Visiting variable " + varStr + " in unknown declaration " + n.getClass().getSimpleName());
+                }
+            }
             globalVariables.addEdge(declRoot, varNode, iter);
             visitAndConnect(declRoot, varNode, iter, arg);
             iter++;
@@ -724,6 +742,28 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private AugmentedNode visitQt(QtExprOrFormula n, ScopeTreeNode arg) {
         int syntactic = n instanceof QtExpr ? 3 : -3;
         String label = n instanceof QtExpr ? "QT_EXPR" : "QT_FORMULA";
+        int semantic = -1;
+        if (n instanceof QtFormula) {
+            QtFormula.Quantifier quantifier = ((QtFormula) n).getOp();
+            if (quantifier == QtFormula.Quantifier.ALL) {
+                semantic = 1; // universal quantifier
+            } else if (quantifier == QtFormula.Quantifier.SOME) {
+                semantic = 2; // existential quantifier
+            } else if (quantifier == QtFormula.Quantifier.NO) {
+                semantic = 3; // negation of existential quantifier
+            } else if (quantifier == QtFormula.Quantifier.LONE) {
+                semantic = 4; // lone quantifier
+            } else if (quantifier == QtFormula.Quantifier.ONE) {
+                semantic = 5; // one quantifier
+            }
+        } else {
+            QtExpr.Quantifier quantifier = ((QtExpr) n).getOp();
+            if (quantifier == QtExpr.Quantifier.SUM) {
+                semantic = 1; // summation
+            } else {
+                semantic = 2; // comprehension
+            }
+        }
         MiddleSymbol qtSymbol = new MiddleSymbol(label);
         List<VarDecl> varDecls = n.getVarDecls();
         scopeNodeId++;
@@ -734,7 +774,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (uniqueNode.containsKey(qtSymbol)) {
             qtRoot = uniqueNode.get(qtSymbol);
         } else {
-            qtRoot = new AugmentedNode(syntactic, 1, qtSymbol);
+            qtRoot = new AugmentedNode(syntactic, semantic, qtSymbol);
             uniqueNode.put(qtSymbol, qtRoot);
         }
         graph.addVertex(qtRoot);
