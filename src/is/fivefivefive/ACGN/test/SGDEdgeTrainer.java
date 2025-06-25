@@ -230,7 +230,7 @@ public class SGDEdgeTrainer {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             args = new String[1];
-            args[0] = "edge_counts_num_wshadow.csv";
+            args[0] = "edge_counts_num_wshadow_update.csv";
         }
         
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
