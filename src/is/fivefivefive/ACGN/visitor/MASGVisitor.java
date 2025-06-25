@@ -747,21 +747,28 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             QtFormula.Quantifier quantifier = ((QtFormula) n).getOp();
             if (quantifier == QtFormula.Quantifier.ALL) {
                 semantic = 1; // universal quantifier
+                label += "_ALL";
             } else if (quantifier == QtFormula.Quantifier.SOME) {
                 semantic = 2; // existential quantifier
+                label += "_SOME";
             } else if (quantifier == QtFormula.Quantifier.NO) {
                 semantic = 3; // negation of existential quantifier
+                label += "_NO";
             } else if (quantifier == QtFormula.Quantifier.LONE) {
                 semantic = 4; // lone quantifier
+                label += "_LONE";
             } else if (quantifier == QtFormula.Quantifier.ONE) {
                 semantic = 5; // one quantifier
+                label += "_ONE";
             }
         } else {
             QtExpr.Quantifier quantifier = ((QtExpr) n).getOp();
             if (quantifier == QtExpr.Quantifier.SUM) {
                 semantic = 1; // summation
-            } else {
+                label += "_SUM";
+            } else if (quantifier == QtExpr.Quantifier.COMPREHENSION) {
                 semantic = 2; // comprehension
+                label += "_COMP";
             }
         }
         MiddleSymbol qtSymbol = new MiddleSymbol(label);
