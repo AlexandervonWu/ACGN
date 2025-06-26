@@ -49,7 +49,7 @@ public class Rewarder {
      * Throws IllegalArgumentException if the node found is not a Predicate.
      * Throws IllegalArgumentException if no graph is found for the predicate.
      */
-    public static List<Multigraph> predicateGraph(CompModule cm, String name) {
+    public static DoubleMap<Integer, Multigraph> predicateGraph(CompModule cm, String name) {
         MASGVisitor visitor = new MASGVisitor();
         ModelUnit mu = new ModelUnit(null, cm);
         List<Node> roots = parser.ast.visitor.ASTNodeFinder.findNodesByTypeAndName(mu, Predicate.class, name, false);
@@ -58,7 +58,7 @@ public class Rewarder {
         }
         visitor.visit(mu, null);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-        List<Multigraph> graphs = new ArrayList<>();
+        DoubleMap<Integer, Multigraph> graphs = new DoubleMap<>();
         // get the forest of graphs by the roots
         for (Node root : roots) {
             if (!(root instanceof Predicate)) {
@@ -69,12 +69,9 @@ public class Rewarder {
             for (int i : forest.keys()) {
                 Multigraph graph = forest.get(i);
                 if (graph.getRoot().getSymbol().getName().equals(rootName)) {
-                    graphs.add(graph);
+                    graphs.put(i, graph);
                 }
             }
-        }
-        if (graphs.isEmpty()) {
-            throw new IllegalArgumentException("No graph found for predicate: " + name);
         }
         return graphs;
     }
