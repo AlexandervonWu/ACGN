@@ -145,6 +145,17 @@ public class Rewarder {
     }
 
     // compute the reward based on the instances of the predicate
+    /**
+     * Computes the reward for a given predicate based on positive and negative instances.
+     * This method evaluates the predicate on a pool of instances and calculates the reward based on the
+     * number of positive and negative instances that satisfy the predicate.
+     * @param cm The CompModule containing the Alloy model.
+     * @param instances A Pair containing the positive and negative instances of the predicate.
+     * @param newPredName The name of the predicate to evaluate.
+     * @param poolSize The size of the pool of instances to evaluate.
+     * @return The computed reward as a double value.
+     * Throws IllegalArgumentException if the instances are null or if the predicate cannot be evaluated.
+     */
     public static double computeReward(CompModule cm, Pair<A4Solution, A4Solution> instances, String newPredName, int poolSize) {
         A4Solution posInstance = instances.a;
         A4Solution negInstance = instances.b;

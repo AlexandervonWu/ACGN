@@ -8,6 +8,7 @@ import java.util.List;
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
+import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
@@ -28,7 +29,8 @@ public class Playground {
         ModelUnit mu = new ModelUnit(null, module);
         List<Node> root = ASTNodeFinder.findNodesByTypeAndName(mu, Predicate.class, "moved", false);
         Predicate rootMoved = (Predicate) root.get(0);
-        MASGVisitor visitor = new MASGVisitor();
+        GlobalVariables gv = new GlobalVariables();
+        MASGVisitor visitor = new MASGVisitor(gv);
         visitor.visit(mu, null);
         System.out.println("Finished visiting the model unit.");
         DoubleMap<Integer, Multigraph> map = visitor.getForest();

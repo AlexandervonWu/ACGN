@@ -222,7 +222,7 @@ public class Generator {
                                 }
                             }
                             AugmentedNode QtBody = downlinksQT.get(iter).getTarget();
-                            sb.append(" | ");
+                            sb.append(" |\n ");
                             tovTracker.putIfAbsent(QtBody, 0);
                             tovTracker.put(QtBody, tovTracker.get(QtBody) + 1);
                             int tovQtBody = tovTracker.get(QtBody);
