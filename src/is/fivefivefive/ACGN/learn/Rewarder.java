@@ -1,6 +1,5 @@
 package is.fivefivefive.ACGN.learn;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;

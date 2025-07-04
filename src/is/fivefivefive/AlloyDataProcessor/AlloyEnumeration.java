@@ -60,7 +60,7 @@ public class AlloyEnumeration {
         	instance.next(); //get next instance - for check commands this is counterexamples, for run commands this is scenarios
         	//Check if valid for a predicate
         	//If you know the name of the predicate:
-        	String pred = "inv1";
+        	String pred  = "inv1";
         	boolean result = (boolean) instance.eval(CompUtil.parseOneExpression_fromString(world, pred));
         	System.out.println(result);
         	

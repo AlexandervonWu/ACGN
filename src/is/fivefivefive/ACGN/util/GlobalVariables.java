@@ -2,7 +2,7 @@ package is.fivefivefive.ACGN.util;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.HashMap;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -23,7 +23,7 @@ public final class GlobalVariables {
     }
     public void addEdge(Symbol source, Symbol target, int position) {
         if (!edgeMap.containsKey(Pair.of(source, position))) {
-            edgeMap.put(Pair.of(source, position), new HashSet<Symbol>());
+            edgeMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
         }
         edgeMap.get(Pair.of(source, position)).add(target);
     }
@@ -38,7 +38,7 @@ public final class GlobalVariables {
         // Combine the edgeMaps
         for (Pair<Symbol, Integer> source : another.getEdgeMap().keySet()) {
             if (!edgeMap.containsKey(source)) {
-                edgeMap.put(source, new HashSet<Symbol>());
+                edgeMap.put(source, new LinkedHashSet<Symbol>());
             }
             edgeMap.get(source).addAll(another.getEdgeMap().get(source));
         }
