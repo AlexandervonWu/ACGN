@@ -12,8 +12,10 @@ import parser.etc.Pair;
 
 public final class GlobalVariables {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
+    private Map<Symbol, Integer> maxChildCount;
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
+        maxChildCount = new HashMap<Symbol, Integer>();
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
@@ -24,6 +26,14 @@ public final class GlobalVariables {
     public void addEdge(Symbol source, Symbol target, int position) {
         if (!edgeMap.containsKey(Pair.of(source, position))) {
             edgeMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
+        }
+        if (maxChildCount.containsKey(source)) {
+            int count = maxChildCount.get(source);
+            if (count < position + 1) {
+                maxChildCount.put(source, position + 1);
+            }
+        } else {
+            maxChildCount.put(source, position + 1);
         }
         edgeMap.get(Pair.of(source, position)).add(target);
     }
@@ -42,5 +52,15 @@ public final class GlobalVariables {
             }
             edgeMap.get(source).addAll(another.getEdgeMap().get(source));
         }
+    }
+    public int getMaxChildCount(Symbol source) {
+        if (maxChildCount.containsKey(source)) {
+            return maxChildCount.get(source);
+        } else {
+            return 0; // No children
+        }
+    }
+    public Map<Symbol, Integer> getMaxChildCountMap() {
+        return maxChildCount;
     }
 }

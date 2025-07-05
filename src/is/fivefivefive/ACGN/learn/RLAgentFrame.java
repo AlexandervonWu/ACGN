@@ -84,6 +84,40 @@ public class RLAgentFrame {
         return 0.0f; // Default probability if not found
     }
 
+    private static final double INERTIA = Hyperparams.INERTIA;
+
+    /**
+     * Update the Q-table with the reward for a given source symbol and its position.
+     * The update is done using the inertia and the reward.
+     * local inertia wanes 
+     * @param source
+     * @param position
+     * @param reward
+     */
+    public void updateQTable(Symbol source, int position, float reward) throws IllegalArgumentException {
+        float[] qVector = qTable.get(Pair.of(source, position));
+        if (qVector == null) {
+            throw new IllegalArgumentException("Q-table entry not found for " + source + " at position " + position);
+        }
+        float[] temp = new float[qVector.length];
+        for (int i = 0; i < qVector.length; i++) {
+            temp[i] = (float) (Math.log(qVector[i]) * INERTIA + Math.log(reward) * (1 - INERTIA));
+        }
+        // Softmax normalization
+        float sum = 0.0f;
+        for (float value : temp) {
+            sum += Math.exp(value);
+        }
+        for (int i = 0; i < temp.length; i++) {
+            temp[i] = (float) (Math.exp(temp[i]) / sum);
+        }
+        qTable.put(Pair.of(source, position), temp);
+    }
+
+    public float localReward(Symbol source, int position, Symbol candidate) {
+        return 0.0f; // Placeholder for local reward calculation
+    }
+
     public void testMethod() {
 
     }
