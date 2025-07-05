@@ -101,7 +101,7 @@ public class RLAgentFrame {
         }
         float[] temp = new float[qVector.length];
         for (int i = 0; i < qVector.length; i++) {
-            temp[i] = (float) (Math.log(qVector[i]) * INERTIA + Math.log(reward) * (1 - INERTIA));
+            temp[i] = (float) (Math.log(qVector[i]) * INERTIA + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
         }
         // Softmax normalization
         float sum = 0.0f;
