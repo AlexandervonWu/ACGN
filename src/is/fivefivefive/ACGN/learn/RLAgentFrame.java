@@ -2,6 +2,7 @@ package is.fivefivefive.ACGN.learn;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -118,6 +119,12 @@ public class RLAgentFrame {
         return 0.0f; // Placeholder for local reward calculation
     }
 
+    public String generateNextPred(String predName) {
+        Random rand = new Random();
+        // TODO: DEFINE THE ARBITRARY ROOT
+        return null;
+
+    }
     public void testMethod() {
 
     }
