@@ -1,12 +1,15 @@
 package is.fivefivefive.ACGN.learn;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
+import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
@@ -120,10 +123,30 @@ public class RLAgentFrame {
     }
 
     public String generateNextPred(String predName) {
-        Random rand = new Random();
-        // TODO: DEFINE THE ARBITRARY ROOT
+        // make a root node
+        AugmentedNode rootNode = new AugmentedNode(-1, -1);
+        Symbol root = new RefSymbol(rootNode, predName);
+        rootNode.setSymbol(root);
+        Multigraph predGraph = new Multigraph(rootNode, gv);
+        // same parameters as the ground truth
+        List<MASGEdge> downlinks = groundTruth.getRoot().getDownlinks();
+        int iter = 2;
+        if (downlinks.size() > 1) {
+            for (int i = 0; i < downlinks.size() - 1; ++i) {
+                MASGEdge edge = downlinks.get(i);
+                AugmentedNode param = edge.getTarget();
+                predGraph.connect(rootNode, param, predGraph, iter, 1);
+                iter++;
+            }
+        }
+        // generate the body root. 
+        generateNextNode(rootNode, 1, new HashMap<>());
         return null;
 
+    }
+    public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
+        // TODO : TOV TRACKER. 
+        Random rand = new Random();
     }
     public void testMethod() {
 
