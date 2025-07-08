@@ -147,6 +147,28 @@ public class RLAgentFrame {
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
         // TODO : TOV TRACKER. 
         Random rand = new Random();
+        Symbol localRootSym = localRoot.getSymbol();
+        Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
+        float[] distribution = qTable.get(Pair.of(localRootSym, position));
+        if (candidates == null || candidates.isEmpty() || distribution == null) {
+            return; // No candidates or no distribution available
+        }
+        // Select a candidate based on the distribution
+        float randomValue = rand.nextFloat();
+        float cumulativeProbability = 0.0f;
+        Symbol selectedCandidate = null;
+        for (int i = 0; i < candidates.size(); i++) {
+            cumulativeProbability += distribution[i];
+            if (randomValue <= cumulativeProbability) {
+                selectedCandidate = symbolId.get(i);
+                break;
+            }
+        }
+        if (selectedCandidate == null) {
+            return; // No candidate selected
+        }
+        // Create a new node for the selected candidate
+        
     }
     public void testMethod() {
 
