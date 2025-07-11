@@ -327,6 +327,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
+        globalVariables.addEdge(predNode, END_NODE, iter);
+        visitAndConnect(predNode, END_NODE, iter, subscope);
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         globalVariables.addEdge(predNode, bodyNode, 1);
         visitAndConnect(predNode, bodyNode, 1, subscope);
@@ -381,7 +383,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph), exprNode);
             arg.addSymbol(varSym);
-            uniqueNode.put(varSym, new AugmentedNode(127, uniqueNode.size(), varSym));
+            AugmentedNode varNode = new AugmentedNode(127, uniqueNode.size(), varSym);
+            uniqueNode.put(varSym, varNode);
+            varNode.setMaxDownlinks(0);
         }
         int iter = 2;
         for (ExprOrFormula v : n.getVariables()) {
@@ -409,6 +413,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             iter++;
         }
         // graph.addVertex(END_NODE);
+        globalVariables.addEdge(declRoot, END_NODE, iter);
         visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
     }
@@ -627,20 +632,32 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (n.isBoolean()) {
             if (val.equalsIgnoreCase("true")) {
                 Symbol boolSymbol = new ConstSymbol("true", true, false);
-                return new AugmentedNode(124, 1, boolSymbol);
+                AugmentedNode node = new AugmentedNode(124, 1, boolSymbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(boolSymbol, node);
+                return node;
             } else {
                 Symbol boolSymbol = new ConstSymbol("false", true, false);
-                return new AugmentedNode(124, 0, boolSymbol);
+                AugmentedNode node = new AugmentedNode(124, 0, boolSymbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(boolSymbol, node);
+                return node;
             }
         } else {
             if (val.equalsIgnoreCase("iden")) {
                 Symbol constSymbol = new ConstSymbol("iden", false, true);
-                return new AugmentedNode(121, 1, constSymbol);
+                AugmentedNode node = new AugmentedNode(121, 1, constSymbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(constSymbol, node);
+                return node;
             }
             try {
                 int semantic = Integer.parseInt(n.getValue());
                 Symbol constSymbol = new ConstSymbol(n.getValue(), false, false);
-                return new AugmentedNode(123, semantic, constSymbol);
+                AugmentedNode node = new AugmentedNode(123, semantic, constSymbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(constSymbol, node);
+                return node;
             } catch (Exception e) {
                 System.out.println("Type of constant not supported! ");
                 throw e;
@@ -666,6 +683,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (var instanceof VarExpr) { 
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
+            letNode.setMaxDownlinks(3);
             updateTimeOfVisit(letNode, arg);
             Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
             uniqueNode.put(varSymbol, letNode);
@@ -694,6 +712,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             ITEDummy = new AugmentedNode(syntactic, 1, ITESymbol);
             uniqueNode.put(ITESymbol, ITEDummy);
         }
+        ITEDummy.setMaxDownlinks(3);
         updateTimeOfVisit(ITEDummy, arg);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
@@ -1027,6 +1046,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
             uniqueNode.put(bopSymbol, bopNode);
         }
+        bopNode.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
@@ -1201,6 +1221,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
             uniqueNode.put(bopSymbol, bopNode);
         }
+        bopNode.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
@@ -1293,6 +1314,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
+        unopNode.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
@@ -1377,6 +1399,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
+        unopNode.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();

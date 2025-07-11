@@ -25,6 +25,7 @@ public class AugmentedNode {
     private Map<Pair<Multigraph, Integer>, List<MASGEdge>> downlinkMapTOV; // map by time of visit
     private boolean isShadow;
     private Symbol symbol;
+    private int maxDownlinks = -1; // -1 means no limit
     public AugmentedNode(int syntactic, int semantic, Symbol symbol) throws IllegalArgumentException {
         if (syntactic > 127 || syntactic < -128) {
             throw new IllegalArgumentException("Syntactic is a single byte! ");
@@ -157,5 +158,11 @@ public class AugmentedNode {
             sb.append("Downlink: ").append(e).append(", ");
         }
         return sb.toString();
+    }
+    public int getMaxDownlinks() {
+        return maxDownlinks;
+    }
+    public void setMaxDownlinks(int maxDownlinks) {
+        this.maxDownlinks = maxDownlinks;
     }
 }
