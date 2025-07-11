@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
+import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 
@@ -146,6 +147,9 @@ public class RLAgentFrame {
     }
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
         // TODO : TOV TRACKER. 
+        if (position > localRoot.getMaxDownlinks()) {
+            return; // No more positions to explore
+        }
         Symbol localRootSym = localRoot.getSymbol();
         tovMap.putIfAbsent(localRootSym, 0);
         tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
@@ -174,7 +178,14 @@ public class RLAgentFrame {
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
-        
+        if (!(newNode == MASGVisitor.END_NODE)) {
+            // next sibling
+            generateNextNode(localRoot, position + 1, tovMap);
+        }
+        if (newNode.getMaxDownlinks() > 0) {
+            // first child
+            generateNextNode(newNode, 1, tovMap);
+        }
     }
     public void testMethod() {
 
