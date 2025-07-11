@@ -92,7 +92,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
     public static final Symbol SHADOW_SYMBOL = new ShadowSymbol();
-    private final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
+    public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;

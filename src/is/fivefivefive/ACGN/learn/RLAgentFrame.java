@@ -146,8 +146,10 @@ public class RLAgentFrame {
     }
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
         // TODO : TOV TRACKER. 
-        Random rand = new Random();
         Symbol localRootSym = localRoot.getSymbol();
+        tovMap.putIfAbsent(localRootSym, 0);
+        tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
+        Random rand = new Random();
         Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
         if (candidates == null || candidates.isEmpty() || distribution == null) {
@@ -168,7 +170,11 @@ public class RLAgentFrame {
             return; // No candidate selected
         }
         // Create a new node for the selected candidate
-        
+        // AugmentedNode newNode = 
+        AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
+        localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
+        // TODO: Recursively generate the next node
+
     }
     public void testMethod() {
 
