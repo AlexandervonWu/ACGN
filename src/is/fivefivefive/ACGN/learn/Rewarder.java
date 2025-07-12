@@ -5,6 +5,7 @@ import java.util.List;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
 import edu.mit.csail.sdg.alloy4.ErrorWarning;
 import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.ast.Expr;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
@@ -150,12 +151,13 @@ public class Rewarder {
      * number of positive and negative instances that satisfy the predicate.
      * @param cm The CompModule containing the Alloy model.
      * @param instances A Pair containing the positive and negative instances of the predicate.
+     * @param originalPredName The name of the ground truth predicate to evaluate.
      * @param newPredName The name of the predicate to evaluate.
      * @param poolSize The size of the pool of instances to evaluate.
      * @return The computed reward as a double value.
      * Throws IllegalArgumentException if the instances are null or if the predicate cannot be evaluated.
      */
-    public static double computeReward(CompModule cm, Pair<A4Solution, A4Solution> instances, String newPredName, int poolSize) {
+    public static double computeReward(CompModule cm, Pair<A4Solution, A4Solution> instances, String originalPredName, String newPredName, int poolSize) {
         A4Solution posInstance = instances.a;
         A4Solution negInstance = instances.b;
         if (posInstance == null || negInstance == null) {
@@ -168,7 +170,7 @@ public class Rewarder {
             if (result) {
                 posCount++;
             }
-            posInstance.next(); // get next instance
+            posInstance = posInstance.next(); // get next instance
             posIter++;
         }
         // similarly for negative instances
@@ -179,8 +181,42 @@ public class Rewarder {
             if (!result) {
                 negCount++;
             }
-            negInstance.next(); // get next instance
+            negInstance = negInstance.next(); // get next instance
             negIter++;
+        }
+        if (posCount == poolSize && negCount == poolSize) {
+            // all instances are correctly classified
+            // SAT Solve;
+            // check overcoverage
+            String satCommandText1 = newPredName + " && !" + originalPredName + ";\n";
+            // check undercoverage
+            String satCommandText2 = newPredName + " && " + originalPredName + ";\n";
+            A4Reporter rep = new A4Reporter() {
+                @Override
+                public void warning(ErrorWarning msg) {
+                    System.out.println(msg.toString().trim());
+                    System.out.flush();
+                }
+            };
+
+            A4Options options = new A4Options();
+            options.solver = A4Options.SatSolver.SAT4J;
+            Expr satCommand1 = CompUtil.parseOneExpression_fromString(cm, satCommandText1);
+            Expr satCommand2 = CompUtil.parseOneExpression_fromString(cm, satCommandText2);
+            cm.addGlobal("l", CompUtil.parseOneExpression_fromString(cm, "List"));
+            Command cmd1 = new Command(true, Hyperparams.SCOPE, Hyperparams.SCOPE, Hyperparams.SCOPE, satCommand1);
+            Command cmd2 = new Command(true, Hyperparams.SCOPE, Hyperparams.SCOPE, Hyperparams.SCOPE, satCommand2);
+            A4Solution satSolution1 = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), cmd1, options);
+            A4Solution satSolution2 = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), cmd2, options);
+            if(satSolution1 == null && satSolution2 == null) {
+                return 1.0; // perfect coverage, no overcoverage or undercoverage
+            }
+            if (satSolution1 != null && satSolution1.satisfiable()) {
+                // TODO: Overcoverage detected
+            }
+            if (satSolution2 != null && satSolution2.satisfiable()) {
+                // TODO: Undercoverage detected
+            }
         }
         // Calculate the reward based on the counts of positive and negative instances
         double reward = (double) (posCount * negCount) / (double) (posIter * negIter + 1); // Avoid division by zero

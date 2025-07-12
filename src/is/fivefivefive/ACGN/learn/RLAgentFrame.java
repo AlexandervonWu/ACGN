@@ -11,6 +11,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
@@ -123,6 +124,14 @@ public class RLAgentFrame {
         return 0.0f; // Placeholder for local reward calculation
     }
 
+    /**
+     * Generate the next predicate in the ASG based on the ground truth.
+     * This method creates a root node and connects it to the parameters of the ground truth.
+     * It then generates the body root and recursively generates the next nodes in the ASG.
+     * 
+     * @param predName The name of the predicate to be generated.
+     * @return The generated code as a string.
+     */
     public String generateNextPred(String predName) {
         // make a root node
         AugmentedNode rootNode = new AugmentedNode(-1, -1);
@@ -142,9 +151,21 @@ public class RLAgentFrame {
         }
         // generate the body root. 
         generateNextNode(rootNode, 1, new HashMap<>());
-        return null;
+        Generator generator = new Generator();
+        currentAns = predGraph;
+        String code = generator.toCode(currentAns, rootNode, 1);
+        return code;
 
     }
+
+    /**
+     * Recursively generate the next node in the ASG based on the current node and its position.
+     * This method uses the Q-table to select candidates based on their probabilities.
+     * 
+     * @param localRoot The current node in the ASG.
+     * @param position The position in the ASG where the next node will be generated.
+     * @param tovMap A map tracking the number of times each symbol has been visited.
+     */
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
         // TODO : TOV TRACKER. 
         if (position > localRoot.getMaxDownlinks()) {
