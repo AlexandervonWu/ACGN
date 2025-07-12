@@ -8,5 +8,7 @@ public interface Symbol {
     public boolean isEndSymbol();
     public double getSignature();
     public void setSignature(double sig);
+    public int getMaxDownlinks();
+    public void setMaxDownlinks(int maxDownlinks);
     // public AugmentedNode toNode();
 }
