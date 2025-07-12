@@ -32,4 +32,12 @@ public class DummySymbol extends AbstractSymbol {
                 "type='" + type + '\'' +
                 '}';
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // DummySymbol does not have downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // DummySymbol does not have downlinks, so this method does nothing
+    }
 }

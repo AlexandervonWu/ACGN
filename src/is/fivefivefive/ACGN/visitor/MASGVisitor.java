@@ -602,6 +602,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode visit(Assertion n, ScopeTreeNode arg) {
         String name = n.getName();
         AugmentedNode assertionRoot = new AugmentedNode(21, 1);
+        assertionRoot.setMaxDownlinks(1);
         Multigraph subgraph = new Multigraph(assertionRoot, globalVariables);
         Symbol assertionSym = new AssertSymbol(name, subgraph);
         arg.addSymbol(assertionSym);

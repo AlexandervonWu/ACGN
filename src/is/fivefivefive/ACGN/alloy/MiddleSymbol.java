@@ -3,6 +3,7 @@ package is.fivefivefive.ACGN.alloy;
 public class MiddleSymbol extends AbstractSymbol {
     private String name;
     private boolean infiniteRoot;
+    private int maxDownlinks = 1; // Default value for maxDownlinks
     public MiddleSymbol(String name) {
         this.name = name;
     }
@@ -44,5 +45,13 @@ public class MiddleSymbol extends AbstractSymbol {
                 "name='" + name + '\'' +
                 ", infiniteRoot=" + infiniteRoot +
                 '}';
+    }
+    @Override
+    public int getMaxDownlinks() {
+        return maxDownlinks;
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        this.maxDownlinks = maxDownlinks;
     }
 }

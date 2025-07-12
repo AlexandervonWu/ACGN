@@ -35,4 +35,12 @@ public class ConstSymbol extends AbstractSymbol {
             return false;
         }
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // ConstSymbol does not have downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // ConstSymbol does not have downlinks, so this method does nothing
+    }
 }

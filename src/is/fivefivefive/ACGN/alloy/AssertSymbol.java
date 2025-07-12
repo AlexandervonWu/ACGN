@@ -23,4 +23,12 @@ public class AssertSymbol extends AbstractSymbol {
     public int hashCode() {
         return Hasher.hashByTwo(name.hashCode(), graph.hashCode());
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 1;
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // AssertSymbol does not have downlinks, so this method does nothing
+    }
 }

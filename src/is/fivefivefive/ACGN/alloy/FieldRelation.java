@@ -15,4 +15,11 @@ public class FieldRelation extends RelationSet {
     public String getType() {
         return "FieldRelation :" + confiners.toString();
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // FieldRelation has at most one downlink
+    }
+    public void setMaxDownlinks(int maxDownlinks) {
+        // FieldRelation does not have downlinks, so this method does nothing
+    }
 }

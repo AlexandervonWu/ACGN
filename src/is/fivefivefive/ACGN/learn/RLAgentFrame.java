@@ -121,6 +121,7 @@ public class RLAgentFrame {
     }
 
     public float localReward(Symbol source, int position, Symbol candidate) {
+        
         return 0.0f; // Placeholder for local reward calculation
     }
 

@@ -17,4 +17,12 @@ public final class EndSymbol extends AbstractSymbol {
     public int hashCode() {
         return 0;
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // EndSymbol does not have downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // EndSymbol does not have downlinks, so this method does nothing
+    }
 }

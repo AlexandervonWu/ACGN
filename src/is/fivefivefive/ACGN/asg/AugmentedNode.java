@@ -164,5 +164,6 @@ public class AugmentedNode {
     }
     public void setMaxDownlinks(int maxDownlinks) {
         this.maxDownlinks = maxDownlinks;
+        this.symbol.setMaxDownlinks(maxDownlinks);
     }
 }

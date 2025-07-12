@@ -35,4 +35,12 @@ public class RefSymbol extends AbstractSymbol {
     public AugmentedNode getNode() {
         return node;
     }
+    @Override
+    public int getMaxDownlinks() {
+        return -1; // RefSymbol can have any number of downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // RefSymbol does not have a fixed number of downlinks, so this method does nothing 
+    }
 }

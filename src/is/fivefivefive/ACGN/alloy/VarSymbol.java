@@ -47,4 +47,12 @@ public class VarSymbol extends AbstractSymbol {
     public void setConfinerNode(AugmentedNode confinerNode) {
         this.confinerNode = confinerNode;
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // VarSymbol does not have downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // VarSymbol does not have downlinks, so this method does nothing
+    }
 }

@@ -30,4 +30,12 @@ public final class ShadowSymbol extends AbstractSymbol {
                 "signature=" + getSignature() +
                 '}';
     }
+    @Override
+    public int getMaxDownlinks() {
+        return 0; // ShadowSymbol does not have downlinks
+    }
+    @Override
+    public void setMaxDownlinks(int maxDownlinks) {
+        // ShadowSymbol does not have downlinks, so this method does nothing
+    }
 }
