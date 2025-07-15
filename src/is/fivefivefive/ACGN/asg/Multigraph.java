@@ -135,6 +135,15 @@ public class Multigraph {
         }
         return null;
     }
+    public List<MASGEdge> edgesUnder(AugmentedNode node) {
+        List<MASGEdge> result = new ArrayList<MASGEdge>();
+        for (MASGEdge e : edges) {
+            if (e.getSource().equals(node)) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
     public int size() {
         return vertices.size();
     }

@@ -120,9 +120,35 @@ public class RLAgentFrame {
         qTable.put(Pair.of(source, position), temp);
     }
 
-    public float localReward(Symbol source, int position, Symbol candidate) {
-        
-        return 0.0f; // Placeholder for local reward calculation
+    public float localReward(Symbol source, int position, Symbol candidate, float rawReward) {
+        if (candidate == null) {
+            throw new IllegalArgumentException("Candidate symbol cannot be null");
+        }
+        if (candidate.getMaxDownlinks() == 0) {
+            return rawReward;
+        }
+        // look for all children of the candidate
+        AugmentedNode candidateNode = uniqueNodes.get(candidate);
+        if (candidateNode == null) {
+            throw new IllegalArgumentException("Candidate node not found for " + candidate);
+        }
+        List<MASGEdge> downlinks = currentAns.edgesUnder(candidateNode);
+        if (downlinks.isEmpty()) {
+            return rawReward; // No children, return the raw reward
+        }
+        float ans = 0.0f;
+        for (MASGEdge edge : downlinks) {
+            AugmentedNode targetNode = edge.getTarget();
+            Symbol targetSymbol = targetNode.getSymbol();
+            if (targetSymbol == null) {
+                throw new IllegalArgumentException("Target symbol cannot be null for edge: " + edge);
+            }
+            // Calculate the local reward based on the target symbol
+            float localImpact = qTable.get(Pair.of(source, position))[symbolId.rget(targetSymbol)];
+            float downReward = localReward(candidate, edge.getPosition(), targetSymbol, rawReward);
+            ans += localImpact * downReward;
+        }
+        return ans; // Placeholder for local reward calculation
     }
 
     /**
@@ -145,7 +171,7 @@ public class RLAgentFrame {
         if (downlinks.size() > 1) {
             for (int i = 0; i < downlinks.size() - 1; ++i) {
                 MASGEdge edge = downlinks.get(i);
-                AugmentedNode param = edge.getTarget();
+                AugmentedNode param = new AugmentedNode(edge.getTarget());
                 predGraph.connect(rootNode, param, predGraph, iter, 1);
                 iter++;
             }
