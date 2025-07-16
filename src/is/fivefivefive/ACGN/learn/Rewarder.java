@@ -24,6 +24,7 @@ import parser.etc.Pair;
  * It uses the MASGVisitor to traverse the model and extract the relevant graphs.
  * This class is part of the ACGN (Alloy Code Generation Network) project.
  */
+// TODO: Implement LFU Cache for the pool of instances.
 public class Rewarder {
     static final int COMMAND_CHECKER = 3; // after the third command, we can insert the new commands.
     /**
@@ -32,6 +33,20 @@ public class Rewarder {
      * @param file The path to the Alloy model file.
      * @return A CompModule representing the parsed Alloy model.
      */
+
+
+    private static class AlloyInstance {    
+        public A4Solution instance;
+        public AlloyInstance next;
+        public AlloyInstance last;
+        public int usageFrequency = 0; // for LFU cache
+        public AlloyInstance(A4Solution instance) {
+            this.instance = instance;
+            this.next = null;
+            this.last = null;
+            this.usageFrequency = 1; // initial usage frequency
+        }
+    }
     public static CompModule fromFile(String file) {
 		String file_name = file;
 		 A4Reporter rep = new A4Reporter() {
@@ -212,7 +227,7 @@ public class Rewarder {
                 return 1.0; // perfect coverage, no overcoverage or undercoverage
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
-                // TODO: Overcoverage detected
+                // TODO: Overcoverage detected, remove the least frequently used instance from the instance pool;
             }
             if (satSolution2 != null && satSolution2.satisfiable()) {
                 // TODO: Undercoverage detected

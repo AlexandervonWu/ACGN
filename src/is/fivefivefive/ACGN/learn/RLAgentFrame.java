@@ -120,6 +120,16 @@ public class RLAgentFrame {
         qTable.put(Pair.of(source, position), temp);
     }
 
+    /**
+     * Calculate the local reward for a candidate symbol based on its children in the ASG.
+     * This method looks for all children of the candidate symbol and calculates the local reward based on their probabilities.
+     * * If the candidate symbol has no children, it returns the raw reward.
+     * @param source the source symbol from which the candidate is derived.
+     * @param position the position in the ASG where the candidate is located.
+     * @param candidate the candidate symbol for which the local reward is calculated.
+     * @param rawReward the raw reward value associated with the generated current predicate.
+     * @return the calculated local reward based on the children of the candidate symbol.
+     */
     public float localReward(Symbol source, int position, Symbol candidate, float rawReward) {
         if (candidate == null) {
             throw new IllegalArgumentException("Candidate symbol cannot be null");
@@ -235,6 +245,7 @@ public class RLAgentFrame {
             generateNextNode(newNode, 1, tovMap);
         }
     }
+
     public void testMethod() {
 
     }
