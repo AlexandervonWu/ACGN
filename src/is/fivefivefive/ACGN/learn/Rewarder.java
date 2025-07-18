@@ -14,6 +14,7 @@ import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
+import is.fivefivefive.ACGN.util.InstancePool;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
@@ -33,20 +34,6 @@ public class Rewarder {
      * @param file The path to the Alloy model file.
      * @return A CompModule representing the parsed Alloy model.
      */
-
-
-    private static class AlloyInstance {    
-        public A4Solution instance;
-        public AlloyInstance next;
-        public AlloyInstance last;
-        public int usageFrequency = 0; // for LFU cache
-        public AlloyInstance(A4Solution instance) {
-            this.instance = instance;
-            this.next = null;
-            this.last = null;
-            this.usageFrequency = 1; // initial usage frequency
-        }
-    }
     public static CompModule fromFile(String file) {
 		String file_name = file;
 		 A4Reporter rep = new A4Reporter() {
@@ -135,7 +122,7 @@ public class Rewarder {
      * @return A Pair containing the positive and negative instances of the predicate.
      * @throws IllegalArgumentException if no predicate with the given name is found or if no satisfiable instance is found.
      */
-    public static Pair<A4Solution, A4Solution> instances(CompModule cm, String predName) {
+    public static Pair<InstancePool, InstancePool> instances(CompModule cm, String predName, int poolSize) {
         A4Reporter rep = new A4Reporter() {
             @Override
             public void warning(ErrorWarning msg) {
@@ -155,8 +142,22 @@ public class Rewarder {
         if (!posInstance.satisfiable() || !negInstance.satisfiable()) {
             throw new IllegalArgumentException("No satisfiable instance found for predicate: " + predName);
         }
+        // Create instance pools for positive and negative instances
+        InstancePool posInstancePool = new InstancePool(poolSize);
+        InstancePool negInstancePool = new InstancePool(poolSize);
+        // Add the first instances to the pools
+        posInstancePool.add(posInstance);
+        for (int i = 1; i < poolSize && posInstance.next() != null; i++) {
+            posInstance = posInstance.next(); // get next instance
+            posInstancePool.add(posInstance);
+        }
+        negInstancePool.add(negInstance);
+        for (int i = 1; i < poolSize && negInstance.next() != null; i++) {
+            negInstance = negInstance.next(); // get next instance
+            negInstancePool.add(negInstance);
+        }
         // Return the instances as a Pair
-        return Pair.of(posInstance, negInstance);
+        return Pair.of(posInstancePool, negInstancePool);
     }
 
     // compute the reward based on the instances of the predicate
@@ -172,11 +173,24 @@ public class Rewarder {
      * @return The computed reward as a double value.
      * Throws IllegalArgumentException if the instances are null or if the predicate cannot be evaluated.
      */
-    public static double computeReward(CompModule cm, Pair<A4Solution, A4Solution> instances, String originalPredName, String newPredName, int poolSize) {
-        A4Solution posInstance = instances.a;
-        A4Solution negInstance = instances.b;
+    public static double computeReward(CompModule cm, Pair<InstancePool, InstancePool> instances, String originalPredName, String newPredName, int poolSize) {
+        if (cm == null || instances == null || originalPredName == null || newPredName == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
+        if (poolSize <= 0) {
+            throw new IllegalArgumentException("Pool size must be greater than zero");
+        }
+        // Get the positive and negative instances from the Pair
+        InstancePool posInstances = instances.a;
+        InstancePool negInstances = instances.b;
+        if (posInstances == null || negInstances == null) {
+            throw new IllegalArgumentException("Instance pools cannot be null");
+        }
+        // Get the first instances from the pools
+        A4Solution posInstance = posInstances.getHead();
+        A4Solution negInstance = negInstances.getHead();
         if (posInstance == null || negInstance == null) {
-            throw new IllegalArgumentException("Instances cannot be null");
+            throw new IllegalArgumentException("No instances found in the pools");
         }
         int posIter = 0;
         int posCount = 0;
@@ -228,9 +242,11 @@ public class Rewarder {
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
                 // TODO: Overcoverage detected, remove the least frequently used instance from the instance pool;
+                posInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
             if (satSolution2 != null && satSolution2.satisfiable()) {
                 // TODO: Undercoverage detected
+                negInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
         }
         // Calculate the reward based on the counts of positive and negative instances

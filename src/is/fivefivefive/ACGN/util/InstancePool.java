@@ -148,11 +148,11 @@ public class InstancePool {
     public boolean isFull() {
         return size == capacity;
     }
-    public AlloyInstance getHead() {
-        return head;
+    public A4Solution getHead() {
+        return head.instance;
     }
-    public AlloyInstance getTail() {
-        return tail;
+    public A4Solution getTail() {
+        return tail.instance;
     }
     public void setHead(AlloyInstance head) {
         this.head = head;
