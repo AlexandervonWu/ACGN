@@ -27,7 +27,8 @@ import parser.etc.Pair;
  */
 // TODO: Implement LFU Cache for the pool of instances.
 public class Rewarder {
-    static final int COMMAND_CHECKER = 3; // after the third command, we can insert the new commands.
+    private static final int COMMAND_CHECKER = 3; // after the third command, we can insert the new commands.
+    private static final int POOL_REPLACEMENT = 5; // the number of instances to replace in the pool if overcoverage or undercoverage is detected.
     /**
      * Compiles an Alloy model from a file and returns the CompModule representation.
      * This method is used to parse the Alloy model and create a CompModule object that can be used for further processing.
@@ -198,6 +199,9 @@ public class Rewarder {
             boolean result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
             if (result) {
                 posCount++;
+            } else {
+                // If the instance does not satisfy the new predicate, increment its usage frequency
+                posInstances.incrementUsageFrequency(posInstance);
             }
             posInstance = posInstance.next(); // get next instance
             posIter++;
@@ -209,6 +213,9 @@ public class Rewarder {
             boolean result = (boolean) negInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
             if (!result) {
                 negCount++;
+            } else {
+                // If the instance does not satisfy the new predicate, increment its usage frequency
+                negInstances.incrementUsageFrequency(negInstance);
             }
             negInstance = negInstance.next(); // get next instance
             negIter++;
@@ -242,11 +249,13 @@ public class Rewarder {
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
                 // TODO: Overcoverage detected, remove the least frequently used instance from the instance pool;
-                posInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
+                for (int i = 0; i < POOL_REPLACEMENT; ++i) 
+                    posInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
             if (satSolution2 != null && satSolution2.satisfiable()) {
                 // TODO: Undercoverage detected
-                negInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
+                for (int i = 0; i < POOL_REPLACEMENT; ++i) 
+                    negInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
         }
         // Calculate the reward based on the counts of positive and negative instances
