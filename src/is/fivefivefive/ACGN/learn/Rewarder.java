@@ -93,8 +93,8 @@ public class Rewarder {
      */
     private static String addCommands(String predName) {
         StringBuilder sb = new StringBuilder();
-        sb.append("run ").append(predName).append(";\n");
-        sb.append("run !").append(predName).append(";\n");
+        sb.append("run ").append(predName).append("\n");
+        sb.append("run {!").append(predName).append("}\n");
         return sb.toString();
     }
 
