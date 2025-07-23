@@ -13,9 +13,11 @@ import parser.etc.Pair;
 public final class GlobalVariables {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
     private Map<Symbol, Integer> maxChildCount;
+    private Map<Pair<Symbol, Integer>, float[]> initQTable;
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         maxChildCount = new HashMap<Symbol, Integer>();
+        initQTable = new HashMap<Pair<Symbol, Integer>, float[]>();
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
@@ -62,5 +64,11 @@ public final class GlobalVariables {
     }
     public Map<Symbol, Integer> getMaxChildCountMap() {
         return maxChildCount;
+    }
+    public void setInitQTable(Map<Pair<Symbol, Integer>, float[]> initQTable) {
+        this.initQTable = initQTable;
+    }
+    public Map<Pair<Symbol, Integer>, float[]> getInitQTable() {
+        return initQTable;
     }
 }

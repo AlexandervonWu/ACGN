@@ -34,16 +34,17 @@ public class RLAgentFrame {
         this.gv = gv;
         this.groundTruth = groundTruth;
         this.uniqueNodes = uniqueNodes;
-        qTable = new HashMap<Pair<Symbol, Integer>, float[]>();
+        qTable = gv.getInitQTable() == null ? new HashMap<Pair<Symbol, Integer>, float[]>() : gv.getInitQTable();
         symbolId = new DoubleMap<Integer, Symbol>();
     }
     public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, DoubleMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns) {
-        this.gv = gv;
-        this.groundTruth = groundTruth;
+        this(gv, groundTruth, uniqueNodes);
         this.currentAns = currentAns;
-        this.uniqueNodes = uniqueNodes;
-        qTable = new HashMap<Pair<Symbol, Integer>, float[]>();
-        symbolId = new DoubleMap<Integer, Symbol>();
+    }
+    // also the case with the initial Q-table
+    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, DoubleMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns, Map<Pair<Symbol, Integer>, float[]> qTable) {
+        this(gv, groundTruth, uniqueNodes, currentAns);
+        this.qTable = qTable;
     }
 
     /**
@@ -69,6 +70,7 @@ public class RLAgentFrame {
                 }
             }
         }
+        gv.setInitQTable(qTable);
     }
 
     /**

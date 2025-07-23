@@ -299,6 +299,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private AugmentedNode visitPredOrFun(PredOrFun n, ScopeTreeNode arg) {
+        if (arg == null) {
+            rootScope = new ScopeTreeNode(scopeNodeId, null, null);
+            scopeNodeId++;
+        }
         numPredicates++; 
         scopeNodeId++;
         // Once declared, the PredNode when called is just a near-leaf (d=1) node symbol. 
