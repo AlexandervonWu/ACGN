@@ -8,7 +8,7 @@ import is.fivefivefive.ACGN.learn.Hyperparams;
 
 // TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
-    public static final int END_SYMBOL_ID = 5;
+    public static final int END_SYMBOL_ID = 3;
     static class Edge {
         int source, target, position, count;
         Edge(int s, int t, int p, int c) {
@@ -230,7 +230,7 @@ public class SGDEdgeTrainer {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             args = new String[1];
-            args[0] = "edge_counts_num_wshadow_update.csv";
+            args[0] = "edge_counts_indiced_wshadow.csv";
         }
         
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
