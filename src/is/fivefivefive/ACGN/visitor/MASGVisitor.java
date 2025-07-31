@@ -318,7 +318,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         forest.put(numPredicates, predGraph);
         // localSymbols.put(predGraph, new HashSet<Symbol>());
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, rootScope, predGraph);
-        System.out.println("Scope affliation root: " + subscope.getAffliation().getRoot());
+        // System.out.println("Scope affliation root: " + subscope.getAffliation().getRoot());
         updateTimeOfVisit(predNode, subscope);
         predNode.initLocalTovAsRoot(predGraph);
         int iter = 2;
@@ -402,14 +402,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     ParamDecl pd = (ParamDecl) n;
                     psv = new PrettyStringVisitor();
                     String paramStr = psv.visit(pd, null);
-                    System.out.println("Visiting variable " + varStr + " in parameter declaration " + paramStr);
+                    // System.out.println("Visiting variable " + varStr + " in parameter declaration " + paramStr);
                 } else if (n instanceof VarDecl) {
                     VarDecl vd = (VarDecl) n;
                     psv = new PrettyStringVisitor();
                     String varDeclStr = psv.visit(vd, null);
-                    System.out.println("Visiting variable " + varStr + " in variable declaration " + varDeclStr);
+                    // System.out.println("Visiting variable " + varStr + " in variable declaration " + varDeclStr);
                 } else {
-                    System.out.println("Visiting variable " + varStr + " in unknown declaration " + n.getClass().getSimpleName());
+                    // System.out.println("Visiting variable " + varStr + " in unknown declaration " + n.getClass().getSimpleName());
                 }
             }
             globalVariables.addEdge(declRoot, varNode, iter);

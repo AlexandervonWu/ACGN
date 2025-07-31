@@ -1,5 +1,6 @@
 package is.fivefivefive.ACGN.asg;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +25,7 @@ import is.fivefivefive.ACGN.util.GlobalVariables;
 /*
  * A naive, intermediate multigraph representation of the Multi-ASG.
  */
-public class Multigraph {
+public class Multigraph implements Serializable {
     private Set<AugmentedNode> vertices;
     private List<MASGEdge> edges;
     private GlobalVariables globalVariables;

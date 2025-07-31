@@ -1,10 +1,12 @@
 package is.fivefivefive.ACGN.asg;
 // import com.abdulfatir.jcomplexnumber.ComplexNumber;
 
+import java.io.Serializable;
+
 /*
  * An edge in the naive, intermediate Multi-ASG. 
  */
-public class MASGEdge {
+public class MASGEdge implements Serializable {
     private int position;
     private int timeOfVisit;
     private AugmentedNode source;

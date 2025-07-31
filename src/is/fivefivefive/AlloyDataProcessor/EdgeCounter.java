@@ -10,6 +10,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.etc.Triple;
+import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
@@ -21,6 +22,7 @@ import java.util.Map;
 import edu.mit.csail.sdg.parser.CompModule;
 
 public class EdgeCounter {
+    private static GlobalVariables gv = new GlobalVariables();
     private static int modelCount = 0;
     public static Map<Triple<Symbol, Symbol, Integer>, Integer> countEdges(String dir) {
         File dirFile = new File(dir);
@@ -36,7 +38,7 @@ public class EdgeCounter {
                     try {
                         CompModule module = AlloyUtil.compileAlloyModule(dir + "/" + file.getName());
                         ModelUnit mu = new ModelUnit(null, module);
-                        MASGVisitor visitor = new MASGVisitor();
+                        MASGVisitor visitor = new MASGVisitor(gv);
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
                             if (id == 0) continue; // Skip the root node
@@ -97,6 +99,8 @@ public class EdgeCounter {
     public static void main(String[] args) {
         String dir = "classified-data"; // Replace with your directory path
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
+        // write GlobalVariables gv to a file
+        GlobalVariables.writeToFile("global_variables.ser", gv);
         int uniqueNodeCount = 0;
         DoubleMap<Symbol, Integer> nodeId = new DoubleMap<>();
         if (edgeCountMap != null) {

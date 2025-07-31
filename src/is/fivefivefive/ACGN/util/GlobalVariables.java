@@ -3,6 +3,12 @@ package is.fivefivefive.ACGN.util;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -10,7 +16,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import parser.etc.Pair;
 
-public final class GlobalVariables {
+public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
     private Map<Symbol, Integer> maxChildCount;
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
@@ -70,5 +76,23 @@ public final class GlobalVariables {
     }
     public Map<Pair<Symbol, Integer>, float[]> getInitQTable() {
         return initQTable;
+    }
+    public static void writeToFile(String filename, GlobalVariables gv) {
+        // serialize the GlobalVariables object to a file
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename)))
+        {
+            oos.writeObject(gv);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static GlobalVariables readFromFile(String filename) {
+        // deserialize the GlobalVariables object from a file
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+            return (GlobalVariables) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

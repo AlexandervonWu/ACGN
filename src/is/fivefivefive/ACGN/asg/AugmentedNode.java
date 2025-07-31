@@ -1,5 +1,6 @@
 package is.fivefivefive.ACGN.asg;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,7 @@ import is.fivefivefive.ACGN.test.Playground;
  * A node in the Abstract Semantic Graph.
  * NOTE THAT SIGNATURE DOES NOT RELATED TO THE SEMANTIC AND SYNTACTIC PREASSIGNED CODES ANYMORE! 
  */
-public class AugmentedNode {
+public class AugmentedNode implements Serializable {
     private byte syntactic;
     private int semantic;
     // private double signature;

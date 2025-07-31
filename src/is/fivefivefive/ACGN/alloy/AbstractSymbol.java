@@ -1,6 +1,8 @@
 package is.fivefivefive.ACGN.alloy;
 
-public abstract class AbstractSymbol implements Symbol {
+import java.io.Serializable;
+
+public abstract class AbstractSymbol implements Symbol, Serializable {
     private double signature;
     public AbstractSymbol() {}
     public String getName() {
