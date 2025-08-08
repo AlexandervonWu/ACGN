@@ -6,4 +6,5 @@ public class Hyperparams {
     public static final double INERTIA = 0.85;
     public static final double CLASS_SYMBOL_VARIANCE = 0.01;
     public static final int SCOPE = 3;
+    public static final int POOL_SIZE = 100;
 }
