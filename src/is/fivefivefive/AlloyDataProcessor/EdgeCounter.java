@@ -17,6 +17,7 @@ import parser.util.AlloyUtil;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import edu.mit.csail.sdg.parser.CompModule;
@@ -103,6 +104,7 @@ public class EdgeCounter {
         GlobalVariables.writeToFile("global_variables.ser", gv);
         int uniqueNodeCount = 0;
         DoubleMap<Symbol, Integer> nodeId = new DoubleMap<>();
+        String nodeIdFilePath = "node_id.csv";
         if (edgeCountMap != null) {
             // TODO:  combine the entries with the same key
             for (Map.Entry<Triple<Symbol, Symbol, Integer>, Integer> entry : edgeCountMap.entrySet()) {
@@ -114,10 +116,22 @@ public class EdgeCounter {
                 // write the data to a file， generate the CSV
                 if (!nodeId.containsKey(edge.x)) {
                     nodeId.put(edge.x, uniqueNodeCount);
+                    String csvLine = uniqueNodeCount + "," + edge.x.getName();
+                    try (java.io.FileWriter writer = new java.io.FileWriter(nodeIdFilePath, true)) {
+                        writer.write(csvLine + "\n");
+                    } catch (java.io.IOException e) {
+                        System.out.println("Error writing to CSV file: " + e.getMessage());
+                    }
                     uniqueNodeCount++;
                 }
                 if (!nodeId.containsKey(edge.y)) {
                     nodeId.put(edge.y, uniqueNodeCount);
+                    String csvLine = uniqueNodeCount + "," + edge.y.getName();
+                    try (java.io.FileWriter writer = new java.io.FileWriter(nodeIdFilePath, true)) {
+                        writer.write(csvLine + "\n");
+                    } catch (java.io.IOException e) {
+                        System.out.println("Error writing to CSV file: " + e.getMessage());
+                    }
                     uniqueNodeCount++;
                 }
                 String x = edge.x.getName();

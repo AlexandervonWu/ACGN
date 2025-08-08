@@ -36,6 +36,10 @@ public class ConstSymbol extends AbstractSymbol {
         }
     }
     @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+    @Override
     public int getMaxDownlinks() {
         return 0; // ConstSymbol does not have downlinks
     }
