@@ -3,12 +3,15 @@ package is.fivefivefive.ACGN.test;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
+import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.learn.RLAgentFrame;
 import is.fivefivefive.ACGN.learn.Rewarder;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
@@ -38,6 +41,19 @@ public class RLTest {
         Predicate groundTruth = (Predicate) groundTruthNode;
         Predicate studentSolution = (Predicate) studentSolutionNode;
         MASGVisitor visitor = new MASGVisitor(gv);
+        AugmentedNode groundTruthRoot = groundTruth.accept(visitor, null);
+        AugmentedNode studentSolutionRoot = studentSolution.accept(visitor, null);
+        Multigraph groundTruthGraph = visitor.getForest().get(0);
+        Multigraph studentSolutionGraph = visitor.getForest().get(1);
+        if (groundTruthRoot == null || studentSolutionRoot == null) {
+            System.out.println("Failed to create AugmentedNode for ground truth or student solution.");
+            throw new RuntimeException("AugmentedNode creation failed.");
+        }
+        // unique nodes? gv? 
+        DoubleMap<Symbol, AugmentedNode> uniqueNodes = visitor.getUniqueNode();
+        RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);
+        agent.initialize();
+        // begin RL
         
         return null;
     }
