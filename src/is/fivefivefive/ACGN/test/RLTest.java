@@ -1,5 +1,6 @@
 package is.fivefivefive.ACGN.test;
 
+import java.io.File;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
@@ -42,10 +43,11 @@ public class RLTest {
         Predicate groundTruth = (Predicate) groundTruthNode;
         Predicate studentSolution = (Predicate) studentSolutionNode;
         MASGVisitor visitor = new MASGVisitor(gv);
-        AugmentedNode groundTruthRoot = groundTruth.accept(visitor, null);
-        AugmentedNode studentSolutionRoot = studentSolution.accept(visitor, null);
+        AugmentedNode globalRoot = mu.accept(visitor, null);
         Multigraph groundTruthGraph = visitor.getForest().get(0);
         Multigraph studentSolutionGraph = visitor.getForest().get(1);
+        AugmentedNode groundTruthRoot = groundTruthGraph.getRoot();
+        AugmentedNode studentSolutionRoot = studentSolutionGraph.getRoot();
         if (groundTruthRoot == null || studentSolutionRoot == null) {
             System.out.println("Failed to create AugmentedNode for ground truth or student solution.");
             throw new RuntimeException("AugmentedNode creation failed.");
@@ -73,5 +75,60 @@ public class RLTest {
         }
         System.out.println("Failed to learn the predicate within the maximum steps.");
         return Pair.of(false, maxReward);
+    }
+
+    public static void main(String[] args) {
+        GlobalVariables gv = GlobalVariables.readFromFile("global_variables.ser");
+        if (gv == null) {
+            System.out.println("Failed to load global variables.");
+            return;
+        }
+        final int CPU_THREADS = 32;
+        // parallelize by files
+        String path = "classified-data";
+        File dir = new File(path);
+        if (!dir.exists() || !dir.isDirectory()) {
+            System.out.println("Invalid directory: " + path);
+            return;
+        }
+        File[] files = dir.listFiles();
+        if (files == null || files.length == 0) {
+            System.out.println("No files found in the directory: " + path);
+            return;
+        }
+        // PARALLELIZE
+        for (File file : files) {
+            // first layer are still directories
+            if (file.isDirectory()) {
+                System.out.println("Processing directory: " + file.getName());
+                String subDirPath = file.getAbsolutePath();
+                File[] subFiles = new File(subDirPath).listFiles();
+                
+                if (subFiles != null && subFiles.length > 0) {
+                    for (File subFile : subFiles) {
+                        String dirName = subFile.getName();
+                        File[] subsubFiles = subFile.listFiles();
+                        for (File subsubFile : subsubFiles) {
+                            if (subsubFile.isDirectory()) {
+                                System.out.println("Processing subdirectory: " + subsubFile.getName());
+                            } else if (subsubFile.isFile() && subsubFile.getName().endsWith(".als")) {
+                                // add a new thread for each file
+                                System.out.println("Processing file: " + subsubFile.getName());
+                                Pair<Boolean, Double> result = learn(gv, subsubFile.getAbsolutePath(), 1000);
+                                if (result.a) {
+                                    System.out.println("Successfully learned from " + subsubFile.getName() + " in " + result.b + " steps.");
+                                } else {
+                                    System.out.println("Failed to learn from " + subsubFile.getName() + ". Max reward: " + result.b);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    System.out.println("No .als files found in the directory: " + subDirPath
+                            + ". Skipping this directory.");
+                }
+            }
+        }
+        System.out.println("All files processed.");
     }
 }

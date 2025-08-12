@@ -53,6 +53,10 @@ public class RLAgentFrame {
      */
     public void initialize() {
         // initialize the Q-table
+        if (gv.getInitQTable() != null) {
+            qTable = gv.getInitQTable();
+            return; // already initialized
+        }
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
@@ -184,6 +188,7 @@ public class RLAgentFrame {
             for (int i = 0; i < downlinks.size() - 1; ++i) {
                 MASGEdge edge = downlinks.get(i);
                 AugmentedNode param = new AugmentedNode(edge.getTarget());
+                predGraph.addVertex(param);
                 predGraph.connect(rootNode, param, predGraph, iter, 1);
                 iter++;
             }
