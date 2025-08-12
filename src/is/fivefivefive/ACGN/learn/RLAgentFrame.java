@@ -12,6 +12,8 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
+import is.fivefivefive.ACGN.test.Playground;
+import is.fivefivefive.ACGN.test.RLTest;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
@@ -53,10 +55,10 @@ public class RLAgentFrame {
      */
     public void initialize() {
         // initialize the Q-table
-        if (gv.getInitQTable() != null) {
+        /*if (gv.getInitQTable() != null) {
             qTable = gv.getInitQTable();
             return; // already initialized
-        }
+        }*/
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
@@ -180,9 +182,15 @@ public class RLAgentFrame {
         AugmentedNode rootNode = new AugmentedNode(-1, -1);
         Symbol root = new RefSymbol(rootNode, predName);
         rootNode.setSymbol(root);
+        root.setMaxDownlinks(1);
         Multigraph predGraph = new Multigraph(rootNode, gv);
         // same parameters as the ground truth
         List<MASGEdge> downlinks = groundTruth.getRoot().getDownlinks();
+        if (RLTest.DEBUG) {
+            System.out.println("Generating predicate: " + predName);
+            System.out.println("Downlinks size: " + downlinks.size());
+            System.out.println(downlinks);
+        }
         int iter = 2;
         if (downlinks.size() > 1) {
             for (int i = 0; i < downlinks.size() - 1; ++i) {
@@ -193,6 +201,7 @@ public class RLAgentFrame {
                 iter++;
             }
         }
+        rootNode.setMaxDownlinks(1);
         // generate the body root. 
         generateNextNode(rootNode, 1, new HashMap<>());
         Generator generator = new Generator();
@@ -220,7 +229,14 @@ public class RLAgentFrame {
         tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
         Random rand = new Random();
         Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
+        if (RLTest.DEBUG) {
+            System.out.println(qTable);
+        }
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
+        if (RLTest.DEBUG) {
+            System.out.println(distribution);
+        }
+        
         if (candidates == null || candidates.isEmpty() || distribution == null) {
             return; // No candidates or no distribution available
         }
@@ -232,6 +248,9 @@ public class RLAgentFrame {
             cumulativeProbability += distribution[i];
             if (randomValue <= cumulativeProbability) {
                 selectedCandidate = symbolId.get(i);
+                if (RLTest.DEBUG) {
+                    System.out.println("Selected candidate: " + selectedCandidate + " with probability: " + distribution[i]);
+                }
                 break;
             }
         }
@@ -243,7 +262,7 @@ public class RLAgentFrame {
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
-        if (!(newNode == MASGVisitor.END_NODE)) {
+        if (!(newNode == MASGVisitor.END_NODE) && localRoot.getMaxDownlinks() > position) {
             // next sibling
             generateNextNode(localRoot, position + 1, tovMap);
         }

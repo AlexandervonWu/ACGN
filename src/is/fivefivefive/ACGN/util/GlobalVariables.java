@@ -17,6 +17,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.test.Playground;
 import parser.etc.Pair;
 
+// TODO: Globalize all unique nodes. 
 public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
     private Map<Symbol, Integer> maxChildCount;

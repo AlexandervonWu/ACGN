@@ -43,4 +43,18 @@ public class RefSymbol extends AbstractSymbol {
     public void setMaxDownlinks(int maxDownlinks) {
         // RefSymbol does not have a fixed number of downlinks, so this method does nothing 
     }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof RefSymbol)) return false;
+        RefSymbol that = (RefSymbol) o;
+        return isEnd == that.isEnd && name.equals(that.name) && type.equals(that.type);
+    }
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + type.hashCode();
+        result = 31 * result + (isEnd ? 1 : 0);
+        return result;
+    }
 }

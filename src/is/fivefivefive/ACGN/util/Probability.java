@@ -23,6 +23,10 @@ public class Probability {
         Set<Symbol> candidates = gv.getCandidates(source, position);
         if (candidates != null) {
             AugmentedNode sourceNode = uniqueNodes.get(source);
+            if (sourceNode == null) {
+                System.out.println("Source node not found for symbol: " + source);
+                throw new RuntimeException("Source node not found for symbol: " + source.getName());
+            }
             double sourceSig = sourceNode.getSignature();
             double sum = 0;
             for (Symbol candidate : candidates) {

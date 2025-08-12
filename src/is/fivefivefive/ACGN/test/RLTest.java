@@ -21,6 +21,7 @@ import parser.ast.visitor.ASTNodeFinder;
 import parser.etc.Pair;
 
 public class RLTest {
+    public static final boolean DEBUG = true;
     private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) {
         CompModule cm = Rewarder.fromFile(path);
         if (cm == null) {
@@ -42,9 +43,10 @@ public class RLTest {
         Node studentSolutionNode = predicates.get(0);
         Predicate groundTruth = (Predicate) groundTruthNode;
         Predicate studentSolution = (Predicate) studentSolutionNode;
-        MASGVisitor visitor = new MASGVisitor(gv);
-        AugmentedNode globalRoot = mu.accept(visitor, null);
-        Multigraph groundTruthGraph = visitor.getForest().get(0);
+        MASGVisitor visitor = new MASGVisitor();
+        visitor.visit(mu, null);
+        Multigraph groundTruthGraph = visitor.getForest().get(2);
+        
         Multigraph studentSolutionGraph = visitor.getForest().get(1);
         AugmentedNode groundTruthRoot = groundTruthGraph.getRoot();
         AugmentedNode studentSolutionRoot = studentSolutionGraph.getRoot();
@@ -54,6 +56,8 @@ public class RLTest {
         }
         // unique nodes? gv? 
         DoubleMap<Symbol, AugmentedNode> uniqueNodes = visitor.getUniqueNode();
+        System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
+        System.out.println(uniqueNodes);
         RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);
         agent.initialize();
         // begin RL
@@ -62,6 +66,9 @@ public class RLTest {
         for (int i = 0; i < maxSteps; ++i) {
             String name = "invX" + i;
             String nextPredCode = agent.generateNextPred(name);
+            if (DEBUG) {
+                System.out.println(nextPredCode);
+            }
             double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), name, Hyperparams.POOL_SIZE);
             if (reward > maxReward) {
                 maxReward = reward;

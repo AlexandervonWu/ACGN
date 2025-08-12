@@ -316,6 +316,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Symbol predSymbol = new RefSymbol(predNode, predName);
         predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);
+        // System.out.println("Visiting predicate: " + predName + " with symbol: " + predSymbol + " into uniqueNode. ");
         aame.addSymbol(predName, predSymbol);
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
         forest.put(numPredicates, predGraph);
@@ -1405,6 +1406,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             unopNode = uniqueNode.get(unopSymbol);
         } else {
             unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
+            System.out.println("Creating new unary node: " + unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
         unopNode.setMaxDownlinks(1);
