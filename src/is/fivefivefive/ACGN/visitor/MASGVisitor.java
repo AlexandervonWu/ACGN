@@ -8,6 +8,7 @@ import java.util.List;
 
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -86,7 +87,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // private DoubleMap<Multigraph, Set<Symbol>> localSymbols;
     private ScopeTreeNode rootScope;
     // Unique nodes with unique symbols to represent.
-    private DoubleMap<Symbol, AugmentedNode> uniqueNode;
+    private BiMap<Symbol, AugmentedNode> uniqueNode;
     public static final Symbol END_SYMBOL = new EndSymbol();
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
@@ -106,7 +107,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         scopeNodeId = 0;
         globalVariables = new GlobalVariables();
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
-        uniqueNode = new DoubleMap<>();
+        uniqueNode = new BiMap<>();
         uniqueNode.put(END_SYMBOL, END_NODE);
         uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
         uniqueNode.put(SHADOW_SYMBOL, SHADOW_NODE);
