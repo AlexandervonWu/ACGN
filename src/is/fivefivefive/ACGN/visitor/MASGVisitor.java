@@ -253,6 +253,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (!unfoundSigs.isEmpty()) {
             throw new RuntimeException("Unfound sigs: " + unfoundSigs);
         }
+        globalVariables.addUniqueNodes(uniqueNode);
         return mu;
     }
 

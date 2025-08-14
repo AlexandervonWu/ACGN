@@ -82,7 +82,7 @@ public class EdgeCounter {
         }
         return edgeCountMap;
     }
-    private static Symbol getSymbolForPretrain(Symbol original) {
+    public static Symbol getSymbolForPretrain(Symbol original) {
         if (original instanceof VarSymbol) {
             return new DummySymbol("var");
         } else if (original instanceof RefSymbol) {

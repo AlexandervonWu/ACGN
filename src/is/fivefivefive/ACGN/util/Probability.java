@@ -41,7 +41,8 @@ public class Probability {
                 double candidateSig = uniqueNodes.get(candidate).getSignature();
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff / TEMPERATURE);
-                probabilities[i++] = (float) (expDiff / sum);
+                probabilities[i] = (float) (expDiff / sum);
+                i++;
             }
             return probabilities;
         }

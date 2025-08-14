@@ -11,10 +11,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 
+import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
+import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.test.Playground;
+import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
 import parser.etc.Pair;
 
 // TODO: Globalize all unique nodes. 
@@ -22,6 +25,8 @@ public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
     private Map<Symbol, Integer> maxChildCount;
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
+    private BiMap<Symbol, AugmentedNode> uniqueNode;
+    private Map<Symbol, Double> pretrainedSignatures;
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         maxChildCount = new HashMap<Symbol, Integer>();
@@ -80,6 +85,27 @@ public final class GlobalVariables implements Serializable {
     }
     public Map<Pair<Symbol, Integer>, float[]> getInitQTable() {
         return initQTable;
+    }
+    public BiMap<Symbol, AugmentedNode> getUniqueNodes() {
+        return uniqueNode;
+    }
+    public void setUniqueNodes(BiMap<Symbol, AugmentedNode> uniqueNode) {
+        this.uniqueNode = uniqueNode;
+    }
+    public void addUniqueNodes(BiMap<Symbol, AugmentedNode> nextUniqueNodes) {
+        for (Symbol key : nextUniqueNodes.keys()) {
+            Symbol keyMod = EdgeCounter.getSymbolForPretrain(key);
+            AugmentedNode node = nextUniqueNodes.get(key);
+            if (keyMod instanceof DummySymbol) {
+                // make a dummy AugmentedNode
+                int dummyId = uniqueNode.size();
+                AugmentedNode dummyNode = new AugmentedNode(-1, dummyId, keyMod);
+                node = dummyNode;
+            }
+            if (!uniqueNode.containsKey(keyMod)) {
+                uniqueNode.put(keyMod, node);
+            }
+        }
     }
     public static void writeToFile(String filename, GlobalVariables gv) {
         // serialize the GlobalVariables object to a file
