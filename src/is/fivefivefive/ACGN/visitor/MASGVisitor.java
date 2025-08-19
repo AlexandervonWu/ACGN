@@ -821,7 +821,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             AugmentedNode varDeclNode = var.accept(this, subscope);
             globalVariables.addEdge(qtRoot, varDeclNode, 2);
             visitAndConnect(qtRoot, varDeclNode, iter, subscope);
-            System.out.println("VarDecl at " + iter + ": " + var);
+            if (Playground.DEBUG) System.out.println("VarDecl at " + iter + ": " + var);
             iter++;
         }
         visitAndConnect(qtRoot, END_NODE, iter, subscope);
@@ -1408,7 +1408,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             unopNode = uniqueNode.get(unopSymbol);
         } else {
             unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
-            System.out.println("Creating new unary node: " + unopSymbol);
+            if (Playground.DEBUG) System.out.println("Creating new unary node: " + unopSymbol);
             uniqueNode.put(unopSymbol, unopNode);
         }
         unopNode.setMaxDownlinks(1);

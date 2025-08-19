@@ -18,6 +18,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.test.Playground;
 import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
+import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 
 // TODO: Globalize all unique nodes. 
@@ -31,6 +32,7 @@ public final class GlobalVariables implements Serializable {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         maxChildCount = new HashMap<Symbol, Integer>();
         initQTable = new HashMap<Pair<Symbol, Integer>, float[]>();
+        uniqueNode = new BiMap<Symbol, AugmentedNode>();
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
@@ -107,6 +109,23 @@ public final class GlobalVariables implements Serializable {
             }
         }
     }
+    public void addCustomUniqueNodes(DoubleMap<Symbol, AugmentedNode> visitorNodes) {
+        for (Symbol symbol : visitorNodes.keys()) {
+            AugmentedNode node = visitorNodes.get(symbol);
+            Symbol categorySymbol = EdgeCounter.getSymbolForPretrain(symbol);
+            if (categorySymbol instanceof DummySymbol) {
+                // transformed
+                System.out.println("Adding custom unique node: " + categorySymbol.getType());
+                System.out.println(uniqueNode.toString());
+                double signature = uniqueNode.get(categorySymbol).getSignature();
+                double randomNoise = (Math.random() - 1) * 0.01; // small noise
+                node.setSignature(signature + randomNoise);
+            }
+            if (!uniqueNode.containsKey(symbol)) {
+                uniqueNode.put(symbol, node);
+            }
+        }
+    }
     public static void writeToFile(String filename, GlobalVariables gv) {
         // serialize the GlobalVariables object to a file
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename)))
@@ -125,4 +144,5 @@ public final class GlobalVariables implements Serializable {
             return null;
         }
     }
+    
 }

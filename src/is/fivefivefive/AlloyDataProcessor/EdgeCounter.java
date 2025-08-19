@@ -140,9 +140,16 @@ public class EdgeCounter {
                 int yId = nodeId.get(edge.y);
                 int z = edge.z;
                 String csvLine = x + "," + xId + "," + y + "," + yId + "," + z + "," + count;
+                String pureCsvLine = xId + "," + yId + "," + z + "," + count;
                 String csvFilePath = "edge_counts_dirty_indiced_wshadow.csv"; // Replace with your desired CSV file path
+                String pureCsvFilePath = "edge_counts.csv";
                 try (java.io.FileWriter writer = new java.io.FileWriter(csvFilePath, true)) {
                     writer.write(csvLine + "\n");
+                } catch (java.io.IOException e) {
+                    System.out.println("Error writing to CSV file: " + e.getMessage());
+                }
+                try (java.io.FileWriter writer = new java.io.FileWriter(pureCsvFilePath, true)) {
+                    writer.write(pureCsvLine + "\n");
                 } catch (java.io.IOException e) {
                     System.out.println("Error writing to CSV file: " + e.getMessage());
                 }

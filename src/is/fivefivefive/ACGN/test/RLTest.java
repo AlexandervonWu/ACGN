@@ -46,7 +46,6 @@ public class RLTest {
         MASGVisitor visitor = new MASGVisitor();
         visitor.visit(mu, null);
         Multigraph groundTruthGraph = visitor.getForest().get(2);
-        
         Multigraph studentSolutionGraph = visitor.getForest().get(1);
         AugmentedNode groundTruthRoot = groundTruthGraph.getRoot();
         AugmentedNode studentSolutionRoot = studentSolutionGraph.getRoot();
@@ -55,7 +54,8 @@ public class RLTest {
             throw new RuntimeException("AugmentedNode creation failed.");
         }
         // unique nodes? gv? 
-        DoubleMap<Symbol, AugmentedNode> uniqueNodes = visitor.getUniqueNode();
+        gv.addCustomUniqueNodes(visitor.getUniqueNode());
+        DoubleMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
         System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
         System.out.println(uniqueNodes);
         RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);

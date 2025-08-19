@@ -8,7 +8,7 @@ import is.fivefivefive.ACGN.learn.Hyperparams;
 
 // TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
-    public static final int END_SYMBOL_ID = 9;
+    public static final int END_SYMBOL_ID = 25;
     static class Edge {
         int source, target, position, count;
         Edge(int s, int t, int p, int c) {
@@ -236,6 +236,6 @@ public class SGDEdgeTrainer {
         List<Edge> edgeList = loadEdgesFromCSV(args[0]);
         int maxNodeId = edgeList.stream().flatMapToInt(e -> java.util.stream.IntStream.of(e.source, e.target)).max().orElse(0);
         int numNodes = maxNodeId + 1;
-        train(edgeList, numNodes, Hyperparams.INITIAL_LEARNING_RATE, Hyperparams.TEMPERATURE, 1000, 12, "node_signatures_fixed.csv");
+        train(edgeList, numNodes, Hyperparams.INITIAL_LEARNING_RATE, Hyperparams.TEMPERATURE, 1000, 32, "node_signatures_fixed.csv");
     }
 }
