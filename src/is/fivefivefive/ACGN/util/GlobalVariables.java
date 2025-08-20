@@ -105,18 +105,18 @@ public final class GlobalVariables implements Serializable {
                 node = dummyNode;
             }
             if (!uniqueNode.containsKey(keyMod)) {
+                System.out.println("Adding key: " + keyMod);
                 uniqueNode.put(keyMod, node);
             }
         }
     }
-    public void addCustomUniqueNodes(DoubleMap<Symbol, AugmentedNode> visitorNodes) {
+    public void addCustomUniqueNodes(BiMap<Symbol, AugmentedNode> visitorNodes) {
         for (Symbol symbol : visitorNodes.keys()) {
             AugmentedNode node = visitorNodes.get(symbol);
             Symbol categorySymbol = EdgeCounter.getSymbolForPretrain(symbol);
             if (categorySymbol instanceof DummySymbol) {
                 // transformed
-                System.out.println("Adding custom unique node: " + categorySymbol.getType());
-                System.out.println(uniqueNode.toString());
+                System.out.println("Adding custom unique node: " + categorySymbol.getType() + " -> " + symbol.getName());
                 double signature = uniqueNode.get(categorySymbol).getSignature();
                 double randomNoise = (Math.random() - 1) * 0.01; // small noise
                 node.setSignature(signature + randomNoise);
@@ -131,6 +131,7 @@ public final class GlobalVariables implements Serializable {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename)))
         {
             oos.writeObject(gv);
+            BiMap.writeToFile("map_" + filename, gv.uniqueNode);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -138,7 +139,10 @@ public final class GlobalVariables implements Serializable {
     public static GlobalVariables readFromFile(String filename) {
         // deserialize the GlobalVariables object from a file
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
-            return (GlobalVariables) ois.readObject();
+            GlobalVariables gv = (GlobalVariables) ois.readObject();
+            System.out.println(gv.edgeMap.size());
+            System.out.println(gv.uniqueNode.size());
+            return gv;
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             return null;

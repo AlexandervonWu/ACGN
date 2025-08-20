@@ -8,7 +8,8 @@ import is.fivefivefive.ACGN.learn.Hyperparams;
 
 // TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
-    public static final int END_SYMBOL_ID = 25;
+    // check each time before training
+    public static final int END_SYMBOL_ID = 19;
     static class Edge {
         int source, target, position, count;
         Edge(int s, int t, int p, int c) {

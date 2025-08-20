@@ -12,6 +12,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
+import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.test.Playground;
 import is.fivefivefive.ACGN.test.RLTest;
 import is.fivefivefive.ACGN.util.GlobalVariables;
@@ -30,21 +31,21 @@ public class RLAgentFrame {
     private Multigraph groundTruth;
     private Multigraph currentAns;
     private Map<Pair<Symbol, Integer>, float[]> qTable;
-    private DoubleMap<Integer, Symbol> symbolId;
-    private DoubleMap<Symbol, AugmentedNode> uniqueNodes;
-    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, DoubleMap<Symbol, AugmentedNode> uniqueNodes) {
+    private BiMap<Integer, Symbol> symbolId;
+    private BiMap<Symbol, AugmentedNode> uniqueNodes;
+    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, BiMap<Symbol, AugmentedNode> uniqueNodes) {
         this.gv = gv;
         this.groundTruth = groundTruth;
         this.uniqueNodes = uniqueNodes;
         qTable = gv.getInitQTable() == null ? new HashMap<Pair<Symbol, Integer>, float[]>() : gv.getInitQTable();
-        symbolId = new DoubleMap<Integer, Symbol>();
+        symbolId = new BiMap<Integer, Symbol>();
     }
-    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, DoubleMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns) {
+    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, BiMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns) {
         this(gv, groundTruth, uniqueNodes);
         this.currentAns = currentAns;
     }
     // also the case with the initial Q-table
-    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, DoubleMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns, Map<Pair<Symbol, Integer>, float[]> qTable) {
+    public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, BiMap<Symbol, AugmentedNode> uniqueNodes, Multigraph currentAns, Map<Pair<Symbol, Integer>, float[]> qTable) {
         this(gv, groundTruth, uniqueNodes, currentAns);
         this.qTable = qTable;
     }

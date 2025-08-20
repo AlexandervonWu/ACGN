@@ -101,6 +101,7 @@ public class EdgeCounter {
         String dir = "classified-data"; // Replace with your directory path
         Map<Triple<Symbol, Symbol, Integer>, Integer> edgeCountMap = countEdges(dir);
         // write GlobalVariables gv to a file
+        System.out.println(gv.getUniqueNodes().size());
         GlobalVariables.writeToFile("global_variables.ser", gv);
         int uniqueNodeCount = 0;
         DoubleMap<Symbol, Integer> nodeId = new DoubleMap<>();

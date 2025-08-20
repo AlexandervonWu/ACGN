@@ -7,6 +7,7 @@ import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
+import is.fivefivefive.ACGN.etc.BiMap;
 
 public class Probability {
     /**
@@ -17,7 +18,7 @@ public class Probability {
      * @param position The position in the ASG where the source symbol is located.
      * @return An array of probabilities for each candidate symbol.
      */
-    public static float[] probabilitiesBySignatures(GlobalVariables gv, DoubleMap<Symbol, AugmentedNode> uniqueNodes, Symbol source, int position) {
+    public static float[] probabilitiesBySignatures(GlobalVariables gv, BiMap<Symbol, AugmentedNode> uniqueNodes, Symbol source, int position) {
         // calculate by the softmax function
         final float TEMPERATURE = Hyperparams.TEMPERATURE;
         Set<Symbol> candidates = gv.getCandidates(source, position);
@@ -30,10 +31,16 @@ public class Probability {
             double sourceSig = sourceNode.getSignature();
             double sum = 0;
             for (Symbol candidate : candidates) {
-                double candidateSig = uniqueNodes.get(candidate).getSignature();
-                double diff = sourceSig - candidateSig;
-                double expDiff = Math.exp(diff / TEMPERATURE);
-                sum += expDiff;
+                try {
+                    double candidateSig = uniqueNodes.get(candidate).getSignature();
+                    double diff = sourceSig - candidateSig;
+                    double expDiff = Math.exp(diff / TEMPERATURE);
+                    sum += expDiff;
+                } catch(NullPointerException e) {
+                    System.out.println(candidate.getType() + ",, " + candidate.getName());
+                    throw e;
+                }
+
             }
             float[] probabilities = new float[candidates.size()];
             int i = 0;

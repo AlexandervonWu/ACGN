@@ -7,6 +7,7 @@ import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.learn.Hyperparams;
 import is.fivefivefive.ACGN.learn.RLAgentFrame;
 import is.fivefivefive.ACGN.learn.Rewarder;
@@ -37,7 +38,7 @@ public class RLTest {
             return Pair.of(false, 0.0);
         }
         if (predicates.size() > 2) {
-            System.out.println("Warning: More than 2 predicates found with the name 'inv', 'Inv', or 'prop'. Using the first one.");
+            System.out.println("Warning: More than 2 predicates found with the name 'inv', 'Inv', or 'prop'. Using the first pair.");
         }
         Node groundTruthNode = predicates.get(1);
         Node studentSolutionNode = predicates.get(0);
@@ -54,10 +55,12 @@ public class RLTest {
             throw new RuntimeException("AugmentedNode creation failed.");
         }
         // unique nodes? gv? 
+        BiMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
+        System.out.println(uniqueNodes.size());
         gv.addCustomUniqueNodes(visitor.getUniqueNode());
-        DoubleMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
+        
         System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
-        System.out.println(uniqueNodes);
+        
         RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);
         agent.initialize();
         // begin RL

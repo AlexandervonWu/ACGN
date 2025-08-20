@@ -137,7 +137,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode getOverallRoot() {
         return overallRoot;
     }
-    public DoubleMap<Symbol, AugmentedNode> getUniqueNode() {
+    public BiMap<Symbol, AugmentedNode> getUniqueNode() {
         return uniqueNode;
     }
     // visits, all non-predicates are discarded. 
