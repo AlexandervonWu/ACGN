@@ -21,6 +21,7 @@ import parser.ast.nodes.Predicate;
 import parser.ast.visitor.ASTNodeFinder;
 import parser.etc.Pair;
 
+// TODO: GENERATION RULE: NO <SHADOW> TOKENS UNDER THE ROOT. 
 public class RLTest {
     public static final boolean DEBUG = true;
     private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) {

@@ -18,6 +18,7 @@ import is.fivefivefive.ACGN.test.RLTest;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 
@@ -63,7 +64,8 @@ public class RLAgentFrame {
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
-            float[] dist = Probability.probabilitiesBySignatures(gv, uniqueNodes, positional.a, positional.b);
+            Symbol pretrainedA = EdgeCounter.getSymbolForPretrain(positional.a);
+            float[] dist = Probability.probabilitiesBySignatures(gv, uniqueNodes, pretrainedA, positional.b);
             qTable.put(positional, dist);
             Symbol parent = positional.a;
             if (!symbolId.containsValue(parent)) {

@@ -3,6 +3,7 @@ import java.util.Map;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.learn.Hyperparams;
+import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -32,7 +33,12 @@ public class Probability {
             double sum = 0;
             for (Symbol candidate : candidates) {
                 try {
-                    double candidateSig = uniqueNodes.get(candidate).getSignature();
+                    // still not right! CANDIDATE MASK SHOULD BE PURGED BEFORE. 
+                    Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
+                    if (!uniqueNodes.containsKey(candidateMask)) {
+                        continue; // non-presenting symbols
+                    }
+                    double candidateSig = uniqueNodes.get(candidateMask).getSignature();
                     double diff = sourceSig - candidateSig;
                     double expDiff = Math.exp(diff / TEMPERATURE);
                     sum += expDiff;
@@ -45,10 +51,16 @@ public class Probability {
             float[] probabilities = new float[candidates.size()];
             int i = 0;
             for (Symbol candidate : candidates) {
-                double candidateSig = uniqueNodes.get(candidate).getSignature();
+                // still not right! 
+                Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
+                if (!uniqueNodes.containsKey(candidateMask)) {
+                    continue; // non-presenting symbols
+                }
+                double candidateSig = uniqueNodes.get(candidateMask).getSignature();
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff / TEMPERATURE);
                 probabilities[i] = (float) (expDiff / sum);
+                System.out.println("Transitional Probability between " + source.getName() + " and " + candidateMask.getName() + " at position " + position + ": " + probabilities[i]);
                 i++;
             }
             return probabilities;
