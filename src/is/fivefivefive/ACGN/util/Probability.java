@@ -31,36 +31,38 @@ public class Probability {
             }
             double sourceSig = sourceNode.getSignature();
             double sum = 0;
+            int validCandidates = 0;
             for (Symbol candidate : candidates) {
                 try {
                     // still not right! CANDIDATE MASK SHOULD BE PURGED BEFORE. 
-                    Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
-                    if (!uniqueNodes.containsKey(candidateMask)) {
+                    //  Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
+                    if (!uniqueNodes.containsKey(candidate)) {
                         continue; // non-presenting symbols
                     }
-                    double candidateSig = uniqueNodes.get(candidateMask).getSignature();
+                    double candidateSig = uniqueNodes.get(candidate).getSignature();
                     double diff = sourceSig - candidateSig;
                     double expDiff = Math.exp(diff / TEMPERATURE);
                     sum += expDiff;
+                    validCandidates++;
                 } catch(NullPointerException e) {
                     System.out.println(candidate.getType() + ",, " + candidate.getName());
                     throw e;
                 }
 
             }
-            float[] probabilities = new float[candidates.size()];
+            float[] probabilities = new float[validCandidates];
             int i = 0;
             for (Symbol candidate : candidates) {
                 // still not right! 
-                Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
-                if (!uniqueNodes.containsKey(candidateMask)) {
+                //Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
+                if (!uniqueNodes.containsKey(candidate)) {
                     continue; // non-presenting symbols
                 }
-                double candidateSig = uniqueNodes.get(candidateMask).getSignature();
+                double candidateSig = uniqueNodes.get(candidate).getSignature();
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff / TEMPERATURE);
                 probabilities[i] = (float) (expDiff / sum);
-                System.out.println("Transitional Probability between " + source.getName() + " and " + candidateMask.getName() + " at position " + position + ": " + probabilities[i]);
+                System.out.println("Transitional Probability between " + source.getName() + " and " + candidate.getName() + " at position " + position + ": " + probabilities[i]);
                 i++;
             }
             return probabilities;

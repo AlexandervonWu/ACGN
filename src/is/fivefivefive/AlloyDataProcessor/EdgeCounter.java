@@ -160,4 +160,50 @@ public class EdgeCounter {
             System.out.println("No edges found.");
         }
     }
+    public static Map<String, Float> generateNodeSignatureMap(String nodeIdCsvPath, String signatureCsvPath) {
+        Map<Integer, String> idToSymbol = new HashMap<>();
+        Map<Integer, Float> idToSignature = new HashMap<>();
+        Map<String, Float> symbolToSignature = new HashMap<>();
+
+        // Read nodeIdCsvPath: id,symbolName
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(nodeIdCsvPath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    int id = Integer.parseInt(parts[0].trim());
+                    String symbolName = parts[1].trim();
+                    idToSymbol.put(id, symbolName);
+                }
+            }
+        } catch (java.io.IOException e) {
+            System.out.println("Error reading node ID CSV: " + e.getMessage());
+        }
+
+        // Read signatureCsvPath: id,signature
+        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(signatureCsvPath))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    int id = Integer.parseInt(parts[0].trim());
+                    float signature = Float.parseFloat(parts[1].trim());
+                    idToSignature.put(id, signature);
+                }
+            }
+        } catch (java.io.IOException e) {
+            System.out.println("Error reading signature CSV: " + e.getMessage());
+        }
+
+        // Combine maps
+        for (Map.Entry<Integer, String> entry : idToSymbol.entrySet()) {
+            int id = entry.getKey();
+            String symbolName = entry.getValue();
+            if (idToSignature.containsKey(id)) {
+                symbolToSignature.put(symbolName, idToSignature.get(id));
+            }
+        }
+
+        return symbolToSignature;
+    }
 }

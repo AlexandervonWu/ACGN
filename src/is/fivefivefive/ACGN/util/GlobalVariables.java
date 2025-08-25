@@ -149,4 +149,5 @@ public final class GlobalVariables implements Serializable {
         }
     }
     
+
 }
