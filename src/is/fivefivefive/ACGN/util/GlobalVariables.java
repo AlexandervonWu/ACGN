@@ -149,5 +149,17 @@ public final class GlobalVariables implements Serializable {
         }
     }
     
+    public void loadPretrainedSignatures(String nodeIdCsvPath, String signatureCsvPath) {
+        Map<String, Float> symbolSignatureMap = EdgeCounter.generateNodeSignatureMap(nodeIdCsvPath, signatureCsvPath);
+        for (Symbol symbol : uniqueNode.keys()) {
+            String key = symbol.getName();
+            if (symbolSignatureMap.containsKey(key)) {
+                float signature = symbolSignatureMap.get(key);
+                uniqueNode.get(symbol).setSignature(signature);
+            } else {
+                System.out.println("ERR: No pretrained signature for: " + key);
+            }
+        }
+    }
 
 }

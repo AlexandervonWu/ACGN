@@ -94,6 +94,7 @@ public class RLTest {
             System.out.println("Failed to load global variables.");
             return;
         }
+        gv.loadPretrainedSignatures("node_id.csv", "node_signatures_fixed.csv");
         final int CPU_THREADS = 32;
         // parallelize by files
         String path = "classified-data";
