@@ -83,7 +83,7 @@ public final class GlobalVariables implements Serializable {
     public void setInitQTable(Map<Pair<Symbol, Integer>, float[]> initQTable) {
         this.initQTable = initQTable;
         System.out.println("Initialized Q-table with " + initQTable.size() + " entries.");
-        writeToFile("global_variables.ser", this);
+        writeToFile("global_variables.tmp.ser", this);
     }
     public Map<Pair<Symbol, Integer>, float[]> getInitQTable() {
         return initQTable;

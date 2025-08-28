@@ -192,7 +192,7 @@ public class RLAgentFrame {
         if (RLTest.DEBUG) {
             System.out.println("Generating predicate: " + predName);
             System.out.println("Downlinks size: " + downlinks.size());
-            System.out.println(downlinks);
+            // System.out.println(downlinks);
         }
         int iter = 2;
         if (downlinks.size() > 1) {
@@ -228,15 +228,19 @@ public class RLAgentFrame {
             return; // No more positions to explore
         }
         Symbol localRootSym = localRoot.getSymbol();
+        if (localRootSym instanceof RefSymbol) {
+            localRootSym = EdgeCounter.getSymbolForPretrain(localRootSym);
+        }
         tovMap.putIfAbsent(localRootSym, 0);
         tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
         Random rand = new Random();
         Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
-        if (RLTest.DEBUG) {
+        /*if (RLTest.DEBUG) {
             System.out.println(qTable);
-        }
+        }*/
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
         if (RLTest.DEBUG) {
+            System.out.println(localRootSym.getName());
             System.out.println(distribution);
         }
         
