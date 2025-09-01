@@ -63,43 +63,44 @@ public class Generator {
                         int tovLetBody = tovTracker.get(letBody);
                         sb.append(" | ");
                         sb.append(toCode(graph, letBody, tovLetBody));
-                    } else {
-                        // references of predicates, functions, etc
-                        List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, tov);
-                        if (downlinks != null && downlinks.size() > 0) {
-                            // This is a predicate definition - add pred keyword, parameters and body
-                            sb.append("pred ");
-                            sb.append(root.getSymbol().getName());
-                            sb.append("[");
-                            // Process parameters (if any)
-                            if (downlinks.size() > 1) {
-                                for (int i = 0; i < downlinks.size() - 1; ++i) {
-                                    MASGEdge e = downlinks.get(i);
-                                    AugmentedNode param = e.getTarget();
-                                    tovTracker.putIfAbsent(param, 0);
-                                    tovTracker.put(param, tovTracker.get(param) + 1);
-                                    int tovParam = tovTracker.get(param);
-                                    if (Playground.DEBUG) {
-                                        System.out.println("Processing parameter " + param.getSymbol().getName() + " at TOV " + tovParam);
-                                    }
-                                    sb.append(toCode(graph, param, tovParam));
-                                    if (i < downlinks.size() - 2) {
-                                        sb.append(", ");
-                                    }
+                    }
+                    break;
+                case "PredRootSymbol":
+                    // references of predicates, functions, etc
+                    List<MASGEdge> downlinks = root.getDownlinksAtTimeOfVisit(graph, tov);
+                    if (downlinks != null && downlinks.size() > 0) {
+                        // This is a predicate definition - add pred keyword, parameters and body
+                        sb.append("pred ");
+                        sb.append(root.getSymbol().getName());
+                        sb.append("[");
+                        // Process parameters (if any)
+                        if (downlinks.size() > 1) {
+                            for (int i = 0; i < downlinks.size() - 1; ++i) {
+                                MASGEdge e = downlinks.get(i);
+                                AugmentedNode param = e.getTarget();
+                                tovTracker.putIfAbsent(param, 0);
+                                tovTracker.put(param, tovTracker.get(param) + 1);
+                                int tovParam = tovTracker.get(param);
+                                if (Playground.DEBUG) {
+                                    System.out.println("Processing parameter " + param.getSymbol().getName() + " at TOV " + tovParam);
+                                }
+                                sb.append(toCode(graph, param, tovParam));
+                                if (i < downlinks.size() - 2) {
+                                    sb.append(", ");
                                 }
                             }
-                            sb.append("] {\n  ");
-                            // Process body
-                            AugmentedNode refBody = downlinks.get(downlinks.size() - 1).getTarget();
-                            tovTracker.putIfAbsent(refBody, 0);
-                            tovTracker.put(refBody, tovTracker.get(refBody) + 1);
-                            int bodyTov = tovTracker.get(refBody);
-                            sb.append(toCode(graph, refBody, bodyTov));
-                            sb.append("\n}");
-                        } else {
-                            // This is a function/predicate call - just output the name
-                            sb.append(root.getSymbol().getName());
                         }
+                        sb.append("] {\n  ");
+                        // Process body
+                        AugmentedNode refBody = downlinks.get(downlinks.size() - 1).getTarget();
+                        tovTracker.putIfAbsent(refBody, 0);
+                        tovTracker.put(refBody, tovTracker.get(refBody) + 1);
+                        int bodyTov = tovTracker.get(refBody);
+                        sb.append(toCode(graph, refBody, bodyTov));
+                        sb.append("\n}");
+                    } else {
+                        // This is a function/predicate call - just output the name
+                        sb.append(root.getSymbol().getName());
                     }
                     break;
                 case "MiddleSymbol":

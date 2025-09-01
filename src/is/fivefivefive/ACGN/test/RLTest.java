@@ -57,10 +57,10 @@ public class RLTest {
         }
         // unique nodes? gv? 
         BiMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
-        System.out.println(uniqueNodes.size());
+        System.out.println(uniqueNodes);
         gv.addCustomUniqueNodes(visitor.getUniqueNode());
         
-        System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
+        // System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
         
         RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);
         agent.initialize();

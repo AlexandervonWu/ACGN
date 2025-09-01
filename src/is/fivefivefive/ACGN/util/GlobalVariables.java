@@ -114,14 +114,14 @@ public final class GlobalVariables implements Serializable {
         for (Symbol symbol : visitorNodes.keys()) {
             AugmentedNode node = visitorNodes.get(symbol);
             Symbol categorySymbol = EdgeCounter.getSymbolForPretrain(symbol);
-            if (categorySymbol instanceof DummySymbol) {
+            if (categorySymbol instanceof DummySymbol && !(categorySymbol.getType().equals("predroot"))) {
                 // transformed
                 System.out.println("Adding custom unique node: " + categorySymbol.getType() + " -> " + symbol.getName());
                 double signature = uniqueNode.get(categorySymbol).getSignature();
                 double randomNoise = (Math.random() - 1) * 0.01; // small noise
                 node.setSignature(signature + randomNoise);
             }
-            if (!uniqueNode.containsKey(symbol)) {
+            if (!uniqueNode.containsKey(symbol) && !(categorySymbol.getType().equals("predroot"))) {
                 uniqueNode.put(symbol, node);
             }
         }
@@ -158,6 +158,8 @@ public final class GlobalVariables implements Serializable {
                 uniqueNode.get(symbol).setSignature(signature);
             } else {
                 System.out.println("ERR: No pretrained signature for: " + key);
+                // DEFAULT TO ZERO
+                uniqueNode.get(symbol).setSignature(0.0);
             }
         }
     }

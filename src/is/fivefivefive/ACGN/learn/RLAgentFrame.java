@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -64,10 +65,14 @@ public class RLAgentFrame {
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
-            Symbol pretrainedA = EdgeCounter.getSymbolForPretrain(positional.a);
-            float[] dist = Probability.probabilitiesBySignatures(gv, uniqueNodes, pretrainedA, positional.b);
+            Symbol transformedA = positional.a instanceof PredRootSymbol ? EdgeCounter.getSymbolForPretrain(positional.a) : positional.a;
+            if (!uniqueNodes.containsKey(transformedA)) {
+                System.out.println("Transformed symbol not found in unique nodes: " + transformedA.getType() + " -> " + transformedA.getName());
+                continue; // non-presenting symbols
+            }
+            float[] dist = Probability.probabilitiesBySignatures(gv, uniqueNodes, transformedA, positional.b);
             qTable.put(positional, dist);
-            Symbol parent = positional.a;
+            Symbol parent = transformedA;
             if (!symbolId.containsValue(parent)) {
                 int id = symbolId.size();
                 symbolId.put(id, parent);
@@ -183,7 +188,7 @@ public class RLAgentFrame {
     public String generateNextPred(String predName) {
         // make a root node
         AugmentedNode rootNode = new AugmentedNode(-1, -1);
-        Symbol root = new RefSymbol(rootNode, predName);
+        Symbol root = new PredRootSymbol(rootNode, predName);
         rootNode.setSymbol(root);
         root.setMaxDownlinks(1);
         Multigraph predGraph = new Multigraph(rootNode, gv);
@@ -228,8 +233,9 @@ public class RLAgentFrame {
             return; // No more positions to explore
         }
         Symbol localRootSym = localRoot.getSymbol();
-        if (localRootSym instanceof RefSymbol) {
+        if (localRootSym instanceof PredRootSymbol) {
             localRootSym = EdgeCounter.getSymbolForPretrain(localRootSym);
+            System.out.println("Transformed type: " + localRootSym.getName());
         }
         tovMap.putIfAbsent(localRootSym, 0);
         tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
@@ -240,7 +246,7 @@ public class RLAgentFrame {
         }*/
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
         if (RLTest.DEBUG) {
-            System.out.println(localRootSym.getName());
+            
             System.out.println(distribution);
         }
         

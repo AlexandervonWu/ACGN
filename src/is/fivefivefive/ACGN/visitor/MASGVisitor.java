@@ -22,6 +22,7 @@ import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SetSymbol;
 import is.fivefivefive.ACGN.alloy.ShadowSymbol;
@@ -315,7 +316,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode predNode = new AugmentedNode(syn, numPredicates);
         
         String predName = n.getName();
-        Symbol predSymbol = new RefSymbol(predNode, predName);
+        Symbol predSymbol = new PredRootSymbol(predNode, predName);
         predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);
         // System.out.println("Visiting predicate: " + predName + " with symbol: " + predSymbol + " into uniqueNode. ");

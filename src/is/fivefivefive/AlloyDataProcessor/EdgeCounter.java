@@ -1,6 +1,7 @@
 package is.fivefivefive.AlloyDataProcessor;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.alloy.SubsetRelation;
@@ -93,6 +94,8 @@ public class EdgeCounter {
             return new DummySymbol("sig");
         } else if (original instanceof SubsetRelation) {
             return new DummySymbol("subset");
+        } else if (original instanceof PredRootSymbol) {
+            return new DummySymbol("predroot");
         } else {
             return original;
         }
