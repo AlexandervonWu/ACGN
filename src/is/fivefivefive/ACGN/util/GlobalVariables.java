@@ -3,6 +3,7 @@ package is.fivefivefive.ACGN.util;
 import java.util.Map;
 import java.util.Set;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
@@ -27,7 +29,7 @@ public final class GlobalVariables implements Serializable {
     private Map<Symbol, Integer> maxChildCount;
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
     private BiMap<Symbol, AugmentedNode> uniqueNode;
-    private Map<Symbol, Double> pretrainedSignatures;
+    private List<Symbol> concreteRoots; // the predicate roots
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         maxChildCount = new HashMap<Symbol, Integer>();
@@ -120,6 +122,27 @@ public final class GlobalVariables implements Serializable {
                 double signature = uniqueNode.get(categorySymbol).getSignature();
                 double randomNoise = (Math.random() - 1) * 0.01; // small noise
                 node.setSignature(signature + randomNoise);
+                uniqueNode.put(symbol, node);
+                
+            }
+            if (categorySymbol instanceof DummySymbol && (categorySymbol.getType().equals("predroot"))) {
+                String name = symbol.getName();
+                if (name.startsWith("run")) {
+                    continue; // skip check commands
+                }
+                // add all predicate candidates down
+                System.out.println("Merging predroot downlinks: " + categorySymbol.getType() + " -> " + symbol.getName());
+                // update edgeMap
+                Map<Pair<Symbol, Integer>, Set<Symbol>> additionalEdges = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
+                for (Pair<Symbol, Integer> key : edgeMap.keySet()) {
+                    if (key.a instanceof PredRootSymbol) {
+                        Set<Symbol> targets = edgeMap.get(key);
+                        Pair<Symbol, Integer> newKey = Pair.of(categorySymbol, key.b);
+                        additionalEdges.put(newKey, new LinkedHashSet<Symbol>());
+                        additionalEdges.get(newKey).addAll(targets);
+                    }
+                }
+                edgeMap.putAll(additionalEdges);
             }
             if (!uniqueNode.containsKey(symbol) && !(categorySymbol.getType().equals("predroot"))) {
                 uniqueNode.put(symbol, node);
@@ -163,5 +186,4 @@ public final class GlobalVariables implements Serializable {
             }
         }
     }
-
 }

@@ -272,6 +272,9 @@ public class RLAgentFrame {
         }
         // Create a new node for the selected candidate
         // AugmentedNode newNode = 
+        if (!uniqueNodes.containsKey(selectedCandidate)) {
+            uniqueNodes.put(selectedCandidate, gv.getUniqueNodes().get(selectedCandidate));
+        }
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
