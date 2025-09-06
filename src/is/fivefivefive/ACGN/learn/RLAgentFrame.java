@@ -228,8 +228,9 @@ public class RLAgentFrame {
      * @param tovMap A map tracking the number of times each symbol has been visited.
      */
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
+        System.out.println("Generating next node for " + localRoot.getSymbol().getName() + " at position " + position);
         // TODO : TOV TRACKER. 
-        if (position > localRoot.getMaxDownlinks()) {
+        if (localRoot.getMaxDownlinks() != -1 && position > localRoot.getMaxDownlinks()) {
             return; // No more positions to explore
         }
         Symbol localRootSym = localRoot.getSymbol();
@@ -245,11 +246,7 @@ public class RLAgentFrame {
             System.out.println(qTable);
         }*/
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
-        if (RLTest.DEBUG) {
-            
-            System.out.println(distribution);
-        }
-        
+        System.out.println("Size of distribution: " + (distribution == null ? "null" : distribution.length));
         if (candidates == null || candidates.isEmpty() || distribution == null) {
             return; // No candidates or no distribution available
         }
@@ -257,15 +254,17 @@ public class RLAgentFrame {
         float randomValue = rand.nextFloat();
         float cumulativeProbability = 0.0f;
         Symbol selectedCandidate = null;
-        for (int i = 0; i < candidates.size(); i++) {
+        int i = 0;
+        for (Symbol candidate : candidates) {
             cumulativeProbability += distribution[i];
             if (randomValue <= cumulativeProbability) {
-                selectedCandidate = symbolId.get(i);
+                selectedCandidate = candidate;
                 if (RLTest.DEBUG) {
-                    System.out.println("Selected candidate: " + selectedCandidate + " with probability: " + distribution[i]);
+                    System.out.println("Selected candidate: " + selectedCandidate.getName() + " with probability: " + distribution[i] + " at position " + position);
                 }
                 break;
             }
+            i++;
         }
         if (selectedCandidate == null) {
             return; // No candidate selected
@@ -276,13 +275,15 @@ public class RLAgentFrame {
             uniqueNodes.put(selectedCandidate, gv.getUniqueNodes().get(selectedCandidate));
         }
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
+        // problem here: the newNode is sometimes null, when referring to a concrete node derived from an abstract class; unknown reason. 
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
         if (!(newNode == MASGVisitor.END_NODE) && localRoot.getMaxDownlinks() > position) {
             // next sibling
             generateNextNode(localRoot, position + 1, tovMap);
         }
-        if (newNode.getMaxDownlinks() > 0) {
+        System.out.println(newNode.getMaxDownlinks());
+        if (newNode.getMaxDownlinks() != 0) {
             // first child
             generateNextNode(newNode, 1, tovMap);
         }

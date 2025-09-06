@@ -924,7 +924,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, 2);
+            globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
@@ -953,7 +953,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, 2);
+            globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }

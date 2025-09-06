@@ -62,6 +62,7 @@ public class Probability {
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff / TEMPERATURE);
                 probabilities[i] = (float) (expDiff / sum);
+                // REMINDER: ONE PAIR OF SYMBOLS SHOULD ONLY BE PASSED INTO THIS FUNCTION ONCE.
                 System.out.println("Transitional Probability between " + source.getName() + " and " + candidate.getName() + " at position " + position + ": " + probabilities[i]);
                 i++;
             }
