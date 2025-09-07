@@ -127,7 +127,7 @@ public final class GlobalVariables implements Serializable {
             }
             if (categorySymbol instanceof DummySymbol && (categorySymbol.getType().equals("predroot"))) {
                 String name = symbol.getName();
-                if (name.startsWith("run")) {
+                if (name.startsWith("run") || name.equals("overconstrained") || name.equals("underconstrained") || name.equals("both")) {
                     continue; // skip check commands
                 }
                 // add all predicate candidates down

@@ -69,7 +69,15 @@ public class RLTest {
         double maxReward = 0;
         for (int i = 0; i < maxSteps; ++i) {
             String name = "invX" + i;
-            String nextPredCode = agent.generateNextPred(name);
+            String nextPredCode = null;
+            try {
+                nextPredCode = agent.generateNextPred(name);
+            } catch (Exception e) {
+                System.out.println("Error generating next predicate: " + e.getMessage());
+                System.out.println("in file " + path);
+                throw e;
+            }
+            
             if (DEBUG) {
                 System.out.println(nextPredCode);
             }
