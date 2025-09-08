@@ -34,11 +34,11 @@ public class RLAgentFrame {
     private Multigraph currentAns;
     private Map<Pair<Symbol, Integer>, float[]> qTable;
     private BiMap<Integer, Symbol> symbolId;
-    private BiMap<Symbol, AugmentedNode> uniqueNodes;
+    // private BiMap<Symbol, AugmentedNode> uniqueNodes;
     public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, BiMap<Symbol, AugmentedNode> uniqueNodes) {
         this.gv = gv;
         this.groundTruth = groundTruth;
-        this.uniqueNodes = uniqueNodes;
+        // this.uniqueNodes = uniqueNodes;
         qTable = gv.getInitQTable() == null ? new HashMap<Pair<Symbol, Integer>, float[]>() : gv.getInitQTable();
         symbolId = new BiMap<Integer, Symbol>();
     }
@@ -66,11 +66,11 @@ public class RLAgentFrame {
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
             Symbol transformedA = positional.a instanceof PredRootSymbol ? EdgeCounter.getSymbolForPretrain(positional.a) : positional.a;
-            if (!uniqueNodes.containsKey(transformedA)) {
+            if (!gv.getUniqueNodes().containsKey(transformedA)) {
                 System.out.println("Transformed symbol not found in unique nodes: " + transformedA.getType() + " -> " + transformedA.getName());
                 continue; // non-presenting symbols
             }
-            float[] dist = Probability.probabilitiesBySignatures(gv, uniqueNodes, transformedA, positional.b);
+            float[] dist = Probability.probabilitiesBySignatures(gv, gv.getUniqueNodes(), transformedA, positional.b);
             qTable.put(positional, dist);
             Symbol parent = transformedA;
             if (!symbolId.containsValue(parent)) {
@@ -154,7 +154,7 @@ public class RLAgentFrame {
             return rawReward;
         }
         // look for all children of the candidate
-        AugmentedNode candidateNode = uniqueNodes.get(candidate);
+        AugmentedNode candidateNode = gv.getUniqueNodes().get(candidate);
         if (candidateNode == null) {
             throw new IllegalArgumentException("Candidate node not found for " + candidate);
         }
@@ -229,6 +229,7 @@ public class RLAgentFrame {
      */
     public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
         System.out.println("Generating next node for " + localRoot.getSymbol().getName() + " at position " + position);
+        BiMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
         // TODO : TOV TRACKER. 
         if (localRoot.getMaxDownlinks() != -1 && position > localRoot.getMaxDownlinks()) {
             return; // No more positions to explore
@@ -271,9 +272,9 @@ public class RLAgentFrame {
         }
         // Create a new node for the selected candidate
         // AugmentedNode newNode = 
-        if (!uniqueNodes.containsKey(selectedCandidate)) {
+        /*if (!uniqueNodes.containsKey(selectedCandidate)) {
             uniqueNodes.put(selectedCandidate, gv.getUniqueNodes().get(selectedCandidate));
-        }
+        }*/
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
         // problem here: the newNode is sometimes null, when referring to a concrete node derived from an abstract class; unknown reason. 
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
