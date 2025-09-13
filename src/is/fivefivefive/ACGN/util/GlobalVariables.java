@@ -138,7 +138,7 @@ public final class GlobalVariables implements Serializable {
                     if (key.a instanceof PredRootSymbol) {
                         Set<Symbol> targets = edgeMap.get(key);
                         Pair<Symbol, Integer> newKey = Pair.of(categorySymbol, key.b);
-                        additionalEdges.put(newKey, new LinkedHashSet<Symbol>());
+                        additionalEdges.putIfAbsent(newKey, new LinkedHashSet<Symbol>());
                         additionalEdges.get(newKey).addAll(targets);
                     }
                 }

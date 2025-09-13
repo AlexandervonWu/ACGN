@@ -1,6 +1,8 @@
 package is.fivefivefive.ACGN.test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
@@ -96,7 +98,9 @@ public class RLTest {
         return Pair.of(false, maxReward);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
+        PrintStream p = new PrintStream(new File("output_rl.log"));
+        System.setOut(p);
         GlobalVariables gv = GlobalVariables.readFromFile("global_variables.ser");
         if (gv == null) {
             System.out.println("Failed to load global variables.");

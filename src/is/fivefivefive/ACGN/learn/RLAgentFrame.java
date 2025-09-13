@@ -257,6 +257,9 @@ public class RLAgentFrame {
         Symbol selectedCandidate = null;
         int i = 0;
         for (Symbol candidate : candidates) {
+            if (!uniqueNodes.containsKey(candidate)) {
+                continue;
+            }
             cumulativeProbability += distribution[i];
             if (randomValue <= cumulativeProbability) {
                 selectedCandidate = candidate;
