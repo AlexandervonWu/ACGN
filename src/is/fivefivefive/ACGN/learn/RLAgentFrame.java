@@ -286,6 +286,12 @@ public class RLAgentFrame {
             // next sibling
             generateNextNode(localRoot, position + 1, tovMap);
         }
+        boolean shadow = newNode == MASGVisitor.SHADOW_NODE;
+        if (shadow) {
+            // shadow node is a copy of the original node with a different T.O.V.
+            newNode = new AugmentedNode(localRoot);
+            newNode.setSymbol(localRoot.getSymbol());
+        }
         System.out.println(newNode.getMaxDownlinks());
         if (newNode.getMaxDownlinks() != 0) {
             // first child

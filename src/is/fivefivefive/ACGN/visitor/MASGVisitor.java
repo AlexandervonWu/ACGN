@@ -118,6 +118,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         nodeDict.put(2, SHADOW_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
+        END_NODE.setMaxDownlinks(0);
+        EMPTY_SET_NODE.setMaxDownlinks(0);
+        SHADOW_NODE.setMaxDownlinks(0);
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -419,12 +422,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     // System.out.println("Visiting variable " + varStr + " in unknown declaration " + n.getClass().getSimpleName());
                 }
             }
-            globalVariables.addEdge(declRoot, varNode, iter);
+            // globalVariables.addEdge(declRoot, varNode, iter);
             visitAndConnect(declRoot, varNode, iter, arg);
             iter++;
         }
         // graph.addVertex(END_NODE);
-        globalVariables.addEdge(declRoot, END_NODE, iter);
+        // globalVariables.addEdge(declRoot, END_NODE, iter);
         visitAndConnect(declRoot, END_NODE, iter, arg);
         return declRoot;
     }
@@ -450,10 +453,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
             graph.addVertex(SHADOW_NODE);
             graph.connect(parent, SHADOW_NODE, graph, position, timeOfVisit);
-            
+            globalVariables.addEdge(parent, SHADOW_NODE, position);
         } else {
             graph.addVertex(child);
             graph.connect(parent, child, graph, position, timeOfVisit);
+            globalVariables.addEdge(parent, child, position);
         }
         if (Playground.DEBUG) {
             System.out.println(parent.getDownlinksAtTimeOfVisit(graph, timeOfVisit));
@@ -623,7 +627,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg, subgraph);
         AugmentedNode body = n.getBody().accept(this, subscope);
-        globalVariables.addEdge(assertionRoot, body, 1);
+        // globalVariables.addEdge(assertionRoot, body, 1);
         visitAndConnect(assertionRoot, body, 1, subscope);
         return assertionRoot;
     }
@@ -702,9 +706,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             child.addSymbol(varSymbol);
             letNode.setSymbol(varSymbol);
             AugmentedNode boundNode = bound.accept(this, arg); 
-            globalVariables.addEdge(letNode, boundNode, 1);
+            // globalVariables.addEdge(letNode, boundNode, 1);
             AugmentedNode bodyNode = body.accept(this, child);
-            globalVariables.addEdge(letNode, bodyNode, 2);
+            // globalVariables.addEdge(letNode, bodyNode, 2);
             visitAndConnect(letNode, boundNode, 1, arg);
             visitAndConnect(letNode, bodyNode, 2, arg);
             return letNode;
@@ -733,17 +737,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (condNode == ITEDummy) {
             downTimeOfVisit(ITEDummy, arg);
         }
-        globalVariables.addEdge(ITEDummy, condNode, 1);
+        // globalVariables.addEdge(ITEDummy, condNode, 1);
         AugmentedNode thenNode = thenClause.accept(this, arg);
         if (thenNode == ITEDummy) {
             downTimeOfVisit(ITEDummy, arg);
         }
-        globalVariables.addEdge(ITEDummy, thenNode, 2);
+        // globalVariables.addEdge(ITEDummy, thenNode, 2);
         AugmentedNode elseNode = elseClause.accept(this, arg);
         if (elseNode == ITEDummy) {
             downTimeOfVisit(ITEDummy, arg);
         }
-        globalVariables.addEdge(ITEDummy, elseNode, 3);
+        // globalVariables.addEdge(ITEDummy, elseNode, 3);
         visitAndConnect(ITEDummy, condNode, 1, arg);
         visitAndConnect(ITEDummy, thenNode, 2, arg);
         visitAndConnect(ITEDummy, elseNode, 3, arg);
@@ -820,14 +824,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = var.accept(this, subscope);
-            globalVariables.addEdge(qtRoot, varDeclNode, 2);
+            // globalVariables.addEdge(qtRoot, varDeclNode, 2);
             visitAndConnect(qtRoot, varDeclNode, iter, subscope);
             if (Playground.DEBUG) System.out.println("VarDecl at " + iter + ": " + var);
             iter++;
         }
         visitAndConnect(qtRoot, END_NODE, iter, subscope);
         AugmentedNode bodyNode = body.accept(this, subscope);
-        globalVariables.addEdge(qtRoot, bodyNode, 1);
+        // globalVariables.addEdge(qtRoot, bodyNode, 1);
         visitAndConnect(qtRoot, bodyNode, 1, subscope);
         return qtRoot;
     }
@@ -857,13 +861,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(callNode, arg);
         Symbol predOrFunSymbol = aame.getSymbol(n.getName());
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
-        globalVariables.addEdge(callNode, calledNode, 1);
+        // globalVariables.addEdge(callNode, calledNode, 1);
         // connect the callNode to the calledNode at position 1
         visitAndConnect(callNode, calledNode, 1, arg);
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            globalVariables.addEdge(callNode, calledNode, 2);
+            // globalVariables.addEdge(callNode, calledNode, 2);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -890,12 +894,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             calledNode = new AugmentedNode(7, 1, new RefSymbol(null, n.getName()));
             uniqueNode.put(calledNode.getSymbol(), calledNode);
         }
-        globalVariables.addEdge(callNode, calledNode, 1);
+        // globalVariables.addEdge(callNode, calledNode, 1);
         visitAndConnect(callNode, calledNode, 1, arg);
         int iter = 2;
         for (ExprOrFormula param : n.getArguments()) {
             AugmentedNode paramAug = param.accept(this, arg);
-            globalVariables.addEdge(callNode, calledNode, 2);
+            // globalVariables.addEdge(callNode, calledNode, 2);
             visitAndConnect(callNode, paramAug, iter, arg);
             iter++;
         }
@@ -924,11 +928,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, iter);
+            // globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
-        globalVariables.addEdge(opNode, END_NODE, iter);
+        // globalVariables.addEdge(opNode, END_NODE, iter);
         visitAndConnect(opNode, END_NODE, iter, arg);
         return opNode;
     }
@@ -953,7 +957,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
-            globalVariables.addEdge(opNode, argChildNode, iter);
+            // globalVariables.addEdge(opNode, argChildNode, iter);
             visitAndConnect(opNode, argChildNode, iter, arg);
             iter++;
         }
@@ -1068,13 +1072,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(bopNode, arg);
         }
-        globalVariables.addEdge(bopNode, leftNode, 1);
+        // globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
         if (rightNode == bopNode) {
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(bopNode, arg);
         }
-        globalVariables.addEdge(bopNode, rightNode, 2);
+        // globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, leftNode, 1, arg);
         visitAndConnect(bopNode, rightNode, 2, arg);
         // update the shadow node time of visit back
@@ -1243,14 +1247,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(bopNode, arg);
         }
-        globalVariables.addEdge(bopNode, leftNode, 1);
+        // globalVariables.addEdge(bopNode, leftNode, 1);
         visitAndConnect(bopNode, leftNode, 1, arg);
         AugmentedNode rightNode = right.accept(this, arg);
         if (rightNode == bopNode) {
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(bopNode, arg);
         }
-        globalVariables.addEdge(bopNode, rightNode, 2);
+        // globalVariables.addEdge(bopNode, rightNode, 2);
         visitAndConnect(bopNode, rightNode, 2, arg);
         // update the shadow node time of visit back
         // TODO: ALSO APPLY TO OTHER SHADOWY NODES
@@ -1335,7 +1339,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(unopNode, arg);
         }
-        globalVariables.addEdge(unopNode, subNode, 1);
+        // globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
         // update the shadow node time of visit back
         if (subNode == unopNode) {
@@ -1421,7 +1425,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(unopNode, arg);
         }
-        globalVariables.addEdge(unopNode, subNode, 1);
+        // globalVariables.addEdge(unopNode, subNode, 1);
         visitAndConnect(unopNode, subNode, 1, arg);
         // update the shadow node time of visit back
         if (subNode == unopNode) {
