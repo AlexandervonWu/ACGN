@@ -219,7 +219,10 @@ public class RLAgentFrame {
         }
         rootNode.setMaxDownlinks(1);
         // generate the body root. 
-        generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
+        int signal = generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
+        if (signal == 1) {
+            return generateNextPred(predName);
+        }
         Generator generator = new Generator();
         currentAns = predGraph;
         String code = generator.toCode(currentAns, rootNode, 1);
@@ -234,19 +237,22 @@ public class RLAgentFrame {
      * @param localRoot The current node in the ASG.
      * @param position The position in the ASG where the next node will be generated.
      * @param tovMap A map tracking the number of times each symbol has been visited.
+     * @param depth The depth of the node in the ASG.
+     * @param stepNum The number of steps taken.
+     * @return A signal of success or failure.
      */
-    public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap, int depth, int stepNum) {
+    public int generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap, int depth, int stepNum) {
         if (stepNum > MAX_STEPS) {
             System.out.println("Max steps reached: " + stepNum);
             // GIVE THE ZERO REWARD. 
             updateQTable(localRoot.getSymbol(), position, 0);
-            return;
+            return 1;
         }
         System.out.println("Generating next node for " + localRoot.getSymbol().getName() + " at position " + position);
         BiMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
         // TODO : TOV TRACKER. 
         if (localRoot.getMaxDownlinks() != -1 && position > localRoot.getMaxDownlinks()) {
-            return; // No more positions to explore
+            return 0; // No more positions to explore
         }
         Symbol localRootSym = localRoot.getSymbol();
         if (localRootSym instanceof PredRootSymbol) {
@@ -263,7 +269,7 @@ public class RLAgentFrame {
         float[] distribution = qTable.get(Pair.of(localRootSym, position));
         System.out.println("Size of distribution: " + (distribution == null ? "null" : distribution.length));
         if (candidates == null || candidates.isEmpty() || distribution == null) {
-            return; // No candidates or no distribution available
+            return 0; // No candidates or no distribution available
         }
         // Select a candidate based on the distribution
         float randomValue = rand.nextFloat();
@@ -285,7 +291,7 @@ public class RLAgentFrame {
             i++;
         }
         if (selectedCandidate == null) {
-            return; // No candidate selected
+            return 0; // No candidate selected
         }
         // Create a new node for the selected candidate
         // AugmentedNode newNode = 
@@ -298,7 +304,10 @@ public class RLAgentFrame {
         // TODO: Recursively generate the next node
         if (!(newNode == MASGVisitor.END_NODE) && localRoot.getMaxDownlinks() > position) {
             // next sibling
-            generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
+            int signal = generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
+            if (signal == 1) {
+                return 1;
+            }
         }
         boolean shadow = newNode == MASGVisitor.SHADOW_NODE;
         if (shadow) {
@@ -309,8 +318,12 @@ public class RLAgentFrame {
         System.out.println(newNode.getMaxDownlinks());
         if (newNode.getMaxDownlinks() != 0) {
             // first child
-            generateNextNode(newNode, 1, tovMap, depth + 1, stepNum + 1);
+            int signal = generateNextNode(newNode, 1, tovMap, depth + 1, stepNum + 1);
+            if (signal == 1) {
+                return 1;
+            }
         }
+        return 0;
     }
 
     public void testMethod() {
