@@ -29,11 +29,13 @@ import parser.etc.Pair;
  * The Q-table is a mapping from (source symbol, position) to a set of probabilities for each candidate symbol.
  */
 public class RLAgentFrame {
+    public static final int MAX_STEPS = 500;
     private GlobalVariables gv;
     private Multigraph groundTruth;
     private Multigraph currentAns;
     private Map<Pair<Symbol, Integer>, float[]> qTable;
     private BiMap<Integer, Symbol> symbolId;
+    private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     // private BiMap<Symbol, AugmentedNode> uniqueNodes;
     public RLAgentFrame(GlobalVariables gv, Multigraph groundTruth, BiMap<Symbol, AugmentedNode> uniqueNodes) {
         this.gv = gv;
@@ -151,6 +153,7 @@ public class RLAgentFrame {
             throw new IllegalArgumentException("Candidate symbol cannot be null");
         }
         if (candidate.getMaxDownlinks() == 0) {
+            edgeRewardMap.put(Pair.of(source, position), rawReward);
             return rawReward;
         }
         // look for all children of the candidate
@@ -171,7 +174,12 @@ public class RLAgentFrame {
             }
             // Calculate the local reward based on the target symbol
             float localImpact = qTable.get(Pair.of(source, position))[symbolId.rget(targetSymbol)];
-            float downReward = localReward(candidate, edge.getPosition(), targetSymbol, rawReward);
+            float downReward = 0.0f;
+            if (edgeRewardMap.containsKey(Pair.of(source, edge.getPosition()))) {
+                downReward = edgeRewardMap.get(Pair.of(source, edge.getPosition()));
+            } else {
+                downReward = localReward(candidate, edge.getPosition(), targetSymbol, rawReward);
+            }
             ans += localImpact * downReward;
         }
         return ans; // Placeholder for local reward calculation
@@ -211,7 +219,7 @@ public class RLAgentFrame {
         }
         rootNode.setMaxDownlinks(1);
         // generate the body root. 
-        generateNextNode(rootNode, 1, new HashMap<>());
+        generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
         Generator generator = new Generator();
         currentAns = predGraph;
         String code = generator.toCode(currentAns, rootNode, 1);
@@ -227,7 +235,13 @@ public class RLAgentFrame {
      * @param position The position in the ASG where the next node will be generated.
      * @param tovMap A map tracking the number of times each symbol has been visited.
      */
-    public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap) {
+    public void generateNextNode(AugmentedNode localRoot, int position, Map<Symbol, Integer> tovMap, int depth, int stepNum) {
+        if (stepNum > MAX_STEPS) {
+            System.out.println("Max steps reached: " + stepNum);
+            // GIVE THE ZERO REWARD. 
+            updateQTable(localRoot.getSymbol(), position, 0);
+            return;
+        }
         System.out.println("Generating next node for " + localRoot.getSymbol().getName() + " at position " + position);
         BiMap<Symbol, AugmentedNode> uniqueNodes = gv.getUniqueNodes();
         // TODO : TOV TRACKER. 
@@ -284,7 +298,7 @@ public class RLAgentFrame {
         // TODO: Recursively generate the next node
         if (!(newNode == MASGVisitor.END_NODE) && localRoot.getMaxDownlinks() > position) {
             // next sibling
-            generateNextNode(localRoot, position + 1, tovMap);
+            generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
         }
         boolean shadow = newNode == MASGVisitor.SHADOW_NODE;
         if (shadow) {
@@ -295,7 +309,7 @@ public class RLAgentFrame {
         System.out.println(newNode.getMaxDownlinks());
         if (newNode.getMaxDownlinks() != 0) {
             // first child
-            generateNextNode(newNode, 1, tovMap);
+            generateNextNode(newNode, 1, tovMap, depth + 1, stepNum + 1);
         }
     }
 
