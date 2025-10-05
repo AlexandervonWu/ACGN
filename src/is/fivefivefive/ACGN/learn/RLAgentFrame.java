@@ -200,6 +200,7 @@ public class RLAgentFrame {
         rootNode.setSymbol(root);
         root.setMaxDownlinks(1);
         Multigraph predGraph = new Multigraph(rootNode, gv);
+        currentAns = predGraph;
         // same parameters as the ground truth
         List<MASGEdge> downlinks = groundTruth.getRoot().getDownlinks();
         if (RLTest.DEBUG) {
@@ -224,7 +225,6 @@ public class RLAgentFrame {
             return generateNextPred(predName);
         }
         Generator generator = new Generator();
-        currentAns = predGraph;
         String code = generator.toCode(currentAns, rootNode, 1);
         return code;
 
@@ -260,7 +260,9 @@ public class RLAgentFrame {
             System.out.println("Transformed type: " + localRootSym.getName());
         }
         tovMap.putIfAbsent(localRootSym, 0);
-        tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
+        if (position == 1) {
+            tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
+        }
         Random rand = new Random();
         Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
         /*if (RLTest.DEBUG) {
@@ -302,7 +304,7 @@ public class RLAgentFrame {
         // problem here: the newNode is sometimes null, when referring to a concrete node derived from an abstract class; unknown reason. 
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
-        if (!(newNode == MASGVisitor.END_NODE) && localRoot.getMaxDownlinks() > position) {
+        if (!(newNode == MASGVisitor.END_NODE) && (localRoot.getMaxDownlinks() > position || localRoot.getMaxDownlinks() == -1)) {
             // next sibling
             int signal = generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
             if (signal == 1) {
