@@ -1,11 +1,14 @@
 package is.fivefivefive.ACGN.learn;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
+import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -14,6 +17,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.etc.Triple;
 import is.fivefivefive.ACGN.test.Playground;
 import is.fivefivefive.ACGN.test.RLTest;
 import is.fivefivefive.ACGN.util.GlobalVariables;
@@ -121,6 +125,7 @@ public class RLAgentFrame {
     public void updateQTable(Symbol source, int position, float reward) throws IllegalArgumentException {
         float[] qVector = qTable.get(Pair.of(source, position));
         if (qVector == null) {
+            // TODO: Add the default qVectors for those new positions without existing data; try to copy the last position? but where is our <END>;
             throw new IllegalArgumentException("Q-table entry not found for " + source + " at position " + position);
         }
         float[] temp = new float[qVector.length];
@@ -218,12 +223,77 @@ public class RLAgentFrame {
                 iter++;
             }
         }
+        /* 
+        // TODO: rework on the reinforcement learning; ditch the recursion. 
+        Queue<Triple<Symbol, Integer, Integer>> holeQueue = new LinkedList<>(); // queue of the holes to be filled, in the form of (source symbol, TOV, position)
+        Map<Symbol, Integer> tovMap = new HashMap<>();
+        holeQueue.add(new Triple<Symbol, Integer, Integer>(root, 1, 1));
+        Random rand = new Random();
+        int stepNum = 0;
+        while (!holeQueue.isEmpty() && stepNum < MAX_STEPS) {
+            stepNum++;
+            Triple<Symbol, Integer, Integer> hole = holeQueue.poll();
+            Symbol source = hole.x;
+            tovMap.putIfAbsent(source, 0);
+            int tov = hole.y;
+            int position = hole.z;
+            if (position == 1) {
+                tovMap.put(source, tovMap.get(source) + 1);
+            }
+            AugmentedNode sourceNode = gv.getUniqueNodes().get(source);
+            // do not use "generateNextNode" here; use the Q-table to select candidates based on their probabilities. 
+            float[] distribution = qTable.get(Pair.of(source, position));
+            if (distribution == null) {
+                continue;
+            }
+            // Select a candidate based on the distribution
+            float randomValue = rand.nextFloat();
+            float cumulativeProbability = 0.0f;
+            Symbol selectedCandidate = null;
+            int i = 0;
+            Set<Symbol> candidates = gv.getCandidates(source, position);
+            for (Symbol candidate : candidates) {
+                cumulativeProbability += distribution[i];
+                if (randomValue <= cumulativeProbability) {
+                    selectedCandidate = candidate;
+                    if (RLTest.DEBUG) {
+                        System.out.println("Selected candidate: " + selectedCandidate.getName() + " with probability: " + distribution[i] + " at position " + position);
+                    }
+                    break;
+                }
+            }
+            if (selectedCandidate == null) {
+                continue;
+            }
+            // Create a new node for the selected candidate
+            AugmentedNode newNode = gv.getUniqueNodes().get(selectedCandidate);
+            predGraph.addVertex(newNode);
+            predGraph.connect(sourceNode, newNode, predGraph, tov, position);
+            if (newNode.getMaxDownlinks() != 0) {
+                holeQueue.add(new Triple<Symbol, Integer, Integer>(selectedCandidate, tovMap.get(selectedCandidate), 1));
+            }
+            if (sourceNode.getMaxDownlinks() > position || sourceNode.getMaxDownlinks() == -1) {
+                holeQueue.add(new Triple<Symbol, Integer, Integer>(source, tovMap.get(source), position + 1));
+            }
+            if (stepNum == MAX_STEPS) {
+                System.out.println("Max steps reached: " + stepNum);
+                // GIVE THE ZERO REWARD. 
+                updateQTable(source, position, 0);
+                currentAns = null;
+                return generateNextPred(predName);
+            }
+        }*/
+
+
         rootNode.setMaxDownlinks(1);
         // generate the body root. 
         int signal = generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
         if (signal == 1) {
+            currentAns = null;
             return generateNextPred(predName);
         }
+
+
         Generator generator = new Generator();
         String code = generator.toCode(currentAns, rootNode, 1);
         return code;
@@ -263,6 +333,7 @@ public class RLAgentFrame {
         if (position == 1) {
             tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
         }
+        System.out.println("current TOV: " + tovMap.get(localRootSym));
         Random rand = new Random();
         Set<Symbol> candidates = gv.getCandidates(localRootSym, position);
         /*if (RLTest.DEBUG) {
@@ -304,7 +375,7 @@ public class RLAgentFrame {
         // problem here: the newNode is sometimes null, when referring to a concrete node derived from an abstract class; unknown reason. 
         localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
         // TODO: Recursively generate the next node
-        if (!(newNode == MASGVisitor.END_NODE) && (localRoot.getMaxDownlinks() > position || localRoot.getMaxDownlinks() == -1)) {
+        if ((!(selectedCandidate instanceof EndSymbol)) && (localRoot.getMaxDownlinks() > position || localRoot.getMaxDownlinks() == -1)) {
             // next sibling
             int signal = generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
             if (signal == 1) {
