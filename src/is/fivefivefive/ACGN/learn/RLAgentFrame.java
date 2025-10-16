@@ -214,9 +214,10 @@ public class RLAgentFrame {
             // System.out.println(downlinks);
         }
         int iter = 2;
-        if (downlinks.size() > 1) {
+        if (downlinks.size() > 2) {
             for (int i = 0; i < downlinks.size() - 1; ++i) {
                 MASGEdge edge = downlinks.get(i);
+                System.out.println("Param: " + edge.getTarget().getSymbol().getName());
                 AugmentedNode param = new AugmentedNode(edge.getTarget());
                 predGraph.addVertex(param);
                 predGraph.connect(rootNode, param, predGraph, iter, 1);
@@ -373,7 +374,7 @@ public class RLAgentFrame {
         }*/
         AugmentedNode newNode = uniqueNodes.get(selectedCandidate);
         // problem here: the newNode is sometimes null, when referring to a concrete node derived from an abstract class; unknown reason. 
-        localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
+        
         // TODO: Recursively generate the next node
         if ((!(selectedCandidate instanceof EndSymbol)) && (localRoot.getMaxDownlinks() > position || localRoot.getMaxDownlinks() == -1)) {
             // next sibling
@@ -388,6 +389,8 @@ public class RLAgentFrame {
             newNode = new AugmentedNode(localRoot);
             newNode.setSymbol(localRoot.getSymbol());
         }
+        localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
+        System.out.println("Downlinks size: " + localRoot.getDownlinks().size());
         System.out.println(newNode.getMaxDownlinks());
         if (newNode.getMaxDownlinks() != 0) {
             // first child
