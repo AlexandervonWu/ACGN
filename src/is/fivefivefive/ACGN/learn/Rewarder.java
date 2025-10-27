@@ -196,7 +196,12 @@ public class Rewarder {
         int posIter = 0;
         int posCount = 0;
         while (posIter < poolSize && posInstance.satisfiable()) {
-            boolean result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
+            try {
+                boolean result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
+            } catch (Exception e) {
+                System.out.println("Error evaluating predicate: " + e.getMessage());                return 0.0;
+            }
+            
             if (result) {
                 posCount++;
             } else {
@@ -239,7 +244,7 @@ public class Rewarder {
             options.solver = A4Options.SatSolver.SAT4J;
             Expr satCommand1 = CompUtil.parseOneExpression_fromString(cm, satCommandText1);
             Expr satCommand2 = CompUtil.parseOneExpression_fromString(cm, satCommandText2);
-            cm.addGlobal("l", CompUtil.parseOneExpression_fromString(cm, "List"));
+            // cm.addGlobal("l", CompUtil.parseOneExpression_fromString(cm, "List"));
             Command cmd1 = new Command(true, Hyperparams.SCOPE, Hyperparams.SCOPE, Hyperparams.SCOPE, satCommand1);
             Command cmd2 = new Command(true, Hyperparams.SCOPE, Hyperparams.SCOPE, Hyperparams.SCOPE, satCommand2);
             A4Solution satSolution1 = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), cmd1, options);

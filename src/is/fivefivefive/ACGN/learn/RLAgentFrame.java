@@ -249,7 +249,7 @@ public class RLAgentFrame {
 
 
         Generator generator = new Generator();
-        String code = generator.toCode(currentAns, rootNode, 1);
+        String code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
         return code;
 
     }
@@ -286,6 +286,8 @@ public class RLAgentFrame {
         tovMap.putIfAbsent(localRootSym, 0);
         if (position == 1) {
             tovMap.put(localRootSym, tovMap.get(localRootSym) + 1);
+            // Also update the graph's timeOfVisitMap to keep it in sync
+            currentAns.updateTimeOfVisitMap(localRoot, tovMap.get(localRootSym));
         }
         System.out.println("current TOV: " + tovMap.get(localRootSym));
         Random rand = new Random();
@@ -344,7 +346,10 @@ public class RLAgentFrame {
             newNode = new AugmentedNode(localRoot);
             newNode.setSymbol(localRoot.getSymbol());
         }
-        localRoot.connect(newNode, position, currentAns, tovMap.get(localRootSym));
+        // Use TOV from tovMap (which was set at position==1) for connecting
+        // This ensures we use the correct TOV for this parent node
+        int localRootTov = tovMap.get(localRootSym);
+        localRoot.connect(newNode, position, currentAns, localRootTov);
         System.out.println("Downlinks size: " + localRoot.getDownlinks().size());
         System.out.println(newNode.getMaxDownlinks());
         if (newNode.getMaxDownlinks() != 0) {

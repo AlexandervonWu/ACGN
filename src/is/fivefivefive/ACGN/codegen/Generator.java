@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -795,6 +796,9 @@ public class Generator {
                     break;
                 default:
                     break;
+            }
+            if (root.getSymbol() instanceof PredRootSymbol) {
+                return sb.toString();
             }
             return '(' + sb.toString() + ')';
         } catch (Exception e) {

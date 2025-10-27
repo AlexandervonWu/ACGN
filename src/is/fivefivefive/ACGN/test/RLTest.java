@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;
 
+import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.ast.Expr;
 import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -83,7 +86,9 @@ public class RLTest {
             if (DEBUG) {
                 System.out.println(nextPredCode);
             }
-            double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), name, Hyperparams.POOL_SIZE);
+            // add the new predicate into the Alloy API
+            // Expr newPred = CompUtil.parseOneExpression_fromString(cm, nextPredCode);
+            double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), nextPredCode, Hyperparams.POOL_SIZE);
             if (reward > maxReward) {
                 maxReward = reward;
             }
