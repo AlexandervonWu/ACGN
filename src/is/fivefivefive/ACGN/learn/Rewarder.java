@@ -196,10 +196,12 @@ public class Rewarder {
         int posIter = 0;
         int posCount = 0;
         while (posIter < poolSize && posInstance.satisfiable()) {
+            boolean result = false;
             try {
-                boolean result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
+                result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
             } catch (Exception e) {
-                System.out.println("Error evaluating predicate: " + e.getMessage());                return 0.0;
+                System.out.println("Error evaluating predicate: " + e.getMessage());                
+                return 0.0;
             }
             
             if (result) {

@@ -14,6 +14,7 @@ import java.util.Set;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
+import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
@@ -249,7 +250,13 @@ public class RLAgentFrame {
 
 
         Generator generator = new Generator();
-        String code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
+        String code = null;
+        try {
+            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
+        } catch (Exception e) {
+            return generateNextPred(predName); // regenerate the predicate
+        }
+        
         return code;
 
     }
@@ -340,12 +347,12 @@ public class RLAgentFrame {
                 return 1;
             }
         }
-        boolean shadow = newNode == MASGVisitor.SHADOW_NODE;
-        if (shadow) {
+        boolean shadow = newNode.getSymbol() instanceof ShadowSymbol;
+        /*if (shadow) {
             // shadow node is a copy of the original node with a different T.O.V.
             newNode = new AugmentedNode(localRoot);
             newNode.setSymbol(localRoot.getSymbol());
-        }
+        }*/
         // Use TOV from tovMap (which was set at position==1) for connecting
         // This ensures we use the correct TOV for this parent node
         int localRootTov = tovMap.get(localRootSym);
@@ -355,6 +362,13 @@ public class RLAgentFrame {
         if (newNode.getMaxDownlinks() != 0) {
             // first child
             int signal = generateNextNode(newNode, 1, tovMap, depth + 1, stepNum + 1);
+            if (signal == 1) {
+                float reward = localReward(localRootSym, position, selectedCandidate, 0);
+                updateQTable(localRootSym, position, selectedCandidate, reward);
+                return 1;
+            }
+        } else if (shadow) {
+            int signal = generateNextNode(localRoot, 1, tovMap, depth + 1, stepNum + 1);
             if (signal == 1) {
                 float reward = localReward(localRootSym, position, selectedCandidate, 0);
                 updateQTable(localRootSym, position, selectedCandidate, reward);

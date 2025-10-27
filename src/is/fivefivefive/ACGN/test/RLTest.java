@@ -29,7 +29,29 @@ import parser.etc.Pair;
 // TODO: GENERATION RULE: NO <SHADOW> TOKENS UNDER THE ROOT. 
 public class RLTest {
     public static final boolean DEBUG = true;
-    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) {
+    private static PrintStream rewardStream;
+    private static PrintStream outputStream;
+    private static PrintStream errorStream;
+
+    static {
+        try {
+            rewardStream = new PrintStream(new File("reward_rl.log"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to create reward_rl.log", e);
+        }
+        try {
+            outputStream = new PrintStream(new File("output_rl.log"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to create output_rl.log", e);
+        }
+        try {
+            errorStream = new PrintStream(new File("error_rl.log"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to create error_rl.log", e);
+        }
+    }
+
+    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException {
         CompModule cm = Rewarder.fromFile(path);
         if (cm == null) {
             System.out.println("Failed to compile Alloy module at " + path);
@@ -92,7 +114,9 @@ public class RLTest {
             if (reward > maxReward) {
                 maxReward = reward;
             }
+            System.setOut(rewardStream);
             System.out.println("Step " + i + ": reward = " + reward + ", maxReward = " + maxReward);
+            System.setOut(outputStream);
             if (reward == 1) {
                 System.out.println("Successfully learned the predicate: ");
                 System.out.println(nextPredCode);
@@ -104,8 +128,8 @@ public class RLTest {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        PrintStream p = new PrintStream(new File("output_rl.log"));
-        System.setOut(p);
+        System.setOut(outputStream);
+        System.setErr(errorStream);
         GlobalVariables gv = GlobalVariables.readFromFile("global_variables.ser");
         if (gv == null) {
             System.out.println("Failed to load global variables.");
@@ -145,9 +169,13 @@ public class RLTest {
                                 System.out.println("Processing file: " + subsubFile.getName());
                                 Pair<Boolean, Double> result = learn(gv, subsubFile.getAbsolutePath(), 1000);
                                 if (result.a) {
+                                    System.setOut(rewardStream);
                                     System.out.println("Successfully learned from " + subsubFile.getName() + " in " + result.b + " steps.");
+                                    System.setOut(outputStream);
                                 } else {
+                                    System.setOut(rewardStream);
                                     System.out.println("Failed to learn from " + subsubFile.getName() + ". Max reward: " + result.b);
+                                    System.setOut(outputStream);
                                 }
                             }
                         }
