@@ -1,7 +1,9 @@
 package is.fivefivefive.ACGN.learn;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +79,10 @@ public class RLAgentFrame {
                 System.out.println("Transformed symbol not found in unique nodes: " + transformedA.getType() + " -> " + transformedA.getName());
                 continue; // non-presenting symbols
             }
-            float[] dist = Probability.probabilitiesBySignatures(gv, gv.getUniqueNodes(), transformedA, positional.b);
-            qTable.put(positional, dist);
+            if (!qTable.containsKey(positional)) {
+                float[] dist = Probability.probabilitiesBySignatures(gv, gv.getUniqueNodes(), transformedA, positional.b);
+                qTable.put(positional, dist);
+            }
             Symbol parent = transformedA;
             if (!symbolId.containsValue(parent)) {
                 int id = symbolId.size();
@@ -123,15 +127,22 @@ public class RLAgentFrame {
      * @param position
      * @param reward
      */
-    public void updateQTable(Symbol source, int position, float reward) throws IllegalArgumentException {
+    public void updateQTable(Symbol source, int position, Symbol selection, float reward) throws IllegalArgumentException {
         float[] qVector = qTable.get(Pair.of(source, position));
         if (qVector == null) {
             // TODO: Add the default qVectors for those new positions without existing data; try to copy the last position? but where is our <END>;
             throw new IllegalArgumentException("Q-table entry not found for " + source + " at position " + position);
         }
+        LinkedHashSet<Symbol> candidateSet = (LinkedHashSet<Symbol>) gv.getCandidates(source, position);
+        List<Symbol> candidateList = new ArrayList<>(candidateSet);
+        int index = candidateList.indexOf(selection);
         float[] temp = new float[qVector.length];
         for (int i = 0; i < qVector.length; i++) {
-            temp[i] = (float) (Math.log(qVector[i]) * INERTIA + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
+            if (i == index) {
+                temp[i] = (float) (Math.log(qVector[i]) * INERTIA + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
+            } else {
+                temp[i] = (float) (Math.log(qVector[i]) * INERTIA);
+            }
         }
         // Softmax normalization
         float sum = 0.0f;
@@ -202,6 +213,7 @@ public class RLAgentFrame {
      */
     public String generateNextPred(String predName) {
         // make a root node
+        edgeRewardMap = new HashMap<Pair<Symbol, Integer>, Float>(); // reset the edge reward map
         AugmentedNode rootNode = new AugmentedNode(-1, -1);
         Symbol root = new PredRootSymbol(rootNode, predName);
         rootNode.setSymbol(root);
@@ -257,7 +269,7 @@ public class RLAgentFrame {
         if (stepNum > MAX_STEPS) {
             System.out.println("Max steps reached: " + stepNum);
             // GIVE THE ZERO REWARD. 
-            updateQTable(localRoot.getSymbol(), position, 0);
+            // updateQTable(localRoot.getSymbol(), position, 0);
             return 1;
         }
         System.out.println("Generating next node for " + localRoot.getSymbol().getName() + " at position " + position);
@@ -321,6 +333,8 @@ public class RLAgentFrame {
             // next sibling
             int signal = generateNextNode(localRoot, position + 1, tovMap, depth, stepNum + 1);
             if (signal == 1) {
+                float reward = localReward(localRootSym, position, selectedCandidate, 0);
+                updateQTable(localRootSym, position, selectedCandidate, reward);
                 return 1;
             }
         }
@@ -337,6 +351,8 @@ public class RLAgentFrame {
             // first child
             int signal = generateNextNode(newNode, 1, tovMap, depth + 1, stepNum + 1);
             if (signal == 1) {
+                float reward = localReward(localRootSym, position, selectedCandidate, 0);
+                updateQTable(localRootSym, position, selectedCandidate, reward);
                 return 1;
             }
         }

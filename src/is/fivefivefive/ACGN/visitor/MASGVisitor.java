@@ -807,6 +807,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
         }
         MiddleSymbol qtSymbol = new MiddleSymbol(label);
+        qtSymbol.setInfiniteRoot(true); // infinite root for quantifier
         List<VarDecl> varDecls = n.getVarDecls();
         scopeNodeId++;
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, arg);
@@ -916,6 +917,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             default: throw new RuntimeException("Custom labeled list not supported");
         }
         MiddleSymbol opSymbol = new MiddleSymbol("LIST_FORMULA_" + semantics);
+        opSymbol.setInfiniteRoot(true); // infinite root for list formula
         AugmentedNode opNode;
         if (uniqueNode.containsKey(opSymbol)) {
             opNode = uniqueNode.get(opSymbol);
@@ -946,6 +948,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             default: throw new RuntimeException("Custom labeled list not supported");
         }
         MiddleSymbol opSymbol = new MiddleSymbol("LIST_EXPR_" + semantics);
+        opSymbol.setInfiniteRoot(true); // infinite root for list expression
         AugmentedNode opNode;
         if (uniqueNode.containsKey(opSymbol)) {
             opNode = uniqueNode.get(opSymbol);

@@ -30,6 +30,7 @@ public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
     private BiMap<Symbol, AugmentedNode> uniqueNode;
     private List<Symbol> concreteRoots; // the predicate roots
+    //private Map<String, Set<Symbol>> classOfSymbols;
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         maxChildCount = new HashMap<Symbol, Integer>();
