@@ -32,6 +32,7 @@ public class RLTest {
     private static PrintStream rewardStream;
     private static PrintStream outputStream;
     private static PrintStream errorStream;
+    private static PrintStream codeOutputStream;
 
     static {
         try {
@@ -39,15 +40,21 @@ public class RLTest {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create reward_rl.log", e);
         }
-        try {
+        /*try {
             outputStream = new PrintStream(new File("output_rl.log"));
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create output_rl.log", e);
-        }
+        }*/
+        outputStream = System.out;
         try {
             errorStream = new PrintStream(new File("error_rl.log"));
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create error_rl.log", e);
+        }
+        try {
+            codeOutputStream = new PrintStream(new File("code_rl.log"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to create code_rl.log", e);
         }
     }
 
@@ -106,7 +113,11 @@ public class RLTest {
             }
             
             if (DEBUG) {
+                System.setOut(codeOutputStream);
+                System.out.println("Code for step " + i + ": ");
                 System.out.println(nextPredCode);
+                System.out.println("--------------------------------");
+                System.setOut(outputStream);
             }
             // add the new predicate into the Alloy API
             // Expr newPred = CompUtil.parseOneExpression_fromString(cm, nextPredCode);

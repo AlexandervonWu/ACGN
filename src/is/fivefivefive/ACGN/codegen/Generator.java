@@ -21,6 +21,11 @@ public class Generator {
     }
 
     public String toCode(Multigraph graph, AugmentedNode root, int tov) {
+        if (tov > 1000) {
+            // infinite loop
+            System.err.println("Infinite loop detected at TOV " + tov);
+            return "<ERROR>";
+        }
         // TODO: Rewrite to use the labels, not semantic IDs; these IDs are not corresponding. 
         try {
             System.out.println("Generating code for " + root.getSymbol().getName() + " at TOV " + tov);
@@ -308,8 +313,18 @@ public class Generator {
                         case 5:
                             // BinaryExpr
                             List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            AugmentedNode leftExpr = downlinksBin.get(0).getTarget();
-                            AugmentedNode rightExpr = downlinksBin.get(1).getTarget();
+                            AugmentedNode leftExpr;
+                            AugmentedNode rightExpr;
+                            try {
+                                leftExpr = downlinksBin.get(0).getTarget();
+                                rightExpr = downlinksBin.get(1).getTarget();
+                            } catch (NullPointerException e) {
+                                System.err.println("No left expression for BinaryExpr at TOV " + tov);
+                                return "<ERROR>";
+                            } catch (IndexOutOfBoundsException e) {
+                                System.err.println("No right expression for BinaryExpr at TOV " + tov);
+                                return "<ERROR>";
+                            }
                             tovTracker.putIfAbsent(leftExpr, 0);
                             tovTracker.put(leftExpr, tovTracker.get(leftExpr) + 1);
                             int tovLeftExpr = tovTracker.get(leftExpr);
