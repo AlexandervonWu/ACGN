@@ -21,7 +21,7 @@ public class Generator {
     }
 
     public String toCode(Multigraph graph, AugmentedNode root, int tov) {
-        if (tov > 1000) {
+        if (tov > 50) {
             // infinite loop
             System.err.println("Infinite loop detected at TOV " + tov);
             return "<ERROR>";

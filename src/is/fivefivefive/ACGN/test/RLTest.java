@@ -28,7 +28,7 @@ import parser.etc.Pair;
 
 // TODO: GENERATION RULE: NO <SHADOW> TOKENS UNDER THE ROOT. 
 public class RLTest {
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     private static PrintStream rewardStream;
     private static PrintStream outputStream;
     private static PrintStream errorStream;
@@ -40,12 +40,12 @@ public class RLTest {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create reward_rl.log", e);
         }
-        /*try {
+        try {
             outputStream = new PrintStream(new File("output_rl.log"));
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create output_rl.log", e);
-        }*/
-        outputStream = System.out;
+        }
+        // outputStream = System.out;
         try {
             errorStream = new PrintStream(new File("error_rl.log"));
         } catch (FileNotFoundException e) {
@@ -111,19 +111,16 @@ public class RLTest {
                 System.out.println("in file " + path);
                 throw e;
             }
-            
-            if (DEBUG) {
-                System.setOut(codeOutputStream);
-                System.out.println("Code for step " + i + ": ");
-                System.out.println(nextPredCode);
-                System.out.println("--------------------------------");
-                System.setOut(outputStream);
-            }
             // add the new predicate into the Alloy API
             // Expr newPred = CompUtil.parseOneExpression_fromString(cm, nextPredCode);
             double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), nextPredCode, Hyperparams.POOL_SIZE);
             if (reward > maxReward) {
                 maxReward = reward;
+                System.setOut(codeOutputStream);
+                System.out.println("New Best: Code for step " + i + "with reward " + reward + " in file " + path + ": ");
+                System.out.println(nextPredCode);
+                System.out.println("--------------------------------");
+                System.setOut(outputStream);
             }
             System.setOut(rewardStream);
             System.out.println("Step " + i + ": reward = " + reward + ", maxReward = " + maxReward);

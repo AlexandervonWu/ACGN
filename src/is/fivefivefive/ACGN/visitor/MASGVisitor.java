@@ -700,11 +700,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
             letNode.setMaxDownlinks(3);
-            updateTimeOfVisit(letNode, arg);
             Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
             uniqueNode.put(varSymbol, letNode);
             child.addSymbol(varSymbol);
             letNode.setSymbol(varSymbol);
+            updateTimeOfVisit(letNode, arg);
             AugmentedNode boundNode = bound.accept(this, arg); 
             // globalVariables.addEdge(letNode, boundNode, 1);
             AugmentedNode bodyNode = body.accept(this, child);
