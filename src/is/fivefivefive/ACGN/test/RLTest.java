@@ -124,6 +124,7 @@ public class RLTest {
             }
             System.setOut(rewardStream);
             System.out.println("Step " + i + ": reward = " + reward + ", maxReward = " + maxReward);
+            System.out.println("Code for step " + i + ": \n" + nextPredCode);
             System.setOut(outputStream);
             if (reward == 1) {
                 System.out.println("Successfully learned the predicate: ");

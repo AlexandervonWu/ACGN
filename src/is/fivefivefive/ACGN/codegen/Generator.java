@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -13,6 +15,7 @@ import is.fivefivefive.ACGN.util.GlobalVariables;
 import parser.etc.Pair;
 
 public class Generator {
+    public static final int MAX_TOV = 20;
     // TODO: The main code generator
     private Map<AugmentedNode, Integer> tovTracker;
 
@@ -21,7 +24,7 @@ public class Generator {
     }
 
     public String toCode(Multigraph graph, AugmentedNode root, int tov) {
-        if (tov > 50) {
+        if (tov > MAX_TOV) {
             // infinite loop
             System.err.println("Infinite loop detected at TOV " + tov);
             return "<ERROR>";
@@ -149,7 +152,9 @@ public class Generator {
                             tovTracker.putIfAbsent(relDeclBody, 0);
                             tovTracker.put(relDeclBody, tovTracker.get(relDeclBody) + 1);
                             int tovRelDeclBody = tovTracker.get(relDeclBody);
-                            sb.append(toCode(graph, relDeclBody, tovRelDeclBody));
+                            String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody);
+                            relDeclBodyCode = relDeclBodyCode.substring(1, relDeclBodyCode.length() - 1);
+                            sb.append(relDeclBodyCode);
                             break;
                         case 2:
                         case -2:
@@ -319,10 +324,10 @@ public class Generator {
                                 leftExpr = downlinksBin.get(0).getTarget();
                                 rightExpr = downlinksBin.get(1).getTarget();
                             } catch (NullPointerException e) {
-                                System.err.println("No left expression for BinaryExpr at TOV " + tov);
+                                System.err.println("No left expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
                                 return "<ERROR>";
                             } catch (IndexOutOfBoundsException e) {
-                                System.err.println("No right expression for BinaryExpr at TOV " + tov);
+                                System.err.println("No right expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
                                 return "<ERROR>";
                             }
                             tovTracker.putIfAbsent(leftExpr, 0);
@@ -812,7 +817,7 @@ public class Generator {
                 default:
                     break;
             }
-            if (root.getSymbol() instanceof PredRootSymbol) {
+            if (!(root.getSymbol() instanceof MiddleSymbol)) {
                 return sb.toString();
             }
             return '(' + sb.toString() + ')';

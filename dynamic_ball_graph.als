@@ -32,9 +32,10 @@ pred TestIdea{
     always moved[b]
 }
 
-pred TestIdea2{
-  all b: Ball |
-    always moved[b]
+pred TestIdea2[] {
+(all b: (one Ball) {
+(always (moved[b]))
+})
 }
 
 run TestIdea
