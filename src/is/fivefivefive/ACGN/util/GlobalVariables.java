@@ -30,6 +30,7 @@ public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
     private BiMap<Symbol, AugmentedNode> uniqueNode;
     private List<Symbol> concreteRoots; // the predicate roots
+    private double uniformVarSig;
     //private Map<String, Set<Symbol>> classOfSymbols;
     public GlobalVariables() {
         edgeMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
@@ -147,6 +148,8 @@ public final class GlobalVariables implements Serializable {
                 edgeMap.putAll(additionalEdges);
             }
             if (categorySymbol instanceof DummySymbol && (categorySymbol.getType().equals("var"))) {
+                uniformVarSig = node.getSignature();
+                System.out.println("Setting uniform variable signature to: " + uniformVarSig);
             }
             if (!uniqueNode.containsKey(symbol) && !(categorySymbol.getType().equals("predroot"))) {
                 uniqueNode.put(symbol, node);
@@ -189,5 +192,11 @@ public final class GlobalVariables implements Serializable {
                 uniqueNode.get(symbol).setSignature(0.0);
             }
         }
+    }
+    public double getUniformVarSig() {
+        return uniformVarSig;
+    }
+    public void setUniformVarSig(double uniformVarSig) {
+        this.uniformVarSig = uniformVarSig;
     }
 }

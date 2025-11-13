@@ -13,7 +13,7 @@ public class VarSymbol extends AbstractSymbol {
     // private Set<FieldConfiner> fieldConfinerSet; // the set of field confiners that this variable is subject to
     private AugmentedNode confinerNode; 
     public VarSymbol(String sig, String varName, int treeId, AugmentedNode confinerNode) {
-        type = sig;
+        type = "VAR_" + sig;
         this.varName = varName;
         treeIdScope = treeId;
         node = new AugmentedNode(-1, 0);
