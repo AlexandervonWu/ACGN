@@ -37,6 +37,13 @@ public class Probability {
                     // still not right! CANDIDATE MASK SHOULD BE PURGED BEFORE. 
                     //  Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
                     if (!uniqueNodes.containsKey(candidate)) {
+                        if (candidate.getType().equals("var")) {
+                            double candidateSig = gv.getUniformVarSig();
+                            double diff = sourceSig - candidateSig;
+                            double expDiff = Math.exp(diff / TEMPERATURE);
+                            sum += expDiff;
+                            validCandidates++;
+                        }
                         continue; // non-presenting symbols
                     }
                     double candidateSig = uniqueNodes.get(candidate).getSignature();
