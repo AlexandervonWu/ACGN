@@ -43,7 +43,7 @@ public class DeclRootSymbol extends AbstractSymbol {
     }
     @Override
     public int hashCode() {
-        return 966213141 + semantic;
+        return 96601 + semantic;
     }
     @Override
     public String toString() {

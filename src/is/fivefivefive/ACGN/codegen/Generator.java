@@ -814,6 +814,47 @@ public class Generator {
                             break;
                     }
                     break;
+                case "DeclRootSymbol": 
+                    // RelDecl roots
+                    switch ((int) Math.round(root.getSemantic())) {
+                        case 1:
+                            sb.append("disj ");
+                            break;
+                        case 2:
+                            sb.append("var ");
+                            break;
+                        case 3:
+                            sb.append("var disj ");
+                            break;
+                        default:
+                            break;
+                    }
+                    List<MASGEdge> downlinksRD = root.getDownlinksAtTimeOfVisit(graph, tov);
+                    if (downlinksRD == null) {
+                        System.out.println(root.getDownlinkMapTOV());
+                        System.out.println("No downlinks for RelDecl at TOV " + tov);
+                        return "";
+                    }
+                    for (int i = 1; i < downlinksRD.size(); ++i) {
+                        MASGEdge e = downlinksRD.get(i);
+                        AugmentedNode relDecl = e.getTarget();
+                        tovTracker.putIfAbsent(relDecl, 0);
+                        tovTracker.put(relDecl, tovTracker.get(relDecl) + 1);
+                        int tovRelDecl = tovTracker.get(relDecl);
+                        sb.append(toCode(graph, relDecl, tovRelDecl));
+                        if (i < downlinksRD.size() - 2) {
+                            sb.append(", ");
+                        }
+                    }
+                    sb.append(" : ");
+                    AugmentedNode relDeclBody = downlinksRD.get(0).getTarget();
+                    tovTracker.putIfAbsent(relDeclBody, 0);
+                    tovTracker.put(relDeclBody, tovTracker.get(relDeclBody) + 1);
+                    int tovRelDeclBody = tovTracker.get(relDeclBody);
+                    String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody);
+                    relDeclBodyCode = relDeclBodyCode.substring(1, relDeclBodyCode.length() - 1);
+                    sb.append(relDeclBodyCode);
+                    break;
                 default:
                     break;
             }

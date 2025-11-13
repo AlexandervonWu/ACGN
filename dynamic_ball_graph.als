@@ -33,9 +33,8 @@ pred TestIdea{
 }
 
 pred TestIdea2[] {
-(all b: (one Ball) {
-(always (moved[b]))
-})
+  (all b : one Ball |
+ (always (moved[b])))
 }
 
-run TestIdea
+run TestIdea2

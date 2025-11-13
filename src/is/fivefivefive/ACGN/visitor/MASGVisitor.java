@@ -27,6 +27,7 @@ import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SetSymbol;
 import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
+import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.test.Playground;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -361,7 +362,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int isDisj = n.isDisjoint() ? 1 : 0;
         // syntactic: according to the signature type and the confiners. 
         int semantic = isVar * 2 + isDisj; // class of the decl; confined by property of the decl. 
-        Symbol declRootSym = new MiddleSymbol("RELDECL_" + semantic);
+        Symbol declRootSym = new DeclRootSymbol(semantic);
         AugmentedNode declRoot; // a virtual root node of the decl set. 
         if (!uniqueNode.containsKey(declRootSym)) {
             uniqueNode.put(declRootSym, new AugmentedNode(-127, semantic, declRootSym));

@@ -119,11 +119,11 @@ public final class GlobalVariables implements Serializable {
             Symbol categorySymbol = EdgeCounter.getSymbolForPretrain(symbol);
             if (categorySymbol instanceof DummySymbol && !(categorySymbol.getType().equals("predroot"))) {
                 // transformed
-                System.out.println("Adding custom unique node: " + categorySymbol.getType() + " -> " + symbol.getName() + " with signature " + node.getSignature());
                 double signature = uniqueNode.get(categorySymbol).getSignature();
                 double randomNoise = (Math.random() - 1) * 0.01; // small noise
                 node.setSignature(signature + randomNoise);
                 node.setMaxDownlinks(0);
+                System.out.println("Adding custom unique node: " + categorySymbol.getType() + " -> " + symbol.getName() + " with signature " + signature);
                 uniqueNode.put(symbol, node);
                 
             }
@@ -145,6 +145,8 @@ public final class GlobalVariables implements Serializable {
                     }
                 }
                 edgeMap.putAll(additionalEdges);
+            }
+            if (categorySymbol instanceof DummySymbol && (categorySymbol.getType().equals("var"))) {
             }
             if (!uniqueNode.containsKey(symbol) && !(categorySymbol.getType().equals("predroot"))) {
                 uniqueNode.put(symbol, node);
