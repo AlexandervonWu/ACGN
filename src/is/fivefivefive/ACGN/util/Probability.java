@@ -6,7 +6,9 @@ import is.fivefivefive.ACGN.learn.Hyperparams;
 import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
+import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.etc.BiMap;
 
@@ -37,7 +39,7 @@ public class Probability {
                     // still not right! CANDIDATE MASK SHOULD BE PURGED BEFORE. 
                     //  Symbol candidateMask = EdgeCounter.getSymbolForPretrain(candidate);
                     if (!uniqueNodes.containsKey(candidate)) {
-                        if (candidate.getType().equals("var")) {
+                        if (candidate instanceof VarSymbol) {
                             double candidateSig = gv.getUniformVarSig();
                             double diff = sourceSig - candidateSig;
                             double expDiff = Math.exp(diff / TEMPERATURE);

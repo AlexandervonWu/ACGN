@@ -16,6 +16,7 @@ import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -75,7 +76,7 @@ public class RLAgentFrame {
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             // calculate by the pretrained signatures
-            Symbol transformedA = positional.a instanceof PredRootSymbol ? EdgeCounter.getSymbolForPretrain(positional.a) : positional.a;
+            Symbol transformedA = positional.a instanceof PredRootSymbol || positional.a instanceof VarSymbol ? EdgeCounter.getSymbolForPretrain(positional.a) : positional.a;
             if (!gv.getUniqueNodes().containsKey(transformedA)) {
                 System.out.println("Transformed symbol not found in unique nodes: " + transformedA.getType() + " -> " + transformedA.getName());
                 continue; // non-presenting symbols

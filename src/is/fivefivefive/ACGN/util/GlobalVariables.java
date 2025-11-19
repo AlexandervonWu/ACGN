@@ -37,6 +37,7 @@ public final class GlobalVariables implements Serializable {
         maxChildCount = new HashMap<Symbol, Integer>();
         initQTable = new HashMap<Pair<Symbol, Integer>, float[]>();
         uniqueNode = new BiMap<Symbol, AugmentedNode>();
+        uniformVarSig = 0.0;
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
@@ -121,6 +122,9 @@ public final class GlobalVariables implements Serializable {
             if (categorySymbol instanceof DummySymbol && !(categorySymbol.getType().equals("predroot"))) {
                 // transformed
                 double signature = uniqueNode.get(categorySymbol).getSignature();
+                if (uniformVarSig == 0.0) {
+                    uniformVarSig = signature;
+                }
                 double randomNoise = (Math.random() - 1) * 0.01; // small noise
                 node.setSignature(signature + randomNoise);
                 node.setMaxDownlinks(0);
@@ -146,10 +150,6 @@ public final class GlobalVariables implements Serializable {
                     }
                 }
                 edgeMap.putAll(additionalEdges);
-            }
-            if (categorySymbol instanceof DummySymbol && (categorySymbol.getType().equals("var"))) {
-                uniformVarSig = node.getSignature();
-                System.out.println("Setting uniform variable signature to: " + uniformVarSig);
             }
             if (!uniqueNode.containsKey(symbol) && !(categorySymbol.getType().equals("predroot"))) {
                 uniqueNode.put(symbol, node);
