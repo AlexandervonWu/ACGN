@@ -84,4 +84,10 @@ public class BiMap<K, V> implements Serializable {
             e.printStackTrace();
         }
     }
+
+    public void putAll(BiMap<K,V> another) {
+        for (K key : another.keys()) {
+            put(key, another.get(key));
+        }
+    }
 }
