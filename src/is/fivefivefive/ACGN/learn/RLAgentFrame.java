@@ -432,7 +432,32 @@ public class RLAgentFrame {
                 currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
             }
             Set<Symbol> candidates = gv.getCandidates(currentSym, position);
+            float[] distribution = qTable.get(Pair.of(currentSym, position));
+            float randomValue = rand.nextFloat();
+            float cumulativeProbability = 0.0f;
+            Symbol selectedCandidate = null;
+            int i = 0;
+            for (Symbol candidate : candidates) {
+                cumulativeProbability += distribution[i];
+                if (randomValue <= cumulativeProbability) {
+                    selectedCandidate = candidate;
+                    break;
+                }
+                i++;
+            }
+            AugmentedNode newNode = dynamicUniqueNodes.get(selectedCandidate);
+            boolean shadow = newNode.getSymbol() instanceof ShadowSymbol;
+            if (shadow) {
+                newNode = new AugmentedNode(currentNode);
+                newNode.setSymbol(currentNode.getSymbol());
+            }
+            int newNodeChildren = newNode.getMaxDownlinks();
+            if (newNodeChildren == -1) {
+                // generate until <END>
+            } else {
 
+            }
+            currentNode.connect(newNode, position, currentAns, localRootTov);
             if (currentSym instanceof DeclRootSymbol) {
                 // TODO: The declRoot logic for the variables. 
                 AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
