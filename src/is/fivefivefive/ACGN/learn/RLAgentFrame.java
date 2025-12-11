@@ -383,7 +383,7 @@ public class RLAgentFrame {
                 }
                 AugmentedNode varNode = new AugmentedNode(127, globalNewVarCounter);
                 globalNewVarCounter++;
-                Symbol varSym = new VarSymbol("generic", "var" + varId, -1, varNode0);
+                Symbol varSym = new VarSymbol("generic", "var" + varId, -1, newNode.getDownlinks().get(0).getTarget());
                 varNode.setSymbol(varSym);
                 currentAns.addVertex(varNode);
                 newNode.connect(varNode, varId + 2, currentAns, localRootTov);
@@ -413,6 +413,59 @@ public class RLAgentFrame {
         return 0;
     }
 
+    private void generateNodesIter(AugmentedNode root, Map<Symbol, Integer> tovMap) {
+        // TODO
+        // try not use queue but keep track with the pointer
+        AugmentedNode currentNode = root;
+        int slots = 1;
+        int position = 1;
+        Random rand = new Random();
+        while (slots > 0) {
+            Symbol currentSym = currentNode.getSymbol();
+            int localRootTov = tovMap.get(currentSym);
+            if (currentSym instanceof PredRootSymbol) {
+                currentSym = EdgeCounter.getSymbolForPretrain(currentSym);
+            }
+            tovMap.putIfAbsent(currentSym, 0);
+            if (position == 1) {
+                tovMap.put(currentSym, tovMap.get(currentSym) + 1);
+                currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
+            }
+            Set<Symbol> candidates = gv.getCandidates(currentSym, position);
+
+            if (currentSym instanceof DeclRootSymbol) {
+                // TODO: The declRoot logic for the variables. 
+                AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
+                globalNewVarCounter++;
+                Symbol varSym0 = new VarSymbol("generic", "var0", -1, currentNode.getDownlinks().get(0).getTarget());
+                varNode0.setSymbol(varSym0);
+                currentAns.addVertex(varNode0);
+                currentNode.connect(varNode0, 2, currentAns, localRootTov);
+                dynamicUniqueNodes.put(varSym0, varNode0);
+                int varId = 1;
+                float probabilityOfEnd = 0;
+                float selection = 1;
+                while (selection > probabilityOfEnd) {
+                    selection = rand.nextFloat();
+                    probabilityOfEnd = qTable.get(Pair.of(currentSym, varId + 2))[0];
+                    if (selection <= probabilityOfEnd) {
+                        break;
+                    }
+                    AugmentedNode varNode = new AugmentedNode(127, globalNewVarCounter);
+                    globalNewVarCounter++;
+                    Symbol varSym = new VarSymbol("generic", "var" + varId, -1, currentNode.getDownlinks().get(0).getTarget());
+                    varNode.setSymbol(varSym);
+                    currentAns.addVertex(varNode);
+                    currentNode.connect(varNode, varId + 2, currentAns, localRootTov);
+                    dynamicUniqueNodes.put(varSym, varNode);
+                    varId++;
+                }
+            } else {
+
+            }
+            position++;
+        }
+    }
     public void testMethod() {
 
     }
