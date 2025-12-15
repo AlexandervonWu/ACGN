@@ -416,6 +416,7 @@ public class RLAgentFrame {
     private void generateNodesIter(AugmentedNode root, Map<Symbol, Integer> tovMap) {
         // TODO
         // try not use queue but keep track with the pointer
+        AugmentedNode parentNode = null;
         AugmentedNode currentNode = root;
         int slots = 1;
         int position = 1;
@@ -451,13 +452,9 @@ public class RLAgentFrame {
                 newNode = new AugmentedNode(currentNode);
                 newNode.setSymbol(currentNode.getSymbol());
             }
-            int newNodeChildren = newNode.getMaxDownlinks();
-            if (newNodeChildren == -1) {
-                // generate until <END>
-            } else {
-
-            }
             currentNode.connect(newNode, position, currentAns, localRootTov);
+            // complete the generation of the node
+            // after this, check the special case of a declaration root node. 
             if (currentSym instanceof DeclRootSymbol) {
                 // TODO: The declRoot logic for the variables. 
                 AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
@@ -486,8 +483,36 @@ public class RLAgentFrame {
                     varId++;
                 }
             } else {
-
+                // non-declaration root node
+                int currentChildren = currentNode.getDownlinks().size();
+                if (currentChildren == -1) {
+                    // generate until <END>
+                    if (selectedCandidate instanceof EndSymbol) {
+                        // revert to the first child-position here
+                        // TODO: the sibling check. 
+                        currentNode = currentNode.getDownlinks().get(0).getTarget();
+                        slots = currentNode.getMaxDownlinks();
+                        position = 1;
+                    } else {
+                        // generate the next child
+                        slots++;
+                        position++;
+                    }
+                } else {
+                    // generate the children
+                    if (position < currentChildren) {
+                        // generate the next child
+                        slots++;
+                        position++;
+                    } else {
+                        // revert to the first child-position here
+                        currentNode = currentNode.getDownlinks().get(0).getTarget();
+                        slots = currentNode.getMaxDownlinks();
+                        position = 1;
+                    }
+                }
             }
+            slots--;
             position++;
         }
     }
