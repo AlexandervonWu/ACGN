@@ -418,6 +418,7 @@ public class RLAgentFrame {
         // try not use queue but keep track with the pointer
         AugmentedNode parentNode = null;
         AugmentedNode currentNode = root;
+        int parentPosition = -1;
         int slots = 1;
         int position = 1;
         Random rand = new Random();
@@ -489,9 +490,13 @@ public class RLAgentFrame {
                     // generate until <END>
                     if (selectedCandidate instanceof EndSymbol) {
                         // revert to the first child-position here
-                        // TODO: the sibling check. 
-                        currentNode = currentNode.getDownlinks().get(0).getTarget();
-                        slots = currentNode.getMaxDownlinks();
+                        // TODO: the sibling check. )
+                        if (parentNode == null || parentPosition == parentNode.getDownlinks().size()) {
+                            currentNode = currentNode.getDownlinks().get(0).getTarget();
+                        } else {
+                            currentNode = parentNode.getDownlinks().get(parentPosition).getTarget();
+                            parentPosition++;
+                        }
                         position = 1;
                     } else {
                         // generate the next child
@@ -506,8 +511,14 @@ public class RLAgentFrame {
                         position++;
                     } else {
                         // revert to the first child-position here
-                        currentNode = currentNode.getDownlinks().get(0).getTarget();
-                        slots = currentNode.getMaxDownlinks();
+                        if (parentNode == null || parentPosition == parentNode.getDownlinks().size()) {
+                            parentNode = parentNode.getDownlinks().get(0).getTarget();
+                            parentPosition = 1;
+                            
+                        } else {
+                            currentNode = parentNode.getDownlinks().get(parentPosition).getTarget();
+                            parentPosition++;
+                        }
                         position = 1;
                     }
                 }
