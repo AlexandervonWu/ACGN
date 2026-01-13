@@ -413,7 +413,7 @@ public class RLAgentFrame {
         return 0;
     }
 
-    private void generateNodesIter(AugmentedNode root, Map<Symbol, Integer> tovMap) {
+    private void generateNodesIterObs(AugmentedNode root, Map<Symbol, Integer> tovMap) {
         // TODO
         // try not use queue but keep track with the pointer
         AugmentedNode parentNode = null;
@@ -526,6 +526,50 @@ public class RLAgentFrame {
             slots--;
             position++;
         }
+    }
+    private void generateNodesIter(AugmentedNode root, Map<Symbol, Integer> tovMap) {
+        List<AugmentedNode> iterativeNodeList = new ArrayList<>();
+        int depth = 0;
+        iterativeNodeList.add(root);
+        while (!iterativeNodeList.isEmpty()) {
+            List<AugmentedNode> nextDepthNodeList = new ArrayList<>();
+            for (AugmentedNode currentNode : iterativeNodeList) {
+                Symbol currentSym = currentNode.getSymbol();
+                int localRootTov = tovMap.get(currentSym);
+                if (currentSym instanceof PredRootSymbol) {
+                    currentSym = EdgeCounter.getSymbolForPretrain(currentSym);
+                }
+                tovMap.putIfAbsent(currentSym, 0);
+                tovMap.put(currentSym, tovMap.get(currentSym) + 1);
+                currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
+                Set<Symbol> candidates = gv.getCandidates(currentSym, depth + 1);
+                float[] distribution = qTable.get(Pair.of(currentSym, depth + 1));
+                Random rand = new Random();
+                float randomValue = rand.nextFloat();
+                float cumulativeProbability = 0.0f;
+                Symbol selectedCandidate = null;
+                int i = 0;
+                for (Symbol candidate : candidates) {
+                    cumulativeProbability += distribution[i];
+                    if (randomValue <= cumulativeProbability) {
+                        selectedCandidate = candidate;
+                        break;
+                    }
+                    i++;
+                }
+                AugmentedNode newNode = dynamicUniqueNodes.get(selectedCandidate);
+                boolean shadow = newNode.getSymbol() instanceof ShadowSymbol;
+                if (shadow) {
+                    newNode = new AugmentedNode(currentNode);
+                    newNode.setSymbol(currentNode.getSymbol());
+                }
+                currentNode.connect(newNode, depth + 1, currentAns, localRootTov);
+                nextDepthNodeList.add(newNode);
+            }
+            iterativeNodeList = nextDepthNodeList;
+            depth++;
+        }
+        // every space have been filled here
     }
     public void testMethod() {
 
