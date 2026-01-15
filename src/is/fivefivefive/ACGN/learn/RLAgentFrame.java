@@ -278,11 +278,12 @@ public class RLAgentFrame {
 
         rootNode.setMaxDownlinks(1);
         // generate the body root.
-        int signal = generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
+        /*int signal = generateNextNode(rootNode, 1, new HashMap<>(), 0, 0);
         if (signal == 1) {
             currentAns = null;
             return generateNextPred(predName);
-        }
+        }*/
+        generateNodesIter(rootNode, new HashMap<>());
 
         Generator generator = new Generator();
         String code = null;
@@ -581,24 +582,25 @@ public class RLAgentFrame {
             List<AugmentedNode> nextDepthNodeList = new ArrayList<>();
             for (AugmentedNode currentNode : iterativeNodeList) {
                 Symbol currentSym = currentNode.getSymbol();
-                int localRootTov = tovMap.get(currentSym);
                 if (currentSym instanceof PredRootSymbol) {
                     currentSym = EdgeCounter.getSymbolForPretrain(currentSym);
                 }
                 tovMap.putIfAbsent(currentSym, 0);
                 tovMap.put(currentSym, tovMap.get(currentSym) + 1);
+                int localRootTov = tovMap.get(currentSym);
                 currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
                 int position = 1;
                 while (position <= currentNode.getMaxDownlinks() || currentNode.getMaxDownlinks() == -1) {
                     Set<Symbol> candidates = gv.getCandidates(currentSym, position);
                     float[] distribution = qTable.get(Pair.of(currentSym, position));
+                    System.out.println("Distribution length: " + (distribution == null ? "null" : distribution.length) + " for " + currentSym.getName() + " at position " + position);
                     Random rand = new Random();
                     float randomValue = rand.nextFloat();
                     float cumulativeProbability = 0.0f;
                     Symbol selectedCandidate = null;
                     int i = 0;
                     for (Symbol candidate : candidates) {
-                        cumulativeProbability += distribution[i];
+                        cumulativeProbability += distribution[i]; // maybe some problems with distribution length? 
                         if (randomValue <= cumulativeProbability) {
                             selectedCandidate = candidate;
                             break;
@@ -613,6 +615,9 @@ public class RLAgentFrame {
                     }
                     currentNode.connect(newNode, position, currentAns, localRootTov);
                     nextDepthNodeList.add(newNode);
+                    if (selectedCandidate instanceof EndSymbol) {
+                        break;
+                    }
                     position++;
                 }
             }
