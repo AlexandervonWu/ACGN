@@ -600,6 +600,9 @@ public class RLAgentFrame {
                     Symbol selectedCandidate = null;
                     int i = 0;
                     for (Symbol candidate : candidates) {
+                        if (!dynamicUniqueNodes.containsKey(candidate)) {
+                            continue;
+                        }
                         cumulativeProbability += distribution[i]; // maybe some problems with distribution length? 
                         if (randomValue <= cumulativeProbability) {
                             selectedCandidate = candidate;
