@@ -622,7 +622,9 @@ public class RLAgentFrame {
                         AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
                         globalNewVarCounter++;
                         Symbol varSym0 = new VarSymbol("generic", "var0", -1,
-                                currentNode.getDownlinks().get(0).getTarget());
+                                currentNode); 
+                            // the usually defined confiner node is still undefined in the current breadth-first generation
+                            // try to use the parent node as the confiner node. Try generation. 
                         varNode0.setSymbol(varSym0);
                         currentAns.addVertex(varNode0);
                         newNode.connect(varNode0, 2, currentAns, localRootTov);
