@@ -617,6 +617,37 @@ public class RLAgentFrame {
                         newNode.setSymbol(currentNode.getSymbol());
                     }
                     currentNode.connect(newNode, position, currentAns, localRootTov);
+                    // TODO: handle the declare roots; dummy code down here. 
+                    if (selectedCandidate instanceof DeclRootSymbol) {
+                        AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
+                        globalNewVarCounter++;
+                        Symbol varSym0 = new VarSymbol("generic", "var0", -1,
+                                currentNode.getDownlinks().get(0).getTarget());
+                        varNode0.setSymbol(varSym0);
+                        currentAns.addVertex(varNode0);
+                        newNode.connect(varNode0, 2, currentAns, localRootTov);
+                        dynamicUniqueNodes.put(varSym0, varNode0);
+                        int varId = 1;
+                        float probabilityOfEnd = 0;
+                        float selection = 1;
+                        while (selection > probabilityOfEnd) {
+                            selection = rand.nextFloat();
+                            probabilityOfEnd = qTable.get(Pair.of(currentSym, varId + 2))[0];
+                            if (selection <= probabilityOfEnd) {
+                                break;
+                            }
+                            AugmentedNode varNode = new AugmentedNode(127, globalNewVarCounter);
+                            globalNewVarCounter++;
+                            Symbol varSym = new VarSymbol("generic", "var" + varId, -1,
+                                    currentNode.getDownlinks().get(0).getTarget());
+                            varNode.setSymbol(varSym);
+                            currentAns.addVertex(varNode);
+                            newNode.connect(varNode, varId + 2, currentAns, localRootTov);
+                            dynamicUniqueNodes.put(varSym, varNode);
+                            varId++;
+                        }
+                        continue; // finished the generation of new var declarations. 
+                    }
                     nextDepthNodeList.add(newNode);
                     if (selectedCandidate instanceof EndSymbol) {
                         break;
