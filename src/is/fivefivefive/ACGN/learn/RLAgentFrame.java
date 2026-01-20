@@ -579,6 +579,7 @@ public class RLAgentFrame {
         int depth = 0;
         iterativeNodeList.add(root);
         while (!iterativeNodeList.isEmpty()) {
+            System.out.println("Depth: " + depth);
             List<AugmentedNode> nextDepthNodeList = new ArrayList<>();
             for (AugmentedNode currentNode : iterativeNodeList) {
                 Symbol currentSym = currentNode.getSymbol();
@@ -591,9 +592,11 @@ public class RLAgentFrame {
                 currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
                 int position = 1;
                 while (position <= currentNode.getMaxDownlinks() || currentNode.getMaxDownlinks() == -1) {
+                    System.out.println("Position: " + position);
                     Set<Symbol> candidates = gv.getCandidates(currentSym, position);
                     float[] distribution = qTable.get(Pair.of(currentSym, position));
                     System.out.println("Distribution length: " + (distribution == null ? "null" : distribution.length) + " for " + currentSym.getName() + " at position " + position);
+                    System.out.println("Candidates size: " + (candidates == null ? "null" : candidates.size()));
                     Random rand = new Random();
                     float randomValue = rand.nextFloat();
                     float cumulativeProbability = 0.0f;
@@ -611,7 +614,11 @@ public class RLAgentFrame {
                         i++;
                     }
                     AugmentedNode newNode = dynamicUniqueNodes.get(selectedCandidate);
-                    boolean shadow = newNode.getSymbol() instanceof ShadowSymbol;
+                    if (newNode == null) {
+                        System.out.println("New node is null for candidate: " + selectedCandidate.getName());
+                        throw new NullPointerException("New node is null for candidate: " + selectedCandidate.getName());
+                    }
+                    boolean shadow = selectedCandidate instanceof ShadowSymbol;
                     if (shadow) {
                         newNode = new AugmentedNode(currentNode);
                         newNode.setSymbol(currentNode.getSymbol());
