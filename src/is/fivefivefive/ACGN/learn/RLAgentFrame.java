@@ -480,6 +480,10 @@ public class RLAgentFrame {
                     float[] distribution = qTable.get(Pair.of(currentSym, position));
                     System.out.println("Distribution length: " + (distribution == null ? "null" : distribution.length) + " for " + currentSym.getName() + " at position " + position);
                     System.out.println("Candidates size: " + (candidates == null ? "null" : candidates.size()));
+                    if (candidates.size() > 100) {
+                        // mysteriously long candidates list; output it to see
+                        System.out.println("Mysteriously long candidates list: " + candidates + " for " + currentSym.getName() + " at position " + position);
+                    }
                     Random rand = new Random();
                     float randomValue = rand.nextFloat();
                     float cumulativeProbability = 0.0f;
