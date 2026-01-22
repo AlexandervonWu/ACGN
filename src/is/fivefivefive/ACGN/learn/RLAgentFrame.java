@@ -457,123 +457,6 @@ public class RLAgentFrame {
         }
         return 0;
     }
-
-    private void generateNodesIterObs(AugmentedNode root, Map<Symbol, Integer> tovMap) {
-        // TODO
-        // try not use queue but keep track with the pointer
-        AugmentedNode parentNode = null;
-        AugmentedNode currentNode = root;
-        int parentPosition = -1;
-        int slots = 1;
-        int position = 1;
-        Random rand = new Random();
-        while (slots > 0) {
-            Symbol currentSym = currentNode.getSymbol();
-            int localRootTov = tovMap.get(currentSym);
-            if (currentSym instanceof PredRootSymbol) {
-                currentSym = EdgeCounter.getSymbolForPretrain(currentSym);
-            }
-            tovMap.putIfAbsent(currentSym, 0);
-            if (position == 1) {
-                tovMap.put(currentSym, tovMap.get(currentSym) + 1);
-                currentAns.updateTimeOfVisitMap(currentNode, tovMap.get(currentSym));
-            }
-            Set<Symbol> candidates = gv.getCandidates(currentSym, position);
-            float[] distribution = qTable.get(Pair.of(currentSym, position));
-            float randomValue = rand.nextFloat();
-            float cumulativeProbability = 0.0f;
-            Symbol selectedCandidate = null;
-            int i = 0;
-            for (Symbol candidate : candidates) {
-                cumulativeProbability += distribution[i];
-                if (randomValue <= cumulativeProbability) {
-                    selectedCandidate = candidate;
-                    break;
-                }
-                i++;
-            }
-            AugmentedNode newNode = dynamicUniqueNodes.get(selectedCandidate);
-            boolean shadow = newNode.getSymbol() instanceof ShadowSymbol;
-            if (shadow) {
-                newNode = new AugmentedNode(currentNode);
-                newNode.setSymbol(currentNode.getSymbol());
-            }
-            currentNode.connect(newNode, position, currentAns, localRootTov);
-            // complete the generation of the node
-            // after this, check the special case of a declaration root node.
-            if (currentSym instanceof DeclRootSymbol) {
-                // TODO: The declRoot logic for the variables.
-                AugmentedNode varNode0 = new AugmentedNode(127, globalNewVarCounter);
-                globalNewVarCounter++;
-                Symbol varSym0 = new VarSymbol("generic", "var0", -1, currentNode.getDownlinks().get(0).getTarget());
-                varNode0.setSymbol(varSym0);
-                currentAns.addVertex(varNode0);
-                currentNode.connect(varNode0, 2, currentAns, localRootTov);
-                dynamicUniqueNodes.put(varSym0, varNode0);
-                int varId = 1;
-                float probabilityOfEnd = 0;
-                float selection = 1;
-                while (selection > probabilityOfEnd) {
-                    selection = rand.nextFloat();
-                    probabilityOfEnd = qTable.get(Pair.of(currentSym, varId + 2))[0];
-                    if (selection <= probabilityOfEnd) {
-                        break;
-                    }
-                    AugmentedNode varNode = new AugmentedNode(127, globalNewVarCounter);
-                    globalNewVarCounter++;
-                    Symbol varSym = new VarSymbol("generic", "var" + varId, -1,
-                            currentNode.getDownlinks().get(0).getTarget());
-                    varNode.setSymbol(varSym);
-                    currentAns.addVertex(varNode);
-                    currentNode.connect(varNode, varId + 2, currentAns, localRootTov);
-                    dynamicUniqueNodes.put(varSym, varNode);
-                    varId++;
-                }
-            } else {
-                // non-declaration root node
-                int currentChildren = currentNode.getDownlinks().size();
-                if (currentChildren == -1) {
-                    // generate until <END>
-                    if (selectedCandidate instanceof EndSymbol) {
-                        // revert to the first child-position here
-                        // TODO: the sibling check. )
-                        if (parentNode == null || parentPosition == parentNode.getDownlinks().size()) {
-                            currentNode = currentNode.getDownlinks().get(0).getTarget();
-                        } else {
-                            currentNode = parentNode.getDownlinks().get(parentPosition).getTarget();
-                            parentPosition++;
-                        }
-                        position = 1;
-                    } else {
-                        // generate the next child
-                        slots++;
-                        position++;
-                    }
-                } else {
-                    // generate the children
-                    if (position < currentChildren) {
-                        // generate the next child
-                        slots++;
-                        position++;
-                    } else {
-                        // revert to the first child-position here
-                        if (parentNode == null || parentPosition == parentNode.getDownlinks().size()) {
-                            parentNode = parentNode.getDownlinks().get(0).getTarget();
-                            parentPosition = 1;
-
-                        } else {
-                            currentNode = parentNode.getDownlinks().get(parentPosition).getTarget();
-                            parentPosition++;
-                        }
-                        position = 1;
-                    }
-                }
-            }
-            slots--;
-            position++;
-        }
-    }
-
     private void generateNodesIter(AugmentedNode root, Map<Symbol, Integer> tovMap) {
         List<AugmentedNode> iterativeNodeList = new ArrayList<>();
         int depth = 0;
@@ -609,6 +492,7 @@ public class RLAgentFrame {
                         cumulativeProbability += distribution[i]; // maybe some problems with distribution length? 
                         if (randomValue <= cumulativeProbability) {
                             selectedCandidate = candidate;
+                            System.out.println("Selected candidate: " + selectedCandidate.getName() + "at cumulative probability: " + cumulativeProbability);
                             break;
                         }
                         i++;
