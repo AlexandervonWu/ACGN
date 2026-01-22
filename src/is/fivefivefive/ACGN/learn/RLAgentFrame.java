@@ -500,6 +500,10 @@ public class RLAgentFrame {
                             break;
                         }
                         i++;
+                        if (i == candidates.size()) {
+                            System.out.println("No candidate selected for " + currentSym.getName() + " at position " + position);
+                            throw new RuntimeException("No candidate selected for " + currentSym.getName() + " at position " + position);
+                        }
                     }
                     AugmentedNode newNode = dynamicUniqueNodes.get(selectedCandidate);
                     if (newNode == null) {
