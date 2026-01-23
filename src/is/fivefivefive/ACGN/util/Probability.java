@@ -57,7 +57,6 @@ public class Probability {
                     System.out.println(candidate.getType() + ",, " + candidate.getName());
                     throw e;
                 }
-
             }
             float[] probabilities = new float[validCandidates];
             int i = 0;

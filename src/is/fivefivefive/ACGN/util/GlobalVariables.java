@@ -26,6 +26,7 @@ import parser.etc.Pair;
 // TODO: Globalize all unique nodes. 
 public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap;
+    private Map<Pair<Symbol, Integer>, Set<Symbol>> coarseGrainCandidateMap;
     private Map<Symbol, Integer> maxChildCount;
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
     private BiMap<Symbol, AugmentedNode> uniqueNode;
@@ -37,6 +38,7 @@ public final class GlobalVariables implements Serializable {
         maxChildCount = new HashMap<Symbol, Integer>();
         initQTable = new HashMap<Pair<Symbol, Integer>, float[]>();
         uniqueNode = new BiMap<Symbol, AugmentedNode>();
+        coarseGrainCandidateMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         uniformVarSig = 0.0;
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
@@ -45,9 +47,13 @@ public final class GlobalVariables implements Serializable {
     public Set<Symbol> getCandidates(Symbol source, int position) {
         return edgeMap.get(Pair.of(source, position));
     }
+    public Set<Symbol> getCoarseGrainCandidates(Symbol source, int position) {
+        return coarseGrainCandidateMap.get(Pair.of(source, position));
+    }
     public void addEdge(Symbol source, Symbol target, int position) {
         if (!edgeMap.containsKey(Pair.of(source, position))) {
             edgeMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
+            coarseGrainCandidateMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
         }
         if (maxChildCount.containsKey(source)) {
             int count = maxChildCount.get(source);
@@ -58,6 +64,7 @@ public final class GlobalVariables implements Serializable {
             maxChildCount.put(source, position + 1);
         }
         edgeMap.get(Pair.of(source, position)).add(target);
+        coarseGrainCandidateMap.get(Pair.of(source, position)).add(EdgeCounter.getSymbolForPretrain(target)); // the coarse-grain version
     }
     public void addEdge(MASGEdge edge, int position) {
         addEdge(edge.getSource().getSymbol(), edge.getTarget().getSymbol(), position);
@@ -71,8 +78,10 @@ public final class GlobalVariables implements Serializable {
         for (Pair<Symbol, Integer> source : another.getEdgeMap().keySet()) {
             if (!edgeMap.containsKey(source)) {
                 edgeMap.put(source, new LinkedHashSet<Symbol>());
+                coarseGrainCandidateMap.put(source, new LinkedHashSet<Symbol>());
             }
             edgeMap.get(source).addAll(another.getEdgeMap().get(source));
+            coarseGrainCandidateMap.get(source).addAll(another.getCoarseGrainCandidates(source.a, source.b));
         }
     }
     public int getMaxChildCount(Symbol source) {
