@@ -34,4 +34,12 @@ public class CodeGenAgent {
     public void initialize() {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
     }
+
+    /*
+     * // TODOS: 
+     * 1. Coarse token to fine token expansion; not in initialization because new fine tokens as the newly declared variables; 
+     * Fields and signatures could be initialized by the general coarse token metric. 
+     * 2. RL Agent PER MODEL: - rewrite the dynamic unique nodes each iteration; 
+     * REDESIGN some Q-learning to include some multivariance? Increase the uplooking depth? 
+     */
 }
