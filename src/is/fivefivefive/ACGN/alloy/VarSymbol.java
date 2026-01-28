@@ -10,6 +10,7 @@ public class VarSymbol extends AbstractSymbol {
     private String varName; // the name of the variable
     private int treeIdScope; // 0 for global symbols;
     private AugmentedNode node; // the node that this symbol is associated with
+    private boolean isGlobal;
     // private Set<FieldConfiner> fieldConfinerSet; // the set of field confiners that this variable is subject to
     private AugmentedNode confinerNode; 
     public VarSymbol(String sig, String varName, int treeId, AugmentedNode confinerNode) {
@@ -19,6 +20,7 @@ public class VarSymbol extends AbstractSymbol {
         node = new AugmentedNode(-1, 0);
         // fieldConfinerSet = new HashSet<>();
         this.confinerNode = confinerNode;
+        isGlobal = (treeId == 0);
     }
     public String getType() {
         return type;
@@ -54,5 +56,8 @@ public class VarSymbol extends AbstractSymbol {
     @Override
     public void setMaxDownlinks(int maxDownlinks) {
         // VarSymbol does not have downlinks, so this method does nothing
+    }
+    public boolean isGlobal() {
+        return isGlobal;
     }
 }

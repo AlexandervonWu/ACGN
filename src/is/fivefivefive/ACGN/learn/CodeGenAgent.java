@@ -31,6 +31,10 @@ public class CodeGenAgent {
         this.dynamicUniqueNodes = new BiMap<Symbol, AugmentedNode>();
     }
 
+    public static Map<Pair<Symbol, Integer>, float[]> initialQTable(GlobalVariables gv) {
+        // TODO
+        return null;
+    }
     public void initialize() {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
     }
@@ -41,5 +45,6 @@ public class CodeGenAgent {
      * Fields and signatures could be initialized by the general coarse token metric. 
      * 2. RL Agent PER MODEL: - rewrite the dynamic unique nodes each iteration; 
      * REDESIGN some Q-learning to include some multivariance? Increase the uplooking depth? 
+     * Use a map: [nextToken : probability] at each (currentToken, position) pair. 
      */
 }

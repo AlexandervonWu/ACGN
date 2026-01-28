@@ -1,4 +1,5 @@
 package is.fivefivefive.ACGN.util;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -77,6 +78,38 @@ public class Probability {
             return probabilities;
         }
 
+        return null;
+    }
+
+    /**
+     * Get the coarse token probabilities for a given source symbol at a specific position.
+     * @param gv Global variables containing the candidates.
+     * @param source The source symbol for which candidates are being evaluated.
+     * @param position The position in the ASG where the source symbol is located.
+     * @return A dictionary of probabilities for each candidate symbol.
+     */
+    public static Map<Symbol, Float> coarseTokenProbabilities(GlobalVariables gv, Symbol source, int position) {
+        Set<Symbol> candidates = gv.getCoarseGrainCandidates(source, position);
+        if (candidates != null) {
+            Map<Symbol, Float> probabilities = new HashMap<>();
+            // Use signatures of the nodes
+            double sourceSig = source.getSignature();
+            double sum = 0;
+            for (Symbol candidate : candidates) {
+                double candidateSig = candidate.getSignature();
+                double diff = sourceSig - candidateSig;
+                double expDiff = Math.exp(diff);
+                sum += expDiff;
+            }
+            for (Symbol candidate : candidates) {
+                double candidateSig = candidate.getSignature();
+                double diff = sourceSig - candidateSig;
+                double expDiff = Math.exp(diff);
+                probabilities.put(candidate, (float) (expDiff / sum));
+                // System.out.println("Coarse Token Probability between " + source.getName() + " and " + candidate.getName() + " at position " + position + ": " + probabilities.get(candidate));
+            }
+            return probabilities;
+        }
         return null;
     }
 

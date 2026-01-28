@@ -85,17 +85,17 @@ public class EdgeCounter {
     }
     public static Symbol getSymbolForPretrain(Symbol original) {
         if (original instanceof VarSymbol) {
-            return new DummySymbol("var");
+            return DummySymbol.DUMMY_VAR;
         } else if (original instanceof RefSymbol) {
-            return new DummySymbol("ref");
+            return DummySymbol.DUMMY_REF;
         } else if (original instanceof FieldRelation) {
-            return new DummySymbol("field");
+            return DummySymbol.DUMMY_FIELD;
         } else if (original instanceof SigSymbol) {
-            return new DummySymbol("sig");
+            return DummySymbol.DUMMY_SIG;
         } else if (original instanceof SubsetRelation) {
-            return new DummySymbol("subset");
+            return DummySymbol.DUMMY_SUBSET;
         } else if (original instanceof PredRootSymbol) {
-            return new DummySymbol("predroot");
+            return DummySymbol.DUMMY_PREDROOT;
         } else {
             return original;
         }
