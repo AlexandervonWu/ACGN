@@ -1,5 +1,7 @@
 package is.fivefivefive.ACGN.alloy;
 
+import java.util.List;
+
 public class DummySymbol extends AbstractSymbol {
     // A dummy symbol representing anything of the signatures, vars, references, etc.
     private String type;
@@ -47,4 +49,5 @@ public class DummySymbol extends AbstractSymbol {
     public static final DummySymbol DUMMY_REF = new DummySymbol("ref");
     public static final DummySymbol DUMMY_SUBSET = new DummySymbol("subset");
     public static final DummySymbol DUMMY_PREDROOT = new DummySymbol("predroot");
+    public static final List<DummySymbol> ALL_DUMMIES = List.of(DUMMY_VAR, DUMMY_SIG, DUMMY_FIELD, DUMMY_REF, DUMMY_SUBSET, DUMMY_PREDROOT);
 }
