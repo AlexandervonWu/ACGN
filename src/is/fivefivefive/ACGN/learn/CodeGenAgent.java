@@ -1,7 +1,9 @@
 package is.fivefivefive.ACGN.learn;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -16,7 +18,7 @@ public class CodeGenAgent {
     static final int MAX_STEPS = 500;
     private Multigraph groundTruth;
     private Multigraph currentAns;
-    private Map<Pair<Symbol, Integer>, float[]> qTable;
+    private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable;
     private BiMap<Integer, Symbol> symbolId;
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
@@ -37,6 +39,19 @@ public class CodeGenAgent {
     }
     public void initialize() {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
+        // to begin with, find all signatures, fields, reference points; 
+    }
+    private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
+        Map<Symbol, Float> fineProbabilities = new HashMap<>();
+        for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
+            Symbol coarseToken = entry.getKey();
+            Float coarseProb = entry.getValue();
+            if (!(coarseToken instanceof DummySymbol)) fineProbabilities.put(coarseToken, coarseProb);
+            else {
+                // TODO: expand the dummy token to fine tokens
+            }
+        }
+        return fineProbabilities;
     }
 
     /*

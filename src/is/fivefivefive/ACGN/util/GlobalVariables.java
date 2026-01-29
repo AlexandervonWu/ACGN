@@ -31,6 +31,7 @@ public final class GlobalVariables implements Serializable {
     private Map<Pair<Symbol, Integer>, float[]> initQTable;
     private BiMap<Symbol, AugmentedNode> uniqueNode;
     private List<Symbol> concreteRoots; // the predicate roots
+    private Map<Symbol, Set<Symbol>> coarseToFineBin;
     private double uniformVarSig;
     //private Map<String, Set<Symbol>> classOfSymbols;
     public GlobalVariables() {
@@ -40,6 +41,10 @@ public final class GlobalVariables implements Serializable {
         uniqueNode = new BiMap<Symbol, AugmentedNode>();
         coarseGrainCandidateMap = new HashMap<Pair<Symbol, Integer>, Set<Symbol>>();
         uniformVarSig = 0.0;
+        coarseToFineBin = new HashMap<Symbol, Set<Symbol>>();
+        for (Symbol dummy : DummySymbol.ALL_DUMMIES) {
+            coarseToFineBin.put(dummy, new LinkedHashSet<Symbol>());
+        }
     }
     public Map<Pair<Symbol, Integer>, Set<Symbol>> getEdgeMap() {
         return edgeMap;
@@ -64,7 +69,11 @@ public final class GlobalVariables implements Serializable {
             maxChildCount.put(source, position + 1);
         }
         edgeMap.get(Pair.of(source, position)).add(target);
-        coarseGrainCandidateMap.get(Pair.of(source, position)).add(EdgeCounter.getSymbolForPretrain(target)); // the coarse-grain version
+        Symbol coarseHash = EdgeCounter.getSymbolForPretrain(target);
+        if (coarseHash instanceof DummySymbol) {
+            coarseToFineBin.get(coarseHash).add(target);
+        }
+        coarseGrainCandidateMap.get(Pair.of(source, position)).add(coarseHash); // the coarse-grain version
     }
     public void addEdge(MASGEdge edge, int position) {
         addEdge(edge.getSource().getSymbol(), edge.getTarget().getSymbol(), position);
