@@ -55,6 +55,12 @@ public final class GlobalVariables implements Serializable {
     public Set<Symbol> getCoarseGrainCandidates(Symbol source, int position) {
         return coarseGrainCandidateMap.get(Pair.of(source, position));
     }
+    public Map<Pair<Symbol, Integer>, Set<Symbol>> getCoarseGrainCandidateMap() {
+        return coarseGrainCandidateMap;
+    }
+    public Map<Symbol, Set<Symbol>> getCoarseToFineBin() {
+        return coarseToFineBin;
+    }
     public void addEdge(Symbol source, Symbol target, int position) {
         if (!edgeMap.containsKey(Pair.of(source, position))) {
             edgeMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());

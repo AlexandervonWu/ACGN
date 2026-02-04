@@ -1,7 +1,9 @@
 package is.fivefivefive.ACGN.learn;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
@@ -9,6 +11,7 @@ import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import parser.etc.Pair;
 
@@ -23,6 +26,7 @@ public class CodeGenAgent {
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
     private BiMap<Symbol, AugmentedNode> dynamicUniqueNodes;
+    private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -31,11 +35,24 @@ public class CodeGenAgent {
         this.gv = gv;
         this.symbolId = symbolId;
         this.dynamicUniqueNodes = new BiMap<Symbol, AugmentedNode>();
+        this.coarseToFineBin = new HashMap<Symbol, Set<Symbol>>();
+        for (Symbol dummy : DummySymbol.ALL_DUMMIES) {
+            this.coarseToFineBin.put(dummy, new LinkedHashSet<Symbol>());
+            this.coarseToFineBin.get(dummy).addAll(gv.getCoarseToFineBin().get(dummy));
+        }
     }
 
-    public static Map<Pair<Symbol, Integer>, float[]> initialQTable(GlobalVariables gv) {
-        // TODO
-        return null;
+    public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = new HashMap<>();
+        Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
+        for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
+            Symbol source = positional.a;
+            int position = positional.b;
+            Map<Symbol, Float> coarseProbabilities = Probability.coarseTokenProbabilities(gv, source, position);
+            // Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
+            qTable.put(positional, coarseProbabilities);
+        }
+        return qTable;
     }
     public void initialize() {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
@@ -48,7 +65,11 @@ public class CodeGenAgent {
             Float coarseProb = entry.getValue();
             if (!(coarseToken instanceof DummySymbol)) fineProbabilities.put(coarseToken, coarseProb);
             else {
-                // TODO: expand the dummy token to fine tokens
+                // expand the dummy token to fine tokens
+                coarseToFineBin.get(coarseToken).forEach(fineToken -> {
+                    float fineProb = coarseProb / coarseToFineBin.get(coarseToken).size();
+                    fineProbabilities.put(fineToken, fineProb);
+                });
             }
         }
         return fineProbabilities;
