@@ -1,11 +1,14 @@
 package is.fivefivefive.ACGN.learn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
+import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -28,6 +31,7 @@ public class CodeGenAgent {
     private int globalNewVarCounter = 100;
     private BiMap<Symbol, AugmentedNode> dynamicUniqueNodes;
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
+    private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -44,6 +48,7 @@ public class CodeGenAgent {
             this.coarseToFineBin.put(dummy, new LinkedHashSet<Symbol>());
             this.coarseToFineBin.get(dummy).addAll(gv.getCoarseToFineBin().get(dummy));
         }
+        this.actionSequence = new ArrayList<>();
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -83,6 +88,23 @@ public class CodeGenAgent {
             }
         }
         return fineProbabilities;
+    }
+    
+    public String generateNextPred(String predName) {
+        AugmentedNode rootNode = new AugmentedNode(-1, -1);
+        Symbol root = new PredRootSymbol(rootNode, predName);
+        Multigraph predGraph = new Multigraph(rootNode, gv);
+        // TODO: begin with generaing the quantifiers and decls; 
+
+        return generateNextPred(predName);
+    }
+
+    public Symbol fillHole(Symbol source, int position) {
+        // TODO: 1. use a randomizer and the Q-table to select the next token;
+        // 2. log the action into the sequence; 
+        // 3. return the selected token;
+        
+        return null;
     }
 
     /**
