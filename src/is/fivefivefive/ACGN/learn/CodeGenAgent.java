@@ -7,6 +7,7 @@ import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
@@ -35,6 +36,9 @@ public class CodeGenAgent {
         this.gv = gv;
         this.symbolId = symbolId;
         this.dynamicUniqueNodes = new BiMap<Symbol, AugmentedNode>();
+        for (Symbol sym : gv.getUniqueNodes().keys()) {
+            this.dynamicUniqueNodes.put(sym, gv.getUniqueNodes().get(sym));
+        }
         this.coarseToFineBin = new HashMap<Symbol, Set<Symbol>>();
         for (Symbol dummy : DummySymbol.ALL_DUMMIES) {
             this.coarseToFineBin.put(dummy, new LinkedHashSet<Symbol>());
@@ -57,13 +61,19 @@ public class CodeGenAgent {
     public void initialize() {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
         // to begin with, find all signatures, fields, reference points; 
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialQTable = initialCoarseQTable();
+        for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
+            Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
+            Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
+            this.qTable.put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
+        }
     }
     private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
         Map<Symbol, Float> fineProbabilities = new HashMap<>();
         for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
             Symbol coarseToken = entry.getKey();
             Float coarseProb = entry.getValue();
-            if (!(coarseToken instanceof DummySymbol)) fineProbabilities.put(coarseToken, coarseProb);
+            if (!(coarseToken instanceof DummySymbol) || (coarseToken == DummySymbol.DUMMY_LOCAL_VAR)) fineProbabilities.put(coarseToken, coarseProb);
             else {
                 // expand the dummy token to fine tokens
                 coarseToFineBin.get(coarseToken).forEach(fineToken -> {
@@ -73,6 +83,24 @@ public class CodeGenAgent {
             }
         }
         return fineProbabilities;
+    }
+
+    /**
+     * An action defined to add a variable declaration in the scope. 
+     * @param sigName The signature name that the variable belongs to.
+     * @param treeId The tree ID representing the scope level (0 for global).
+     * @param confinerNode The AugmentedNode that confines the variable.
+     */
+    public void addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode) {
+        // add a new variable into the scope of coarse to fine bin;
+        globalNewVarCounter++;
+        Symbol newVar = new VarSymbol(sigName, "local_var_" + globalNewVarCounter, treeId, confinerNode);
+        this.symbolId.put(this.symbolId.size(), newVar);
+        // update the coarse to fine bin
+        coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
+        // update the dynamic unique nodes
+        AugmentedNode newNode = new AugmentedNode(127, globalNewVarCounter); // var nodes have signature 127
+        this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
     /*

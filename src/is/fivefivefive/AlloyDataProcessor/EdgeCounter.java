@@ -84,8 +84,10 @@ public class EdgeCounter {
         return edgeCountMap;
     }
     public static Symbol getSymbolForPretrain(Symbol original) {
-        if (original instanceof VarSymbol) {
-            return DummySymbol.DUMMY_VAR;
+        if (original instanceof VarSymbol && ((VarSymbol) original).isGlobal()) {
+            return DummySymbol.DUMMY_GLOBAL_VAR;
+        } else if (original instanceof VarSymbol && !((VarSymbol) original).isGlobal()) {
+            return DummySymbol.DUMMY_LOCAL_VAR;
         } else if (original instanceof RefSymbol) {
             return DummySymbol.DUMMY_REF;
         } else if (original instanceof FieldRelation) {
