@@ -3,11 +3,14 @@ package is.fivefivefive.ACGN.learn;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
+import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
@@ -91,11 +94,34 @@ public class CodeGenAgent {
     }
     
     public String generateNextPred(String predName) {
+        Map<Symbol, Integer> tovTracker = new HashMap<>();
         AugmentedNode rootNode = new AugmentedNode(-1, -1);
         Symbol root = new PredRootSymbol(rootNode, predName);
         Multigraph predGraph = new Multigraph(rootNode, gv);
         // TODO: begin with generaing the quantifiers and decls; 
-
+        Queue<Symbol> nonterminals = new LinkedList<>();
+        nonterminals.add(root);
+        while (!nonterminals.isEmpty()) {
+            // TODO: exception case for the predroot; 
+            Symbol current = nonterminals.poll();
+            tovTracker.putIfAbsent(current, 1);
+            tovTracker.put(current, tovTracker.get(current) + 1);
+            AugmentedNode currentNode = dynamicUniqueNodes.get(current);
+            if (current.getMaxDownlinks() > 0 || current.getMaxDownlinks() == -1) {
+                int position = 1;
+                Symbol nextToken = fillHole(current, position);
+                while (position <= current.getMaxDownlinks() && !(nextToken instanceof EndSymbol)) {
+                    nonterminals.add(nextToken);
+                    position++;
+                    nextToken = fillHole(current, position);
+                    if (nextToken.getMaxDownlinks() != 0) {
+                        nonterminals.add(nextToken);
+                    }
+                    AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
+                    predGraph.connect(currentNode, nextNode, predGraph, position, tovTracker.get(current));
+                }
+            }
+        }
         return generateNextPred(predName);
     }
 
