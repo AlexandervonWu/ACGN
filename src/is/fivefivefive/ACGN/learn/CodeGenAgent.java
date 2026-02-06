@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.DummySymbol;
@@ -129,8 +130,26 @@ public class CodeGenAgent {
         // TODO: 1. use a randomizer and the Q-table to select the next token;
         // 2. log the action into the sequence; 
         // 3. return the selected token;
-        
-        return null;
+
+        Random rand = new Random();
+        float randomValue = rand.nextFloat();
+        float cumulativeProbability = 0.0f;
+        Symbol nextToken = null;
+        for (Map.Entry<Symbol, Float> entry : qTable.get(Pair.of(source, position)).entrySet()) {
+            Symbol token = entry.getKey();
+            Float prob = entry.getValue();
+            cumulativeProbability += prob;
+            if (cumulativeProbability > randomValue) {
+                nextToken = token;
+                break;
+            }
+        }
+        if (nextToken == null) {
+            System.out.println("Incomplete Q-table set for " + source.getName() + " at position " + position);
+            throw new RuntimeException("No next token selected for " + source.getName() + " at position " + position);
+        }
+        actionSequence.add(source.getName() + ", " + position + " -> " + nextToken.getName());
+        return nextToken;
     }
 
     /**
