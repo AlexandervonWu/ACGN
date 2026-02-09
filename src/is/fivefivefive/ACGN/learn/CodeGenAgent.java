@@ -152,6 +152,15 @@ public class CodeGenAgent {
         return nextToken;
     }
 
+    private void fillHoleQt(Symbol qtRoot) {
+        Symbol qt1 = fillHole(qtRoot, 1);
+        AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
+        int i = 2; 
+        while (true) {
+            
+        }
+    }
+
     /**
      * An action defined to add a variable declaration in the scope. 
      * @param sigName The signature name that the variable belongs to.
@@ -170,6 +179,9 @@ public class CodeGenAgent {
         this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
+    public void updateQTable(Symbol source, int position, Symbol selection, float reward) {
+        
+    }
     /*
      * // TODOS: 
      * 1. Coarse token to fine token expansion; not in initialization because new fine tokens as the newly declared variables; 
