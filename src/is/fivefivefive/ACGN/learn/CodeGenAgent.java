@@ -179,9 +179,39 @@ public class CodeGenAgent {
         this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
-    public void updateQTable(Symbol source, int position, Symbol selection, float reward) {
-        
+    private static final double INERTIA = Hyperparams.INERTIA;
+    public void updateQTable(Symbol source, int position, Symbol selection, float reward) throws IllegalArgumentException {
+        Map<Symbol, Float> actionProbabilities = qTable.get(Pair.of(source, position));
+        if (actionProbabilities == null || !actionProbabilities.containsKey(selection)) {
+            throw new IllegalArgumentException("No action probabilities found for source: " + source.getName() + " at position: " + position);
+        }
+        // Q-learning update
+        Map<Symbol, Float> updatedActionProbabilities = new HashMap<>();
+        for (Map.Entry<Symbol, Float> entry : actionProbabilities.entrySet()) {
+            Symbol action = entry.getKey();
+            float oldProb = entry.getValue();
+            float newProb;
+            if (action.equals(selection)) {
+                newProb = (float) (Math.log(oldProb) * INERTIA
+                + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
+            } else {
+                newProb = (float) (Math.log(oldProb) * INERTIA);
+            }
+            updatedActionProbabilities.put(action, newProb);
+        }
+        // softmax normalization
+        float sum = 0.0f;
+        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
+            sum += Math.exp(e.getValue());
+        }
+        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
+            Symbol action = e.getKey();
+            float newProb = (float) Math.exp(updatedActionProbabilities.get(action)) / sum;
+            updatedActionProbabilities.put(action, newProb);
+        }
+        qTable.put(Pair.of(source, position), updatedActionProbabilities);
     }
+    
     /*
      * // TODOS: 
      * 1. Coarse token to fine token expansion; not in initialization because new fine tokens as the newly declared variables; 
