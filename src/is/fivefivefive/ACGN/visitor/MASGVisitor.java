@@ -387,6 +387,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
+        AugmentedNode iter = exprNode;
+        while (iter.getDownlinks() != null && !iter.getDownlinks().isEmpty()) {
+            iter = iter.getDownlinks().get(0).getTarget();
+        }
+        if (iter.getSymbol() instanceof SigSymbol) {
+            ((DeclRootSymbol) declRootSym).setSigType((SigSymbol) iter.getSymbol());
+        } else {
+            System.err.println("WARNING: NO SIG FOUND. ");
+        }
         if (exprNode == null) {
             exprNode = EMPTY_SET_NODE;
         }
