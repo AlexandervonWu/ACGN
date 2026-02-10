@@ -10,6 +10,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
+import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
@@ -37,6 +38,7 @@ public class CodeGenAgent {
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
     private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
     private Map<Symbol, Integer> tovMap; // track the times of visit. 
+    private int treeId;
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -55,6 +57,7 @@ public class CodeGenAgent {
         }
         this.actionSequence = new ArrayList<>();
         this.tovMap = new HashMap<>();
+        this.treeId = visitor.getForest().size();
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -161,28 +164,70 @@ public class CodeGenAgent {
         int syntactic = label3 == 'E' ? 3 : -3;
         char labelLast = label.charAt(label.length() - 1);
         int semantic = labelLast - '0';
-        AugmentedNode qtNode = new AugmentedNode(syntactic, semantic); // PLACEHOLDER
+        AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot); 
         Symbol qt1 = fillHole(qtRoot, 1);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
         currentAns.connect(qtNode, qt1Node, currentAns, 1, tovMap.get(qtRoot));
+        actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
         while (true) {
             // find if end; if not end -> add a reldecl;
             if (!qTable.containsKey(Pair.of(qtRoot, i))) break; 
             float nextRandom = random.nextFloat();
-            float endProb = qTable.get(Pair.of(qtRoot, i)).get(MASGVisitor.END_SYMBOL));
-            if (nextRandom < endProb) break;
-            
+            float endProb = qTable.get(Pair.of(qtRoot, i)).containsKey(MASGVisitor.END_SYMBOL) ? 
+                qTable.get(Pair.of(qtRoot, i)).get(MASGVisitor.END_SYMBOL) :
+                0;
+            if (nextRandom < endProb) {
+                Symbol endSymbol = MASGVisitor.END_SYMBOL;
+                AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
+                currentAns.connect(qtNode, endNode, currentAns, i, tovMap.get(qtRoot));
+                actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
+                break;
+            }
+            Symbol relDeclRoot = new DeclRootSymbol(0);
+            AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode);
+            currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+            actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
         }
+        return qtNode;
     }
 
-    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot) {
-        // TODO
-
-        return null;
+    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode) {
+        if (!dynamicUniqueNodes.containsKey(relDeclRoot)) {
+            dynamicUniqueNodes.put(relDeclRoot, new AugmentedNode(-127, 0, relDeclRoot));
+        }
+        AugmentedNode relDeclNode = dynamicUniqueNodes.get(relDeclRoot);
+        Random random = new Random();
+        // TODO: generate type first
+        // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
+        Symbol sig = fillHole(relDeclRoot, 1);
+        AugmentedNode sigNode = dynamicUniqueNodes.get(sig);
+        tovMap.putIfAbsent(relDeclRoot, 0);
+        tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
+        currentAns.connect(relDeclNode, sigNode, currentAns, 1, tovMap.get(relDeclRoot));
+        String sigName = sig.getName();
+        actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
+        int i = 2; 
+        while (true) {
+            if (!qTable.containsKey(Pair.of(relDeclNode, i))) break;
+            float nextRandom = random.nextFloat();
+            float endProb = qTable.get(Pair.of(relDeclRoot, i)).containsKey(MASGVisitor.END_SYMBOL) ? 
+                qTable.get(Pair.of(relDeclRoot, i)).get(MASGVisitor.END_SYMBOL) : 
+                0;
+            if (nextRandom < endProb) {
+                Symbol endSymbol = MASGVisitor.END_SYMBOL;
+                AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
+                currentAns.connect(relDeclNode, endNode, currentAns, i, tovMap.get(relDeclRoot));
+                actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
+                break;
+            }
+            addVariableDecl(sigName, treeId, qtNode);
+            actionSequence.add(relDeclRoot.getName() + ", " + i + " ADD_VAR " + globalNewVarCounter + " TYPE " + sigName);
+        }
+        return relDeclNode;
     }
 
     /**
