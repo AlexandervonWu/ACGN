@@ -201,7 +201,7 @@ public class CodeGenAgent {
         }
         AugmentedNode relDeclNode = dynamicUniqueNodes.get(relDeclRoot);
         Random random = new Random();
-        // TODO: generate type first
+        // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
         Symbol sig = fillHole(relDeclRoot, 1);
         AugmentedNode sigNode = dynamicUniqueNodes.get(sig);
