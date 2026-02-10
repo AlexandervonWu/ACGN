@@ -36,6 +36,7 @@ public class CodeGenAgent {
     private BiMap<Symbol, AugmentedNode> dynamicUniqueNodes;
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
     private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
+    private Map<Symbol, Integer> tovMap; // track the times of visit. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -53,6 +54,7 @@ public class CodeGenAgent {
             this.coarseToFineBin.get(dummy).addAll(gv.getCoarseToFineBin().get(dummy));
         }
         this.actionSequence = new ArrayList<>();
+        this.tovMap = new HashMap<>();
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -76,6 +78,7 @@ public class CodeGenAgent {
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
             this.qTable.put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
         }
+        this.tovMap = new HashMap<>();
     }
     private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
         Map<Symbol, Float> fineProbabilities = new HashMap<>();
@@ -152,13 +155,34 @@ public class CodeGenAgent {
         return nextToken;
     }
 
-    private void fillHoleQt(Symbol qtRoot) {
+    private AugmentedNode fillHoleQt(Symbol qtRoot) {
+        String label = qtRoot.getName();
+        char label3 = label.charAt(3);
+        int syntactic = label3 == 'E' ? 3 : -3;
+        char labelLast = label.charAt(label.length() - 1);
+        int semantic = labelLast - '0';
+        AugmentedNode qtNode = new AugmentedNode(syntactic, semantic); // PLACEHOLDER
         Symbol qt1 = fillHole(qtRoot, 1);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
+        tovMap.putIfAbsent(qtRoot, 0);
+        tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
+        currentAns.connect(qtNode, qt1Node, currentAns, 1, tovMap.get(qtRoot));
         int i = 2; 
+        Random random = new Random();
         while (true) {
+            // find if end; if not end -> add a reldecl;
+            if (!qTable.containsKey(Pair.of(qtRoot, i))) break; 
+            float nextRandom = random.nextFloat();
+            float endProb = qTable.get(Pair.of(qtRoot, i)).get(MASGVisitor.END_SYMBOL));
+            if (nextRandom < endProb) break;
             
         }
+    }
+
+    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot) {
+        // TODO
+
+        return null;
     }
 
     /**
