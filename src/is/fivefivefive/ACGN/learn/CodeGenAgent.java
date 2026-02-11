@@ -186,11 +186,24 @@ public class CodeGenAgent {
                 currentAns.connect(qtNode, endNode, currentAns, i, tovMap.get(qtRoot));
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
+            } else {
+                Map<Symbol, Float> sigProbabilities = Probability.coarseTokenProbabilities(gv, qtRoot, i);
+                nextRandom -= endProb;
+                float cumulativeProbability = 0.0f;
+                for (Map.Entry<Symbol, Float> entry : sigProbabilities.entrySet()) {
+                    Symbol sig = entry.getKey();
+                    if (sig instanceof EndSymbol) continue;
+                    float sigProb = entry.getValue();
+                    cumulativeProbability += sigProb;
+                    if (cumulativeProbability > nextRandom) {
+                        Symbol relDeclRoot = sig;
+                        AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode);
+                        currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+                        actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
+                        break;
+                    }
+                }
             }
-            Symbol relDeclRoot = new DeclRootSymbol(0);
-            AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode);
-            currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
-            actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
         }
         return qtNode;
     }

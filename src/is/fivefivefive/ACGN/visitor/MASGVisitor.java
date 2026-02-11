@@ -388,13 +388,20 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // TODO: Write the ExprNode accept method. 
         AugmentedNode exprNode = expr.accept(this, arg);
         AugmentedNode iterNode = exprNode;
-        while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty()) {
+        while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty() && !(iterNode.getSymbol() instanceof SetSymbol)) {
             iterNode = iterNode.getDownlinks().get(0).getTarget();
         }
-        if (iterNode.getSymbol() instanceof SigSymbol) {
-            ((DeclRootSymbol) declRootSym).setSigType((SigSymbol) iterNode.getSymbol());
+        if (iterNode.getSymbol() instanceof SetSymbol) {
+            ((DeclRootSymbol) declRootSym).setSigType((SetSymbol) iterNode.getSymbol());
         } else {
             System.err.println("WARNING: NO SIG FOUND. ");
+            System.err.println("Iter end: " + iterNode.getSymbol().getName());
+            System.err.println("Trace: ");
+            iterNode = exprNode;
+            while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty()) {
+                iterNode = iterNode.getDownlinks().get(0).getTarget();
+                System.err.println("Iter down: " + iterNode.getSymbol().getName());
+            }
         }
         if (exprNode == null) {
             exprNode = EMPTY_SET_NODE;

@@ -2,11 +2,11 @@ package is.fivefivefive.ACGN.alloy;
 
 public class DeclRootSymbol extends AbstractSymbol {
     private int semantic;
-    private SigSymbol sigType;
+    private SetSymbol sigType;
     public DeclRootSymbol(int semantic) {
         this.semantic = semantic;
     }
-    public DeclRootSymbol(int semantic, SigSymbol sigType) {
+    public DeclRootSymbol(int semantic, SetSymbol sigType) {
         this(semantic);
         setSigType(sigType);
     }
@@ -56,10 +56,10 @@ public class DeclRootSymbol extends AbstractSymbol {
                 "semantic=" + semantic +
                 '}';
     }
-    public SigSymbol getSigType() {
+    public SetSymbol getSigType() {
         return sigType;
     }
-    public void setSigType(SigSymbol sig) {
+    public void setSigType(SetSymbol sig) {
         sigType = sig;
     }
 }
