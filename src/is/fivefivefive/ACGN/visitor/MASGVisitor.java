@@ -823,7 +823,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 label += "_COMP2";
             }
         }
-        MiddleSymbol qtSymbol = new MiddleSymbol(label);
+        MiddleSymbol qtSymbol = new MiddleSymbol(label, true, false);
         qtSymbol.setInfiniteRoot(true); // infinite root for quantifier
         List<VarDecl> varDecls = n.getVarDecls();
         scopeNodeId++;
@@ -1618,5 +1618,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
         }
         return false;
+    }
+
+    public ScopeTreeNode getRootScope() {
+        return rootScope;
     }
 }

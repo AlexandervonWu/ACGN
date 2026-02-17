@@ -13,12 +13,16 @@ import java.util.Set;
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
+import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.structure.RLScopeTreeNode;
+import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
@@ -39,6 +43,7 @@ public class CodeGenAgent {
     private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
     private Map<Symbol, Integer> tovMap; // track the times of visit. 
     private int treeId;
+    private RLScopeTreeNode rootScope;
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -58,6 +63,7 @@ public class CodeGenAgent {
         this.actionSequence = new ArrayList<>();
         this.tovMap = new HashMap<>();
         this.treeId = visitor.getForest().size();
+        this.rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -101,38 +107,54 @@ public class CodeGenAgent {
     }
     
     public String generateNextPred(String predName) {
+        currentAns = new Multigraph();
+        rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
         Map<Symbol, Integer> tovTracker = new HashMap<>();
-        AugmentedNode rootNode = new AugmentedNode(-1, -1);
+        AugmentedNode rootNode = new AugmentedNode(-1, treeId);
         Symbol root = new PredRootSymbol(rootNode, predName);
+        dynamicUniqueNodes.put(root, rootNode);
+        rootNode.setSymbol(root);
         Multigraph predGraph = new Multigraph(rootNode, gv);
-        // TODO: begin with generaing the quantifiers and decls; 
-        Queue<Symbol> nonterminals = new LinkedList<>();
-        nonterminals.add(root);
-        while (!nonterminals.isEmpty()) {
-            // TODO: exception case for the predroot; 
-            Symbol current = nonterminals.poll();
-            tovTracker.putIfAbsent(current, 1);
-            tovTracker.put(current, tovTracker.get(current) + 1);
-            AugmentedNode currentNode = dynamicUniqueNodes.get(current);
-            if (current.getMaxDownlinks() > 0 || current.getMaxDownlinks() == -1) {
-                int position = 1;
-                Symbol nextToken = fillHole(current, position);
-                while (position <= current.getMaxDownlinks() && !(nextToken instanceof EndSymbol)) {
-                    nonterminals.add(nextToken);
-                    position++;
-                    nextToken = fillHole(current, position);
-                    if (nextToken.getMaxDownlinks() != 0) {
-                        nonterminals.add(nextToken);
-                    }
-                    AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
-                    predGraph.connect(currentNode, nextNode, predGraph, position, tovTracker.get(current));
-                }
-            }
+        generateNextNode(rootNode, 1, tovTracker, rootScope, 1);
+        Generator generator = new Generator();
+        String code = null;
+        try {
+            code = generator.toCode(predGraph, predGraph.getRoot(), 1);
+        } catch (Exception e) {
+            System.out.println("Error during code generation: " + e.getMessage());
+            e.printStackTrace();
+            return null;
         }
-        return generateNextPred(predName);
+        return code;
     }
 
-    public Symbol fillHole(Symbol source, int position) {
+    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, ScopeTreeNode scope, int stepNum) {
+        if (stepNum > MAX_STEPS) {
+            throw new RuntimeException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
+        }
+        Symbol source = localParent.getSymbol();
+        if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
+            AugmentedNode qtNode = fillHoleQt(source, scope);
+            localParent.connect(qtNode, position, currentAns, tovTracker.getOrDefault(source, 0));
+            // TODO: recursively generate downstream
+            return 0; // success
+        }
+        Symbol nextToken = fillHole(source, position, scope);
+        AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
+        currentAns.connect(localParent, nextNode, currentAns, position, tovTracker.getOrDefault(source, 0));
+        if (nextToken.getMaxDownlinks() != 0) {
+            tovTracker.putIfAbsent(nextToken, 0);
+            tovTracker.put(nextToken, tovTracker.get(nextToken) + 1);
+            int childPosition = 1;
+            while (childPosition <= nextToken.getMaxDownlinks()) {
+                int result = generateNextNode(nextNode, childPosition, tovTracker, scope, stepNum + 1);
+                if (result == -1) break; // end symbol reached
+                childPosition++;
+            }// TODO: recursively generate downstream
+        }
+        return 0; // success
+    }
+    public Symbol fillHole(Symbol source, int position, ScopeTreeNode currentScope) {
         // TODO: 1. use a randomizer and the Q-table to select the next token;
         // 2. log the action into the sequence; 
         // 3. return the selected token;
@@ -158,14 +180,15 @@ public class CodeGenAgent {
         return nextToken;
     }
 
-    private AugmentedNode fillHoleQt(Symbol qtRoot) {
+    private AugmentedNode fillHoleQt(Symbol qtRoot, ScopeTreeNode currentScope) {
         String label = qtRoot.getName();
         char label3 = label.charAt(3);
         int syntactic = label3 == 'E' ? 3 : -3;
         char labelLast = label.charAt(label.length() - 1);
         int semantic = labelLast - '0';
         AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot); 
-        Symbol qt1 = fillHole(qtRoot, 1);
+        ScopeTreeNode qtScope = new ScopeTreeNode(treeId, currentScope, currentAns);
+        Symbol qt1 = fillHole(qtRoot, 1, qtScope);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
@@ -197,7 +220,7 @@ public class CodeGenAgent {
                     cumulativeProbability += sigProb;
                     if (cumulativeProbability > nextRandom) {
                         Symbol relDeclRoot = sig;
-                        AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode);
+                        AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
                         break;
@@ -208,7 +231,7 @@ public class CodeGenAgent {
         return qtNode;
     }
 
-    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode) {
+    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode, ScopeTreeNode currentScope) {
         if (!dynamicUniqueNodes.containsKey(relDeclRoot)) {
             dynamicUniqueNodes.put(relDeclRoot, new AugmentedNode(-127, 0, relDeclRoot));
         }
@@ -216,7 +239,7 @@ public class CodeGenAgent {
         Random random = new Random();
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
-        Symbol sig = fillHole(relDeclRoot, 1);
+        Symbol sig = fillHole(relDeclRoot, 1, currentScope);
         AugmentedNode sigNode = dynamicUniqueNodes.get(sig);
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
