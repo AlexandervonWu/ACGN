@@ -34,10 +34,11 @@ public class CodeGenAgent {
     static final int MAX_STEPS = 500;
     private Multigraph groundTruth;
     private Multigraph currentAns;
-    private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable;
+    // private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable;
     private BiMap<Integer, Symbol> symbolId;
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
+    private int rlScopeTreeNodeId = 100;
     private BiMap<Symbol, AugmentedNode> dynamicUniqueNodes;
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
     private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
@@ -63,7 +64,7 @@ public class CodeGenAgent {
         this.actionSequence = new ArrayList<>();
         this.tovMap = new HashMap<>();
         this.treeId = visitor.getForest().size();
-        this.rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
+        this.rootScope = new RLScopeTreeNode(rlScopeTreeNodeId, visitor.getRootScope(), currentAns);
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -85,7 +86,7 @@ public class CodeGenAgent {
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
             Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
-            this.qTable.put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
+            this.rootScope.getqDist().put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
         }
         this.tovMap = new HashMap<>();
     }
@@ -128,7 +129,7 @@ public class CodeGenAgent {
         return code;
     }
 
-    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, ScopeTreeNode scope, int stepNum) {
+    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, RLScopeTreeNode scope, int stepNum) {
         if (stepNum > MAX_STEPS) {
             throw new RuntimeException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
         }
@@ -154,11 +155,11 @@ public class CodeGenAgent {
         }
         return 0; // success
     }
-    public Symbol fillHole(Symbol source, int position, ScopeTreeNode currentScope) {
+    public Symbol fillHole(Symbol source, int position, RLScopeTreeNode currentScope) {
         // TODO: 1. use a randomizer and the Q-table to select the next token;
         // 2. log the action into the sequence; 
         // 3. return the selected token;
-
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         Random rand = new Random();
         float randomValue = rand.nextFloat();
         float cumulativeProbability = 0.0f;
@@ -180,14 +181,17 @@ public class CodeGenAgent {
         return nextToken;
     }
 
-    private AugmentedNode fillHoleQt(Symbol qtRoot, ScopeTreeNode currentScope) {
+    private AugmentedNode fillHoleQt(Symbol qtRoot, RLScopeTreeNode currentScope) {
         String label = qtRoot.getName();
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         char label3 = label.charAt(3);
         int syntactic = label3 == 'E' ? 3 : -3;
         char labelLast = label.charAt(label.length() - 1);
         int semantic = labelLast - '0';
         AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot); 
-        ScopeTreeNode qtScope = new ScopeTreeNode(treeId, currentScope, currentAns);
+        rlScopeTreeNodeId++;
+        RLScopeTreeNode qtScope = new RLScopeTreeNode(rlScopeTreeNodeId, currentScope, currentAns);
+        // TODO: update the qtable of the new scope;
         Symbol qt1 = fillHole(qtRoot, 1, qtScope);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
         tovMap.putIfAbsent(qtRoot, 0);
@@ -231,11 +235,12 @@ public class CodeGenAgent {
         return qtNode;
     }
 
-    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode, ScopeTreeNode currentScope) {
+    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode, RLScopeTreeNode currentScope) {
         if (!dynamicUniqueNodes.containsKey(relDeclRoot)) {
             dynamicUniqueNodes.put(relDeclRoot, new AugmentedNode(-127, 0, relDeclRoot));
         }
         AugmentedNode relDeclNode = dynamicUniqueNodes.get(relDeclRoot);
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         Random random = new Random();
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
@@ -285,7 +290,8 @@ public class CodeGenAgent {
     }
 
     private static final double INERTIA = Hyperparams.INERTIA;
-    public void updateQTable(Symbol source, int position, Symbol selection, float reward) throws IllegalArgumentException {
+    public void updateQTable(Symbol source, int position, Symbol selection, float reward, RLScopeTreeNode currentScope) throws IllegalArgumentException {
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         Map<Symbol, Float> actionProbabilities = qTable.get(Pair.of(source, position));
         if (actionProbabilities == null || !actionProbabilities.containsKey(selection)) {
             throw new IllegalArgumentException("No action probabilities found for source: " + source.getName() + " at position: " + position);
@@ -315,6 +321,7 @@ public class CodeGenAgent {
             updatedActionProbabilities.put(action, newProb);
         }
         qTable.put(Pair.of(source, position), updatedActionProbabilities);
+        currentScope.setqDist(qTable);
     }
     
     /*
