@@ -265,7 +265,7 @@ public class CodeGenAgent {
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;
             }
-            addVariableDecl(sigName, treeId, qtNode);
+            addVariableDecl(sigName, treeId, qtNode, currentScope);
             actionSequence.add(relDeclRoot.getName() + ", " + i + " ADD_VAR " + globalNewVarCounter + " TYPE " + sigName);
         }
         return relDeclNode;
@@ -276,8 +276,9 @@ public class CodeGenAgent {
      * @param sigName The signature name that the variable belongs to.
      * @param treeId The tree ID representing the scope level (0 for global).
      * @param confinerNode The AugmentedNode that confines the variable.
+     * @param currentScope The current RLScopeTreeNode representing the scope in which the variable is declared.
      */
-    public void addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode) {
+    public void addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode, RLScopeTreeNode currentScope) {
         // add a new variable into the scope of coarse to fine bin;
         globalNewVarCounter++;
         Symbol newVar = new VarSymbol(sigName, "local_var_" + globalNewVarCounter, treeId, confinerNode);
@@ -286,6 +287,7 @@ public class CodeGenAgent {
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
         // update the dynamic unique nodes
         AugmentedNode newNode = new AugmentedNode(127, globalNewVarCounter); // var nodes have signature 127
+        currentScope.addSymbol(newVar);
         this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
