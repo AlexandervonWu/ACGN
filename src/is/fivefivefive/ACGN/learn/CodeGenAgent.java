@@ -39,6 +39,7 @@ public class CodeGenAgent {
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
     private int rlScopeTreeNodeId = 100;
+    private int stepNum = 0;
     private BiMap<Symbol, AugmentedNode> dynamicUniqueNodes;
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // local rather than global. 
     private List<String> actionSequence; // log the action sequence, then apply reinforcement learning by Q-learning.
@@ -88,6 +89,7 @@ public class CodeGenAgent {
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
             this.rootScope.getqDist().put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
         }
+        stepNum = 0;
         this.tovMap = new HashMap<>();
     }
     private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
@@ -116,7 +118,7 @@ public class CodeGenAgent {
         dynamicUniqueNodes.put(root, rootNode);
         rootNode.setSymbol(root);
         Multigraph predGraph = new Multigraph(rootNode, gv);
-        generateNextNode(rootNode, 1, tovTracker, rootScope, 1);
+        generateNextNode(rootNode, 1, tovTracker, rootScope);
         Generator generator = new Generator();
         String code = null;
         try {
@@ -129,10 +131,11 @@ public class CodeGenAgent {
         return code;
     }
 
-    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, RLScopeTreeNode scope, int stepNum) {
+    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, RLScopeTreeNode scope) {
         if (stepNum > MAX_STEPS) {
             throw new RuntimeException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
         }
+        stepNum++;
         Symbol source = localParent.getSymbol();
         if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
             AugmentedNode qtNode = fillHoleQt(source, scope);
@@ -143,12 +146,15 @@ public class CodeGenAgent {
         Symbol nextToken = fillHole(source, position, scope);
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.connect(localParent, nextNode, currentAns, position, tovTracker.getOrDefault(source, 0));
+        if (nextToken instanceof EndSymbol) {
+            return -1; // end symbol reached
+        }
         if (nextToken.getMaxDownlinks() != 0) {
             tovTracker.putIfAbsent(nextToken, 0);
             tovTracker.put(nextToken, tovTracker.get(nextToken) + 1);
             int childPosition = 1;
-            while (childPosition <= nextToken.getMaxDownlinks()) {
-                int result = generateNextNode(nextNode, childPosition, tovTracker, scope, stepNum + 1);
+            while (childPosition <= nextToken.getMaxDownlinks() || nextToken.getMaxDownlinks() == -1) {
+                int result = generateNextNode(nextNode, childPosition, tovTracker, scope);
                 if (result == -1) break; // end symbol reached
                 childPosition++;
             }// TODO: recursively generate downstream
@@ -182,6 +188,7 @@ public class CodeGenAgent {
     }
 
     private AugmentedNode fillHoleQt(Symbol qtRoot, RLScopeTreeNode currentScope) {
+        stepNum++;
         String label = qtRoot.getName();
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         char label3 = label.charAt(3);
@@ -230,6 +237,14 @@ public class CodeGenAgent {
                         break;
                     }
                 }
+            }
+        }
+        if (qt1.getMaxDownlinks() != 0) {
+            int childPosition = 1;
+            while (childPosition <= qt1.getMaxDownlinks() || qt1.getMaxDownlinks() == -1) {
+                int result = generateNextNode(qt1Node, childPosition, tovMap, qtScope);
+                if (result == -1) break; // end symbol reached
+                childPosition++;
             }
         }
         return qtNode;
