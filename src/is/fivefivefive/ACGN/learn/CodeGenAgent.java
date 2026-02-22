@@ -193,6 +193,11 @@ public class CodeGenAgent {
                 break;
             }
         }
+        if (nextToken instanceof DummySymbol) {
+            // if the selected token is dummy, we need to revert and generate again
+            System.out.println("Selected token is a dummy symbol: " + nextToken.getName() + ". Reverting and selecting again.");
+            return fillHole(source, position, currentScope);
+        }
         if (nextToken == null) {
             System.out.println("Incomplete Q-table set for " + source.getName() + " at position " + position);
             throw new RuntimeException("No next token selected for " + source.getName() + " at position " + position);
