@@ -2,12 +2,15 @@ package is.fivefivefive.ACGN.structure;
 
 import java.util.Map;
 import java.util.HashMap;
+
 import parser.etc.Pair;
+import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
 
 public class RLScopeTreeNode extends ScopeTreeNode {
+    public static final float OLD_VARS_RESERVE_RATE = 0.2f;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist;
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
@@ -50,5 +53,55 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                 ((RLScopeTreeNode) children).resetQDist();
             }
         }
+    }
+
+    public void localizeQDist(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> globalQDist) {
+        // use the inherited qDist as the original qDist, and localize it by the symbols in the current node. 
+        // for each pair of (symbol, position) in the global qDist, find the probability of DUMMY_LOCAL_VAR
+        Map<Pair<Symbol, Integer>, Float> localVarProbs = new HashMap<>();
+        // find the probability of DUMMY_LOCAL_VAR for each (symbol, position) pair in the global qDist
+        for (Pair<Symbol, Integer> pair : globalQDist.keySet()) {
+            Map<Symbol, Float> candidateProbs = globalQDist.get(pair);
+            float dummyLocalVarProb = candidateProbs.getOrDefault(DummySymbol.DUMMY_LOCAL_VAR, 0f);
+            localVarProbs.put(pair, dummyLocalVarProb);
+        }
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localizedQDist = new HashMap<>();
+        Map<String, Symbol> inheritedSymbols = getParent() instanceof RLScopeTreeNode ? getParent().symbolsAvailable() : null;
+        // distribute the probability of DUMMY_LOCAL_VAR to the symbols in the current node according to the reserve rate, and keep the rest for DUMMY_LOCAL_VAR
+        if (inheritedSymbols != null) {
+            for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+                Pair<Symbol, Integer> pair = entry.getKey();
+                Map<Symbol, Float> candidateProbs = entry.getValue();
+                float dummyLocalVarProb = localVarProbs.getOrDefault(pair, 0f);
+                float distributedProb = dummyLocalVarProb * (1 - OLD_VARS_RESERVE_RATE);
+                Map<Symbol, Float> localizedCandidateProbs = new HashMap<>();
+                for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()) {
+                    Symbol candidate = candidateEntry.getKey();
+                    float prob = candidateEntry.getValue();
+                    if (inheritedSymbols.containsValue(candidate)) {
+                        localizedCandidateProbs.put(candidate, prob * OLD_VARS_RESERVE_RATE);
+                    } else {
+                        localizedCandidateProbs.put(candidate, prob);
+                    }
+                }
+                for (Symbol localSymbol : getSymbols().values()) {
+                    localizedCandidateProbs.put(localSymbol, distributedProb / getSymbols().size());
+                }
+                localizedQDist.put(pair, localizedCandidateProbs);
+            }
+        } else {
+            // initial distribution
+            for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+                Pair<Symbol, Integer> pair = entry.getKey();
+                Map<Symbol, Float> candidateProbs = entry.getValue();
+                float dummyLocalVarProb = localVarProbs.getOrDefault(pair, 0f);
+                Map<Symbol, Float> localizedCandidateProbs = new HashMap<>(candidateProbs);
+                for (Symbol localSymbol : getSymbols().values()) {
+                    localizedCandidateProbs.put(localSymbol, dummyLocalVarProb / getSymbols().size());
+                }
+                localizedQDist.put(pair, localizedCandidateProbs);
+            }
+        }
+        this.qDist = localizedQDist;
     }
 }

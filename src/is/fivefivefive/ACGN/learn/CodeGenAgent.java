@@ -34,7 +34,7 @@ public class CodeGenAgent {
     static final int MAX_STEPS = 500;
     private Multigraph groundTruth;
     private Multigraph currentAns;
-    // private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable;
+    private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> globalQTable;
     private BiMap<Integer, Symbol> symbolId;
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
@@ -46,6 +46,7 @@ public class CodeGenAgent {
     private Map<Symbol, Integer> tovMap; // track the times of visit. 
     private int treeId;
     private RLScopeTreeNode rootScope;
+    private int initializationState = 0;
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -66,6 +67,12 @@ public class CodeGenAgent {
         this.tovMap = new HashMap<>();
         this.treeId = visitor.getForest().size();
         this.rootScope = new RLScopeTreeNode(rlScopeTreeNodeId, visitor.getRootScope(), currentAns);
+        // initialize the Q-table for the root scope
+        this.globalQTable = initialCoarseQTable();
+        initializationState = 0;
+    }
+    public int getInitializationState() {
+        return initializationState;
     }
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
@@ -91,7 +98,14 @@ public class CodeGenAgent {
         }
         stepNum = 0;
         this.tovMap = new HashMap<>();
-    }
+        rootScope.setqDist(initialQTable);
+        globalQTable = initialQTable;
+        if (initializationState == 0) {
+            initializationState = 1;
+        } else {
+            initializationState = 2; // reinitialized flag
+        }
+    } 
     private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
         Map<Symbol, Float> fineProbabilities = new HashMap<>();
         for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
@@ -239,6 +253,7 @@ public class CodeGenAgent {
                 }
             }
         }
+        qtScope.localizeQDist(globalQTable);
         if (qt1.getMaxDownlinks() != 0) {
             int childPosition = 1;
             while (childPosition <= qt1.getMaxDownlinks() || qt1.getMaxDownlinks() == -1) {
