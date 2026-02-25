@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.Vector;
 
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
@@ -18,6 +19,7 @@ import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
+import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
@@ -26,6 +28,7 @@ import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.alloyasg.vector.Vector1D;
 import parser.etc.Pair;
 
 public class CodeGenAgent {
@@ -359,6 +362,22 @@ public class CodeGenAgent {
         }
         qTable.put(Pair.of(source, position), updatedActionProbabilities);
         currentScope.setqDist(qTable);
+    }
+
+    public float localReward(Symbol source, int position, Symbol selection, float rawReward, RLScopeTreeNode currentScope) {
+        if (selection.getMaxDownlinks() == 0) {
+            return rawReward;
+        }
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
+        AugmentedNode selectionNode = dynamicUniqueNodes.get(selection);
+        float localReward = 0.0f;
+        List<MASGEdge> downlinks = currentAns.edgesUnder(selectionNode);
+        for (MASGEdge edge : downlinks) {
+            AugmentedNode targetNode = edge.getTarget();
+            Symbol targetSymbol = targetNode.getSymbol();
+            // TODO: reverse TOV lookup here. 
+        }
+        return localReward;
     }
     
     /*
