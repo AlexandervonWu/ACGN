@@ -369,4 +369,6 @@ public class CodeGenAgent {
      * REDESIGN some Q-learning to include some multivariance? Increase the uplooking depth? 
      * Use a map: [nextToken : probability] at each (currentToken, position) pair. 
      */
+
+    // TODOS: Make two types of Q-learner: - keep the scopetree; - reset it totally. 
 }
