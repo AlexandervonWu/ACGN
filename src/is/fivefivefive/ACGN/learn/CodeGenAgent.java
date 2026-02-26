@@ -14,8 +14,11 @@ import java.util.Vector;
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
+import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
+import is.fivefivefive.ACGN.alloy.SetSymbol;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -283,11 +286,12 @@ public class CodeGenAgent {
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
         Symbol sig = fillHole(relDeclRoot, 1, currentScope);
-        AugmentedNode sigNode = dynamicUniqueNodes.get(sig);
+        Symbol typeSig = typeCheckSymbol(sig);
+        AugmentedNode sigNode = dynamicUniqueNodes.get(typeSig);
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
         currentAns.connect(relDeclNode, sigNode, currentAns, 1, tovMap.get(relDeclRoot));
-        String sigName = sig.getName();
+        String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
         while (true) {
@@ -309,6 +313,32 @@ public class CodeGenAgent {
         return relDeclNode;
     }
 
+    private SetSymbol typeCheckSymbol(Symbol sym) {
+        // like MASGVisitor.typeCheckExpr but with symbols
+        if (sym instanceof VarSymbol) {
+            VarSymbol varSym = (VarSymbol) sym;
+            String sigName = varSym.getType().substring(4); // remove "VAR_" prefix
+            return new SigSymbol(sigName);
+        } else if (sym instanceof SigSymbol) {
+            return (SigSymbol) sym;
+        } else if (sym instanceof FieldRelation) {
+            return (FieldRelation) sym;
+        } else if (sym instanceof MiddleSymbol) {
+            AugmentedNode node = dynamicUniqueNodes.get(sym);
+            List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(sym, 0));
+            for (MASGEdge downlink : downlinks) {
+                Symbol targetSym = downlink.getTarget().getSymbol();
+                if (targetSym instanceof SigSymbol) {
+                    return (SigSymbol) targetSym;
+                } else if (targetSym instanceof FieldRelation) {
+                    return (FieldRelation) targetSym;
+                }
+            }
+            return downlinks.isEmpty() ? null : typeCheckSymbol(downlinks.get(0).getTarget().getSymbol()); // recursive check
+        } else {
+            return null; // for other symbol types, return null or throw an exception based on your design choice
+        }
+    }
     /**
      * An action defined to add a variable declaration in the scope. 
      * @param sigName The signature name that the variable belongs to.
@@ -319,7 +349,7 @@ public class CodeGenAgent {
     public void addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode, RLScopeTreeNode currentScope) {
         // add a new variable into the scope of coarse to fine bin;
         globalNewVarCounter++;
-        Symbol newVar = new VarSymbol(sigName, "local_var_" + globalNewVarCounter, treeId, confinerNode);
+        Symbol newVar = new VarSymbol(sigName, "local_var_s" + rlScopeTreeNodeId + "_" + globalNewVarCounter, treeId, confinerNode);
         this.symbolId.put(this.symbolId.size(), newVar);
         // update the coarse to fine bin
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
