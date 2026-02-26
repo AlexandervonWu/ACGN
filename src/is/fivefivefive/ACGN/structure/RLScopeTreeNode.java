@@ -6,12 +6,13 @@ import java.util.HashMap;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
-
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.Multigraph;
 
 public class RLScopeTreeNode extends ScopeTreeNode {
     public static final float OLD_VARS_RESERVE_RATE = 0.2f;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist;
+    private Map<Symbol, String> sigCorr;
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
         this.qDist = new HashMap<>();
@@ -39,6 +40,22 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl, Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         super(id, symbols, parent, affl);
         this.qDist = qDist;
+    }
+    public void addSymbol(Symbol next) {
+        super.addSymbol(next);
+        if (next instanceof VarSymbol) {
+            VarSymbol varNext = (VarSymbol) next;
+            sigCorr.put(varNext, varNext.getType());
+        }
+    }
+    public String typeOf(Symbol s) {
+        if (sigCorr.containsKey(s)) {
+            return sigCorr.get(s);
+        }
+        if (getParent() != null && getParent() instanceof RLScopeTreeNode) {
+            return ((RLScopeTreeNode) getParent()).typeOf(s);
+        }
+        return null;
     }
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> getqDist() {
         return qDist;
