@@ -121,4 +121,32 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         }
         this.qDist = localizedQDist;
     }
+    
+    public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> dumpLocalVariables() {
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarProbs = new HashMap<>();
+        for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+            Pair<Symbol, Integer> parentPair = entry.getKey();
+            Map<Symbol, Float> candidateProbs = entry.getValue();
+            for (Symbol localSymbol : getSymbols().values()) {
+                float totalLocalVarProb = 0f;
+                if (candidateProbs.containsKey(localSymbol)) {
+                    localVarProbs.put(parentPair, candidateProbs);
+                    totalLocalVarProb += candidateProbs.get(localSymbol);
+                }
+                // normalize the probabilities of the candidates for the parent pair, and remove the local symbol from the candidate list
+                if (totalLocalVarProb > 0) {
+                    Map<Symbol, Float> normalizedCandidateProbs = new HashMap<>();
+                    for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()){
+                        Symbol candidate = candidateEntry.getKey();
+                        float prob = candidateEntry.getValue();
+                        if (!candidate.equals(localSymbol)) {
+                            normalizedCandidateProbs.put(candidate, prob / totalLocalVarProb);
+                        }
+                    }
+                    localVarProbs.put(parentPair, normalizedCandidateProbs);
+                }
+            }
+        }
+        return localVarProbs;
+    }
 }

@@ -395,21 +395,65 @@ public class CodeGenAgent {
         currentScope.setqDist(qTable);
     }
 
-    public float localReward(Symbol source, int position, Symbol selection, float rawReward, RLScopeTreeNode currentScope) {
-        if (selection.getMaxDownlinks() == 0) {
+    /**
+     * Calculate the local reward for a candidate symbol based on its children in
+     * the ASG.
+     * This method looks for all children of the candidate symbol and calculates the
+     * local reward based on their probabilities.
+     * * If the candidate symbol has no children, it returns the raw reward.
+     * 
+     * @param source    the source symbol from which the candidate is derived.
+     * @param position  the position in the ASG where the candidate is located.
+     * @param candidate the candidate symbol for which the local reward is
+     *                  calculated.
+     * @param rawReward the raw reward value associated with the generated current
+     *                  predicate.
+     * @return the calculated local reward based on the children of the candidate
+     *         symbol.
+     */
+    public float localReward(Symbol source, int position, Symbol candidate, float rawReward, RLScopeTreeNode currentScope) throws IllegalArgumentException {
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
+        if (candidate == null) {
+            throw new IllegalArgumentException("Candidate symbol cannot be null");
+        }
+        if (candidate.getMaxDownlinks() == 0) {
+            edgeRewardMap.put(Pair.of(source, position), rawReward);
             return rawReward;
         }
-        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
-        AugmentedNode selectionNode = dynamicUniqueNodes.get(selection);
-        float localReward = 0.0f;
-        List<MASGEdge> downlinks = currentAns.edgesUnder(selectionNode);
+        // look for all children of the candidate
+        AugmentedNode candidateNode = gv.getUniqueNodes().get(candidate);
+        if (candidateNode == null) {
+            throw new IllegalArgumentException("Candidate node not found for " + candidate);
+        }
+        List<MASGEdge> downlinks = currentAns.edgesUnder(candidateNode);
+        if (downlinks.isEmpty()) {
+            return rawReward; // No children, return the raw reward
+        }
+        float ans = 0.0f;
         for (MASGEdge edge : downlinks) {
             AugmentedNode targetNode = edge.getTarget();
             Symbol targetSymbol = targetNode.getSymbol();
-            // TODO: reverse TOV lookup here. 
+            if (targetSymbol == null) {
+                throw new IllegalArgumentException("Target symbol cannot be null for edge: " + edge);
+            }
+            // Calculate the local reward based on the target symbol
+            float localImpact = 0.0f;
+            Map<Symbol, Float> candidateProbs = qTable.get(Pair.of(source, position));
+            if (candidateProbs != null) {
+                localImpact = candidateProbs.getOrDefault(targetSymbol, 0.0f);
+            }
+            float downReward = 0.0f;
+            if (edgeRewardMap.containsKey(Pair.of(source, edge.getPosition()))) {
+                downReward = edgeRewardMap.get(Pair.of(source, edge.getPosition()));
+            } else {
+                downReward = localReward(candidate, edge.getPosition(), targetSymbol, rawReward, currentScope);
+            }
+            ans += localImpact * downReward;
         }
-        return localReward;
+        return ans; // Placeholder for local reward calculation
+        // TODO: Up-pooling rewards for collapsing Scope Tree.
     }
+
     
     /*
      * // TODOS: 
