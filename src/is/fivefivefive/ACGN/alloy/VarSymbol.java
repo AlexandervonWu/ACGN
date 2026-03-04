@@ -24,13 +24,13 @@ public class VarSymbol extends AbstractSymbol {
         isGlobal = (treeId == 0);
         hashName = type + "_" + varName;
     }
-    public VarSymbol(String sig, String varName, int treeId, String hashName) {
+    public VarSymbol(String sig, String varName, String hashName, int treeId, AugmentedNode confinerNode) {
         type = "VAR_" + sig;
         this.varName = varName;
         treeIdScope = treeId;
         node = new AugmentedNode(-1, 0);
         // fieldConfinerSet = new HashSet<>();
-        this.confinerNode = null;
+        this.confinerNode = confinerNode;
         isGlobal = (treeId == 0);
         this.hashName = hashName;
     }
