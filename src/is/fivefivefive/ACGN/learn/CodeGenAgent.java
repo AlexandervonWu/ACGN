@@ -26,6 +26,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.etc.Triple;
 import is.fivefivefive.ACGN.structure.RLScopeTreeNode;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
@@ -53,6 +54,8 @@ public class CodeGenAgent {
     private int treeId;
     private RLScopeTreeNode rootScope;
     private int initializationState = 0;
+    private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist;
+    private Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter; // track the polling scaling
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -76,6 +79,9 @@ public class CodeGenAgent {
         // initialize the Q-table for the root scope
         this.globalQTable = initialCoarseQTable();
         initializationState = 0;
+        this.localVarDist = new HashMap<>();
+        this.localVarCounter = new HashMap<>();
+        this.edgeRewardMap = new HashMap<>();
     }
     public int getInitializationState() {
         return initializationState;
@@ -132,6 +138,7 @@ public class CodeGenAgent {
     public String generateNextPred(String predName) {
         currentAns = new Multigraph();
         rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
+        rlScopeTreeNodeId = 100; // reset the scope tree node id for each new generation
         Map<Symbol, Integer> tovTracker = new HashMap<>();
         AugmentedNode rootNode = new AugmentedNode(-1, treeId);
         Symbol root = new PredRootSymbol(rootNode, predName);

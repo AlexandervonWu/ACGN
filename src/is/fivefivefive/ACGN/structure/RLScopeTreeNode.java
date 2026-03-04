@@ -8,6 +8,7 @@ import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.etc.Triple;
 
 public class RLScopeTreeNode extends ScopeTreeNode {
     public static final float OLD_VARS_RESERVE_RATE = 0.2f;
@@ -121,9 +122,10 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         }
         this.qDist = localizedQDist;
     }
-    
-    public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> dumpLocalVariables() {
+
+    public void dumpLocalVariables(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist, Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter) {
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarProbs = new HashMap<>();
+        Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounterUpdate = new HashMap<>();
         for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
             Pair<Symbol, Integer> parentPair = entry.getKey();
             Map<Symbol, Float> candidateProbs = entry.getValue();
@@ -132,6 +134,9 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                 if (candidateProbs.containsKey(localSymbol)) {
                     localVarProbs.put(parentPair, candidateProbs);
                     totalLocalVarProb += candidateProbs.get(localSymbol);
+                    Triple<Symbol, Integer, Symbol> counterKey = new Triple<>(parentPair.a, parentPair.b, localSymbol);
+                    localVarCounterUpdate.put(counterKey, localVarCounterUpdate.getOrDefault(counterKey, 0) + 1);
+                    localVarCounter.put(counterKey, localVarCounter.getOrDefault(counterKey, 0) + 1);
                 }
                 // normalize the probabilities of the candidates for the parent pair, and remove the local symbol from the candidate list
                 if (totalLocalVarProb > 0) {
@@ -144,9 +149,21 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                         }
                     }
                     localVarProbs.put(parentPair, normalizedCandidateProbs);
+                    // scale the localVarDist with the localVarCounter and localVarCounterUpdate
+                    for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()){
+                        Symbol candidate = candidateEntry.getKey();
+                        if (!candidate.equals(localSymbol)) {
+                            Triple<Symbol, Integer, Symbol> counterKey = new Triple<>(parentPair.a, parentPair.b, localSymbol);
+                            int count = localVarCounter.getOrDefault(counterKey, 1);
+                            int updateCount = localVarCounterUpdate.getOrDefault(counterKey, 1);
+                            float scale = (float) count / updateCount;
+                            localVarProbs.get(parentPair).put(candidate, candidateEntry.getValue() * scale + localVarDist.getOrDefault(localVarCounterUpdate, candidateProbs).getOrDefault(candidate, 0f) * (1 - scale));
+                        }
+                    }
+
                 }
             }
         }
-        return localVarProbs;
+        
     }
 }
