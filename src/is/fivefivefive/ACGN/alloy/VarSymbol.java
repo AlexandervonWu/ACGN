@@ -13,6 +13,7 @@ public class VarSymbol extends AbstractSymbol {
     private boolean isGlobal;
     // private Set<FieldConfiner> fieldConfinerSet; // the set of field confiners that this variable is subject to
     private AugmentedNode confinerNode; 
+    private String hashName; // the name used for hashing, which is a combination of type and varName
     public VarSymbol(String sig, String varName, int treeId, AugmentedNode confinerNode) {
         type = "VAR_" + sig;
         this.varName = varName;
@@ -21,6 +22,17 @@ public class VarSymbol extends AbstractSymbol {
         // fieldConfinerSet = new HashSet<>();
         this.confinerNode = confinerNode;
         isGlobal = (treeId == 0);
+        hashName = type + "_" + varName;
+    }
+    public VarSymbol(String sig, String varName, int treeId, String hashName) {
+        type = "VAR_" + sig;
+        this.varName = varName;
+        treeIdScope = treeId;
+        node = new AugmentedNode(-1, 0);
+        // fieldConfinerSet = new HashSet<>();
+        this.confinerNode = null;
+        isGlobal = (treeId == 0);
+        this.hashName = hashName;
     }
     public String getType() {
         return type;
@@ -59,5 +71,24 @@ public class VarSymbol extends AbstractSymbol {
     }
     public boolean isGlobal() {
         return isGlobal;
+    }
+    public String getHashName() {
+        return hashName;
+    }
+    public void setHashName(String hashName) {
+        this.hashName = hashName;
+    }
+    public int hashCode() {
+        return hashName.hashCode();
+    }
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof VarSymbol) {
+            VarSymbol other = (VarSymbol) obj;
+            return this.hashName.equals(other.hashName);
+        } else {
+            return false;
+        }
     }
 }

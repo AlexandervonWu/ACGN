@@ -308,7 +308,7 @@ public class CodeGenAgent {
                 break;
             }
             addVariableDecl(sigName, treeId, qtNode, currentScope);
-            actionSequence.add(relDeclRoot.getName() + ", " + i + " ADD_VAR " + globalNewVarCounter + " TYPE " + sigName);
+            
         }
         return relDeclNode;
     }
@@ -350,7 +350,8 @@ public class CodeGenAgent {
         // add a new variable into the scope of coarse to fine bin;
         globalNewVarCounter++;
         // encoding corresponding to De Bruijn indices: the variable name is not important, but the place in the scope tree is
-        Symbol newVar = new VarSymbol(sigName, "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), treeId, confinerNode);
+        Symbol newVar = new VarSymbol(sigName, "var_" + globalNewVarCounter, "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), treeId, confinerNode);
+        actionSequence.add("ADD_VAR " + ((VarSymbol)newVar).getHashName());
         this.symbolId.put(this.symbolId.size(), newVar);
         // update the coarse to fine bin
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
