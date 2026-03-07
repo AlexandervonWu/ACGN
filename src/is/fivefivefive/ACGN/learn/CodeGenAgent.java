@@ -56,6 +56,9 @@ public class CodeGenAgent {
     private int initializationState = 0;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist;
     private Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter; // track the polling scaling
+    private Set<Symbol> leaves; // track the leaf nodes for local reward calculation.
+    private Map<Symbol, Set<RLScopeTreeNode>> symbolScopeMap; // track the scopes that a symbol appears in, for scope collapsing and reward backpropagation.
+    // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
         this.groundTruth = groundTruth;
@@ -82,6 +85,7 @@ public class CodeGenAgent {
         this.localVarDist = new HashMap<>();
         this.localVarCounter = new HashMap<>();
         this.edgeRewardMap = new HashMap<>();
+        this.leaves = new LinkedHashSet<>();
     }
     public int getInitializationState() {
         return initializationState;
@@ -140,6 +144,7 @@ public class CodeGenAgent {
         rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
         rlScopeTreeNodeId = 100; // reset the scope tree node id for each new generation
         Map<Symbol, Integer> tovTracker = new HashMap<>();
+        leaves = new LinkedHashSet<>();
         AugmentedNode rootNode = new AugmentedNode(-1, treeId);
         Symbol root = new PredRootSymbol(rootNode, predName);
         dynamicUniqueNodes.put(root, rootNode);
@@ -155,6 +160,7 @@ public class CodeGenAgent {
             e.printStackTrace();
             return null;
         }
+        this.globalQTable = rootScope.getqDist(); // update the global Q-table with the one from the root scope after generation
         return code;
     }
 
@@ -174,8 +180,10 @@ public class CodeGenAgent {
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.connect(localParent, nextNode, currentAns, position, tovTracker.getOrDefault(source, 0));
         if (nextToken instanceof EndSymbol) {
-            return -1; // end symbol reached
-        }
+            leaves.add(nextToken);
+            return -1; // end symbol reached, pass a signal to stop further generation in this branch
+        } 
+        // no need to generate siblings, since there is only one node down the root
         if (nextToken.getMaxDownlinks() != 0) {
             tovTracker.putIfAbsent(nextToken, 0);
             tovTracker.put(nextToken, tovTracker.get(nextToken) + 1);
@@ -185,6 +193,8 @@ public class CodeGenAgent {
                 if (result == -1) break; // end symbol reached
                 childPosition++;
             }// TODO: recursively generate downstream
+        } else {
+            leaves.add(nextToken);
         }
         return 0; // success
     }
@@ -458,11 +468,60 @@ public class CodeGenAgent {
             }
             ans += localImpact * downReward;
         }
+        edgeRewardMap.put(Pair.of(source, position), ans);
         return ans; // Placeholder for local reward calculation
         // TODO: Up-pooling rewards for collapsing Scope Tree.
     }
 
-    
+    public void backpropagateReward(float reward) {
+        List<MASGEdge> edges = currentAns.getEdges();
+        Map<Pair<Symbol, Integer>, Set<Symbol>> children = new HashMap<>();
+        Map<Symbol, Set<Pair<Symbol, Integer>>> parents = new HashMap<>();
+        for (MASGEdge edge : edges) {
+            Symbol source = edge.getSource().getSymbol();
+            Symbol target = edge.getTarget().getSymbol();
+            int position = edge.getPosition();
+            children.putIfAbsent(Pair.of(source, position), new LinkedHashSet<>());
+            children.get(Pair.of(source, position)).add(target);
+            parents.putIfAbsent(target, new LinkedHashSet<>());
+            parents.get(target).add(Pair.of(source, position));
+        }
+        Queue<Pair<Symbol, Integer>> queue = new LinkedList<>();
+        Map<Pair<Symbol, Integer>, Integer> remaining = new HashMap<>();
+        for (Map.Entry<Pair<Symbol, Integer>, Set<Symbol>> entry : children.entrySet()) {
+            Pair<Symbol, Integer> parent = entry.getKey();
+            Set<Symbol> childSet = entry.getValue();
+            boolean allLeaves = true;
+            int leafOffset = 0;
+            for (Symbol child : childSet) {
+                if (!leaves.contains(child)) {
+                    allLeaves = false;
+                    leafOffset++;
+                }
+            }
+            if (allLeaves) {
+                queue.offer(parent);
+            }
+            remaining.put(parent, childSet.size() - leafOffset);
+        }
+        while (!queue.isEmpty()) {
+            Pair<Symbol, Integer> current = queue.poll();
+            Symbol source = current.a;
+            int position = current.b;
+            Set<Symbol> childSet = children.get(current);
+            // TODO: calculate the reward for the current node based on its children and the edge rewards
+            for (Symbol child : childSet) {
+                float edgeReward = localReward(source, position, child, reward, rootScope);
+            }
+            for (Pair<Symbol, Integer> parent : parents.get(source)) {
+                int rem = remaining.get(parent) - 1;
+                remaining.put(parent, rem);
+                if (rem == 0) {
+                    queue.offer(parent);
+                }
+            }
+        }
+    }
     /*
      * // TODOS: 
      * 1. Coarse token to fine token expansion; not in initialization because new fine tokens as the newly declared variables; 
