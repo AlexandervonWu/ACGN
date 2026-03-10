@@ -173,4 +173,8 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     public Symbol getRootSymbol() {
         return rootSymbol;
     }
+    public void synchronizeQUpdate(Pair<Symbol, Integer> key, Map<Symbol, Float> value) {
+        // synchronize UP and DOWN of the tree 
+        
+    }
 }
