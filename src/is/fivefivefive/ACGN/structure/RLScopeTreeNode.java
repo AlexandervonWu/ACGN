@@ -14,6 +14,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     public static final float OLD_VARS_RESERVE_RATE = 0.2f;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist;
     private Map<Symbol, String> sigCorr;
+    private Symbol rootSymbol;
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
         this.qDist = new HashMap<>();
@@ -43,6 +44,9 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         this.qDist = qDist;
     }
     public void addSymbol(Symbol next) {
+        if (rootSymbol == null) {
+            rootSymbol = next;
+        }
         super.addSymbol(next);
         if (next instanceof VarSymbol) {
             VarSymbol varNext = (VarSymbol) next;
@@ -165,5 +169,8 @@ public class RLScopeTreeNode extends ScopeTreeNode {
             }
         }
         
+    }
+    public Symbol getRootSymbol() {
+        return rootSymbol;
     }
 }

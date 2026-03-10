@@ -57,7 +57,7 @@ public class CodeGenAgent {
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist;
     private Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter; // track the polling scaling
     private Set<Symbol> leaves; // track the leaf nodes for local reward calculation.
-    private Map<Symbol, Set<RLScopeTreeNode>> symbolScopeMap; // track the scopes that a symbol appears in, for scope collapsing and reward backpropagation.
+    private Map<Symbol, RLScopeTreeNode> symbolScopeMap; // track the scopes that a symbol appears in, for scope collapsing and reward backpropagation.
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
@@ -86,6 +86,10 @@ public class CodeGenAgent {
         this.localVarCounter = new HashMap<>();
         this.edgeRewardMap = new HashMap<>();
         this.leaves = new LinkedHashSet<>();
+        this.symbolScopeMap = new HashMap<>();
+        for (Symbol sym : gv.getUniqueNodes().keys()) {
+            this.symbolScopeMap.put(sym, rootScope);
+        }
     }
     public int getInitializationState() {
         return initializationState;
@@ -512,6 +516,8 @@ public class CodeGenAgent {
             // TODO: calculate the reward for the current node based on its children and the edge rewards
             for (Symbol child : childSet) {
                 float edgeReward = localReward(source, position, child, reward, rootScope);
+                edgeRewardMap.put(Pair.of(source, position), edgeReward);
+                updateQTable(source, position, child, edgeReward, rootScope);
             }
             for (Pair<Symbol, Integer> parent : parents.get(source)) {
                 int rem = remaining.get(parent) - 1;
