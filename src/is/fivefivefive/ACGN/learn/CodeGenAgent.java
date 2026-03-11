@@ -79,6 +79,7 @@ public class CodeGenAgent {
         this.tovMap = new HashMap<>();
         this.treeId = visitor.getForest().size();
         this.rootScope = new RLScopeTreeNode(rlScopeTreeNodeId, visitor.getRootScope(), currentAns);
+        rootScope.addSymbol(DummySymbol.DUMMY_LOCAL_VAR); // the dummy for local vars to be preserved in the root scope
         // initialize the Q-table for the root scope
         this.globalQTable = initialCoarseQTable();
         initializationState = 0;

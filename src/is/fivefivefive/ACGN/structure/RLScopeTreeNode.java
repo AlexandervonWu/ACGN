@@ -173,8 +173,63 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     public Symbol getRootSymbol() {
         return rootSymbol;
     }
-    public void synchronizeQUpdate(Pair<Symbol, Integer> key, Map<Symbol, Float> value) {
-        // synchronize UP and DOWN of the tree 
-        
+    public void rescaleLocalVars(float newLocalVarProb) {
+        // get the total probability of local variables in the current qDist for each parent pair, and rescale them to newLocalVarProb, while keeping the relative probabilities among the local variables unchanged.
+        if (getSymbols().containsValue(DummySymbol.DUMMY_LOCAL_VAR)) {
+            // scale the probability of DUMMY_LOCAL_VAR to newLocalVarProb, and scale the probabilities of the other candidates accordingly to keep the total probability sum to 1
+            for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+                Pair<Symbol, Integer> parentPair = entry.getKey();
+                Map<Symbol, Float> candidateProbs = entry.getValue();
+                float dummyLocalVarProb = candidateProbs.getOrDefault(DummySymbol.DUMMY_LOCAL_VAR, 0f);
+                if (dummyLocalVarProb > 0) {
+                    for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()) {                    
+                        Symbol candidate = candidateEntry.getKey();
+                        float prob = candidateEntry.getValue();
+                        if (candidate.equals(DummySymbol.DUMMY_LOCAL_VAR)) {
+                            candidateProbs.put(candidate, newLocalVarProb);
+                        } else {
+                            candidateProbs.put(candidate, prob * (1 - newLocalVarProb) / (1 - dummyLocalVarProb));
+                        }
+                    }
+                }
+            }
+            return;
+        }
+        for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+            Pair<Symbol, Integer> parentPair = entry.getKey();
+            Map<Symbol, Float> candidateProbs = entry.getValue();
+            float totalLocalVarProb = localVarProb(parentPair);
+            // rescale the probabilities of the candidates for the parent pair
+            if (totalLocalVarProb > 0) {
+                float scale = newLocalVarProb / totalLocalVarProb;
+                for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()) {
+                    Symbol candidate = candidateEntry.getKey();
+                    float prob = candidateEntry.getValue();
+                    candidateProbs.put(candidate, prob * scale);
+                }
+            }
+            // rescale the other candidates to keep the total probability sum to 1
+            float totalOtherProb = 1 - totalLocalVarProb;
+            if (totalOtherProb > 0) {
+                float otherScale = (1 - newLocalVarProb) / totalOtherProb;
+                for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()){
+                    Symbol candidate = candidateEntry.getKey();
+                    float prob = candidateEntry.getValue();
+                    if (!getSymbols().containsValue(candidate)) {
+                        candidateProbs.put(candidate, prob * otherScale);
+                    }
+                }
+            }
+        }
+    }
+    public float localVarProb(Pair<Symbol, Integer> parentPair) {
+        Map<Symbol, Float> candidateProbs = qDist.getOrDefault(parentPair, new HashMap<>());
+        float totalLocalVarProb = 0f;
+        for (Symbol localSymbol : getSymbols().values()) {
+            if (candidateProbs.containsKey(localSymbol)) {
+                totalLocalVarProb += candidateProbs.get(localSymbol);
+            }
+        }
+        return totalLocalVarProb;
     }
 }
