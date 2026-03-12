@@ -2,6 +2,7 @@ package is.fivefivefive.ACGN.learn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -58,6 +59,7 @@ public class CodeGenAgent {
     private Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter; // track the polling scaling
     private Set<Symbol> leaves; // track the leaf nodes for local reward calculation.
     private Map<Symbol, RLScopeTreeNode> symbolScopeMap; // track the scopes that a symbol appears in, for scope collapsing and reward backpropagation.
+    private Set<RLScopeTreeNode> visitedScopes; // a temporary set to track the synchronization of the scope tree over updating of the Q-table
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
@@ -375,6 +377,7 @@ public class CodeGenAgent {
         Symbol newVar = new VarSymbol(sigName, "var_" + globalNewVarCounter, "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), treeId, confinerNode);
         actionSequence.add("ADD_VAR " + ((VarSymbol)newVar).getHashName());
         this.symbolId.put(this.symbolId.size(), newVar);
+        symbolScopeMap.put(newVar, currentScope);
         // update the coarse to fine bin
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
         // update the dynamic unique nodes
@@ -416,6 +419,43 @@ public class CodeGenAgent {
         }
         qTable.put(Pair.of(source, position), updatedActionProbabilities);
         currentScope.setqDist(qTable);
+        if (currentScope == rootScope) {
+            globalQTable = qTable; // keep the global Q-table updated with the root scope's Q-table
+        }
+        if (currentScope.getParent() != null && currentScope.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(currentScope.getParent())) {
+            RLScopeTreeNode parentScope = (RLScopeTreeNode) currentScope.getParent();
+            visitedScopes.add(parentScope);
+            if (parentScope.symbolsAvailable().containsValue(selection)) {
+                updateQTable(source, position, selection, reward, parentScope);
+            } else {
+                // if the selected symbol is not available in the parent scope, we can update the local variable distribution scope
+                Queue<RLScopeTreeNode> queue = new LinkedList<>();
+                float localVarProb = currentScope.localVarProb(Pair.of(source, position));
+                queue.offer(parentScope);
+                while (!queue.isEmpty()) {
+                    RLScopeTreeNode scopeNode = queue.poll();
+                    scopeNode.rescaleLocalVars(localVarProb);
+                    if (scopeNode.getParent() != null && scopeNode.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(scopeNode.getParent())) {
+                        visitedScopes.add((RLScopeTreeNode) scopeNode.getParent());
+                        queue.offer((RLScopeTreeNode) scopeNode.getParent());
+                    }
+                    // other children
+                    for (ScopeTreeNode child : scopeNode.getChildren()) {
+                        if (child instanceof RLScopeTreeNode && !visitedScopes.contains(child)) {
+                            visitedScopes.add((RLScopeTreeNode) child);
+                            queue.offer((RLScopeTreeNode) child);
+                        }
+                    }
+                }
+            }
+        }
+        for (ScopeTreeNode child : currentScope.getChildren()) {
+            RLScopeTreeNode childNode = (child instanceof RLScopeTreeNode) ? (RLScopeTreeNode) child : null;
+            if (!visitedScopes.contains(childNode)) {
+                visitedScopes.add(childNode);
+                updateQTable(source, position, selection, reward, childNode);
+            }
+        }
     }
 
     /**
@@ -516,6 +556,7 @@ public class CodeGenAgent {
             Set<Symbol> childSet = children.get(current);
             // TODO: calculate the reward for the current node based on its children and the edge rewards
             for (Symbol child : childSet) {
+                visitedScopes = new HashSet<RLScopeTreeNode>();
                 float edgeReward = localReward(source, position, child, reward, rootScope);
                 edgeRewardMap.put(Pair.of(source, position), edgeReward);
                 updateQTable(source, position, child, edgeReward, rootScope);
