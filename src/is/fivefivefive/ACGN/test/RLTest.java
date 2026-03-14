@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.learn.CodeGenAgent;
 import is.fivefivefive.ACGN.learn.Hyperparams;
 import is.fivefivefive.ACGN.learn.RLAgentFrame;
 import is.fivefivefive.ACGN.learn.Rewarder;
@@ -95,8 +96,8 @@ public class RLTest {
         gv.addCustomUniqueNodes(visitor.getUniqueNode());
         
         // System.out.println(uniqueNodes.rget(groundTruthGraph.getRoot()).getName());
-        
-        RLAgentFrame agent = new RLAgentFrame(gv, groundTruthGraph, uniqueNodes, studentSolutionGraph);
+
+        CodeGenAgent agent = new CodeGenAgent(groundTruthGraph, visitor, gv);
         agent.initialize();
         // begin RL
         Pair<InstancePool, InstancePool> instancePoolPair = Rewarder.instances(cm, groundTruth.getName(), Hyperparams.POOL_SIZE);

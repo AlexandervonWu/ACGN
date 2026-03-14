@@ -43,7 +43,7 @@ public class CodeGenAgent {
     private Multigraph groundTruth;
     private Multigraph currentAns;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> globalQTable;
-    private BiMap<Integer, Symbol> symbolId;
+    // private BiMap<Integer, Symbol> symbolId;
     private Map<Pair<Symbol, Integer>, Float> edgeRewardMap; // reward for each edge
     private int globalNewVarCounter = 100;
     private int rlScopeTreeNodeId = 100;
@@ -62,12 +62,12 @@ public class CodeGenAgent {
     private Set<RLScopeTreeNode> visitedScopes; // a temporary set to track the synchronization of the scope tree over updating of the Q-table
     // TODO: fill the scope map so RL backpropagation works. 
 
-    public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv, BiMap<Integer, Symbol> symbolId) {
+    public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
         this.groundTruth = groundTruth;
         this.currentAns = new Multigraph();
         this.visitor = visitor;
         this.gv = gv;
-        this.symbolId = symbolId;
+        // this.symbolId = symbolId;
         this.dynamicUniqueNodes = new BiMap<Symbol, AugmentedNode>();
         for (Symbol sym : gv.getUniqueNodes().keys()) {
             this.dynamicUniqueNodes.put(sym, gv.getUniqueNodes().get(sym));
@@ -376,7 +376,7 @@ public class CodeGenAgent {
         // encoding corresponding to De Bruijn indices: the variable name is not important, but the place in the scope tree is
         Symbol newVar = new VarSymbol(sigName, "var_" + globalNewVarCounter, "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), treeId, confinerNode);
         actionSequence.add("ADD_VAR " + ((VarSymbol)newVar).getHashName());
-        this.symbolId.put(this.symbolId.size(), newVar);
+        // this.symbolId.put(this.symbolId.size(), newVar);
         symbolScopeMap.put(newVar, currentScope);
         // update the coarse to fine bin
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
