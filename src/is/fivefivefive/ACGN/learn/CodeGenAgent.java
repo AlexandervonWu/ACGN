@@ -100,7 +100,7 @@ public class CodeGenAgent {
 
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = new HashMap<>();
-        Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getEdgeMap();
+        Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getCoarseGrainCandidateMap();
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             Symbol source = positional.a;
             int position = positional.b;
@@ -114,6 +114,7 @@ public class CodeGenAgent {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
         // to begin with, find all signatures, fields, reference points; 
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialQTable = initialCoarseQTable();
+        System.err.println("Initial Q-table for predroot at 1: " + initialQTable.get(Pair.of(DummySymbol.DUMMY_PREDROOT, 1)));
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
             Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
@@ -209,6 +210,13 @@ public class CodeGenAgent {
         // TODO: 1. use a randomizer and the Q-table to select the next token;
         // 2. log the action into the sequence; 
         // 3. return the selected token;
+        if (source instanceof PredRootSymbol) {
+            return fillHole(DummySymbol.DUMMY_PREDROOT, position, currentScope);
+        }
+        if (!currentScope.getqDist().containsKey(Pair.of(source, position))) {
+            System.out.println("Q-table missing for " + source.getName() + " at position " + position);
+            throw new RuntimeException("Q-table missing for " + source.getName() + " at position " + position);
+        }
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         Random rand = new Random();
         float randomValue = rand.nextFloat();

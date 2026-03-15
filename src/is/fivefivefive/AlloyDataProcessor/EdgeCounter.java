@@ -96,8 +96,6 @@ public class EdgeCounter {
             return DummySymbol.DUMMY_SIG;
         } else if (original instanceof SubsetRelation) {
             return DummySymbol.DUMMY_SUBSET;
-        } else if (original instanceof PredRootSymbol) {
-            return DummySymbol.DUMMY_PREDROOT;
         } else {
             return original;
         }

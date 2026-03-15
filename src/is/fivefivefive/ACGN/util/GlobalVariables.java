@@ -62,9 +62,10 @@ public final class GlobalVariables implements Serializable {
         return coarseToFineBin;
     }
     public void addEdge(Symbol source, Symbol target, int position) {
+        Symbol coarseSource = source instanceof PredRootSymbol ? DummySymbol.DUMMY_PREDROOT : source; // predroot is the only dummy being nonterminal
         if (!edgeMap.containsKey(Pair.of(source, position))) {
             edgeMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
-            coarseGrainCandidateMap.put(Pair.of(source, position), new LinkedHashSet<Symbol>());
+            coarseGrainCandidateMap.put(Pair.of(coarseSource, position), new LinkedHashSet<Symbol>());
         }
         if (maxChildCount.containsKey(source)) {
             int count = maxChildCount.get(source);
@@ -79,7 +80,8 @@ public final class GlobalVariables implements Serializable {
         if (coarseHash instanceof DummySymbol) {
             coarseToFineBin.get(coarseHash).add(target);
         }
-        coarseGrainCandidateMap.get(Pair.of(source, position)).add(coarseHash); // the coarse-grain version
+        coarseGrainCandidateMap.get(Pair.of(coarseSource, position)).add(coarseHash); // the coarse-grain version
+        System.out.println("Added coarse candidate: " + coarseHash.getName() + " for source: " + coarseSource.getName() + " at position: " + position);
     }
     public void addEdge(MASGEdge edge, int position) {
         addEdge(edge.getSource().getSymbol(), edge.getTarget().getSymbol(), position);

@@ -77,7 +77,6 @@ public class Probability {
             }
             return probabilities;
         }
-
         return null;
     }
 
@@ -110,6 +109,7 @@ public class Probability {
             }
             return probabilities;
         }
+        System.err.println("No coarse-grain candidates found for symbol: " + source.getName() + " at position: " + position);
         return null;
     }
 
