@@ -52,11 +52,6 @@ public class RLTest {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create error_rl.log", e);
         }
-        try {
-            codeOutputStream = new PrintStream(new File("code_rl.log"));
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("Unable to create code_rl.log", e);
-        }
     }
 
     private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException {
@@ -176,17 +171,7 @@ public class RLTest {
                                 System.out.println("Processing subdirectory: " + subsubFile.getName());
                             } else if (subsubFile.isFile() && subsubFile.getName().endsWith(".als")) {
                                 // add a new thread for each file
-                                System.out.println("Processing file: " + subsubFile.getName());
-                                Pair<Boolean, Double> result = learn(gv, subsubFile.getAbsolutePath(), 1000);
-                                if (result.a) {
-                                    System.setOut(rewardStream);
-                                    System.out.println("Successfully learned from " + subsubFile.getName() + " in " + result.b + " steps.");
-                                    System.setOut(outputStream);
-                                } else {
-                                    System.setOut(rewardStream);
-                                    System.out.println("Failed to learn from " + subsubFile.getName() + ". Max reward: " + result.b);
-                                    System.setOut(outputStream);
-                                }
+                                new Thread(new RLWorker(gv, subsubFile.getAbsolutePath())).start();
                             }
                         }
                     }
@@ -197,5 +182,32 @@ public class RLTest {
             }
         }
         System.out.println("All files processed.");
+    }
+    private static class RLWorker implements Runnable {
+        private GlobalVariables gv;
+        private String path;
+
+        public RLWorker(GlobalVariables gv, String path) {
+            this.gv = gv;
+            this.path = path;
+        }
+
+        @Override
+        public void run() {
+            try {
+                Pair<Boolean, Double> result = learn(gv, path, 1000);
+                if (result.a) {
+                    System.setOut(rewardStream);
+                    System.out.println("Successfully learned from " + path + " in " + result.b + " steps.");
+                    System.setOut(outputStream);
+                } else {
+                    System.setOut(rewardStream);
+                    System.out.println("Failed to learn from " + path + ". Max reward: " + result.b);
+                    System.setOut(outputStream);
+                }
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: " + path);
+            }
+        }
     }
 }
