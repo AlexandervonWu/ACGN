@@ -114,6 +114,9 @@ public class Multigraph implements Serializable {
     }
     public void addVertex(AugmentedNode v) {
         vertices.add(v);
+        if (vertices.size() == 1) {
+            root = v;
+        }
     }
     public void removeVertex(AugmentedNode v) {
         if (v.equals(root)) {

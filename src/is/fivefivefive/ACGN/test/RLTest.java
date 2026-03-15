@@ -171,7 +171,21 @@ public class RLTest {
                                 System.out.println("Processing subdirectory: " + subsubFile.getName());
                             } else if (subsubFile.isFile() && subsubFile.getName().endsWith(".als")) {
                                 // add a new thread for each file
-                                new Thread(new RLWorker(gv, subsubFile.getAbsolutePath())).start();
+                                // new Thread(new RLWorker(gv, subsubFile.getAbsolutePath())).start();
+                                try {
+                                    Pair<Boolean, Double> result = learn(gv, subsubFile.getAbsolutePath(), 1000);
+                                    if (result.a) {
+                                        System.setOut(rewardStream);
+                                        System.out.println("Successfully learned from " + subsubFile.getAbsolutePath() + " in " + result.b + " steps.");
+                                        System.setOut(outputStream);
+                                    } else {
+                                        System.setOut(rewardStream);
+                                        System.out.println("Failed to learn from " + subsubFile.getAbsolutePath() + ". Max reward: " + result.b);
+                                        System.setOut(outputStream);
+                                    }
+                                } catch (FileNotFoundException e) {
+                                    System.out.println("File not found: " + subsubFile.getAbsolutePath());
+                                }
                             }
                         }
                     }
