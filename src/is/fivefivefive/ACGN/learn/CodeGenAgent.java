@@ -136,6 +136,7 @@ public class CodeGenAgent {
     } 
     private Map<Symbol, Float> coarseToFineInit(Map<Symbol, Float> coarseProbabilities) {
         Map<Symbol, Float> fineProbabilities = new HashMap<>();
+        float totalRemovedCoarseProb = 0.0f; 
         for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
             Symbol coarseToken = entry.getKey();
             Float coarseProb = entry.getValue();
@@ -151,14 +152,15 @@ public class CodeGenAgent {
             } else {
                 // scale other tokens up
                 fineProbabilities.remove(coarseToken);
-                float scaleFactor = 1.0f / (1.0f - coarseProb);
-                for (Map.Entry<Symbol, Float> e : coarseProbabilities.entrySet()) {
-                    Symbol token = e.getKey();
-                    if (!token.equals(coarseToken)) {
-                        fineProbabilities.put(token, e.getValue() * scaleFactor);
-                    }
-                }
-                break;
+                totalRemovedCoarseProb += coarseProb;
+            }
+        }
+        // rescale
+        if (totalRemovedCoarseProb > 0) {
+            float scaleFactor = 1.0f / (1.0f - totalRemovedCoarseProb);
+            for (Map.Entry<Symbol, Float> e : fineProbabilities.entrySet()) {
+                Symbol token = e.getKey();
+                fineProbabilities.put(token, e.getValue() * scaleFactor);
             }
         }
         return fineProbabilities;
