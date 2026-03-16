@@ -102,11 +102,13 @@ public class Probability {
             }
             for (Symbol candidate : candidates) {
                 double candidateSig = candidate.getSignature();
+                System.err.println("Source signature for " + source.getName() + ": " + sourceSig + ", Candidate signature for " + candidate.getName() + ": " + candidateSig);
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff);
                 probabilities.put(candidate, (float) (expDiff / sum));
-                // System.out.println("Coarse Token Probability between " + source.getName() + " and " + candidate.getName() + " at position " + position + ": " + probabilities.get(candidate));
+                // System.err.println("Coarse Token Probability between " + source.getName() + " and " + candidate.getName() + " at position " + position + ": " + probabilities.get(candidate));
             }
+            // System.err.println("Coarse-grain candidates found for symbol: " + source.getName() + " at position: " + position + ", probabilities: " + probabilities);
             return probabilities;
         }
         System.err.println("No coarse-grain candidates found for symbol: " + source.getName() + " at position: " + position);
