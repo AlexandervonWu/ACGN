@@ -118,6 +118,7 @@ public class CodeGenAgent {
         // System.err.println("Initial Q-table for predroot at 1: " + initialQTable.get(Pair.of(DummySymbol.DUMMY_PREDROOT, 1)));
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
             Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
+            System.err.println("Coarse probabilities for " + key.a.getName() + " at position " + key.b + ": " + coarseProbabilities);
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
             System.err.println("Fine probabilities for " + key.a.getName() + " at position " + key.b + ": " + fineProbabilities);
             fineQTable.put(key, fineProbabilities);
@@ -125,7 +126,8 @@ public class CodeGenAgent {
         this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
         stepNum = 0;
         this.tovMap = new HashMap<>();
-        globalQTable = initialQTable;
+        initialQTable = fineQTable;
+        globalQTable = initialQTable; // set the global Q-table to the fine-grained initialized Q-table
         if (initializationState == 0) {
             initializationState = 1;
         } else {
@@ -137,14 +139,26 @@ public class CodeGenAgent {
         for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
             Symbol coarseToken = entry.getKey();
             Float coarseProb = entry.getValue();
-            if ((! (coarseToken instanceof DummySymbol)) || (coarseToken == DummySymbol.DUMMY_LOCAL_VAR)) fineProbabilities.put(coarseToken, coarseProb);
-            else {
+            if ((! (coarseToken instanceof DummySymbol)) || (coarseToken.equals(DummySymbol.DUMMY_LOCAL_VAR))) fineProbabilities.put(coarseToken, coarseProb);
+            else if (coarseToFineBin.get(coarseToken) != null && !coarseToFineBin.get(coarseToken).isEmpty()) {
                 // expand the dummy token to fine tokens
                 coarseToFineBin.get(coarseToken).forEach(fineToken -> {
                     float fineProb = coarseProb / coarseToFineBin.get(coarseToken).size();
                     fineProbabilities.put(fineToken, fineProb);
                 });
                 fineProbabilities.remove(coarseToken); // remove the dummy token itself from the fine probabilities
+                System.err.println("Expanded " + coarseToken.getName() + " at position to fine tokens: " + coarseToFineBin.get(coarseToken) + " with probability " + coarseProb);
+            } else {
+                // scale other tokens up
+                fineProbabilities.remove(coarseToken);
+                float scaleFactor = 1.0f / (1.0f - coarseProb);
+                for (Map.Entry<Symbol, Float> e : coarseProbabilities.entrySet()) {
+                    Symbol token = e.getKey();
+                    if (!token.equals(coarseToken)) {
+                        fineProbabilities.put(token, e.getValue() * scaleFactor);
+                    }
+                }
+                break;
             }
         }
         return fineProbabilities;
