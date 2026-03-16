@@ -75,12 +75,12 @@ public class CodeGenAgent {
         this.coarseToFineBin = new HashMap<Symbol, Set<Symbol>>();
         for (Symbol dummy : DummySymbol.ALL_DUMMIES) {
             this.coarseToFineBin.put(dummy, new LinkedHashSet<Symbol>());
-            this.coarseToFineBin.get(dummy).addAll(gv.getCoarseToFineBin().get(dummy));
+            this.coarseToFineBin.get(dummy).addAll(visitor.getFineSymbolsForCoarseSymbol(dummy));
         }
         this.actionSequence = new ArrayList<>();
         this.tovMap = new HashMap<>();
         this.treeId = visitor.getForest().size();
-        this.rootScope = new RLScopeTreeNode(rlScopeTreeNodeId, visitor.getRootScope(), currentAns);
+        this.rootScope = new RLScopeTreeNode(rlScopeTreeNodeId, null, currentAns);
         rootScope.addSymbol(DummySymbol.DUMMY_LOCAL_VAR); // the dummy for local vars to be preserved in the root scope
         // initialize the Q-table for the root scope
         this.globalQTable = initialCoarseQTable();
@@ -114,15 +114,17 @@ public class CodeGenAgent {
         // TODO: Initialize the agent with coarse-grained token candidates and the unique nodes presenting in the model. 
         // to begin with, find all signatures, fields, reference points; 
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialQTable = initialCoarseQTable();
-        System.err.println("Initial Q-table for predroot at 1: " + initialQTable.get(Pair.of(DummySymbol.DUMMY_PREDROOT, 1)));
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> fineQTable = new HashMap<>();
+        // System.err.println("Initial Q-table for predroot at 1: " + initialQTable.get(Pair.of(DummySymbol.DUMMY_PREDROOT, 1)));
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
             Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
-            this.rootScope.getqDist().put(key, fineProbabilities); // initial partially fine Q-table, waiting for the local variable declarations. 
+            System.err.println("Fine probabilities for " + key.a.getName() + " at position " + key.b + ": " + fineProbabilities);
+            fineQTable.put(key, fineProbabilities);
         }
+        this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
         stepNum = 0;
         this.tovMap = new HashMap<>();
-        rootScope.setqDist(initialQTable);
         globalQTable = initialQTable;
         if (initializationState == 0) {
             initializationState = 1;
@@ -135,13 +137,14 @@ public class CodeGenAgent {
         for (Map.Entry<Symbol, Float> entry : coarseProbabilities.entrySet()) {
             Symbol coarseToken = entry.getKey();
             Float coarseProb = entry.getValue();
-            if (!(coarseToken instanceof DummySymbol) || (coarseToken == DummySymbol.DUMMY_LOCAL_VAR)) fineProbabilities.put(coarseToken, coarseProb);
+            if ((! (coarseToken instanceof DummySymbol)) || (coarseToken == DummySymbol.DUMMY_LOCAL_VAR)) fineProbabilities.put(coarseToken, coarseProb);
             else {
                 // expand the dummy token to fine tokens
                 coarseToFineBin.get(coarseToken).forEach(fineToken -> {
                     float fineProb = coarseProb / coarseToFineBin.get(coarseToken).size();
                     fineProbabilities.put(fineToken, fineProb);
                 });
+                fineProbabilities.remove(coarseToken); // remove the dummy token itself from the fine probabilities
             }
         }
         return fineProbabilities;
@@ -149,19 +152,20 @@ public class CodeGenAgent {
     
     public String generateNextPred(String predName) {
         currentAns = new Multigraph();
-        rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
+        // rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
         rlScopeTreeNodeId = 100; // reset the scope tree node id for each new generation
-        Map<Symbol, Integer> tovTracker = new HashMap<>();
+        tovMap = new HashMap<>();
         leaves = new LinkedHashSet<>();
         AugmentedNode rootNode = new AugmentedNode(-1, treeId);
         Symbol root = new PredRootSymbol(rootNode, predName);
         dynamicUniqueNodes.put(root, rootNode);
         rootNode.setSymbol(root);
         Multigraph predGraph = new Multigraph(rootNode, gv);
-        rootScope.setqDist(globalQTable); // set the Q-table of the root scope to the global Q-table before generation
+        // rootScope.setqDist(globalQTable); // set the Q-table of the root scope to the global Q-table before generation
         currentAns.addVertex(rootNode);
         currentAns.setScope(rootScope);
-        generateNextNode(rootNode, 1, tovTracker, rootScope);
+        // System.err.println("rootScope dist: " + rootScope.getqDist());
+        generateNextNode(rootNode, 1, rootScope);
         Generator generator = new Generator();
         String code = null;
         try {
@@ -175,34 +179,37 @@ public class CodeGenAgent {
         return code;
     }
 
-    public int generateNextNode(AugmentedNode localParent, int position, Map<Symbol, Integer> tovTracker, RLScopeTreeNode scope) {
+    public int generateNextNode(AugmentedNode localParent, int position, RLScopeTreeNode scope) {
         if (stepNum > MAX_STEPS) {
             throw new RuntimeException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
+        }
+        if (position == 1) {
+            // update the times of visit only for the first position for each visit
+            tovMap.putIfAbsent(localParent.getSymbol(), 0);
+            tovMap.put(localParent.getSymbol(), tovMap.get(localParent.getSymbol()) + 1);
         }
         stepNum++;
         Symbol source = localParent.getSymbol();
         if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
             AugmentedNode qtNode = fillHoleQt(source, scope);
             currentAns.addVertex(qtNode);
-            currentAns.connect(localParent, qtNode,currentAns, position, tovTracker.getOrDefault(source, 0));
+            localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
             // TODO: recursively generate downstream
             return 0; // success
         }
         Symbol nextToken = fillHole(source, position, scope);
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.addVertex(nextNode);
-        currentAns.connect(localParent, nextNode, currentAns, position, tovTracker.getOrDefault(source, 0));
+        localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
         if (nextToken instanceof EndSymbol) {
             leaves.add(nextToken);
             return -1; // end symbol reached, pass a signal to stop further generation in this branch
         } 
         // no need to generate siblings, since there is only one node down the root
         if (nextToken.getMaxDownlinks() != 0) {
-            tovTracker.putIfAbsent(nextToken, 0);
-            tovTracker.put(nextToken, tovTracker.get(nextToken) + 1);
             int childPosition = 1;
             while (childPosition <= nextToken.getMaxDownlinks() || nextToken.getMaxDownlinks() == -1) {
-                int result = generateNextNode(nextNode, childPosition, tovTracker, scope);
+                int result = generateNextNode(nextNode, childPosition, scope);
                 if (result == -1) break; // end symbol reached
                 childPosition++;
             }// TODO: recursively generate downstream
@@ -238,7 +245,9 @@ public class CodeGenAgent {
         }
         if (nextToken instanceof DummySymbol) {
             // if the selected token is dummy, we need to revert and generate again
-            System.out.println("Selected token is a dummy symbol: " + nextToken.getName() + ". Reverting and selecting again.");
+            System.err.println("Selected token is a dummy symbol: " + nextToken.getName() + " at position " + position + " of " + source.getName() + ". Reverting and selecting again.");
+            System.err.println("Current Q-entry value: " + qTable.get(Pair.of(source, position)));
+            System.err.println("for RL Scope Tree ID " + rlScopeTreeNodeId);
             return fillHole(source, position, currentScope);
         }
         if (nextToken == null) {
@@ -267,7 +276,7 @@ public class CodeGenAgent {
         currentAns.addVertex(qt1Node);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
-        currentAns.connect(qtNode, qt1Node, currentAns, 1, tovMap.get(qtRoot));
+        qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
@@ -282,7 +291,7 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 currentAns.addVertex(endNode);
-                currentAns.connect(qtNode, endNode, currentAns, i, tovMap.get(qtRoot));
+                qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
             } else {
@@ -309,7 +318,7 @@ public class CodeGenAgent {
         if (qt1.getMaxDownlinks() != 0) {
             int childPosition = 1;
             while (childPosition <= qt1.getMaxDownlinks() || qt1.getMaxDownlinks() == -1) {
-                int result = generateNextNode(qt1Node, childPosition, tovMap, qtScope);
+                int result = generateNextNode(qt1Node, childPosition, qtScope);
                 if (result == -1) break; // end symbol reached
                 childPosition++;
             }
@@ -326,12 +335,12 @@ public class CodeGenAgent {
         Random random = new Random();
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
-        Symbol sig = fillHole(relDeclRoot, 1, currentScope);
-        Symbol typeSig = typeCheckSymbol(sig);
+        generateNextNode(relDeclNode, 1, currentScope);
+        Symbol typeSig = typeCheckSymbol(relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol());
         AugmentedNode sigNode = dynamicUniqueNodes.get(typeSig);
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
-        currentAns.connect(relDeclNode, sigNode, currentAns, 1, tovMap.get(relDeclRoot));
+        relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
@@ -344,7 +353,7 @@ public class CodeGenAgent {
             if (nextRandom < endProb) {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
-                currentAns.connect(relDeclNode, endNode, currentAns, i, tovMap.get(relDeclRoot));
+                relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;
             }
@@ -366,7 +375,10 @@ public class CodeGenAgent {
             return (FieldRelation) sym;
         } else if (sym instanceof MiddleSymbol) {
             AugmentedNode node = dynamicUniqueNodes.get(sym);
-            List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(sym, 0));
+            List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(sym, 1));
+            if (downlinks == null || downlinks.isEmpty()) {
+                throw new RuntimeException("No downlinks found for symbol: " + sym.getName() + " at time of visit: " + tovMap.getOrDefault(sym, 1));
+            }
             for (MASGEdge downlink : downlinks) {
                 Symbol targetSym = downlink.getTarget().getSymbol();
                 if (targetSym instanceof SigSymbol) {

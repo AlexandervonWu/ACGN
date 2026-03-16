@@ -29,15 +29,15 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent) {
         super(id, parent);
-        this.qDist = parent.getqDist();
+        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent, Multigraph affl) {
         super(id, parent, affl);
-        this.qDist = parent.getqDist();
+        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, RLScopeTreeNode parent, Multigraph affl) {
         super(id, symbols, parent, affl);
-        this.qDist = parent.getqDist();
+        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl, Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         super(id, symbols, parent, affl);
@@ -88,7 +88,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
             localVarProbs.put(pair, dummyLocalVarProb);
         }
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localizedQDist = new HashMap<>();
-        Map<String, Symbol> inheritedSymbols = getParent() instanceof RLScopeTreeNode ? getParent().symbolsAvailable() : null;
+        Map<String, Symbol> inheritedSymbols = getParent() == null ? null : getParent().symbolsAvailable();
         // distribute the probability of DUMMY_LOCAL_VAR to the symbols in the current node according to the reserve rate, and keep the rest for DUMMY_LOCAL_VAR
         if (inheritedSymbols != null) {
             for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
@@ -116,7 +116,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
             for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
                 Pair<Symbol, Integer> pair = entry.getKey();
                 Map<Symbol, Float> candidateProbs = entry.getValue();
-                float dummyLocalVarProb = localVarProbs.getOrDefault(pair, 0f);
+                float dummyLocalVarProb = candidateProbs.getOrDefault(DummySymbol.DUMMY_LOCAL_VAR, 0f);
                 Map<Symbol, Float> localizedCandidateProbs = new HashMap<>(candidateProbs);
                 for (Symbol localSymbol : getSymbols().values()) {
                     localizedCandidateProbs.put(localSymbol, dummyLocalVarProb / getSymbols().size());

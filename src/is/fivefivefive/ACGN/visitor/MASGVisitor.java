@@ -28,6 +28,7 @@ import is.fivefivefive.ACGN.alloy.SetSymbol;
 import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
+import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.test.Playground;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.OpenDecl;
@@ -90,6 +91,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private ScopeTreeNode rootScope;
     // Unique nodes with unique symbols to represent.
     private BiMap<Symbol, AugmentedNode> uniqueNode;
+    private Map<Symbol, Set<Symbol>> coarseToFineBin; // for each coarse symbol except local variables or predicate roots, the set of symbols that can be used to expand it in the fine-grained generation.
     public static final Symbol END_SYMBOL = new EndSymbol();
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
@@ -119,6 +121,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         nodeDict.put(2, SHADOW_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
+        coarseToFineBin = new HashMap<>();
+        for (DummySymbol ds : DummySymbol.ALL_DUMMIES) {
+            if (ds != DummySymbol.DUMMY_LOCAL_VAR && ds != DummySymbol.DUMMY_PREDROOT) coarseToFineBin.put(ds, new HashSet<>());
+        }
         END_NODE.setMaxDownlinks(0);
         EMPTY_SET_NODE.setMaxDownlinks(0);
         SHADOW_NODE.setMaxDownlinks(0);
@@ -144,6 +150,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
     public BiMap<Symbol, AugmentedNode> getUniqueNode() {
         return uniqueNode;
+    }
+    public Set<Symbol> getFineSymbolsForCoarseSymbol(Symbol coarse) {
+        return coarseToFineBin.getOrDefault(coarse, new HashSet<>());
     }
     // visits, all non-predicates are discarded. 
     // consider AAME into it. 
@@ -276,6 +285,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public AugmentedNode visit(SigDecl n, ScopeTreeNode arg) {
         String nameKey = n.getName();
         SigSymbol sigsy = new SigSymbol(nameKey);
+        coarseToFineBin.get(DummySymbol.DUMMY_SIG).add(sigsy);
         if (unfoundSigs.containsKey(nameKey)) {
             sigsy = unfoundSigs.get(nameKey);
             unfoundSigs.remove(nameKey);
@@ -413,6 +423,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         SigSymbol sigSymbol = typeCheckExpr(expr);
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph), exprNode);
+            if (arg.getParent() == null) {
+                // it is rootscope
+                coarseToFineBin.get(DummySymbol.DUMMY_GLOBAL_VAR).add(varSym);
+            }
             arg.addSymbol(varSym);
             AugmentedNode varNode = new AugmentedNode(127, uniqueNode.size(), varSym);
             uniqueNode.put(varSym, varNode);
@@ -717,10 +731,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
             letNode.setMaxDownlinks(3);
-            Symbol varSymbol = new RefSymbol(letNode, varExpr.getName());
-            uniqueNode.put(varSymbol, letNode);
-            child.addSymbol(varSymbol);
-            letNode.setSymbol(varSymbol);
+            Symbol refSymbol = new RefSymbol(letNode, varExpr.getName());
+            coarseToFineBin.get(DummySymbol.DUMMY_REF).add(refSymbol);
+            uniqueNode.put(refSymbol, letNode);
+            child.addSymbol(refSymbol);
+            letNode.setSymbol(refSymbol);
             updateTimeOfVisit(letNode, arg);
             AugmentedNode boundNode = bound.accept(this, arg); 
             // globalVariables.addEdge(letNode, boundNode, 1);
@@ -1526,6 +1541,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int iter = 2;
         for (String fieldName : n.getNames()) {
             Symbol fieldSymbol = new FieldRelation(fieldName, sourceSymbol, targetSymbol, confiners);
+            coarseToFineBin.get(DummySymbol.DUMMY_FIELD).add(fieldSymbol);
             AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size(), fieldSymbol);
             uniqueNode.put(fieldSymbol, fieldNode);
             aame.addSymbol(fieldName, fieldSymbol);
