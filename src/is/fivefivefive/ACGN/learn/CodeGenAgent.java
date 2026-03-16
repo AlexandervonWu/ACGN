@@ -374,7 +374,7 @@ public class CodeGenAgent {
                 break;
             }
             addVariableDecl(sigName, treeId, qtNode, currentScope);
-            
+            i++;
         }
         return relDeclNode;
     }

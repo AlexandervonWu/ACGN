@@ -208,7 +208,20 @@ public class EdgeCounter {
                 symbolToSignature.put(symbolName, idToSignature.get(id));
             }
         }
-
+        // writeout to (id, symbolName, signature) to a new CSV
+        String outputCsvPath = "node_signatures.csv";
+        try (java.io.FileWriter writer = new java.io.FileWriter(outputCsvPath)) {
+            writer.write("id,symbolName,signature\n");
+            for (Map.Entry<Integer, String> entry : idToSymbol.entrySet()) {
+                int id = entry.getKey();
+                String symbolName = entry.getValue();
+                float signature = idToSignature.getOrDefault(id, 0.0f);
+                String csvLine = id + "," + symbolName + "," + signature;
+                writer.write(csvLine + "\n");
+            }
+        } catch (java.io.IOException e) {
+            System.out.println("Error writing to output CSV: " + e.getMessage());
+        }
         return symbolToSignature;
     }
 }
