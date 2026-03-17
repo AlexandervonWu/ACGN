@@ -8,6 +8,7 @@ import is.fivefivefive.AlloyDataProcessor.EdgeCounter;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
+import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -83,11 +84,12 @@ public class Probability {
     /**
      * Get the coarse token probabilities for a given source symbol at a specific position.
      * @param gv Global variables containing the candidates.
+     * @param uniqueNodes A map of unique nodes.
      * @param source The source symbol for which candidates are being evaluated.
      * @param position The position in the ASG where the source symbol is located.
      * @return A dictionary of probabilities for each candidate symbol.
      */
-    public static Map<Symbol, Float> coarseTokenProbabilities(GlobalVariables gv, Symbol source, int position) {
+    public static Map<Symbol, Float> coarseTokenProbabilities(GlobalVariables gv, BiMap<Symbol, AugmentedNode> uniqueNodes, Symbol source, int position) {
         Set<Symbol> candidates = gv.getCoarseGrainCandidates(source, position);
         if (candidates != null) {
             Map<Symbol, Float> probabilities = new HashMap<>();
@@ -95,13 +97,13 @@ public class Probability {
             double sourceSig = source.getSignature();
             double sum = 0;
             for (Symbol candidate : candidates) {
-                double candidateSig = candidate.getSignature();
+                double candidateSig = candidate instanceof DummySymbol ? candidate.getSignature() : uniqueNodes.get(candidate).getSignature();
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff);
                 sum += expDiff;
             }
             for (Symbol candidate : candidates) {
-                double candidateSig = candidate.getSignature();
+                double candidateSig = candidate instanceof DummySymbol ? candidate.getSignature() : uniqueNodes.get(candidate).getSignature();
                 System.err.println("Source signature for " + source.getName() + ": " + sourceSig + ", Candidate signature for " + candidate.getName() + ": " + candidateSig);
                 double diff = sourceSig - candidateSig;
                 double expDiff = Math.exp(diff);

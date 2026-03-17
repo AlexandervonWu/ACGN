@@ -104,7 +104,7 @@ public class CodeGenAgent {
         for (Pair<Symbol, Integer> positional : edgeMap.keySet()) {
             Symbol source = positional.a;
             int position = positional.b;
-            Map<Symbol, Float> coarseProbabilities = Probability.coarseTokenProbabilities(gv, source, position);
+            Map<Symbol, Float> coarseProbabilities = Probability.coarseTokenProbabilities(gv, dynamicUniqueNodes, source, position);
             // Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
             qTable.put(positional, coarseProbabilities);
         }
@@ -311,7 +311,7 @@ public class CodeGenAgent {
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
             } else {
-                Map<Symbol, Float> sigProbabilities = Probability.coarseTokenProbabilities(gv, qtRoot, i);
+                Map<Symbol, Float> sigProbabilities = Probability.coarseTokenProbabilities(gv, dynamicUniqueNodes, qtRoot, i);
                 nextRandom -= endProb;
                 float cumulativeProbability = 0.0f;
                 for (Map.Entry<Symbol, Float> entry : sigProbabilities.entrySet()) {
