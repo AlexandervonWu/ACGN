@@ -38,7 +38,7 @@ import parser.etc.Pair;
 
 public class CodeGenAgent {
     private GlobalVariables gv;
-    private MASGVisitor visitor; // the visitor for the specific Alloy Model
+    // private MASGVisitor visitor; // the visitor for the specific Alloy Model
     static final int MAX_STEPS = 500;
     private Multigraph groundTruth;
     private Multigraph currentAns;
@@ -65,7 +65,7 @@ public class CodeGenAgent {
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
         this.groundTruth = groundTruth;
         this.currentAns = new Multigraph();
-        this.visitor = visitor;
+        // this.visitor = visitor;
         this.gv = gv;
         // this.symbolId = symbolId;
         this.dynamicUniqueNodes = new BiMap<Symbol, AugmentedNode>();
@@ -128,6 +128,10 @@ public class CodeGenAgent {
         this.tovMap = new HashMap<>();
         initialQTable = fineQTable;
         globalQTable = initialQTable; // set the global Q-table to the fine-grained initialized Q-table
+        for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
+            localVarDist.put(key, new HashMap<>()); // initialize local variables for each position as empty
+            // TODO: Do we need the local var counter with corresponding keys? 
+        }
         if (initializationState == 0) {
             initializationState = 1;
         } else {
