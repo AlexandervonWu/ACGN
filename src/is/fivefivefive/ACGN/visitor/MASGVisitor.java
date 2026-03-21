@@ -399,6 +399,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode exprNode = expr.accept(this, arg);
         AugmentedNode iterNode = exprNode;
         while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty() && !(iterNode.getSymbol() instanceof SetSymbol)) {
+            if (iterNode.getSymbol() instanceof MiddleSymbol) {
+                MiddleSymbol midSym = (MiddleSymbol) iterNode.getSymbol();
+                midSym.setTypeConfinerUnop(true);
+            }
             iterNode = iterNode.getDownlinks().get(0).getTarget();
         }
         if (iterNode.getSymbol() instanceof SetSymbol) {

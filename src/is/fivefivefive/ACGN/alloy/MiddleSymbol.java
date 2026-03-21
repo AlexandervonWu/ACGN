@@ -5,6 +5,7 @@ public class MiddleSymbol extends AbstractSymbol {
     private boolean infiniteRoot;
     private boolean isQt;
     private int maxDownlinks = 1; // Default value for maxDownlinks
+    private boolean typeConfinerUnop = false; // Default value for typeConfinerUnop
     public MiddleSymbol(String name) {
         this.name = name;
         this.infiniteRoot = false; // Default value for infiniteRoot
@@ -56,6 +57,7 @@ public class MiddleSymbol extends AbstractSymbol {
         return "MiddleSymbol{" +
                 "name='" + name + '\'' +
                 ", infiniteRoot=" + infiniteRoot +
+                ", typeConfinerUnop= " + typeConfinerUnop +
                 '}';
     }
     @Override
@@ -65,5 +67,12 @@ public class MiddleSymbol extends AbstractSymbol {
     @Override
     public void setMaxDownlinks(int maxDownlinks) {
         this.maxDownlinks = maxDownlinks;
+    }
+    public boolean isTypeConfinerUnop() {
+        return typeConfinerUnop;
+    }
+    public void setTypeConfinerUnop(boolean typeConfinerUnop) {
+        this.typeConfinerUnop = typeConfinerUnop;
+        name = "TYPECONFINERUNOP_" + name; // Update the name to reflect the type confiner unop status, distinct UnOp symbol for type checking only
     }
 }
