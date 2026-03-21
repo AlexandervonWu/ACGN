@@ -396,17 +396,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }*/
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         // TODO: Write the ExprNode accept method. 
-        AugmentedNode exprNode = expr.accept(this, arg);
+        /* AugmentedNode exprNode = expr.accept(this, arg);
         AugmentedNode iterNode = exprNode;
         while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty() && !(iterNode.getSymbol() instanceof SetSymbol)) {
             if (iterNode.getSymbol() instanceof MiddleSymbol) {
                 MiddleSymbol midSym = (MiddleSymbol) iterNode.getSymbol();
-                midSym.setTypeConfinerUnop(true);
+                MiddleSymbol newMidSym = new MiddleSymbol(midSym.getName(), midSym.isInfiniteRoot());
+                newMidSym.setTypeConfinerOp(true);
+                iterNode.setSymbol(newMidSym);
+                if (newMidSym.getMaxDownlinks() == 2) {
+                    break; // if it is binary then it is already the atomic type (dot, union, intersection, difference set). 
+                }
             }
             iterNode = iterNode.getDownlinks().get(0).getTarget();
         }
-        if (iterNode.getSymbol() instanceof SetSymbol) {
-            ((DeclRootSymbol) declRootSym).setSigType((SetSymbol) iterNode.getSymbol());
+        if (iterNode.getSymbol() instanceof SetSymbol || iterNode.getSymbol().getMaxDownlinks() == 2) {
+            // ((DeclRootSymbol) declRootSym).setSigType(iterNode.getSymbol());
         } else {
             System.err.println("WARNING: NO SIG FOUND. ");
             System.err.println("Iter end: " + iterNode.getSymbol().getName());
@@ -419,7 +424,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         if (exprNode == null) {
             exprNode = EMPTY_SET_NODE;
-        }
+        }*/
+        AugmentedNode exprNode = visitTypeExpr(expr, arg);
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
@@ -523,6 +529,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 System.out.println("Updated time of visit for " + parent.getSymbol().getName() + " to " + (localTov + 1));
             }
         }
+    }
+    private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg) {
+        // TODO: Implement type expression visiting logic
+        return null;
     }
 
     private void downTimeOfVisit(AugmentedNode parent, ScopeTreeNode arg) {

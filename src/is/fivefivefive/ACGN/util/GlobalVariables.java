@@ -81,7 +81,7 @@ public final class GlobalVariables implements Serializable {
             coarseToFineBin.get(coarseHash).add(target);
         }
         coarseGrainCandidateMap.get(Pair.of(coarseSource, position)).add(coarseHash); // the coarse-grain version
-        System.out.println("Added coarse candidate: " + coarseHash.getName() + " for source: " + coarseSource.getName() + " at position: " + position);
+        // System.out.println("Added coarse candidate: " + coarseHash.getName() + " for source: " + coarseSource.getName() + " at position: " + position);
     }
     public void addEdge(MASGEdge edge, int position) {
         addEdge(edge.getSource().getSymbol(), edge.getTarget().getSymbol(), position);

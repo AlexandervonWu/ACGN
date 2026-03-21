@@ -5,7 +5,7 @@ public class MiddleSymbol extends AbstractSymbol {
     private boolean infiniteRoot;
     private boolean isQt;
     private int maxDownlinks = 1; // Default value for maxDownlinks
-    private boolean typeConfinerUnop = false; // Default value for typeConfinerUnop
+    private boolean typeConfinerOp = false; // Default value for typeConfinerOp
     public MiddleSymbol(String name) {
         this.name = name;
         this.infiniteRoot = false; // Default value for infiniteRoot
@@ -57,7 +57,7 @@ public class MiddleSymbol extends AbstractSymbol {
         return "MiddleSymbol{" +
                 "name='" + name + '\'' +
                 ", infiniteRoot=" + infiniteRoot +
-                ", typeConfinerUnop= " + typeConfinerUnop +
+                ", typeConfinerOp= " + typeConfinerOp +
                 '}';
     }
     @Override
@@ -68,11 +68,16 @@ public class MiddleSymbol extends AbstractSymbol {
     public void setMaxDownlinks(int maxDownlinks) {
         this.maxDownlinks = maxDownlinks;
     }
-    public boolean isTypeConfinerUnop() {
-        return typeConfinerUnop;
+    public boolean isTypeConfinerOp() {
+        return typeConfinerOp;
     }
-    public void setTypeConfinerUnop(boolean typeConfinerUnop) {
-        this.typeConfinerUnop = typeConfinerUnop;
-        name = "TYPECONFINERUNOP_" + name; // Update the name to reflect the type confiner unop status, distinct UnOp symbol for type checking only
+    public void setTypeConfinerOp(boolean typeConfinerOp) {
+        if (typeConfinerOp && !this.typeConfinerOp) { // Only update the name if we're setting typeConfinerOp to true for the first time
+            name = "TYPECONFINEROP_" + name; // Update the name to reflect the type confiner op status, distinct UnOp symbol for type checking only
+        } else if (!typeConfinerOp && this.typeConfinerOp) { // If we're unsetting typeConfinerOp, we should remove the prefix from the name
+            name = name.replaceFirst("TYPECONFINEROP_", ""); // Remove the prefix to revert to the original name
+        }
+        this.typeConfinerOp = typeConfinerOp;
+
     }
 }
