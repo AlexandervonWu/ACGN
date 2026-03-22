@@ -6,10 +6,14 @@ public class MiddleSymbol extends AbstractSymbol {
     private boolean isQt;
     private int maxDownlinks = 1; // Default value for maxDownlinks
     private boolean typeConfinerOp = false; // Default value for typeConfinerOp
+    public static final String TYPECONFINEROP_PREFIX = "TYPECONFINEROP_";
     public MiddleSymbol(String name) {
         this.name = name;
         this.infiniteRoot = false; // Default value for infiniteRoot
         this.isQt = false;
+        if (name.startsWith(TYPECONFINEROP_PREFIX)) {
+            this.typeConfinerOp = true;
+        }
     }
     public MiddleSymbol(String name, boolean infiniteRoot) {
         this.name = name;
@@ -72,11 +76,6 @@ public class MiddleSymbol extends AbstractSymbol {
         return typeConfinerOp;
     }
     public void setTypeConfinerOp(boolean typeConfinerOp) {
-        if (typeConfinerOp && !this.typeConfinerOp) { // Only update the name if we're setting typeConfinerOp to true for the first time
-            name = "TYPECONFINEROP_" + name; // Update the name to reflect the type confiner op status, distinct UnOp symbol for type checking only
-        } else if (!typeConfinerOp && this.typeConfinerOp) { // If we're unsetting typeConfinerOp, we should remove the prefix from the name
-            name = name.replaceFirst("TYPECONFINEROP_", ""); // Remove the prefix to revert to the original name
-        }
         this.typeConfinerOp = typeConfinerOp;
 
     }

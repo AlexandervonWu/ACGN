@@ -2,7 +2,6 @@ package is.fivefivefive.ACGN.visitor;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
-
 import java.util.HashSet;
 import java.util.List;
 
@@ -180,7 +179,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      *   6 = Unary Expr;
      *   -6 = Unary Formula;
      *   7 = CallExpr;
-     *  -7 = CallFormula;
+     *   -7 = CallFormula;
+     *   15 = BinaryExpr for type checking only;
+     *   16 = UnaryExpr for type checking only;
      *   -127 = dummy node for the list of declarations;
      *   -128 = the End Symbol (predefined);
      *   121 - 'iden' constant
@@ -532,8 +533,45 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
     private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg) {
         // TODO: Implement type expression visiting logic
-        return null;
+        if (expr instanceof UnaryExpr) {
+            UnaryExpr unExpr = (UnaryExpr) expr;
+            if (unExpr.getOp() == UnaryExpr.UnaryOp.NOOP) {
+                return visitTypeExpr(unExpr.getSub(), arg);
+            }
+            int syntactic = 16;
+            Pair<String, Integer> labelAndSemantics = getUnaryExprSymbolLabelAndSemantic(unExpr);
+            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
+            int semantic = labelAndSemantics.b;
+            Symbol midSym = new MiddleSymbol(label);
+            AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
+            uniqueNode.put(midSym, midNode);
+            updateTimeOfVisit(midNode, arg);
+            ExprOrFormula childExpr = unExpr.getSub();
+            AugmentedNode childNode = visitTypeExpr(childExpr, arg);
+            visitAndConnect(midNode, childNode, 1, arg);
+            return midNode;
+        } else if (expr instanceof BinaryExpr) {
+            BinaryExpr binExpr = (BinaryExpr) expr;
+            int syntactic = 15;
+            Pair<String, Integer> labelAndSemantics = getBinaryExprSymbolLabelAndSemantic(binExpr);
+            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
+            int semantic = labelAndSemantics.b;
+            Symbol midSym = new MiddleSymbol(label);
+            AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
+            uniqueNode.put(midSym, midNode);
+            updateTimeOfVisit(midNode, arg);
+            ExprOrFormula leftExpr = binExpr.getLeft();
+            ExprOrFormula rightExpr = binExpr.getRight();
+            AugmentedNode leftNode = visitTypeExpr(leftExpr, arg);
+            AugmentedNode rightNode = visitTypeExpr(rightExpr, arg);
+            visitAndConnect(midNode, leftNode, 1, arg);
+            visitAndConnect(midNode, rightNode, 2, arg);
+            return midNode;
+        }
+        
+        return expr.accept(this, arg);
     }
+
 
     private void downTimeOfVisit(AugmentedNode parent, ScopeTreeNode arg) {
         if (!timeOfVisitMap.containsKey(parent)) {
@@ -1146,6 +1184,52 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         String symbolLabel = "BOPEXPR_";
         int syntactic = 5;
         int semantic = 0;
+        Pair<String, Integer> symbolInfo = getBinaryExprSymbolLabelAndSemantic(n);
+        symbolLabel = symbolInfo.a;
+        semantic = symbolInfo.b;
+        MiddleSymbol bopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode bopNode;
+        if (uniqueNode.containsKey(bopSymbol)) {
+            bopNode = uniqueNode.get(bopSymbol);
+        } else {
+            bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
+            uniqueNode.put(bopSymbol, bopNode);
+        }
+        bopNode.setMaxDownlinks(2);
+        arg.getAffliation().addVertex(bopNode);
+        updateTimeOfVisit(bopNode, arg);
+        ExprOrFormula left = n.getLeft();
+        ExprOrFormula right = n.getRight();
+        AugmentedNode leftNode = left.accept(this, arg);
+        if (leftNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
+        // globalVariables.addEdge(bopNode, leftNode, 1);
+        visitAndConnect(bopNode, leftNode, 1, arg);
+        AugmentedNode rightNode = right.accept(this, arg);
+        if (rightNode == bopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(bopNode, arg);
+        }
+        // globalVariables.addEdge(bopNode, rightNode, 2);
+        visitAndConnect(bopNode, rightNode, 2, arg);
+        // update the shadow node time of visit back
+        // TODO: ALSO APPLY TO OTHER SHADOWY NODES
+        if (leftNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
+        if (rightNode == bopNode) {
+            updateTimeOfVisit(bopNode, arg);
+        }
+        // System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
+
+        return bopNode;
+    }
+
+    private Pair<String, Integer> getBinaryExprSymbolLabelAndSemantic(BinaryExpr n) {
+        String symbolLabel = "BOPEXPR_";
+        int semantic = 0;
         switch (n.getOp()) {
             case ARROW:
                 symbolLabel = "BOPEXPR_ARROW";
@@ -1278,44 +1362,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             default:
                 break;
         }
-        MiddleSymbol bopSymbol = new MiddleSymbol(symbolLabel);
-        AugmentedNode bopNode;
-        if (uniqueNode.containsKey(bopSymbol)) {
-            bopNode = uniqueNode.get(bopSymbol);
-        } else {
-            bopNode = new AugmentedNode(syntactic, semantic, bopSymbol);
-            uniqueNode.put(bopSymbol, bopNode);
-        }
-        bopNode.setMaxDownlinks(2);
-        arg.getAffliation().addVertex(bopNode);
-        updateTimeOfVisit(bopNode, arg);
-        ExprOrFormula left = n.getLeft();
-        ExprOrFormula right = n.getRight();
-        AugmentedNode leftNode = left.accept(this, arg);
-        if (leftNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, leftNode, 1);
-        visitAndConnect(bopNode, leftNode, 1, arg);
-        AugmentedNode rightNode = right.accept(this, arg);
-        if (rightNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, rightNode, 2);
-        visitAndConnect(bopNode, rightNode, 2, arg);
-        // update the shadow node time of visit back
-        // TODO: ALSO APPLY TO OTHER SHADOWY NODES
-        if (leftNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        if (rightNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        // System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
-
-        return bopNode;
+        return Pair.of(symbolLabel, semantic);
     }
 
     @Override
@@ -1402,9 +1449,43 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         String symbolLabel = "UNOPE_";
         int syntactic = 6;
         int semantic = 0;
+        if (n.getOp() == UnaryExpr.UnaryOp.NOOP) {
+            return n.getSub().accept(this, arg);
+        }
+        Pair<String, Integer> labelAndSemantic = getUnaryExprSymbolLabelAndSemantic(n);
+        symbolLabel = labelAndSemantic.a;
+        semantic = labelAndSemantic.b;
+        MiddleSymbol unopSymbol = new MiddleSymbol(symbolLabel);
+        AugmentedNode unopNode;
+        if (uniqueNode.containsKey(unopSymbol)) {
+            unopNode = uniqueNode.get(unopSymbol);
+        } else {
+            unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
+            if (Playground.DEBUG) System.out.println("Creating new unary node: " + unopSymbol);
+            uniqueNode.put(unopSymbol, unopNode);
+        }
+        unopNode.setMaxDownlinks(1);
+        arg.getAffliation().addVertex(unopNode);
+        updateTimeOfVisit(unopNode, arg);
+        ExprOrFormula sub = n.getSub();
+        AugmentedNode subNode = sub.accept(this, arg);
+        if (subNode == unopNode) {
+            // shadow node created, need to down the time of visit tracker
+            downTimeOfVisit(unopNode, arg);
+        }
+        // globalVariables.addEdge(unopNode, subNode, 1);
+        visitAndConnect(unopNode, subNode, 1, arg);
+        // update the shadow node time of visit back
+        if (subNode == unopNode) {
+            updateTimeOfVisit(unopNode, arg);
+        }
+        return unopNode;
+    }
+
+    private Pair<String, Integer> getUnaryExprSymbolLabelAndSemantic(UnaryExpr n) {
+        String symbolLabel = "UNOPE_";
+        int semantic = 0;
         switch (n.getOp()) {
-            case NOOP:
-                return n.getSub().accept(this, arg);
             case SET:
                 symbolLabel = "UNOPE_SET";
                 semantic = 1;
@@ -1456,33 +1537,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             default:
                 break;
         }
-        MiddleSymbol unopSymbol = new MiddleSymbol(symbolLabel);
-        AugmentedNode unopNode;
-        if (uniqueNode.containsKey(unopSymbol)) {
-            unopNode = uniqueNode.get(unopSymbol);
-        } else {
-            unopNode = new AugmentedNode(syntactic, semantic, unopSymbol);
-            if (Playground.DEBUG) System.out.println("Creating new unary node: " + unopSymbol);
-            uniqueNode.put(unopSymbol, unopNode);
-        }
-        unopNode.setMaxDownlinks(1);
-        arg.getAffliation().addVertex(unopNode);
-        updateTimeOfVisit(unopNode, arg);
-        ExprOrFormula sub = n.getSub();
-        AugmentedNode subNode = sub.accept(this, arg);
-        if (subNode == unopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(unopNode, arg);
-        }
-        // globalVariables.addEdge(unopNode, subNode, 1);
-        visitAndConnect(unopNode, subNode, 1, arg);
-        // update the shadow node time of visit back
-        if (subNode == unopNode) {
-            updateTimeOfVisit(unopNode, arg);
-        }
-        return unopNode;
+        return Pair.of(symbolLabel, semantic);
     }
-            
+
     // TODO: Singular exprs starting here. 
     // Only invoked when the symbol was already declared and now used. 
     private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {

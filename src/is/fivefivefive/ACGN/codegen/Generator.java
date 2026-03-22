@@ -316,6 +316,7 @@ public class Generator {
                             }
                             break;
                         case 5:
+                        case 15:
                             // BinaryExpr
                             List<MASGEdge> downlinksBin = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode leftExpr;
@@ -670,6 +671,7 @@ public class Generator {
                             }
                             break;
                         case 6:
+                        case 16:
                             // UnaryExpr
                             List<MASGEdge> downlinksUnary = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode unaryExprSub = downlinksUnary.get(0).getTarget();
