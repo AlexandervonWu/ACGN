@@ -9,7 +9,28 @@ import is.fivefivefive.ACGN.learn.Hyperparams;
 // TODO : FIX ONE NODE FOR THE BASELINE.
 public class SGDEdgeTrainer {
     // check each time before training
-    public static final int END_SYMBOL_ID = 28;
+    // public static final int END_SYMBOL_ID = 28;
+    private static int endId = -1; // Will be set after loading edges
+    private static void getEndSymbolId() {
+        // open "node_id.csv" and find the ID for "<END>"
+        try (BufferedReader br = new BufferedReader(new FileReader("node_id.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2 && parts[1].trim().equals("<END>")) {
+                    endId = Integer.parseInt(parts[0].trim());
+                    System.out.println("Detected <END> symbol ID: " + endId);
+                    return;
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error reading node_id.csv: " + e.getMessage());
+        }
+        if (endId == -1) {
+            System.err.println("Warning: <END> symbol ID not found in node_id.csv. Defaulting to 28.");
+            endId = 0; // Default fallback
+        }
+    }
     static class Edge {
         int source, target, position, count;
         Edge(int s, int t, int p, int c) {
@@ -26,7 +47,7 @@ public class SGDEdgeTrainer {
         Embeddings(int numNodes, Random rand) {
             angle = new float[numNodes];
             for (int i = 0; i < numNodes; i++) {
-                angle[i] = i == END_SYMBOL_ID ? 0f : (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
+                angle[i] = i == endId ? 0f : (float) ((rand.nextFloat() * 2 - 1) * Math.PI); // angle in [-pi, pi]
             }
         }
 
@@ -92,8 +113,8 @@ public class SGDEdgeTrainer {
                 for (int j = 0; j < numNodes; j++) {
                     float grad = (j == jTrue ? 1f : 0f) - probs[j];
                     float delta = lr * grad / T;
-                    if (j != END_SYMBOL_ID) emb.angle[j] += delta;
-                    if (i != END_SYMBOL_ID) emb.angle[i] -= delta;
+                    if (j != endId) emb.angle[j] += delta;
+                    if (i != endId) emb.angle[i] -= delta;
 
                     if (emb.angle[j] > Math.PI) emb.angle[j] -= 2 * (float) Math.PI;
                     if (emb.angle[j] < -Math.PI) emb.angle[j] += 2 * (float) Math.PI;
@@ -229,6 +250,7 @@ public class SGDEdgeTrainer {
     }
 
     public static void main(String[] args) throws Exception {
+        getEndSymbolId();
         if (args.length < 1) {
             args = new String[1];
             args[0] = "edge_counts.csv";

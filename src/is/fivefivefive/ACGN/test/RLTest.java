@@ -141,7 +141,7 @@ public class RLTest {
             return;
         }
         gv.loadPretrainedSignatures("node_id.csv", "node_signatures_fixed.csv");
-        final int CPU_THREADS = 32;
+        final int CPU_THREADS = Runtime.getRuntime().availableProcessors();
         // parallelize by files
         String path = "classified-data";
         File dir = new File(path);
