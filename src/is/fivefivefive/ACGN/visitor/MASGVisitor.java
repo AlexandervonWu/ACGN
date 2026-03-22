@@ -977,6 +977,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (calledNode == null) {
             // the node is a built-in function
             calledNode = new AugmentedNode(7, 1, new RefSymbol(null, n.getName()));
+            ((RefSymbol) calledNode.getSymbol()).setNode(calledNode);
+            coarseToFineBin.get(DummySymbol.DUMMY_REF).add((RefSymbol) calledNode.getSymbol());
             uniqueNode.put(calledNode.getSymbol(), calledNode);
         }
         // globalVariables.addEdge(callNode, calledNode, 1);
