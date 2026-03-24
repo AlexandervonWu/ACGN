@@ -26,6 +26,7 @@ import edu.mit.csail.sdg.parser.CompModule;
 public class EdgeCounter {
     private static GlobalVariables gv = new GlobalVariables();
     private static int modelCount = 0;
+    private static String finalDebugMessage = "";
     public static Map<Triple<Symbol, Symbol, Integer>, Integer> countEdges(String dir) {
         File dirFile = new File(dir);
         if (!dirFile.isDirectory()) {
@@ -44,10 +45,15 @@ public class EdgeCounter {
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
                             if (id == 0) continue; // Skip the root node
+                            if (id == 1) continue; // Skip the student-written solution for now, they have cringe errors
                             if (id > 2) continue; // Skip the checking predicates
                             Multigraph graph = visitor.getForest().get(id);
                             for (MASGEdge e : graph.getEdges()) {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
+                                if (source.getName().equals("CALL_EXPR")) {
+                                    // output the debug with the filename
+                                    finalDebugMessage += "Debug: Found CALL_EXPR in file " + file.getName() + " at model count " + modelCount + "\n";
+                                }
                                 Symbol target = getSymbolForPretrain(e.getTarget().getSymbol());
                                 int position = e.getPosition();
                                 /* 
@@ -164,6 +170,7 @@ public class EdgeCounter {
         } else {
             System.out.println("No edges found.");
         }
+        System.out.println(finalDebugMessage);
     }
     public static Map<String, Float> generateNodeSignatureMap(String nodeIdCsvPath, String signatureCsvPath) {
         Map<Integer, String> idToSymbol = new HashMap<>();

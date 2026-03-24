@@ -383,7 +383,8 @@ public class CodeGenAgent {
         return relDeclNode;
     }
 
-    private SetSymbol typeCheckSymbol(Symbol sym) {
+    private Symbol typeCheckSymbol(Symbol sym) {
+        System.out.println("Type checking symbol: " + sym.getName() + " " + sym.getClass().getSimpleName());
         // like MASGVisitor.typeCheckExpr but with symbols
         if (sym instanceof VarSymbol) {
             VarSymbol varSym = (VarSymbol) sym;
@@ -394,6 +395,12 @@ public class CodeGenAgent {
         } else if (sym instanceof FieldRelation) {
             return (FieldRelation) sym;
         } else if (sym instanceof MiddleSymbol) {
+            MiddleSymbol middleSym = (MiddleSymbol) sym;
+            if (middleSym.getMaxDownlinks() == 2) {
+                // a relation for union/intersection/diff/join, so here is the type
+                System.out.println("Middle symbol with 2 downlinks, treating as relation: " + middleSym.getName());
+                return sym;
+            }
             AugmentedNode node = dynamicUniqueNodes.get(sym);
             List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(sym, 1));
             if (downlinks == null || downlinks.isEmpty()) {
