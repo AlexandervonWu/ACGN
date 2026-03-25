@@ -178,6 +178,7 @@ public class CodeGenAgent {
         leaves = new LinkedHashSet<>();
         AugmentedNode rootNode = new AugmentedNode(-1, treeId);
         Symbol root = new PredRootSymbol(rootNode, predName);
+        coarseToFineBin.put(DummySymbol.DUMMY_LOCAL_VAR, new LinkedHashSet<>()); // reset the local var bin for each new generation
         dynamicUniqueNodes.put(root, rootNode);
         rootNode.setSymbol(root);
         Multigraph predGraph = new Multigraph(rootNode, gv);
@@ -374,6 +375,7 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
+                leaves.add(endSymbol);
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;
             }
@@ -436,9 +438,15 @@ public class CodeGenAgent {
         symbolScopeMap.put(newVar, currentScope);
         // update the coarse to fine bin
         coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
+        for (Pair<Symbol, Integer> key : localVarDist.keySet()) {
+            localVarDist.get(key).put(newVar, 1.0f); // initialize the local variable distribution for the new variable as 1 for all positions
+            Triple<Symbol, Integer, Symbol> counterKey = new Triple<>(key.a, key.b, newVar);
+            localVarCounter.put(counterKey, 0); // initialize the local variable counter for polling scaling
+        }
         // update the dynamic unique nodes
         AugmentedNode newNode = new AugmentedNode(127, globalNewVarCounter); // var nodes have signature 127
         currentScope.addSymbol(newVar);
+        leaves.add(newVar);
         this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
