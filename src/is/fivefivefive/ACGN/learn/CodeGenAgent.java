@@ -60,6 +60,8 @@ public class CodeGenAgent {
     private Set<Symbol> leaves; // track the leaf nodes for local reward calculation.
     private Map<Symbol, RLScopeTreeNode> symbolScopeMap; // track the scopes that a symbol appears in, for scope collapsing and reward backpropagation.
     private Set<RLScopeTreeNode> visitedScopes; // a temporary set to track the synchronization of the scope tree over updating of the Q-table
+    private Map<Integer, Set<RLScopeTreeNode>> scopeDepthMap; // track the scopes at each depth for scope collapsing.
+    private int maxScopeDepth = 0;
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
@@ -93,6 +95,9 @@ public class CodeGenAgent {
         for (Symbol sym : gv.getUniqueNodes().keys()) {
             this.symbolScopeMap.put(sym, rootScope);
         }
+        this.visitedScopes = new HashSet<>();
+        this.scopeDepthMap = new HashMap<>();
+        
     }
     public int getInitializationState() {
         return initializationState;
@@ -124,6 +129,8 @@ public class CodeGenAgent {
             fineQTable.put(key, fineProbabilities);
         }
         this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
+        this.scopeDepthMap.put(0, new HashSet<>());
+        this.scopeDepthMap.get(0).add(rootScope);
         stepNum = 0;
         this.tovMap = new HashMap<>();
         initialQTable = fineQTable;
@@ -184,6 +191,8 @@ public class CodeGenAgent {
         Multigraph predGraph = new Multigraph(rootNode, gv);
         // rootScope.setqDist(globalQTable); // set the Q-table of the root scope to the global Q-table before generation
         currentAns.addVertex(rootNode);
+        rootScope.resetChildren(); // reset the children of the root scope before generation to avoid interference from previous generations
+        maxScopeDepth = 0; // reset the max scope depth for each new generation
         currentAns.setScope(rootScope);
         // System.err.println("rootScope dist: " + rootScope.getqDist());
         generateNextNode(rootNode, 1, rootScope);
@@ -291,6 +300,9 @@ public class CodeGenAgent {
         currentAns.addVertex(qtNode);
         rlScopeTreeNodeId++;
         RLScopeTreeNode qtScope = new RLScopeTreeNode(rlScopeTreeNodeId, currentScope, currentAns);
+        maxScopeDepth++;
+        scopeDepthMap.putIfAbsent(maxScopeDepth, new HashSet<>());
+        scopeDepthMap.get(maxScopeDepth).add(qtScope);
         // TODO: update the qtable of the new scope;
         Symbol qt1 = fillHole(qtRoot, 1, qtScope);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
