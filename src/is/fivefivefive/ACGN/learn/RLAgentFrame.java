@@ -34,6 +34,7 @@ import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.etc.Pair;
 
 /**
+ * DEPRECATED: This is the non-functional version. Scrap for reusable codes. 
  * RLAgentFrame is the frame for the RL agent.
  * It contains the global variables, the ground truth, the current answer, and
  * the Q-table.

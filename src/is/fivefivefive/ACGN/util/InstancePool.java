@@ -1,5 +1,8 @@
 package is.fivefivefive.ACGN.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.mit.csail.sdg.translator.A4Solution;
 
 /**
@@ -22,63 +25,128 @@ public class InstancePool {
             this.usageFrequency = 1; // initial usage frequency
         }
     }
+    private static class DoublyLinkedList {
+        private AlloyInstance head;
+        private AlloyInstance tail;
+        private int size;
+        public DoublyLinkedList() {
+            this.head = null;
+            this.tail = null;
+            this.size = 0;
+        }
+        public void add(AlloyInstance instance) {
+            if (head == null) {
+                head = instance;
+                tail = instance;
+            } else {
+                tail.next = instance;
+                instance.last = tail;
+                tail = instance;
+            }
+            size++;
+        }
+        public void remove(AlloyInstance instance) {
+            if (instance == head) {
+                head = instance.next;
+                if (head != null) {
+                    head.last = null;
+                }
+            } else if (instance == tail) {
+                tail = instance.last;
+                if (tail != null) {
+                    tail.next = null;
+                }
+            } else {
+                instance.last.next = instance.next;
+                if (instance.next != null) {
+                    instance.next.last = instance.last;
+                }
+            }
+            size--;
+        }
+        public AlloyInstance removeLast() { 
+            if (tail == null) {
+                return null;
+            }
+            AlloyInstance lastInstance = tail;
+            remove(lastInstance);
+            return lastInstance;
+        }
+        public int size() {
+            return size;
+        }
+        public boolean isEmpty() {
+            return size == 0;
+        }
+    }
     private AlloyInstance head;
     private AlloyInstance tail;
     private int size;
     private final int capacity;
+    private final Map<Integer, DoublyLinkedList> frequencyMap; // Map from usage frequency to list of instances with that frequency
+    private final Map<Integer, AlloyInstance> instanceMap; // Map from instance key to the actual instance for O(1) access
+    private final Map<A4Solution, Integer> uniqueKey; // Map of the keys
+    private int minFrequency; // Track the minimum frequency of instances in the pool
+    private int gid = 0;
     public InstancePool(int capacity) {
         this.capacity = capacity;
         this.size = 0;
         this.head = null;
         this.tail = null;
+        this.frequencyMap = new HashMap<>();
+        this.instanceMap = new HashMap<>();
+        this.uniqueKey = new HashMap<>();
     }
+    // must be O(1)
     public void add(A4Solution instance) {
-        AlloyInstance newInstance = new AlloyInstance(instance);
-        if (size == capacity) {
-            // remove the least frequently used instance
-            AlloyInstance toRemove = head;
-            head = head.next;
-            if (head != null) {
-                head.last = null;
-            }
-            size--;
+        if (!uniqueKey.containsKey(instance)) {
+            uniqueKey.put(instance, gid);
+            gid++;
         }
-        if (head == null) {
-            head = newInstance;
-            tail = newInstance;
+        if (instanceMap.containsKey(uniqueKey.get(instance))) {
+            // If the instance already exists, increment its usage frequency
+            incrementUsageFrequency(instance);
         } else {
-            tail.next = newInstance;
-            newInstance.last = tail;
-            tail = newInstance;
-        }
-        size++;
-    }
-    public A4Solution get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index out of bounds: " + index);
-        }
-        AlloyInstance current = head;
-        for (int i = 0; i < index; i++) {
-            current = current.next;
-        }
-        current.usageFrequency++;
-        // Move the accessed instance to the end of the list
-        if (current != tail) {
-            if (current == head) {
-                head = current.next;
-                head.last = null;
-            } else {
-                current.last.next = current.next;
-                if (current.next != null) {
-                    current.next.last = current.last;
+            if (size == capacity) {
+                DoublyLinkedList leastFrequentList = frequencyMap.get(1); // get the list of instances with usage frequency 1
+                if (leastFrequentList != null && !leastFrequentList.isEmpty()) {
+                    AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
+                    instanceMap.remove(uniqueKey.get(leastFrequentInstance.instance)); // remove from instance map
+                    size--;
                 }
             }
-            tail.next = current;
-            current.last = tail;
-            current.next = null;
-            tail = current;
+            AlloyInstance newInstance = new AlloyInstance(instance);
+            instanceMap.put(uniqueKey.get(instance), newInstance); // add to instance map
+            frequencyMap.computeIfAbsent(1, k -> new DoublyLinkedList()).add(newInstance); // add to frequency map
+            size++;
+            minFrequency = 1; // reset minimum frequency to 1 for the new instance
         }
-        return current.instance;
+    }
+    // must be O(1); no iteration over the list; LFU; take the new Map
+    public A4Solution get(int index) {
+        if (instanceMap.containsKey(index)) {
+            AlloyInstance instance = instanceMap.get(index);
+            instance.usageFrequency++;
+            int oldFrequency = instance.usageFrequency - 1;
+            frequencyMap.get(oldFrequency).remove(instance);
+            frequencyMap.computeIfAbsent(instance.usageFrequency, k -> new DoublyLinkedList()).add(instance);
+            if (frequencyMap.get(oldFrequency).isEmpty() && oldFrequency == minFrequency) {
+                minFrequency++;
+            }
+            return instance.instance;
+        }
+        return null; // instance not found
+    }
+    public void incrementUsageFrequency(A4Solution instance) {
+        get(uniqueKey.get(instance)); // this will automatically increment the usage frequency
+    }
+    public void removeLeastFrequentlyUsed() {
+        DoublyLinkedList leastFrequentList = frequencyMap.get(minFrequency);
+        if (leastFrequentList != null && !leastFrequentList.isEmpty()) {
+            AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
+            instanceMap.remove(uniqueKey.get(leastFrequentInstance.instance)); // remove from instance map
+            size--;
+        }
     }
     public int size() {
         return size;
@@ -120,29 +188,12 @@ public class InstancePool {
         return false;
     }
     public void remove(A4Solution instance) {
-        AlloyInstance current = head;
-        while (current != null) {
-            if (current.instance.equals(instance)) {
-                if (current == head) {
-                    head = current.next;
-                    if (head != null) {
-                        head.last = null;
-                    }
-                } else if (current == tail) {
-                    tail = current.last;
-                    if (tail != null) {
-                        tail.next = null;
-                    }
-                } else {
-                    current.last.next = current.next;
-                    if (current.next != null) {
-                        current.next.last = current.last;
-                    }
-                }
-                size--;
-                return;
-            }
-            current = current.next;
+        if (instanceMap.containsKey(uniqueKey.get(instance))) {
+            AlloyInstance existingInstance = instanceMap.get(uniqueKey.get(instance));
+            int frequency = existingInstance.usageFrequency;
+            frequencyMap.get(frequency).remove(existingInstance);
+            instanceMap.remove(uniqueKey.get(instance));
+            size--;
         }
     }
     public boolean isFull() {
@@ -161,51 +212,9 @@ public class InstancePool {
         this.tail = tail;
     }
     public int getUsageFrequency(A4Solution instance) {
-        AlloyInstance current = head;
-        while (current != null) {
-            if (current.instance.equals(instance)) {
-                return current.usageFrequency;
-            }
-            current = current.next;
+        if (instanceMap.containsKey(uniqueKey.get(instance))) {
+            return instanceMap.get(uniqueKey.get(instance)).usageFrequency;
         }
-        return 0; // instance not found
-    }
-    public void incrementUsageFrequency(A4Solution instance) {
-        AlloyInstance current = head;
-        while (current != null) {
-            if (current.instance.equals(instance)) {
-                current.usageFrequency++;
-                return;
-            }
-            current = current.next;
-        }
-        throw new IllegalArgumentException("Instance not found in the pool: " + instance);
-    }
-    public void decrementUsageFrequency(A4Solution instance) {
-        AlloyInstance current = head;
-        while (current != null) {
-            if (current.instance.equals(instance)) {
-                if (current.usageFrequency > 0) {
-                    current.usageFrequency--;
-                }
-                return;
-            }
-            current = current.next;
-        }
-        throw new IllegalArgumentException("Instance not found in the pool: " + instance);
-    }
-    public void removeLeastFrequentlyUsed() {
-        if (head == null) {
-            return; // Pool is empty
-        }
-        AlloyInstance leastUsed = head;
-        AlloyInstance current = head;
-        while (current != null) {
-            if (current.usageFrequency < leastUsed.usageFrequency) {
-                leastUsed = current;
-            }
-            current = current.next;
-        }
-        remove(leastUsed.instance); // Remove the least frequently used instance
+        return -1; // instance not found
     }
 }
