@@ -102,4 +102,7 @@ public class ScopeTreeNode {
     public int size() {
         return symbols.size();
     }
+    public void resetChildren() {
+        this.children = new LinkedList<>();
+    }
 }

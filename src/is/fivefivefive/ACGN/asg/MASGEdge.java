@@ -3,6 +3,8 @@ package is.fivefivefive.ACGN.asg;
 
 import java.io.Serializable;
 
+import is.fivefivefive.ACGN.structure.RLScopeTreeNode;
+
 /*
  * An edge in the naive, intermediate Multi-ASG. 
  */
@@ -11,11 +13,21 @@ public class MASGEdge implements Serializable {
     private int timeOfVisit;
     private AugmentedNode source;
     private AugmentedNode target;
+    private RLScopeTreeNode scope; // only used in RL
+    private int depthInNode; // only used in RL, the depth of the edge in the current node, used for reward backpropagation
     public MASGEdge(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         this.position = position;
         this.timeOfVisit = timeOfVisit;
         this.source = source;
         this.target = target;
+    }
+    public MASGEdge(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit, RLScopeTreeNode scope, int depthInNode) {
+        this.position = position;
+        this.timeOfVisit = timeOfVisit;
+        this.source = source;
+        this.target = target;
+        this.scope = scope;
+        this.depthInNode = depthInNode;
     }
     public int getPosition() {
         return position;
@@ -34,6 +46,12 @@ public class MASGEdge implements Serializable {
     }
     public int logEdgeLength() {
         return position * (timeOfVisit - 1);
+    }
+    public RLScopeTreeNode getScope() {
+        return scope;
+    }
+    public int getDepthInNode() {
+        return depthInNode;
     }
     @Override
     public boolean equals(Object o) {
