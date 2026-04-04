@@ -434,7 +434,8 @@ public class CodeGenAgent {
         }
     }
     /**
-     * An action defined to add a variable declaration in the scope. 
+     * An action defined to add a variable declaration in the scope. Add non-existent local variables only.
+     * TODO: For pre-generated local variables, make a storage. 
      * @param sigName The signature name that the variable belongs to.
      * @param treeId The tree ID representing the scope level (0 for global).
      * @param confinerNode The AugmentedNode that confines the variable.
@@ -444,7 +445,9 @@ public class CodeGenAgent {
         // add a new variable into the scope of coarse to fine bin;
         globalNewVarCounter++;
         // encoding corresponding to De Bruijn indices: the variable name is not important, but the place in the scope tree is
-        Symbol newVar = new VarSymbol(sigName, "var_" + globalNewVarCounter, "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), treeId, confinerNode);
+        Symbol newVar = new VarSymbol(sigName, "var_" + globalNewVarCounter, 
+                "local_var_" + sigName + "_s" + rlScopeTreeNodeId + "_" + currentScope.size(), 
+                treeId, confinerNode);
         actionSequence.add("ADD_VAR " + ((VarSymbol)newVar).getHashName());
         // this.symbolId.put(this.symbolId.size(), newVar);
         symbolScopeMap.put(newVar, currentScope);
@@ -479,7 +482,7 @@ public class CodeGenAgent {
                 newProb = (float) (Math.log(oldProb) * INERTIA
                 + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
             } else {
-                newProb = (float) (Math.log(oldProb) * INERTIA);
+                newProb = (float) Math.log(oldProb);
             }
             updatedActionProbabilities.put(action, newProb);
         }
@@ -575,7 +578,8 @@ public class CodeGenAgent {
             if (targetSymbol == null) {
                 throw new IllegalArgumentException("Target symbol cannot be null for edge: " + edge);
             }
-            // Calculate the local reward based on the target symbol
+            // Calculate the local reward based on the target symbol, 
+            // dot product of the probability from the Q-table and the reward from the edge reward map or recursive local reward calculation
             float localImpact = 0.0f;
             Map<Symbol, Float> candidateProbs = qTable.get(Pair.of(source, position));
             if (candidateProbs != null) {
