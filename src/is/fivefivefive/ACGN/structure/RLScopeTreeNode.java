@@ -15,33 +15,63 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist;
     private Map<Symbol, String> sigCorr;
     private Symbol rootSymbol;
+    private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
         this.qDist = new HashMap<>();
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, ScopeTreeNode parent, Multigraph affl) {
         super(id, parent, affl);
         this.qDist = new HashMap<>();
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl) {
         super(id, symbols, parent, affl);
         this.qDist = new HashMap<>();
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent) {
         super(id, parent);
-        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        
+        // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        this.qDist = new HashMap<>();
+        // deep copy except the symbols which are invariant hashes
+        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
+        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent, Multigraph affl) {
         super(id, parent, affl);
-        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        this.qDist = new HashMap<>();
+        // deep copy except the symbols which are invariant hashes
+        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
+        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, RLScopeTreeNode parent, Multigraph affl) {
         super(id, symbols, parent, affl);
-        this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
+        this.qDist = new HashMap<>();
+        // deep copy except the symbols which are invariant hashes
+        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
+        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl, Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         super(id, symbols, parent, affl);
-        this.qDist = qDist;
+        this.qDist = new HashMap<>();
+        qDist.forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
+        qDist.forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        this.sigCorr = new HashMap<>();
+        this.qDistBackup = new HashMap<>();
     }
     public void addSymbol(Symbol next) {
         if (rootSymbol == null) {
@@ -129,7 +159,21 @@ public class RLScopeTreeNode extends ScopeTreeNode {
 
     public void dumpLocalVariables(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist, Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter) {
         // TODO: Need a total rewrite. 
-        
+        for (Pair<Symbol, Integer> keyPair : qDist.keySet()) {
+            Map<Symbol, Float> candidateProbs = qDist.get(keyPair);
+            // find the local variables down from each pair
+            for (Symbol candidate : candidateProbs.keySet()) {
+                if (getSymbols().containsValue(candidate)) {
+                    // this is a local variable
+                    int count = localVarCounter.getOrDefault(new Triple<>(keyPair.a, keyPair.b, candidate), 0);
+                    float prob = candidateProbs.get(candidate);
+                    float localVarProb = localVarDist.getOrDefault(keyPair, new HashMap<>()).getOrDefault(candidate, 0f);
+
+                    // localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(candidate, localVarProb + prob * (count + 1));
+                    // TODO: Use the replacement rules formula in Section 3.6 of the paper to compute the relative probability values of the hashings.
+                }
+            }
+        }
     }
     public Symbol getRootSymbol() {
         return rootSymbol;
@@ -147,8 +191,12 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                         Symbol candidate = candidateEntry.getKey();
                         float prob = candidateEntry.getValue();
                         if (candidate.equals(DummySymbol.DUMMY_LOCAL_VAR)) {
+                            // TODO: change this. Here it is the DUMMY_LOCAL_VAR back again. We need to push the concrete local variables in. 
                             candidateProbs.put(candidate, newLocalVarProb);
+                            qDistBackup.put(parentPair, new HashMap<>());
+                            qDistBackup.get(parentPair).put(candidate, newLocalVarProb);
                         } else {
+                            // rescale non-local-variable candidates to keep the total probability sum to 1
                             candidateProbs.put(candidate, prob * (1 - newLocalVarProb) / (1 - dummyLocalVarProb));
                         }
                     }
