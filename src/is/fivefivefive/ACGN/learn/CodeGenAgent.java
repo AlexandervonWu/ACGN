@@ -467,74 +467,11 @@ public class CodeGenAgent {
 
     private static final double INERTIA = Hyperparams.INERTIA;
     public void updateQTable(Symbol source, int position, Symbol selection, float reward, RLScopeTreeNode currentScope) throws IllegalArgumentException {
-        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
-        Map<Symbol, Float> actionProbabilities = qTable.get(Pair.of(source, position));
-        if (actionProbabilities == null || !actionProbabilities.containsKey(selection)) {
-            throw new IllegalArgumentException("No action probabilities found for source: " + source.getName() + " at position: " + position);
-        }
-        // Q-learning update
-        Map<Symbol, Float> updatedActionProbabilities = new HashMap<>();
-        for (Map.Entry<Symbol, Float> entry : actionProbabilities.entrySet()) {
-            Symbol action = entry.getKey();
-            float oldProb = entry.getValue();
-            float newProb;
-            if (action.equals(selection)) {
-                newProb = (float) (Math.log(oldProb) * INERTIA
-                + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
-            } else {
-                newProb = (float) Math.log(oldProb);
-            }
-            updatedActionProbabilities.put(action, newProb);
-        }
-        // softmax normalization
-        float sum = 0.0f;
-        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
-            sum += Math.exp(e.getValue());
-        }
-        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
-            Symbol action = e.getKey();
-            float newProb = (float) Math.exp(updatedActionProbabilities.get(action)) / sum;
-            updatedActionProbabilities.put(action, newProb);
-        }
-        qTable.put(Pair.of(source, position), updatedActionProbabilities);
-        currentScope.setqDist(qTable);
-        if (currentScope == rootScope) {
-            globalQTable = qTable; // keep the global Q-table updated with the root scope's Q-table
-        }
-        if (currentScope.getParent() != null && currentScope.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(currentScope.getParent())) {
-            RLScopeTreeNode parentScope = (RLScopeTreeNode) currentScope.getParent();
-            visitedScopes.add(parentScope);
-            if (parentScope.symbolsAvailable().containsValue(selection)) {
-                updateQTable(source, position, selection, reward, parentScope);
-            } else {
-                // if the selected symbol is not available in the parent scope, we can update the local variable distribution scope
-                Queue<RLScopeTreeNode> queue = new LinkedList<>();
-                float localVarProb = currentScope.localVarProb(Pair.of(source, position));
-                queue.offer(parentScope);
-                while (!queue.isEmpty()) {
-                    RLScopeTreeNode scopeNode = queue.poll();
-                    scopeNode.rescaleLocalVars(localVarProb);
-                    if (scopeNode.getParent() != null && scopeNode.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(scopeNode.getParent())) {
-                        visitedScopes.add((RLScopeTreeNode) scopeNode.getParent());
-                        queue.offer((RLScopeTreeNode) scopeNode.getParent());
-                    }
-                    // other children
-                    for (ScopeTreeNode child : scopeNode.getChildren()) {
-                        if (child instanceof RLScopeTreeNode && !visitedScopes.contains(child)) {
-                            visitedScopes.add((RLScopeTreeNode) child);
-                            queue.offer((RLScopeTreeNode) child);
-                        }
-                    }
-                }
-            }
-        }
-        for (ScopeTreeNode child : currentScope.getChildren()) {
-            RLScopeTreeNode childNode = (child instanceof RLScopeTreeNode) ? (RLScopeTreeNode) child : null;
-            if (!visitedScopes.contains(childNode)) {
-                visitedScopes.add(childNode);
-                updateQTable(source, position, selection, reward, childNode);
-            }
-        }
+       // TODO: Rewrite the Q-table update. We need to use the formulas directly and get the hierarchies right. 
+       // This method is STRICTLY just updating the Q-table entry for the current scope because the new pipeline is rewired. 
+       // Invariants: 1. the local reward for the current action is already calculated and stored in the edgeRewardMap; 
+       // 2. update it iteratively up, once at a time, tracking the uncolored MASG edges only. 
+       // TODO: Define the order of backpropagation first. 
     }
 
     /**
@@ -661,3 +598,73 @@ public class CodeGenAgent {
 
     // TODOS: Make two types of Q-learner: - keep the scopetree; - reset it totally. 
 }
+
+// DUMPED CODE 
+    /*    Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
+        Map<Symbol, Float> actionProbabilities = qTable.get(Pair.of(source, position));
+        if (actionProbabilities == null || !actionProbabilities.containsKey(selection)) {
+            throw new IllegalArgumentException("No action probabilities found for source: " + source.getName() + " at position: " + position);
+        }
+        // Q-learning update
+        Map<Symbol, Float> updatedActionProbabilities = new HashMap<>();
+        for (Map.Entry<Symbol, Float> entry : actionProbabilities.entrySet()) {
+            Symbol action = entry.getKey();
+            float oldProb = entry.getValue();
+            float newProb;
+            if (action.equals(selection)) {
+                newProb = (float) (Math.log(oldProb) * INERTIA
+                + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
+            } else {
+                newProb = (float) Math.log(oldProb);
+            }
+            updatedActionProbabilities.put(action, newProb);
+        }
+        // softmax normalization
+        float sum = 0.0f;
+        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
+            sum += Math.exp(e.getValue());
+        }
+        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
+            Symbol action = e.getKey();
+            float newProb = (float) Math.exp(updatedActionProbabilities.get(action)) / sum;
+            updatedActionProbabilities.put(action, newProb);
+        }
+        qTable.put(Pair.of(source, position), updatedActionProbabilities);
+        currentScope.setqDist(qTable);
+        if (currentScope == rootScope) {
+            globalQTable = qTable; // keep the global Q-table updated with the root scope's Q-table
+        }
+        if (currentScope.getParent() != null && currentScope.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(currentScope.getParent())) {
+            RLScopeTreeNode parentScope = (RLScopeTreeNode) currentScope.getParent();
+            visitedScopes.add(parentScope);
+            if (parentScope.symbolsAvailable().containsValue(selection)) {
+                updateQTable(source, position, selection, reward, parentScope);
+            } else {
+                // if the selected symbol is not available in the parent scope, we can update the local variable distribution scope
+                Queue<RLScopeTreeNode> queue = new LinkedList<>();
+                float localVarProb = currentScope.localVarProb(Pair.of(source, position));
+                queue.offer(parentScope);
+                while (!queue.isEmpty()) {
+                    RLScopeTreeNode scopeNode = queue.poll();
+                    scopeNode.rescaleLocalVars(localVarProb);
+                    if (scopeNode.getParent() != null && scopeNode.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(scopeNode.getParent())) {
+                        visitedScopes.add((RLScopeTreeNode) scopeNode.getParent());
+                        queue.offer((RLScopeTreeNode) scopeNode.getParent());
+                    }
+                    // other children
+                    for (ScopeTreeNode child : scopeNode.getChildren()) {
+                        if (child instanceof RLScopeTreeNode && !visitedScopes.contains(child)) {
+                            visitedScopes.add((RLScopeTreeNode) child);
+                            queue.offer((RLScopeTreeNode) child);
+                        }
+                    }
+                }
+            }
+        }
+        for (ScopeTreeNode child : currentScope.getChildren()) {
+            RLScopeTreeNode childNode = (child instanceof RLScopeTreeNode) ? (RLScopeTreeNode) child : null;
+            if (!visitedScopes.contains(childNode)) {
+                visitedScopes.add(childNode);
+                updateQTable(source, position, selection, reward, childNode);
+            }
+        }*/ 

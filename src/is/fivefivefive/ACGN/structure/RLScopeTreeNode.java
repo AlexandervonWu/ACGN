@@ -16,6 +16,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Map<Symbol, String> sigCorr;
     private Symbol rootSymbol;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
+    // TODO: Use this to keep the old iteration of Q-values for the Scope Tree Node. 
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
         this.qDist = new HashMap<>();
@@ -98,6 +99,11 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     public void setqDist(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         this.qDist = qDist;
     }
+    // encapsulation of the Q-table update AND do the backup of the old weights. 
+    public void updateQDistAt(Pair<Symbol, Integer> parentPair, Symbol candidate, float newProb) {
+        qDistBackup.computeIfAbsent(parentPair, k -> new HashMap<>()).put(candidate, qDist.getOrDefault(parentPair, new HashMap<>()).getOrDefault(candidate, 0f));
+        qDist.computeIfAbsent(parentPair, k -> new HashMap<>()).put(candidate, newProb);
+    }
     public void resetQDist() {
         this.qDist = new HashMap<>();
         for (ScopeTreeNode children : getChildren()) {
@@ -168,6 +174,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                     int count = localVarCounter.getOrDefault(new Triple<>(keyPair.a, keyPair.b, candidate), 0);
                     float prob = candidateProbs.get(candidate);
                     float localVarProb = localVarDist.getOrDefault(keyPair, new HashMap<>()).getOrDefault(candidate, 0f);
+                    
 
                     // localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(candidate, localVarProb + prob * (count + 1));
                     // TODO: Use the replacement rules formula in Section 3.6 of the paper to compute the relative probability values of the hashings.
@@ -191,7 +198,6 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                         Symbol candidate = candidateEntry.getKey();
                         float prob = candidateEntry.getValue();
                         if (candidate.equals(DummySymbol.DUMMY_LOCAL_VAR)) {
-                            // TODO: change this. Here it is the DUMMY_LOCAL_VAR back again. We need to push the concrete local variables in. 
                             candidateProbs.put(candidate, newLocalVarProb);
                             qDistBackup.put(parentPair, new HashMap<>());
                             qDistBackup.get(parentPair).put(candidate, newLocalVarProb);
