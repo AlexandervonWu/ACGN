@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.Vector;
 
 import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
@@ -62,6 +63,9 @@ public class CodeGenAgent {
     private Set<RLScopeTreeNode> visitedScopes; // a temporary set to track the synchronization of the scope tree over updating of the Q-table
     private Map<Integer, Set<RLScopeTreeNode>> scopeDepthMap; // track the scopes at each depth for scope collapsing.
     private int maxScopeDepth = 0;
+    private Stack<MASGEdge> generationStack; // track the generation stack for backpropagation. 
+    // Each time we go down a level in the tree, we push the corresponding edge into the stack; each time we backtrack, 
+    // we pop the edge from the stack and update the Q-table entry for that edge with the accumulated reward.
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
@@ -97,7 +101,7 @@ public class CodeGenAgent {
         }
         this.visitedScopes = new HashSet<>();
         this.scopeDepthMap = new HashMap<>();
-        
+        this.generationStack = new Stack<>();
     }
     public int getInitializationState() {
         return initializationState;
@@ -194,6 +198,7 @@ public class CodeGenAgent {
         rootScope.resetChildren(); // reset the children of the root scope before generation to avoid interference from previous generations
         maxScopeDepth = 0; // reset the max scope depth for each new generation
         currentAns.setScope(rootScope);
+        generationStack = new Stack<>(); // reset the generation stack for each new generation
         // System.err.println("rootScope dist: " + rootScope.getqDist());
         generateNextNode(rootNode, 1, rootScope);
         Generator generator = new Generator();
@@ -223,14 +228,16 @@ public class CodeGenAgent {
         if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
             AugmentedNode qtNode = fillHoleQt(source, scope);
             currentAns.addVertex(qtNode);
-            localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
+            MASGEdge edge = localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
+            generationStack.push(edge);
             // TODO: recursively generate downstream
             return 0; // success
         }
         Symbol nextToken = fillHole(source, position, scope);
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.addVertex(nextNode);
-        localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
+        MASGEdge edge = localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
+        generationStack.push(edge);
         if (nextToken instanceof EndSymbol) {
             leaves.add(nextToken);
             return -1; // end symbol reached, pass a signal to stop further generation in this branch
@@ -309,7 +316,8 @@ public class CodeGenAgent {
         currentAns.addVertex(qt1Node);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
-        qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
+        MASGEdge edge = qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
+        generationStack.push(edge);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
@@ -324,7 +332,8 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 currentAns.addVertex(endNode);
-                qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
+                MASGEdge endEdge = qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
+                generationStack.push(endEdge);
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
             } else {
@@ -340,7 +349,8 @@ public class CodeGenAgent {
                         Symbol relDeclRoot = sig;
                         AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.addVertex(anDown);
-                        currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+                        MASGEdge relDeclEdge = currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+                        generationStack.push(relDeclEdge);
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
                         break;
                     }
@@ -373,7 +383,8 @@ public class CodeGenAgent {
         AugmentedNode sigNode = dynamicUniqueNodes.get(typeSig);
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
-        relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
+        MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
+        generationStack.push(relDeclEdge);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
@@ -386,7 +397,8 @@ public class CodeGenAgent {
             if (nextRandom < endProb) {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
-                relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
+                MASGEdge endEdge = relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
+                generationStack.push(endEdge);
                 leaves.add(endSymbol);
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;

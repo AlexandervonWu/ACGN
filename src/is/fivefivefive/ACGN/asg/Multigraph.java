@@ -124,12 +124,14 @@ public class Multigraph implements Serializable {
         }
         vertices.remove(v);
     }
-    public void connect(AugmentedNode source, AugmentedNode target, Multigraph graph, int position, int timeOfVisit) throws IllegalArgumentException {
+    public MASGEdge connect(AugmentedNode source, AugmentedNode target, Multigraph graph, int position, int timeOfVisit) throws IllegalArgumentException {
         if (!vertices.contains(source) || !vertices.contains(target)) {
             throw new IllegalArgumentException("Source and target must be in the graph.");
         }
-        edges.add(new MASGEdge(source, target, position, timeOfVisit));
+        MASGEdge edge = new MASGEdge(source, target, position, timeOfVisit);
+        edges.add(edge);
         source.connect(target, position, graph, timeOfVisit);
+        return edge;
     }
     public MASGEdge edgeBetween(AugmentedNode source, AugmentedNode target, int position, int timeOfVisit) {
         for (MASGEdge e : edges) {
