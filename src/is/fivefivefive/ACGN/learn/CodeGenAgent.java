@@ -496,13 +496,45 @@ public class CodeGenAgent {
         this.dynamicUniqueNodes.put(newVar, newNode);
     }
 
-    private static final double INERTIA = Hyperparams.INERTIA;
-    public void updateQTable(Symbol source, int position, Symbol selection, float reward, RLScopeTreeNode currentScope) throws IllegalArgumentException {
-       // TODO: Rewrite the Q-table update. We need to use the formulas directly and get the hierarchies right. 
-       // This method is STRICTLY just updating the Q-table entry for the current scope because the new pipeline is rewired. 
-       // Invariants: 1. the local reward for the current action is already calculated and stored in the edgeRewardMap; 
-       // 2. update it iteratively up, once at a time, tracking the uncolored MASG edges only. 
-       // TODO: Define the order of backpropagation first. 
+    private static final float INERTIA = Hyperparams.INERTIA;
+    public void updateQTable(Symbol source, 
+            int position, 
+            Symbol selection, 
+            float reward, 
+            RLScopeTreeNode currentScope) throws IllegalArgumentException {
+        // TODO: Rewrite the Q-table update. We need to use the formulas directly and get the hierarchies right. 
+        // This method is STRICTLY just updating the Q-table entry for the current scope because the new pipeline is rewired. 
+        // Invariants: 1. the local reward for the current action is already calculated and stored in the edgeRewardMap; 
+        // 2. update it iteratively up, once at a time, tracking the uncolored MASG edges only. 
+        // TODO: Define the order of backpropagation first. 
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
+        if (!qTable.containsKey(Pair.of(source, position)) || !qTable.get(Pair.of(source, position)).containsKey(selection)) {
+            throw new IllegalArgumentException("Q-table entry missing for symbol: " + source.getName() + " at position: " + position + " with selection: " + selection.getName());
+        }
+        Map<Symbol, Float> actionValues = qTable.get(Pair.of(source, position));
+        for (Symbol action : actionValues.keySet()) {
+            float oldValue = actionValues.get(action);
+            if (action.equals(selection)) {
+                float update = INERTIA * oldValue + (1 - INERTIA) * reward;
+                float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)
+                actionValues.put(action, logUpdate);
+            } else {
+                float logUpdate = (float) (Math.log(oldValue + 1e-6)); // add a small constant to avoid log(0)
+                actionValues.put(action, logUpdate);
+            }
+        }
+        softmax(actionValues, Hyperparams.TEMPERATURE);
+    }
+
+    private void softmax(Map<Symbol, Float> actionValues, float temperature) {
+        float sumExp = 0.0f;
+        for (float value : actionValues.values()) {
+            sumExp += Math.exp(value / temperature);
+        }
+        for (Map.Entry<Symbol, Float> entry : actionValues.entrySet()) {
+            float softmaxValue = (float) (Math.exp(entry.getValue() / temperature) / sumExp);
+            entry.setValue(softmaxValue);
+        }
     }
 
     /**
