@@ -66,6 +66,10 @@ public class CodeGenAgent {
     private Stack<MASGEdge> generationStack; // track the generation stack for backpropagation. 
     // Each time we go down a level in the tree, we push the corresponding edge into the stack; each time we backtrack, 
     // we pop the edge from the stack and update the Q-table entry for that edge with the accumulated reward.
+    private Map<Triple<Symbol, Integer, Symbol>, MASGEdge> edgeMap; 
+    // map from (source symbol, position, target symbol) to the corresponding edge in the graph for quick access during backpropagation.
+    private Map<Pair<Symbol, Integer>, List<MASGEdge>> positionEdgeMap; 
+    // map from (source symbol, position) to the list of edges for quick access during backpropagation.
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
@@ -230,6 +234,8 @@ public class CodeGenAgent {
             currentAns.addVertex(qtNode);
             MASGEdge edge = localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
             generationStack.push(edge);
+            edgeMap.put(new Triple<>(source, position, qtNode.getSymbol()), edge);
+            positionEdgeMap.computeIfAbsent(Pair.of(source, position), k -> new ArrayList<>()).add(edge);
             // TODO: recursively generate downstream
             return 0; // success
         }
@@ -237,6 +243,8 @@ public class CodeGenAgent {
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.addVertex(nextNode);
         MASGEdge edge = localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
+        edgeMap.put(new Triple<>(source, position, nextNode.getSymbol()), edge);
+        positionEdgeMap.computeIfAbsent(Pair.of(source, position), k -> new ArrayList<>()).add(edge);
         generationStack.push(edge);
         if (nextToken instanceof EndSymbol) {
             leaves.add(nextToken);
@@ -318,6 +326,8 @@ public class CodeGenAgent {
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
         MASGEdge edge = qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
         generationStack.push(edge);
+        edgeMap.put(new Triple<>(qtRoot, 1, qt1), edge);
+        positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, 1), k -> new ArrayList<>()).add(edge);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
@@ -334,6 +344,9 @@ public class CodeGenAgent {
                 currentAns.addVertex(endNode);
                 MASGEdge endEdge = qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
                 generationStack.push(endEdge);
+                edgeMap.put(new Triple<>(qtRoot, i, endSymbol), endEdge);
+                positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, i), k -> new ArrayList<>()).add(endEdge);
+                leaves.add(endSymbol);
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
             } else {
@@ -350,6 +363,8 @@ public class CodeGenAgent {
                         AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.addVertex(anDown);
                         MASGEdge relDeclEdge = currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+                        edgeMap.put(new Triple<>(qtRoot, i, relDeclRoot), relDeclEdge);
+                        positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, i), k -> new ArrayList<>()).add(relDeclEdge);
                         generationStack.push(relDeclEdge);
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
                         break;
@@ -385,6 +400,8 @@ public class CodeGenAgent {
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
         MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
         generationStack.push(relDeclEdge);
+        edgeMap.put(new Triple<>(relDeclRoot, 1, typeSig), relDeclEdge);
+        positionEdgeMap.computeIfAbsent(Pair.of(relDeclRoot, 1), k -> new ArrayList<>()).add(relDeclEdge);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
@@ -398,6 +415,8 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 MASGEdge endEdge = relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
+                edgeMap.put(new Triple<>(relDeclRoot, i, endSymbol), endEdge);
+                positionEdgeMap.computeIfAbsent(Pair.of(relDeclRoot, i), k -> new ArrayList<>()).add(endEdge);
                 generationStack.push(endEdge);
                 leaves.add(endSymbol);
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
