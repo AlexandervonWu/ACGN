@@ -68,8 +68,8 @@ public class CodeGenAgent {
     // we pop the edge from the stack and update the Q-table entry for that edge with the accumulated reward.
     private Map<Triple<Symbol, Integer, Symbol>, MASGEdge> edgeMap; 
     // map from (source symbol, position, target symbol) to the corresponding edge in the graph for quick access during backpropagation.
-    private Map<Pair<Symbol, Integer>, List<MASGEdge>> positionEdgeMap; 
-    // map from (source symbol, position) to the list of edges for quick access during backpropagation.
+    private Map<Symbol, List<MASGEdge>> downlinkEdgeMap; 
+    // map from symbol to the list of edges for quick access during backpropagation.
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
@@ -235,7 +235,7 @@ public class CodeGenAgent {
             MASGEdge edge = localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
             generationStack.push(edge);
             edgeMap.put(Triple.of(source, position, qtNode.getSymbol()), edge);
-            positionEdgeMap.computeIfAbsent(Pair.of(source, position), k -> new ArrayList<>()).add(edge);
+            downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
             // TODO: recursively generate downstream
             return 0; // success
         }
@@ -244,7 +244,7 @@ public class CodeGenAgent {
         currentAns.addVertex(nextNode);
         MASGEdge edge = localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
         edgeMap.put(Triple.of(source, position, nextNode.getSymbol()), edge);
-        positionEdgeMap.computeIfAbsent(Pair.of(source, position), k -> new ArrayList<>()).add(edge);
+        downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
         generationStack.push(edge);
         if (nextToken instanceof EndSymbol) {
             leaves.add(nextToken);
@@ -327,7 +327,7 @@ public class CodeGenAgent {
         MASGEdge edge = qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
         generationStack.push(edge);
         edgeMap.put(Triple.of(qtRoot, 1, qt1), edge);
-        positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, 1), k -> new ArrayList<>()).add(edge);
+        downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(edge);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
@@ -345,7 +345,7 @@ public class CodeGenAgent {
                 MASGEdge endEdge = qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
                 generationStack.push(endEdge);
                 edgeMap.put(Triple.of(qtRoot, i, endSymbol), endEdge);
-                positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, i), k -> new ArrayList<>()).add(endEdge);
+                downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(endEdge);
                 leaves.add(endSymbol);
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
@@ -364,7 +364,7 @@ public class CodeGenAgent {
                         currentAns.addVertex(anDown);
                         MASGEdge relDeclEdge = currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
                         edgeMap.put(Triple.of(qtRoot, i, relDeclRoot), relDeclEdge);
-                        positionEdgeMap.computeIfAbsent(Pair.of(qtRoot, i), k -> new ArrayList<>()).add(relDeclEdge);
+                        downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(relDeclEdge);
                         generationStack.push(relDeclEdge);
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
                         break;
@@ -401,7 +401,7 @@ public class CodeGenAgent {
         MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
         generationStack.push(relDeclEdge);
         edgeMap.put(Triple.of(relDeclRoot, 1, typeSig), relDeclEdge);
-        positionEdgeMap.computeIfAbsent(Pair.of(relDeclRoot, 1), k -> new ArrayList<>()).add(relDeclEdge);
+        downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(relDeclEdge);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
@@ -416,7 +416,7 @@ public class CodeGenAgent {
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 MASGEdge endEdge = relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
                 edgeMap.put(Triple.of(relDeclRoot, i, endSymbol), endEdge);
-                positionEdgeMap.computeIfAbsent(Pair.of(relDeclRoot, i), k -> new ArrayList<>()).add(endEdge);
+                downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(endEdge);
                 generationStack.push(endEdge);
                 leaves.add(endSymbol);
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
@@ -521,7 +521,13 @@ public class CodeGenAgent {
      * @return the calculated local reward based on the children of the candidate
      *         symbol.
      */
-    public float localReward(Symbol source, int position, Symbol candidate, float rawReward, RLScopeTreeNode currentScope) throws IllegalArgumentException {
+    public float localReward(
+            Symbol source, 
+            int position, 
+            Symbol candidate, 
+            float rawReward, 
+            RLScopeTreeNode currentScope
+        ) throws IllegalArgumentException {
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         if (candidate == null) {
             throw new IllegalArgumentException("Candidate symbol cannot be null");
@@ -530,40 +536,28 @@ public class CodeGenAgent {
             edgeRewardMap.put(Pair.of(source, position), rawReward);
             return rawReward;
         }
-        // look for all children of the candidate
-        AugmentedNode candidateNode = gv.getUniqueNodes().get(candidate);
-        if (candidateNode == null) {
-            throw new IllegalArgumentException("Candidate node not found for " + candidate);
+        List<MASGEdge> childEdges = downlinkEdgeMap.get(candidate);
+        if (childEdges == null || childEdges.isEmpty()) {
+            throw new IllegalArgumentException("No child edges found for candidate symbol: " + candidate.getName() + " at position: " + position);
         }
-        List<MASGEdge> downlinks = currentAns.edgesUnder(candidateNode);
-        if (downlinks.isEmpty()) {
-            return rawReward; // No children, return the raw reward
+        int maxOrEndPosition = 0;
+        float localReward = 0f;
+        for (MASGEdge edge : childEdges) {
+            Symbol child = edge.getTarget().getSymbol();
+            Pair<Symbol, Integer> childKey = Pair.of(candidate, edge.getPosition());
+            if (!qTable.containsKey(childKey) || !qTable.get(childKey).containsKey(child)) {
+                throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition());
+            }
+            float childProb = qTable.get(childKey).get(child);
+            float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
+            localReward += childProb * childReward;
+            if (edgeRewardMap.containsKey(childKey)) {
+                maxOrEndPosition = Math.max(maxOrEndPosition, edge.getPosition());
+            }
         }
-        float ans = 0.0f;
-        for (MASGEdge edge : downlinks) {
-            AugmentedNode targetNode = edge.getTarget();
-            Symbol targetSymbol = targetNode.getSymbol();
-            if (targetSymbol == null) {
-                throw new IllegalArgumentException("Target symbol cannot be null for edge: " + edge);
-            }
-            // Calculate the local reward based on the target symbol, 
-            // dot product of the probability from the Q-table and the reward from the edge reward map or recursive local reward calculation
-            float localImpact = 0.0f;
-            Map<Symbol, Float> candidateProbs = qTable.get(Pair.of(source, position));
-            if (candidateProbs != null) {
-                localImpact = candidateProbs.getOrDefault(targetSymbol, 0.0f);
-            }
-            float downReward = 0.0f;
-            if (edgeRewardMap.containsKey(Pair.of(source, edge.getPosition()))) {
-                downReward = edgeRewardMap.get(Pair.of(source, edge.getPosition()));
-            } else {
-                downReward = localReward(candidate, edge.getPosition(), targetSymbol, rawReward, currentScope);
-            }
-            ans += localImpact * downReward;
-        }
-        edgeRewardMap.put(Pair.of(source, position), ans);
-        return ans; // Placeholder for local reward calculation
-        // TODO: Up-pooling rewards for collapsing Scope Tree.
+        localReward /= maxOrEndPosition; // average over the children
+        edgeRewardMap.put(Pair.of(source, position), localReward);
+        return localReward;
     }
 
     public void backpropagateReward(float reward) {
@@ -630,72 +624,3 @@ public class CodeGenAgent {
     // TODOS: Make two types of Q-learner: - keep the scopetree; - reset it totally. 
 }
 
-// DUMPED CODE 
-    /*    Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
-        Map<Symbol, Float> actionProbabilities = qTable.get(Pair.of(source, position));
-        if (actionProbabilities == null || !actionProbabilities.containsKey(selection)) {
-            throw new IllegalArgumentException("No action probabilities found for source: " + source.getName() + " at position: " + position);
-        }
-        // Q-learning update
-        Map<Symbol, Float> updatedActionProbabilities = new HashMap<>();
-        for (Map.Entry<Symbol, Float> entry : actionProbabilities.entrySet()) {
-            Symbol action = entry.getKey();
-            float oldProb = entry.getValue();
-            float newProb;
-            if (action.equals(selection)) {
-                newProb = (float) (Math.log(oldProb) * INERTIA
-                + (reward > 0 ? Math.log(reward) * (1 - INERTIA) : 0));
-            } else {
-                newProb = (float) Math.log(oldProb);
-            }
-            updatedActionProbabilities.put(action, newProb);
-        }
-        // softmax normalization
-        float sum = 0.0f;
-        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
-            sum += Math.exp(e.getValue());
-        }
-        for (Map.Entry<Symbol, Float> e : actionProbabilities.entrySet()) {
-            Symbol action = e.getKey();
-            float newProb = (float) Math.exp(updatedActionProbabilities.get(action)) / sum;
-            updatedActionProbabilities.put(action, newProb);
-        }
-        qTable.put(Pair.of(source, position), updatedActionProbabilities);
-        currentScope.setqDist(qTable);
-        if (currentScope == rootScope) {
-            globalQTable = qTable; // keep the global Q-table updated with the root scope's Q-table
-        }
-        if (currentScope.getParent() != null && currentScope.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(currentScope.getParent())) {
-            RLScopeTreeNode parentScope = (RLScopeTreeNode) currentScope.getParent();
-            visitedScopes.add(parentScope);
-            if (parentScope.symbolsAvailable().containsValue(selection)) {
-                updateQTable(source, position, selection, reward, parentScope);
-            } else {
-                // if the selected symbol is not available in the parent scope, we can update the local variable distribution scope
-                Queue<RLScopeTreeNode> queue = new LinkedList<>();
-                float localVarProb = currentScope.localVarProb(Pair.of(source, position));
-                queue.offer(parentScope);
-                while (!queue.isEmpty()) {
-                    RLScopeTreeNode scopeNode = queue.poll();
-                    scopeNode.rescaleLocalVars(localVarProb);
-                    if (scopeNode.getParent() != null && scopeNode.getParent() instanceof RLScopeTreeNode && !visitedScopes.contains(scopeNode.getParent())) {
-                        visitedScopes.add((RLScopeTreeNode) scopeNode.getParent());
-                        queue.offer((RLScopeTreeNode) scopeNode.getParent());
-                    }
-                    // other children
-                    for (ScopeTreeNode child : scopeNode.getChildren()) {
-                        if (child instanceof RLScopeTreeNode && !visitedScopes.contains(child)) {
-                            visitedScopes.add((RLScopeTreeNode) child);
-                            queue.offer((RLScopeTreeNode) child);
-                        }
-                    }
-                }
-            }
-        }
-        for (ScopeTreeNode child : currentScope.getChildren()) {
-            RLScopeTreeNode childNode = (child instanceof RLScopeTreeNode) ? (RLScopeTreeNode) child : null;
-            if (!visitedScopes.contains(childNode)) {
-                visitedScopes.add(childNode);
-                updateQTable(source, position, selection, reward, childNode);
-            }
-        }*/ 
