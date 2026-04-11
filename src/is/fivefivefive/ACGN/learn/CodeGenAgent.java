@@ -497,6 +497,16 @@ public class CodeGenAgent {
     }
 
     private static final float INERTIA = Hyperparams.INERTIA;
+    /**
+     * Update the Q-table based on the action taken and the reward received. 
+     * Only update the Q-table entry for the current scope here. 
+     * @param source the source symbol from which the action was taken.
+     * @param position the position in the ASG where the action was taken.
+     * @param selection the selected symbol.
+     * @param reward the reward received for the action.
+     * @param currentScope the current scope node.
+     * @throws IllegalArgumentException
+     */
     public void updateQTable(Symbol source, 
             int position, 
             Symbol selection, 
