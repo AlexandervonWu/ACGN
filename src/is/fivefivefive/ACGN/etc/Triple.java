@@ -6,6 +6,10 @@ public class Triple<A, B, C> extends is.fivefivefive.alloyasg.etc.Triple<A, B, C
     public Triple(A first, B second, C third) {
         super(first, second, third);
     }
+    
+    public static <A, B, C> Triple<A, B, C> of(A first, B second, C third) {
+        return new Triple<>(first, second, third);
+    }
 
     @Override
     public int hashCode() {
