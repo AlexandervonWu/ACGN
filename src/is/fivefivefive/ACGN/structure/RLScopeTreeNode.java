@@ -16,6 +16,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Map<Symbol, String> sigCorr;
     private Symbol rootSymbol;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
+    private Map<Pair<Symbol, Integer>, Float> localVarPriorProb;
     // TODO: Use this to keep the old iteration of Q-values for the Scope Tree Node. 
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
@@ -117,6 +118,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         // use the inherited qDist as the original qDist, and localize it by the symbols in the current node. 
         // for each pair of (symbol, position) in the global qDist, find the probability of DUMMY_LOCAL_VAR
         Map<Pair<Symbol, Integer>, Float> localVarProbs = new HashMap<>();
+        localVarPriorProb = new HashMap<>();
         // find the probability of DUMMY_LOCAL_VAR for each (symbol, position) pair in the global qDist
         for (Pair<Symbol, Integer> pair : globalQDist.keySet()) {
             Map<Symbol, Float> candidateProbs = globalQDist.get(pair);
@@ -132,6 +134,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                 Map<Symbol, Float> candidateProbs = entry.getValue();
                 float dummyLocalVarProb = localVarProbs.getOrDefault(pair, 0f);
                 float distributedProb = dummyLocalVarProb * (1 - OLD_VARS_RESERVE_RATE);
+                localVarPriorProb.put(pair, distributedProb);
                 Map<Symbol, Float> localizedCandidateProbs = new HashMap<>();
                 for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()) {
                     Symbol candidate = candidateEntry.getKey();
@@ -153,6 +156,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                 Pair<Symbol, Integer> pair = entry.getKey();
                 Map<Symbol, Float> candidateProbs = entry.getValue();
                 float dummyLocalVarProb = candidateProbs.getOrDefault(DummySymbol.DUMMY_LOCAL_VAR, 0f);
+                localVarPriorProb.put(pair, dummyLocalVarProb);
                 Map<Symbol, Float> localizedCandidateProbs = new HashMap<>(candidateProbs);
                 for (Symbol localSymbol : getSymbols().values()) {
                     localizedCandidateProbs.put(localSymbol, dummyLocalVarProb / getSymbols().size());
@@ -164,24 +168,34 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     }
 
     public void dumpLocalVariables(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist, Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter) {
-        // TODO: Need a total rewrite. 
+        Map<Pair<Symbol, Integer>, Float> totalLocalVarQRatio = new HashMap<>();
         for (Pair<Symbol, Integer> keyPair : qDist.keySet()) {
             Map<Symbol, Float> candidateProbs = qDist.get(keyPair);
             // find the local variables down from each pair
             for (Symbol candidate : candidateProbs.keySet()) {
                 if (getSymbols().containsValue(candidate)) {
                     // this is a local variable
-                    int count = localVarCounter.getOrDefault(new Triple<>(keyPair.a, keyPair.b, candidate), 0);
                     float prob = candidateProbs.get(candidate);
-                    float localVarProb = localVarDist.getOrDefault(keyPair, new HashMap<>()).getOrDefault(candidate, 0f);
-                    
-
-                    // localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(candidate, localVarProb + prob * (count + 1));
-                    // TODO: Use the replacement rules formula in Section 3.6 of the paper to compute the relative probability values of the hashings.
+                    totalLocalVarQRatio.put(keyPair, totalLocalVarQRatio.getOrDefault(keyPair, 0f) + prob);
+                }
+            }
+            for (Symbol localVar : candidateProbs.keySet()) {
+                if (getSymbols().containsValue(localVar)) {
+                    // this is a local variable
+                    if (!localVarPriorProb.containsKey(keyPair)) {
+                        throw new RuntimeException("Local variable " + localVar + " does not have a prior probability in the old qDist of " + keyPair.a + " at position " + keyPair.b);
+                    } else {
+                        totalLocalVarQRatio.put(keyPair, totalLocalVarQRatio.getOrDefault(keyPair, 0f) / localVarPriorProb.get(keyPair));
+                    }
+                    float prob = candidateProbs.get(localVar);
+                    float localVarWeight = prob * getSymbols().size() * totalLocalVarQRatio.get(keyPair);
+                    localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(localVar, localVarWeight);
+                    localVarCounter.put(new Triple<>(keyPair.a, keyPair.b, localVar), localVarCounter.getOrDefault(new Triple<>(keyPair.a, keyPair.b, localVar), 0) + 1);
                 }
             }
         }
     }
+    
     public Symbol getRootSymbol() {
         return rootSymbol;
     }
