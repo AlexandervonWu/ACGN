@@ -18,6 +18,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
     private Map<Pair<Symbol, Integer>, Float> localVarPriorProb;
     private boolean active = false;
+    private boolean ready = true;
     // TODO: Use this to keep the old iteration of Q-values for the Scope Tree Node. 
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
@@ -47,6 +48,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
+        parent.deready();
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent, Multigraph affl) {
         super(id, parent, affl);
@@ -57,6 +59,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
+        parent.deready();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, RLScopeTreeNode parent, Multigraph affl) {
         super(id, symbols, parent, affl);
@@ -67,6 +70,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
+        parent.deready();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl, Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         super(id, symbols, parent, affl);
@@ -172,6 +176,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
 
     public void dumpLocalVariables(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist, Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter) {
         Map<Pair<Symbol, Integer>, Float> totalLocalVarQRatio = new HashMap<>();
+        boolean isDirectlyUnderRoot = getParent() != null && getParent().getParent() == null;
         for (Pair<Symbol, Integer> keyPair : qDist.keySet()) {
             Map<Symbol, Float> candidateProbs = qDist.get(keyPair);
             float totalLocalVarProb = 0f;
@@ -197,12 +202,17 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                     localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(localVar, localVarWeight);
                     localVarCounter.put(Triple.of(keyPair.a, keyPair.b, localVar), localVarCounter.getOrDefault(Triple.of(keyPair.a, keyPair.b, localVar), 0) + 1);
                     qDist.get(keyPair).put(localVar, 0f); // reset the probability so the qDist could be salvaged up
-                } else {
+                } else if (!isDirectlyUnderRoot) {
+                    // the scope is not directly under the root
                     // this is not a local variable within the scope, scale the probability up
                     float scale = 1 - totalLocalVarProb;
                     float prob = candidateProbs.get(localVar);
                     qDist.get(keyPair).put(localVar, prob / scale);
                 }
+            }
+            if (isDirectlyUnderRoot) {
+                // if the scope is directly under the root, we can simply dump the local variable probabilities to DUMMY_LOCAL_VAR
+                qDist.get(keyPair).put(DummySymbol.DUMMY_LOCAL_VAR, totalLocalVarProb); 
             }
         }
         // after dumping the local variables, the qDist of the current node is now localized to the parent node, and can be used for the parent node's update.
@@ -274,7 +284,49 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         }
         return totalLocalVarProb;
     }
+    public void poll() {
+        // for all RLScopeTreeNode children, poll them up to the current node, update the qDist to the avg of the two
+        Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localizedQDist = new HashMap<>();
+        int childCount = 0;
+        for (ScopeTreeNode child : getChildren()) {
+            if (child instanceof RLScopeTreeNode) {
+                childCount++;
+                RLScopeTreeNode rlChild = (RLScopeTreeNode) child;
+                Map<Pair<Symbol, Integer>, Map<Symbol, Float>> childQDist = rlChild.getqDist();
+                for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : childQDist.entrySet()) {
+                    Pair<Symbol, Integer> parentPair = entry.getKey();
+                    Map<Symbol, Float> childCandidateProbs = entry.getValue();
+                    for (Map.Entry<Symbol, Float> candidateEntry : childCandidateProbs.entrySet()) {
+                        Symbol candidate = candidateEntry.getKey();
+                        float childProb = candidateEntry.getValue();
+                        float currentProb = localizedQDist.getOrDefault(parentPair, new HashMap<>()).getOrDefault(candidate, 0f);
+                        localizedQDist.computeIfAbsent(parentPair, k -> new HashMap<>()).put(candidate, currentProb + childProb);
+                    }
+                }
+            }
+        }
+        // average the qDist from the children
+        for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : localizedQDist.entrySet()) {
+            Pair<Symbol, Integer> parentPair = entry.getKey();
+            Map<Symbol, Float> candidateProbs = entry.getValue();
+            for (Map.Entry<Symbol, Float> candidateEntry : candidateProbs.entrySet()) {
+                Symbol candidate = candidateEntry.getKey();
+                float totalProb = candidateEntry.getValue();
+                localizedQDist.get(parentPair).put(candidate, totalProb / childCount);
+            }
+        }
+        // update the current node's qDist to the localized qDist
+        this.qDist = localizedQDist;
+        // after polling, the current node is now active for RL training.
+        active = true;
+    }
     public boolean isActive() {
         return active;
+    }
+    public boolean isReady() {
+        return ready;
+    }
+    public void deready() {
+        this.ready = false;
     }
 }
