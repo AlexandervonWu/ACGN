@@ -18,7 +18,10 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
     private Map<Pair<Symbol, Integer>, Float> localVarPriorProb;
     private boolean active = false;
+    // active: gets the localized qDist to activate, but not ready for training until poll() is called to aggregate the qDist from the children nodes.
+    // deactivate when it collapses back to the parent node, and the qDist is dumped to the parent node, and the current node is reset for the next round of training.
     private boolean ready = true;
+    // ready: leaf nodes are default ready for training, but non-leaf nodes need to wait for the qDist from the children nodes to be polled up before they are ready for training.
     // TODO: Use this to keep the old iteration of Q-values for the Scope Tree Node. 
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
@@ -317,8 +320,8 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         }
         // update the current node's qDist to the localized qDist
         this.qDist = localizedQDist;
-        // after polling, the current node is now active for RL training.
-        active = true;
+        // after polling, the current node is now ready for RL training.
+        ready = true;
     }
     public boolean isActive() {
         return active;
