@@ -17,6 +17,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     private Symbol rootSymbol;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDistBackup; // backup the old Q-dist for local variables after rescaling
     private Map<Pair<Symbol, Integer>, Float> localVarPriorProb;
+    private boolean active = false;
     // TODO: Use this to keep the old iteration of Q-values for the Scope Tree Node. 
     public RLScopeTreeNode(int id, ScopeTreeNode parent) {
         super(id, parent);
@@ -165,18 +166,22 @@ public class RLScopeTreeNode extends ScopeTreeNode {
             }
         }
         this.qDist = localizedQDist;
+        // after localizing the qDist, the current node is now active for RL training. 
+        active = true;
     }
 
     public void dumpLocalVariables(Map<Pair<Symbol, Integer>, Map<Symbol, Float>> localVarDist, Map<Triple<Symbol, Integer, Symbol>, Integer> localVarCounter) {
         Map<Pair<Symbol, Integer>, Float> totalLocalVarQRatio = new HashMap<>();
         for (Pair<Symbol, Integer> keyPair : qDist.keySet()) {
             Map<Symbol, Float> candidateProbs = qDist.get(keyPair);
+            float totalLocalVarProb = 0f;
             // find the local variables down from each pair
             for (Symbol candidate : candidateProbs.keySet()) {
                 if (getSymbols().containsValue(candidate)) {
                     // this is a local variable
                     float prob = candidateProbs.get(candidate);
                     totalLocalVarQRatio.put(keyPair, totalLocalVarQRatio.getOrDefault(keyPair, 0f) + prob);
+                    totalLocalVarProb += prob;
                 }
             }
             for (Symbol localVar : candidateProbs.keySet()) {
@@ -190,10 +195,18 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                     float prob = candidateProbs.get(localVar);
                     float localVarWeight = prob * getSymbols().size() * totalLocalVarQRatio.get(keyPair);
                     localVarDist.computeIfAbsent(keyPair, k -> new HashMap<>()).put(localVar, localVarWeight);
-                    localVarCounter.put(new Triple<>(keyPair.a, keyPair.b, localVar), localVarCounter.getOrDefault(new Triple<>(keyPair.a, keyPair.b, localVar), 0) + 1);
+                    localVarCounter.put(Triple.of(keyPair.a, keyPair.b, localVar), localVarCounter.getOrDefault(Triple.of(keyPair.a, keyPair.b, localVar), 0) + 1);
+                    qDist.get(keyPair).put(localVar, 0f); // reset the probability so the qDist could be salvaged up
+                } else {
+                    // this is not a local variable within the scope, scale the probability up
+                    float scale = 1 - totalLocalVarProb;
+                    float prob = candidateProbs.get(localVar);
+                    qDist.get(keyPair).put(localVar, prob / scale);
                 }
             }
         }
+        // after dumping the local variables, the qDist of the current node is now localized to the parent node, and can be used for the parent node's update.
+        active = false;
     }
     
     public Symbol getRootSymbol() {
@@ -260,5 +273,8 @@ public class RLScopeTreeNode extends ScopeTreeNode {
             }
         }
         return totalLocalVarProb;
+    }
+    public boolean isActive() {
+        return active;
     }
 }
