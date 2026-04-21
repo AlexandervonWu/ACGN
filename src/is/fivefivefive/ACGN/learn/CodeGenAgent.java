@@ -205,6 +205,8 @@ public class CodeGenAgent {
         maxScopeDepth = 0; // reset the max scope depth for each new generation
         currentAns.setScope(rootScope);
         generationStack = new Stack<>(); // reset the generation stack for each new generation
+        edgeMap = new HashMap<>(); // reset the edge map for each new generation
+        downlinkEdgeMap = new HashMap<>(); // reset the downlink edge map for each new generation
         // System.err.println("rootScope dist: " + rootScope.getqDist());
         generateNextNode(rootNode, 1, rootScope);
         Generator generator = new Generator();
@@ -356,7 +358,7 @@ public class CodeGenAgent {
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
             } else {
-                Map<Symbol, Float> sigProbabilities = Probability.coarseTokenProbabilities(gv, dynamicUniqueNodes, qtRoot, i);
+                Map<Symbol, Float> sigProbabilities = qTable.get(Pair.of(qtRoot, i));
                 nextRandom -= endProb;
                 float cumulativeProbability = 0.0f;
                 for (Map.Entry<Symbol, Float> entry : sigProbabilities.entrySet()) {
@@ -377,6 +379,7 @@ public class CodeGenAgent {
                         break;
                     }
                 }
+                i++;
             }
         }
         qtScope.localizeQDist(globalQTable);
@@ -403,6 +406,11 @@ public class CodeGenAgent {
         generateNextNode(relDeclNode, 1, currentScope);
         Symbol typeSig = typeCheckSymbol(relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol());
         AugmentedNode sigNode = dynamicUniqueNodes.get(typeSig);
+        if (sigNode == null) {
+            System.out.println(actionSequence);
+            System.err.println(typeSig.getName() + " is not found in the unique nodes for relation declaration under " + relDeclRoot.getName());
+            throw new RuntimeException("Type checking failed for relation declaration. Cannot find signature node for type: " + typeSig.getName());
+        }
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
         MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
@@ -526,6 +534,10 @@ public class CodeGenAgent {
         // Invariants: 1. the local reward for the current action is already calculated and stored in the edgeRewardMap; 
         // 2. update it iteratively up, once at a time, tracking the uncolored MASG edges only. 
         // TODO: Define the order of backpropagation first. 
+        if (source instanceof PredRootSymbol) {
+            updateQTable(DummySymbol.DUMMY_PREDROOT, position, selection, reward, currentScope);
+            return;
+        }
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         if (!qTable.containsKey(Pair.of(source, position)) || !qTable.get(Pair.of(source, position)).containsKey(selection)) {
             throw new IllegalArgumentException("Q-table entry missing for symbol: " + source.getName() + " at position: " + position + " with selection: " + selection.getName());

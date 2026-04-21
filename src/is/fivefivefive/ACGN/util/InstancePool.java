@@ -80,7 +80,7 @@ public class InstancePool {
         }
     }
     private AlloyInstance head;
-    private AlloyInstance tail;
+    // private AlloyInstance tail;
     private int size;
     private final int capacity;
     private final Map<Integer, DoublyLinkedList> frequencyMap; // Map from usage frequency to list of instances with that frequency
@@ -92,7 +92,7 @@ public class InstancePool {
         this.capacity = capacity;
         this.size = 0;
         this.head = null;
-        this.tail = null;
+        // this.tail = null;
         this.frequencyMap = new HashMap<>();
         this.instanceMap = new HashMap<>();
         this.uniqueKey = new HashMap<>();
@@ -111,6 +111,9 @@ public class InstancePool {
                 DoublyLinkedList leastFrequentList = frequencyMap.get(1); // get the list of instances with usage frequency 1
                 if (leastFrequentList != null && !leastFrequentList.isEmpty()) {
                     AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
+                    if (head == leastFrequentInstance) {
+                        head = leastFrequentInstance.next; // update head if necessary
+                    }
                     instanceMap.remove(uniqueKey.get(leastFrequentInstance.instance)); // remove from instance map
                     size--;
                 }
@@ -119,6 +122,9 @@ public class InstancePool {
             instanceMap.put(uniqueKey.get(instance), newInstance); // add to instance map
             frequencyMap.computeIfAbsent(1, k -> new DoublyLinkedList()).add(newInstance); // add to frequency map
             size++;
+            if (size == 1) {
+                head = newInstance; // set head if this is the first instance
+            }
             minFrequency = 1; // reset minimum frequency to 1 for the new instance
         }
     }
@@ -146,6 +152,9 @@ public class InstancePool {
             AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
             instanceMap.remove(uniqueKey.get(leastFrequentInstance.instance)); // remove from instance map
             size--;
+            if (size == 0) {
+                head = null; // reset head if the pool is now empty
+            }
         }
     }
     public int size() {
@@ -156,7 +165,7 @@ public class InstancePool {
     }
     public void clear() {
         head = null;
-        tail = null;
+        // tail = null;
         size = 0;
     }
     public int getCapacity() {
@@ -201,15 +210,6 @@ public class InstancePool {
     }
     public A4Solution getHead() {
         return head.instance;
-    }
-    public A4Solution getTail() {
-        return tail.instance;
-    }
-    public void setHead(AlloyInstance head) {
-        this.head = head;
-    }
-    public void setTail(AlloyInstance tail) {
-        this.tail = tail;
     }
     public int getUsageFrequency(A4Solution instance) {
         if (instanceMap.containsKey(uniqueKey.get(instance))) {

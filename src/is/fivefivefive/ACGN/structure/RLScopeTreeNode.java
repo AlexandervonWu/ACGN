@@ -41,39 +41,45 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
     }
+    private void copyFromParent(RLScopeTreeNode parent) {
+        // deep copy except the symbols which are invariant hashes
+        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
+        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        parent.deready();
+    }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent) {
         super(id, parent);
         
         // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
         this.qDist = new HashMap<>();
         // deep copy except the symbols which are invariant hashes
-        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
-        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        if (parent != null) {
+            copyFromParent(parent);
+        }
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
-        parent.deready();
     }
     public RLScopeTreeNode(int id, RLScopeTreeNode parent, Multigraph affl) {
         super(id, parent, affl);
         // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
         this.qDist = new HashMap<>();
         // deep copy except the symbols which are invariant hashes
-        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
-        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        if (parent != null) {
+            copyFromParent(parent);
+        }
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
-        parent.deready();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, RLScopeTreeNode parent, Multigraph affl) {
         super(id, symbols, parent, affl);
         // this.qDist = parent == null ? new HashMap<>() : parent.getqDist();
         this.qDist = new HashMap<>();
         // deep copy except the symbols which are invariant hashes
-        parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
-        parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
+        if (parent != null) {
+            copyFromParent(parent);
+        }
         this.sigCorr = new HashMap<>();
         this.qDistBackup = new HashMap<>();
-        parent.deready();
     }
     public RLScopeTreeNode(int id, Map<String, Symbol> symbols, ScopeTreeNode parent, Multigraph affl, Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qDist) {
         super(id, symbols, parent, affl);

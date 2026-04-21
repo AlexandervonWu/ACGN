@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.exceptions.ScopeNotReadyException;
 import is.fivefivefive.ACGN.learn.CodeGenAgent;
 import is.fivefivefive.ACGN.learn.Hyperparams;
 import is.fivefivefive.ACGN.learn.RLAgentFrame;
@@ -54,7 +55,7 @@ public class RLTest {
         }
     }
 
-    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException {
+    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException, ScopeNotReadyException {
         CompModule cm = Rewarder.fromFile(path);
         if (cm == null) {
             System.out.println("Failed to compile Alloy module at " + path);
@@ -126,13 +127,21 @@ public class RLTest {
                 System.out.println("Successfully learned the predicate: ");
                 System.out.println(nextPredCode);
                 return Pair.of(true, i + 1.0);
+            } else {
+                try {
+                    agent.backpropagate((float) reward);
+                } catch (Exception e) {
+                    System.out.println("Error during backpropagation: " + e.getMessage());
+                    System.out.println("in file " + path);
+                    throw e;
+                }
             }
         }
         System.out.println("Failed to learn the predicate within the maximum steps.");
         return Pair.of(false, maxReward);
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException, ScopeNotReadyException {
         System.setOut(outputStream);
         System.setErr(errorStream);
         GlobalVariables gv = GlobalVariables.readFromFile("global_variables.ser");
@@ -221,6 +230,8 @@ public class RLTest {
                 }
             } catch (FileNotFoundException e) {
                 System.out.println("File not found: " + path);
+            } catch (ScopeNotReadyException e) {
+                System.out.println("Scope not ready: " + path);
             }
         }
     }
