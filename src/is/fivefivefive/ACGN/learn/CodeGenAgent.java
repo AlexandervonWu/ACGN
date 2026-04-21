@@ -29,11 +29,13 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.etc.Triple;
+import is.fivefivefive.ACGN.exceptions.ScopeNotReadyException;
 import is.fivefivefive.ACGN.structure.RLScopeTreeNode;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.Probability;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.alloyasg.exceptions.ScopeNotFoundException;
 import is.fivefivefive.alloyasg.vector.Vector1D;
 import parser.etc.Pair;
 
@@ -233,6 +235,7 @@ public class CodeGenAgent {
             AugmentedNode qtNode = fillHoleQt(source, scope);
             currentAns.addVertex(qtNode);
             MASGEdge edge = localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
+            edge.setScope(scope);
             generationStack.push(edge);
             edgeMap.put(Triple.of(source, position, qtNode.getSymbol()), edge);
             downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
@@ -243,6 +246,7 @@ public class CodeGenAgent {
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.addVertex(nextNode);
         MASGEdge edge = localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
+        edge.setScope(scope);
         edgeMap.put(Triple.of(source, position, nextNode.getSymbol()), edge);
         downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
         generationStack.push(edge);
@@ -325,6 +329,7 @@ public class CodeGenAgent {
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
         MASGEdge edge = qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
+        edge.setScope(qtScope);
         generationStack.push(edge);
         edgeMap.put(Triple.of(qtRoot, 1, qt1), edge);
         downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(edge);
@@ -343,6 +348,7 @@ public class CodeGenAgent {
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 currentAns.addVertex(endNode);
                 MASGEdge endEdge = qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
+                endEdge.setScope(qtScope);
                 generationStack.push(endEdge);
                 edgeMap.put(Triple.of(qtRoot, i, endSymbol), endEdge);
                 downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(endEdge);
@@ -363,6 +369,7 @@ public class CodeGenAgent {
                         AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.addVertex(anDown);
                         MASGEdge relDeclEdge = currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
+                        relDeclEdge.setScope(qtScope);
                         edgeMap.put(Triple.of(qtRoot, i, relDeclRoot), relDeclEdge);
                         downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(relDeclEdge);
                         generationStack.push(relDeclEdge);
@@ -399,6 +406,7 @@ public class CodeGenAgent {
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
         MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
+        relDeclEdge.setScope(currentScope);
         generationStack.push(relDeclEdge);
         edgeMap.put(Triple.of(relDeclRoot, 1, typeSig), relDeclEdge);
         downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(relDeclEdge);
@@ -415,6 +423,7 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 MASGEdge endEdge = relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
+                endEdge.setScope(currentScope);
                 edgeMap.put(Triple.of(relDeclRoot, i, endSymbol), endEdge);
                 downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(endEdge);
                 generationStack.push(endEdge);
@@ -601,58 +610,42 @@ public class CodeGenAgent {
         edgeRewardMap.put(Pair.of(source, position), localReward);
         return localReward;
     }
-
-    public void backpropagateReward(float reward) {
-        List<MASGEdge> edges = currentAns.getEdges();
-        Map<Pair<Symbol, Integer>, Set<Symbol>> children = new HashMap<>();
-        Map<Symbol, Set<Pair<Symbol, Integer>>> parents = new HashMap<>();
-        for (MASGEdge edge : edges) {
+    
+    /**
+     * Backpropagates the reward through the generated code structure.
+     * @param reward the reward to backpropagate
+     * @throws ScopeNotReadyException if any scope is not ready
+     */
+    public void backpropagate(float reward) throws ScopeNotReadyException {
+        // edges from the stack
+        while (!generationStack.isEmpty()) {
+            MASGEdge edge = generationStack.pop();
+            RLScopeTreeNode scope = edge.getScope();
+            if (scope == null) {
+                throw new ScopeNotReadyException("Scope not found for edge: " + edge.getSource().getSymbol().getName() + " -> " + edge.getTarget().getSymbol().getName() + " at position " + edge.getPosition());
+            } else if (!scope.isReady()) {
+                throw new ScopeNotReadyException("Scope not ready for edge: " + edge.getSource().getSymbol().getName() + " -> " + edge.getTarget().getSymbol().getName() + " at position " + edge.getPosition());
+            }
             Symbol source = edge.getSource().getSymbol();
-            Symbol target = edge.getTarget().getSymbol();
             int position = edge.getPosition();
-            children.putIfAbsent(Pair.of(source, position), new LinkedHashSet<>());
-            children.get(Pair.of(source, position)).add(target);
-            parents.putIfAbsent(target, new LinkedHashSet<>());
-            parents.get(target).add(Pair.of(source, position));
-        }
-        Queue<Pair<Symbol, Integer>> queue = new LinkedList<>();
-        Map<Pair<Symbol, Integer>, Integer> remaining = new HashMap<>();
-        for (Map.Entry<Pair<Symbol, Integer>, Set<Symbol>> entry : children.entrySet()) {
-            Pair<Symbol, Integer> parent = entry.getKey();
-            Set<Symbol> childSet = entry.getValue();
-            boolean allLeaves = true;
-            int leafOffset = 0;
-            for (Symbol child : childSet) {
-                if (!leaves.contains(child)) {
-                    allLeaves = false;
-                    leafOffset++;
-                }
+            Symbol target = edge.getTarget().getSymbol();
+            float edgeReward = localReward(source, position, target, reward, scope);
+            updateQTable(source, position, target, edgeReward, scope);
+            MASGEdge nextEdge = generationStack.empty() ? null : generationStack.peek();
+            if (nextEdge == null) break;
+            RLScopeTreeNode nextScope = nextEdge.getScope();
+            if (nextScope == null) {
+                throw new ScopeNotReadyException("Scope not found for next edge: " + nextEdge.getSource().getSymbol().getName() + " -> " + nextEdge.getTarget().getSymbol().getName() + " at position " + nextEdge.getPosition());
+            } else if (!nextScope.isReady()) {
+                throw new ScopeNotReadyException("Scope not ready for next edge: " + nextEdge.getSource().getSymbol().getName() + " -> " + nextEdge.getTarget().getSymbol().getName() + " at position " + nextEdge.getPosition());
             }
-            if (allLeaves) {
-                queue.offer(parent);
-            }
-            remaining.put(parent, childSet.size() - leafOffset);
-        }
-        while (!queue.isEmpty()) {
-            Pair<Symbol, Integer> current = queue.poll();
-            Symbol source = current.a;
-            int position = current.b;
-            Set<Symbol> childSet = children.get(current);
-            // TODO: calculate the reward for the current node based on its children and the edge rewards
-            for (Symbol child : childSet) {
-                visitedScopes = new HashSet<RLScopeTreeNode>();
-                float edgeReward = localReward(source, position, child, reward, rootScope);
-                edgeRewardMap.put(Pair.of(source, position), edgeReward);
-                updateQTable(source, position, child, edgeReward, rootScope);
-            }
-            for (Pair<Symbol, Integer> parent : parents.get(source)) {
-                int rem = remaining.get(parent) - 1;
-                remaining.put(parent, rem);
-                if (rem == 0) {
-                    queue.offer(parent);
-                }
+            if (nextScope != scope) {
+                // scope end;
+                scope.dumpLocalVariables(localVarDist,localVarCounter);
+                nextScope.poll();
             }
         }
+        globalQTable = rootScope.getqDist(); // update the global Q-table with the one from the root scope after backpropagation
     }
     /*
      * // TODOS: 

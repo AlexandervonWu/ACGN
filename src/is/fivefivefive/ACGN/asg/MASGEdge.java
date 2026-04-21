@@ -50,6 +50,9 @@ public class MASGEdge implements Serializable {
     public RLScopeTreeNode getScope() {
         return scope;
     }
+    public void setScope(RLScopeTreeNode scope) {
+        this.scope = scope;
+    }
     public int getDepthInNode() {
         return depthInNode;
     }
