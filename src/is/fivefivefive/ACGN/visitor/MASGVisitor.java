@@ -543,6 +543,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
             int semantic = labelAndSemantics.b;
             Symbol midSym = new MiddleSymbol(label);
+            midSym.setMaxDownlinks(1);
             AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
             uniqueNode.put(midSym, midNode);
             updateTimeOfVisit(midNode, arg);
@@ -557,6 +558,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
             int semantic = labelAndSemantics.b;
             Symbol midSym = new MiddleSymbol(label);
+            midSym.setMaxDownlinks(2);
             AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
             uniqueNode.put(midSym, midNode);
             updateTimeOfVisit(midNode, arg);
