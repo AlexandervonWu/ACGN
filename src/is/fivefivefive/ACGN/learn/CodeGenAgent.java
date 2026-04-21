@@ -642,7 +642,7 @@ public class CodeGenAgent {
             if (nextScope != scope) {
                 // scope end;
                 scope.dumpLocalVariables(localVarDist,localVarCounter);
-                nextScope.poll();
+                if (!nextScope.isReady()) nextScope.poll();
             }
         }
         globalQTable = rootScope.getqDist(); // update the global Q-table with the one from the root scope after backpropagation
