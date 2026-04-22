@@ -1,6 +1,7 @@
 package is.fivefivefive.ACGN.alloy;
 
 public final class ShadowSymbol extends AbstractSymbol {
+    public static final ShadowSymbol SHADOW = new ShadowSymbol();
     public ShadowSymbol() {
         super();
     }

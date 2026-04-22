@@ -48,7 +48,8 @@ public class DummySymbol extends AbstractSymbol {
     public static final DummySymbol DUMMY_SIG = new DummySymbol("sig");
     public static final DummySymbol DUMMY_FIELD = new DummySymbol("field");
     public static final DummySymbol DUMMY_REF = new DummySymbol("ref");
+    public static final DummySymbol DUMMY_LET = new DummySymbol("let");
     public static final DummySymbol DUMMY_SUBSET = new DummySymbol("subset");
     public static final DummySymbol DUMMY_PREDROOT = new DummySymbol("predroot"); 
-    public static final List<DummySymbol> ALL_DUMMIES = List.of(DUMMY_LOCAL_VAR, DUMMY_GLOBAL_VAR, DUMMY_SIG, DUMMY_FIELD, DUMMY_REF, DUMMY_SUBSET, DUMMY_PREDROOT);
+    public static final List<DummySymbol> ALL_DUMMIES = List.of(DUMMY_LOCAL_VAR, DUMMY_GLOBAL_VAR, DUMMY_SIG, DUMMY_FIELD, DUMMY_REF, DUMMY_LET, DUMMY_SUBSET, DUMMY_PREDROOT);
 }

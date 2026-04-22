@@ -95,7 +95,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
     private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
-    public static final Symbol SHADOW_SYMBOL = new ShadowSymbol();
+    public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
     public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
@@ -786,7 +786,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
             letNode.setMaxDownlinks(3);
             Symbol refSymbol = new RefSymbol(letNode, varExpr.getName());
-            coarseToFineBin.get(DummySymbol.DUMMY_REF).add(refSymbol);
+            coarseToFineBin.get(DummySymbol.DUMMY_LET).add(refSymbol);
             uniqueNode.put(refSymbol, letNode);
             child.addSymbol(refSymbol);
             letNode.setSymbol(refSymbol);

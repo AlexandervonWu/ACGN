@@ -20,6 +20,7 @@ import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.SetSymbol;
+import is.fivefivefive.ACGN.alloy.ShadowSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
@@ -112,7 +113,18 @@ public class CodeGenAgent {
     public int getInitializationState() {
         return initializationState;
     }
-
+    private void connect(AugmentedNode source, AugmentedNode target, int position, RLScopeTreeNode scope) {
+        if (source.equals(target)) {
+            // create shadow instead
+            connect(source, dynamicUniqueNodes.get(ShadowSymbol.SHADOW), position, scope);
+            return;
+        }
+        MASGEdge edge = source.connect(target, position, currentAns, tovMap.getOrDefault(source.getSymbol(), 1));
+        edge.setScope(scope);
+        generationStack.push(edge);
+        edgeMap.put(Triple.of(source.getSymbol(), position, target.getSymbol()), edge);
+        downlinkEdgeMap.computeIfAbsent(source.getSymbol(), k -> new ArrayList<>()).add(edge);
+    }
     public Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialCoarseQTable() {
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = new HashMap<>();
         Map<Pair<Symbol, Integer>, Set<Symbol>> edgeMap = gv.getCoarseGrainCandidateMap();
@@ -136,7 +148,12 @@ public class CodeGenAgent {
             System.err.println("Coarse probabilities for " + key.a.getName() + " at position " + key.b + ": " + coarseProbabilities);
             Map<Symbol, Float> fineProbabilities = coarseToFineInit(coarseProbabilities);
             System.err.println("Fine probabilities for " + key.a.getName() + " at position " + key.b + ": " + fineProbabilities);
-            fineQTable.put(key, fineProbabilities);
+            // remove undefined behavior for tokens with no fine candidates
+            if (!fineProbabilities.isEmpty()) {
+                fineQTable.put(key, fineProbabilities); 
+            } else {
+
+            }
         }
         this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
         this.scopeDepthMap.put(0, new HashSet<>());
@@ -236,22 +253,14 @@ public class CodeGenAgent {
         if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
             AugmentedNode qtNode = fillHoleQt(source, scope);
             currentAns.addVertex(qtNode);
-            MASGEdge edge = localParent.connect(qtNode, position, currentAns, tovMap.getOrDefault(source, 1));
-            edge.setScope(scope);
-            generationStack.push(edge);
-            edgeMap.put(Triple.of(source, position, qtNode.getSymbol()), edge);
-            downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
+            connect(localParent, qtNode, position, scope);
             // TODO: recursively generate downstream
             return 0; // success
         }
         Symbol nextToken = fillHole(source, position, scope);
         AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
         currentAns.addVertex(nextNode);
-        MASGEdge edge = localParent.connect(nextNode, position, currentAns, tovMap.getOrDefault(source, 1));
-        edge.setScope(scope);
-        edgeMap.put(Triple.of(source, position, nextNode.getSymbol()), edge);
-        downlinkEdgeMap.computeIfAbsent(source, k -> new ArrayList<>()).add(edge);
-        generationStack.push(edge);
+        connect(localParent, nextNode, position, scope);
         if (nextToken instanceof EndSymbol) {
             leaves.add(nextToken);
             return -1; // end symbol reached, pass a signal to stop further generation in this branch
@@ -330,11 +339,7 @@ public class CodeGenAgent {
         currentAns.addVertex(qt1Node);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
-        MASGEdge edge = qtNode.connect(qt1Node, 1, currentAns, tovMap.get(qtRoot));
-        edge.setScope(qtScope);
-        generationStack.push(edge);
-        edgeMap.put(Triple.of(qtRoot, 1, qt1), edge);
-        downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(edge);
+        connect(qtNode, qt1Node, 1, qtScope);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
         Random random = new Random();
@@ -349,11 +354,7 @@ public class CodeGenAgent {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
                 currentAns.addVertex(endNode);
-                MASGEdge endEdge = qtNode.connect(endNode, i, currentAns, tovMap.get(qtRoot));
-                endEdge.setScope(qtScope);
-                generationStack.push(endEdge);
-                edgeMap.put(Triple.of(qtRoot, i, endSymbol), endEdge);
-                downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(endEdge);
+                connect(qtNode, endNode, i, qtScope);
                 leaves.add(endSymbol);
                 actionSequence.add(qtRoot.getName() + ", " + i + ", <END>");
                 break;
@@ -370,11 +371,7 @@ public class CodeGenAgent {
                         Symbol relDeclRoot = sig;
                         AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.addVertex(anDown);
-                        MASGEdge relDeclEdge = currentAns.connect(qtNode, anDown, currentAns, i, tovMap.get(qtRoot));
-                        relDeclEdge.setScope(qtScope);
-                        edgeMap.put(Triple.of(qtRoot, i, relDeclRoot), relDeclEdge);
-                        downlinkEdgeMap.computeIfAbsent(qtRoot, k -> new ArrayList<>()).add(relDeclEdge);
-                        generationStack.push(relDeclEdge);
+                        connect(qtNode, anDown, i, qtScope);
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
                         break;
                     }
@@ -413,11 +410,7 @@ public class CodeGenAgent {
         }
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
-        MASGEdge relDeclEdge = relDeclNode.connect(sigNode, 1, currentAns, tovMap.get(relDeclRoot));
-        relDeclEdge.setScope(currentScope);
-        generationStack.push(relDeclEdge);
-        edgeMap.put(Triple.of(relDeclRoot, 1, typeSig), relDeclEdge);
-        downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(relDeclEdge);
+        connect(sigNode, relDeclNode, 1, currentScope);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
@@ -430,11 +423,7 @@ public class CodeGenAgent {
             if (nextRandom < endProb) {
                 Symbol endSymbol = MASGVisitor.END_SYMBOL;
                 AugmentedNode endNode = dynamicUniqueNodes.get(endSymbol);
-                MASGEdge endEdge = relDeclNode.connect(endNode, i, currentAns, tovMap.get(relDeclRoot));
-                endEdge.setScope(currentScope);
-                edgeMap.put(Triple.of(relDeclRoot, i, endSymbol), endEdge);
-                downlinkEdgeMap.computeIfAbsent(relDeclRoot, k -> new ArrayList<>()).add(endEdge);
-                generationStack.push(endEdge);
+                connect(relDeclNode, endNode, i, currentScope);
                 leaves.add(endSymbol);
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;

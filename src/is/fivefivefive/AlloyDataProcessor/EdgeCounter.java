@@ -1,6 +1,7 @@
 package is.fivefivefive.AlloyDataProcessor;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
+import is.fivefivefive.ACGN.alloy.LetSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
@@ -94,6 +95,8 @@ public class EdgeCounter {
             return DummySymbol.DUMMY_GLOBAL_VAR;
         } else if (original instanceof VarSymbol && !((VarSymbol) original).isGlobal()) {
             return DummySymbol.DUMMY_LOCAL_VAR;
+        } else if (original instanceof LetSymbol) {
+            return DummySymbol.DUMMY_LET;
         } else if (original instanceof RefSymbol) {
             return DummySymbol.DUMMY_REF;
         } else if (original instanceof FieldRelation) {
