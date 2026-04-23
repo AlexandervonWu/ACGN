@@ -239,7 +239,7 @@ public class CodeGenAgent {
         coarseToFineBin.put(DummySymbol.DUMMY_LOCAL_VAR, new LinkedHashSet<>()); // reset the local var bin for each new generation
         dynamicUniqueNodes.put(root, rootNode);
         rootNode.setSymbol(root);
-        Multigraph predGraph = new Multigraph(rootNode, gv);
+        // Multigraph predGraph = new Multigraph(rootNode, gv);
         // rootScope.setqDist(globalQTable); // set the Q-table of the root scope to the global Q-table before generation
         currentAns.addVertex(rootNode);
         rootScope.resetChildren(); // reset the children of the root scope before generation to avoid interference from previous generations
@@ -256,11 +256,12 @@ public class CodeGenAgent {
             e.printStackTrace();
             return generateNextPred(predName); // restart generation if exceeded max steps to avoid getting stuck;
         }
-        
+        System.out.println("Generation completed with " + stepNum + " steps. ");
         Generator generator = new Generator();
         String code = null;
         try {
-            code = generator.toCode(predGraph, predGraph.getRoot(), 1);
+            code = generator.toCode(currentAns, rootNode, 1);
+            System.out.println("Generated code for " + predName + ":\n" + code);
         } catch (Exception e) {
             System.out.println("Error during code generation: " + e.getMessage());
             e.printStackTrace();
@@ -278,6 +279,7 @@ public class CodeGenAgent {
             // update the times of visit only for the first position for each visit
             tovMap.putIfAbsent(localParent.getSymbol(), 0);
             tovMap.put(localParent.getSymbol(), tovMap.get(localParent.getSymbol()) + 1);
+            currentAns.updateTimeOfVisitMap(localParent, tovMap.get(localParent.getSymbol()));
         }
         stepNum++;
         Symbol source = localParent.getSymbol();
@@ -370,6 +372,7 @@ public class CodeGenAgent {
         currentAns.addVertex(qt1Node);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
+        currentAns.updateTimeOfVisitMap(qtNode, tovMap.get(qtRoot));
         connect(qtNode, qt1Node, 1, qtScope);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
