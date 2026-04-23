@@ -268,6 +268,7 @@ public class CodeGenAgent {
             return null;
         }
         this.globalQTable = rootScope.getqDist(); // update the global Q-table with the one from the root scope after generation
+        treeId++; // increment the tree ID for the next generation
         return code;
     }
 
@@ -435,17 +436,13 @@ public class CodeGenAgent {
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
         generateNextNode(relDeclNode, 1, currentScope);
-        Symbol typeSig = typeCheckSymbol(relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol());
-        AugmentedNode sigNode = dynamicUniqueNodes.get(typeSig);
-        if (sigNode == null) {
-            System.out.println(actionSequence);
-            System.err.println(typeSig.getName() + " is not found in the unique nodes for relation declaration under " + relDeclRoot.getName());
-            throw new RuntimeException("Type checking failed for relation declaration. Cannot find signature node for type: " + typeSig.getName());
-        }
+        Symbol fullTypeSig = relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol();
+        Symbol typeSig = typeCheckSymbol(fullTypeSig);
+        AugmentedNode sigNode = dynamicUniqueNodes.get(fullTypeSig);
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
         currentAns.updateTimeOfVisitMap(relDeclNode, tovMap.get(relDeclRoot));
-        connect(sigNode, relDeclNode, 1, currentScope);
+        connect(relDeclNode, sigNode, 1, currentScope);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
