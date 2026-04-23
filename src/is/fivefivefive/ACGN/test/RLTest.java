@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
+import is.fivefivefive.ACGN.exceptions.ExceedMaxStepException;
 import is.fivefivefive.ACGN.exceptions.ScopeNotReadyException;
 import is.fivefivefive.ACGN.learn.CodeGenAgent;
 import is.fivefivefive.ACGN.learn.Hyperparams;
@@ -55,7 +56,7 @@ public class RLTest {
         }
     }
 
-    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException, ScopeNotReadyException {
+    private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException, ScopeNotReadyException, ExceedMaxStepException {
         CompModule cm = Rewarder.fromFile(path);
         if (cm == null) {
             System.out.println("Failed to compile Alloy module at " + path);
@@ -141,7 +142,7 @@ public class RLTest {
         return Pair.of(false, maxReward);
     }
 
-    public static void main(String[] args) throws FileNotFoundException, ScopeNotReadyException {
+    public static void main(String[] args) throws FileNotFoundException, ScopeNotReadyException, ExceedMaxStepException {
         System.setOut(outputStream);
         System.setErr(errorStream);
         GlobalVariables gv = GlobalVariables.readFromFile("global_variables.ser");
@@ -232,6 +233,8 @@ public class RLTest {
                 System.out.println("File not found: " + path);
             } catch (ScopeNotReadyException e) {
                 System.out.println("Scope not ready: " + path);
+            } catch (ExceedMaxStepException e) {
+                System.out.println("Exceeded max steps during learning: " + path);
             }
         }
     }

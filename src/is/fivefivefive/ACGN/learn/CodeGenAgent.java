@@ -30,6 +30,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.codegen.Generator;
 import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.etc.Triple;
+import is.fivefivefive.ACGN.exceptions.ExceedMaxStepException;
 import is.fivefivefive.ACGN.exceptions.ScopeNotReadyException;
 import is.fivefivefive.ACGN.structure.RLScopeTreeNode;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
@@ -143,6 +144,7 @@ public class CodeGenAgent {
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> initialQTable = initialCoarseQTable();
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> fineQTable = new HashMap<>();
         // System.err.println("Initial Q-table for predroot at 1: " + initialQTable.get(Pair.of(DummySymbol.DUMMY_PREDROOT, 1)));
+        Set<Symbol> deadendSymbols = new HashSet<>(); // track the symbols that lead to dead ends (no fine candidates) for pruning
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
             Map<Symbol, Float> coarseProbabilities = initialQTable.get(key);
             System.err.println("Coarse probabilities for " + key.a.getName() + " at position " + key.b + ": " + coarseProbabilities);
@@ -152,8 +154,30 @@ public class CodeGenAgent {
             if (!fineProbabilities.isEmpty()) {
                 fineQTable.put(key, fineProbabilities); 
             } else {
-
+                int maxDownlinks = key.a.getMaxDownlinks();
+                if (maxDownlinks != -1) {
+                    // remove the entry; 
+                    deadendSymbols.add(key.a);
+                } else {
+                    fineProbabilities.put(MASGVisitor.END_SYMBOL, 1.0f); // if it is a position without valid subtokens, replace it with end
+                    fineQTable.put(key, fineProbabilities);
+                }
             }
+        }
+        // remove all deadend references from the Qtable
+        for (Symbol deadend : deadendSymbols) {
+            fineQTable.entrySet().removeIf(entry -> entry.getKey().a.equals(deadend));
+            // also remove them from positions down from other symbols
+            fineQTable.entrySet().forEach(entry -> {
+                Map<Symbol, Float> probs = entry.getValue();
+                if (probs.keySet().removeIf(sym -> sym.equals(deadend))) {
+                    // if any symbol is removed, we need to rescale the probabilities
+                    float totalProb = probs.values().stream().reduce(0.0f, Float::sum);
+                    for (Map.Entry<Symbol, Float> e : probs.entrySet()) {
+                        e.setValue(e.getValue() / totalProb);
+                    }
+                }
+            });
         }
         this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
         this.scopeDepthMap.put(0, new HashSet<>());
@@ -204,7 +228,7 @@ public class CodeGenAgent {
         return fineProbabilities;
     }
     
-    public String generateNextPred(String predName) {
+    public String generateNextPred(String predName) throws ExceedMaxStepException {
         currentAns = new Multigraph();
         // rootScope = new RLScopeTreeNode(treeId, visitor.getRootScope(), currentAns);
         rlScopeTreeNodeId = 100; // reset the scope tree node id for each new generation
@@ -225,7 +249,14 @@ public class CodeGenAgent {
         edgeMap = new HashMap<>(); // reset the edge map for each new generation
         downlinkEdgeMap = new HashMap<>(); // reset the downlink edge map for each new generation
         // System.err.println("rootScope dist: " + rootScope.getqDist());
-        generateNextNode(rootNode, 1, rootScope);
+        try {
+            generateNextNode(rootNode, 1, rootScope);
+        } catch (ExceedMaxStepException e) {
+            System.out.println("Generation exceeded maximum steps: " + e.getMessage());
+            e.printStackTrace();
+            return generateNextPred(predName); // restart generation if exceeded max steps to avoid getting stuck;
+        }
+        
         Generator generator = new Generator();
         String code = null;
         try {
@@ -239,9 +270,9 @@ public class CodeGenAgent {
         return code;
     }
 
-    public int generateNextNode(AugmentedNode localParent, int position, RLScopeTreeNode scope) {
+    public int generateNextNode(AugmentedNode localParent, int position, RLScopeTreeNode scope) throws ExceedMaxStepException {
         if (stepNum > MAX_STEPS) {
-            throw new RuntimeException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
+            throw new ExceedMaxStepException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
         }
         if (position == 1) {
             // update the times of visit only for the first position for each visit
@@ -318,7 +349,7 @@ public class CodeGenAgent {
         return nextToken;
     }
 
-    private AugmentedNode fillHoleQt(Symbol qtRoot, RLScopeTreeNode currentScope) {
+    private AugmentedNode fillHoleQt(Symbol qtRoot, RLScopeTreeNode currentScope) throws ExceedMaxStepException {
         stepNum++;
         String label = qtRoot.getName();
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
@@ -391,7 +422,7 @@ public class CodeGenAgent {
         return qtNode;
     }
 
-    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode, RLScopeTreeNode currentScope) {
+    private AugmentedNode fillHoleRelDecl(Symbol relDeclRoot, AugmentedNode qtNode, RLScopeTreeNode currentScope) throws ExceedMaxStepException {
         if (!dynamicUniqueNodes.containsKey(relDeclRoot)) {
             dynamicUniqueNodes.put(relDeclRoot, new AugmentedNode(-127, 0, relDeclRoot));
         }
