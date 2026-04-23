@@ -361,6 +361,9 @@ public class CodeGenAgent {
         int semantic = labelLast - '0';
         AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot); 
         currentAns.addVertex(qtNode);
+        tovMap.putIfAbsent(qtRoot, 0);
+        tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
+        currentAns.updateTimeOfVisitMap(qtNode, tovMap.get(qtRoot));
         rlScopeTreeNodeId++;
         RLScopeTreeNode qtScope = new RLScopeTreeNode(rlScopeTreeNodeId, currentScope, currentAns);
         maxScopeDepth++;
@@ -370,9 +373,6 @@ public class CodeGenAgent {
         Symbol qt1 = fillHole(qtRoot, 1, qtScope);
         AugmentedNode qt1Node = dynamicUniqueNodes.get(qt1);
         currentAns.addVertex(qt1Node);
-        tovMap.putIfAbsent(qtRoot, 0);
-        tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
-        currentAns.updateTimeOfVisitMap(qtNode, tovMap.get(qtRoot));
         connect(qtNode, qt1Node, 1, qtScope);
         actionSequence.add(qtRoot.getName() + ", body (1)  -> " + qt1.getName());
         int i = 2; 
@@ -444,6 +444,7 @@ public class CodeGenAgent {
         }
         tovMap.putIfAbsent(relDeclRoot, 0);
         tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
+        currentAns.updateTimeOfVisitMap(relDeclNode, tovMap.get(relDeclRoot));
         connect(sigNode, relDeclNode, 1, currentScope);
         String sigName = typeSig.getName();
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        

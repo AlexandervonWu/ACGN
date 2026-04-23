@@ -233,7 +233,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
     }
     public void rescaleLocalVars(float newLocalVarProb) {
         // get the total probability of local variables in the current qDist for each parent pair, and rescale them to newLocalVarProb, while keeping the relative probabilities among the local variables unchanged.
-        if (getSymbols().containsValue(DummySymbol.DUMMY_LOCAL_VAR)) {
+        if (getParent().getSymbols().containsValue(DummySymbol.DUMMY_LOCAL_VAR)) {
             // scale the probability of DUMMY_LOCAL_VAR to newLocalVarProb, and scale the probabilities of the other candidates accordingly to keep the total probability sum to 1
             for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
                 Pair<Symbol, Integer> parentPair = entry.getKey();
@@ -253,6 +253,13 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                         }
                     }
                 }
+            }
+            // delete DUMMY_LOCAL_VAR from the qDist of the current node since it's no longer a local variable after rescaling, 
+            // and the probability mass has been redistributed to the other candidates.
+            for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
+                Pair<Symbol, Integer> parentPair = entry.getKey();
+                Map<Symbol, Float> candidateProbs = entry.getValue();
+                candidateProbs.remove(DummySymbol.DUMMY_LOCAL_VAR);
             }
             return;
         }
