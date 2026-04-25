@@ -414,7 +414,7 @@ public class CodeGenAgent {
                 i++;
             }
         }
-        qtScope.localizeQDist(globalQTable);
+        qtScope.localizeQDist(localVarDist, globalQTable);
         if (qt1.getMaxDownlinks() != 0) {
             int childPosition = 1;
             while (childPosition <= qt1.getMaxDownlinks() || qt1.getMaxDownlinks() == -1) {
@@ -520,12 +520,14 @@ public class CodeGenAgent {
         actionSequence.add("ADD_VAR " + ((VarSymbol)newVar).getHashName());
         // this.symbolId.put(this.symbolId.size(), newVar);
         symbolScopeMap.put(newVar, currentScope);
-        // update the coarse to fine bin
-        coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).add(newVar);
-        for (Pair<Symbol, Integer> key : localVarDist.keySet()) {
-            localVarDist.get(key).put(newVar, 1.0f); // initialize the local variable distribution for the new variable as 1 for all positions
-            Triple<Symbol, Integer, Symbol> counterKey = Triple.of(key.a, key.b, newVar);
-            localVarCounter.put(counterKey, 0); // initialize the local variable counter for polling scaling
+        // update the coarse to fine bin on initialization
+        if (!coarseToFineBin.containsKey(DummySymbol.DUMMY_LOCAL_VAR) || !coarseToFineBin.get(DummySymbol.DUMMY_LOCAL_VAR).contains(newVar)) {
+            coarseToFineBin.computeIfAbsent(DummySymbol.DUMMY_LOCAL_VAR, k -> new LinkedHashSet<>()).add(newVar);
+            for (Pair<Symbol, Integer> key : localVarDist.keySet()) {
+                localVarDist.get(key).put(newVar, 1.0f); // initialize the local variable distribution for the new variable as 1 for all positions
+                Triple<Symbol, Integer, Symbol> counterKey = Triple.of(key.a, key.b, newVar);
+                localVarCounter.put(counterKey, 0); // initialize the local variable counter for polling scaling
+            }
         }
         // update the dynamic unique nodes
         AugmentedNode newNode = new AugmentedNode(127, globalNewVarCounter); // var nodes have signature 127
