@@ -20,6 +20,7 @@ import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.ExtFact;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
+import is.fivefivefive.ACGN.alloy.LetSymbol;
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.RefSymbol;
@@ -785,7 +786,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
             letNode.setMaxDownlinks(3);
-            Symbol refSymbol = new RefSymbol(letNode, varExpr.getName());
+            Symbol refSymbol = new LetSymbol(letNode, varExpr.getName());
             coarseToFineBin.get(DummySymbol.DUMMY_LET).add(refSymbol);
             uniqueNode.put(refSymbol, letNode);
             child.addSymbol(refSymbol);

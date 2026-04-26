@@ -44,7 +44,7 @@ import parser.etc.Pair;
 public class CodeGenAgent {
     private GlobalVariables gv;
     // private MASGVisitor visitor; // the visitor for the specific Alloy Model
-    static final int MAX_STEPS = 500;
+    static final int MAX_STEPS = 100;
     private Multigraph groundTruth;
     private Multigraph currentAns;
     private Map<Pair<Symbol, Integer>, Map<Symbol, Float>> globalQTable;
@@ -167,17 +167,30 @@ public class CodeGenAgent {
         // remove all deadend references from the Qtable
         for (Symbol deadend : deadendSymbols) {
             fineQTable.entrySet().removeIf(entry -> entry.getKey().a.equals(deadend));
-            // also remove them from positions down from other symbols
-            fineQTable.entrySet().forEach(entry -> {
-                Map<Symbol, Float> probs = entry.getValue();
-                if (probs.keySet().removeIf(sym -> sym.equals(deadend))) {
-                    // if any symbol is removed, we need to rescale the probabilities
-                    float totalProb = probs.values().stream().reduce(0.0f, Float::sum);
-                    for (Map.Entry<Symbol, Float> e : probs.entrySet()) {
-                        e.setValue(e.getValue() / totalProb);
-                    }
+
+        }
+        // also remove them from positions down from other symbols
+        // if any symbol is removed, we need to rescale the probabilities for the remaining symbols to ensure they sum up to 1
+        for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : fineQTable.entrySet()) {
+            Pair<Symbol, Integer> key = entry.getKey();
+            Map<Symbol, Float> probMap = entry.getValue();
+            boolean modified = false;
+            for (Symbol deadend : deadendSymbols) {
+                if (probMap.containsKey(deadend)) {
+                    probMap.remove(deadend);
+                    modified = true;
                 }
-            });
+            }
+            if (modified) {
+                // rescale the probabilities
+                float sum = 0.0f;
+                for (float prob : probMap.values()) {
+                    sum += prob;
+                }
+                for (Symbol token : probMap.keySet()) {
+                    probMap.put(token, probMap.get(token) / sum);
+                }
+            }
         }
         this.rootScope.setqDist(fineQTable); // set the Q-table of the root scope to the fine-grained initialized Q-table
         this.scopeDepthMap.put(0, new HashSet<>());
@@ -244,6 +257,8 @@ public class CodeGenAgent {
         currentAns.addVertex(rootNode);
         rootScope.resetChildren(); // reset the children of the root scope before generation to avoid interference from previous generations
         maxScopeDepth = 0; // reset the max scope depth for each new generation
+        stepNum = 0; // reset the step number for each new generation
+        actionSequence = new ArrayList<>(); // reset the action sequence for each new generation
         currentAns.setScope(rootScope);
         generationStack = new Stack<>(); // reset the generation stack for each new generation
         edgeMap = new HashMap<>(); // reset the edge map for each new generation
@@ -257,6 +272,7 @@ public class CodeGenAgent {
             return generateNextPred(predName); // restart generation if exceeded max steps to avoid getting stuck;
         }
         System.out.println("Generation completed with " + stepNum + " steps. ");
+        System.out.println("Generation action sequence: " + actionSequence);
         Generator generator = new Generator();
         String code = null;
         try {
@@ -280,6 +296,7 @@ public class CodeGenAgent {
             // update the times of visit only for the first position for each visit
             tovMap.putIfAbsent(localParent.getSymbol(), 0);
             tovMap.put(localParent.getSymbol(), tovMap.get(localParent.getSymbol()) + 1);
+            System.out.println("Visiting node " + localParent.getSymbol().getName() + " at position " + position + " for the " + tovMap.get(localParent.getSymbol()) + " time(s).");
             currentAns.updateTimeOfVisitMap(localParent, tovMap.get(localParent.getSymbol()));
         }
         stepNum++;
@@ -299,6 +316,11 @@ public class CodeGenAgent {
             leaves.add(nextToken);
             return -1; // end symbol reached, pass a signal to stop further generation in this branch
         } 
+        if (nextToken instanceof ShadowSymbol) {
+            leaves.add(nextToken); // technically shadow is a leave
+            nextToken = source;
+            nextNode = localParent; // if it is a shadow symbol, we need to connect the same parent to the next node and continue generation from there
+        }
         // no need to generate siblings, since there is only one node down the root
         if (nextToken.getMaxDownlinks() != 0) {
             int childPosition = 1;
@@ -346,6 +368,8 @@ public class CodeGenAgent {
         }
         if (nextToken == null) {
             System.out.println("Incomplete Q-table set for " + source.getName() + " at position " + position);
+            System.out.println("Current Q-entry value: " + qTable.get(Pair.of(source, position)));
+            System.out.println("with cumulative probability " + cumulativeProbability + " and random value " + randomValue);
             throw new RuntimeException("No next token selected for " + source.getName() + " at position " + position);
         }
         actionSequence.add(source.getName() + ", " + position + " -> " + nextToken.getName());
@@ -460,7 +484,11 @@ public class CodeGenAgent {
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;
             }
-            addVariableDecl(sigName, treeId, qtNode, currentScope);
+            Symbol newVar = addVariableDecl(sigName, treeId, qtNode, currentScope);
+            AugmentedNode varNode = dynamicUniqueNodes.get(newVar);
+            currentAns.addVertex(varNode);
+            connect(relDeclNode, varNode, i, currentScope);
+            actionSequence.add(relDeclRoot.getName() + ", " + i + " VAR_" + sigName);
             i++;
         }
         return relDeclNode;
@@ -510,7 +538,7 @@ public class CodeGenAgent {
      * @param confinerNode The AugmentedNode that confines the variable.
      * @param currentScope The current RLScopeTreeNode representing the scope in which the variable is declared.
      */
-    public void addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode, RLScopeTreeNode currentScope) {
+    public Symbol addVariableDecl(String sigName, int treeId, AugmentedNode confinerNode, RLScopeTreeNode currentScope) {
         // add a new variable into the scope of coarse to fine bin;
         globalNewVarCounter++;
         // encoding corresponding to De Bruijn indices: the variable name is not important, but the place in the scope tree is
@@ -534,6 +562,7 @@ public class CodeGenAgent {
         currentScope.addSymbol(newVar);
         leaves.add(newVar);
         this.dynamicUniqueNodes.put(newVar, newNode);
+        return newVar;
     }
 
     private static final float INERTIA = Hyperparams.INERTIA;
