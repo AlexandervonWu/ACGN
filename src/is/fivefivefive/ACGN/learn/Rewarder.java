@@ -200,6 +200,7 @@ public class Rewarder {
             try {
                 result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
             } catch (Exception e) {
+                System.out.println("[REWARDER] Exception in " + newPredName);
                 System.out.println("Error evaluating predicate: " + e.getMessage());                
                 return 0.0;
             }

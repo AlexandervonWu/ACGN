@@ -200,8 +200,9 @@ public class CodeGenAgent {
         initialQTable = fineQTable;
         globalQTable = initialQTable; // set the global Q-table to the fine-grained initialized Q-table
         for (Pair<Symbol, Integer> key : initialQTable.keySet()) {
-            localVarDist.put(key, new HashMap<>()); // initialize local variables for each position as empty
-            // TODO: Do we need the local var counter with corresponding keys? 
+            if (globalQTable.get(key).containsKey(DummySymbol.DUMMY_LOCAL_VAR)) {
+                localVarDist.put(key, new HashMap<>()); // initialize local variables for each position as empty
+            }
         }
         if (initializationState == 0) {
             initializationState = 1;
@@ -427,6 +428,7 @@ public class CodeGenAgent {
                     float sigProb = entry.getValue();
                     cumulativeProbability += sigProb;
                     if (cumulativeProbability > nextRandom) {
+                        System.out.println("Selected signature for relation declaration: " + sig.getName() + " at position " + i + " of " + qtRoot.getName());
                         Symbol relDeclRoot = sig;
                         AugmentedNode anDown = fillHoleRelDecl(relDeclRoot, qtNode, qtScope);
                         currentAns.addVertex(anDown);
@@ -471,7 +473,7 @@ public class CodeGenAgent {
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
         while (true) {
-            if (!qTable.containsKey(Pair.of(relDeclNode, i))) break;
+            if (!qTable.containsKey(Pair.of(relDeclRoot, i))) break;
             float nextRandom = random.nextFloat();
             float endProb = qTable.get(Pair.of(relDeclRoot, i)).containsKey(MASGVisitor.END_SYMBOL) ? 
                 qTable.get(Pair.of(relDeclRoot, i)).get(MASGVisitor.END_SYMBOL) : 
@@ -484,6 +486,7 @@ public class CodeGenAgent {
                 actionSequence.add(relDeclRoot.getName() + ", " + i + " <END> ");
                 break;
             }
+            System.out.println("Generating variable declaration for relation declaration " + relDeclRoot.getName() + " at position " + i + " with signature " + sigName);
             Symbol newVar = addVariableDecl(sigName, treeId, qtNode, currentScope);
             AugmentedNode varNode = dynamicUniqueNodes.get(newVar);
             currentAns.addVertex(varNode);
@@ -559,6 +562,7 @@ public class CodeGenAgent {
         }
         // update the dynamic unique nodes
         AugmentedNode newNode = new AugmentedNode(127, globalNewVarCounter); // var nodes have signature 127
+        newNode.setSymbol(newVar);
         currentScope.addSymbol(newVar);
         leaves.add(newVar);
         this.dynamicUniqueNodes.put(newVar, newNode);

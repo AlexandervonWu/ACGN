@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import parser.etc.Pair;
+import is.fivefivefive.ACGN.alloy.DeclRootSymbol;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
@@ -157,7 +158,9 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         // one down from the root
         for (Map.Entry<Pair<Symbol, Integer>, Map<Symbol, Float>> entry : qDist.entrySet()) {
             Pair<Symbol, Integer> key = entry.getKey();
-            // Map<Symbol, Float> candidateProbs = entry.getValue();
+            if (key.a instanceof DeclRootSymbol) continue; // skip localization for declarations. 
+            Map<Symbol, Float> candidateProbs = entry.getValue();
+            if (!candidateProbs.containsKey(DummySymbol.DUMMY_LOCAL_VAR)) continue; // skip localization if there is no local variable candidate, which means the localVarProb is 0
             // float localVarProb = candidateProbs.get(DummySymbol.DUMMY_LOCAL_VAR);
             float localVarWeightSum = 0f;
             for (Symbol localVar : symbolsAvailable().values()) {
@@ -178,6 +181,8 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                     float localVarProbForThisVar = localVarWeightSum == 0 ? 0
                             : localVarProb * weight / localVarWeightSum;
                     qDist.computeIfAbsent(key, k -> new HashMap<>()).put(localVar, localVarProbForThisVar);
+                    System.out.println("Localized QDist for " + localVar + " under " + key.a + " at position " + key.b
+                            + " with probability " + localVarProbForThisVar);
                 } else {
                     throw new RuntimeException("Local variable " + localVar
                             + " does not have a weight in the local variable distribution for " + key.a
@@ -366,5 +371,11 @@ public class RLScopeTreeNode extends ScopeTreeNode {
 
     public void deready() {
         this.ready = false;
+    }
+
+    @Override
+    public void resetChildren() {
+        super.resetChildren();
+        this.ready = true;
     }
 }
