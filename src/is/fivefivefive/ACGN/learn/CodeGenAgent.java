@@ -297,7 +297,7 @@ public class CodeGenAgent {
             // update the times of visit only for the first position for each visit
             tovMap.putIfAbsent(localParent.getSymbol(), 0);
             tovMap.put(localParent.getSymbol(), tovMap.get(localParent.getSymbol()) + 1);
-            System.out.println("Visiting node " + localParent.getSymbol().getName() + " at position " + position + " for the " + tovMap.get(localParent.getSymbol()) + " time(s).");
+            // System.out.println("Visiting node " + localParent.getSymbol().getName() + " at position " + position + " for the " + tovMap.get(localParent.getSymbol()) + " time(s).");
             currentAns.updateTimeOfVisitMap(localParent, tovMap.get(localParent.getSymbol()));
         }
         stepNum++;
