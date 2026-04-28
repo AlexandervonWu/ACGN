@@ -1119,6 +1119,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(bopSymbol, bopNode);
         }
         bopNode.setMaxDownlinks(2);
+        bopSymbol.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
@@ -1165,6 +1166,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(bopSymbol, bopNode);
         }
         bopNode.setMaxDownlinks(2);
+        bopSymbol.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         ExprOrFormula left = n.getLeft();
@@ -1396,6 +1398,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(unopSymbol, unopNode);
         }
         unopNode.setMaxDownlinks(1);
+        unopSymbol.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();
@@ -1434,6 +1437,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(unopSymbol, unopNode);
         }
         unopNode.setMaxDownlinks(1);
+        unopSymbol.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         ExprOrFormula sub = n.getSub();

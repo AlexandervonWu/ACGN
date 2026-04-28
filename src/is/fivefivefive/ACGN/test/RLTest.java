@@ -54,6 +54,11 @@ public class RLTest {
         } catch (FileNotFoundException e) {
             throw new RuntimeException("Unable to create error_rl.log", e);
         }
+        try {
+            codeOutputStream = new PrintStream(new File("code_rl.log"));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException("Unable to create code_rl.log", e);
+        }
     }
 
     private static Pair<Boolean, Double> learn(GlobalVariables gv, String path, int maxSteps) throws FileNotFoundException, ScopeNotReadyException, ExceedMaxStepException {

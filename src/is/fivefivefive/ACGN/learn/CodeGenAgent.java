@@ -266,7 +266,7 @@ public class CodeGenAgent {
         downlinkEdgeMap = new HashMap<>(); // reset the downlink edge map for each new generation
         // System.err.println("rootScope dist: " + rootScope.getqDist());
         try {
-            generateNextNode(rootNode, 1, rootScope);
+            generateNextNode(rootNode, rootScope);
         } catch (ExceedMaxStepException e) {
             System.out.println("Generation exceeded maximum steps: " + e.getMessage());
             e.printStackTrace();
@@ -289,50 +289,57 @@ public class CodeGenAgent {
         return code;
     }
 
-    public int generateNextNode(AugmentedNode localParent, int position, RLScopeTreeNode scope) throws ExceedMaxStepException {
+    public int generateNextNode(AugmentedNode localParent, RLScopeTreeNode scope) throws ExceedMaxStepException {
         if (stepNum > MAX_STEPS) {
-            throw new ExceedMaxStepException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName() + ", position: " + position);
+            throw new ExceedMaxStepException("Exceeded maximum steps in generation. Current node: " + localParent.getSymbol().getName());
         }
-        if (position == 1) {
-            // update the times of visit only for the first position for each visit
-            tovMap.putIfAbsent(localParent.getSymbol(), 0);
-            tovMap.put(localParent.getSymbol(), tovMap.get(localParent.getSymbol()) + 1);
-            // System.out.println("Visiting node " + localParent.getSymbol().getName() + " at position " + position + " for the " + tovMap.get(localParent.getSymbol()) + " time(s).");
-            currentAns.updateTimeOfVisitMap(localParent, tovMap.get(localParent.getSymbol()));
-        }
-        stepNum++;
         Symbol source = localParent.getSymbol();
+        if (leaves.contains(source)) return 0;
+        // update the times of visit only for the first position for each visit
+        tovMap.putIfAbsent(source, 0);
+        tovMap.put(source, tovMap.get(source) + 1);
+        // System.out.println("Visiting node " + localParent.getSymbol().getName() + " at position " + position + " for the " + tovMap.get(localParent.getSymbol()) + " time(s).");
+        currentAns.updateTimeOfVisitMap(localParent, tovMap.get(source));
+        stepNum++;
+        
         if (source instanceof MiddleSymbol && ((MiddleSymbol) source).isQt()) {
-            AugmentedNode qtNode = fillHoleQt(source, scope);
-            currentAns.addVertex(qtNode);
-            connect(localParent, qtNode, position, scope);
+            fillHoleQt(source, scope);
+            // currentAns.addVertex(qtNode);
+            // connect(localParent, qtNode, position, scope);
             // TODO: recursively generate downstream
             return 0; // success
         }
-        Symbol nextToken = fillHole(source, position, scope);
-        AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
-        currentAns.addVertex(nextNode);
-        connect(localParent, nextNode, position, scope);
-        if (nextToken instanceof EndSymbol) {
-            leaves.add(nextToken);
-            return -1; // end symbol reached, pass a signal to stop further generation in this branch
-        } 
-        if (nextToken instanceof ShadowSymbol) {
-            leaves.add(nextToken); // technically shadow is a leave
-            nextToken = source;
-            nextNode = localParent; // if it is a shadow symbol, we need to connect the same parent to the next node and continue generation from there
+        int position = 1;
+        Symbol nextToken = null;
+        List<AugmentedNode> nextGenNodesList = new LinkedList<>();
+        while (position <= source.getMaxDownlinks() || (source.getMaxDownlinks() == -1 && nextToken != MASGVisitor.END_SYMBOL)) {
+            nextToken = fillHole(source, position, scope);
+            AugmentedNode nextNode = dynamicUniqueNodes.get(nextToken);
+            currentAns.addVertex(nextNode);
+            connect(localParent, nextNode, position, scope);
+            if (nextToken instanceof EndSymbol) {
+                leaves.add(nextToken);
+                break;
+            } 
+            if (nextToken instanceof ShadowSymbol) {
+                leaves.add(nextToken); // technically shadow is a leave
+                nextGenNodesList.add(localParent);
+            } else {
+                nextGenNodesList.add(nextNode);
+            }
+            position++;
         }
+
         // no need to generate siblings, since there is only one node down the root
-        if (nextToken.getMaxDownlinks() != 0) {
-            int childPosition = 1;
-            while (childPosition <= nextToken.getMaxDownlinks() || nextToken.getMaxDownlinks() == -1) {
-                int result = generateNextNode(nextNode, childPosition, scope);
-                if (result == -1) break; // end symbol reached
-                childPosition++;
-            }// TODO: recursively generate downstream
-        } else {
-            leaves.add(nextToken);
+        for (AugmentedNode nextNode : nextGenNodesList) {
+            Symbol sym = nextNode.getSymbol();
+            if (sym.getMaxDownlinks() != 0) {
+                generateNextNode(nextNode, scope);
+            } else {
+                leaves.add(sym);
+            }
         }
+
         return 0; // success
     }
     public Symbol fillHole(Symbol source, int position, RLScopeTreeNode currentScope) {
@@ -443,12 +450,7 @@ public class CodeGenAgent {
         }
         qtScope.localizeQDist(localVarDist, globalQTable);
         if (qt1.getMaxDownlinks() != 0) {
-            int childPosition = 1;
-            while (childPosition <= qt1.getMaxDownlinks() || qt1.getMaxDownlinks() == -1) {
-                int result = generateNextNode(qt1Node, childPosition, qtScope);
-                if (result == -1) break; // end symbol reached
-                childPosition++;
-            }
+            generateNextNode(qt1Node, qtScope);
         }
         return qtNode;
     }
@@ -458,19 +460,23 @@ public class CodeGenAgent {
             dynamicUniqueNodes.put(relDeclRoot, new AugmentedNode(-127, 0, relDeclRoot));
         }
         AugmentedNode relDeclNode = dynamicUniqueNodes.get(relDeclRoot);
+        tovMap.putIfAbsent(relDeclRoot, 0);
+        tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
+        currentAns.updateTimeOfVisitMap(relDeclNode, tovMap.get(relDeclRoot));
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         Random random = new Random();
         // TODO: generate type first PROBLEM: HERE BEGINS WITH CONFINERS NOT NODES
         // DEFINED SIGNATURE TYPE, TRY FILLHOLE HERE
-        generateNextNode(relDeclNode, 1, currentScope);
+        Symbol relDeclPos1 = fillHole(relDeclRoot, 1, currentScope);
+        AugmentedNode pos1Node = dynamicUniqueNodes.get(relDeclPos1);
+        generateNextNode(pos1Node, currentScope);
+        connect(relDeclNode, pos1Node, 1, currentScope);
         Symbol fullTypeSig = relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol();
         Symbol typeSig = typeCheckSymbol(fullTypeSig);
         AugmentedNode sigNode = dynamicUniqueNodes.get(fullTypeSig);
-        tovMap.putIfAbsent(relDeclRoot, 0);
-        tovMap.put(relDeclRoot, tovMap.get(relDeclRoot) + 1);
-        currentAns.updateTimeOfVisitMap(relDeclNode, tovMap.get(relDeclRoot));
         connect(relDeclNode, sigNode, 1, currentScope);
-        String sigName = typeSig.getName();
+        Generator tempGen = new Generator();
+        String sigName = tempGen.toCode(currentAns, sigNode, tovMap.get(typeSig));
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
         while (true) {
