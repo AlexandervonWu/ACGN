@@ -277,7 +277,7 @@ public class CodeGenAgent {
         Generator generator = new Generator();
         String code = null;
         try {
-            code = generator.toCode(currentAns, rootNode, 1);
+            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
             System.out.println("Generated code for " + predName + ":\n" + code);
         } catch (Exception e) {
             System.out.println("Error during code generation: " + e.getMessage());
@@ -379,13 +379,14 @@ public class CodeGenAgent {
 
     private AugmentedNode fillHoleQt(Symbol qtRoot, RLScopeTreeNode currentScope) throws ExceedMaxStepException {
         stepNum++;
-        String label = qtRoot.getName();
+        // String label = qtRoot.getName();
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
-        char label3 = label.charAt(3);
-        int syntactic = label3 == 'E' ? 3 : -3;
-        char labelLast = label.charAt(label.length() - 1);
-        int semantic = labelLast - '0';
-        AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot); 
+        // char label3 = label.charAt(3);
+        // int syntactic = label3 == 'E' ? 3 : -3;
+        // char labelLast = label.charAt(label.length() - 1);
+        // int semantic = labelLast - '0';
+        // AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot);
+        AugmentedNode qtNode = dynamicUniqueNodes.get(qtRoot); 
         currentAns.addVertex(qtNode);
         tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);

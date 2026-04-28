@@ -390,44 +390,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         updateTimeOfVisit(declRoot, arg);
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
-        /*if (timeOfVisitMap.containsKey(declRoot)) {
-            int prevValue = timeOfVisitMap.get(declRoot);
-            timeOfVisitMap.put(declRoot, prevValue + 1);
-        } else {
-            timeOfVisitMap.put(declRoot, 1);
-        }*/
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
-        // TODO: Write the ExprNode accept method. 
-        /* AugmentedNode exprNode = expr.accept(this, arg);
-        AugmentedNode iterNode = exprNode;
-        while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty() && !(iterNode.getSymbol() instanceof SetSymbol)) {
-            if (iterNode.getSymbol() instanceof MiddleSymbol) {
-                MiddleSymbol midSym = (MiddleSymbol) iterNode.getSymbol();
-                MiddleSymbol newMidSym = new MiddleSymbol(midSym.getName(), midSym.isInfiniteRoot());
-                newMidSym.setTypeConfinerOp(true);
-                iterNode.setSymbol(newMidSym);
-                if (newMidSym.getMaxDownlinks() == 2) {
-                    break; // if it is binary then it is already the atomic type (dot, union, intersection, difference set). 
-                }
-            }
-            iterNode = iterNode.getDownlinks().get(0).getTarget();
-        }
-        if (iterNode.getSymbol() instanceof SetSymbol || iterNode.getSymbol().getMaxDownlinks() == 2) {
-            // ((DeclRootSymbol) declRootSym).setSigType(iterNode.getSymbol());
-        } else {
-            System.err.println("WARNING: NO SIG FOUND. ");
-            System.err.println("Iter end: " + iterNode.getSymbol().getName());
-            System.err.println("Trace: ");
-            iterNode = exprNode;
-            while (iterNode.getDownlinks() != null && !iterNode.getDownlinks().isEmpty()) {
-                iterNode = iterNode.getDownlinks().get(0).getTarget();
-                System.err.println("Iter down: " + iterNode.getSymbol().getName());
-            }
-        }
-        if (exprNode == null) {
-            exprNode = EMPTY_SET_NODE;
-        }*/
-        AugmentedNode exprNode = visitTypeExpr(expr, arg);
+        AugmentedNode exprNode = visitTypeExpr(expr, arg, 1);
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
@@ -532,16 +496,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
         }
     }
-    private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg) {
+    private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg, int depth) {
         // TODO: Implement type expression visiting logic
         if (expr instanceof UnaryExpr) {
             UnaryExpr unExpr = (UnaryExpr) expr;
             if (unExpr.getOp() == UnaryExpr.UnaryOp.NOOP) {
-                return visitTypeExpr(unExpr.getSub(), arg);
+                return visitTypeExpr(unExpr.getSub(), arg, depth); // noop is not depth-increasing, just bypass it.
             }
             int syntactic = 16;
             Pair<String, Integer> labelAndSemantics = getUnaryExprSymbolLabelAndSemantic(unExpr);
-            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
+            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a + "@" + depth;
             int semantic = labelAndSemantics.b;
             Symbol midSym = new MiddleSymbol(label);
             midSym.setMaxDownlinks(1);
@@ -549,14 +513,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(midSym, midNode);
             updateTimeOfVisit(midNode, arg);
             ExprOrFormula childExpr = unExpr.getSub();
-            AugmentedNode childNode = visitTypeExpr(childExpr, arg);
+            AugmentedNode childNode = visitTypeExpr(childExpr, arg, depth + 1);
             visitAndConnect(midNode, childNode, 1, arg);
             return midNode;
         } else if (expr instanceof BinaryExpr) {
             BinaryExpr binExpr = (BinaryExpr) expr;
             int syntactic = 15;
             Pair<String, Integer> labelAndSemantics = getBinaryExprSymbolLabelAndSemantic(binExpr);
-            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a;
+            String label = MiddleSymbol.TYPECONFINEROP_PREFIX + labelAndSemantics.a + "@" + depth;
             int semantic = labelAndSemantics.b;
             Symbol midSym = new MiddleSymbol(label);
             midSym.setMaxDownlinks(2);
@@ -565,8 +529,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             updateTimeOfVisit(midNode, arg);
             ExprOrFormula leftExpr = binExpr.getLeft();
             ExprOrFormula rightExpr = binExpr.getRight();
-            AugmentedNode leftNode = visitTypeExpr(leftExpr, arg);
-            AugmentedNode rightNode = visitTypeExpr(rightExpr, arg);
+            AugmentedNode leftNode = visitTypeExpr(leftExpr, arg, depth + 1);
+            AugmentedNode rightNode = visitTypeExpr(rightExpr, arg, depth + 1);
             visitAndConnect(midNode, leftNode, 1, arg);
             visitAndConnect(midNode, rightNode, 2, arg);
             return midNode;

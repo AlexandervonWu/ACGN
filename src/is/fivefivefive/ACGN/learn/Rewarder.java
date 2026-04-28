@@ -174,7 +174,7 @@ public class Rewarder {
      * @return The computed reward as a double value.
      * Throws IllegalArgumentException if the instances are null or if the predicate cannot be evaluated.
      */
-    public static double computeReward(CompModule cm, Pair<InstancePool, InstancePool> instances, String originalPredName, String newPredName, int poolSize) {
+    public static double computeReward(CompModule cm, Pair<InstancePool, InstancePool> instances, String originalPredName, String newPredName, String newPredBody, int poolSize) {
         if (cm == null || instances == null || originalPredName == null || newPredName == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }
@@ -198,7 +198,7 @@ public class Rewarder {
         while (posIter < poolSize && posInstance.satisfiable()) {
             boolean result = false;
             try {
-                result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
+                result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredBody));
             } catch (Exception e) {
                 System.out.println("[REWARDER] Exception in " + newPredName);
                 System.out.println("Error evaluating predicate: " + e.getMessage());                
@@ -218,7 +218,7 @@ public class Rewarder {
         int negIter = 0;
         int negCount = 0;
         while (negIter < poolSize && negInstance.satisfiable()) {
-            boolean result = (boolean) negInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredName));
+            boolean result = (boolean) negInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredBody));
             if (!result) {
                 negCount++;
             } else {
@@ -232,9 +232,9 @@ public class Rewarder {
             // all instances are correctly classified
             // SAT Solve;
             // check overcoverage
-            String satCommandText1 = newPredName + " && !" + originalPredName + ";\n";
+            String satCommandText1 = '(' + newPredBody + ") && !" + originalPredName + ";\n";
             // check undercoverage
-            String satCommandText2 = newPredName + " && " + originalPredName + ";\n";
+            String satCommandText2 = '(' + newPredBody + ") && " + originalPredName + ";\n";
             A4Reporter rep = new A4Reporter() {
                 @Override
                 public void warning(ErrorWarning msg) {

@@ -111,7 +111,7 @@ public class RLTest {
             }
             // add the new predicate into the Alloy API
             // Expr newPred = CompUtil.parseOneExpression_fromString(cm, nextPredCode);
-            double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), nextPredCode, Hyperparams.POOL_SIZE);
+            double reward = Rewarder.computeReward(cm, instancePoolPair, groundTruth.getName(), name, nextPredCode, Hyperparams.POOL_SIZE);
             if (reward > maxReward) {
                 maxReward = reward;
                 System.setOut(codeOutputStream);
