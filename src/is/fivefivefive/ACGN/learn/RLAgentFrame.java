@@ -289,7 +289,7 @@ public class RLAgentFrame {
         Generator generator = new Generator();
         String code = null;
         try {
-            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
+            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1, null);
         } catch (Exception e) {
             return generateNextPred(predName); // regenerate the predicate
         }

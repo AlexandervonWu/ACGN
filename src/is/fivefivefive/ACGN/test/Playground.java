@@ -42,7 +42,7 @@ public class Playground {
         Generator generator = new Generator();
         int graphId = 5;
         System.out.println(map.get(graphId).getRoot().getSyntactic() + " " + map.get(graphId).getRoot().getSemantic());
-        String code3 = generator.toCode(map.get(graphId), map.get(graphId).getRoot(), 1);
+        String code3 = generator.toCode(map.get(graphId), map.get(graphId).getRoot(), 1, null);
         System.out.println("Generated code for graph " + graphId + ": ");
         System.out.println(code3);
         PrettyStringVisitor psv = new PrettyStringVisitor();

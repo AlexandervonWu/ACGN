@@ -277,7 +277,7 @@ public class CodeGenAgent {
         Generator generator = new Generator();
         String code = null;
         try {
-            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1);
+            code = generator.toCode(currentAns, rootNode.getDownlinks().get(0).getTarget(), 1, null);
             System.out.println("Generated code for " + predName + ":\n" + code);
         } catch (Exception e) {
             System.out.println("Error during code generation: " + e.getMessage());

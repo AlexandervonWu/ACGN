@@ -23,7 +23,7 @@ public class Generator {
         tovTracker = new HashMap<AugmentedNode, Integer>();
     }
 
-    public String toCode(Multigraph graph, AugmentedNode root, int tov) {
+    public String toCode(Multigraph graph, AugmentedNode root, int tov, AugmentedNode parent) {
         if (tov > MAX_TOV) {
             // infinite loop
             System.err.println("[GENERATOR] Infinite loop detected at TOV " + tov);
@@ -43,13 +43,13 @@ public class Generator {
                     tovTracker.putIfAbsent(assertBody, 0);
                     tovTracker.put(assertBody, tovTracker.get(assertBody) + 1);
                     int tovAssertBody = tovTracker.get(assertBody);
-                    sb.append(toCode(graph, root.getDownlinks().get(0).getTarget(), tovAssertBody));
+                    sb.append(toCode(graph, root.getDownlinks().get(0).getTarget(), tovAssertBody, root));
                     break;
                 case "EndSymbol":
                     return "";
                 case "ShadowSymbol":
                     // TODO: Need the explicit node to pass itself down here. It is not 0th uplink. Find its n-th uplink WITHIN THE GRAPH
-                    AugmentedNode explicit = graph.edgesAbove(root).get(tov - 1).getSource();
+                    AugmentedNode explicit = parent;
                     if (explicit == null) {
                         System.err.println("[GENERATOR] No explicit node found for shadow node " + root.getSymbol().getName() + " at TOV " + tov);
                         return "<ERROR SHADOW>";
@@ -66,7 +66,7 @@ public class Generator {
                     tovTracker.putIfAbsent(explicit, 1);
                     int tovExplicit = tovTracker.get(explicit) + 1;
                     tovTracker.putIfAbsent(explicit, tovExplicit);
-                    sb.append(toCode(graph, explicit, tovExplicit));
+                    sb.append(toCode(graph, explicit, tovExplicit, null));
                     break;
                 case "SigSymbol":
                 case "VarSymbol":
@@ -84,7 +84,7 @@ public class Generator {
                         tovTracker.putIfAbsent(letBody, 1);
                         int tovLetBody = tovTracker.get(letBody);
                         sb.append(" | ");
-                        sb.append(toCode(graph, letBody, tovLetBody));
+                        sb.append(toCode(graph, letBody, tovLetBody, root));
                     }
                     break;
                 case "PredRootSymbol":
@@ -106,7 +106,7 @@ public class Generator {
                                 if (Playground.DEBUG) {
                                     System.out.println("Processing parameter " + param.getSymbol().getName() + " at TOV " + tovParam);
                                 }
-                                sb.append(toCode(graph, param, tovParam));
+                                sb.append(toCode(graph, param, tovParam, root));
                                 if (i < downlinks.size() - 2) {
                                     sb.append(", ");
                                 }
@@ -118,7 +118,7 @@ public class Generator {
                         tovTracker.putIfAbsent(refBody, 0);
                         tovTracker.put(refBody, tovTracker.get(refBody) + 1);
                         int bodyTov = tovTracker.get(refBody);
-                        sb.append(toCode(graph, refBody, bodyTov));
+                        sb.append(toCode(graph, refBody, bodyTov, root));
                         sb.append("\n}");
                     } else {
                         // This is a function/predicate call - just output the name
@@ -155,7 +155,7 @@ public class Generator {
                                 tovTracker.putIfAbsent(relDecl, 0);
                                 tovTracker.put(relDecl, tovTracker.get(relDecl) + 1);
                                 int tovRelDecl = tovTracker.get(relDecl);
-                                sb.append(toCode(graph, relDecl, tovRelDecl));
+                                sb.append(toCode(graph, relDecl, tovRelDecl, root));
                                 if (i < downlinksRD.size() - 2) {
                                     sb.append(", ");
                                 }
@@ -165,7 +165,7 @@ public class Generator {
                             tovTracker.putIfAbsent(relDeclBody, 0);
                             tovTracker.put(relDeclBody, tovTracker.get(relDeclBody) + 1);
                             int tovRelDeclBody = tovTracker.get(relDeclBody);
-                            String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody);
+                            String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody, root);
                             relDeclBodyCode = relDeclBodyCode.substring(1, relDeclBodyCode.length() - 1);
                             sb.append(relDeclBodyCode);
                             break;
@@ -179,17 +179,17 @@ public class Generator {
                             tovTracker.putIfAbsent(ifExpr, 0);
                             tovTracker.put(ifExpr, tovTracker.get(ifExpr) + 1);
                             int tovIfExpr = tovTracker.get(ifExpr);
-                            sb.append(toCode(graph, ifExpr, tovIfExpr));
+                            sb.append(toCode(graph, ifExpr, tovIfExpr, root));
                             sb.append(" => ");
                             tovTracker.putIfAbsent(thenExpr, 0);
                             tovTracker.put(thenExpr, tovTracker.get(thenExpr) + 1);
                             int tovThenExpr = tovTracker.get(thenExpr);
-                            sb.append(toCode(graph, thenExpr, tovThenExpr));
+                            sb.append(toCode(graph, thenExpr, tovThenExpr, root));
                             sb.append(" else ");
                             tovTracker.putIfAbsent(elseExpr, 0);
                             tovTracker.put(elseExpr, tovTracker.get(elseExpr) + 1);
                             int tovElseExpr = tovTracker.get(elseExpr);
-                            sb.append(toCode(graph, elseExpr, tovElseExpr));
+                            sb.append(toCode(graph, elseExpr, tovElseExpr, root));
                             break;
                         case 3:
                         case -3:
@@ -245,7 +245,7 @@ public class Generator {
                                 tovTracker.putIfAbsent(QtVar, 0);
                                 tovTracker.put(QtVar, tovTracker.get(QtVar) + 1);
                                 int tovQtVar = tovTracker.get(QtVar);
-                                sb.append(toCode(graph, QtVar, tovQtVar));
+                                sb.append(toCode(graph, QtVar, tovQtVar, root));
                                 if (iter < downlinksQT.size() - 3) {
                                     sb.append(", ");
                                 }
@@ -255,7 +255,7 @@ public class Generator {
                             tovTracker.putIfAbsent(QtBody, 0);
                             tovTracker.put(QtBody, tovTracker.get(QtBody) + 1);
                             int tovQtBody = tovTracker.get(QtBody);
-                            sb.append(toCode(graph, QtBody, tovQtBody));
+                            sb.append(toCode(graph, QtBody, tovQtBody, root));
                             break;
                         case 7:
                         case -7:
@@ -265,7 +265,7 @@ public class Generator {
                             tovTracker.putIfAbsent(calledNode, 0);
                             tovTracker.put(calledNode, tovTracker.get(calledNode) + 1);
                             int tovCalledNode = tovTracker.get(calledNode);
-                            sb.append(toCode(graph, calledNode, tovCalledNode));
+                            sb.append(toCode(graph, calledNode, tovCalledNode, root));
                             sb.append("[");
                             for (int i = 1; i < downlinksCall.size(); ++i) {
                                 MASGEdge e = downlinksCall.get(i);
@@ -273,7 +273,7 @@ public class Generator {
                                 tovTracker.putIfAbsent(callParam, 0);
                                 tovTracker.put(callParam, tovTracker.get(callParam) + 1);
                                 int tovCallParam = tovTracker.get(callParam);
-                                sb.append(toCode(graph, callParam, tovCallParam));
+                                sb.append(toCode(graph, callParam, tovCallParam, root));
                                 if (i < downlinksCall.size() - 2) {
                                     sb.append(", ");
                                 }
@@ -299,7 +299,7 @@ public class Generator {
                                 tovTracker.putIfAbsent(listElem, 0);
                                 tovTracker.put(listElem, tovTracker.get(listElem) + 1);
                                 int tovListElem = tovTracker.get(listElem);
-                                sb.append(toCode(graph, listElem, tovListElem));
+                                sb.append(toCode(graph, listElem, tovListElem, root));
                                 if (i < downlinksList.size() - 2) {
                                     sb.append(", ");
                                 }
@@ -326,7 +326,7 @@ public class Generator {
                                 tovTracker.putIfAbsent(listElemFormula, 0);
                                 tovTracker.put(listElemFormula, tovTracker.get(listElemFormula) + 1);
                                 int tovListElemFormula = tovTracker.get(listElemFormula);
-                                sb.append(toCode(graph, listElemFormula, tovListElemFormula));
+                                sb.append(toCode(graph, listElemFormula, tovListElemFormula, root));
                                 if (i < downlinksListFormula.size() - 2) {
                                     sb.append(listOp);
                                 }
@@ -357,195 +357,195 @@ public class Generator {
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
                                     // ARROW
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" -> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 2:
                                     // ANY_ARROW_SOME
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" ->some ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 3:
                                     // ANY_ARROW_ONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" ->one ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 4:
                                     // ANY_ARROW_LONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" ->lone ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 5:
                                     // SOME_ARROW_ANY
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" some-> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 6:
                                     // SOME_ARROW_SOME
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" some->some ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 7:
                                     // SOME_ARROW_ONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" some->one ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 8:
                                     // SOME_ARROW_LONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" some->lone ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 9:
                                     // ONE_ARROW_ANY
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" one-> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 10:
                                     // ONE_ARROW_SOME
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" one->some ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 11:
                                     // ONE_ARROW_ONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" one->one ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 12:
                                     // ONE_ARROW_LONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" one->lone ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 13:
                                     // LONE_ARROW_ANY
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" lone-> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 14:
                                     // LONE_ARROW_SOME
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" lone->some ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 15:
                                     // LONE_ARROW_ONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" lone->one ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 16:
                                     // LONE_ARROW_LONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" lone->lone ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 17:
                                     // ISSEQ_ARROW_LONE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" isSeq->lone ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 18:
                                     // JOIN
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(".");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 19:
                                     // DOMAIN
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append("<:");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 20:
                                     // RANGE
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(":>");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 21:
                                     // INTERSECT
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" & ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 22:
                                     // PLUSPLUS
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" ++ ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 23:
                                     // PLUS
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" + ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 24:
                                     // IPLUS
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" @+ ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 25:
                                     // MINUS
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" - ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 26:
                                     // IMINUS
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" @- ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 27:
                                     // MUL
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" * ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 28:
                                     // DIV
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" / ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 29:
                                     // REM
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" % ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 30:
                                     // SHL
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" << ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 31:
                                     // SHA
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" >> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 case 32:
                                     // SHR
-                                    sb.append(toCode(graph, leftExpr, tovLeftExpr));
+                                    sb.append(toCode(graph, leftExpr, tovLeftExpr, root));
                                     sb.append(" >>> ");
-                                    sb.append(toCode(graph, rightExpr, tovRightExpr));
+                                    sb.append(toCode(graph, rightExpr, tovRightExpr, root));
                                     break;
                                 default:
                                     break;
@@ -565,123 +565,123 @@ public class Generator {
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
                                     // EQUALS
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" = ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 2:
                                     // NOT_EQUALS
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" != ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 3:
                                     // AND
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" && ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 4:
                                     // GT
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" > ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 5:
                                     // GTE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" >= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 6:
                                     // IFF
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" <=> ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 7:
                                     // IMPLIES
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" => ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 8:
                                     // IN
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" in ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 9:
                                     // LT
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" < ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 10:
                                     // LTE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" <= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 11:
                                     // NOT_GT
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" !> ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 12:
                                     // NOT_GTE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" !>= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 13:
                                     // NOT_IN
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" !in ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 14:
                                     // NOT_LT
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" !< ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 15:
                                     // NOT_LTE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" !<= ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 16:
                                     // OR
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" || ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 17:
                                     // RELEASES
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" releases ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 18:
                                     // SINCE
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" since ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 19:
                                     // TRIGGERED
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" triggered ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 case 20:
                                     // UNTIL
-                                    sb.append(toCode(graph, leftFormula, tovLeftFormula));
+                                    sb.append(toCode(graph, leftFormula, tovLeftFormula, root));
                                     sb.append(" until ");
-                                    sb.append(toCode(graph, rightFormula, tovRightFormula));
+                                    sb.append(toCode(graph, rightFormula, tovRightFormula, root));
                                     break;
                                 default:
                                     break;
@@ -699,61 +699,61 @@ public class Generator {
                                 case 1:
                                     // SET
                                     sb.append("set ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 2:
                                     // lone
                                     sb.append("lone ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 3:
                                     // one
                                     sb.append("one ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 4:
                                     // some
                                     sb.append("some ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 5:
                                     // exactlyof
                                     sb.append("exactly ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 6:
                                     // transpose
                                     sb.append('~');
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 7:
                                     // Rclosure
                                     sb.append('*');
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 8:
                                     // closure
                                     sb.append('^');
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 9:
                                     // cardinality
                                     sb.append("#");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 10:
                                     // cast2int
                                     sb.append("Int->int ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 11:
                                     // cast2sigint
                                     sb.append("int->Int ");
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     break;
                                 case 12:
                                     // prime
-                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub));
+                                    sb.append(toCode(graph, unaryExprSub, tovUnaryExprSub, root));
                                     sb.append("\'");
                                     break;
                                 default:
@@ -771,57 +771,57 @@ public class Generator {
                                 case 1:
                                     // lone
                                     sb.append("lone ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 2:
                                     // one
                                     sb.append("one ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 3:
                                     // some
                                     sb.append("some ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 4:
                                     // no
                                     sb.append("no ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 5:
                                     // not
                                     sb.append("!");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 6:
                                     // before
                                     sb.append("before ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 7:
                                     // historically
                                     sb.append("historically ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 8:
                                     // once
                                     sb.append("once ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 9:
                                     // always
                                     sb.append("always ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 10:
                                     // eventually
                                     sb.append("eventually ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 case 11:
                                     // after
                                     sb.append("after ");
-                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub));
+                                    sb.append(toCode(graph, unaryFormulaSub, tovUnaryFormulaSub, root));
                                     break;
                                 default:
                                     break;
@@ -860,7 +860,7 @@ public class Generator {
                         tovTracker.putIfAbsent(relDecl, 0);
                         tovTracker.put(relDecl, tovTracker.get(relDecl) + 1);
                         int tovRelDecl = tovTracker.get(relDecl);
-                        sb.append(toCode(graph, relDecl, tovRelDecl));
+                        sb.append(toCode(graph, relDecl, tovRelDecl, root));
                         if (i < downlinksRD.size() - 2) {
                             sb.append(", ");
                         }
@@ -870,7 +870,7 @@ public class Generator {
                     tovTracker.putIfAbsent(relDeclBody, 0);
                     tovTracker.put(relDeclBody, tovTracker.get(relDeclBody) + 1);
                     int tovRelDeclBody = tovTracker.get(relDeclBody);
-                    String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody);
+                    String relDeclBodyCode = toCode(graph, relDeclBody, tovRelDeclBody, root);
                     relDeclBodyCode = relDeclBodyCode.substring(1, relDeclBodyCode.length() - 1);
                     sb.append(relDeclBodyCode);
                     break;
