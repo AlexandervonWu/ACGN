@@ -57,6 +57,7 @@ public class RLScopeTreeNode extends ScopeTreeNode {
         parent.getqDist().forEach((k, v) -> this.qDist.put(k, new HashMap<>()));
         parent.getqDist().forEach((k, v) -> v.forEach((candidate, prob) -> this.qDist.get(k).put(candidate, prob)));
         parent.deready();
+        parent.addChildren(this);
     }
 
     public RLScopeTreeNode(int id, RLScopeTreeNode parent) {

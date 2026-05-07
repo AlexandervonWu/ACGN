@@ -395,9 +395,9 @@ public class CodeGenAgent {
         // AugmentedNode qtNode = new AugmentedNode(syntactic, semantic, qtRoot);
         AugmentedNode qtNode = dynamicUniqueNodes.get(qtRoot); 
         currentAns.addVertex(qtNode);
-        tovMap.putIfAbsent(qtRoot, 0);
+        /*tovMap.putIfAbsent(qtRoot, 0);
         tovMap.put(qtRoot, tovMap.get(qtRoot) + 1);
-        currentAns.updateTimeOfVisitMap(qtNode, tovMap.get(qtRoot));
+        currentAns.updateTimeOfVisitMap(qtNode, tovMap.get(qtRoot));*/
         rlScopeTreeNodeId++;
         RLScopeTreeNode qtScope = new RLScopeTreeNode(rlScopeTreeNodeId, currentScope, currentAns);
         maxScopeDepth++;
@@ -452,6 +452,10 @@ public class CodeGenAgent {
         if (qt1.getMaxDownlinks() != 0) {
             generateNextNode(qt1Node, qtScope);
         }
+        if (qtNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(qtRoot)) == null) {
+            System.err.println("[INVARIANT VIOLATION] No downlinks found for qt node " + qtRoot.getName() + " at time of visit " + tovMap.get(qtRoot));
+            throw new RuntimeException("No downlinks found for qt node " + qtRoot.getName() + " at time of visit " + tovMap.get(qtRoot));
+        }
         return qtNode;
     }
 
@@ -477,8 +481,8 @@ public class CodeGenAgent {
             System.out.println("Type checking failed for symbol: " + fullTypeSig.getName() + " in relation declaration " + relDeclRoot.getName());
             throw new RuntimeException("Type checking failed for symbol: " + fullTypeSig.getName() + " in relation declaration " + relDeclRoot.getName());
         }
-        AugmentedNode sigNode = dynamicUniqueNodes.get(fullTypeSig);
-        connect(relDeclNode, sigNode, 1, currentScope);
+        // AugmentedNode sigNode = dynamicUniqueNodes.get(fullTypeSig);
+        // connect(relDeclNode, sigNode, 1, currentScope);
         String sigName = implicitType(typeSig);
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 

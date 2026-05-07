@@ -150,6 +150,15 @@ public class Multigraph implements Serializable {
         }
         return result;
     }
+    public List<MASGEdge> edgesAbove(AugmentedNode node) {
+        List<MASGEdge> result = new ArrayList<MASGEdge>();
+        for (MASGEdge e : edges) {
+            if (e.getTarget().equals(node)) {
+                result.add(e);
+            }
+        }
+        return result;
+    }
     public int size() {
         return vertices.size();
     }

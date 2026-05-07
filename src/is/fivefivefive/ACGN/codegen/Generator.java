@@ -26,7 +26,7 @@ public class Generator {
     public String toCode(Multigraph graph, AugmentedNode root, int tov) {
         if (tov > MAX_TOV) {
             // infinite loop
-            System.err.println("[REWARDER] Infinite loop detected at TOV " + tov);
+            System.err.println("[GENERATOR] Infinite loop detected at TOV " + tov);
             return "<ERROR>";
         }
         // TODO: Rewrite to use the labels, not semantic IDs; these IDs are not corresponding. 
@@ -48,12 +48,25 @@ public class Generator {
                 case "EndSymbol":
                     return "";
                 case "ShadowSymbol":
-                    // sb.append(root.getUplinks().get(0).getSource().toCode(tov + 1));
-                    AugmentedNode explicit = root.getUplinks().get(0).getSource();
+                    // TODO: Need the explicit node to pass itself down here. It is not 0th uplink. Find its n-th uplink WITHIN THE GRAPH
+                    AugmentedNode explicit = graph.edgesAbove(root).get(tov - 1).getSource();
+                    if (explicit == null) {
+                        System.err.println("[GENERATOR] No explicit node found for shadow node " + root.getSymbol().getName() + " at TOV " + tov);
+                        return "<ERROR SHADOW>";
+                    } else {
+                        System.out.println("Found explicit node " + explicit.getSymbol().getName() + " for shadow node " + root.getSymbol().getName() + " at TOV " + tov);
+                        // print all edges above of the root for debugging
+                        List<MASGEdge> edgesAbove = graph.edgesAbove(root);
+                        System.out.println("Edges above root node " + root.getSymbol().getName() + ":");
+                        for (MASGEdge e : edgesAbove) {
+                            System.out.println("  - " + e.getSource().getSymbol().getName() + " at position " + e.getPosition() + " and TOV " + e.getTimeOfVisit());
+                        }
+
+                    }
                     tovTracker.putIfAbsent(explicit, 1);
                     int tovExplicit = tovTracker.get(explicit) + 1;
                     tovTracker.putIfAbsent(explicit, tovExplicit);
-                    sb.append(toCode(graph, root.getUplinks().get(0).getSource(), tovExplicit));
+                    sb.append(toCode(graph, explicit, tovExplicit));
                     break;
                 case "SigSymbol":
                 case "VarSymbol":
@@ -182,6 +195,10 @@ public class Generator {
                         case -3:
                             // QtExprOrFormula
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
+                            if (downlinksQT == null || downlinksQT.size() < 2) {
+                                System.err.println("[GENERATOR] Invalid QtExprOrFormula with less than 2 downlinks at TOV " + tov);
+                                throw new RuntimeException("QtExprOrFormula must have at least 2 downlinks (quantified variables and body)");
+                            }
                             if (root.getSyntactic() == 3) {
                                 switch ((int) Math.round(root.getSemantic())) {
                                     case 1:
@@ -325,10 +342,10 @@ public class Generator {
                                 leftExpr = downlinksBin.get(0).getTarget();
                                 rightExpr = downlinksBin.get(1).getTarget();
                             } catch (NullPointerException e) {
-                                System.err.println("[REWARDER] No left expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
+                                System.err.println("[GENERATOR] No left expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
                                 return "<ERROR>";
                             } catch (IndexOutOfBoundsException e) {
-                                System.err.println("[REWARDER] No right expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
+                                System.err.println("[GENERATOR] No right expression for BinaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
                                 return "<ERROR>";
                             }
                             tovTracker.putIfAbsent(leftExpr, 0);
