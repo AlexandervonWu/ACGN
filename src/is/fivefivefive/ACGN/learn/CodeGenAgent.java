@@ -442,7 +442,7 @@ public class CodeGenAgent {
                         currentAns.addVertex(anDown);
                         connect(qtNode, anDown, i, qtScope);
                         actionSequence.add(qtRoot.getName() + ", " + i + ", RELDECL ");
-                        break;
+                        // break;
                     }
                 }
                 i++;
@@ -473,10 +473,13 @@ public class CodeGenAgent {
         connect(relDeclNode, pos1Node, 1, currentScope);
         Symbol fullTypeSig = relDeclNode.getDownlinksAtTimeOfVisit(currentAns, tovMap.get(relDeclRoot)).get(0).getTarget().getSymbol();
         Symbol typeSig = typeCheckSymbol(fullTypeSig);
+        if (typeSig == null) {
+            System.out.println("Type checking failed for symbol: " + fullTypeSig.getName() + " in relation declaration " + relDeclRoot.getName());
+            throw new RuntimeException("Type checking failed for symbol: " + fullTypeSig.getName() + " in relation declaration " + relDeclRoot.getName());
+        }
         AugmentedNode sigNode = dynamicUniqueNodes.get(fullTypeSig);
         connect(relDeclNode, sigNode, 1, currentScope);
-        Generator tempGen = new Generator();
-        String sigName = tempGen.toCode(currentAns, sigNode, tovMap.get(typeSig));
+        String sigName = implicitType(typeSig);
         actionSequence.add(relDeclRoot.getName() + ", 1 " + sigName);        
         int i = 2; 
         while (true) {
@@ -502,6 +505,54 @@ public class CodeGenAgent {
             i++;
         }
         return relDeclNode;
+    }
+    
+    private String implicitType(Symbol implicitTypeBop) {
+        if (implicitTypeBop instanceof SigSymbol) {
+            return implicitTypeBop.getName();
+        } else if (implicitTypeBop instanceof FieldRelation) {
+            return implicitTypeBop.getName();
+        } else if (implicitTypeBop instanceof MiddleSymbol) {
+            if (implicitTypeBop.getMaxDownlinks() == 2) {
+                AugmentedNode node = dynamicUniqueNodes.get(implicitTypeBop);
+                List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(implicitTypeBop, 1));
+                if (downlinks == null || downlinks.isEmpty() || downlinks.size() < 2) {
+                    throw new RuntimeException("No downlinks found for symbol: " + implicitTypeBop.getName() + " at time of visit: " + tovMap.getOrDefault(implicitTypeBop, 1));
+                }
+                Symbol leftSym = downlinks.get(0).getTarget().getSymbol();
+                Symbol rightSym = downlinks.get(1).getTarget().getSymbol();
+                String leftType = implicitType(leftSym);
+                String rightType = implicitType(rightSym);
+                if (leftType != null && rightType != null) {
+                    return leftType + " " + implicitTypeBop.getName() + " " + rightType;
+                }
+            } else {
+                AugmentedNode node = dynamicUniqueNodes.get(implicitTypeBop);
+                List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(currentAns, tovMap.getOrDefault(implicitTypeBop, 1));
+                if (downlinks == null || downlinks.isEmpty()) {
+                    throw new RuntimeException("No downlinks found for symbol: " + implicitTypeBop.getName() + " at time of visit: " + tovMap.getOrDefault(implicitTypeBop, 1));
+                }
+                StringBuilder typeBuilder = new StringBuilder();
+                int i = 0;
+                for (MASGEdge downlink : downlinks) {
+                    Symbol targetSym = downlink.getTarget().getSymbol();
+                    String targetType = implicitType(targetSym);
+                    if (targetType != null) {
+                        typeBuilder.append(targetType).append(" ");
+                    }
+                    if (i < downlinks.size() - 1) {
+                        typeBuilder.append(implicitTypeBop.getName()).append(" ");
+                    }
+                    i++;
+                }
+                if (typeBuilder.length() > 0) {
+                    return typeBuilder.toString().trim();
+                } else {
+                    return "Failure";
+                }
+            }
+        }
+        return "Failure";
     }
 
     private Symbol typeCheckSymbol(Symbol sym) {
