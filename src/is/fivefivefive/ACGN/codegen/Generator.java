@@ -132,13 +132,13 @@ public class Generator {
                             // RelDecl roots
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
-                                    sb.append("disj ");
+                                    sb.append(" disj ");
                                     break;
                                 case 2:
-                                    sb.append("var ");
+                                    sb.append(" var ");
                                     break;
                                 case 3:
-                                    sb.append("var disj ");
+                                    sb.append(" var disj ");
                                     break;
                                 default:
                                     break;
@@ -284,10 +284,10 @@ public class Generator {
                             switch ((int) Math.round(root.getSemantic())) {
                                 // ListExpr
                                 case 1:
-                                    sb.append("disjoint [");
+                                    sb.append(" disjoint [");
                                     break;
                                 case 2:
-                                    sb.append("pred/totalorder [");
+                                    sb.append(" pred/totalorder [");
                                     break;
                                 default:
                                     break;
@@ -837,13 +837,13 @@ public class Generator {
                     // RelDecl roots
                     switch ((int) Math.round(root.getSemantic())) {
                         case 1:
-                            sb.append("disj ");
+                            sb.append(" disj ");
                             break;
                         case 2:
-                            sb.append("var ");
+                            sb.append(" var ");
                             break;
                         case 3:
-                            sb.append("var disj ");
+                            sb.append(" var disj ");
                             break;
                         default:
                             break;
@@ -861,7 +861,7 @@ public class Generator {
                         tovTracker.put(relDecl, tovTracker.get(relDecl) + 1);
                         int tovRelDecl = tovTracker.get(relDecl);
                         sb.append(toCode(graph, relDecl, tovRelDecl, root));
-                        if (i < downlinksRD.size() - 2) {
+                        if (i < downlinksRD.size() - 1) {
                             sb.append(", ");
                         }
                     }

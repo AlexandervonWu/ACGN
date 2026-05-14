@@ -726,8 +726,10 @@ public class CodeGenAgent {
         for (MASGEdge edge : childEdges) {
             Symbol child = edge.getTarget().getSymbol();
             Pair<Symbol, Integer> childKey = Pair.of(candidate, edge.getPosition());
-            if (!qTable.containsKey(childKey) || !qTable.get(childKey).containsKey(child)) {
+            if (!qTable.containsKey(childKey)) {
                 throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition());
+            } else if (!qTable.get(childKey).containsKey(child)) {
+                throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition() + " in the children of candidate symbol: " + candidate.getName());
             }
             float childProb = qTable.get(childKey).get(child);
             float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
