@@ -74,6 +74,7 @@ public class CodeGenAgent {
     // map from (source symbol, position, target symbol) to the corresponding edge in the graph for quick access during backpropagation.
     private Map<Symbol, List<MASGEdge>> downlinkEdgeMap; 
     // map from symbol to the list of edges for quick access during backpropagation.
+    private Map<Symbol, Float> impactMap;
     // TODO: fill the scope map so RL backpropagation works. 
 
     public CodeGenAgent(Multigraph groundTruth, MASGVisitor visitor, GlobalVariables gv) {
@@ -264,6 +265,7 @@ public class CodeGenAgent {
         generationStack = new Stack<>(); // reset the generation stack for each new generation
         edgeMap = new HashMap<>(); // reset the edge map for each new generation
         downlinkEdgeMap = new HashMap<>(); // reset the downlink edge map for each new generation
+        impactMap = new HashMap<>(); // reset the corresponding impacts
         // System.err.println("rootScope dist: " + rootScope.getqDist());
         try {
             generateNextNode(rootNode, rootScope);
@@ -667,6 +669,11 @@ public class CodeGenAgent {
                 float update = INERTIA * oldValue + (1 - INERTIA) * reward;
                 float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)
                 actionValues.put(action, logUpdate);
+                if (impactMap.containsKey(action)) {
+                    impactMap.put(action, impactMap.get(action) + logUpdate);
+                } else {
+                    impactMap.put(action, logUpdate);
+                }
             } else {
                 float logUpdate = (float) (Math.log(oldValue + 1e-6)); // add a small constant to avoid log(0)
                 actionValues.put(action, logUpdate);
@@ -726,12 +733,13 @@ public class CodeGenAgent {
         for (MASGEdge edge : childEdges) {
             Symbol child = edge.getTarget().getSymbol();
             Pair<Symbol, Integer> childKey = Pair.of(candidate, edge.getPosition());
-            if (!qTable.containsKey(childKey)) {
+            /* if (!qTable.containsKey(childKey)) {
                 throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition());
             } else if (!qTable.get(childKey).containsKey(child)) {
                 throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition() + " in the children of candidate symbol: " + candidate.getName());
-            }
-            float childProb = qTable.get(childKey).get(child);
+            }*/
+            // float childProb = qTable.get(childKey).get(child);
+            float childProb = impactMap.get(child);
             float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
             localReward += childProb * childReward;
             if (edgeRewardMap.containsKey(childKey)) {
