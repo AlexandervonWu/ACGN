@@ -640,7 +640,7 @@ public class CodeGenAgent {
      * @param source the source symbol from which the action was taken.
      * @param position the position in the ASG where the action was taken.
      * @param selection the selected symbol.
-     * @param reward the reward received for the action.
+     * @param reward the reward received for the action, local reward.
      * @param currentScope the current scope node.
      * @throws IllegalArgumentException
      */
@@ -670,9 +670,9 @@ public class CodeGenAgent {
                 float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)
                 actionValues.put(action, logUpdate);
                 if (impactMap.containsKey(action)) {
-                    impactMap.put(action, impactMap.get(action) + logUpdate);
+                    impactMap.put(action, impactMap.get(action) + logUpdate * reward);
                 } else {
-                    impactMap.put(action, logUpdate);
+                    impactMap.put(action, logUpdate * reward);
                 }
             } else {
                 float logUpdate = (float) (Math.log(oldValue + 1e-6)); // add a small constant to avoid log(0)
@@ -739,9 +739,9 @@ public class CodeGenAgent {
                 throw new IllegalArgumentException("Q-table entry missing for child symbol: " + child.getName() + " at position: " + edge.getPosition() + " in the children of candidate symbol: " + candidate.getName());
             }*/
             // float childProb = qTable.get(childKey).get(child);
-            float childProb = impactMap.get(child);
-            float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
-            localReward += childProb * childReward;
+            // float childProb = impactMap.get(child);
+            // float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
+            localReward += impactMap.get(child);
             if (edgeRewardMap.containsKey(childKey)) {
                 maxOrEndPosition = Math.max(maxOrEndPosition, edge.getPosition());
             }
