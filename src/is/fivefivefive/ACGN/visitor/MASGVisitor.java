@@ -452,7 +452,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             System.out.println("Visiting " + parent.getSymbol().getName() + " for " + child.getSymbol().getName() + " at time of visit " + timeOfVisit);
         }
         graph.addVertex(parent);
-        boolean flagEq = parent.equals(child);
+        boolean flagEq = parent.equals(child) && parent.getSyntactic() != 15 && parent.getSyntactic() != 16;
         if (flagEq) {
             // create a shadow node
             if (Playground.DEBUG) {

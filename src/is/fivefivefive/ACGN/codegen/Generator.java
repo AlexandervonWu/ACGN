@@ -197,6 +197,7 @@ public class Generator {
                             List<MASGEdge> downlinksQT = root.getDownlinksAtTimeOfVisit(graph, tov);
                             if (downlinksQT == null || downlinksQT.size() < 2) {
                                 System.err.println("[GENERATOR] Invalid QtExprOrFormula with less than 2 downlinks at TOV " + tov);
+                                System.err.println("Downlinks size :" + (downlinksQT == null ? "null" : downlinksQT.size()));
                                 throw new RuntimeException("QtExprOrFormula must have at least 2 downlinks (quantified variables and body)");
                             }
                             if (root.getSyntactic() == 3) {
@@ -692,6 +693,10 @@ public class Generator {
                             // UnaryExpr
                             List<MASGEdge> downlinksUnary = root.getDownlinksAtTimeOfVisit(graph, tov);
                             AugmentedNode unaryExprSub = downlinksUnary.get(0).getTarget();
+                            if (unaryExprSub == null) {
+                                System.err.println("[GENERATOR] No sub-expression for UnaryExpr " + root.getSymbol().getName() + " at TOV " + tov);
+                                return "<ERROR>";
+                            }
                             tovTracker.putIfAbsent(unaryExprSub, 0);
                             tovTracker.put(unaryExprSub, tovTracker.get(unaryExprSub) + 1);
                             int tovUnaryExprSub = tovTracker.get(unaryExprSub);

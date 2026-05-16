@@ -669,10 +669,10 @@ public class CodeGenAgent {
                 float update = INERTIA * oldValue + (1 - INERTIA) * reward;
                 float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)
                 actionValues.put(action, logUpdate);
-                if (impactMap.containsKey(action)) {
-                    impactMap.put(action, impactMap.get(action) + logUpdate * reward);
+                if (impactMap.containsKey(source)) {
+                    impactMap.put(source, impactMap.get(source) + logUpdate * reward);
                 } else {
-                    impactMap.put(action, logUpdate * reward);
+                    impactMap.put(source, logUpdate * reward);
                 }
             } else {
                 float logUpdate = (float) (Math.log(oldValue + 1e-6)); // add a small constant to avoid log(0)
@@ -741,7 +741,7 @@ public class CodeGenAgent {
             // float childProb = qTable.get(childKey).get(child);
             // float childProb = impactMap.get(child);
             // float childReward = edgeRewardMap.getOrDefault(childKey, 0f);
-            localReward += impactMap.get(child);
+            localReward += impactMap.containsKey(child) ? impactMap.get(child) : 1f; // use the impact as the reward signal for the child
             if (edgeRewardMap.containsKey(childKey)) {
                 maxOrEndPosition = Math.max(maxOrEndPosition, edge.getPosition());
             }
