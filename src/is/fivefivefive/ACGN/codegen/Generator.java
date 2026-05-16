@@ -65,7 +65,7 @@ public class Generator {
                     }
                     tovTracker.putIfAbsent(explicit, 1);
                     int tovExplicit = tovTracker.get(explicit) + 1;
-                    tovTracker.putIfAbsent(explicit, tovExplicit);
+                    tovTracker.put(explicit, tovExplicit);
                     sb.append(toCode(graph, explicit, tovExplicit, null));
                     break;
                 case "SigSymbol":

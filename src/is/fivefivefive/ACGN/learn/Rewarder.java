@@ -202,7 +202,7 @@ public class Rewarder {
             } catch (Exception e) {
                 System.out.println("[REWARDER] Exception in " + newPredName);
                 System.out.println("Error evaluating predicate: " + e.getMessage());                
-                return 0.0;
+                throw e; // rethrow the exception after logging
             }
             
             if (result) {

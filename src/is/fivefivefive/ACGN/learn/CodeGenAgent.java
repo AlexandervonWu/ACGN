@@ -667,7 +667,11 @@ public class CodeGenAgent {
             float oldValue = actionValues.get(action);
             if (action.equals(selection)) {
                 float update = INERTIA * oldValue + (1 - INERTIA) * reward;
-                float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)
+                float logUpdate = (float) (Math.log(update + 1e-6)); // add a small constant to avoid log(0)'
+                if (logUpdate == Float.NaN) {
+                    System.err.println("Log update is NaN for action: " + action.getName() + " with update value: " + update);
+                    throw new RuntimeException("Log update is NaN for action: " + action.getName() + " with update value: " + update);
+                }
                 actionValues.put(action, logUpdate);
                 if (impactMap.containsKey(source)) {
                     impactMap.put(source, impactMap.get(source) + logUpdate * reward);
