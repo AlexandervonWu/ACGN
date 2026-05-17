@@ -885,7 +885,7 @@ public class Generator {
             if (!(root.getSymbol() instanceof MiddleSymbol)) {
                 return sb.toString();
             }
-            return '(' + sb.toString() + ')';
+            return '(' + sb.toString() + ") ";
         } catch (Exception e) {
             System.out.println("Error in generating code for " + root.getSymbol().getName() + " at " + tov);
             e.printStackTrace();

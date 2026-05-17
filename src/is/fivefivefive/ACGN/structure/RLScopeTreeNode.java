@@ -235,6 +235,10 @@ public class RLScopeTreeNode extends ScopeTreeNode {
                     // the scope is not directly under the root
                     // this is not a local variable within the scope, scale the probability up
                     float scale = 1 - totalLocalVarProb;
+                    if (scale == 0) {
+                        throw new RuntimeException("Total local variable probability is 1 for " + keyPair.a
+                                + " at position " + keyPair.b + ", cannot scale up the non-local-variable candidates.");
+                    }
                     float prob = candidateProbs.get(localVar);
                     qDist.get(keyPair).put(localVar, prob / scale);
                 }

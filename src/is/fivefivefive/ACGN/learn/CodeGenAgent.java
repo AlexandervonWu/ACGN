@@ -377,9 +377,9 @@ public class CodeGenAgent {
             return fillHole(source, position, currentScope);
         }
         if (nextToken == null) {
-            System.out.println("Incomplete Q-table set for " + source.getName() + " at position " + position);
-            System.out.println("Current Q-entry value: " + qTable.get(Pair.of(source, position)));
-            System.out.println("with cumulative probability " + cumulativeProbability + " and random value " + randomValue);
+            System.err.println("Incomplete Q-table set for " + source.getName() + " at position " + position);
+            System.err.println("Current Q-entry value: " + qTable.get(Pair.of(source, position)));
+            System.err.println("with cumulative probability " + cumulativeProbability + " and random value " + randomValue);
             throw new RuntimeException("No next token selected for " + source.getName() + " at position " + position);
         }
         actionSequence.add(source.getName() + ", " + position + " -> " + nextToken.getName());
@@ -660,6 +660,7 @@ public class CodeGenAgent {
         }
         Map<Pair<Symbol, Integer>, Map<Symbol, Float>> qTable = currentScope.getqDist();
         if (!qTable.containsKey(Pair.of(source, position)) || !qTable.get(Pair.of(source, position)).containsKey(selection)) {
+            System.err.println("Q-table at current scope: " + currentScope.getId() + " is missing entry for symbol: " + source.getName() + " at position: " + position + " with selection: " + selection.getName());
             throw new IllegalArgumentException("Q-table entry missing for symbol: " + source.getName() + " at position: " + position + " with selection: " + selection.getName());
         }
         Map<Symbol, Float> actionValues = qTable.get(Pair.of(source, position));
@@ -680,6 +681,10 @@ public class CodeGenAgent {
                 }
             } else {
                 float logUpdate = (float) (Math.log(oldValue + 1e-6)); // add a small constant to avoid log(0)
+                if (logUpdate == Float.NaN) {
+                    System.err.println("Log update is NaN for action: " + action.getName());
+                    throw new RuntimeException("Log update is NaN for action: " + action.getName());
+                }
                 actionValues.put(action, logUpdate);
             }
         }
