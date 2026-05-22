@@ -129,7 +129,9 @@ public class Multigraph implements Serializable {
             throw new IllegalArgumentException("Source and target must be in the graph.");
         }
         MASGEdge edge = new MASGEdge(source, target, position, timeOfVisit);
-        edges.add(edge);
+        if (!edges.contains(edge)) {
+            edges.add(edge);
+        }
         source.connect(target, position, graph, timeOfVisit);
         return edge;
     }

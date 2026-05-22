@@ -46,14 +46,17 @@ public class EdgeCounter {
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
                             if (id == 0) continue; // Skip the root node
-                            if (id == 1) continue; // Skip the student-written solution for now, they have cringe errors
+                            // if (id == 1) continue; // Skip the student-written solution for now, they have cringe errors
                             if (id > 2) continue; // Skip the checking predicates
                             Multigraph graph = visitor.getForest().get(id);
                             for (MASGEdge e : graph.getEdges()) {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
                                 if (source.getName().equals("CALL_EXPR")) {
                                     // output the debug with the filename
-                                    finalDebugMessage += "Debug: Found CALL_EXPR in file " + file.getName() + " at model count " + modelCount + "\n";
+                                    finalDebugMessage += "Debug: Found CALL_EXPR in file " + file.getName() + " at model count " + modelCount + " for id " + id + "\n";
+                                    finalDebugMessage += "Source node symbol: " + e.getSource().getSymbol().getName() + "\n";
+                                    finalDebugMessage += "Target node symbol: " + e.getTarget().getSymbol().getName() + "\n";
+                                    finalDebugMessage += "Edge position: " + e.getPosition() + "\n";
                                 }
                                 Symbol target = getSymbolForPretrain(e.getTarget().getSymbol());
                                 int position = e.getPosition();
