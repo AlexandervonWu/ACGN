@@ -101,6 +101,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private Map<Integer, AugmentedNode> nodeDict;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
+    public static final boolean USE_SHADOW = false;
+    public static final boolean TYPE_SPECIAL_SETS = false;
 
     public MASGVisitor() {
         forest = new DoubleMap<>();
@@ -391,11 +393,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Multigraph graph = arg.getAffliation();
         graph.addVertex(declRoot);
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
-        AugmentedNode exprNode = visitTypeExpr(expr, arg, 1);
+        AugmentedNode exprNode;
+        if (TYPE_SPECIAL_SETS) {
+            exprNode = visitTypeExpr(expr, arg, 1);
+        } else {
+            exprNode = expr.accept(this, arg);
+        }
         globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
         // SigSymbol sigSymbol = sigPair.a;
+        // TODO: not actually sigs; need to capture complex type expressions. 
         SigSymbol sigSymbol = typeCheckExpr(expr);
         for (String name : n.getNames()) {
             VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph), exprNode);
@@ -452,7 +460,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             System.out.println("Visiting " + parent.getSymbol().getName() + " for " + child.getSymbol().getName() + " at time of visit " + timeOfVisit);
         }
         graph.addVertex(parent);
-        boolean flagEq = parent.equals(child) && parent.getSyntactic() != 15 && parent.getSyntactic() != 16;
+        boolean flagEq = USE_SHADOW && parent.equals(child) && parent.getSyntactic() != 15 && parent.getSyntactic() != 16;
         if (flagEq) {
             // create a shadow node
             if (Playground.DEBUG) {
