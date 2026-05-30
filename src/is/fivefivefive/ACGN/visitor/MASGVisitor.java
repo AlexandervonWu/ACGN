@@ -399,7 +399,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         } else {
             exprNode = expr.accept(this, arg);
         }
-        globalVariables.addEdge(declRoot, exprNode, 1);
+        // globalVariables.addEdge(declRoot, exprNode, 1);
         visitAndConnect(declRoot, exprNode, 1, arg);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
         // SigSymbol sigSymbol = sigPair.a;
