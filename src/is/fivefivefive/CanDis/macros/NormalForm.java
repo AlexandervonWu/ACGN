@@ -1,4 +1,4 @@
-package edu.uta.cse.scope.macros;
+package is.fivefivefive.CanDis.macros;
 
 import java.util.List;
 import java.util.Map;

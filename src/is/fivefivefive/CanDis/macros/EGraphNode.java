@@ -1,8 +1,7 @@
-package edu.uta.cse.scope.macros;
+package is.fivefivefive.CanDis.macros;
 
 import java.util.List;
 
-import edu.uta.cse.scope.macros.EGraphNode.Metatype;
 
 /**
  * This class represents a node in the slotted e-graph of the matrix of the normal form.

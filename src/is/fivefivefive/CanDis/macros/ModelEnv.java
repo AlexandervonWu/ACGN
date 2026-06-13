@@ -1,4 +1,4 @@
-package edu.uta.cse.scope.macros;
+package is.fivefivefive.CanDis.macros;
 
 import java.util.Set;
 import java.util.HashSet;

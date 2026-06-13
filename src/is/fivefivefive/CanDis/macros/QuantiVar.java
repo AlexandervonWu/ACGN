@@ -1,4 +1,4 @@
-package edu.uta.cse.scope.macros;
+package is.fivefivefive.CanDis.macros;
 
 import edu.mit.csail.sdg.ast.Type;
 
