@@ -208,7 +208,7 @@ public class Generator {
                                         break;
                                     case 2:
                                         // comprehension
-                                        sb.append("some ");
+                                        sb.append("");
                                         break;
                                     default:
                                         break;

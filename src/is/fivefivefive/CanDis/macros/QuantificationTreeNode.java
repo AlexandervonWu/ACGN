@@ -19,12 +19,23 @@ public class QuantificationTreeNode {
     private List<QuantiVar> quantiVars; // the quantified variables at this node
     private List<QuantificationTreeNode> children; // the child nodes of this node
     private QuantificationTreeNode parent; // the parent node of this node, null for the root node
-    private String quantifier; // the quantifier at this node, e.g., "all", "some", "lone", "one"
+    private Quantifier quantifier; // the quantifier at this node, e.g., "all", "some", "lone", "one"
     private boolean isDisj; // if these variables in the QTN are disjoint, which is determined by the presence of "disj" keyword in the original formula.
     private String type; // the reduced primitive type of the quantified variables at this node, type-checked by the intepreter, and used to keep De Bruijn equivalence. 
     // invariant: all quantified variables at this node have the same type, which is the same as the type of the quantifier in the original formula. 
 
-    public QuantificationTreeNode(String quantifier, List<QuantiVar> quantiVars, List<QuantificationTreeNode> children, QuantificationTreeNode parent, boolean isDisj, String type) {
+    public enum Quantifier {
+        SUM,
+        COMPREHENSION,
+        ALL,
+        SOME,
+        NO,
+        ONE,
+        LONE,
+        NOTONE,
+        NOTLONE
+    }
+    public QuantificationTreeNode(Quantifier quantifier, List<QuantiVar> quantiVars, List<QuantificationTreeNode> children, QuantificationTreeNode parent, boolean isDisj, String type) {
         this.quantiVars = quantiVars;
         this.children = children;
         this.parent = parent;
@@ -33,13 +44,13 @@ public class QuantificationTreeNode {
         this.type = type;
 
     }
-    public QuantificationTreeNode(String quantifier, List<QuantiVar> quantiVars, List<QuantificationTreeNode> children, boolean isDisj, String type) {
+    public QuantificationTreeNode(Quantifier quantifier, List<QuantiVar> quantiVars, List<QuantificationTreeNode> children, boolean isDisj, String type) {
         this(quantifier, quantiVars, children, null, isDisj, type);
     }
-    public QuantificationTreeNode(String quantifier, List<QuantiVar> quantiVars, boolean isDisj, String type) {
+    public QuantificationTreeNode(Quantifier quantifier, List<QuantiVar> quantiVars, boolean isDisj, String type) {
         this(quantifier, quantiVars, new ArrayList<>(), null, isDisj, type);
     }
-    public QuantificationTreeNode(String quantifier, List<QuantiVar> quantiVars, QuantificationTreeNode parent, boolean isDisj, String type) {
+    public QuantificationTreeNode(Quantifier quantifier, List<QuantiVar> quantiVars, QuantificationTreeNode parent, boolean isDisj, String type) {
         this(quantifier, quantiVars, new ArrayList<>(), parent, isDisj, type);
     }
     public List<QuantiVar> getQuantiVars() {
@@ -60,7 +71,7 @@ public class QuantificationTreeNode {
     public void setParent(QuantificationTreeNode parent) {
         this.parent = parent;
     }
-    public String getQuantifier() {
+    public Quantifier getQuantifier() {
         return quantifier;
     }
     public boolean isDisj() {
