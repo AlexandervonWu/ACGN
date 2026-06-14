@@ -1,7 +1,9 @@
 package is.fivefivefive.CanDis.macros;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * This class encodes the normal form of a formula or function, which consists of a quantification tree and a matrix e-graph representation of the formula. 
@@ -16,15 +18,27 @@ public class NormalForm {
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
     private Map<QuantiVar, QuantificationTreeNode> correspondingQuantificationTreeNodes; // a mapping from quantified variables in the matrix to their corresponding quantification tree nodes, for easy access.
-
-    public NormalForm() {
+    private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
+    public enum TemporalOp {
+        NONE,
+        BEFORE,
+        HISTORICALLY,
+        ONCE,
+        ALWAYS,
+        EVENTUALLY,
+        UNTIL,
+        RELEASES,
+        SINCE,
+        TRIGGERED,
+    }
+    public NormalForm(TemporalOp temporalOp) {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.
         this.quantificationTreeRoot = null;
         this.matrixEGraphRoot = null;
-        this.params = null;
-        this.matrixQuantiVars = null;
-        this.correspondingQuantificationTreeNodes = null;
-    
+        this.params = new ArrayList<>();
+        this.matrixQuantiVars = new ArrayList<>();
+        this.correspondingQuantificationTreeNodes = new HashMap<>();
+        this.temporalOp = temporalOp;
     }
 
     public QuantificationTreeNode getQuantificationTree() {
@@ -67,5 +81,8 @@ public class NormalForm {
         this.matrixQuantiVars.add(quantiVar);
         this.correspondingQuantificationTreeNodes.put(quantiVar, qtNode);
         qtNode.addQuantiVar(quantiVar);
+    }
+    public TemporalOp getTemporalOp() {
+        return this.temporalOp;
     }
 }
