@@ -84,7 +84,7 @@ public class EGraphNode {
      * Rewrite the e-graph with regard to rewriting rules; canonicalize the formula with equality saturation. 
      */
     public void rewrite() {
-        // TODO : rewrite this node according to the operator and the structure. 
+        // TODO : rewrite this node according to the operator and the structure. Saturate the rewrite with: 1. Make all consecutive associative operators 
         for (EGraphNode child : children) {
             child.rewrite();
         }

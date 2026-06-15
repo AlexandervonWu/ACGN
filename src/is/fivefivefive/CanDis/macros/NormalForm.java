@@ -26,10 +26,14 @@ public class NormalForm {
         ONCE,
         ALWAYS,
         EVENTUALLY,
-        UNTIL,
-        RELEASES,
-        SINCE,
-        TRIGGERED,
+        UNTILL,
+        UNTILR,
+        RELEASESL,
+        RELEASESR,
+        SINCEL,
+        SINCER,
+        TRIGGEREDL,
+        TRIGGEREDR
     }
     public NormalForm(TemporalOp temporalOp) {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.

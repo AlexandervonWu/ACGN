@@ -47,6 +47,14 @@ public class IRAgent {
                     NormalForm rootNf = new NormalForm(TemporalOp.NONE);
                     anchor.put(Pair.of(node, tov), rootNf);
                 // 
+                case "MiddleSymbol":
+                    switch (root.getSyntactic()) {
+                        case -127:
+                            switch ((int) Math.round(root.getSemantic())) {
+                                case 1:
+                                    
+                            }
+                    }
             }
         }
     }
