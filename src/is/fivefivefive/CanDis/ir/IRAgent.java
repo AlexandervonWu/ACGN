@@ -7,20 +7,22 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.macros.NormalForm;
+import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
+import parser.etc.Pair;
 
 public class IRAgent {
     private Multigraph graph;
-    private Map<AugmentedNode, Integer> tovTracker;
+    
     private List<NormalForm> nfs; // the normal forms from the graph in temporal logical operators order; 
     // try to normalize as much as possible from MASG to the normal form. Try prenexing. 
 
     public IRAgent(Multigraph graph) {
         this.graph = graph;
         this.nfs = new ArrayList<>();
-        this.tovTracker = new HashMap<>();
     }
 
     public List<NormalForm> normalForms() {
@@ -28,11 +30,25 @@ public class IRAgent {
     }
 
     public void computeNormalForm() {
+        Map<AugmentedNode, Integer> tovTracker = new HashMap<>(); // track the time of visit
         AugmentedNode root = graph.getRoot();
-        this.tovTracker = new HashMap<>();
         boolean negation = false;
+        Map<Pair<AugmentedNode, Integer>, NormalForm> anchor = new HashMap<>(); // anchor each pair of (node, time of visit) to its normal form up to temporals
         Queue<AugmentedNode> queue = new LinkedList<>();
-        
+        queue.add(graph.getRoot());
+        while (!queue.isEmpty()) {
+            AugmentedNode node = queue.poll();
+            tovTracker.putIfAbsent(node, 0);
+            int tov = tovTracker.get(node) + 1;
+            tovTracker.put(node, tov);
+            Symbol symbol = node.getSymbol();
+            switch (symbol.getClass().getSimpleName()) {
+                case "PredRootSymbol":
+                    NormalForm rootNf = new NormalForm(TemporalOp.NONE);
+                    anchor.put(Pair.of(node, tov), rootNf);
+                // 
+            }
+        }
     }
 
     private static boolean flip(boolean f) {
