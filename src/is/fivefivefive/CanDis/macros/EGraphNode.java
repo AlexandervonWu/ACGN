@@ -37,7 +37,16 @@ public class EGraphNode {
         PREDICATE,
         FUNCTION,
         VARIABLE,
+        GLOBALBINDING,
         CONSTANT,
+        TEMPORALROOT,
+
+        // TEMPORAL LEAVES
+        RELEASES,
+        SINCE,
+        TRIGGERED,
+        UNTIL,
+        
         // ... other operators can be added here
         MODULEDECL,
         OPEN,

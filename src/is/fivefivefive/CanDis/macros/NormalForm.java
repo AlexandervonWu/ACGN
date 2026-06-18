@@ -3,6 +3,10 @@ package is.fivefivefive.CanDis.macros;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+
+import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
+import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
+
 import java.util.HashMap;
 
 /**
@@ -35,12 +39,21 @@ public class NormalForm {
         TRIGGEREDL,
         TRIGGEREDR
     }
-    public NormalForm(TemporalOp temporalOp) {
+    public NormalForm() {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.
         this.quantificationTreeRoot = null;
         this.matrixEGraphRoot = null;
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
+        this.correspondingQuantificationTreeNodes = new HashMap<>();
+        this.temporalOp = TemporalOp.NONE;
+    }
+
+    public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
+        this.quantificationTreeRoot = null;
+        this.matrixEGraphRoot = new EGraphNode(egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false, Metatype.BOOLEAN);
+        this.params = parent.params;
+        this.matrixQuantiVars = parent.matrixQuantiVars;
         this.correspondingQuantificationTreeNodes = new HashMap<>();
         this.temporalOp = temporalOp;
     }
