@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
+import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.macros.NormalForm;
 import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
@@ -41,20 +42,25 @@ public class IRAgent {
             tovTracker.putIfAbsent(node, 0);
             int tov = tovTracker.get(node) + 1;
             tovTracker.put(node, tov);
+            List<MASGEdge> downlinksAtTov = node.getDownlinksAtTimeOfVisit(graph, tov);
             Symbol symbol = node.getSymbol();
             switch (symbol.getClass().getSimpleName()) {
                 case "PredRootSymbol":
                     NormalForm rootNf = new NormalForm(TemporalOp.NONE);
                     anchor.put(Pair.of(node, tov), rootNf);
-                // 
+                    
                 case "MiddleSymbol":
                     switch (root.getSyntactic()) {
                         case -127:
+                            // RelDecl Roots; put decls into 
                             switch ((int) Math.round(root.getSemantic())) {
                                 case 1:
                                     
                             }
                     }
+            }
+            for (MASGEdge downlink : downlinksAtTov) {
+                queue.add(downlink.getTarget());
             }
         }
     }
