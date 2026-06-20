@@ -30,10 +30,6 @@ public class EGraphNode {
         NOT,
         IMPLIES,
         IFF,
-        FORALL,
-        EXISTS,
-        LONE,
-        ONE,
         PREDICATE,
         FUNCTION,
         VARIABLE,
@@ -47,6 +43,12 @@ public class EGraphNode {
         TRIGGERED,
         UNTIL,
         
+        // QUANTIFIER IR NODES TO BE ELIMINATED
+        FORALL,
+        EXISTS,
+        LONE,
+        ONE,
+
         // ... other operators can be added here
         MODULEDECL,
         OPEN,
@@ -92,10 +94,10 @@ public class EGraphNode {
     /**
      * Rewrite the e-graph with regard to rewriting rules; canonicalize the formula with equality saturation. 
      */
-    public void rewrite() {
+    public void saturate() {
         // TODO : rewrite this node according to the operator and the structure. Saturate the rewrite with: 1. Make all consecutive associative operators 
         for (EGraphNode child : children) {
-            child.rewrite();
+            child.saturate();
         }
     }
 

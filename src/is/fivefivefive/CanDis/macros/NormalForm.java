@@ -102,4 +102,7 @@ public class NormalForm {
     public TemporalOp getTemporalOp() {
         return this.temporalOp;
     }
+    public void prenex() {
+        // TODO
+    }
 }

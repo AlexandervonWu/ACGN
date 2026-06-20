@@ -35,6 +35,9 @@ public class IRAgent {
         return nfs;
     }
 
+    /**
+     * Build the skeleton of the e-graph prior to rewriting;
+     */
     public void computeNormalForm() {
         Map<AugmentedNode, Integer> tovTracker = new HashMap<>(); // track the time of visit
         AugmentedNode root = graph.getRoot();
@@ -76,7 +79,8 @@ public class IRAgent {
                     id++;
                     checkEmpty(parseStack);
                     parseStack.peek().addChild(constNode);
-
+                case "EndSymbol":
+                    parseStack.pop();
                 case "MiddleSymbol":
                     switch (node.getSyntactic()) {
                         case -127:

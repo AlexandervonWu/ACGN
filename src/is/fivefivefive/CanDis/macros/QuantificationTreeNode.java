@@ -89,4 +89,25 @@ public class QuantificationTreeNode {
         sb.append("}");
         return sb.toString();
     }
+    public void flipQuantifier() {
+        switch (quantifier) {
+            case ALL:
+                quantifier = Quantifier.SOME;
+            case NO:
+                // ADD a negation to the matrix
+                quantifier = Quantifier.ALL;
+            case ONE:
+                quantifier = Quantifier.NOTONE;
+            case LONE:
+                quantifier = Quantifier.NOTLONE;
+            case NOTONE:
+                quantifier = Quantifier.ONE;
+            case NOTLONE:
+                quantifier = Quantifier.LONE;
+            case SOME:
+                quantifier = Quantifier.ALL;
+            default:
+                // NOOP
+        }
+    }
 }
