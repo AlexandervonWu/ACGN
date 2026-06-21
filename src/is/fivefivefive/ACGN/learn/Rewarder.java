@@ -252,7 +252,9 @@ public class Rewarder {
             Command cmd2 = new Command(true, Hyperparams.SCOPE, Hyperparams.SCOPE, Hyperparams.SCOPE, satCommand2);
             A4Solution satSolution1 = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), cmd1, options);
             A4Solution satSolution2 = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), cmd2, options);
-            if(satSolution1 == null && satSolution2 == null) {
+            boolean noOvercoverage = satSolution1 == null || !satSolution1.satisfiable();
+            boolean noUndercoverage = satSolution2 == null || !satSolution2.satisfiable();
+            if (noOvercoverage && noUndercoverage) {
                 return 1.0; // perfect coverage, no overcoverage or undercoverage
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
@@ -267,7 +269,10 @@ public class Rewarder {
             }
         }
         // Calculate the reward based on the counts of positive and negative instances
-        double reward = (double) (posCount * negCount) / (double) (posIter * negIter + 1); // Avoid division by zero
+        if (posIter == 0 || negIter == 0) {
+            return 0.0;
+        }
+        double reward = (double) (posCount * negCount) / (double) (posIter * negIter);
         return reward;
     }
 }

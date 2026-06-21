@@ -40,7 +40,7 @@ def write_csv(points, output_dir):
             "candidateReward",
             "groundTruthReward",
             "rewardGap",
-        ])
+        ], lineterminator="\n")
         writer.writeheader()
         writer.writerows(points)
     return path
@@ -98,7 +98,8 @@ def plot(points, output_dir):
             c=colors.get(status, "#7f7f7f"),
             marker=markers.get(status, "o"),
         )
-    corr = correlation([p["distance"] for p in points], [p["candidateReward"] for p in points])
+    corr_points = [p for p in points if p["statusFolder"] != "CORRECT"]
+    corr = correlation([p["distance"] for p in corr_points], [p["candidateReward"] for p in corr_points])
     ax.set_title(f"Canonical edit distance vs Rewarder candidate reward (r={corr:.3f})")
     ax.set_xlabel("Canonical edit distance")
     ax.set_ylabel("Candidate reward against invXC")
@@ -121,7 +122,8 @@ def plot(points, output_dir):
             c=colors.get(status, "#7f7f7f"),
             marker=markers.get(status, "o"),
         )
-    corr = correlation([p["distance"] for p in points], [p["rewardGap"] for p in points])
+    corr_points = [p for p in points if p["statusFolder"] != "CORRECT"]
+    corr = correlation([p["distance"] for p in corr_points], [p["rewardGap"] for p in corr_points])
     ax.set_title(f"Canonical edit distance vs reward gap (r={corr:.3f})")
     ax.set_xlabel("Canonical edit distance")
     ax.set_ylabel("Ground-truth reward - candidate reward")
@@ -175,7 +177,8 @@ def plot_svg(points, output_dir):
         def sy(value):
             return top + plot_height - (value - y_min) * plot_height / (y_max - y_min)
 
-        corr = correlation(xs, ys)
+        corr_points = [p for p in points if p["statusFolder"] != "CORRECT"]
+        corr = correlation([p["distance"] for p in corr_points], [p[y_key] for p in corr_points])
         path = output_dir / filename
         with path.open("w", encoding="utf-8") as handle:
             handle.write(f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">\n')

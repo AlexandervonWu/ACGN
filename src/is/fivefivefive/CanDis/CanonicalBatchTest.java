@@ -218,6 +218,7 @@ public class CanonicalBatchTest {
         writer.write("    \"averageCandidateReward\": " + number(summary.averageCandidateReward()) + ",\n");
         writer.write("    \"averageGroundTruthReward\": " + number(summary.averageGroundTruthReward()) + ",\n");
         writer.write("    \"averageRewardGap\": " + number(summary.averageRewardGap()) + ",\n");
+        writer.write("    \"distanceCandidateRewardPearsonSamples\": " + summary.distanceRewardSamples + ",\n");
         writer.write("    \"distanceCandidateRewardPearson\": " + number(summary.distanceRewardCorrelation()) + "\n");
         writer.write("  }\n");
         writer.write("}\n");
@@ -282,6 +283,8 @@ public class CanonicalBatchTest {
             writer.write("- Average candidate reward: " + number(summary.averageCandidateReward()) + "\n");
             writer.write("- Average ground-truth self reward: " + number(summary.averageGroundTruthReward()) + "\n");
             writer.write("- Average reward gap: " + number(summary.averageRewardGap()) + "\n");
+            writer.write("- Pearson correlation sample: non-CORRECT rewarded predicates ("
+                    + summary.distanceRewardSamples + " files)\n");
             writer.write("- Pearson correlation, distance vs candidate reward: "
                     + number(summary.distanceRewardCorrelation()) + "\n\n");
 
@@ -448,6 +451,7 @@ public class CanonicalBatchTest {
         private double candidateRewardSum;
         private double groundTruthRewardSum;
         private double rewardGapSum;
+        private int distanceRewardSamples;
         private double distanceRewardXSum;
         private double distanceRewardYSum;
         private double distanceRewardXXSum;
@@ -472,11 +476,14 @@ public class CanonicalBatchTest {
                     candidateRewardSum += result.candidateReward;
                     groundTruthRewardSum += result.groundTruthReward;
                     rewardGapSum += result.rewardGap;
-                    distanceRewardXSum += result.distance;
-                    distanceRewardYSum += result.candidateReward;
-                    distanceRewardXXSum += (double) result.distance * result.distance;
-                    distanceRewardYYSum += result.candidateReward * result.candidateReward;
-                    distanceRewardXYSum += result.distance * result.candidateReward;
+                    if (isCorrelationEligible(result)) {
+                        distanceRewardSamples++;
+                        distanceRewardXSum += result.distance;
+                        distanceRewardYSum += result.candidateReward;
+                        distanceRewardXXSum += (double) result.distance * result.distance;
+                        distanceRewardYYSum += result.candidateReward * result.candidateReward;
+                        distanceRewardXYSum += result.distance * result.candidateReward;
+                    }
                 }
             } else {
                 failures++;
@@ -508,7 +515,7 @@ public class CanonicalBatchTest {
 
         private double distanceRewardCorrelation() {
             return correlation(
-                    rewardSuccesses,
+                    distanceRewardSamples,
                     distanceRewardXSum,
                     distanceRewardYSum,
                     distanceRewardXXSum,
@@ -544,6 +551,7 @@ public class CanonicalBatchTest {
         private Integer maxDistance;
         private int rewardSuccesses;
         private double candidateRewardSum;
+        private int distanceRewardSamples;
         private double distanceRewardXSum;
         private double distanceRewardYSum;
         private double distanceRewardXXSum;
@@ -565,11 +573,14 @@ public class CanonicalBatchTest {
                 if (result.rewardError == null) {
                     rewardSuccesses++;
                     candidateRewardSum += result.candidateReward;
-                    distanceRewardXSum += result.distance;
-                    distanceRewardYSum += result.candidateReward;
-                    distanceRewardXXSum += (double) result.distance * result.distance;
-                    distanceRewardYYSum += result.candidateReward * result.candidateReward;
-                    distanceRewardXYSum += result.distance * result.candidateReward;
+                    if (isCorrelationEligible(result)) {
+                        distanceRewardSamples++;
+                        distanceRewardXSum += result.distance;
+                        distanceRewardYSum += result.candidateReward;
+                        distanceRewardXXSum += (double) result.distance * result.distance;
+                        distanceRewardYYSum += result.candidateReward * result.candidateReward;
+                        distanceRewardXYSum += result.distance * result.candidateReward;
+                    }
                 }
             } else {
                 failures++;
@@ -586,7 +597,7 @@ public class CanonicalBatchTest {
 
         private double distanceRewardCorrelation() {
             return correlation(
-                    rewardSuccesses,
+                    distanceRewardSamples,
                     distanceRewardXSum,
                     distanceRewardYSum,
                     distanceRewardXXSum,
@@ -601,6 +612,10 @@ public class CanonicalBatchTest {
         private String maxDistanceMarkdown() {
             return maxDistance == null ? "n/a" : maxDistance.toString();
         }
+    }
+
+    private static boolean isCorrelationEligible(FileResult result) {
+        return !"CORRECT".equals(result.statusFolder);
     }
 
     private static double correlation(int n, double xSum, double ySum, double xxSum, double yySum, double xySum) {
