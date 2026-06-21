@@ -85,10 +85,25 @@ public class IRAgent {
                     switch (node.getSyntactic()) {
                         case -127:
                             // RelDecl Roots; put decls into; TODO: Typechecking
+                            Opcode opcode;
                             switch ((int) Math.round(node.getSemantic())) {
                                 case 1:
-                                    
+                                    opcode = Opcode.DISJ;
+                                    break;
+                                case 2:
+                                    opcode = Opcode.VAR;
+                                    break;
+                                case 3:
+                                    opcode = Opcode.DISJVAR;
+                                    break;
+                                default:
+                                    opcode = Opcode.GENERICRELDECL;
+                                    break;
                             }
+                            id++;
+                            EGraphNode relDeclEGN = new EGraphNode(id, opcode, new ArrayList<>(), true, -1, true, Metatype.CONTROL);
+                            checkEmpty(parseStack);
+                            parseStack.peek().addChild(relDeclEGN);
                         case -5: 
                         switch ((int) Math.round(node.getSemantic())) {
                             case 17: {
@@ -108,6 +123,7 @@ public class IRAgent {
                                 AugmentedNode nr = downlinksAtTov.get(1).getTarget();
                                 anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
                                 anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
+                                break;
                             }
                             case 18: {
                                 // SINCE
@@ -126,6 +142,7 @@ public class IRAgent {
                                 AugmentedNode nr = downlinksAtTov.get(1).getTarget();
                                 anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
                                 anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
+                                break;
                             }
                             case 19: {
                                 // TRIGGERED
@@ -144,6 +161,7 @@ public class IRAgent {
                                 AugmentedNode nr = downlinksAtTov.get(1).getTarget();
                                 anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
                                 anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
+                                break;
                             }
                             case 20: {
                                 // UNTIL
@@ -162,6 +180,7 @@ public class IRAgent {
                                 AugmentedNode nr = downlinksAtTov.get(1).getTarget();
                                 anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
                                 anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
+                                break;
                             }
                         }
                     }

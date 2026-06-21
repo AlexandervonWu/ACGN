@@ -49,6 +49,12 @@ public class EGraphNode {
         LONE,
         ONE,
 
+        // DECLS IR NODES TO BE ELIMINATED
+        GENERICRELDECL,
+        DISJ,
+        VAR,
+        DISJVAR,
+        
         // ... other operators can be added here
         MODULEDECL,
         OPEN,
