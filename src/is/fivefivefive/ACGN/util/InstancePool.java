@@ -144,9 +144,15 @@ public class InstancePool {
         return null; // instance not found
     }
     public void incrementUsageFrequency(A4Solution instance) {
-        get(uniqueKey.get(instance)); // this will automatically increment the usage frequency
+        Integer key = uniqueKey.get(instance);
+        if (key != null) {
+            get(key); // this will automatically increment the usage frequency
+        }
     }
     public void removeLeastFrequentlyUsed() {
+        if (size == 0) {
+            return;
+        }
         DoublyLinkedList leastFrequentList = frequencyMap.get(minFrequency);
         if (leastFrequentList != null && !leastFrequentList.isEmpty()) {
             AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
@@ -209,6 +215,9 @@ public class InstancePool {
         return size == capacity;
     }
     public A4Solution getHead() {
+        if (head == null) {
+            return null;
+        }
         return head.instance;
     }
     public int getUsageFrequency(A4Solution instance) {

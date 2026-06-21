@@ -17,18 +17,23 @@ import java.util.Map;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.learn.Hyperparams;
+import is.fivefivefive.ACGN.learn.Rewarder;
 import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.ACGN.util.InstancePool;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
+import parser.etc.Pair;
 
 public class CanonicalBatchTest {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "distance_results";
 
     public static void main(String[] args) throws IOException {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
         Options options = Options.parse(args);
         Files.createDirectories(options.outputDir);
         Path jsonPath = options.outputDir.resolve("distances.json");
@@ -44,7 +49,7 @@ public class CanonicalBatchTest {
             writeJsonHeader(json, options, files.size());
             boolean first = true;
             for (Path file : files) {
-                FileResult result = processFile(options.inputDir, file, options.verbose);
+                FileResult result = processFile(options.inputDir, file, options);
                 summary.add(result);
                 if (!first) {
                     json.write(",\n");
@@ -62,15 +67,22 @@ public class CanonicalBatchTest {
         System.out.println("Wrote " + markdownPath);
     }
 
-    private static FileResult processFile(Path inputRoot, Path file, boolean verbose) {
+    private static FileResult processFile(Path inputRoot, Path file, Options options) {
         FileResult result = new FileResult(inputRoot, file);
         PrintStream originalOut = System.out;
-        if (!verbose) {
+        PrintStream originalErr = System.err;
+        if (!options.verbose) {
+            PrintStream sink = new PrintStream(new OutputStream() {
+                @Override
+                public void write(int b) {
+                }
+            });
             System.setOut(new PrintStream(new OutputStream() {
                 @Override
                 public void write(int b) {
                 }
             }));
+            System.setErr(sink);
         }
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
@@ -101,14 +113,40 @@ public class CanonicalBatchTest {
             result.leftIRTemporalFOL = Canonical.irTemporalFol(left);
             result.rightIRTemporalFOL = Canonical.irTemporalFol(right);
             result.edits = Canonical.edits(left, right);
+            computeRewardMetrics(module, result, options.rewardPoolSize);
             return result;
         } catch (Throwable t) {
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
             return result;
         } finally {
-            if (!verbose) {
+            if (!options.verbose) {
                 System.setOut(originalOut);
+                System.setErr(originalErr);
             }
+        }
+    }
+
+    private static void computeRewardMetrics(CompModule module, FileResult result, int poolSize) {
+        try {
+            Pair<InstancePool, InstancePool> instances = Rewarder.instances(module, result.rightPredicate, poolSize);
+            result.rewardPoolSize = poolSize;
+            result.candidateReward = Rewarder.computeReward(
+                    module,
+                    instances,
+                    result.rightPredicate,
+                    result.leftPredicate,
+                    result.leftPredicate,
+                    poolSize);
+            result.groundTruthReward = Rewarder.computeReward(
+                    module,
+                    instances,
+                    result.rightPredicate,
+                    result.rightPredicate,
+                    result.rightPredicate,
+                    poolSize);
+            result.rewardGap = result.groundTruthReward - result.candidateReward;
+        } catch (Throwable t) {
+            result.rewardError = t.getClass().getSimpleName() + ": " + t.getMessage();
         }
     }
 
@@ -174,7 +212,13 @@ public class CanonicalBatchTest {
         writer.write("    \"failures\": " + summary.failures + ",\n");
         writer.write("    \"averageDistance\": " + number(summary.averageDistance()) + ",\n");
         writer.write("    \"minDistance\": " + summary.minDistanceJson() + ",\n");
-        writer.write("    \"maxDistance\": " + summary.maxDistanceJson() + "\n");
+        writer.write("    \"maxDistance\": " + summary.maxDistanceJson() + ",\n");
+        writer.write("    \"rewardSuccesses\": " + summary.rewardSuccesses + ",\n");
+        writer.write("    \"rewardFailures\": " + summary.rewardFailures() + ",\n");
+        writer.write("    \"averageCandidateReward\": " + number(summary.averageCandidateReward()) + ",\n");
+        writer.write("    \"averageGroundTruthReward\": " + number(summary.averageGroundTruthReward()) + ",\n");
+        writer.write("    \"averageRewardGap\": " + number(summary.averageRewardGap()) + ",\n");
+        writer.write("    \"distanceCandidateRewardPearson\": " + number(summary.distanceRewardCorrelation()) + "\n");
         writer.write("  }\n");
         writer.write("}\n");
     }
@@ -194,6 +238,17 @@ public class CanonicalBatchTest {
             writer.write("      \"leftVertices\": " + result.leftVertices + ",\n");
             writer.write("      \"rightVertices\": " + result.rightVertices + ",\n");
             writer.write("      \"distance\": " + result.distance + ",\n");
+            writer.write("      \"rewardPoolSize\": " + result.rewardPoolSize + ",\n");
+            if (result.rewardError == null) {
+                writer.write("      \"candidateReward\": " + number(result.candidateReward) + ",\n");
+                writer.write("      \"groundTruthReward\": " + number(result.groundTruthReward) + ",\n");
+                writer.write("      \"rewardGap\": " + number(result.rewardGap) + ",\n");
+            } else {
+                writer.write("      \"candidateReward\": null,\n");
+                writer.write("      \"groundTruthReward\": null,\n");
+                writer.write("      \"rewardGap\": null,\n");
+                writer.write("      \"rewardError\": \"" + escape(result.rewardError) + "\",\n");
+            }
             writer.write("      \"leftIRTemporalFOL\": ");
             writeJsonStringArray(writer, result.leftIRTemporalFOL);
             writer.write(",\n");
@@ -220,15 +275,25 @@ public class CanonicalBatchTest {
             writer.write("- Average distance: " + number(summary.averageDistance()) + "\n");
             writer.write("- Min distance: " + summary.minDistanceMarkdown() + "\n");
             writer.write("- Max distance: " + summary.maxDistanceMarkdown() + "\n\n");
+            writer.write("## Reward Comparison\n\n");
+            writer.write("- Rewarded files: " + summary.rewardSuccesses + "\n");
+            writer.write("- Reward failures: " + summary.rewardFailures() + "\n");
+            writer.write("- Reward pool size: " + options.rewardPoolSize + "\n");
+            writer.write("- Average candidate reward: " + number(summary.averageCandidateReward()) + "\n");
+            writer.write("- Average ground-truth self reward: " + number(summary.averageGroundTruthReward()) + "\n");
+            writer.write("- Average reward gap: " + number(summary.averageRewardGap()) + "\n");
+            writer.write("- Pearson correlation, distance vs candidate reward: "
+                    + number(summary.distanceRewardCorrelation()) + "\n\n");
 
             writer.write("## By Problem Class And Status\n\n");
-            writer.write("| Problem class | Status | Files | Successes | Failures | Avg distance | Min | Max |\n");
-            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+            writer.write("| Problem class | Status | Files | Successes | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             for (Map.Entry<String, Stats> entry : summary.groupStats.entrySet()) {
                 Stats stats = entry.getValue();
                 writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
                         + stats.total + " | " + stats.successes + " | " + stats.failures + " | "
-                        + number(stats.averageDistance()) + " | " + stats.minDistanceMarkdown() + " | "
+                        + number(stats.averageDistance()) + " | " + number(stats.averageCandidateReward()) + " | "
+                        + number(stats.distanceRewardCorrelation()) + " | " + stats.minDistanceMarkdown() + " | "
                         + stats.maxDistanceMarkdown() + " |\n");
             }
 
@@ -294,6 +359,7 @@ public class CanonicalBatchTest {
         private Path inputDir = Paths.get(DEFAULT_INPUT);
         private Path outputDir = Paths.get(DEFAULT_OUTPUT);
         private int limit = -1;
+        private int rewardPoolSize = Hyperparams.POOL_SIZE;
         private boolean verbose;
 
         private static Options parse(String[] args) {
@@ -302,6 +368,8 @@ public class CanonicalBatchTest {
             for (int i = 0; i < args.length; i++) {
                 if ("--limit".equals(args[i]) && i + 1 < args.length) {
                     options.limit = Integer.parseInt(args[++i]);
+                } else if ("--reward-pool".equals(args[i]) && i + 1 < args.length) {
+                    options.rewardPoolSize = Integer.parseInt(args[++i]);
                 } else if ("--verbose".equals(args[i])) {
                     options.verbose = true;
                 } else if (positional == 0) {
@@ -342,6 +410,11 @@ public class CanonicalBatchTest {
         private int leftVertices;
         private int rightVertices;
         private int distance;
+        private int rewardPoolSize;
+        private double candidateReward;
+        private double groundTruthReward;
+        private double rewardGap;
+        private String rewardError;
         private List<String> leftIRTemporalFOL = new ArrayList<>();
         private List<String> rightIRTemporalFOL = new ArrayList<>();
         private List<String> edits = new ArrayList<>();
@@ -371,6 +444,15 @@ public class CanonicalBatchTest {
         private long distanceSum;
         private Integer minDistance;
         private Integer maxDistance;
+        private int rewardSuccesses;
+        private double candidateRewardSum;
+        private double groundTruthRewardSum;
+        private double rewardGapSum;
+        private double distanceRewardXSum;
+        private double distanceRewardYSum;
+        private double distanceRewardXXSum;
+        private double distanceRewardYYSum;
+        private double distanceRewardXYSum;
         private Map<String, Stats> groupStats = new java.util.TreeMap<>();
         private List<FileResult> failureSamples = new ArrayList<>();
 
@@ -385,6 +467,17 @@ public class CanonicalBatchTest {
                 distanceSum += result.distance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
+                if (result.rewardError == null) {
+                    rewardSuccesses++;
+                    candidateRewardSum += result.candidateReward;
+                    groundTruthRewardSum += result.groundTruthReward;
+                    rewardGapSum += result.rewardGap;
+                    distanceRewardXSum += result.distance;
+                    distanceRewardYSum += result.candidateReward;
+                    distanceRewardXXSum += (double) result.distance * result.distance;
+                    distanceRewardYYSum += result.candidateReward * result.candidateReward;
+                    distanceRewardXYSum += result.distance * result.candidateReward;
+                }
             } else {
                 failures++;
                 if (failureSamples.size() < 25) {
@@ -395,6 +488,32 @@ public class CanonicalBatchTest {
 
         private double averageDistance() {
             return successes == 0 ? 0.0 : (double) distanceSum / successes;
+        }
+
+        private int rewardFailures() {
+            return successes - rewardSuccesses;
+        }
+
+        private double averageCandidateReward() {
+            return rewardSuccesses == 0 ? 0.0 : candidateRewardSum / rewardSuccesses;
+        }
+
+        private double averageGroundTruthReward() {
+            return rewardSuccesses == 0 ? 0.0 : groundTruthRewardSum / rewardSuccesses;
+        }
+
+        private double averageRewardGap() {
+            return rewardSuccesses == 0 ? 0.0 : rewardGapSum / rewardSuccesses;
+        }
+
+        private double distanceRewardCorrelation() {
+            return correlation(
+                    rewardSuccesses,
+                    distanceRewardXSum,
+                    distanceRewardYSum,
+                    distanceRewardXXSum,
+                    distanceRewardYYSum,
+                    distanceRewardXYSum);
         }
 
         private String minDistanceJson() {
@@ -423,6 +542,13 @@ public class CanonicalBatchTest {
         private long distanceSum;
         private Integer minDistance;
         private Integer maxDistance;
+        private int rewardSuccesses;
+        private double candidateRewardSum;
+        private double distanceRewardXSum;
+        private double distanceRewardYSum;
+        private double distanceRewardXXSum;
+        private double distanceRewardYYSum;
+        private double distanceRewardXYSum;
 
         private Stats(String problemClass, String statusFolder) {
             this.problemClass = problemClass;
@@ -436,6 +562,15 @@ public class CanonicalBatchTest {
                 distanceSum += result.distance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
+                if (result.rewardError == null) {
+                    rewardSuccesses++;
+                    candidateRewardSum += result.candidateReward;
+                    distanceRewardXSum += result.distance;
+                    distanceRewardYSum += result.candidateReward;
+                    distanceRewardXXSum += (double) result.distance * result.distance;
+                    distanceRewardYYSum += result.candidateReward * result.candidateReward;
+                    distanceRewardXYSum += result.distance * result.candidateReward;
+                }
             } else {
                 failures++;
             }
@@ -445,6 +580,20 @@ public class CanonicalBatchTest {
             return successes == 0 ? 0.0 : (double) distanceSum / successes;
         }
 
+        private double averageCandidateReward() {
+            return rewardSuccesses == 0 ? 0.0 : candidateRewardSum / rewardSuccesses;
+        }
+
+        private double distanceRewardCorrelation() {
+            return correlation(
+                    rewardSuccesses,
+                    distanceRewardXSum,
+                    distanceRewardYSum,
+                    distanceRewardXXSum,
+                    distanceRewardYYSum,
+                    distanceRewardXYSum);
+        }
+
         private String minDistanceMarkdown() {
             return minDistance == null ? "n/a" : minDistance.toString();
         }
@@ -452,5 +601,18 @@ public class CanonicalBatchTest {
         private String maxDistanceMarkdown() {
             return maxDistance == null ? "n/a" : maxDistance.toString();
         }
+    }
+
+    private static double correlation(int n, double xSum, double ySum, double xxSum, double yySum, double xySum) {
+        if (n < 2) {
+            return 0.0;
+        }
+        double numerator = n * xySum - xSum * ySum;
+        double xDenominator = n * xxSum - xSum * xSum;
+        double yDenominator = n * yySum - ySum * ySum;
+        if (xDenominator <= 0.0 || yDenominator <= 0.0) {
+            return 0.0;
+        }
+        return numerator / Math.sqrt(xDenominator * yDenominator);
     }
 }

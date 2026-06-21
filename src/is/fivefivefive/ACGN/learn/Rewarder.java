@@ -232,9 +232,9 @@ public class Rewarder {
             // all instances are correctly classified
             // SAT Solve;
             // check overcoverage
-            String satCommandText1 = '(' + newPredBody + ") && !" + originalPredName + ";\n";
+            String satCommandText1 = '(' + newPredBody + ") && !(" + originalPredName + ")";
             // check undercoverage
-            String satCommandText2 = '(' + newPredBody + ") && " + originalPredName + ";\n";
+            String satCommandText2 = "!(" + newPredBody + ") && (" + originalPredName + ")";
             A4Reporter rep = new A4Reporter() {
                 @Override
                 public void warning(ErrorWarning msg) {
@@ -257,12 +257,12 @@ public class Rewarder {
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
                 // TODO: Overcoverage detected, remove the least frequently used instance from the instance pool;
-                for (int i = 0; i < POOL_REPLACEMENT; ++i) 
+                for (int i = 0; i < POOL_REPLACEMENT && posInstances.size() > 1; ++i)
                     posInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
             if (satSolution2 != null && satSolution2.satisfiable()) {
                 // TODO: Undercoverage detected
-                for (int i = 0; i < POOL_REPLACEMENT; ++i) 
+                for (int i = 0; i < POOL_REPLACEMENT && negInstances.size() > 1; ++i)
                     negInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
             }
         }
