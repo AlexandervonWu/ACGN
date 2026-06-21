@@ -93,19 +93,26 @@ public class QuantificationTreeNode {
         switch (quantifier) {
             case ALL:
                 quantifier = Quantifier.SOME;
+                break;
             case NO:
                 // ADD a negation to the matrix
                 quantifier = Quantifier.ALL;
+                break;
             case ONE:
                 quantifier = Quantifier.NOTONE;
+                break;
             case LONE:
                 quantifier = Quantifier.NOTLONE;
+                break;
             case NOTONE:
                 quantifier = Quantifier.ONE;
+                break;
             case NOTLONE:
                 quantifier = Quantifier.LONE;
+                break;
             case SOME:
                 quantifier = Quantifier.ALL;
+                break;
             default:
                 // NOOP
         }

@@ -2,12 +2,8 @@ package is.fivefivefive.CanDis.ir;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Queue;
-import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.EmptyStackException;
-import java.util.LinkedList;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -18,7 +14,6 @@ import is.fivefivefive.CanDis.macros.NormalForm;
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
-import parser.etc.Pair;
 
 public class IRAgent {
     private Multigraph graph;
@@ -35,177 +30,465 @@ public class IRAgent {
         return nfs;
     }
 
-    /**
-     * Build the skeleton of the e-graph prior to rewriting;
-     */
     public void computeNormalForm() {
-        Map<AugmentedNode, Integer> tovTracker = new HashMap<>(); // track the time of visit
+        nfs.clear();
         AugmentedNode root = graph.getRoot();
-        boolean negation = false;
-        Map<Pair<AugmentedNode, Integer>, NormalForm> anchor = new HashMap<>(); // anchor each pair of (node, time of visit) to its normal form up to temporals
-        Queue<AugmentedNode> queue = new LinkedList<>();
-        Stack<EGraphNode> parseStack = new Stack<>();
-        int id = 0;
-        queue.add(root);
-        while (!queue.isEmpty()) {
-            AugmentedNode node = queue.poll();
-            tovTracker.putIfAbsent(node, 0);
-            int tov = tovTracker.get(node) + 1;
-            tovTracker.put(node, tov);
-            List<MASGEdge> downlinksAtTov = node.getDownlinksAtTimeOfVisit(graph, tov);
-            Symbol symbol = node.getSymbol();
-            NormalForm anchoredNF = null;
-            if (!anchor.isEmpty()) {
-                anchoredNF = anchor.get(Pair.of(node, tov));
-            }
-            switch (symbol.getClass().getSimpleName()) {
-                case "PredRootSymbol":
-                    NormalForm rootNf = new NormalForm();
-                    anchor.put(Pair.of(node, tov), rootNf);
-                    anchoredNF = rootNf;
-                case "SigSymbol":
-                case "FieldRelation":
-                    EGraphNode sigOrFieldNode = new EGraphNode(id, Opcode.GLOBALBINDING, null, false, 0, false, Metatype.ATOMIC);
-                    id++;
-                    checkEmpty(parseStack);
-                    parseStack.peek().addChild(sigOrFieldNode);
-                case "VarSymbol":
-                    EGraphNode varNode = new EGraphNode(id, Opcode.VARIABLE, null, false, 0, false, Metatype.ATOMIC);
-                    id++;
-                    checkEmpty(parseStack);
-                    parseStack.peek().addChild(varNode);
-                case "ConstSymbol":
-                    EGraphNode constNode = new EGraphNode(id, Opcode.CONSTANT, null, false, 0, false, Metatype.ATOMIC);
-                    id++;
-                    checkEmpty(parseStack);
-                    parseStack.peek().addChild(constNode);
-                case "EndSymbol":
-                    parseStack.pop();
-                case "MiddleSymbol":
-                    switch (node.getSyntactic()) {
-                        case -127:
-                            // RelDecl Roots; put decls into; TODO: Typechecking
-                            Opcode opcode;
-                            switch ((int) Math.round(node.getSemantic())) {
-                                case 1:
-                                    opcode = Opcode.DISJ;
-                                    break;
-                                case 2:
-                                    opcode = Opcode.VAR;
-                                    break;
-                                case 3:
-                                    opcode = Opcode.DISJVAR;
-                                    break;
-                                default:
-                                    opcode = Opcode.GENERICRELDECL;
-                                    break;
-                            }
-                            id++;
-                            EGraphNode relDeclEGN = new EGraphNode(id, opcode, new ArrayList<>(), true, -1, true, Metatype.CONTROL);
-                            checkEmpty(parseStack);
-                            parseStack.peek().addChild(relDeclEGN);
-                        case -5: 
-                        switch ((int) Math.round(node.getSemantic())) {
-                            case 17: {
-                                // RELEASES (LEFT AND RIGHT ANCHORS)
-                                EGraphNode releasesEGN = new EGraphNode(id, Opcode.RELEASES, null, false, 0, false, Metatype.BOOLEAN);
-                                if (!parseStack.isEmpty()) {
-                                    parseStack.peek().addChild(releasesEGN);
-                                }
-                                id++;
-                                NormalForm nfl = new NormalForm(anchoredNF, TemporalOp.RELEASESL, id);
-                                id++;
-                                NormalForm nfr = new NormalForm(anchoredNF, TemporalOp.RELEASESR, id);
-                                id++;
-                                parseStack.push(nfr.getMatrixEGraph());
-                                parseStack.push(nfl.getMatrixEGraph());
-                                AugmentedNode nl = downlinksAtTov.get(0).getTarget();
-                                AugmentedNode nr = downlinksAtTov.get(1).getTarget();
-                                anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
-                                anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
-                                break;
-                            }
-                            case 18: {
-                                // SINCE
-                                EGraphNode sinceEGN = new EGraphNode(id, Opcode.SINCE, null, false, 0, false, Metatype.BOOLEAN);
-                                if (!parseStack.isEmpty()) {
-                                    parseStack.peek().addChild(sinceEGN);
-                                }
-                                id++;
-                                NormalForm nfl = new NormalForm(anchoredNF, TemporalOp.SINCEL, id);
-                                id++;
-                                NormalForm nfr = new NormalForm(anchoredNF, TemporalOp.SINCER, id);
-                                id++;
-                                parseStack.push(nfr.getMatrixEGraph());
-                                parseStack.push(nfl.getMatrixEGraph());
-                                AugmentedNode nl = downlinksAtTov.get(0).getTarget();
-                                AugmentedNode nr = downlinksAtTov.get(1).getTarget();
-                                anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
-                                anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
-                                break;
-                            }
-                            case 19: {
-                                // TRIGGERED
-                                EGraphNode triggeredEGN = new EGraphNode(id, Opcode.TRIGGERED, null, false, 0, false, Metatype.BOOLEAN);
-                                if (!parseStack.isEmpty()) {
-                                    parseStack.peek().addChild(triggeredEGN);
-                                }
-                                id++;
-                                NormalForm nfl = new NormalForm(anchoredNF, TemporalOp.TRIGGEREDL, id);
-                                id++;
-                                NormalForm nfr = new NormalForm(anchoredNF, TemporalOp.TRIGGEREDR, id);
-                                id++;
-                                parseStack.push(nfr.getMatrixEGraph());
-                                parseStack.push(nfl.getMatrixEGraph());
-                                AugmentedNode nl = downlinksAtTov.get(0).getTarget();
-                                AugmentedNode nr = downlinksAtTov.get(1).getTarget();
-                                anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
-                                anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
-                                break;
-                            }
-                            case 20: {
-                                // UNTIL
-                                EGraphNode untilEGN = new EGraphNode(id, Opcode.UNTIL, null, false, 0, false, Metatype.BOOLEAN);
-                                if (!parseStack.isEmpty()) {
-                                    parseStack.peek().addChild(untilEGN);
-                                }
-                                id++;
-                                NormalForm nfl = new NormalForm(anchoredNF, TemporalOp.UNTILL, id);
-                                id++;
-                                NormalForm nfr = new NormalForm(anchoredNF, TemporalOp.UNTILR, id);
-                                id++;
-                                parseStack.push(nfr.getMatrixEGraph());
-                                parseStack.push(nfl.getMatrixEGraph());
-                                AugmentedNode nl = downlinksAtTov.get(0).getTarget();
-                                AugmentedNode nr = downlinksAtTov.get(1).getTarget();
-                                anchor.put(Pair.of(nl, tovTracker.get(nl) + 1), nfl);
-                                anchor.put(Pair.of(nr, tovTracker.get(nr) + 1), nfr);
-                                break;
-                            }
-                        }
-                    }
-                }
-            for (MASGEdge downlink : downlinksAtTov) {
-                AugmentedNode target = downlink.getTarget();
-                queue.add(target);
-                if (!anchor.containsKey(Pair.of(target, tovTracker.get(target) + 1))) {
-                    anchor.put(Pair.of(target, tovTracker.get(target) + 1), anchoredNF);
-                }
-            }
+        if (root == null) {
+            return;
+        }
+
+        NormalForm rootNf = new NormalForm();
+        nfs.add(rootNf);
+        Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
+        int[] nextId = new int[] { 0 };
+        rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId));
+        for (NormalForm nf : nfs) {
+            nf.prenex();
         }
     }
 
-    private static boolean flip(boolean f) {
-        return f ? false : true;
+    private EGraphNode buildEGraph(AugmentedNode node, int tov, NormalForm nf, Map<AugmentedNode, Integer> tovTracker, int[] nextId) {
+        List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(graph, tov);
+        Opcode opcode = opcodeOf(node);
+        EGraphNode current = new EGraphNode(nextId[0]++, opcode, new ArrayList<>(), isCommutative(opcode), maxArity(opcode), isFlexibleArity(opcode), metatypeOf(node, opcode));
+        attachSourceMetadata(current, node);
+
+        if (downlinks == null || downlinks.isEmpty()) {
+            return current;
+        }
+
+        TemporalOp[] temporalOps = temporalOpsOf(node);
+        if (temporalOps != null && downlinks.size() >= 2) {
+            NormalForm leftNf = new NormalForm(nf, temporalOps[0], nextId[0]++);
+            NormalForm rightNf = new NormalForm(nf, temporalOps[1], nextId[0]++);
+            nfs.add(leftNf);
+            nfs.add(rightNf);
+            addTemporalChild(leftNf, downlinks.get(0).getTarget(), tovTracker, nextId);
+            addTemporalChild(rightNf, downlinks.get(1).getTarget(), tovTracker, nextId);
+            return current;
+        }
+
+        for (MASGEdge downlink : downlinks) {
+            AugmentedNode child = downlink.getTarget();
+            current.addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId));
+        }
+        return current;
     }
-    private static <E> void checkEmpty(Stack<E> stack) {
-        if (stack.isEmpty()) {
-            throw new EmptyStackException("Parent node not found");
+
+    private static void attachSourceMetadata(EGraphNode eGraphNode, AugmentedNode sourceNode) {
+        Symbol symbol = sourceNode.getSymbol();
+        if (symbol == null) {
+            return;
+        }
+        eGraphNode.setSourceName(symbol.getName());
+        eGraphNode.setSourceType(symbol.getType());
+        if (eGraphNode.getOpcode() == Opcode.VARIABLE) {
+            eGraphNode.setAlphaName(symbol.getName());
         }
     }
-    private static class EmptyStackException extends RuntimeException {
-        public EmptyStackException(String message) {
-            super(message);
+
+    private void addTemporalChild(NormalForm nf, AugmentedNode child, Map<AugmentedNode, Integer> tovTracker, int[] nextId) {
+        nf.getMatrixEGraph().addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId));
+    }
+
+    private static int nextTov(Map<AugmentedNode, Integer> tovTracker, AugmentedNode node) {
+        int tov = tovTracker.getOrDefault(node, 0) + 1;
+        tovTracker.put(node, tov);
+        return tov;
+    }
+
+    private static Opcode opcodeOf(AugmentedNode node) {
+        Symbol symbol = node.getSymbol();
+        if (symbol != null) {
+            switch (symbol.getClass().getSimpleName()) {
+                case "AssertSymbol":
+                    return Opcode.ASSERTION;
+                case "CheckSymbol":
+                    return Opcode.CHECK;
+                case "RunSymbol":
+                    return Opcode.RUN;
+                case "FactSymbol":
+                case "ExtFact":
+                    return Opcode.FACT;
+                case "LetSymbol":
+                    return Opcode.LET;
+                case "PredRootSymbol":
+                    return Opcode.PREDICATE;
+                case "FunRootSymbol":
+                    return Opcode.FUNCTION;
+                case "SigSymbol":
+                case "FieldRelation":
+                case "SubsetRelation":
+                    return Opcode.GLOBALBINDING;
+                case "VarSymbol":
+                    return Opcode.VARIABLE;
+                case "ConstSymbol":
+                    return Opcode.CONSTANT;
+                case "DummySymbol":
+                    return Opcode.DUMMY;
+                case "RefSymbol":
+                    return Opcode.REF;
+                case "ShadowSymbol":
+                    return Opcode.SHADOW;
+                case "EndSymbol":
+                    return Opcode.END;
+                case "DeclRootSymbol":
+                    return relDeclOpcode(node);
+                default:
+                    break;
+            }
         }
+
+        if (node.getSyntactic() == -127) {
+            return relDeclOpcode(node);
+        }
+
+        if (node.getSyntactic() == 2 || node.getSyntactic() == -2) {
+            return Opcode.ITE;
+        }
+
+        if (node.getSyntactic() == 3) {
+            switch ((int) Math.round(node.getSemantic())) {
+                case 1:
+                    return Opcode.SUM;
+                case 2:
+                    return Opcode.COMPREHENSION;
+                default:
+                    return Opcode.COMPREHENSION;
+            }
+        }
+
+        if (node.getSyntactic() == -3) {
+            switch ((int) Math.round(node.getSemantic())) {
+                case 1:
+                    return Opcode.FORALL;
+                case 2:
+                    return Opcode.EXISTS;
+                case 3:
+                    return Opcode.NO;
+                case 4:
+                    return Opcode.LONE;
+                case 5:
+                    return Opcode.ONE;
+                default:
+                    return Opcode.FORALL;
+            }
+        }
+
+        if (node.getSyntactic() == 7 || node.getSyntactic() == -7) {
+            return Opcode.CALL;
+        }
+
+        if (node.getSyntactic() == 4) {
+            switch ((int) Math.round(node.getSemantic())) {
+                case 1:
+                    return Opcode.DISJOINT_LIST;
+                case 2:
+                    return Opcode.TOTALORDER_LIST;
+                default:
+                    return Opcode.LIST;
+            }
+        }
+
+        if (node.getSyntactic() == -4) {
+            return ((int) Math.round(node.getSemantic())) == 2 ? Opcode.OR : Opcode.AND;
+        }
+
+        if (node.getSyntactic() == 5 || node.getSyntactic() == 15) {
+            return binaryExprOpcode(node);
+        }
+
+        if (node.getSyntactic() == -5) {
+            return binaryFormulaOpcode(node);
+        }
+
+        if (node.getSyntactic() == 6 || node.getSyntactic() == 16) {
+            return unaryExprOpcode(node);
+        }
+
+        if (node.getSyntactic() == -6) {
+            return unaryFormulaOpcode(node);
+        }
+
+        if (node.getSyntactic() == -128) {
+            return Opcode.SHADOW;
+        }
+
+        return Opcode.PREDICATE;
+    }
+
+    private static Opcode relDeclOpcode(AugmentedNode node) {
+        switch ((int) Math.round(node.getSemantic())) {
+            case 1:
+                return Opcode.DISJ;
+            case 2:
+                return Opcode.VAR;
+            case 3:
+                return Opcode.DISJVAR;
+            default:
+                return Opcode.GENERICRELDECL;
+        }
+    }
+
+    private static Opcode binaryFormulaOpcode(AugmentedNode node) {
+        switch ((int) Math.round(node.getSemantic())) {
+            case 1:
+                return Opcode.EQUALS;
+            case 2:
+                return Opcode.NOT_EQUALS;
+            case 3:
+                return Opcode.AND;
+            case 4:
+                return Opcode.GT;
+            case 5:
+                return Opcode.GTE;
+            case 6:
+                return Opcode.IFF;
+            case 7:
+                return Opcode.IMPLIES;
+            case 8:
+                return Opcode.IN;
+            case 9:
+                return Opcode.LT;
+            case 10:
+                return Opcode.LTE;
+            case 11:
+                return Opcode.NOT_GT;
+            case 12:
+                return Opcode.NOT_GTE;
+            case 13:
+                return Opcode.NOT_IN;
+            case 14:
+                return Opcode.NOT_LT;
+            case 15:
+                return Opcode.NOT_LTE;
+            case 16:
+                return Opcode.OR;
+            case 17:
+                return Opcode.RELEASES;
+            case 18:
+                return Opcode.SINCE;
+            case 19:
+                return Opcode.TRIGGERED;
+            case 20:
+                return Opcode.UNTIL;
+            default:
+                return Opcode.PREDICATE;
+        }
+    }
+
+    private static Opcode binaryExprOpcode(AugmentedNode node) {
+        switch ((int) Math.round(node.getSemantic())) {
+            case 1:
+                return Opcode.ARROW;
+            case 2:
+                return Opcode.ANY_ARROW_SOME;
+            case 3:
+                return Opcode.ANY_ARROW_ONE;
+            case 4:
+                return Opcode.ANY_ARROW_LONE;
+            case 5:
+                return Opcode.SOME_ARROW_ANY;
+            case 6:
+                return Opcode.SOME_ARROW_SOME;
+            case 7:
+                return Opcode.SOME_ARROW_ONE;
+            case 8:
+                return Opcode.SOME_ARROW_LONE;
+            case 9:
+                return Opcode.ONE_ARROW_ANY;
+            case 10:
+                return Opcode.ONE_ARROW_SOME;
+            case 11:
+                return Opcode.ONE_ARROW_ONE;
+            case 12:
+                return Opcode.ONE_ARROW_LONE;
+            case 13:
+                return Opcode.LONE_ARROW_ANY;
+            case 14:
+                return Opcode.LONE_ARROW_SOME;
+            case 15:
+                return Opcode.LONE_ARROW_ONE;
+            case 16:
+                return Opcode.LONE_ARROW_LONE;
+            case 17:
+                return Opcode.ISSEQ_ARROW_LONE;
+            case 18:
+                return Opcode.JOIN;
+            case 19:
+                return Opcode.DOMAIN;
+            case 20:
+                return Opcode.RANGE;
+            case 21:
+                return Opcode.INTERSECT;
+            case 22:
+                return Opcode.PLUSPLUS;
+            case 23:
+                return Opcode.PLUS;
+            case 24:
+                return Opcode.IPLUS;
+            case 25:
+                return Opcode.MINUS;
+            case 26:
+                return Opcode.IMINUS;
+            case 27:
+                return Opcode.MUL;
+            case 28:
+                return Opcode.DIV;
+            case 29:
+                return Opcode.REM;
+            case 30:
+                return Opcode.SHL;
+            case 31:
+                return Opcode.SHA;
+            case 32:
+                return Opcode.SHR;
+            default:
+                return Opcode.FUNCTION;
+        }
+    }
+
+    private static Opcode unaryExprOpcode(AugmentedNode node) {
+        switch ((int) Math.round(node.getSemantic())) {
+            case 1:
+                return Opcode.SETOF;
+            case 2:
+                return Opcode.LONE;
+            case 3:
+                return Opcode.ONE;
+            case 4:
+                return Opcode.SOME;
+            case 5:
+                return Opcode.EXACTLY;
+            case 6:
+                return Opcode.TRANSPOSE;
+            case 7:
+                return Opcode.RCLOSURE;
+            case 8:
+                return Opcode.CLOSURE;
+            case 9:
+                return Opcode.CARDINALITY;
+            case 10:
+                return Opcode.CAST2INT;
+            case 11:
+                return Opcode.CAST2SIGINT;
+            case 12:
+                return Opcode.PRIME;
+            default:
+                return Opcode.FUNCTION;
+        }
+    }
+
+    private static Opcode unaryFormulaOpcode(AugmentedNode node) {
+        switch ((int) Math.round(node.getSemantic())) {
+            case 1:
+                return Opcode.LONE;
+            case 2:
+                return Opcode.ONE;
+            case 3:
+                return Opcode.SOME;
+            case 4:
+                return Opcode.NO;
+            case 5:
+                return Opcode.NOT;
+            case 6:
+                return Opcode.BEFORE;
+            case 7:
+                return Opcode.HISTORICALLY;
+            case 8:
+                return Opcode.ONCE;
+            case 9:
+                return Opcode.ALWAYS;
+            case 10:
+                return Opcode.EVENTUALLY;
+            case 11:
+                return Opcode.AFTER;
+            default:
+                return Opcode.PREDICATE;
+        }
+    }
+
+    private static TemporalOp[] temporalOpsOf(AugmentedNode node) {
+        if (node.getSyntactic() != -5) {
+            return null;
+        }
+        switch ((int) Math.round(node.getSemantic())) {
+            case 17:
+                return new TemporalOp[] { TemporalOp.RELEASESL, TemporalOp.RELEASESR };
+            case 18:
+                return new TemporalOp[] { TemporalOp.SINCEL, TemporalOp.SINCER };
+            case 19:
+                return new TemporalOp[] { TemporalOp.TRIGGEREDL, TemporalOp.TRIGGEREDR };
+            case 20:
+                return new TemporalOp[] { TemporalOp.UNTILL, TemporalOp.UNTILR };
+            default:
+                return null;
+        }
+    }
+
+    private static boolean isCommutative(Opcode opcode) {
+        return opcode == Opcode.AND || opcode == Opcode.OR || opcode == Opcode.IFF
+                || opcode == Opcode.EQUALS || opcode == Opcode.NOT_EQUALS
+                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
+                || opcode == Opcode.IPLUS
+                || isRelDeclOpcode(opcode);
+    }
+
+    private static int maxArity(Opcode opcode) {
+        if (isFlexibleArity(opcode)) {
+            return -1;
+        }
+        if (isUnary(opcode)) {
+            return 1;
+        }
+        if (opcode == Opcode.ITE) {
+            return 3;
+        }
+        return 2;
+    }
+
+    private static boolean isFlexibleArity(Opcode opcode) {
+        return opcode == Opcode.AND || opcode == Opcode.OR || opcode == Opcode.CALL || opcode == Opcode.LIST
+                || opcode == Opcode.DISJOINT_LIST || opcode == Opcode.TOTALORDER_LIST
+                || opcode == Opcode.FORALL || opcode == Opcode.EXISTS || opcode == Opcode.NO
+                || opcode == Opcode.LONE || opcode == Opcode.ONE || opcode == Opcode.COMPREHENSION
+                || opcode == Opcode.SUM
+                || isRelDeclOpcode(opcode);
+    }
+
+    private static boolean isUnary(Opcode opcode) {
+        return opcode == Opcode.NOT || opcode == Opcode.SOME || opcode == Opcode.NO || opcode == Opcode.LONE
+                || opcode == Opcode.ONE || opcode == Opcode.SETOF || opcode == Opcode.EXACTLY
+                || opcode == Opcode.TRANSPOSE || opcode == Opcode.RCLOSURE || opcode == Opcode.CLOSURE
+                || opcode == Opcode.CARDINALITY || opcode == Opcode.CAST2INT || opcode == Opcode.CAST2SIGINT
+                || opcode == Opcode.PRIME || opcode == Opcode.BEFORE || opcode == Opcode.HISTORICALLY
+                || opcode == Opcode.ONCE || opcode == Opcode.ALWAYS || opcode == Opcode.EVENTUALLY
+                || opcode == Opcode.AFTER;
+    }
+
+    private static boolean isRelDeclOpcode(Opcode opcode) {
+        return opcode == Opcode.DISJ || opcode == Opcode.VAR || opcode == Opcode.DISJVAR
+                || opcode == Opcode.GENERICRELDECL;
+    }
+
+    private static Metatype metatypeOf(AugmentedNode node, Opcode opcode) {
+        if (opcode == Opcode.VARIABLE || opcode == Opcode.GLOBALBINDING || opcode == Opcode.CONSTANT) {
+            return Metatype.ATOMIC;
+        }
+        if (isRelDeclOpcode(opcode)) {
+            return Metatype.CONTROL;
+        }
+        if (opcode == Opcode.EQUALS || opcode == Opcode.NOT_EQUALS || opcode == Opcode.GT || opcode == Opcode.GTE
+                || opcode == Opcode.IN || opcode == Opcode.LT || opcode == Opcode.LTE || opcode == Opcode.NOT_GT
+                || opcode == Opcode.NOT_GTE || opcode == Opcode.NOT_IN || opcode == Opcode.NOT_LT
+                || opcode == Opcode.NOT_LTE || opcode == Opcode.SOME || opcode == Opcode.NO || opcode == Opcode.NOT
+                || opcode == Opcode.BEFORE || opcode == Opcode.HISTORICALLY || opcode == Opcode.ONCE
+                || opcode == Opcode.ALWAYS || opcode == Opcode.EVENTUALLY || opcode == Opcode.AFTER
+                || opcode == Opcode.AND || opcode == Opcode.OR || opcode == Opcode.IMPLIES || opcode == Opcode.IFF
+                || opcode == Opcode.RELEASES || opcode == Opcode.SINCE || opcode == Opcode.TRIGGERED
+                || opcode == Opcode.UNTIL || opcode == Opcode.PREDICATE) {
+            return Metatype.BOOLEAN;
+        }
+        return node.getSyntactic() > 0 ? Metatype.SET : Metatype.BOOLEAN;
     }
 }

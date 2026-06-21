@@ -10,10 +10,18 @@ public class QuantiVar {
     private int id;
     private String name;
     private Type type;
+    private String typeName;
     public QuantiVar(int id, String name, Type type) {
         this.id = id;
         this.name = name;
         this.type = type;
+        this.typeName = type == null ? null : type.toString();
+    }
+    public QuantiVar(int id, String name, String typeName) {
+        this.id = id;
+        this.name = name;
+        this.type = null;
+        this.typeName = typeName;
     }
     public int getId() {
         return id;
@@ -24,17 +32,26 @@ public class QuantiVar {
     public Type getType() {
         return type;
     }
+    public String getTypeName() {
+        return typeName;
+    }
     public boolean equals(Object o) {
         if (o == this) return true;
         if (!(o instanceof QuantiVar)) return false;
         QuantiVar qv = (QuantiVar) o;
         return this.id == qv.id;
     }
+    public int hashCode() {
+        return id;
+    }
     public boolean sameType(QuantiVar qv) {
-        return this.type.equals(qv.type);
+        if (this.typeName != null) {
+            return this.typeName.equals(qv.typeName);
+        }
+        return this.type != null && this.type.equals(qv.type);
     }
     public String toString() {
         // in JSON form
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"type\": \"" + type + "\"}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"type\": \"" + typeName + "\"}";
     }
 }

@@ -18,6 +18,9 @@ public class EGraphNode {
     private boolean isCommutative; // whether the operator of this node is commutative, which can help to capture the symmetry of the formula
     private int maxArity; // the maximum arity of this node, which is the maximum number of children this node can have, and it is determined by the operator of this node
     private boolean flexibleArity; // whether this node has flexible arity, which is determined by the operator of this node, e.g., "and" and "or" have flexible arity, while "implies" and "iff" have fixed arity of 2.
+    private String sourceName;
+    private String sourceType;
+    private String alphaName;
     public enum Metatype {
         ATOMIC, 
         SET, 
@@ -36,12 +39,95 @@ public class EGraphNode {
         GLOBALBINDING,
         CONSTANT,
         TEMPORALROOT,
+        ASSERTION,
+        CHECK,
+        RUN,
+        FACT,
+        LET,
+        DUMMY,
+        REF,
+        SHADOW,
+        END,
+
+        // STRUCTURAL IR NODES
+        ITE,
+        CALL,
+        LIST,
+        DISJOINT_LIST,
+        TOTALORDER_LIST,
+        COMPREHENSION,
+        SUM,
 
         // TEMPORAL LEAVES
         RELEASES,
         SINCE,
         TRIGGERED,
         UNTIL,
+        BEFORE,
+        HISTORICALLY,
+        ONCE,
+        ALWAYS,
+        EVENTUALLY,
+        AFTER,
+
+        // FORMULA OPERATORS
+        EQUALS,
+        NOT_EQUALS,
+        GT,
+        GTE,
+        IN,
+        LT,
+        LTE,
+        NOT_GT,
+        NOT_GTE,
+        NOT_IN,
+        NOT_LT,
+        NOT_LTE,
+        SOME,
+        NO,
+
+        // EXPRESSION OPERATORS
+        ARROW,
+        ANY_ARROW_SOME,
+        ANY_ARROW_ONE,
+        ANY_ARROW_LONE,
+        SOME_ARROW_ANY,
+        SOME_ARROW_SOME,
+        SOME_ARROW_ONE,
+        SOME_ARROW_LONE,
+        ONE_ARROW_ANY,
+        ONE_ARROW_SOME,
+        ONE_ARROW_ONE,
+        ONE_ARROW_LONE,
+        LONE_ARROW_ANY,
+        LONE_ARROW_SOME,
+        LONE_ARROW_ONE,
+        LONE_ARROW_LONE,
+        ISSEQ_ARROW_LONE,
+        JOIN,
+        DOMAIN,
+        RANGE,
+        INTERSECT,
+        PLUSPLUS,
+        PLUS,
+        IPLUS,
+        MINUS,
+        IMINUS,
+        MUL,
+        DIV,
+        REM,
+        SHL,
+        SHA,
+        SHR,
+        SETOF,
+        EXACTLY,
+        TRANSPOSE,
+        RCLOSURE,
+        CLOSURE,
+        CARDINALITY,
+        CAST2INT,
+        CAST2SIGINT,
+        PRIME,
         
         // QUANTIFIER IR NODES TO BE ELIMINATED
         FORALL,
@@ -81,6 +167,9 @@ public class EGraphNode {
     public List<EGraphNode> getChildren() {
         return children;
     }
+    public void setChildren(List<EGraphNode> children) {
+        this.children = children;
+    }
     public boolean isCommutative() {
         return isCommutative;
     }
@@ -95,6 +184,24 @@ public class EGraphNode {
     }
     public Metatype getMetatype() {
         return metatype;
+    }
+    public String getSourceName() {
+        return sourceName;
+    }
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
+    public String getSourceType() {
+        return sourceType;
+    }
+    public void setSourceType(String sourceType) {
+        this.sourceType = sourceType;
+    }
+    public String getAlphaName() {
+        return alphaName;
+    }
+    public void setAlphaName(String alphaName) {
+        this.alphaName = alphaName;
     }
 
     /**
