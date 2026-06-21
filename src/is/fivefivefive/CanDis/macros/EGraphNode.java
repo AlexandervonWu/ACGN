@@ -1,5 +1,8 @@
 package is.fivefivefive.CanDis.macros;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -208,10 +211,53 @@ public class EGraphNode {
      * Rewrite the e-graph with regard to rewriting rules; canonicalize the formula with equality saturation. 
      */
     public void saturate() {
-        // TODO : rewrite this node according to the operator and the structure. Saturate the rewrite with: 1. Make all consecutive associative operators 
+        if (children == null || children.isEmpty()) {
+            return;
+        }
+        List<EGraphNode> saturatedChildren = new ArrayList<>();
         for (EGraphNode child : children) {
             child.saturate();
+            if (isAssociative(opcode) && child.getOpcode() == opcode) {
+                saturatedChildren.addAll(child.getChildren());
+            } else {
+                saturatedChildren.add(child);
+            }
         }
+        if (isCommutative) {
+            Collections.sort(saturatedChildren, Comparator.comparing(EGraphNode::sortKey));
+        }
+        children = saturatedChildren;
+    }
+
+    private static boolean isAssociative(Opcode opcode) {
+        return opcode == Opcode.AND || opcode == Opcode.OR
+                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
+                || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
+    }
+
+    private String sortKey() {
+        StringBuilder sb = new StringBuilder();
+        appendSortKey(this, sb);
+        return sb.toString();
+    }
+
+    private static void appendSortKey(EGraphNode node, StringBuilder sb) {
+        sb.append(node.opcode).append(':');
+        if (node.alphaName != null) {
+            sb.append(node.alphaName);
+        } else if (node.sourceName != null) {
+            sb.append(node.sourceName);
+        } else {
+            sb.append(node.id);
+        }
+        sb.append('[');
+        if (node.children != null) {
+            for (EGraphNode child : node.children) {
+                appendSortKey(child, sb);
+                sb.append(',');
+            }
+        }
+        sb.append(']');
     }
 
 }

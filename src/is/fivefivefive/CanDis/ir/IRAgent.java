@@ -43,7 +43,7 @@ public class IRAgent {
         int[] nextId = new int[] { 0 };
         rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId));
         for (NormalForm nf : nfs) {
-            nf.prenex();
+            nf.normalize();
         }
     }
 
@@ -61,10 +61,20 @@ public class IRAgent {
         if (temporalOps != null && downlinks.size() >= 2) {
             NormalForm leftNf = new NormalForm(nf, temporalOps[0], nextId[0]++);
             NormalForm rightNf = new NormalForm(nf, temporalOps[1], nextId[0]++);
+            nf.addTemporalChild(leftNf);
+            nf.addTemporalChild(rightNf);
             nfs.add(leftNf);
             nfs.add(rightNf);
             addTemporalChild(leftNf, downlinks.get(0).getTarget(), tovTracker, nextId);
             addTemporalChild(rightNf, downlinks.get(1).getTarget(), tovTracker, nextId);
+            return current;
+        }
+        TemporalOp unaryTemporalOp = unaryTemporalOpOf(opcode);
+        if (unaryTemporalOp != null && !downlinks.isEmpty()) {
+            NormalForm temporalNf = new NormalForm(nf, unaryTemporalOp, nextId[0]++);
+            nf.addTemporalChild(temporalNf);
+            nfs.add(temporalNf);
+            addTemporalChild(temporalNf, downlinks.get(0).getTarget(), tovTracker, nextId);
             return current;
         }
 
@@ -421,6 +431,25 @@ public class IRAgent {
                 return new TemporalOp[] { TemporalOp.TRIGGEREDL, TemporalOp.TRIGGEREDR };
             case 20:
                 return new TemporalOp[] { TemporalOp.UNTILL, TemporalOp.UNTILR };
+            default:
+                return null;
+        }
+    }
+
+    private static TemporalOp unaryTemporalOpOf(Opcode opcode) {
+        switch (opcode) {
+            case BEFORE:
+                return TemporalOp.BEFORE;
+            case HISTORICALLY:
+                return TemporalOp.HISTORICALLY;
+            case ONCE:
+                return TemporalOp.ONCE;
+            case ALWAYS:
+                return TemporalOp.ALWAYS;
+            case EVENTUALLY:
+                return TemporalOp.EVENTUALLY;
+            case AFTER:
+                return TemporalOp.AFTER;
             default:
                 return null;
         }

@@ -9,17 +9,23 @@ import edu.mit.csail.sdg.ast.Type;
 public class QuantiVar {
     private int id;
     private String name;
+    private String originalName;
     private Type type;
     private String typeName;
     public QuantiVar(int id, String name, Type type) {
         this.id = id;
         this.name = name;
+        this.originalName = name;
         this.type = type;
         this.typeName = type == null ? null : type.toString();
     }
     public QuantiVar(int id, String name, String typeName) {
+        this(id, name, name, typeName);
+    }
+    public QuantiVar(int id, String name, String originalName, String typeName) {
         this.id = id;
         this.name = name;
+        this.originalName = originalName;
         this.type = null;
         this.typeName = typeName;
     }
@@ -28,6 +34,9 @@ public class QuantiVar {
     }
     public String getName() {
         return name;
+    }
+    public String getOriginalName() {
+        return originalName;
     }
     public Type getType() {
         return type;
@@ -52,6 +61,6 @@ public class QuantiVar {
     }
     public String toString() {
         // in JSON form
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"type\": \"" + typeName + "\"}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName + "\", \"type\": \"" + typeName + "\"}";
     }
 }
