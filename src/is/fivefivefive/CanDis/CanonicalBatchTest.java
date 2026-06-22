@@ -167,6 +167,9 @@ public class CanonicalBatchTest {
             computeRewardMetrics(module, result, options.rewardPoolSize);
             return result;
         } catch (Throwable t) {
+            if (options.verbose) {
+                t.printStackTrace(System.err);
+            }
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
             return result;
         }
@@ -345,9 +348,21 @@ public class CanonicalBatchTest {
     }
 
     private static String rawAstLabel(Node node) {
-        String label = node.getClass().getSimpleName();
-        String text = node.toString();
-        return text == null || text.startsWith(node.getClass().getName() + "@") ? label : label + ":" + text;
+        StringBuilder label = new StringBuilder(node.getClass().getSimpleName());
+        appendAstAttribute(label, node, "getOp");
+        appendAstAttribute(label, node, "getName");
+        appendAstAttribute(label, node, "getValue");
+        return label.toString();
+    }
+
+    private static void appendAstAttribute(StringBuilder label, Node node, String methodName) {
+        try {
+            Object value = node.getClass().getMethod(methodName).invoke(node);
+            if (value != null) {
+                label.append(':').append(value);
+            }
+        } catch (ReflectiveOperationException ignored) {
+        }
     }
 
     private static String preferredPredicateBase(Path file) {

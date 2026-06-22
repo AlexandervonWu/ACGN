@@ -129,6 +129,36 @@ public class NormalForm {
         matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
         matrixEGraphRoot.saturate();
+        registerQuantifierSymmetries(quantificationTreeRoot);
+    }
+
+    private void registerQuantifierSymmetries(QuantificationTreeNode node) {
+        if (node == null || matrixEGraphRoot == null) {
+            return;
+        }
+        List<QuantiVar> swappable = new ArrayList<>();
+        if (isSymmetricBooleanQuantifier(node.getQuantifier())) {
+            for (QuantiVar qv : node.getQuantiVars()) {
+                if (matrixQuantiVars.contains(qv)) {
+                    swappable.add(qv);
+                }
+            }
+        }
+        for (int i = 1; i < swappable.size(); i++) {
+            matrixEGraphRoot.getEClass().addSlotSwap(
+                    swappable.get(i - 1).getName(),
+                    swappable.get(i).getName());
+        }
+        for (QuantificationTreeNode child : node.getChildren()) {
+            registerQuantifierSymmetries(child);
+        }
+    }
+
+    private static boolean isSymmetricBooleanQuantifier(Quantifier quantifier) {
+        return quantifier == Quantifier.ALL || quantifier == Quantifier.SOME
+                || quantifier == Quantifier.NO || quantifier == Quantifier.ONE
+                || quantifier == Quantifier.LONE || quantifier == Quantifier.NOTONE
+                || quantifier == Quantifier.NOTLONE;
     }
 
     private static EGraphNode betaRewriteLet(EGraphNode node, Map<String, EGraphNode> bindings) {
@@ -213,9 +243,6 @@ public class NormalForm {
             return prenex(expandIff(node, negated), scope, env, nextVarId, false, constraints);
         }
         if (node.getOpcode() == Opcode.NOT) {
-            if (node.getChildren().size() == 1 && consumesMatrixNegation(node.getChildren().get(0).getOpcode())) {
-                return prenex(node.getChildren().get(0), scope, env, nextVarId, true, constraints);
-            }
             List<EGraphNode> rewritten = new ArrayList<>();
             for (EGraphNode child : node.getChildren()) {
                 EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, !negated, constraints);
@@ -231,18 +258,22 @@ public class NormalForm {
             List<EGraphNode> localConstraints = new ArrayList<>();
             EGraphNode body = null;
             List<EGraphNode> children = node.getChildren();
+            boolean bodyNegated = negated && !consumesMatrixNegation(node.getOpcode());
             for (int i = 0; i < children.size(); i++) {
                 EGraphNode child = children.get(i);
                 if (isRelDecl(child.getOpcode())) {
                     prenexRelDecl(node.getOpcode(), child, scope, scopedEnv, nextVarId, false, negated, localConstraints);
                 } else {
-                    EGraphNode rewrittenChild = prenex(child, scope, scopedEnv, nextVarId, negated, constraints);
+                    EGraphNode rewrittenChild = prenex(child, scope, scopedEnv, nextVarId, bodyNegated, constraints);
                     if (rewrittenChild != null) {
                         body = rewrittenChild;
                     }
                 }
             }
             body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), negated));
+            if (body != null && negated && consumesMatrixNegation(node.getOpcode())) {
+                body = syntheticUnary(body, Opcode.NOT, body, -1);
+            }
             return body == null ? node : body;
         }
 
@@ -475,13 +506,17 @@ public class NormalForm {
                 continue;
             }
             if (isAssociative(node.getOpcode()) && normalizedChild.getOpcode() == node.getOpcode()) {
-                rewritten.getChildren().addAll(normalizedChild.getChildren());
+                for (EGraphNode grandchild : normalizedChild.getChildren()) {
+                    rewritten.addChild(grandchild);
+                }
             } else {
                 rewritten.addChild(normalizedChild);
             }
         }
         if (isCommutative(rewritten.getOpcode())) {
-            Collections.sort(rewritten.getChildren(), Comparator.comparing(NormalForm::sortKey));
+            List<EGraphNode> sortedChildren = new ArrayList<>(rewritten.getChildren());
+            Collections.sort(sortedChildren, Comparator.comparing(NormalForm::sortKey));
+            rewritten.setChildren(sortedChildren);
         }
         return rewritten;
     }

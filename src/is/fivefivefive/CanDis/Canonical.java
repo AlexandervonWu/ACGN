@@ -322,14 +322,6 @@ public class Canonical {
 
     private static void matrixEdits(NormalForm left, NormalForm right, String path, List<String> edits) {
         Map<String, String> mapping = bestVariableMapping(left, right);
-        Map<String, String> leftNames = variableDisplayNames(left);
-        Map<String, String> rightNames = variableDisplayNames(right);
-        for (Map.Entry<String, String> entry : mapping.entrySet()) {
-            if (!safeEquals(entry.getKey(), entry.getValue())) {
-                edits.add(path + ": alpha-map " + displayName(entry.getKey(), leftNames) + " -> "
-                        + displayName(entry.getValue(), rightNames));
-            }
-        }
         eGraphEdits(left.getMatrixEGraph(), right.getMatrixEGraph(), mapping, path, edits);
     }
 
@@ -501,7 +493,13 @@ public class Canonical {
                 && !safeEquals(left.getSourceName(), right.getSourceName())) {
             edits.add(path + ": replace binding " + display(left.getSourceName()) + " -> " + display(right.getSourceName()));
         }
-        eGraphChildEdits(left.getChildren(), right.getChildren(), variableMapping, path + ".child", edits);
+        List<EGraphNode> leftChildren = left.getChildren();
+        List<EGraphNode> rightChildren = right.getChildren();
+        if (left.getOpcode() == right.getOpcode() && left.isCommutative() && right.isCommutative()) {
+            leftChildren = sortedForMapping(leftChildren, variableMapping);
+            rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
+        }
+        eGraphChildEdits(leftChildren, rightChildren, variableMapping, path + ".child", edits);
     }
 
     private static void eGraphChildEdits(
@@ -580,8 +578,42 @@ public class Canonical {
             return eGraphSize(left);
         }
         int distance = nodeUpdateCost(left, right, variableMapping);
-        distance += childDistance(left.getChildren(), right.getChildren(), variableMapping);
+        List<EGraphNode> leftChildren = left.getChildren();
+        List<EGraphNode> rightChildren = right.getChildren();
+        if (left.getOpcode() == right.getOpcode() && left.isCommutative() && right.isCommutative()) {
+            leftChildren = sortedForMapping(leftChildren, variableMapping);
+            rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
+        }
+        distance += childDistance(leftChildren, rightChildren, variableMapping);
         return distance;
+    }
+
+    private static List<EGraphNode> sortedForMapping(
+            List<EGraphNode> children,
+            Map<String, String> variableMapping) {
+        List<EGraphNode> sorted = new ArrayList<>(children);
+        sorted.sort((left, right) -> mappedSortKey(left, variableMapping)
+                .compareTo(mappedSortKey(right, variableMapping)));
+        return sorted;
+    }
+
+    private static String mappedSortKey(EGraphNode node, Map<String, String> variableMapping) {
+        StringBuilder key = new StringBuilder(node.getOpcode().toString()).append(':');
+        if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
+            String name = variableName(node);
+            key.append(variableMapping.getOrDefault(name, name));
+        } else if (node.getSourceName() != null) {
+            key.append(node.getSourceName());
+        }
+        key.append('[');
+        List<EGraphNode> children = new ArrayList<>(node.getChildren());
+        if (node.isCommutative()) {
+            children = sortedForMapping(children, variableMapping);
+        }
+        for (EGraphNode child : children) {
+            key.append(mappedSortKey(child, variableMapping)).append(',');
+        }
+        return key.append(']').toString();
     }
 
     private static int childDistance(List<EGraphNode> left, List<EGraphNode> right, Map<String, String> variableMapping) {
@@ -810,22 +842,6 @@ public class Canonical {
 
     private static String quantiVarName(QuantiVar qv) {
         return display(firstNonEmpty(qv.getOriginalName(), qv.getName()));
-    }
-
-    private static Map<String, String> variableDisplayNames(NormalForm nf) {
-        Map<String, String> names = new HashMap<>();
-        for (QuantiVar qv : nf.getParams()) {
-            names.put(qv.getName(), quantiVarName(qv));
-        }
-        for (QuantiVar qv : nf.getMatrixQuantiVars()) {
-            names.put(qv.getName(), quantiVarName(qv));
-        }
-        return names;
-    }
-
-    private static String displayName(String alphaName, Map<String, String> names) {
-        String name = names.get(alphaName);
-        return name == null ? alphaName : name;
     }
 
     private static String normalFormPath(NormalForm nf, int index) {

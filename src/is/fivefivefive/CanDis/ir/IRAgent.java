@@ -36,14 +36,18 @@ public class IRAgent {
         if (root == null) {
             return;
         }
-
-        NormalForm rootNf = new NormalForm();
-        nfs.add(rootNf);
-        Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
-        int[] nextId = new int[] { 0 };
-        rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId));
-        for (NormalForm nf : nfs) {
-            nf.normalize();
+        EGraphNode.beginGraph();
+        try {
+            NormalForm rootNf = new NormalForm();
+            nfs.add(rootNf);
+            Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
+            int[] nextId = new int[] { 0 };
+            rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId));
+            for (NormalForm nf : nfs) {
+                nf.normalize();
+            }
+        } finally {
+            EGraphNode.endGraph();
         }
     }
 
@@ -477,12 +481,18 @@ public class IRAgent {
     }
 
     private static boolean isFlexibleArity(Opcode opcode) {
-        return opcode == Opcode.AND || opcode == Opcode.OR || opcode == Opcode.CALL || opcode == Opcode.LIST
+        return isAssociative(opcode) || opcode == Opcode.CALL || opcode == Opcode.LIST
                 || opcode == Opcode.DISJOINT_LIST || opcode == Opcode.TOTALORDER_LIST
                 || opcode == Opcode.FORALL || opcode == Opcode.EXISTS || opcode == Opcode.NO
                 || opcode == Opcode.LONE || opcode == Opcode.ONE || opcode == Opcode.COMPREHENSION
                 || opcode == Opcode.SUM
                 || isRelDeclOpcode(opcode);
+    }
+
+    private static boolean isAssociative(Opcode opcode) {
+        return opcode == Opcode.AND || opcode == Opcode.OR
+                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
+                || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
     }
 
     private static boolean isUnary(Opcode opcode) {

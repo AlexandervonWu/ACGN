@@ -3,7 +3,15 @@ package is.fivefivefive.CanDis.macros;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import is.fivefivefive.CanDis.macros.RenamedIdUnionFind.RenamedId;
 
 
 /**
@@ -12,12 +20,20 @@ import java.util.List;
  * For example, for a formula like "P(x) and Q(y)", the e-graph would have a node for "P(x)", a node for "Q(y)", and an edge between them representing the "and" operator. 
  * The e-graph shall be used to make the distance minimal, to capture the symmetry, associativity, commutativity, and other properties of the formula, 
  * which can help to make the distance calculation more accurate and efficient.
- * TODO: define the structure of the e-graph, and how to generate it from the original formula using the Normal Form Visitor.
+ * Operands are slotted e-class invocations rather than embedded subtrees. Each
+ * invocation maps the slots exposed by the referenced e-class into the caller's
+ * slots. The current implementation keeps canonical representatives for legacy
+ * consumers and retains rewrite alternatives in their shared e-class.
  */
 public class EGraphNode {
+    private static final AtomicInteger NEXT_ECLASS_ID = new AtomicInteger();
+    private static final ThreadLocal<EGraphArena> CURRENT_ARENA = ThreadLocal.withInitial(EGraphArena::new);
+
     private int id;
     private Opcode opcode; // the semantic operator of this node with a corresponding opcode
-    private List<EGraphNode> children; // the child nodes of this node, which are the subformulas of this node
+    private List<EClassRef> childClasses;
+    private EClass eClass;
+    private EGraphArena arena;
     private boolean isCommutative; // whether the operator of this node is commutative, which can help to capture the symmetry of the formula
     private int maxArity; // the maximum arity of this node, which is the maximum number of children this node can have, and it is determined by the operator of this node
     private boolean flexibleArity; // whether this node has flexible arity, which is determined by the operator of this node, e.g., "and" and "or" have flexible arity, while "implies" and "iff" have fixed arity of 2.
@@ -155,11 +171,18 @@ public class EGraphNode {
     public EGraphNode(int id, Opcode opcode, List<EGraphNode> children, boolean isCommutative, int maxArity, boolean flexibleArity, Metatype metatype) {
         this.id = id;
         this.opcode = opcode;
-        this.children = children;
+        this.arena = CURRENT_ARENA.get();
+        this.childClasses = new ArrayList<>();
         this.isCommutative = isCommutative;
         this.maxArity = maxArity;
         this.flexibleArity = flexibleArity;
         this.metatype = metatype;
+        if (children != null) {
+            for (EGraphNode child : children) {
+                addChild(child);
+            }
+        }
+        this.eClass = new EClass(NEXT_ECLASS_ID.getAndIncrement(), this);
     }
     public int getId() {
         return id;
@@ -168,10 +191,20 @@ public class EGraphNode {
         return opcode;
     }
     public List<EGraphNode> getChildren() {
-        return children;
+        List<EGraphNode> representatives = new ArrayList<>(childClasses.size());
+        for (EClassRef child : childClasses) {
+            representatives.add(child.getEClass().getRepresentative());
+        }
+        return Collections.unmodifiableList(representatives);
     }
     public void setChildren(List<EGraphNode> children) {
-        this.children = children;
+        childClasses.clear();
+        if (children != null) {
+            for (EGraphNode child : children) {
+                addChild(child);
+            }
+        }
+        refreshEClassSlots();
     }
     public boolean isCommutative() {
         return isCommutative;
@@ -183,7 +216,43 @@ public class EGraphNode {
         return flexibleArity;
     }
     public void addChild(EGraphNode child) {
-        children.add(child);
+        if (child == null) {
+            return;
+        }
+        childClasses.add(new EClassRef(child.getEClass(), identitySlotMap(child.getEClass())));
+        refreshEClassSlots();
+    }
+    public List<EClassRef> getChildClasses() {
+        return Collections.unmodifiableList(childClasses);
+    }
+    public EClass getEClass() {
+        return eClass;
+    }
+    public EClassRef getEClassRef() {
+        return eClass.invoke(identitySlotMap(eClass));
+    }
+    public static EClassRef union(EClassRef left, EClassRef right) {
+        if (left.eClass.arena != right.eClass.arena) {
+            throw new IllegalArgumentException("Cannot union e-classes from different e-graphs");
+        }
+        EGraphArena arena = left.eClass.arena;
+        EClassRef canonicalLeft = left.canonical();
+        EClassRef canonicalRight = right.canonical();
+        if (canonicalLeft.eClass.id == canonicalRight.eClass.id) {
+            canonicalLeft.eClass.symmetries.addInvocationEquivalence(
+                    canonicalLeft.slotMap,
+                    canonicalRight.slotMap);
+            return canonicalLeft;
+        }
+        RenamedId leader = arena.unionFind.union(left.asRenamedId(), right.asRenamedId());
+        EClass leaderClass = arena.classes.get(leader.getId());
+        return new EClassRef(leaderClass, leader.getRenaming());
+    }
+    public static void beginGraph() {
+        CURRENT_ARENA.set(new EGraphArena());
+    }
+    public static void endGraph() {
+        CURRENT_ARENA.remove();
     }
     public Metatype getMetatype() {
         return metatype;
@@ -193,6 +262,7 @@ public class EGraphNode {
     }
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
+        refreshEClassSlots();
     }
     public String getSourceType() {
         return sourceType;
@@ -205,28 +275,234 @@ public class EGraphNode {
     }
     public void setAlphaName(String alphaName) {
         this.alphaName = alphaName;
+        refreshEClassSlots();
     }
 
     /**
      * Rewrite the e-graph with regard to rewriting rules; canonicalize the formula with equality saturation. 
      */
     public void saturate() {
-        if (children == null || children.isEmpty()) {
+        Set<Integer> active = new HashSet<>();
+        saturate(active);
+    }
+
+    private void saturate(Set<Integer> active) {
+        if (!active.add(eClass.getId())) {
             return;
         }
-        List<EGraphNode> saturatedChildren = new ArrayList<>();
-        for (EGraphNode child : children) {
-            child.saturate();
-            if (isAssociative(opcode) && child.getOpcode() == opcode) {
-                saturatedChildren.addAll(child.getChildren());
+        for (EClassRef child : new ArrayList<>(childClasses)) {
+            child.getEClass().getRepresentative().saturate(active);
+        }
+        boolean changed;
+        int iterations = 0;
+        do {
+            changed = saturateOnce();
+            iterations++;
+        } while (changed && iterations < 32);
+        active.remove(eClass.getId());
+    }
+
+    private boolean saturateOnce() {
+        List<EClassRef> canonicalChildren = new ArrayList<>(childClasses.size());
+        for (EClassRef child : childClasses) {
+            canonicalChildren.add(child.canonical());
+        }
+        if (!sameChildren(childClasses, canonicalChildren)) {
+            childClasses = canonicalChildren;
+            refreshEClassSlots();
+        }
+
+        if (opcode == Opcode.NOT && childClasses.size() == 1) {
+            EGraphNode child = childClasses.get(0).getEClass().getRepresentative();
+            if (child.getOpcode() == Opcode.NOT && child.childClasses.size() == 1) {
+                eClass.preserveSnapshot(snapshot());
+                adopt(child.childClasses.get(0).getEClass().getRepresentative());
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+
+        List<EClassRef> rewrittenChildren = new ArrayList<>();
+        for (EClassRef childRef : childClasses) {
+            EGraphNode child = childRef.getEClass().getRepresentative();
+            if (flexibleArity && isAssociative(opcode) && child.getOpcode() == opcode) {
+                rewrittenChildren.addAll(child.childClasses);
             } else {
-                saturatedChildren.add(child);
+                rewrittenChildren.add(childRef);
             }
         }
         if (isCommutative) {
-            Collections.sort(saturatedChildren, Comparator.comparing(EGraphNode::sortKey));
+            rewrittenChildren.sort(Comparator.comparing(ref -> ref.getEClass().getRepresentative().sortKey()));
         }
-        children = saturatedChildren;
+
+        if (opcode == Opcode.AND || opcode == Opcode.OR) {
+            rewrittenChildren = removeDuplicateInvocations(rewrittenChildren);
+            if (containsComplement(rewrittenChildren)) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(opcode == Opcode.OR);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            if (rewrittenChildren.size() == 1) {
+                eClass.preserveSnapshot(snapshot());
+                adopt(rewrittenChildren.get(0).getEClass().getRepresentative());
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+
+        if (!sameChildren(childClasses, rewrittenChildren)) {
+            eClass.preserveSnapshot(snapshot());
+            childClasses = rewrittenChildren;
+            refreshEClassSlots();
+            eClass.recordShape(this);
+            return true;
+        }
+
+        if (opcode == Opcode.NOT && childClasses.size() == 1) {
+            EGraphNode child = childClasses.get(0).getEClass().getRepresentative();
+            if (child.getOpcode() == Opcode.AND || child.getOpcode() == Opcode.OR) {
+                eClass.preserveSnapshot(snapshot());
+                opcode = child.getOpcode() == Opcode.AND ? Opcode.OR : Opcode.AND;
+                isCommutative = true;
+                flexibleArity = true;
+                maxArity = -1;
+                childClasses = new ArrayList<>();
+                for (EClassRef grandchild : child.childClasses) {
+                    EGraphNode negated = new EGraphNode(
+                            -Math.abs(grandchild.getEClass().getId()) - 1,
+                            Opcode.NOT,
+                            new ArrayList<>(),
+                            false,
+                            1,
+                            false,
+                            Metatype.BOOLEAN);
+                    negated.addChild(grandchild.getEClass().getRepresentative());
+                    negated.saturate();
+                    addChild(negated);
+                }
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void adopt(EGraphNode replacement) {
+        opcode = replacement.opcode;
+        childClasses = new ArrayList<>(replacement.childClasses);
+        isCommutative = replacement.isCommutative;
+        maxArity = replacement.maxArity;
+        flexibleArity = replacement.flexibleArity;
+        sourceName = replacement.sourceName;
+        sourceType = replacement.sourceType;
+        alphaName = replacement.alphaName;
+        metatype = replacement.metatype;
+    }
+
+    private void collapseToBooleanConstant(boolean value) {
+        opcode = Opcode.CONSTANT;
+        childClasses = new ArrayList<>();
+        isCommutative = false;
+        maxArity = 0;
+        flexibleArity = false;
+        sourceName = Boolean.toString(value);
+        sourceType = "Bool";
+        alphaName = null;
+        metatype = Metatype.BOOLEAN;
+    }
+
+    private static List<EClassRef> removeDuplicateInvocations(List<EClassRef> children) {
+        List<EClassRef> unique = new ArrayList<>();
+        Set<String> seen = new LinkedHashSet<>();
+        for (EClassRef child : children) {
+            String key = invocationKey(child);
+            if (seen.add(key)) {
+                unique.add(child);
+            }
+        }
+        return unique;
+    }
+
+    private static boolean containsComplement(List<EClassRef> children) {
+        for (int i = 0; i < children.size(); i++) {
+            for (int j = i + 1; j < children.size(); j++) {
+                if (areComplements(children.get(i), children.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean areComplements(EClassRef left, EClassRef right) {
+        EGraphNode leftNode = left.getEClass().getRepresentative();
+        EGraphNode rightNode = right.getEClass().getRepresentative();
+        if (leftNode.opcode == Opcode.NOT && leftNode.childClasses.size() == 1) {
+            return sameInvocation(leftNode.childClasses.get(0), right);
+        }
+        if (rightNode.opcode == Opcode.NOT && rightNode.childClasses.size() == 1) {
+            return sameInvocation(left, rightNode.childClasses.get(0));
+        }
+        return dualOf(leftNode.opcode) == rightNode.opcode && sameOperands(leftNode, rightNode);
+    }
+
+    private static boolean sameOperands(EGraphNode left, EGraphNode right) {
+        if (left.childClasses.size() != right.childClasses.size()) {
+            return false;
+        }
+        if (left.sourceName != null ? !left.sourceName.equals(right.sourceName) : right.sourceName != null) {
+            return false;
+        }
+        for (int i = 0; i < left.childClasses.size(); i++) {
+            if (!sameInvocation(left.childClasses.get(i), right.childClasses.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Opcode dualOf(Opcode opcode) {
+        switch (opcode) {
+            case EQUALS:
+                return Opcode.NOT_EQUALS;
+            case NOT_EQUALS:
+                return Opcode.EQUALS;
+            case GT:
+                return Opcode.LTE;
+            case LTE:
+                return Opcode.GT;
+            case GTE:
+                return Opcode.LT;
+            case LT:
+                return Opcode.GTE;
+            case IN:
+                return Opcode.NOT_IN;
+            case NOT_IN:
+                return Opcode.IN;
+            case SOME:
+                return Opcode.NO;
+            case NO:
+                return Opcode.SOME;
+            default:
+                return null;
+        }
+    }
+
+    private static boolean sameInvocation(EClassRef left, EClassRef right) {
+        if (left.equivalentTo(right)) {
+            return true;
+        }
+        return invocationKey(left).equals(invocationKey(right));
+    }
+
+    private static String invocationKey(EClassRef invocation) {
+        EClassRef canonical = invocation.canonical();
+        return canonical.getEClass().getRepresentative().sortKey() + canonical.getSlotMap();
     }
 
     private static boolean isAssociative(Opcode opcode) {
@@ -251,13 +527,212 @@ public class EGraphNode {
             sb.append(node.id);
         }
         sb.append('[');
-        if (node.children != null) {
-            for (EGraphNode child : node.children) {
+        if (node.childClasses != null) {
+            for (EClassRef childRef : node.childClasses) {
+                EGraphNode child = childRef.getEClass().getRepresentative();
                 appendSortKey(child, sb);
                 sb.append(',');
             }
         }
         sb.append(']');
+    }
+
+    private EGraphNode snapshot() {
+        EGraphNode copy = new EGraphNode(id, opcode, new ArrayList<>(), isCommutative, maxArity, flexibleArity, metatype);
+        copy.sourceName = sourceName;
+        copy.sourceType = sourceType;
+        copy.alphaName = alphaName;
+        copy.childClasses = new ArrayList<>(childClasses);
+        copy.refreshEClassSlots();
+        return copy;
+    }
+
+    private void refreshEClassSlots() {
+        if (eClass != null) {
+            eClass.recomputeSlots();
+        }
+    }
+
+    private static Map<String, String> identitySlotMap(EClass eClass) {
+        Map<String, String> mapping = new LinkedHashMap<>();
+        for (String slot : eClass.getSlots()) {
+            mapping.put(slot, slot);
+        }
+        return mapping;
+    }
+
+    private static boolean sameChildren(List<EClassRef> left, List<EClassRef> right) {
+        if (left.size() != right.size()) {
+            return false;
+        }
+        for (int i = 0; i < left.size(); i++) {
+            if (!left.get(i).equals(right.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Set<String> slots() {
+        Set<String> slots = new LinkedHashSet<>();
+        collectSlots(this, slots, new HashSet<>());
+        return slots;
+    }
+
+    private static void collectSlots(EGraphNode node, Set<String> slots, Set<Integer> visitedClasses) {
+        if (node.opcode == Opcode.VARIABLE) {
+            String slot = node.alphaName != null ? node.alphaName : node.sourceName;
+            if (slot != null) {
+                slots.add(slot);
+            }
+        }
+        for (EClassRef child : node.childClasses) {
+            if (visitedClasses.add(child.getEClass().getId())) {
+                slots.addAll(child.getSlotMap().values());
+            }
+        }
+    }
+
+    public static final class EClassRef {
+        private final EClass eClass;
+        private final Map<String, String> slotMap;
+
+        private EClassRef(EClass eClass, Map<String, String> slotMap) {
+            this.eClass = eClass;
+            this.slotMap = Collections.unmodifiableMap(new LinkedHashMap<>(slotMap));
+        }
+
+        public EClass getEClass() {
+            return eClass;
+        }
+
+        public Map<String, String> getSlotMap() {
+            return slotMap;
+        }
+
+        public EClassRef canonical() {
+            RenamedId leader = eClass.arena.unionFind.find(asRenamedId());
+            return new EClassRef(eClass.arena.classes.get(leader.getId()), leader.getRenaming());
+        }
+
+        public boolean equivalentTo(EClassRef other) {
+            if (eClass.arena != other.eClass.arena) {
+                return false;
+            }
+            EClassRef left = canonical();
+            EClassRef right = other.canonical();
+            return left.eClass.id == right.eClass.id
+                    && left.eClass.symmetries.equivalentInvocations(left.slotMap, right.slotMap);
+        }
+
+        private RenamedId asRenamedId() {
+            return new RenamedId(eClass.getId(), slotMap);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof EClassRef)) {
+                return false;
+            }
+            EClassRef ref = (EClassRef) other;
+            return eClass.getId() == ref.eClass.getId() && slotMap.equals(ref.slotMap);
+        }
+
+        @Override
+        public int hashCode() {
+            return 31 * eClass.getId() + slotMap.hashCode();
+        }
+    }
+
+    public static final class EClass {
+        private final int id;
+        private final EGraphArena arena;
+        private final List<EGraphNode> nodes = new ArrayList<>();
+        private Set<String> slots = new LinkedHashSet<>();
+        private final Set<String> shapes = new HashSet<>();
+        private final SlotPermutationGroup symmetries = new SlotPermutationGroup(Collections.emptySet());
+
+        private EClass(int id, EGraphNode head) {
+            this.id = id;
+            this.arena = head.arena;
+            nodes.add(head);
+            shapes.add(head.sortKey());
+            recomputeSlots();
+            arena.classes.put(id, this);
+            arena.unionFind.register(id, slots);
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public List<EGraphNode> getNodes() {
+            return Collections.unmodifiableList(nodes);
+        }
+
+        public EGraphNode getRepresentative() {
+            return nodes.get(0);
+        }
+
+        public Set<String> getSlots() {
+            return Collections.unmodifiableSet(slots);
+        }
+
+        public EClassRef invoke(Map<String, String> slotMap) {
+            if (!slotMap.keySet().equals(slots)) {
+                throw new IllegalArgumentException("Invocation must map every exposed e-class slot");
+            }
+            return new EClassRef(this, slotMap);
+        }
+
+        public void addSlotSwap(String left, String right) {
+            symmetries.addSwap(left, right);
+        }
+
+        public int symmetryCount() {
+            return symmetries.size();
+        }
+
+        private void addEquivalentNode(EGraphNode node) {
+            String shape = node.sortKey();
+            if (!shapes.add(shape)) {
+                return;
+            }
+            node.eClass = this;
+            nodes.add(node);
+            recomputeSlots();
+        }
+
+        private void preserveSnapshot(EGraphNode node) {
+            node.eClass = this;
+            nodes.add(node);
+            recomputeSlots();
+        }
+
+        private void recordShape(EGraphNode node) {
+            shapes.add(node.sortKey());
+        }
+
+        private void recomputeSlots() {
+            if (nodes.isEmpty()) {
+                slots = new LinkedHashSet<>();
+                return;
+            }
+            Set<String> common = new LinkedHashSet<>(nodes.get(0).slots());
+            for (int i = 1; i < nodes.size(); i++) {
+                common.retainAll(nodes.get(i).slots());
+            }
+            slots = common;
+            symmetries.setSlots(slots);
+            if (arena.classes.containsKey(id)) {
+                arena.unionFind.updateSlots(id, slots);
+            }
+        }
+    }
+
+    private static final class EGraphArena {
+        private final Map<Integer, EClass> classes = new LinkedHashMap<>();
+        private final RenamedIdUnionFind unionFind = new RenamedIdUnionFind();
     }
 
 }
