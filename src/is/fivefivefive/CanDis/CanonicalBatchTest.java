@@ -14,10 +14,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
-import is.fivefivefive.ACGN.learn.Hyperparams;
 import is.fivefivefive.ACGN.learn.Rewarder;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.util.InstancePool;
@@ -31,6 +35,8 @@ import parser.etc.Pair;
 public class CanonicalBatchTest {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "distance_results";
+    private static final int DEFAULT_REWARD_POOL_SIZE = 1000;
+    private static final int DEFAULT_THREAD_COUNT = 32;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -45,17 +51,16 @@ public class CanonicalBatchTest {
         }
 
         Summary summary = new Summary();
+        List<FileResult> results = processFiles(files, options);
         try (Writer json = Files.newBufferedWriter(jsonPath, StandardCharsets.UTF_8)) {
             writeJsonHeader(json, options, files.size());
-            boolean first = true;
-            for (Path file : files) {
-                FileResult result = processFile(options.inputDir, file, options);
+            for (int i = 0; i < results.size(); i++) {
+                FileResult result = results.get(i);
                 summary.add(result);
-                if (!first) {
+                if (i > 0) {
                     json.write(",\n");
                 }
                 writeJsonResult(json, result);
-                first = false;
                 if (options.verbose) {
                     System.err.println(result.relativePath + " -> " + result.status());
                 }
@@ -67,8 +72,7 @@ public class CanonicalBatchTest {
         System.out.println("Wrote " + markdownPath);
     }
 
-    private static FileResult processFile(Path inputRoot, Path file, Options options) {
-        FileResult result = new FileResult(inputRoot, file);
+    private static List<FileResult> processFiles(List<Path> files, Options options) {
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
         if (!options.verbose) {
@@ -77,13 +81,47 @@ public class CanonicalBatchTest {
                 public void write(int b) {
                 }
             });
-            System.setOut(new PrintStream(new OutputStream() {
-                @Override
-                public void write(int b) {
-                }
-            }));
+            System.setOut(sink);
             System.setErr(sink);
         }
+        ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
+        try {
+            List<Future<FileResult>> futures = new ArrayList<>(files.size());
+            for (Path file : files) {
+                Callable<FileResult> task = () -> processFile(options.inputDir, file, options);
+                futures.add(executor.submit(task));
+            }
+            List<FileResult> results = new ArrayList<>(files.size());
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    results.add(futures.get(i).get());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    results.add(failedResult(options.inputDir, files.get(i), "InterruptedException: " + e.getMessage()));
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause() == null ? e : e.getCause();
+                    results.add(failedResult(options.inputDir, files.get(i),
+                            cause.getClass().getSimpleName() + ": " + cause.getMessage()));
+                }
+            }
+            return results;
+        } finally {
+            executor.shutdownNow();
+            if (!options.verbose) {
+                System.setOut(originalOut);
+                System.setErr(originalErr);
+            }
+        }
+    }
+
+    private static FileResult failedResult(Path inputRoot, Path file, String error) {
+        FileResult result = new FileResult(inputRoot, file);
+        result.error = error;
+        return result;
+    }
+
+    private static FileResult processFile(Path inputRoot, Path file, Options options) {
+        FileResult result = new FileResult(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
             ModelUnit model = new ModelUnit(null, module);
@@ -118,11 +156,6 @@ public class CanonicalBatchTest {
         } catch (Throwable t) {
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
             return result;
-        } finally {
-            if (!options.verbose) {
-                System.setOut(originalOut);
-                System.setErr(originalErr);
-            }
         }
     }
 
@@ -201,6 +234,7 @@ public class CanonicalBatchTest {
         writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
         writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
         writer.write("  \"fileCount\": " + fileCount + ",\n");
+        writer.write("  \"threadCount\": " + options.threadCount + ",\n");
         writer.write("  \"results\": [\n");
     }
 
@@ -270,6 +304,7 @@ public class CanonicalBatchTest {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("# Canonical Rewrite Distance Summary\n\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
+            writer.write("- Thread count: " + options.threadCount + "\n");
             writer.write("- Total files: " + summary.total + "\n");
             writer.write("- Successful distances: " + summary.successes + "\n");
             writer.write("- Failures: " + summary.failures + "\n");
@@ -362,7 +397,8 @@ public class CanonicalBatchTest {
         private Path inputDir = Paths.get(DEFAULT_INPUT);
         private Path outputDir = Paths.get(DEFAULT_OUTPUT);
         private int limit = -1;
-        private int rewardPoolSize = Hyperparams.POOL_SIZE;
+        private int rewardPoolSize = DEFAULT_REWARD_POOL_SIZE;
+        private int threadCount = DEFAULT_THREAD_COUNT;
         private boolean verbose;
 
         private static Options parse(String[] args) {
@@ -373,6 +409,8 @@ public class CanonicalBatchTest {
                     options.limit = Integer.parseInt(args[++i]);
                 } else if ("--reward-pool".equals(args[i]) && i + 1 < args.length) {
                     options.rewardPoolSize = Integer.parseInt(args[++i]);
+                } else if ("--threads".equals(args[i]) && i + 1 < args.length) {
+                    options.threadCount = Integer.parseInt(args[++i]);
                 } else if ("--verbose".equals(args[i])) {
                     options.verbose = true;
                 } else if (positional == 0) {
