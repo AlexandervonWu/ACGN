@@ -8,6 +8,11 @@
 - Average distance: 20.275867
 - Average predicate-body Levenshtein distance: 50.283745
 - Average raw AST tree distance: 22.292683
+- Average raw AST size: 26.371004
+- Average canonical form size: 24.817603
+- Average normalized raw AST distance: 0.802277
+- Average normalized canonical distance: 0.758395
+- CORRECT models with canonical distance 0 and raw AST distance > 0: 1
 - Min distance: 0
 - Max distance: 82
 
@@ -24,6 +29,9 @@
 
 - Pearson correlation, Levenshtein vs candidate reward: -0.017296
 - Pearson correlation, raw AST tree distance vs candidate reward: -0.025868
+
+- Pearson correlation, normalized raw AST distance vs candidate reward: 0.011850
+- Pearson correlation, normalized canonical distance vs candidate reward: 0.020420
 
 ## By Problem Class And Status
 

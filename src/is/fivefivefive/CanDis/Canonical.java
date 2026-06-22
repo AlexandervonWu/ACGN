@@ -49,6 +49,16 @@ public class Canonical {
         return formulas;
     }
 
+    public static int canonicalFormSize(Multigraph graph) {
+        List<NormalForm> nfs = normalForms(graph);
+        int size = nfs.size();
+        for (NormalForm nf : nfs) {
+            size += eGraphSize(nf.getMatrixEGraph());
+            size += quantificationSize(nf.getQuantificationTree());
+        }
+        return size;
+    }
+
     private static List<NormalForm> normalForms(Multigraph graph) {
         IRAgent agent = new IRAgent(graph);
         agent.computeNormalForm();
