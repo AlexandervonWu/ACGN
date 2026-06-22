@@ -28,6 +28,7 @@ import is.fivefivefive.ACGN.util.InstancePool;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
+import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
 import parser.etc.Pair;
@@ -145,6 +146,10 @@ public class CanonicalBatchTest {
             result.rightPredicate = pair.rightName;
             result.leftGraphId = pair.leftId;
             result.rightGraphId = pair.rightId;
+            result.predicateBodyLevenshteinDistance = levenshteinDistance(
+                    predicateBody(file, pair.leftName, pair.left),
+                    predicateBody(file, pair.rightName, pair.right));
+            result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.leftVertices = left.size();
             result.rightVertices = right.size();
             result.distance = Canonical.distance(left, right);
@@ -184,26 +189,153 @@ public class CanonicalBatchTest {
     }
 
     private static PredicatePair findPredicatePair(Path file, ModelUnit model) {
+        Map<String, Predicate> predicates = new HashMap<>();
         Map<String, Integer> ids = new HashMap<>();
         int id = 1;
         for (Predicate predicate : model.getPredDeclList()) {
+            predicates.put(predicate.getName(), predicate);
             ids.put(predicate.getName(), id++);
         }
 
         String preferred = preferredPredicateBase(file);
         if (preferred != null && ids.containsKey(preferred) && ids.containsKey(preferred + "C")) {
-            return new PredicatePair(preferred, preferred + "C", ids.get(preferred), ids.get(preferred + "C"));
+            return new PredicatePair(preferred, preferred + "C", ids.get(preferred), ids.get(preferred + "C"),
+                    predicates.get(preferred), predicates.get(preferred + "C"));
         }
 
         for (String name : ids.keySet()) {
             if (name.endsWith("C") && name.length() > 1) {
                 String base = name.substring(0, name.length() - 1);
                 if (ids.containsKey(base)) {
-                    return new PredicatePair(base, name, ids.get(base), ids.get(name));
+                    return new PredicatePair(base, name, ids.get(base), ids.get(name),
+                            predicates.get(base), predicates.get(name));
                 }
             }
         }
         return null;
+    }
+
+    private static String predicateBody(Path file, String predicateName, Predicate predicate) {
+        try {
+            String source = Files.readString(file, StandardCharsets.UTF_8);
+            String body = predicateBodyFromSource(source, predicateName);
+            if (body != null) {
+                return normalizeWhitespace(body);
+            }
+        } catch (IOException ignored) {
+        }
+        if (predicate == null || predicate.getBody() == null || predicate.getBody().getBodyExpr() == null) {
+            return "";
+        }
+        return predicate.getBody().getBodyExpr().toString();
+    }
+
+    private static String predicateBodyFromSource(String source, String predicateName) {
+        String needle = "pred " + predicateName;
+        int start = source.indexOf(needle);
+        while (start >= 0) {
+            int nameEnd = start + needle.length();
+            if (nameEnd < source.length() && Character.isJavaIdentifierPart(source.charAt(nameEnd))) {
+                start = source.indexOf(needle, nameEnd);
+                continue;
+            }
+            int open = source.indexOf('{', nameEnd);
+            if (open < 0) {
+                return null;
+            }
+            int close = matchingBrace(source, open);
+            return close < 0 ? null : source.substring(open + 1, close);
+        }
+        return null;
+    }
+
+    private static int matchingBrace(String source, int open) {
+        int depth = 0;
+        for (int i = open; i < source.length(); i++) {
+            char c = source.charAt(i);
+            if (c == '{') {
+                depth++;
+            } else if (c == '}') {
+                depth--;
+                if (depth == 0) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private static String normalizeWhitespace(String value) {
+        return value.replaceAll("\\s+", " ").trim();
+    }
+
+    private static int levenshteinDistance(String left, String right) {
+        int[] previous = new int[right.length() + 1];
+        int[] current = new int[right.length() + 1];
+        for (int j = 0; j <= right.length(); j++) {
+            previous[j] = j;
+        }
+        for (int i = 1; i <= left.length(); i++) {
+            current[0] = i;
+            for (int j = 1; j <= right.length(); j++) {
+                int replace = previous[j - 1] + (left.charAt(i - 1) == right.charAt(j - 1) ? 0 : 1);
+                int delete = previous[j] + 1;
+                int insert = current[j - 1] + 1;
+                current[j] = Math.min(replace, Math.min(delete, insert));
+            }
+            int[] temp = previous;
+            previous = current;
+            current = temp;
+        }
+        return previous[right.length()];
+    }
+
+    private static int rawAstTreeDistance(Node left, Node right) {
+        if (left == null) {
+            return rawAstSize(right);
+        }
+        if (right == null) {
+            return rawAstSize(left);
+        }
+        int distance = rawAstLabel(left).equals(rawAstLabel(right)) ? 0 : 1;
+        distance += rawAstForestDistance(left.getChildren(), right.getChildren());
+        return distance;
+    }
+
+    private static int rawAstForestDistance(List<Node> left, List<Node> right) {
+        int[][] dp = new int[left.size() + 1][right.size() + 1];
+        for (int i = 1; i <= left.size(); i++) {
+            dp[i][0] = dp[i - 1][0] + rawAstSize(left.get(i - 1));
+        }
+        for (int j = 1; j <= right.size(); j++) {
+            dp[0][j] = dp[0][j - 1] + rawAstSize(right.get(j - 1));
+        }
+        for (int i = 1; i <= left.size(); i++) {
+            for (int j = 1; j <= right.size(); j++) {
+                int delete = dp[i - 1][j] + rawAstSize(left.get(i - 1));
+                int insert = dp[i][j - 1] + rawAstSize(right.get(j - 1));
+                int update = dp[i - 1][j - 1] + rawAstTreeDistance(left.get(i - 1), right.get(j - 1));
+                dp[i][j] = Math.min(update, Math.min(delete, insert));
+            }
+        }
+        return dp[left.size()][right.size()];
+    }
+
+    private static int rawAstSize(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        int size = 1;
+        for (Node child : node.getChildren()) {
+            size += rawAstSize(child);
+        }
+        return size;
+    }
+
+    private static String rawAstLabel(Node node) {
+        String label = node.getClass().getSimpleName();
+        String text = node.toString();
+        return text == null || text.startsWith(node.getClass().getName() + "@") ? label : label + ":" + text;
     }
 
     private static String preferredPredicateBase(Path file) {
@@ -245,6 +377,8 @@ public class CanonicalBatchTest {
         writer.write("    \"successes\": " + summary.successes + ",\n");
         writer.write("    \"failures\": " + summary.failures + ",\n");
         writer.write("    \"averageDistance\": " + number(summary.averageDistance()) + ",\n");
+        writer.write("    \"averagePredicateBodyLevenshteinDistance\": " + number(summary.averageLevenshteinDistance()) + ",\n");
+        writer.write("    \"averageRawAstTreeDistance\": " + number(summary.averageRawAstTreeDistance()) + ",\n");
         writer.write("    \"minDistance\": " + summary.minDistanceJson() + ",\n");
         writer.write("    \"maxDistance\": " + summary.maxDistanceJson() + ",\n");
         writer.write("    \"rewardSuccesses\": " + summary.rewardSuccesses + ",\n");
@@ -253,7 +387,9 @@ public class CanonicalBatchTest {
         writer.write("    \"averageGroundTruthReward\": " + number(summary.averageGroundTruthReward()) + ",\n");
         writer.write("    \"averageRewardGap\": " + number(summary.averageRewardGap()) + ",\n");
         writer.write("    \"distanceCandidateRewardPearsonSamples\": " + summary.distanceRewardSamples + ",\n");
-        writer.write("    \"distanceCandidateRewardPearson\": " + number(summary.distanceRewardCorrelation()) + "\n");
+        writer.write("    \"distanceCandidateRewardPearson\": " + number(summary.distanceRewardCorrelation()) + ",\n");
+        writer.write("    \"levenshteinCandidateRewardPearson\": " + number(summary.levenshteinRewardCorrelation()) + ",\n");
+        writer.write("    \"rawAstCandidateRewardPearson\": " + number(summary.rawAstRewardCorrelation()) + "\n");
         writer.write("  }\n");
         writer.write("}\n");
     }
@@ -272,6 +408,8 @@ public class CanonicalBatchTest {
             writer.write("      \"rightGraphId\": " + result.rightGraphId + ",\n");
             writer.write("      \"leftVertices\": " + result.leftVertices + ",\n");
             writer.write("      \"rightVertices\": " + result.rightVertices + ",\n");
+            writer.write("      \"predicateBodyLevenshteinDistance\": " + result.predicateBodyLevenshteinDistance + ",\n");
+            writer.write("      \"rawAstTreeDistance\": " + result.rawAstTreeDistance + ",\n");
             writer.write("      \"distance\": " + result.distance + ",\n");
             writer.write("      \"rewardPoolSize\": " + result.rewardPoolSize + ",\n");
             if (result.rewardError == null) {
@@ -309,6 +447,9 @@ public class CanonicalBatchTest {
             writer.write("- Successful distances: " + summary.successes + "\n");
             writer.write("- Failures: " + summary.failures + "\n");
             writer.write("- Average distance: " + number(summary.averageDistance()) + "\n");
+            writer.write("- Average predicate-body Levenshtein distance: "
+                    + number(summary.averageLevenshteinDistance()) + "\n");
+            writer.write("- Average raw AST tree distance: " + number(summary.averageRawAstTreeDistance()) + "\n");
             writer.write("- Min distance: " + summary.minDistanceMarkdown() + "\n");
             writer.write("- Max distance: " + summary.maxDistanceMarkdown() + "\n\n");
             writer.write("## Reward Comparison\n\n");
@@ -322,6 +463,10 @@ public class CanonicalBatchTest {
                     + summary.distanceRewardSamples + " files)\n");
             writer.write("- Pearson correlation, distance vs candidate reward: "
                     + number(summary.distanceRewardCorrelation()) + "\n\n");
+            writer.write("- Pearson correlation, Levenshtein vs candidate reward: "
+                    + number(summary.levenshteinRewardCorrelation()) + "\n");
+            writer.write("- Pearson correlation, raw AST tree distance vs candidate reward: "
+                    + number(summary.rawAstRewardCorrelation()) + "\n\n");
 
             writer.write("## By Problem Class And Status\n\n");
             writer.write("| Problem class | Status | Files | Successes | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |\n");
@@ -390,7 +535,7 @@ public class CanonicalBatchTest {
     }
 
     private static String number(double value) {
-        return String.format(java.util.Locale.ROOT, "%.3f", value);
+        return String.format(java.util.Locale.ROOT, "%.6f", value);
     }
 
     private static class Options {
@@ -430,12 +575,16 @@ public class CanonicalBatchTest {
         private final String rightName;
         private final int leftId;
         private final int rightId;
+        private final Predicate left;
+        private final Predicate right;
 
-        private PredicatePair(String leftName, String rightName, int leftId, int rightId) {
+        private PredicatePair(String leftName, String rightName, int leftId, int rightId, Predicate left, Predicate right) {
             this.leftName = leftName;
             this.rightName = rightName;
             this.leftId = leftId;
             this.rightId = rightId;
+            this.left = left;
+            this.right = right;
         }
     }
 
@@ -450,6 +599,8 @@ public class CanonicalBatchTest {
         private int rightGraphId;
         private int leftVertices;
         private int rightVertices;
+        private int predicateBodyLevenshteinDistance;
+        private int rawAstTreeDistance;
         private int distance;
         private int rewardPoolSize;
         private double candidateReward;
@@ -483,6 +634,8 @@ public class CanonicalBatchTest {
         private int successes;
         private int failures;
         private long distanceSum;
+        private long levenshteinDistanceSum;
+        private long rawAstTreeDistanceSum;
         private Integer minDistance;
         private Integer maxDistance;
         private int rewardSuccesses;
@@ -495,6 +648,12 @@ public class CanonicalBatchTest {
         private double distanceRewardXXSum;
         private double distanceRewardYYSum;
         private double distanceRewardXYSum;
+        private double levenshteinRewardXSum;
+        private double levenshteinRewardXXSum;
+        private double levenshteinRewardXYSum;
+        private double rawAstRewardXSum;
+        private double rawAstRewardXXSum;
+        private double rawAstRewardXYSum;
         private Map<String, Stats> groupStats = new java.util.TreeMap<>();
         private List<FileResult> failureSamples = new ArrayList<>();
 
@@ -507,6 +666,8 @@ public class CanonicalBatchTest {
             if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
+                levenshteinDistanceSum += result.predicateBodyLevenshteinDistance;
+                rawAstTreeDistanceSum += result.rawAstTreeDistance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
                 if (result.rewardError == null) {
@@ -521,6 +682,13 @@ public class CanonicalBatchTest {
                         distanceRewardXXSum += (double) result.distance * result.distance;
                         distanceRewardYYSum += result.candidateReward * result.candidateReward;
                         distanceRewardXYSum += result.distance * result.candidateReward;
+                        levenshteinRewardXSum += result.predicateBodyLevenshteinDistance;
+                        levenshteinRewardXXSum += (double) result.predicateBodyLevenshteinDistance
+                                * result.predicateBodyLevenshteinDistance;
+                        levenshteinRewardXYSum += result.predicateBodyLevenshteinDistance * result.candidateReward;
+                        rawAstRewardXSum += result.rawAstTreeDistance;
+                        rawAstRewardXXSum += (double) result.rawAstTreeDistance * result.rawAstTreeDistance;
+                        rawAstRewardXYSum += result.rawAstTreeDistance * result.candidateReward;
                     }
                 }
             } else {
@@ -533,6 +701,14 @@ public class CanonicalBatchTest {
 
         private double averageDistance() {
             return successes == 0 ? 0.0 : (double) distanceSum / successes;
+        }
+
+        private double averageLevenshteinDistance() {
+            return successes == 0 ? 0.0 : (double) levenshteinDistanceSum / successes;
+        }
+
+        private double averageRawAstTreeDistance() {
+            return successes == 0 ? 0.0 : (double) rawAstTreeDistanceSum / successes;
         }
 
         private int rewardFailures() {
@@ -559,6 +735,26 @@ public class CanonicalBatchTest {
                     distanceRewardXXSum,
                     distanceRewardYYSum,
                     distanceRewardXYSum);
+        }
+
+        private double levenshteinRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    levenshteinRewardXSum,
+                    distanceRewardYSum,
+                    levenshteinRewardXXSum,
+                    distanceRewardYYSum,
+                    levenshteinRewardXYSum);
+        }
+
+        private double rawAstRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    rawAstRewardXSum,
+                    distanceRewardYSum,
+                    rawAstRewardXXSum,
+                    distanceRewardYYSum,
+                    rawAstRewardXYSum);
         }
 
         private String minDistanceJson() {

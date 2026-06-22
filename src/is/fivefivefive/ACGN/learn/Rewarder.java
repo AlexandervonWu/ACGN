@@ -193,12 +193,14 @@ public class Rewarder {
         if (posInstance == null || negInstance == null) {
             throw new IllegalArgumentException("No instances found in the pools");
         }
+        String candidateExpression = asAlloyExpression(newPredBody);
+        String originalExpression = asAlloyExpression(originalPredName);
         int posIter = 0;
         int posCount = 0;
         while (posIter < poolSize && posInstance.satisfiable()) {
             boolean result = false;
             try {
-                result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredBody));
+                result = (boolean) posInstance.eval(CompUtil.parseOneExpression_fromString(cm, candidateExpression));
             } catch (Exception e) {
                 System.err.println("[REWARDER] Exception in " + newPredName);
                 System.err.println("Error evaluating predicate: " + e.getMessage());                
@@ -218,7 +220,7 @@ public class Rewarder {
         int negIter = 0;
         int negCount = 0;
         while (negIter < poolSize && negInstance.satisfiable()) {
-            boolean result = (boolean) negInstance.eval(CompUtil.parseOneExpression_fromString(cm, newPredBody));
+            boolean result = (boolean) negInstance.eval(CompUtil.parseOneExpression_fromString(cm, candidateExpression));
             if (!result) {
                 negCount++;
             } else {
@@ -228,13 +230,14 @@ public class Rewarder {
             negInstance = negInstance.next(); // get next instance
             negIter++;
         }
-        if (posCount == poolSize && negCount == poolSize) {
-            // all instances are correctly classified
-            // SAT Solve;
+        int semanticCounterexamples = 0;
+        if (posCount == posIter && negCount == negIter) {
+            // All evaluated instances are correctly classified. Ask Alloy for
+            // bounded semantic counterexamples and refresh the LFU pools with them.
             // check overcoverage
-            String satCommandText1 = '(' + newPredBody + ") && !(" + originalPredName + ")";
+            String satCommandText1 = '(' + candidateExpression + ") && !(" + originalExpression + ")";
             // check undercoverage
-            String satCommandText2 = "!(" + newPredBody + ") && (" + originalPredName + ")";
+            String satCommandText2 = "!(" + candidateExpression + ") && (" + originalExpression + ")";
             A4Reporter rep = new A4Reporter() {
                 @Override
                 public void warning(ErrorWarning msg) {
@@ -258,21 +261,28 @@ public class Rewarder {
                 return 1.0; // perfect coverage, no overcoverage or undercoverage
             }
             if (satSolution1 != null && satSolution1.satisfiable()) {
-                // TODO: Overcoverage detected, remove the least frequently used instance from the instance pool;
-                for (int i = 0; i < POOL_REPLACEMENT && posInstances.size() > 1; ++i)
-                    posInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
+                // Overcoverage: candidate accepts an oracle-negative instance.
+                negInstances.add(satSolution1);
+                semanticCounterexamples++;
             }
             if (satSolution2 != null && satSolution2.satisfiable()) {
-                // TODO: Undercoverage detected
-                for (int i = 0; i < POOL_REPLACEMENT && negInstances.size() > 1; ++i)
-                    negInstances.removeLeastFrequentlyUsed(); // remove the least frequently used instance
+                // Undercoverage: candidate rejects an oracle-positive instance.
+                posInstances.add(satSolution2);
+                semanticCounterexamples++;
             }
         }
         // Calculate the reward based on the counts of positive and negative instances
         if (posIter == 0 || negIter == 0) {
             return 0.0;
         }
-        double reward = (double) (posCount * negCount) / (double) (posIter * negIter);
+        double reward = (double) (posCount * negCount) / (double) (posIter * negIter + semanticCounterexamples);
         return reward;
+    }
+
+    private static String asAlloyExpression(String expression) {
+        if (expression != null && expression.matches("[A-Za-z_][A-Za-z0-9_]*")) {
+            return expression + "[]";
+        }
+        return expression;
     }
 }

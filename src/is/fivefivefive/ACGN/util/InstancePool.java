@@ -108,15 +108,7 @@ public class InstancePool {
             incrementUsageFrequency(instance);
         } else {
             if (size == capacity) {
-                DoublyLinkedList leastFrequentList = frequencyMap.get(1); // get the list of instances with usage frequency 1
-                if (leastFrequentList != null && !leastFrequentList.isEmpty()) {
-                    AlloyInstance leastFrequentInstance = leastFrequentList.removeLast(); // remove the least frequently used instance
-                    if (head == leastFrequentInstance) {
-                        head = leastFrequentInstance.next; // update head if necessary
-                    }
-                    instanceMap.remove(uniqueKey.get(leastFrequentInstance.instance)); // remove from instance map
-                    size--;
-                }
+                removeLeastFrequentlyUsed();
             }
             AlloyInstance newInstance = new AlloyInstance(instance);
             instanceMap.put(uniqueKey.get(instance), newInstance); // add to instance map
