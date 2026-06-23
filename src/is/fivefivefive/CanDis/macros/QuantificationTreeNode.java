@@ -22,6 +22,7 @@ public class QuantificationTreeNode {
     private Quantifier quantifier; // the quantifier at this node, e.g., "all", "some", "lone", "one"
     private boolean isDisj; // if these variables in the QTN are disjoint, which is determined by the presence of "disj" keyword in the original formula.
     private String type; // the reduced primitive type of the quantified variables at this node, type-checked by the intepreter, and used to keep De Bruijn equivalence. 
+    private String bindingPath; // structural source path used as a De Bruijn-equivalent binder identity after prenexing.
     // invariant: all quantified variables at this node have the same type, which is the same as the type of the quantifier in the original formula. 
 
     public enum Quantifier {
@@ -42,6 +43,7 @@ public class QuantificationTreeNode {
         this.quantifier = quantifier;
         this.isDisj = isDisj;
         this.type = type;
+        this.bindingPath = "";
 
     }
     public QuantificationTreeNode(Quantifier quantifier, List<QuantiVar> quantiVars, List<QuantificationTreeNode> children, boolean isDisj, String type) {
@@ -83,10 +85,18 @@ public class QuantificationTreeNode {
     public void setType(String type) {
         this.type = type;
     }
+    public String getBindingPath() {
+        return bindingPath;
+    }
+    public void setBindingPath(String bindingPath) {
+        this.bindingPath = bindingPath == null ? "" : bindingPath;
+    }
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("QuantificationTreeNode{quantiVars=");
         sb.append(quantiVars);
+        sb.append(", bindingPath=");
+        sb.append(bindingPath);
         sb.append(", children=");
         sb.append(children);
         sb.append("}");

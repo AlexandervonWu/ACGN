@@ -123,8 +123,9 @@ public class NormalForm {
         correspondingQuantificationTreeNodes.clear();
         quantificationTreeRoot = null;
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
+        matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
         List<EGraphNode> constraints = new ArrayList<>();
-        matrixEGraphRoot = prenex(matrixEGraphRoot, null, new HashMap<>(), new int[] { 0 }, false, constraints);
+        matrixEGraphRoot = prenex(matrixEGraphRoot, null, new HashMap<>(), new int[] { 0 }, false, constraints, "root");
         matrixEGraphRoot = conjoin(matrixEGraphRoot, constraints);
         matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
@@ -166,6 +167,10 @@ public class NormalForm {
             return null;
         }
         if (node.getOpcode() == Opcode.VARIABLE) {
+            EGraphNode replacement = bindings.get(node.getSourceName());
+            return replacement == null ? node : cloneEGraph(replacement);
+        }
+        if (node.getOpcode() == Opcode.LET && node.getChildren().isEmpty()) {
             EGraphNode replacement = bindings.get(node.getSourceName());
             return replacement == null ? node : cloneEGraph(replacement);
         }
@@ -228,7 +233,14 @@ public class NormalForm {
         }
     }
 
-    private EGraphNode prenex(EGraphNode node, QuantificationTreeNode scope, Map<String, QuantiVar> env, int[] nextVarId, boolean negated, List<EGraphNode> constraints) {
+    private EGraphNode prenex(
+            EGraphNode node,
+            QuantificationTreeNode scope,
+            Map<String, QuantiVar> env,
+            int[] nextVarId,
+            boolean negated,
+            List<EGraphNode> constraints,
+            String bindingPath) {
         if (node == null) {
             return null;
         }
@@ -240,12 +252,12 @@ public class NormalForm {
             return node;
         }
         if (node.getOpcode() == Opcode.IFF && node.getChildren().size() == 2) {
-            return prenex(expandIff(node, negated), scope, env, nextVarId, false, constraints);
+            return prenex(expandIff(node, negated), scope, env, nextVarId, false, constraints, bindingPath + "/iff");
         }
         if (node.getOpcode() == Opcode.NOT) {
             List<EGraphNode> rewritten = new ArrayList<>();
             for (EGraphNode child : node.getChildren()) {
-                EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, !negated, constraints);
+                EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, !negated, constraints, bindingPath + "/not");
                 if (rewrittenChild != null && rewrittenChild.getOpcode() != Opcode.END) {
                     rewritten.add(rewrittenChild);
                 }
@@ -262,9 +274,11 @@ public class NormalForm {
             for (int i = 0; i < children.size(); i++) {
                 EGraphNode child = children.get(i);
                 if (isRelDecl(child.getOpcode())) {
-                    prenexRelDecl(node.getOpcode(), child, scope, scopedEnv, nextVarId, false, negated, localConstraints);
+                    prenexRelDecl(node.getOpcode(), child, scope, scopedEnv, nextVarId, false, negated, localConstraints,
+                            bindingPath + "/decl[" + i + "]");
                 } else {
-                    EGraphNode rewrittenChild = prenex(child, scope, scopedEnv, nextVarId, bodyNegated, constraints);
+                    EGraphNode rewrittenChild = prenex(child, scope, scopedEnv, nextVarId, bodyNegated, constraints,
+                            bindingPath + "/body[" + i + "]");
                     if (rewrittenChild != null) {
                         body = rewrittenChild;
                     }
@@ -282,10 +296,13 @@ public class NormalForm {
         for (int i = 0; i < children.size(); i++) {
             EGraphNode child = children.get(i);
             if (isRelDecl(child.getOpcode())) {
-                scope = prenexRelDecl(Opcode.FORALL, child, scope, env, nextVarId, true, false, constraints);
+                scope = prenexRelDecl(Opcode.FORALL, child, scope, env, nextVarId, true, false, constraints,
+                        bindingPath + "/param[" + i + "]");
                 continue;
             }
-            EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, childNegated(node.getOpcode(), i, negated), constraints);
+            boolean childNegated = childNegated(node.getOpcode(), i, negated);
+            EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, childNegated, constraints,
+                    childBindingPath(bindingPath, node.getOpcode(), i, childNegated));
             if (rewrittenChild != null && rewrittenChild.getOpcode() != Opcode.END) {
                 rewritten.add(rewrittenChild);
             }
@@ -294,16 +311,28 @@ public class NormalForm {
         return node;
     }
 
-    private QuantificationTreeNode prenexRelDecl(Opcode quantifierOpcode, EGraphNode relDecl, QuantificationTreeNode parent, Map<String, QuantiVar> env, int[] nextVarId, boolean parameterDecl, boolean negated, List<EGraphNode> constraints) {
+    private QuantificationTreeNode prenexRelDecl(
+            Opcode quantifierOpcode,
+            EGraphNode relDecl,
+            QuantificationTreeNode parent,
+            Map<String, QuantiVar> env,
+            int[] nextVarId,
+            boolean parameterDecl,
+            boolean negated,
+            List<EGraphNode> constraints,
+            String bindingPath) {
         EGraphNode typeEGraph = null;
         if (!relDecl.getChildren().isEmpty()) {
-            typeEGraph = prenex(relDecl.getChildren().get(0), parent, env, nextVarId, false, constraints);
+            typeEGraph = prenex(relDecl.getChildren().get(0), parent, env, nextVarId, false, constraints,
+                    bindingPath + "/type");
         }
         EGraphNode normalizedTypeEGraph = typeEGraph == null ? null : normalizeAssociativeCommutative(toNNF(typeEGraph, false));
         List<QuantiVar> quantiVars = new ArrayList<>();
         QuantificationTreeNode dependencyParent = deepestDependency(typeEGraph, env, parent);
         String primitiveType = null;
         QuantificationTreeNode qtNode = new QuantificationTreeNode(quantifierOf(quantifierOpcode, negated), quantiVars, dependencyParent, isDisj(relDecl.getOpcode()), null);
+        String deBruijnBase = bindingPath + (negated ? "@neg" : "@pos");
+        qtNode.setBindingPath(deBruijnBase);
         if (dependencyParent == null) {
             addNode(qtNode);
         } else {
@@ -325,6 +354,7 @@ public class NormalForm {
                 qtNode.setType(primitiveType);
             }
             QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
+            qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + normalizeType(varType));
             candidate.setAlphaName(alphaName);
             quantiVars.add(qv);
             if (needsDomainConstraint(normalizedTypeEGraph, varType)) {
@@ -449,6 +479,13 @@ public class NormalForm {
         Opcode opcode = node.getOpcode();
         if (opcode == Opcode.NOT && node.getChildren().size() == 1) {
             return toNNF(node.getChildren().get(0), !negated);
+        }
+        if (isQuantifierNode(node)) {
+            EGraphNode rewritten = copyShallow(node, opcode);
+            for (EGraphNode child : node.getChildren()) {
+                rewritten.addChild(toNNF(child, false));
+            }
+            return negated ? syntheticUnary(node, Opcode.NOT, rewritten, -1) : rewritten;
         }
         if (opcode == Opcode.IFF && node.getChildren().size() == 2) {
             return toNNF(expandIff(node, negated), false);
@@ -766,6 +803,15 @@ public class NormalForm {
             default:
                 return isNegatedFormulaOpcode(opcode) ? !negated : negated;
         }
+    }
+
+    private static String childBindingPath(String parentPath, Opcode opcode, int childIndex, boolean childNegated) {
+        StringBuilder path = new StringBuilder(parentPath);
+        path.append('/').append(opcode.name().toLowerCase()).append('[').append(childIndex).append(']');
+        if (childNegated) {
+            path.append("/not");
+        }
+        return path.toString();
     }
 
     private static boolean isNegatedFormulaOpcode(Opcode opcode) {

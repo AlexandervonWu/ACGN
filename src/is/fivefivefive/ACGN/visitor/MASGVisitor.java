@@ -345,6 +345,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ScopeTreeNode subscope = new ScopeTreeNode(scopeNodeId, rootScope, predGraph);
         // System.out.println("Scope affliation root: " + subscope.getAffliation().getRoot());
         updateTimeOfVisit(predNode, subscope);
+        int predTimeOfVisit = predGraph.getTimeOfVisitMap().getOrDefault(predNode, 1);
         predNode.initLocalTovAsRoot(predGraph);
         int iter = 2;
         for (ParamDecl pd : n.getParamList()) {
@@ -352,15 +353,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // TODO: Incorporate the timeOfVisitMap to ensure unique visit time.
             AugmentedNode pdNode = pd.accept(this, subscope);
             globalVariables.addEdge(predNode, pdNode, 2); // equivalent in infinity;
-            visitAndConnect(predNode, pdNode, iter, subscope);
+            visitAndConnectAt(predNode, pdNode, iter, subscope, predTimeOfVisit);
             // predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
         globalVariables.addEdge(predNode, END_NODE, iter);
-        visitAndConnect(predNode, END_NODE, iter, subscope);
+        visitAndConnectAt(predNode, END_NODE, iter, subscope, predTimeOfVisit);
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         globalVariables.addEdge(predNode, bodyNode, 1);
-        visitAndConnect(predNode, bodyNode, 1, subscope);
+        visitAndConnectAt(predNode, bodyNode, 1, subscope, predTimeOfVisit);
         // predGraph.addVertex(bodyNode);
         // predGraph.connect(predNode, bodyNode, 1, 1);
         return predNode;
@@ -449,12 +450,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // TODO: Down here we need more implementation of the gv augmentations.
 
     private void visitAndConnect(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg) {
+        int timeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(parent, 1);
+        visitAndConnectAt(parent, child, position, arg, timeOfVisit);
+    }
+
+    private void visitAndConnectAt(AugmentedNode parent, AugmentedNode child, int position, ScopeTreeNode arg, int timeOfVisit) {
         if (child == null) {
             return;
         }
-        // int timeOfVisit = timeOfVisitMap.containsKey(parent) ? timeOfVisitMap.get(parent) : 1;
-        // TODO: Retire global time of visit. 
-        int timeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(parent, 1);
         Multigraph graph = arg.getAffliation();
         if (Playground.DEBUG) {
             System.out.println("Visiting " + parent.getSymbol().getName() + " for " + child.getSymbol().getName() + " at time of visit " + timeOfVisit);
@@ -789,6 +792,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         ITEDummy.setMaxDownlinks(3);
         updateTimeOfVisit(ITEDummy, arg);
+        int iteTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(ITEDummy, 1);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
@@ -807,9 +811,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             downTimeOfVisit(ITEDummy, arg);
         }
         // globalVariables.addEdge(ITEDummy, elseNode, 3);
-        visitAndConnect(ITEDummy, condNode, 1, arg);
-        visitAndConnect(ITEDummy, thenNode, 2, arg);
-        visitAndConnect(ITEDummy, elseNode, 3, arg);
+        visitAndConnectAt(ITEDummy, condNode, 1, arg, iteTimeOfVisit);
+        visitAndConnectAt(ITEDummy, thenNode, 2, arg, iteTimeOfVisit);
+        visitAndConnectAt(ITEDummy, elseNode, 3, arg, iteTimeOfVisit);
         if (condNode == ITEDummy) {
             updateTimeOfVisit(ITEDummy, arg);
         }
@@ -881,18 +885,19 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         graph.addVertex(qtRoot);
         updateTimeOfVisit(qtRoot, arg);
+        int qtTimeOfVisit = graph.getTimeOfVisitMap().getOrDefault(qtRoot, 1);
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = var.accept(this, subscope);
             // globalVariables.addEdge(qtRoot, varDeclNode, 2);
-            visitAndConnect(qtRoot, varDeclNode, iter, subscope);
+            visitAndConnectAt(qtRoot, varDeclNode, iter, subscope, qtTimeOfVisit);
             if (Playground.DEBUG) System.out.println("VarDecl at " + iter + ": " + var);
             iter++;
         }
-        visitAndConnect(qtRoot, END_NODE, iter, subscope);
+        visitAndConnectAt(qtRoot, END_NODE, iter, subscope, qtTimeOfVisit);
         AugmentedNode bodyNode = body.accept(this, subscope);
         // globalVariables.addEdge(qtRoot, bodyNode, 1);
-        visitAndConnect(qtRoot, bodyNode, 1, subscope);
+        visitAndConnectAt(qtRoot, bodyNode, 1, subscope, qtTimeOfVisit);
         return qtRoot;
     }
 
@@ -1130,6 +1135,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         bopSymbol.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
+        int bopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(bopNode, 1);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1144,8 +1150,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             downTimeOfVisit(bopNode, arg);
         }
         // globalVariables.addEdge(bopNode, rightNode, 2);
-        visitAndConnect(bopNode, leftNode, 1, arg);
-        visitAndConnect(bopNode, rightNode, 2, arg);
+        visitAndConnectAt(bopNode, leftNode, 1, arg, bopTimeOfVisit);
+        visitAndConnectAt(bopNode, rightNode, 2, arg, bopTimeOfVisit);
         // update the shadow node time of visit back
         if (leftNode == bopNode) {
             updateTimeOfVisit(bopNode, arg);
@@ -1177,6 +1183,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         bopSymbol.setMaxDownlinks(2);
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
+        int bopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(bopNode, 1);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1185,14 +1192,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             downTimeOfVisit(bopNode, arg);
         }
         // globalVariables.addEdge(bopNode, leftNode, 1);
-        visitAndConnect(bopNode, leftNode, 1, arg);
+        visitAndConnectAt(bopNode, leftNode, 1, arg, bopTimeOfVisit);
         AugmentedNode rightNode = right.accept(this, arg);
         if (rightNode == bopNode) {
             // shadow node created, need to down the time of visit tracker
             downTimeOfVisit(bopNode, arg);
         }
         // globalVariables.addEdge(bopNode, rightNode, 2);
-        visitAndConnect(bopNode, rightNode, 2, arg);
+        visitAndConnectAt(bopNode, rightNode, 2, arg, bopTimeOfVisit);
         // update the shadow node time of visit back
         // TODO: ALSO APPLY TO OTHER SHADOWY NODES
         if (leftNode == bopNode) {
@@ -1409,6 +1416,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         unopSymbol.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
+        int unopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(unopNode, 1);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         if (subNode == unopNode) {
@@ -1416,7 +1424,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             downTimeOfVisit(unopNode, arg);
         }
         // globalVariables.addEdge(unopNode, subNode, 1);
-        visitAndConnect(unopNode, subNode, 1, arg);
+        visitAndConnectAt(unopNode, subNode, 1, arg, unopTimeOfVisit);
         // update the shadow node time of visit back
         if (subNode == unopNode) {
             updateTimeOfVisit(unopNode, arg);
@@ -1448,6 +1456,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         unopSymbol.setMaxDownlinks(1);
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
+        int unopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(unopNode, 1);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         if (subNode == unopNode) {
@@ -1455,7 +1464,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             downTimeOfVisit(unopNode, arg);
         }
         // globalVariables.addEdge(unopNode, subNode, 1);
-        visitAndConnect(unopNode, subNode, 1, arg);
+        visitAndConnectAt(unopNode, subNode, 1, arg, unopTimeOfVisit);
         // update the shadow node time of visit back
         if (subNode == unopNode) {
             updateTimeOfVisit(unopNode, arg);

@@ -1,6 +1,6 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-06-23T21:54:54.585513213Z`
+- Generated at: `2026-06-23T23:36:44.498311303Z`
 - Input root: `classified-data`
 - Output root: `alloy4fun-augmented`
 - Source Alloy files: 6601
@@ -36,20 +36,19 @@
 
 | Slice | Count | Levenshtein | Raw AST | Canonical |
 | --- | ---: | ---: | ---: | ---: |
-| All incorrect | 4827 | 32.591672 | 16.158898 | 13.806919 |
-| BOTH | 3023 | 35.336421 | 17.737016 | 15.671849 |
-| OVERCONSTRAINED | 1062 | 28.839925 | 13.491525 | 10.096987 |
-| UNDERCONSTRAINED | 742 | 26.778976 | 13.547170 | 11.518868 |
+| All incorrect | 4827 | 32.591672 | 16.158898 | 18.859126 |
+| BOTH | 3023 | 35.336421 | 17.737016 | 21.769104 |
+| OVERCONSTRAINED | 1062 | 28.839925 | 13.491525 | 13.521657 |
+| UNDERCONSTRAINED | 742 | 26.778976 | 13.547170 | 14.642857 |
 
 ## Relative Distance Averages
 
 | Slice | Count | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |
 | --- | ---: | ---: | ---: | ---: |
-| All incorrect | 4827 | 0.430827 | 0.689450 | 0.650010 |
-| BOTH | 3023 | 0.421308 | 0.683290 | 0.678316 |
-| OVERCONSTRAINED | 1062 | 0.514430 | 0.729348 | 0.595481 |
-| UNDERCONSTRAINED | 742 | 0.349950 | 0.657443 | 0.612733 |
-
+| All incorrect | 4827 | 0.430827 | 0.689450 | 0.734974 |
+| BOTH | 3023 | 0.421308 | 0.683290 | 0.758105 |
+| OVERCONSTRAINED | 1062 | 0.514430 | 0.729348 | 0.717302 |
+| UNDERCONSTRAINED | 742 | 0.349950 | 0.657443 | 0.666032 |
 
 ## Reward Error Correlations
 
@@ -57,9 +56,9 @@
 
 | Metric | Pearson distance vs raw `1 - reward` | Pearson distance vs `log10(1 - reward)` | Pearson relative distance vs raw `1 - reward` | Pearson relative distance vs `log10(1 - reward)` |
 | --- | ---: | ---: | ---: | ---: |
-| Levenshtein | 0.025151 | 0.095232 | 0.029092 | 0.050666 |
-| Raw AST | 0.012220 | 0.080732 | 0.021884 | 0.037654 |
-| Canonical | 0.022042 | 0.076253 | 0.003386 | 0.022021 |
+| Levenshtein | 0.025151 | 0.095231 | 0.029092 | 0.050666 |
+| Raw AST | 0.012220 | 0.080731 | 0.021884 | 0.037653 |
+| Canonical | 0.092885 | 0.129623 | 0.043033 | 0.058045 |
 
 - Raw plot: `canonical_distance_vs_reward_error_raw.svg`
 - Log plot: `canonical_distance_vs_reward_error_log.svg`

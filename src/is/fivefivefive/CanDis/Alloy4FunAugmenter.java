@@ -55,7 +55,9 @@ public class Alloy4FunAugmenter {
         }
         writeAugmentedFiles(groups, options.outputDir);
         List<IncorrectMatch> matches = nearestIncorrectMatches(groups, options);
-        computeRewards(matches, options);
+        if (!options.skipRewards) {
+            computeRewards(matches, options);
+        }
         List<ModelRecord> unmatched = incorrectWithoutReference(groups);
         writeJson(options.outputDir.resolve("index.json"), options, files.size(), groups, records, matches, unmatched);
         writeMarkdown(options.outputDir.resolve("summary.md"), options, files.size(), groups, records, matches, unmatched);
@@ -275,6 +277,7 @@ public class Alloy4FunAugmenter {
     private static void computeReward(IncorrectMatch match, int poolSize) {
         ModelRecord record = match.record;
         match.rewardPoolSize = poolSize;
+        match.rewardComputed = true;
         try {
             CompModule module = AlloyUtil.compileAlloyModule(record.file.toString());
             Pair<InstancePool, InstancePool> instances = Rewarder.instances(module, record.rightPredicate, poolSize);
@@ -530,14 +533,14 @@ public class Alloy4FunAugmenter {
                 writer.write(number(ratio(match.levenshtein.first().distance, match.record.levenshteinSize)) + ",");
                 writer.write(number(ratio(match.rawAst.first().distance, match.record.rawAstSize)) + ",");
                 writer.write(number(ratio(match.canonical.first().distance, match.record.canonicalSize)) + ",");
-                if (match.rewardErrorMessage == null) {
+                if (match.rewardComputed && match.rewardErrorMessage == null) {
                     writer.write(number(match.candidateReward) + ",");
                     writer.write(number(match.rewardError) + ",");
                 } else {
                     writer.write(",,");
                 }
                 writer.write(match.rewardPoolSize + ",");
-                writer.write(csv(match.rewardErrorMessage));
+                writer.write(csv(match.rewardComputed ? match.rewardErrorMessage : "Reward computation skipped."));
                 writer.write("\n");
             }
         }
@@ -546,7 +549,7 @@ public class Alloy4FunAugmenter {
     private static void writeRewardPlots(Path outputDir, List<IncorrectMatch> matches) throws IOException {
         List<IncorrectMatch> rewarded = new ArrayList<>();
         for (IncorrectMatch match : matches) {
-            if (match.rewardErrorMessage == null) {
+            if (match.rewardComputed && match.rewardErrorMessage == null) {
                 rewarded.add(match);
             }
         }
@@ -694,13 +697,15 @@ public class Alloy4FunAugmenter {
         writer.write("      \"canonicalDistanceRatio\": "
                 + number(ratio(match.canonical.first().distance, record.canonicalSize)) + ",\n");
         writer.write("      \"rewardPoolSize\": " + match.rewardPoolSize + ",\n");
-        if (match.rewardErrorMessage == null) {
+        if (match.rewardComputed && match.rewardErrorMessage == null) {
             writer.write("      \"candidateReward\": " + number(match.candidateReward) + ",\n");
             writer.write("      \"rewardError\": " + number(match.rewardError) + ",\n");
         } else {
             writer.write("      \"candidateReward\": null,\n");
             writer.write("      \"rewardError\": null,\n");
-            writer.write("      \"rewardErrorMessage\": \"" + escape(match.rewardErrorMessage) + "\",\n");
+            writer.write("      \"rewardErrorMessage\": \"" + escape(match.rewardComputed
+                    ? match.rewardErrorMessage
+                    : "Reward computation skipped.") + "\",\n");
         }
         writer.write("      \"nearestLevenshtein\": ");
         writeNearestJson(writer, match.levenshtein);
@@ -822,7 +827,7 @@ public class Alloy4FunAugmenter {
         RewardDistanceStats stats = new RewardDistanceStats();
         double floor = rewardErrorFloor(matches);
         for (IncorrectMatch match : matches) {
-            if (match.rewardErrorMessage == null) {
+            if (match.rewardComputed && match.rewardErrorMessage == null) {
                 stats.add(rewardMetricDistance(match, metric), match.rewardError, floor);
             }
         }
@@ -833,7 +838,7 @@ public class Alloy4FunAugmenter {
         RewardDistanceStats stats = new RewardDistanceStats();
         double floor = rewardErrorFloor(matches);
         for (IncorrectMatch match : matches) {
-            if (match.rewardErrorMessage == null) {
+            if (match.rewardComputed && match.rewardErrorMessage == null) {
                 stats.add(rewardMetricRatio(match, metric), match.rewardError, floor);
             }
         }
@@ -863,7 +868,7 @@ public class Alloy4FunAugmenter {
     private static double rewardErrorFloor(List<IncorrectMatch> matches) {
         double floor = Double.POSITIVE_INFINITY;
         for (IncorrectMatch match : matches) {
-            if (match.rewardErrorMessage == null && match.rewardError > 0.0) {
+            if (match.rewardComputed && match.rewardErrorMessage == null && match.rewardError > 0.0) {
                 floor = Math.min(floor, match.rewardError);
             }
         }
@@ -1144,6 +1149,7 @@ public class Alloy4FunAugmenter {
         private int rewardPoolSize = DEFAULT_REWARD_POOL_SIZE;
         private int limit = -1;
         private boolean verbose;
+        private boolean skipRewards;
 
         private static Options parse(String[] args) {
             Options options = new Options();
@@ -1155,6 +1161,8 @@ public class Alloy4FunAugmenter {
                     options.rewardPoolSize = Integer.parseInt(args[++i]);
                 } else if ("--limit".equals(args[i]) && i + 1 < args.length) {
                     options.limit = Integer.parseInt(args[++i]);
+                } else if ("--skip-rewards".equals(args[i])) {
+                    options.skipRewards = true;
                 } else if ("--verbose".equals(args[i])) {
                     options.verbose = true;
                 } else if (positional == 0) {
@@ -1341,6 +1349,7 @@ public class Alloy4FunAugmenter {
         private int rewardPoolSize;
         private double candidateReward;
         private double rewardError;
+        private boolean rewardComputed;
         private String rewardErrorMessage;
 
         private IncorrectMatch(ModelRecord record) {
@@ -1552,6 +1561,9 @@ public class Alloy4FunAugmenter {
             this.groups = groups.size();
             this.incorrectModelsWithoutCorrectReference = unmatched.size();
             for (IncorrectMatch match : matches) {
+                if (!match.rewardComputed) {
+                    continue;
+                }
                 if (match.rewardErrorMessage == null) {
                     rewardSuccesses++;
                     candidateRewardSum += match.candidateReward;

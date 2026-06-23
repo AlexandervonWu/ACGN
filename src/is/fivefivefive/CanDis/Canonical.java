@@ -88,6 +88,12 @@ public class Canonical {
             return quantificationSize(left);
         }
         int distance = left.getQuantifier() == right.getQuantifier() ? 0 : 1;
+        if (left.isDisj() != right.isDisj()) {
+            distance++;
+        }
+        if (!safeEquals(bindingPathKey(left), bindingPathKey(right))) {
+            distance++;
+        }
         distance += variableTypeDelta(left.getQuantiVars(), right.getQuantiVars());
         distance += orderedForestDistance(left.getChildren(), right.getChildren());
         return distance;
@@ -132,6 +138,12 @@ public class Canonical {
             return 0;
         }
         int size = 1 + node.getQuantiVars().size();
+        if (node.isDisj()) {
+            size++;
+        }
+        if (bindingPathKey(node) != null) {
+            size++;
+        }
         for (QuantificationTreeNode child : node.getChildren()) {
             size += quantificationSize(child);
         }
@@ -168,6 +180,13 @@ public class Canonical {
         }
         if (left.getQuantifier() != right.getQuantifier()) {
             edits.add(path + ": replace quantifier " + left.getQuantifier() + " -> " + right.getQuantifier());
+        }
+        if (left.isDisj() != right.isDisj()) {
+            edits.add(path + ": " + (right.isDisj() ? "add" : "remove") + " disj declaration modifier");
+        }
+        if (!safeEquals(bindingPathKey(left), bindingPathKey(right))) {
+            edits.add(path + ": move binding scope " + display(bindingPathKey(left))
+                    + " -> " + display(bindingPathKey(right)));
         }
         variableTypeEdits(left.getQuantiVars(), right.getQuantiVars(), path, edits);
         quantificationForestEdits(left.getChildren(), right.getChildren(), path + ".child", edits);
@@ -246,7 +265,8 @@ public class Canonical {
         if (node == null) {
             return;
         }
-        edits.add(path + ": insert " + node.getQuantifier() + " quantifier : " + display(node.getType()));
+        edits.add(path + ": insert " + node.getQuantifier() + " quantifier : " + display(node.getType())
+                + bindingPathDisplay(node));
         for (QuantiVar qv : node.getQuantiVars()) {
             edits.add(path + ": add quantified variable " + quantiVarName(qv) + " : " + display(qv.getTypeName()));
         }
@@ -259,7 +279,8 @@ public class Canonical {
         if (node == null) {
             return;
         }
-        edits.add(path + ": delete " + node.getQuantifier() + " quantifier : " + display(node.getType()));
+        edits.add(path + ": delete " + node.getQuantifier() + " quantifier : " + display(node.getType())
+                + bindingPathDisplay(node));
         for (QuantiVar qv : node.getQuantiVars()) {
             edits.add(path + ": remove quantified variable " + quantiVarName(qv) + " : " + display(qv.getTypeName()));
         }
@@ -1036,6 +1057,18 @@ public class Canonical {
             }
         }
         return null;
+    }
+
+    private static String bindingPathKey(QuantificationTreeNode node) {
+        if (node == null || node.getBindingPath() == null || node.getBindingPath().isEmpty()) {
+            return null;
+        }
+        return node.getBindingPath();
+    }
+
+    private static String bindingPathDisplay(QuantificationTreeNode node) {
+        String path = bindingPathKey(node);
+        return path == null ? "" : " at " + path;
     }
 
     private static String display(String value) {

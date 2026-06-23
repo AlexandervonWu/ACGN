@@ -25,6 +25,12 @@ public final class EGraphSaturationTest {
         testDoubleNegationAndIdempotence();
         testComplementEliminatesRedundantSlot();
         testSlotPermutationGroups();
+        testDisjModifierIsPreserved();
+        testDisjModifierAffectsCanonicalDistance();
+        testImplicationPrenexPolarityDoesNotDoubleNegate();
+        testImplicationScopeAffectsCanonicalDistance();
+        testIffPrenexPolarity();
+        testAlphaRenamingKeepsCanonicalDistanceZero();
         testOneAndLoneQuantifierNegation();
         testQuantifierPolarityRules();
         System.out.println("EGraphSaturationTest passed");
@@ -184,6 +190,136 @@ public final class EGraphSaturationTest {
                 "adjacent binder swaps must generate the full S3 group");
     }
 
+    private static void testDisjModifierIsPreserved() {
+        NormalForm disjoint = new NormalForm();
+        disjoint.addEClass(node(Opcode.FORALL, false, false, disjRelDecl("x", "y"),
+                predicate("P", variable("x"), variable("y"))));
+        disjoint.normalize();
+        assertTrue(disjoint.getQuantificationTree().isDisj(),
+                "disj declaration modifier must survive prenexing");
+
+        NormalForm plain = new NormalForm();
+        plain.addEClass(node(Opcode.FORALL, false, false, relDecl("x", "y"),
+                predicate("P", variable("x"), variable("y"))));
+        plain.normalize();
+        assertTrue(!plain.getQuantificationTree().isDisj(),
+                "plain declaration must not be marked disj");
+    }
+
+    private static void testDisjModifierAffectsCanonicalDistance() {
+        QuantificationTreeNode disjoint = new QuantificationTreeNode(
+                Quantifier.ALL,
+                new ArrayList<>(),
+                true,
+                "S");
+        QuantificationTreeNode plain = new QuantificationTreeNode(
+                Quantifier.ALL,
+                new ArrayList<>(),
+                false,
+                "S");
+        try {
+            java.lang.reflect.Method distance = Canonical.class.getDeclaredMethod(
+                    "quantificationDistance",
+                    QuantificationTreeNode.class,
+                    QuantificationTreeNode.class);
+            distance.setAccessible(true);
+            int value = (int) distance.invoke(null, disjoint, plain);
+            assertTrue(value > 0, "disj vs non-disj quantifier nodes must have nonzero canonical distance");
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("could not validate disj quantification distance", e);
+        }
+    }
+
+    private static void testImplicationPrenexPolarityDoesNotDoubleNegate() {
+        NormalForm antecedentQuantifier = new NormalForm();
+        antecedentQuantifier.addEClass(node(
+                Opcode.IMPLIES,
+                false,
+                false,
+                node(Opcode.FORALL, false, false, relDecl("a"), predicate("A", variable("a"))),
+                predicate("B")));
+        antecedentQuantifier.normalize();
+
+        assertEquals(Quantifier.SOME, antecedentQuantifier.getQuantificationTree().getQuantifier(),
+                "forall in an implication antecedent must become some after NNF");
+        assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.NOT),
+                "the antecedent matrix must remain negated exactly once after prenexing");
+
+        NormalForm scopedImplication = new NormalForm();
+        scopedImplication.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDecl("a"),
+                node(Opcode.IMPLIES, false, false, predicate("A", variable("a")), predicate("B"))));
+        scopedImplication.normalize();
+
+        assertEquals(Quantifier.ALL, scopedImplication.getQuantificationTree().getQuantifier(),
+                "all a | A(a) => B must keep universal quantification over the implication body");
+    }
+
+    private static void testImplicationScopeAffectsCanonicalDistance() {
+        NormalForm antecedentQuantifier = new NormalForm();
+        antecedentQuantifier.addEClass(node(
+                Opcode.IMPLIES,
+                false,
+                false,
+                node(Opcode.FORALL, false, false, relDecl("a"), predicate("A", variable("a"))),
+                predicate("B")));
+        antecedentQuantifier.normalize();
+
+        NormalForm outerQuantifier = new NormalForm();
+        outerQuantifier.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDecl("a"),
+                node(Opcode.IMPLIES, false, false, predicate("A", variable("a")), predicate("B"))));
+        outerQuantifier.normalize();
+
+        assertTrue(normalFormDistance(antecedentQuantifier, outerQuantifier) > 0,
+                "a quantifier scoped only over an implication antecedent must not collapse with an outer quantifier");
+    }
+
+    private static void testIffPrenexPolarity() {
+        NormalForm iff = new NormalForm();
+        iff.addEClass(node(
+                Opcode.IFF,
+                false,
+                false,
+                node(Opcode.EXISTS, false, false, relDecl("x"), predicate("P", variable("x"))),
+                predicate("Q")));
+        iff.normalize();
+
+        assertTrue(hasQuantifier(iff.getQuantificationTree(), Quantifier.ALL),
+                "IFF expansion must account for the implicit negated implication branch");
+        assertTrue(hasQuantifier(iff.getQuantificationTree(), Quantifier.SOME),
+                "IFF expansion must retain the positive implication branch");
+    }
+
+    private static void testAlphaRenamingKeepsCanonicalDistanceZero() {
+        NormalForm left = new NormalForm();
+        left.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDecl("x", "y"),
+                predicate("F", variable("x"), variable("y"))));
+        left.normalize();
+
+        NormalForm right = new NormalForm();
+        right.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDecl("a", "b"),
+                predicate("F", variable("a"), variable("b"))));
+        right.normalize();
+
+        assertEquals(0, normalFormDistance(left, right),
+                "alpha-renamed binders with the same De Bruijn structure must remain equivalent");
+    }
+
     private static void testOneAndLoneQuantifierNegation() {
         EGraphNode nestedAll = node(
                 Opcode.FORALL,
@@ -285,6 +421,42 @@ public final class EGraphSaturationTest {
         return false;
     }
 
+    private static boolean hasQuantifier(QuantificationTreeNode node, Quantifier quantifier) {
+        if (node == null) {
+            return false;
+        }
+        if (node.getQuantifier() == quantifier) {
+            return true;
+        }
+        for (QuantificationTreeNode child : node.getChildren()) {
+            if (hasQuantifier(child, quantifier)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int normalFormDistance(NormalForm left, NormalForm right) {
+        try {
+            java.lang.reflect.Method quantification = Canonical.class.getDeclaredMethod(
+                    "quantificationDistance",
+                    List.class,
+                    List.class);
+            java.lang.reflect.Method matrix = Canonical.class.getDeclaredMethod(
+                    "matrixDistance",
+                    List.class,
+                    List.class);
+            quantification.setAccessible(true);
+            matrix.setAccessible(true);
+            List<NormalForm> leftList = Arrays.asList(left);
+            List<NormalForm> rightList = Arrays.asList(right);
+            return (int) quantification.invoke(null, leftList, rightList)
+                    + (int) matrix.invoke(null, leftList, rightList);
+        } catch (ReflectiveOperationException e) {
+            throw new AssertionError("could not validate normal-form distance", e);
+        }
+    }
+
     private static Map<String, String> rename(String from, String to) {
         Map<String, String> renaming = new LinkedHashMap<>();
         renaming.put(from, to);
@@ -314,10 +486,26 @@ public final class EGraphSaturationTest {
         return binding;
     }
 
-    private static EGraphNode relDecl(String variableName) {
-        EGraphNode declared = variable(variableName);
-        declared.setSourceType("S");
-        return node(Opcode.GENERICRELDECL, true, true, global("S"), declared);
+    private static EGraphNode relDecl(String... variableNames) {
+        EGraphNode[] children = new EGraphNode[variableNames.length + 1];
+        children[0] = global("S");
+        for (int i = 0; i < variableNames.length; i++) {
+            EGraphNode declared = variable(variableNames[i]);
+            declared.setSourceType("S");
+            children[i + 1] = declared;
+        }
+        return node(Opcode.GENERICRELDECL, true, true, children);
+    }
+
+    private static EGraphNode disjRelDecl(String... variableNames) {
+        EGraphNode[] children = new EGraphNode[variableNames.length + 1];
+        children[0] = global("S");
+        for (int i = 0; i < variableNames.length; i++) {
+            EGraphNode declared = variable(variableNames[i]);
+            declared.setSourceType("S");
+            children[i + 1] = declared;
+        }
+        return node(Opcode.DISJ, true, true, children);
     }
 
     private static EGraphNode predicate(String name, EGraphNode... arguments) {

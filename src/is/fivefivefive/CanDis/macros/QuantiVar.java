@@ -12,12 +12,14 @@ public class QuantiVar {
     private String originalName;
     private Type type;
     private String typeName;
+    private String deBruijnKey;
     public QuantiVar(int id, String name, Type type) {
         this.id = id;
         this.name = name;
         this.originalName = name;
         this.type = type;
         this.typeName = type == null ? null : type.toString();
+        this.deBruijnKey = name;
     }
     public QuantiVar(int id, String name, String typeName) {
         this(id, name, name, typeName);
@@ -28,6 +30,7 @@ public class QuantiVar {
         this.originalName = originalName;
         this.type = null;
         this.typeName = typeName;
+        this.deBruijnKey = name;
     }
     public int getId() {
         return id;
@@ -43,6 +46,12 @@ public class QuantiVar {
     }
     public String getTypeName() {
         return typeName;
+    }
+    public String getDeBruijnKey() {
+        return deBruijnKey == null ? name : deBruijnKey;
+    }
+    public void setDeBruijnKey(String deBruijnKey) {
+        this.deBruijnKey = deBruijnKey;
     }
     public boolean equals(Object o) {
         if (o == this) return true;
@@ -61,6 +70,6 @@ public class QuantiVar {
     }
     public String toString() {
         // in JSON form
-        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName + "\", \"type\": \"" + typeName + "\"}";
+        return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName + "\", \"type\": \"" + typeName + "\", \"deBruijnKey\": \"" + getDeBruijnKey() + "\"}";
     }
 }
