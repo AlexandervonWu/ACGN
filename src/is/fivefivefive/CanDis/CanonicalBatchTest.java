@@ -37,7 +37,7 @@ public class CanonicalBatchTest {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "distance_results";
     private static final int DEFAULT_REWARD_POOL_SIZE = 1000;
-    private static final int DEFAULT_THREAD_COUNT = 32;
+    private static final int DEFAULT_THREAD_COUNT = 96;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -131,6 +131,20 @@ public class CanonicalBatchTest {
                 result.error = "No predicate pair of the form X and XC found.";
                 return result;
             }
+            String leftBody = predicateBody(file, pair.leftName, pair.left);
+            String rightBody = predicateBody(file, pair.rightName, pair.right);
+            result.leftPredicate = pair.leftName;
+            result.rightPredicate = pair.rightName;
+            result.leftRawAstSize = rawAstSize(pair.left.getBody());
+            result.rightRawAstSize = rawAstSize(pair.right.getBody());
+            result.rawAstSize = Math.max(result.leftRawAstSize, result.rightRawAstSize);
+            result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
+            result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
+            if (result.rawAstTreeDistance == 0) {
+                result.skipped = true;
+                result.skipReason = "Identical raw AST predicate body.";
+                return result;
+            }
 
             MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
             visitor.visit(model, null);
@@ -142,18 +156,9 @@ public class CanonicalBatchTest {
                 return result;
             }
 
-            result.leftPredicate = pair.leftName;
-            result.rightPredicate = pair.rightName;
             result.leftGraphId = pair.leftId;
             result.rightGraphId = pair.rightId;
-            result.leftRawAstSize = rawAstSize(pair.left.getBody());
-            result.rightRawAstSize = rawAstSize(pair.right.getBody());
-            result.rawAstSize = Math.max(result.leftRawAstSize, result.rightRawAstSize);
-            result.predicateBodyLevenshteinDistance = levenshteinDistance(
-                    predicateBody(file, pair.leftName, pair.left),
-                    predicateBody(file, pair.rightName, pair.right));
-            result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
-            result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
+            result.predicateBodyLevenshteinDistance = levenshteinDistance(leftBody, rightBody);
             result.leftVertices = left.size();
             result.rightVertices = right.size();
             result.distance = Canonical.distance(left, right);
@@ -402,6 +407,7 @@ public class CanonicalBatchTest {
         writer.write("  \"summary\": {\n");
         writer.write("    \"total\": " + summary.total + ",\n");
         writer.write("    \"successes\": " + summary.successes + ",\n");
+        writer.write("    \"skippedIdenticalRawAstPairs\": " + summary.skipped + ",\n");
         writer.write("    \"failures\": " + summary.failures + ",\n");
         writer.write("    \"averageDistance\": " + number(summary.averageDistance()) + ",\n");
         writer.write("    \"averagePredicateBodyLevenshteinDistance\": " + number(summary.averageLevenshteinDistance()) + ",\n");
@@ -477,7 +483,17 @@ public class CanonicalBatchTest {
             writer.write("      \"edits\": ");
             writeJsonStringArray(writer, result.edits);
             writer.write("\n");
+        } else if (result.skipped) {
+            writer.write("      \"skipped\": true,\n");
+            writer.write("      \"leftPredicate\": \"" + escape(result.leftPredicate) + "\",\n");
+            writer.write("      \"rightPredicate\": \"" + escape(result.rightPredicate) + "\",\n");
+            writer.write("      \"leftRawAstSize\": " + result.leftRawAstSize + ",\n");
+            writer.write("      \"rightRawAstSize\": " + result.rightRawAstSize + ",\n");
+            writer.write("      \"rawAstSize\": " + result.rawAstSize + ",\n");
+            writer.write("      \"rawAstTreeDistance\": " + result.rawAstTreeDistance + ",\n");
+            writer.write("      \"skipReason\": \"" + escape(result.skipReason) + "\"\n");
         } else {
+            writer.write("      \"skipped\": false,\n");
             writer.write("      \"error\": \"" + escape(result.error) + "\"\n");
         }
         writer.write("    }");
@@ -490,6 +506,7 @@ public class CanonicalBatchTest {
             writer.write("- Thread count: " + options.threadCount + "\n");
             writer.write("- Total files: " + summary.total + "\n");
             writer.write("- Successful distances: " + summary.successes + "\n");
+            writer.write("- Skipped identical raw AST predicate pairs: " + summary.skipped + "\n");
             writer.write("- Failures: " + summary.failures + "\n");
             writer.write("- Average distance: " + number(summary.averageDistance()) + "\n");
             writer.write("- Average predicate-body Levenshtein distance: "
@@ -526,12 +543,13 @@ public class CanonicalBatchTest {
                     + number(summary.normalizedCanonicalRewardCorrelation()) + "\n\n");
 
             writer.write("## By Problem Class And Status\n\n");
-            writer.write("| Problem class | Status | Files | Successes | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |\n");
-            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+            writer.write("| Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             for (Map.Entry<String, Stats> entry : summary.groupStats.entrySet()) {
                 Stats stats = entry.getValue();
                 writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
-                        + stats.total + " | " + stats.successes + " | " + stats.failures + " | "
+                        + stats.total + " | " + stats.successes + " | " + stats.skipped + " | "
+                        + stats.failures + " | "
                         + number(stats.averageDistance()) + " | " + number(stats.averageCandidateReward()) + " | "
                         + number(stats.distanceRewardCorrelation()) + " | " + stats.minDistanceMarkdown() + " | "
                         + stats.maxDistanceMarkdown() + " |\n");
@@ -675,6 +693,8 @@ public class CanonicalBatchTest {
         private List<String> leftIRTemporalFOL = new ArrayList<>();
         private List<String> rightIRTemporalFOL = new ArrayList<>();
         private List<String> edits = new ArrayList<>();
+        private boolean skipped;
+        private String skipReason;
         private String error;
 
         private FileResult(Path root, Path file) {
@@ -686,17 +706,21 @@ public class CanonicalBatchTest {
         }
 
         private boolean success() {
-            return error == null;
+            return error == null && !skipped;
         }
 
         private String status() {
-            return success() ? "distance " + distance : "error " + error;
+            if (success()) {
+                return "distance " + distance;
+            }
+            return skipped ? "skipped " + skipReason : "error " + error;
         }
     }
 
     private static class Summary {
         private int total;
         private int successes;
+        private int skipped;
         private int failures;
         private long distanceSum;
         private long levenshteinDistanceSum;
@@ -739,7 +763,9 @@ public class CanonicalBatchTest {
                     result.problemClass + "/" + result.statusFolder,
                     key -> new Stats(result.problemClass, result.statusFolder));
             stats.add(result);
-            if (result.success()) {
+            if (result.skipped) {
+                skipped++;
+            } else if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
                 levenshteinDistanceSum += result.predicateBodyLevenshteinDistance;
@@ -908,6 +934,7 @@ public class CanonicalBatchTest {
         private final String statusFolder;
         private int total;
         private int successes;
+        private int skipped;
         private int failures;
         private long distanceSum;
         private Integer minDistance;
@@ -928,7 +955,9 @@ public class CanonicalBatchTest {
 
         private void add(FileResult result) {
             total++;
-            if (result.success()) {
+            if (result.skipped) {
+                skipped++;
+            } else if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
