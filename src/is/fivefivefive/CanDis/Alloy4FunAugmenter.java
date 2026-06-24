@@ -37,7 +37,7 @@ public class Alloy4FunAugmenter {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "alloy4fun-augmented";
     private static final int DEFAULT_THREAD_COUNT = 32;
-    private static final int DEFAULT_REWARD_POOL_SIZE = 1000;
+    private static final int DEFAULT_REWARD_POOL_SIZE = 10;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");

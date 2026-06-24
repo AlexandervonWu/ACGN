@@ -314,6 +314,13 @@ public class EGraphNode {
 
         if (opcode == Opcode.NOT && childClasses.size() == 1) {
             EGraphNode child = childClasses.get(0).getEClass().getRepresentative();
+            if (isBooleanConstant(child, true) || isBooleanConstant(child, false)) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(isBooleanConstant(child, false));
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
             if (child.getOpcode() == Opcode.NOT && child.childClasses.size() == 1) {
                 eClass.preserveSnapshot(snapshot());
                 adopt(child.childClasses.get(0).getEClass().getRepresentative());
@@ -338,6 +345,20 @@ public class EGraphNode {
 
         if (opcode == Opcode.AND || opcode == Opcode.OR) {
             rewrittenChildren = removeDuplicateInvocations(rewrittenChildren);
+            Boolean constantValue = booleanConstantIn(rewrittenChildren, opcode == Opcode.AND ? false : true);
+            if (constantValue != null) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(constantValue);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            List<EClassRef> withoutNeutral = removeBooleanConstant(
+                    rewrittenChildren,
+                    opcode == Opcode.AND);
+            if (withoutNeutral.size() != rewrittenChildren.size()) {
+                rewrittenChildren = withoutNeutral;
+            }
             if (containsComplement(rewrittenChildren)) {
                 eClass.preserveSnapshot(snapshot());
                 collapseToBooleanConstant(opcode == Opcode.OR);
@@ -389,6 +410,99 @@ public class EGraphNode {
                 return true;
             }
         }
+
+        if (opcode == Opcode.IN && childClasses.size() == 2) {
+            EGraphNode rhs = childClasses.get(1).getEClass().getRepresentative();
+            if (isNone(rhs) || isUniv(rhs)) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(isUniv(rhs));
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+
+        if (opcode == Opcode.IMPLIES && childClasses.size() == 2) {
+            EGraphNode left = childClasses.get(0).getEClass().getRepresentative();
+            EGraphNode right = childClasses.get(1).getEClass().getRepresentative();
+            if (!isBooleanConstant(left, false) && !isBooleanConstant(left, true)
+                    && !isBooleanConstant(right, false) && !isBooleanConstant(right, true)) {
+                eClass.preserveSnapshot(snapshot());
+                EGraphNode negatedLeft = new EGraphNode(
+                        -Math.abs(left.getId()) - 11,
+                        Opcode.NOT,
+                        new ArrayList<>(),
+                        false,
+                        1,
+                        false,
+                        Metatype.BOOLEAN);
+                negatedLeft.addChild(left);
+                opcode = Opcode.OR;
+                childClasses = new ArrayList<>();
+                isCommutative = true;
+                maxArity = -1;
+                flexibleArity = true;
+                addChild(negatedLeft);
+                addChild(right);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            if (isBooleanConstant(left, false) || isBooleanConstant(right, true)) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(true);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            if (isBooleanConstant(left, true)) {
+                eClass.preserveSnapshot(snapshot());
+                adopt(right);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            if (isBooleanConstant(right, false)) {
+                eClass.preserveSnapshot(snapshot());
+                opcode = Opcode.NOT;
+                childClasses = new ArrayList<>();
+                isCommutative = false;
+                maxArity = 1;
+                flexibleArity = false;
+                addChild(left);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+
+        if ((opcode == Opcode.INTERSECT || opcode == Opcode.PLUS) && childClasses.size() >= 2) {
+            if (opcode == Opcode.INTERSECT && containsSetConstant(childClasses, "none")) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToSetConstant("none");
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+            if (opcode == Opcode.PLUS) {
+                List<EClassRef> withoutNone = removeSetConstant(childClasses, "none");
+                if (withoutNone.size() != childClasses.size()) {
+                    if (withoutNone.isEmpty()) {
+                        eClass.preserveSnapshot(snapshot());
+                        collapseToSetConstant("none");
+                    } else if (withoutNone.size() == 1) {
+                        eClass.preserveSnapshot(snapshot());
+                        adopt(withoutNone.get(0).getEClass().getRepresentative());
+                    } else {
+                        eClass.preserveSnapshot(snapshot());
+                        childClasses = withoutNone;
+                    }
+                    refreshEClassSlots();
+                    eClass.recordShape(this);
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -414,6 +528,80 @@ public class EGraphNode {
         sourceType = "Bool";
         alphaName = null;
         metatype = Metatype.BOOLEAN;
+    }
+
+    private void collapseToSetConstant(String name) {
+        opcode = Opcode.GLOBALBINDING;
+        childClasses = new ArrayList<>();
+        isCommutative = false;
+        maxArity = 0;
+        flexibleArity = false;
+        sourceName = name;
+        sourceType = name;
+        alphaName = null;
+        metatype = Metatype.SET;
+    }
+
+    private static Boolean booleanConstantIn(List<EClassRef> children, boolean value) {
+        for (EClassRef child : children) {
+            EGraphNode representative = child.getEClass().getRepresentative();
+            if (isBooleanConstant(representative, value)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private static List<EClassRef> removeBooleanConstant(List<EClassRef> children, boolean value) {
+        List<EClassRef> filtered = new ArrayList<>();
+        for (EClassRef child : children) {
+            EGraphNode representative = child.getEClass().getRepresentative();
+            if (!isBooleanConstant(representative, value)) {
+                filtered.add(child);
+            }
+        }
+        return filtered;
+    }
+
+    private static boolean isBooleanConstant(EGraphNode node, boolean value) {
+        return node.getOpcode() == Opcode.CONSTANT && Boolean.toString(value).equals(node.getSourceName());
+    }
+
+    private static boolean containsSetConstant(List<EClassRef> children, String name) {
+        for (EClassRef child : children) {
+            if (isSetConstant(child.getEClass().getRepresentative(), name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<EClassRef> removeSetConstant(List<EClassRef> children, String name) {
+        List<EClassRef> filtered = new ArrayList<>();
+        for (EClassRef child : children) {
+            if (!isSetConstant(child.getEClass().getRepresentative(), name)) {
+                filtered.add(child);
+            }
+        }
+        return filtered;
+    }
+
+    private static boolean isNone(EGraphNode node) {
+        return isSetConstant(node, "none");
+    }
+
+    private static boolean isUniv(EGraphNode node) {
+        return isSetConstant(node, "univ");
+    }
+
+    private static boolean isSetConstant(EGraphNode node, String name) {
+        if (node == null) {
+            return false;
+        }
+        String source = node.getSourceName();
+        return (node.getOpcode() == Opcode.GLOBALBINDING || node.getOpcode() == Opcode.CONSTANT)
+                && source != null
+                && name.equalsIgnoreCase(source);
     }
 
     private static List<EClassRef> removeDuplicateInvocations(List<EClassRef> children) {

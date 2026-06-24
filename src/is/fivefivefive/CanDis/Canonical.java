@@ -12,7 +12,6 @@ import is.fivefivefive.CanDis.ir.IRAgent;
 import is.fivefivefive.CanDis.macros.EGraphNode;
 import is.fivefivefive.CanDis.macros.NormalForm;
 import is.fivefivefive.CanDis.macros.QuantiVar;
-import is.fivefivefive.CanDis.macros.QuantificationTreeNode;
 import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
 
 public class Canonical {
@@ -43,7 +42,7 @@ public class Canonical {
         List<NormalForm> nfs = normalForms(graph);
         List<String> formulas = new ArrayList<>();
         for (int i = 0; i < nfs.size(); i++) {
-            formulas.add(normalFormPath(nfs.get(i), i) + " := " + quantifierPrefix(nfs.get(i).getQuantificationTree())
+            formulas.add(normalFormPath(nfs.get(i), i) + " := " + quantifierPrefix(nfs.get(i).getMatrixQuantiVars())
                     + eGraphFormula(nfs.get(i).getMatrixEGraph()));
         }
         return formulas;
@@ -54,7 +53,7 @@ public class Canonical {
         int size = nfs.size();
         for (NormalForm nf : nfs) {
             size += eGraphSize(nf.getMatrixEGraph());
-            size += quantificationSize(nf.getQuantificationTree());
+            size += quantificationSize(nf.getMatrixQuantiVars());
         }
         return size;
     }
@@ -70,84 +69,47 @@ public class Canonical {
         int distance = 0;
         for (int i = 0; i < size; i++) {
             if (i >= left.size()) {
-                distance += quantificationSize(right.get(i).getQuantificationTree());
+                distance += quantificationSize(right.get(i).getMatrixQuantiVars());
             } else if (i >= right.size()) {
-                distance += quantificationSize(left.get(i).getQuantificationTree());
+                distance += quantificationSize(left.get(i).getMatrixQuantiVars());
             } else {
-                distance += quantificationDistance(left.get(i).getQuantificationTree(), right.get(i).getQuantificationTree());
+                distance += bindingListDistance(left.get(i).getMatrixQuantiVars(), right.get(i).getMatrixQuantiVars());
             }
         }
         return distance;
     }
 
-    private static int quantificationDistance(QuantificationTreeNode left, QuantificationTreeNode right) {
-        if (left == null) {
-            return quantificationSize(right);
-        }
-        if (right == null) {
-            return quantificationSize(left);
-        }
-        int distance = left.getQuantifier() == right.getQuantifier() ? 0 : 1;
-        if (left.isDisj() != right.isDisj()) {
-            distance++;
-        }
-        if (!safeEquals(bindingPathKey(left), bindingPathKey(right))) {
-            distance++;
-        }
-        distance += variableTypeDelta(left.getQuantiVars(), right.getQuantiVars());
-        distance += orderedForestDistance(left.getChildren(), right.getChildren());
-        return distance;
-    }
-
-    private static int orderedForestDistance(List<QuantificationTreeNode> left, List<QuantificationTreeNode> right) {
+    private static int bindingListDistance(List<QuantiVar> left, List<QuantiVar> right) {
         int[][] dp = new int[left.size() + 1][right.size() + 1];
         for (int i = 1; i <= left.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + quantificationSize(left.get(i - 1));
+            dp[i][0] = dp[i - 1][0] + 1;
         }
         for (int j = 1; j <= right.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + quantificationSize(right.get(j - 1));
+            dp[0][j] = dp[0][j - 1] + 1;
         }
         for (int i = 1; i <= left.size(); i++) {
             for (int j = 1; j <= right.size(); j++) {
-                int delete = dp[i - 1][j] + quantificationSize(left.get(i - 1));
-                int insert = dp[i][j - 1] + quantificationSize(right.get(j - 1));
-                int update = dp[i - 1][j - 1] + quantificationDistance(left.get(i - 1), right.get(j - 1));
+                int delete = dp[i - 1][j] + 1;
+                int insert = dp[i][j - 1] + 1;
+                int update = dp[i - 1][j - 1] + quantifierUpdateCost(left.get(i - 1), right.get(j - 1));
                 dp[i][j] = Math.min(update, Math.min(delete, insert));
             }
         }
         return dp[left.size()][right.size()];
     }
 
-    private static int variableTypeDelta(List<QuantiVar> left, List<QuantiVar> right) {
-        Map<String, Integer> counts = new HashMap<>();
-        for (QuantiVar qv : left) {
-            counts.put(typeKey(qv), counts.getOrDefault(typeKey(qv), 0) + 1);
-        }
-        for (QuantiVar qv : right) {
-            counts.put(typeKey(qv), counts.getOrDefault(typeKey(qv), 0) - 1);
-        }
-        int delta = 0;
-        for (int count : counts.values()) {
-            delta += Math.abs(count);
-        }
-        return delta;
-    }
-
-    private static int quantificationSize(QuantificationTreeNode node) {
-        if (node == null) {
+    private static int quantifierUpdateCost(QuantiVar left, QuantiVar right) {
+        if (left.getQuantifier() == right.getQuantifier()
+                && sameType(left.getTypeName(), right.getTypeName())
+                && left.isDisj() == right.isDisj()
+                && safeEquals(left.getBindingPath(), right.getBindingPath())) {
             return 0;
         }
-        int size = 1 + node.getQuantiVars().size();
-        if (node.isDisj()) {
-            size++;
-        }
-        if (bindingPathKey(node) != null) {
-            size++;
-        }
-        for (QuantificationTreeNode child : node.getChildren()) {
-            size += quantificationSize(child);
-        }
-        return size;
+        return 1;
+    }
+
+    private static int quantificationSize(List<QuantiVar> vars) {
+        return vars == null ? 0 : vars.size();
     }
 
     private static void quantificationEdits(List<NormalForm> left, List<NormalForm> right, List<String> edits) {
@@ -156,60 +118,36 @@ public class Canonical {
             NormalForm pathSource = i < left.size() ? left.get(i) : right.get(i);
             String path = normalFormPath(pathSource, i) + ".quantifier";
             if (i >= left.size()) {
-                collectInsertedQuantifiers(right.get(i).getQuantificationTree(), path, edits);
+                collectInsertedQuantifiers(right.get(i).getMatrixQuantiVars(), path, edits);
             } else if (i >= right.size()) {
-                collectDeletedQuantifiers(left.get(i).getQuantificationTree(), path, edits);
+                collectDeletedQuantifiers(left.get(i).getMatrixQuantiVars(), path, edits);
             } else {
-                quantificationEdits(left.get(i).getQuantificationTree(), right.get(i).getQuantificationTree(), path, edits);
+                quantificationEdits(left.get(i).getMatrixQuantiVars(), right.get(i).getMatrixQuantiVars(), path, edits);
             }
         }
     }
 
     private static void quantificationEdits(
-            QuantificationTreeNode left,
-            QuantificationTreeNode right,
+            List<QuantiVar> left,
+            List<QuantiVar> right,
             String path,
             List<String> edits) {
-        if (left == null) {
-            collectInsertedQuantifiers(right, path, edits);
-            return;
-        }
-        if (right == null) {
-            collectDeletedQuantifiers(left, path, edits);
-            return;
-        }
-        if (left.getQuantifier() != right.getQuantifier()) {
-            edits.add(path + ": replace quantifier " + left.getQuantifier() + " -> " + right.getQuantifier());
-        }
-        if (left.isDisj() != right.isDisj()) {
-            edits.add(path + ": " + (right.isDisj() ? "add" : "remove") + " disj declaration modifier");
-        }
-        if (!safeEquals(bindingPathKey(left), bindingPathKey(right))) {
-            edits.add(path + ": move binding scope " + display(bindingPathKey(left))
-                    + " -> " + display(bindingPathKey(right)));
-        }
-        variableTypeEdits(left.getQuantiVars(), right.getQuantiVars(), path, edits);
-        quantificationForestEdits(left.getChildren(), right.getChildren(), path + ".child", edits);
-    }
-
-    private static void quantificationForestEdits(
-            List<QuantificationTreeNode> left,
-            List<QuantificationTreeNode> right,
-            String path,
-            List<String> edits) {
-        int[][] dp = quantificationForestDp(left, right);
+        int[][] dp = quantificationDp(left, right);
         int i = left.size();
         int j = right.size();
         List<String> reversed = new ArrayList<>();
         while (i > 0 || j > 0) {
-            if (i > 0 && dp[i][j] == dp[i - 1][j] + quantificationSize(left.get(i - 1))) {
-                collectDeletedQuantifiers(left.get(i - 1), path + "[" + (i - 1) + "]", reversed);
+            if (i > 0 && dp[i][j] == dp[i - 1][j] + 1) {
+                reversed.add(path + "[" + (i - 1) + "]: delete " + quantifierFormula(left.get(i - 1)));
                 i--;
-            } else if (j > 0 && dp[i][j] == dp[i][j - 1] + quantificationSize(right.get(j - 1))) {
-                collectInsertedQuantifiers(right.get(j - 1), path + "[" + j + "]", reversed);
+            } else if (j > 0 && dp[i][j] == dp[i][j - 1] + 1) {
+                reversed.add(path + "[" + j + "]: insert " + quantifierFormula(right.get(j - 1)));
                 j--;
             } else {
-                quantificationEdits(left.get(i - 1), right.get(j - 1), path + "[" + (i - 1) + "]", reversed);
+                if (quantifierUpdateCost(left.get(i - 1), right.get(j - 1)) != 0) {
+                    reversed.add(path + "[" + (i - 1) + "]: modify "
+                            + quantifierFormula(left.get(i - 1)) + " -> " + quantifierFormula(right.get(j - 1)));
+                }
                 i--;
                 j--;
             }
@@ -217,75 +155,34 @@ public class Canonical {
         appendReverse(reversed, edits);
     }
 
-    private static int[][] quantificationForestDp(List<QuantificationTreeNode> left, List<QuantificationTreeNode> right) {
+    private static int[][] quantificationDp(List<QuantiVar> left, List<QuantiVar> right) {
         int[][] dp = new int[left.size() + 1][right.size() + 1];
         for (int i = 1; i <= left.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + quantificationSize(left.get(i - 1));
+            dp[i][0] = dp[i - 1][0] + 1;
         }
         for (int j = 1; j <= right.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + quantificationSize(right.get(j - 1));
+            dp[0][j] = dp[0][j - 1] + 1;
         }
         for (int i = 1; i <= left.size(); i++) {
             for (int j = 1; j <= right.size(); j++) {
-                int delete = dp[i - 1][j] + quantificationSize(left.get(i - 1));
-                int insert = dp[i][j - 1] + quantificationSize(right.get(j - 1));
-                int update = dp[i - 1][j - 1] + quantificationDistance(left.get(i - 1), right.get(j - 1));
+                int delete = dp[i - 1][j] + 1;
+                int insert = dp[i][j - 1] + 1;
+                int update = dp[i - 1][j - 1] + quantifierUpdateCost(left.get(i - 1), right.get(j - 1));
                 dp[i][j] = Math.min(update, Math.min(delete, insert));
             }
         }
         return dp;
     }
 
-    private static void variableTypeEdits(List<QuantiVar> left, List<QuantiVar> right, String path, List<String> edits) {
-        Map<String, Integer> leftCounts = typeCounts(left);
-        Map<String, Integer> rightCounts = typeCounts(right);
-        Set<String> types = new HashSet<>();
-        types.addAll(leftCounts.keySet());
-        types.addAll(rightCounts.keySet());
-        for (String type : types) {
-            int leftCount = leftCounts.getOrDefault(type, 0);
-            int rightCount = rightCounts.getOrDefault(type, 0);
-            if (leftCount < rightCount) {
-                edits.add(path + ": add " + (rightCount - leftCount) + " quantified variable(s) of type " + display(type));
-            } else if (leftCount > rightCount) {
-                edits.add(path + ": remove " + (leftCount - rightCount) + " quantified variable(s) of type " + display(type));
-            }
+    private static void collectInsertedQuantifiers(List<QuantiVar> vars, String path, List<String> edits) {
+        for (int i = 0; i < vars.size(); i++) {
+            edits.add(path + "[" + i + "]: insert " + quantifierFormula(vars.get(i)));
         }
     }
 
-    private static Map<String, Integer> typeCounts(List<QuantiVar> vars) {
-        Map<String, Integer> counts = new HashMap<>();
-        for (QuantiVar qv : vars) {
-            counts.put(typeKey(qv), counts.getOrDefault(typeKey(qv), 0) + 1);
-        }
-        return counts;
-    }
-
-    private static void collectInsertedQuantifiers(QuantificationTreeNode node, String path, List<String> edits) {
-        if (node == null) {
-            return;
-        }
-        edits.add(path + ": insert " + node.getQuantifier() + " quantifier : " + display(node.getType())
-                + bindingPathDisplay(node));
-        for (QuantiVar qv : node.getQuantiVars()) {
-            edits.add(path + ": add quantified variable " + quantiVarName(qv) + " : " + display(qv.getTypeName()));
-        }
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            collectInsertedQuantifiers(node.getChildren().get(i), path + ".child[" + i + "]", edits);
-        }
-    }
-
-    private static void collectDeletedQuantifiers(QuantificationTreeNode node, String path, List<String> edits) {
-        if (node == null) {
-            return;
-        }
-        edits.add(path + ": delete " + node.getQuantifier() + " quantifier : " + display(node.getType())
-                + bindingPathDisplay(node));
-        for (QuantiVar qv : node.getQuantiVars()) {
-            edits.add(path + ": remove quantified variable " + quantiVarName(qv) + " : " + display(qv.getTypeName()));
-        }
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            collectDeletedQuantifiers(node.getChildren().get(i), path + ".child[" + i + "]", edits);
+    private static void collectDeletedQuantifiers(List<QuantiVar> vars, String path, List<String> edits) {
+        for (int i = 0; i < vars.size(); i++) {
+            edits.add(path + "[" + i + "]: delete " + quantifierFormula(vars.get(i)));
         }
     }
 
@@ -896,32 +793,20 @@ public class Canonical {
         }
     }
 
-    private static String quantifierPrefix(QuantificationTreeNode root) {
+    private static String quantifierPrefix(List<QuantiVar> bindings) {
         List<String> parts = new ArrayList<>();
-        collectQuantifierPrefixes(root, parts);
+        for (QuantiVar binding : bindings) {
+            parts.add(quantifierFormula(binding));
+        }
         if (parts.isEmpty()) {
             return "";
         }
         return String.join(" ", parts) + " . ";
     }
 
-    private static void collectQuantifierPrefixes(QuantificationTreeNode node, List<String> parts) {
-        if (node == null) {
-            return;
-        }
-        parts.add(quantifierFormula(node));
-        for (QuantificationTreeNode child : node.getChildren()) {
-            collectQuantifierPrefixes(child, parts);
-        }
-    }
-
-    private static String quantifierFormula(QuantificationTreeNode node) {
-        List<String> names = new ArrayList<>();
-        for (QuantiVar qv : node.getQuantiVars()) {
-            names.add(quantiVarName(qv));
-        }
-        String disj = node.isDisj() ? " disj" : "";
-        return node.getQuantifier() + disj + " " + String.join(", ", names) + " : " + display(node.getType());
+    private static String quantifierFormula(QuantiVar qv) {
+        String disj = qv.isDisj() ? " disj" : "";
+        return qv.getQuantifier() + disj + " " + quantiVarName(qv) + " : " + display(qv.getTypeName());
     }
 
     private static String eGraphFormula(EGraphNode node) {
@@ -1057,18 +942,6 @@ public class Canonical {
             }
         }
         return null;
-    }
-
-    private static String bindingPathKey(QuantificationTreeNode node) {
-        if (node == null || node.getBindingPath() == null || node.getBindingPath().isEmpty()) {
-            return null;
-        }
-        return node.getBindingPath();
-    }
-
-    private static String bindingPathDisplay(QuantificationTreeNode node) {
-        String path = bindingPathKey(node);
-        return path == null ? "" : " at " + path;
     }
 
     private static String display(String value) {

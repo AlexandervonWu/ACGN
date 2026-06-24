@@ -1,12 +1,12 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-06-23T23:36:44.498311303Z`
+- Generated at: `2026-06-24T03:00:43.757663860Z`
 - Input root: `classified-data`
 - Output root: `alloy4fun-augmented`
 - Source Alloy files: 6601
 - Thread count: 32
 
-- Reward pool size: 1000
+- Reward pool size: 10
 
 ## Corpus
 
@@ -22,8 +22,8 @@
 
 - Reward successes: 4827
 - Reward failures: 0
-- Average candidate reward: 0.277283
-- Average reward error `(1 - reward)`: 0.722717
+- Average candidate reward: 0.282885
+- Average reward error `(1 - reward)`: 0.717115
 
 ## Ranking Pools
 
@@ -36,19 +36,19 @@
 
 | Slice | Count | Levenshtein | Raw AST | Canonical |
 | --- | ---: | ---: | ---: | ---: |
-| All incorrect | 4827 | 32.591672 | 16.158898 | 18.859126 |
-| BOTH | 3023 | 35.336421 | 17.737016 | 21.769104 |
-| OVERCONSTRAINED | 1062 | 28.839925 | 13.491525 | 13.521657 |
-| UNDERCONSTRAINED | 742 | 26.778976 | 13.547170 | 14.642857 |
+| All incorrect | 4827 | 32.591672 | 16.158898 | 18.427388 |
+| BOTH | 3023 | 35.336421 | 17.737016 | 21.380417 |
+| OVERCONSTRAINED | 1062 | 28.839925 | 13.491525 | 12.870056 |
+| UNDERCONSTRAINED | 742 | 26.778976 | 13.547170 | 14.350404 |
 
 ## Relative Distance Averages
 
 | Slice | Count | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |
 | --- | ---: | ---: | ---: | ---: |
-| All incorrect | 4827 | 0.430827 | 0.689450 | 0.734974 |
-| BOTH | 3023 | 0.421308 | 0.683290 | 0.758105 |
-| OVERCONSTRAINED | 1062 | 0.514430 | 0.729348 | 0.717302 |
-| UNDERCONSTRAINED | 742 | 0.349950 | 0.657443 | 0.666032 |
+| All incorrect | 4827 | 0.430827 | 0.689450 | 0.766424 |
+| BOTH | 3023 | 0.421308 | 0.683290 | 0.804925 |
+| OVERCONSTRAINED | 1062 | 0.514430 | 0.729348 | 0.722659 |
+| UNDERCONSTRAINED | 742 | 0.349950 | 0.657443 | 0.672209 |
 
 ## Reward Error Correlations
 
@@ -56,9 +56,9 @@
 
 | Metric | Pearson distance vs raw `1 - reward` | Pearson distance vs `log10(1 - reward)` | Pearson relative distance vs raw `1 - reward` | Pearson relative distance vs `log10(1 - reward)` |
 | --- | ---: | ---: | ---: | ---: |
-| Levenshtein | 0.025151 | 0.095231 | 0.029092 | 0.050666 |
-| Raw AST | 0.012220 | 0.080731 | 0.021884 | 0.037653 |
-| Canonical | 0.092885 | 0.129623 | 0.043033 | 0.058045 |
+| Levenshtein | 0.043516 | 0.097236 | 0.028120 | 0.040322 |
+| Raw AST | 0.035594 | 0.084743 | 0.016962 | 0.028592 |
+| Canonical | 0.126633 | 0.146647 | 0.052936 | 0.058051 |
 
 - Raw plot: `canonical_distance_vs_reward_error_raw.svg`
 - Log plot: `canonical_distance_vs_reward_error_log.svg`

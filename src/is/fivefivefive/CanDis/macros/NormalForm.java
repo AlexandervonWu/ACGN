@@ -8,23 +8,20 @@ import java.util.Comparator;
 
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.QuantificationTreeNode.Quantifier;
+import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
 
 import java.util.HashMap;
 
 /**
- * This class encodes the normal form of a formula or function, which consists of a quantification tree and a matrix e-graph representation of the formula. 
- * The quantification tree captures the structure of the quantifiers in the formula, while the matrix e-graph captures the structure of the formula itself. 
+ * This class encodes the normal form of a formula or function, which consists of a flat prenex binding list and a matrix e-graph representation of the formula. 
  * The normal form can be used for distance calculation, as well as for other analyses and transformations on the formula.
  * It is the locus of control for the visitor that generates the normal form from the original formula. 
  */
 public class NormalForm {
-    private QuantificationTreeNode quantificationTreeRoot;
     // matrix e-graph representation of the formula, where each node is a subformula, and edges represent the structure of the formula.
     private EGraphNode matrixEGraphRoot;
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
-    private Map<QuantiVar, QuantificationTreeNode> correspondingQuantificationTreeNodes; // a mapping from quantified variables in the matrix to their corresponding quantification tree nodes, for easy access.
     private List<NormalForm> temporalChildren;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
     public enum TemporalOp {
@@ -46,28 +43,21 @@ public class NormalForm {
     }
     public NormalForm() {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.
-        this.quantificationTreeRoot = null;
         this.matrixEGraphRoot = null;
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
-        this.correspondingQuantificationTreeNodes = new HashMap<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = TemporalOp.NONE;
     }
 
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
-        this.quantificationTreeRoot = null;
         this.matrixEGraphRoot = new EGraphNode(egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false, Metatype.BOOLEAN);
         this.params = new ArrayList<>(parent.params);
         this.matrixQuantiVars = new ArrayList<>();
-        this.correspondingQuantificationTreeNodes = new HashMap<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = temporalOp;
     }
 
-    public QuantificationTreeNode getQuantificationTree() {
-        return this.quantificationTreeRoot;
-    }
     public EGraphNode getMatrixEGraph() {
         return this.matrixEGraphRoot;
     }
@@ -76,17 +66,6 @@ public class NormalForm {
     }
     public List<QuantiVar> getMatrixQuantiVars() {
         return this.matrixQuantiVars;
-    }
-    public Map<QuantiVar, QuantificationTreeNode> getCorrespondingQuantificationTreeNodes() {
-        return this.correspondingQuantificationTreeNodes;
-    }
-    public void addNode(QuantificationTreeNode node) {
-        if (this.quantificationTreeRoot == null) {
-            this.quantificationTreeRoot = node;
-        } else {
-            this.quantificationTreeRoot.addChild(node);
-            node.setParent(this.quantificationTreeRoot);
-        }
     }
     public void addEClass(EGraphNode node) {
         if (this.matrixEGraphRoot == null) {
@@ -98,10 +77,8 @@ public class NormalForm {
     public void addParam(QuantiVar param) {
         this.params.add(param);
     }
-    public void addMatrixQuantiVar(QuantificationTreeNode qtNode, QuantiVar quantiVar) {
+    public void addMatrixQuantiVar(QuantiVar quantiVar) {
         this.matrixQuantiVars.add(quantiVar);
-        this.correspondingQuantificationTreeNodes.put(quantiVar, qtNode);
-        qtNode.addQuantiVar(quantiVar);
     }
     public TemporalOp getTemporalOp() {
         return this.temporalOp;
@@ -120,38 +97,30 @@ public class NormalForm {
             return;
         }
         matrixQuantiVars.clear();
-        correspondingQuantificationTreeNodes.clear();
-        quantificationTreeRoot = null;
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
         matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
         List<EGraphNode> constraints = new ArrayList<>();
-        matrixEGraphRoot = prenex(matrixEGraphRoot, null, new HashMap<>(), new int[] { 0 }, false, constraints, "root");
+        matrixEGraphRoot = prenex(matrixEGraphRoot, new HashMap<>(), new int[] { 0 }, false, constraints, "root");
         matrixEGraphRoot = conjoin(matrixEGraphRoot, constraints);
         matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
         matrixEGraphRoot.saturate();
-        registerQuantifierSymmetries(quantificationTreeRoot);
+        registerQuantifierSymmetries();
     }
 
-    private void registerQuantifierSymmetries(QuantificationTreeNode node) {
-        if (node == null || matrixEGraphRoot == null) {
+    private void registerQuantifierSymmetries() {
+        if (matrixEGraphRoot == null) {
             return;
         }
-        List<QuantiVar> swappable = new ArrayList<>();
-        if (isSymmetricBooleanQuantifier(node.getQuantifier())) {
-            for (QuantiVar qv : node.getQuantiVars()) {
-                if (matrixQuantiVars.contains(qv)) {
-                    swappable.add(qv);
-                }
+        for (int i = 1; i < matrixQuantiVars.size(); i++) {
+            QuantiVar left = matrixQuantiVars.get(i - 1);
+            QuantiVar right = matrixQuantiVars.get(i);
+            if (isSymmetricBooleanQuantifier(left.getQuantifier())
+                    && left.getQuantifier() == right.getQuantifier()
+                    && left.isDisj() == right.isDisj()
+                    && normalizeType(left.getTypeName()).equals(normalizeType(right.getTypeName()))) {
+                matrixEGraphRoot.getEClass().addSlotSwap(left.getName(), right.getName());
             }
-        }
-        for (int i = 1; i < swappable.size(); i++) {
-            matrixEGraphRoot.getEClass().addSlotSwap(
-                    swappable.get(i - 1).getName(),
-                    swappable.get(i).getName());
-        }
-        for (QuantificationTreeNode child : node.getChildren()) {
-            registerQuantifierSymmetries(child);
         }
     }
 
@@ -235,7 +204,6 @@ public class NormalForm {
 
     private EGraphNode prenex(
             EGraphNode node,
-            QuantificationTreeNode scope,
             Map<String, QuantiVar> env,
             int[] nextVarId,
             boolean negated,
@@ -252,43 +220,53 @@ public class NormalForm {
             return node;
         }
         if (node.getOpcode() == Opcode.IFF && node.getChildren().size() == 2) {
-            return prenex(expandIff(node, negated), scope, env, nextVarId, false, constraints, bindingPath + "/iff");
+            return prenex(expandIff(node, negated), env, nextVarId, false, constraints, bindingPath + "/iff");
         }
         if (node.getOpcode() == Opcode.NOT) {
             List<EGraphNode> rewritten = new ArrayList<>();
             for (EGraphNode child : node.getChildren()) {
-                EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, !negated, constraints, bindingPath + "/not");
+                EGraphNode rewrittenChild = prenex(child, env, nextVarId, !negated, constraints, bindingPath + "/not");
                 if (rewrittenChild != null && rewrittenChild.getOpcode() != Opcode.END) {
                     rewritten.add(rewrittenChild);
                 }
             }
-            node.setChildren(rewritten);
-            return node;
+            if (rewritten.isEmpty()) {
+                return null;
+            }
+            return rewritten.size() == 1 ? rewritten.get(0) : conjoin(null, rewritten);
         }
         if (isQuantifierNode(node)) {
             Map<String, QuantiVar> scopedEnv = new HashMap<>(env);
             List<EGraphNode> localConstraints = new ArrayList<>();
             EGraphNode body = null;
             List<EGraphNode> children = node.getChildren();
-            boolean bodyNegated = negated && !consumesMatrixNegation(node.getOpcode());
+            boolean bodyNegated = (node.getOpcode() == Opcode.NO && !negated)
+                    || (negated && !consumesMatrixNegation(node.getOpcode()));
+            Boolean emptyDomainValue = null;
             for (int i = 0; i < children.size(); i++) {
                 EGraphNode child = children.get(i);
                 if (isRelDecl(child.getOpcode())) {
-                    prenexRelDecl(node.getOpcode(), child, scope, scopedEnv, nextVarId, false, negated, localConstraints,
+                    RelDeclResult relDecl = prenexRelDecl(node.getOpcode(), child, scopedEnv, nextVarId, false, negated, localConstraints,
                             bindingPath + "/decl[" + i + "]");
+                    if (relDecl.emptyDomainValue != null) {
+                        emptyDomainValue = relDecl.emptyDomainValue;
+                    }
                 } else {
-                    EGraphNode rewrittenChild = prenex(child, scope, scopedEnv, nextVarId, bodyNegated, constraints,
+                    EGraphNode rewrittenChild = prenex(child, scopedEnv, nextVarId, bodyNegated, constraints,
                             bindingPath + "/body[" + i + "]");
                     if (rewrittenChild != null) {
                         body = rewrittenChild;
                     }
                 }
             }
-            body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), negated));
-            if (body != null && negated && consumesMatrixNegation(node.getOpcode())) {
-                body = syntheticUnary(body, Opcode.NOT, body, -1);
+            if (emptyDomainValue != null) {
+                return booleanConstant(node, emptyDomainValue);
             }
+            body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), negated));
             return body == null ? node : body;
+        }
+        if (negated) {
+            return prenexNegatedNonQuantifier(node, env, nextVarId, constraints, bindingPath);
         }
 
         List<EGraphNode> children = node.getChildren();
@@ -296,12 +274,12 @@ public class NormalForm {
         for (int i = 0; i < children.size(); i++) {
             EGraphNode child = children.get(i);
             if (isRelDecl(child.getOpcode())) {
-                scope = prenexRelDecl(Opcode.FORALL, child, scope, env, nextVarId, true, false, constraints,
+                prenexRelDecl(Opcode.FORALL, child, env, nextVarId, true, false, constraints,
                         bindingPath + "/param[" + i + "]");
                 continue;
             }
             boolean childNegated = childNegated(node.getOpcode(), i, negated);
-            EGraphNode rewrittenChild = prenex(child, scope, env, nextVarId, childNegated, constraints,
+            EGraphNode rewrittenChild = prenex(child, env, nextVarId, childNegated, constraints,
                     childBindingPath(bindingPath, node.getOpcode(), i, childNegated));
             if (rewrittenChild != null && rewrittenChild.getOpcode() != Opcode.END) {
                 rewritten.add(rewrittenChild);
@@ -311,10 +289,61 @@ public class NormalForm {
         return node;
     }
 
-    private QuantificationTreeNode prenexRelDecl(
+    private EGraphNode prenexNegatedNonQuantifier(
+            EGraphNode node,
+            Map<String, QuantiVar> env,
+            int[] nextVarId,
+            List<EGraphNode> constraints,
+            String bindingPath) {
+        Opcode opcode = node.getOpcode();
+        if (opcode == Opcode.AND || opcode == Opcode.OR) {
+            EGraphNode rewritten = copyShallow(node, dualBooleanOpcode(opcode));
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                EGraphNode child = prenex(node.getChildren().get(i), env, nextVarId, true, constraints,
+                        childBindingPath(bindingPath, opcode, i, true));
+                if (child != null && child.getOpcode() != Opcode.END) {
+                    rewritten.addChild(child);
+                }
+            }
+            return rewritten;
+        }
+        if (opcode == Opcode.IMPLIES && node.getChildren().size() == 2) {
+            EGraphNode conjunction = syntheticNode(node, Opcode.AND, -1);
+            EGraphNode left = prenex(node.getChildren().get(0), env, nextVarId, false, constraints,
+                    bindingPath + "/implies[0]");
+            EGraphNode right = prenex(node.getChildren().get(1), env, nextVarId, true, constraints,
+                    bindingPath + "/implies[1]/not");
+            if (left != null && left.getOpcode() != Opcode.END) {
+                conjunction.addChild(left);
+            }
+            if (right != null && right.getOpcode() != Opcode.END) {
+                conjunction.addChild(right);
+            }
+            return conjunction;
+        }
+        if (opcode == Opcode.ITE && node.getMetatype() == Metatype.BOOLEAN && node.getChildren().size() == 3) {
+            return prenex(expandIte(node, true), env, nextVarId, false, constraints, bindingPath + "/ite");
+        }
+        Opcode dual = dualOpcode(opcode);
+        if (dual != null) {
+            EGraphNode rewritten = copyShallow(node, dual);
+            boolean negateChildren = dualNegatesChildren(opcode);
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                EGraphNode child = prenex(node.getChildren().get(i), env, nextVarId, negateChildren, constraints,
+                        childBindingPath(bindingPath, opcode, i, negateChildren));
+                if (child != null && child.getOpcode() != Opcode.END) {
+                    rewritten.addChild(child);
+                }
+            }
+            return rewritten;
+        }
+        EGraphNode positive = prenex(node, env, nextVarId, false, constraints, bindingPath + "/positive");
+        return positive == null ? null : syntheticUnary(node, Opcode.NOT, positive, -1);
+    }
+
+    private RelDeclResult prenexRelDecl(
             Opcode quantifierOpcode,
             EGraphNode relDecl,
-            QuantificationTreeNode parent,
             Map<String, QuantiVar> env,
             int[] nextVarId,
             boolean parameterDecl,
@@ -323,22 +352,17 @@ public class NormalForm {
             String bindingPath) {
         EGraphNode typeEGraph = null;
         if (!relDecl.getChildren().isEmpty()) {
-            typeEGraph = prenex(relDecl.getChildren().get(0), parent, env, nextVarId, false, constraints,
+            typeEGraph = prenex(relDecl.getChildren().get(0), env, nextVarId, false, constraints,
                     bindingPath + "/type");
         }
         EGraphNode normalizedTypeEGraph = typeEGraph == null ? null : normalizeAssociativeCommutative(toNNF(typeEGraph, false));
         List<QuantiVar> quantiVars = new ArrayList<>();
-        QuantificationTreeNode dependencyParent = deepestDependency(typeEGraph, env, parent);
-        String primitiveType = null;
-        QuantificationTreeNode qtNode = new QuantificationTreeNode(quantifierOf(quantifierOpcode, negated), quantiVars, dependencyParent, isDisj(relDecl.getOpcode()), null);
-        String deBruijnBase = bindingPath + (negated ? "@neg" : "@pos");
-        qtNode.setBindingPath(deBruijnBase);
-        if (dependencyParent == null) {
-            addNode(qtNode);
-        } else {
-            dependencyParent.addChild(qtNode);
-            qtNode.setParent(dependencyParent);
+        Quantifier quantifier = quantifierOf(quantifierOpcode, negated);
+        if (isNone(normalizedTypeEGraph)) {
+            return new RelDeclResult(quantiVars, emptyDomainValue(quantifier));
         }
+        boolean disj = isDisj(relDecl.getOpcode());
+        String deBruijnBase = bindingPath + (negated ? "@neg" : "@pos");
 
         List<EGraphNode> children = relDecl.getChildren();
         for (int i = 1; i < children.size(); i++) {
@@ -349,11 +373,10 @@ public class NormalForm {
             String originalName = candidate.getSourceName();
             String alphaName = "_q" + nextVarId[0];
             String varType = primitiveVarType(candidate.getSourceType());
-            if (primitiveType == null) {
-                primitiveType = varType;
-                qtNode.setType(primitiveType);
-            }
             QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
+            qv.setQuantifier(quantifier);
+            qv.setDisj(disj);
+            qv.setBindingPath(deBruijnBase);
             qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + normalizeType(varType));
             candidate.setAlphaName(alphaName);
             quantiVars.add(qv);
@@ -365,12 +388,27 @@ public class NormalForm {
             } else {
                 matrixQuantiVars.add(qv);
             }
-            correspondingQuantificationTreeNodes.put(qv, qtNode);
             if (originalName != null) {
                 env.put(originalName, qv);
             }
         }
-        return qtNode;
+        return new RelDeclResult(quantiVars, null);
+    }
+
+    private static Boolean emptyDomainValue(Quantifier quantifier) {
+        switch (quantifier) {
+            case ALL:
+            case NO:
+            case LONE:
+                return true;
+            case SOME:
+            case ONE:
+            case NOTONE:
+            case NOTLONE:
+                return false;
+            default:
+                return null;
+        }
     }
 
     private static EGraphNode applyDomainConstraints(EGraphNode body, List<EGraphNode> constraints, Quantifier quantifier) {
@@ -408,6 +446,13 @@ public class NormalForm {
         return conjunction;
     }
 
+    private static EGraphNode booleanConstant(EGraphNode source, boolean value) {
+        EGraphNode constant = syntheticNode(source, Opcode.CONSTANT, value ? -7 : -8);
+        constant.setSourceName(Boolean.toString(value));
+        constant.setSourceType("Bool");
+        return constant;
+    }
+
     private static String primitiveVarType(String type) {
         String normalized = normalizeType(type);
         return normalized.isEmpty() ? type : normalized;
@@ -424,6 +469,13 @@ public class NormalForm {
         return typeName != null && primitiveType != null && !typeName.equals(primitiveType);
     }
 
+    private static boolean isNone(EGraphNode node) {
+        return node != null
+                && (node.getOpcode() == Opcode.GLOBALBINDING || node.getOpcode() == Opcode.CONSTANT)
+                && node.getSourceName() != null
+                && "none".equalsIgnoreCase(node.getSourceName());
+    }
+
     private static EGraphNode domainConstraint(QuantiVar qv, EGraphNode sourceVariable, EGraphNode domain) {
         EGraphNode constraint = syntheticNode(sourceVariable, Opcode.IN, -1);
         EGraphNode variable = new EGraphNode(sourceVariable.getId(), Opcode.VARIABLE, new ArrayList<>(), false, 0, false, Metatype.ATOMIC);
@@ -433,43 +485,6 @@ public class NormalForm {
         constraint.addChild(variable);
         constraint.addChild(cloneEGraph(domain));
         return constraint;
-    }
-
-    private QuantificationTreeNode deepestDependency(EGraphNode typeEGraph, Map<String, QuantiVar> env, QuantificationTreeNode fallbackParent) {
-        QuantificationTreeNode deepest = null;
-        for (QuantiVar qv : referencedQuantiVars(typeEGraph, env, new ArrayList<>())) {
-            QuantificationTreeNode candidate = correspondingQuantificationTreeNodes.get(qv);
-            if (candidate != null && (deepest == null || depth(candidate) > depth(deepest))) {
-                deepest = candidate;
-            }
-        }
-        return deepest == null ? fallbackParent : deepest;
-    }
-
-    private static List<QuantiVar> referencedQuantiVars(EGraphNode node, Map<String, QuantiVar> env, List<QuantiVar> refs) {
-        if (node == null) {
-            return refs;
-        }
-        if (node.getOpcode() == Opcode.VARIABLE) {
-            QuantiVar qv = env.get(node.getSourceName());
-            if (qv != null && !refs.contains(qv)) {
-                refs.add(qv);
-            }
-        }
-        for (EGraphNode child : node.getChildren()) {
-            referencedQuantiVars(child, env, refs);
-        }
-        return refs;
-    }
-
-    private static int depth(QuantificationTreeNode node) {
-        int depth = 0;
-        QuantificationTreeNode cursor = node;
-        while (cursor.getParent() != null) {
-            depth++;
-            cursor = cursor.getParent();
-        }
-        return depth;
     }
 
     private static EGraphNode toNNF(EGraphNode node, boolean negated) {
@@ -835,7 +850,7 @@ public class NormalForm {
             case EXISTS:
                 return negated ? Quantifier.ALL : Quantifier.SOME;
             case NO:
-                return negated ? Quantifier.SOME : Quantifier.NO;
+                return negated ? Quantifier.SOME : Quantifier.ALL;
             case LONE:
                 return negated ? Quantifier.NOTLONE : Quantifier.LONE;
             case ONE:
@@ -856,5 +871,15 @@ public class NormalForm {
             }
         }
         return null;
+    }
+
+    private static final class RelDeclResult {
+        private final List<QuantiVar> quantiVars;
+        private final Boolean emptyDomainValue;
+
+        private RelDeclResult(List<QuantiVar> quantiVars, Boolean emptyDomainValue) {
+            this.quantiVars = quantiVars;
+            this.emptyDomainValue = emptyDomainValue;
+        }
     }
 }

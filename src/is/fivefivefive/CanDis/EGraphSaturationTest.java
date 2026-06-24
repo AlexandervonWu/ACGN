@@ -10,8 +10,8 @@ import is.fivefivefive.CanDis.macros.EGraphNode;
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.macros.NormalForm;
-import is.fivefivefive.CanDis.macros.QuantificationTreeNode;
-import is.fivefivefive.CanDis.macros.QuantificationTreeNode.Quantifier;
+import is.fivefivefive.CanDis.macros.QuantiVar;
+import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
 
 public final class EGraphSaturationTest {
     private EGraphSaturationTest() {
@@ -23,6 +23,11 @@ public final class EGraphSaturationTest {
         testAssociativeNoncommutativeJoin();
         testRenamedIdUnionFind();
         testDoubleNegationAndIdempotence();
+        testAllNoNotQuantifierEquivalence();
+        testBooleanIdentitySaturation();
+        testSetIdentitySaturation();
+        testImplicationSaturation();
+        testEmptyDomainQuantifierRewrite();
         testComplementEliminatesRedundantSlot();
         testSlotPermutationGroups();
         testDisjModifierIsPreserved();
@@ -118,6 +123,99 @@ public final class EGraphSaturationTest {
         EGraphNode disjunction = node(Opcode.OR, true, true, duplicate, duplicate);
         disjunction.saturate();
         assertEquals(Opcode.VARIABLE, disjunction.getOpcode(), "A OR A must collapse to A");
+
+        EGraphNode duplicateAnd = variable("duplicateAndX");
+        EGraphNode conjunction = node(Opcode.AND, true, true, duplicateAnd, duplicateAnd);
+        conjunction.saturate();
+        assertEquals(Opcode.VARIABLE, conjunction.getOpcode(), "A AND A must collapse to A");
+    }
+
+    private static void testAllNoNotQuantifierEquivalence() {
+        NormalForm all = new NormalForm();
+        all.addEClass(node(Opcode.FORALL, false, false, relDecl("x"), predicate("P", variable("x"))));
+        all.normalize();
+
+        NormalForm noNot = new NormalForm();
+        noNot.addEClass(node(
+                Opcode.NO,
+                false,
+                false,
+                relDecl("x"),
+                node(Opcode.NOT, false, false, predicate("P", variable("x")))));
+        noNot.normalize();
+
+        assertEquals(0, normalFormDistance(all, noNot),
+                "all x:S | P must be equivalent to no x:S | not P");
+    }
+
+    private static void testBooleanIdentitySaturation() {
+        EGraphNode andTrue = node(Opcode.AND, true, true, variable("andTrueX"), bool(true));
+        andTrue.saturate();
+        assertEquals(Opcode.VARIABLE, andTrue.getOpcode(), "A AND true must collapse to A");
+
+        EGraphNode orFalse = node(Opcode.OR, true, true, variable("orFalseX"), bool(false));
+        orFalse.saturate();
+        assertEquals(Opcode.VARIABLE, orFalse.getOpcode(), "A OR false must collapse to A");
+
+        EGraphNode andFalse = node(Opcode.AND, true, true, variable("andFalseX"), bool(false));
+        andFalse.saturate();
+        assertEquals(Opcode.CONSTANT, andFalse.getOpcode(), "A AND false must collapse to false");
+        assertEquals("false", andFalse.getSourceName(), "A AND false must collapse to false");
+
+        EGraphNode orTrue = node(Opcode.OR, true, true, variable("orTrueX"), bool(true));
+        orTrue.saturate();
+        assertEquals(Opcode.CONSTANT, orTrue.getOpcode(), "A OR true must collapse to true");
+        assertEquals("true", orTrue.getSourceName(), "A OR true must collapse to true");
+    }
+
+    private static void testSetIdentitySaturation() {
+        EGraphNode inNone = node(Opcode.IN, false, false, variable("inNoneX"), global("none"));
+        inNone.saturate();
+        assertEquals(Opcode.CONSTANT, inNone.getOpcode(), "x in none must collapse to false");
+        assertEquals("false", inNone.getSourceName(), "x in none must collapse to false");
+
+        EGraphNode inUniv = node(Opcode.IN, false, false, variable("inUnivX"), global("univ"));
+        inUniv.saturate();
+        assertEquals(Opcode.CONSTANT, inUniv.getOpcode(), "x in univ must collapse to true");
+        assertEquals("true", inUniv.getSourceName(), "x in univ must collapse to true");
+
+        EGraphNode intersectNone = node(Opcode.INTERSECT, true, true, global("R"), global("none"));
+        intersectNone.saturate();
+        assertEquals(Opcode.GLOBALBINDING, intersectNone.getOpcode(), "R & none must collapse to none");
+        assertEquals("none", intersectNone.getSourceName(), "R & none must collapse to none");
+
+        EGraphNode plusNone = node(Opcode.PLUS, true, true, global("R"), global("none"));
+        plusNone.saturate();
+        assertEquals(Opcode.GLOBALBINDING, plusNone.getOpcode(), "R + none must collapse to R");
+        assertEquals("R", plusNone.getSourceName(), "R + none must collapse to R");
+    }
+
+    private static void testImplicationSaturation() {
+        EGraphNode implication = node(Opcode.IMPLIES, false, false, variable("impliesA"), variable("impliesB"));
+        implication.saturate();
+        assertEquals(Opcode.OR, implication.getOpcode(), "A implies B must become not A or B");
+        assertTrue(containsOpcode(implication, Opcode.NOT), "A implies B must negate the antecedent");
+
+        EGraphNode falseAntecedent = node(Opcode.IMPLIES, false, false, bool(false), variable("impliesX"));
+        falseAntecedent.saturate();
+        assertEquals(Opcode.CONSTANT, falseAntecedent.getOpcode(), "false implies A must collapse to true");
+        assertEquals("true", falseAntecedent.getSourceName(), "false implies A must collapse to true");
+    }
+
+    private static void testEmptyDomainQuantifierRewrite() {
+        NormalForm existential = new NormalForm();
+        existential.addEClass(node(Opcode.EXISTS, false, false, relDeclOfType("none", "x"), predicate("P", variable("x"))));
+        existential.normalize();
+        assertEquals(Opcode.CONSTANT, existential.getMatrixEGraph().getOpcode(), "some x: none | P must be false");
+        assertEquals("false", existential.getMatrixEGraph().getSourceName(), "some x: none | P must be false");
+        assertEquals(0, existential.getMatrixQuantiVars().size(), "empty-domain existential must not retain a binding");
+
+        NormalForm universal = new NormalForm();
+        universal.addEClass(node(Opcode.FORALL, false, false, relDeclOfType("none", "x"), predicate("P", variable("x"))));
+        universal.normalize();
+        assertEquals(Opcode.CONSTANT, universal.getMatrixEGraph().getOpcode(), "all x: none | P must be true");
+        assertEquals("true", universal.getMatrixEGraph().getSourceName(), "all x: none | P must be true");
+        assertEquals(0, universal.getMatrixQuantiVars().size(), "empty-domain universal must not retain a binding");
     }
 
     private static void testComplementEliminatesRedundantSlot() {
@@ -195,39 +293,30 @@ public final class EGraphSaturationTest {
         disjoint.addEClass(node(Opcode.FORALL, false, false, disjRelDecl("x", "y"),
                 predicate("P", variable("x"), variable("y"))));
         disjoint.normalize();
-        assertTrue(disjoint.getQuantificationTree().isDisj(),
+        assertTrue(disjoint.getMatrixQuantiVars().get(0).isDisj(),
                 "disj declaration modifier must survive prenexing");
 
         NormalForm plain = new NormalForm();
         plain.addEClass(node(Opcode.FORALL, false, false, relDecl("x", "y"),
                 predicate("P", variable("x"), variable("y"))));
         plain.normalize();
-        assertTrue(!plain.getQuantificationTree().isDisj(),
+        assertTrue(!plain.getMatrixQuantiVars().get(0).isDisj(),
                 "plain declaration must not be marked disj");
     }
 
     private static void testDisjModifierAffectsCanonicalDistance() {
-        QuantificationTreeNode disjoint = new QuantificationTreeNode(
-                Quantifier.ALL,
-                new ArrayList<>(),
-                true,
-                "S");
-        QuantificationTreeNode plain = new QuantificationTreeNode(
-                Quantifier.ALL,
-                new ArrayList<>(),
-                false,
-                "S");
-        try {
-            java.lang.reflect.Method distance = Canonical.class.getDeclaredMethod(
-                    "quantificationDistance",
-                    QuantificationTreeNode.class,
-                    QuantificationTreeNode.class);
-            distance.setAccessible(true);
-            int value = (int) distance.invoke(null, disjoint, plain);
-            assertTrue(value > 0, "disj vs non-disj quantifier nodes must have nonzero canonical distance");
-        } catch (ReflectiveOperationException e) {
-            throw new AssertionError("could not validate disj quantification distance", e);
-        }
+        NormalForm disjoint = new NormalForm();
+        disjoint.addEClass(node(Opcode.FORALL, false, false, disjRelDecl("x", "y"),
+                predicate("P", variable("x"), variable("y"))));
+        disjoint.normalize();
+
+        NormalForm plain = new NormalForm();
+        plain.addEClass(node(Opcode.FORALL, false, false, relDecl("x", "y"),
+                predicate("P", variable("x"), variable("y"))));
+        plain.normalize();
+
+        assertTrue(normalFormDistance(disjoint, plain) > 0,
+                "disj vs non-disj bindings must have nonzero canonical distance");
     }
 
     private static void testImplicationPrenexPolarityDoesNotDoubleNegate() {
@@ -240,7 +329,7 @@ public final class EGraphSaturationTest {
                 predicate("B")));
         antecedentQuantifier.normalize();
 
-        assertEquals(Quantifier.SOME, antecedentQuantifier.getQuantificationTree().getQuantifier(),
+        assertEquals(Quantifier.SOME, antecedentQuantifier.getMatrixQuantiVars().get(0).getQuantifier(),
                 "forall in an implication antecedent must become some after NNF");
         assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.NOT),
                 "the antecedent matrix must remain negated exactly once after prenexing");
@@ -254,7 +343,7 @@ public final class EGraphSaturationTest {
                 node(Opcode.IMPLIES, false, false, predicate("A", variable("a")), predicate("B"))));
         scopedImplication.normalize();
 
-        assertEquals(Quantifier.ALL, scopedImplication.getQuantificationTree().getQuantifier(),
+        assertEquals(Quantifier.ALL, scopedImplication.getMatrixQuantiVars().get(0).getQuantifier(),
                 "all a | A(a) => B must keep universal quantification over the implication body");
     }
 
@@ -291,9 +380,9 @@ public final class EGraphSaturationTest {
                 predicate("Q")));
         iff.normalize();
 
-        assertTrue(hasQuantifier(iff.getQuantificationTree(), Quantifier.ALL),
+        assertTrue(hasQuantifier(iff.getMatrixQuantiVars(), Quantifier.ALL),
                 "IFF expansion must account for the implicit negated implication branch");
-        assertTrue(hasQuantifier(iff.getQuantificationTree(), Quantifier.SOME),
+        assertTrue(hasQuantifier(iff.getMatrixQuantiVars(), Quantifier.SOME),
                 "IFF expansion must retain the positive implication branch");
     }
 
@@ -332,10 +421,9 @@ public final class EGraphSaturationTest {
         quantified.addEClass(node(Opcode.NOT, false, false, one));
         quantified.normalize();
 
-        QuantificationTreeNode root = quantified.getQuantificationTree();
-        assertEquals(Quantifier.NOTONE, root.getQuantifier(),
+        assertEquals(Quantifier.NOTONE, quantified.getMatrixQuantiVars().get(0).getQuantifier(),
                 "not one x must become a NOTONE quantifier");
-        assertEquals(Quantifier.ALL, root.getChildren().get(0).getQuantifier(),
+        assertEquals(Quantifier.ALL, quantified.getMatrixQuantiVars().get(1).getQuantifier(),
                 "a negation consumed by NOTONE must not flip nested quantifiers");
         assertEquals(Opcode.CALL, quantified.getMatrixEGraph().getOpcode(),
                 "a negation consumed by NOTONE must not negate its matrix");
@@ -347,7 +435,7 @@ public final class EGraphSaturationTest {
                 false,
                 node(Opcode.LONE, false, false, relDecl("z"), node(Opcode.CALL, false, true, variable("z")))));
         loneQuantified.normalize();
-        assertEquals(Quantifier.NOTLONE, loneQuantified.getQuantificationTree().getQuantifier(),
+        assertEquals(Quantifier.NOTLONE, loneQuantified.getMatrixQuantiVars().get(0).getQuantifier(),
                 "not lone z must become a NOTLONE quantifier");
 
         NormalForm unaryMultiplicity = new NormalForm();
@@ -392,7 +480,7 @@ public final class EGraphSaturationTest {
         EGraphNode quantified = node(source, false, false, relDecl("v"), predicate("P", variable("v")));
         normalForm.addEClass(node(Opcode.NOT, false, false, quantified));
         normalForm.normalize();
-        assertEquals(expectedQuantifier, normalForm.getQuantificationTree().getQuantifier(), message);
+        assertEquals(expectedQuantifier, normalForm.getMatrixQuantiVars().get(0).getQuantifier(), message);
         assertEquals(expectedMatrixRoot, normalForm.getMatrixEGraph().getOpcode(), message);
     }
 
@@ -405,7 +493,7 @@ public final class EGraphSaturationTest {
         EGraphNode quantified = node(source, false, false, relDecl("a"), predicate("P", variable("a")));
         normalForm.addEClass(node(Opcode.IMPLIES, false, false, quantified, predicate("Q")));
         normalForm.normalize();
-        assertEquals(expectedQuantifier, normalForm.getQuantificationTree().getQuantifier(), message);
+        assertEquals(expectedQuantifier, normalForm.getMatrixQuantiVars().get(0).getQuantifier(), message);
         assertEquals(expectedMatrixNegation, containsOpcode(normalForm.getMatrixEGraph(), Opcode.NOT), message);
     }
 
@@ -421,15 +509,9 @@ public final class EGraphSaturationTest {
         return false;
     }
 
-    private static boolean hasQuantifier(QuantificationTreeNode node, Quantifier quantifier) {
-        if (node == null) {
-            return false;
-        }
-        if (node.getQuantifier() == quantifier) {
-            return true;
-        }
-        for (QuantificationTreeNode child : node.getChildren()) {
-            if (hasQuantifier(child, quantifier)) {
+    private static boolean hasQuantifier(List<QuantiVar> bindings, Quantifier quantifier) {
+        for (QuantiVar binding : bindings) {
+            if (binding.getQuantifier() == quantifier) {
                 return true;
             }
         }
@@ -486,12 +568,24 @@ public final class EGraphSaturationTest {
         return binding;
     }
 
+    private static EGraphNode bool(boolean value) {
+        EGraphNode constant = new EGraphNode(Boolean.hashCode(value), Opcode.CONSTANT, new ArrayList<>(), false, 0,
+                false, Metatype.BOOLEAN);
+        constant.setSourceName(Boolean.toString(value));
+        constant.setSourceType("Bool");
+        return constant;
+    }
+
     private static EGraphNode relDecl(String... variableNames) {
+        return relDeclOfType("S", variableNames);
+    }
+
+    private static EGraphNode relDeclOfType(String typeName, String... variableNames) {
         EGraphNode[] children = new EGraphNode[variableNames.length + 1];
-        children[0] = global("S");
+        children[0] = global(typeName);
         for (int i = 0; i < variableNames.length; i++) {
             EGraphNode declared = variable(variableNames[i]);
-            declared.setSourceType("S");
+            declared.setSourceType(typeName);
             children[i + 1] = declared;
         }
         return node(Opcode.GENERICRELDECL, true, true, children);
