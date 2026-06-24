@@ -101,6 +101,7 @@ public class Canonical {
     private static int quantifierUpdateCost(QuantiVar left, QuantiVar right) {
         if (left.getQuantifier() == right.getQuantifier()
                 && sameType(left.getTypeName(), right.getTypeName())
+                && left.getCardinality() == right.getCardinality()
                 && left.isDisj() == right.isDisj()
                 && safeEquals(left.getBindingPath(), right.getBindingPath())) {
             return 0;
@@ -413,7 +414,7 @@ public class Canonical {
         }
         List<EGraphNode> leftChildren = left.getChildren();
         List<EGraphNode> rightChildren = right.getChildren();
-        if (left.getOpcode() == right.getOpcode() && left.isCommutative() && right.isCommutative()) {
+        if (left.getOpcode() == right.getOpcode() && left.isOrderInsensitive() && right.isOrderInsensitive()) {
             leftChildren = sortedForMapping(leftChildren, variableMapping);
             rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
         }
@@ -498,7 +499,7 @@ public class Canonical {
         int distance = nodeUpdateCost(left, right, variableMapping);
         List<EGraphNode> leftChildren = left.getChildren();
         List<EGraphNode> rightChildren = right.getChildren();
-        if (left.getOpcode() == right.getOpcode() && left.isCommutative() && right.isCommutative()) {
+        if (left.getOpcode() == right.getOpcode() && left.isOrderInsensitive() && right.isOrderInsensitive()) {
             leftChildren = sortedForMapping(leftChildren, variableMapping);
             rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
         }
@@ -516,7 +517,8 @@ public class Canonical {
     }
 
     private static String mappedSortKey(EGraphNode node, Map<String, String> variableMapping) {
-        StringBuilder key = new StringBuilder(node.getOpcode().toString()).append(':');
+        StringBuilder key = new StringBuilder(node.getOpcode().toString())
+                .append('{').append(node.getFlexibleArityKind()).append("}:");
         if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             String name = variableName(node);
             key.append(variableMapping.getOrDefault(name, name));
@@ -525,7 +527,7 @@ public class Canonical {
         }
         key.append('[');
         List<EGraphNode> children = new ArrayList<>(node.getChildren());
-        if (node.isCommutative()) {
+        if (node.isOrderInsensitive()) {
             children = sortedForMapping(children, variableMapping);
         }
         for (EGraphNode child : children) {
@@ -747,11 +749,14 @@ public class Canonical {
         if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             return node.getOpcode() + "(" + nodeVariableDisplay(node) + ")";
         }
+        String opcode = node.isFlexibleArity()
+                ? node.getOpcode() + "<" + node.getFlexibleArityKind().name().toLowerCase(java.util.Locale.ROOT) + ">"
+                : node.getOpcode().toString();
         String name = firstNonEmpty(node.getAlphaName(), node.getSourceName());
         if (name == null) {
-            return node.getOpcode().toString();
+            return opcode;
         }
-        return node.getOpcode() + "(" + name + ")";
+        return opcode + "(" + name + ")";
     }
 
     private static String nodeVariableDisplay(EGraphNode node) {
@@ -806,7 +811,25 @@ public class Canonical {
 
     private static String quantifierFormula(QuantiVar qv) {
         String disj = qv.isDisj() ? " disj" : "";
-        return qv.getQuantifier() + disj + " " + quantiVarName(qv) + " : " + display(qv.getTypeName());
+        String cardinality = cardinalityPrefix(qv);
+        return qv.getQuantifier() + disj + " " + quantiVarName(qv) + " : "
+                + cardinality + display(qv.getTypeName());
+    }
+
+    private static String cardinalityPrefix(QuantiVar qv) {
+        switch (qv.getCardinality()) {
+            case SOME:
+                return "some ";
+            case ONE:
+                return "one ";
+            case LONE:
+                return "lone ";
+            case EXACTLY:
+                return "exactly ";
+            case SET:
+            default:
+                return "";
+        }
     }
 
     private static String eGraphFormula(EGraphNode node) {

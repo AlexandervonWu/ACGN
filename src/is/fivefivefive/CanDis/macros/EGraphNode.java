@@ -46,6 +46,11 @@ public class EGraphNode {
         BOOLEAN,
         CONTROL
     }
+    public enum FlexibleArityKind {
+        FIXED,
+        BAG,
+        SEQUENCE
+    }
     public enum Opcode {
         AND,
         OR,
@@ -215,6 +220,21 @@ public class EGraphNode {
     public boolean isFlexibleArity() {
         return flexibleArity;
     }
+    public FlexibleArityKind getFlexibleArityKind() {
+        if (!flexibleArity) {
+            return FlexibleArityKind.FIXED;
+        }
+        return isCommutative ? FlexibleArityKind.BAG : FlexibleArityKind.SEQUENCE;
+    }
+    public boolean isBagFlexibleArity() {
+        return getFlexibleArityKind() == FlexibleArityKind.BAG;
+    }
+    public boolean isSequenceFlexibleArity() {
+        return getFlexibleArityKind() == FlexibleArityKind.SEQUENCE;
+    }
+    public boolean isOrderInsensitive() {
+        return isCommutative;
+    }
     public void addChild(EGraphNode child) {
         if (child == null) {
             return;
@@ -339,7 +359,7 @@ public class EGraphNode {
                 rewrittenChildren.add(childRef);
             }
         }
-        if (isCommutative) {
+        if (isOrderInsensitive()) {
             rewrittenChildren.sort(Comparator.comparing(ref -> ref.getEClass().getRepresentative().sortKey()));
         }
 
@@ -706,7 +726,7 @@ public class EGraphNode {
     }
 
     private static void appendSortKey(EGraphNode node, StringBuilder sb) {
-        sb.append(node.opcode).append(':');
+        sb.append(node.opcode).append('{').append(node.getFlexibleArityKind()).append("}:");
         if (node.alphaName != null) {
             sb.append(node.alphaName);
         } else if (node.sourceName != null) {

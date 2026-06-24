@@ -17,8 +17,11 @@ def corr(xs, ys):
 print('Use the generated SVG plots:')
 print(ROOT / 'canonical_distance_vs_reward_error_raw.svg')
 print(ROOT / 'canonical_distance_vs_reward_error_log.svg')
+print(ROOT / 'relative_repair_coverage_comparison.svg')
+print(ROOT / 'raw_edit_repair_coverage_ast_canonical.svg')
 with CSV.open() as f:
-    rows = [r for r in csv.DictReader(f) if r.get('candidateReward')]
+    all_rows = list(csv.DictReader(f))
+rows = [r for r in all_rows if r.get('candidateReward')]
 print(f'Loaded {len(rows)} rewarded points from {CSV}')
 errs = [float(r['rewardError']) for r in rows]
 positive = [e for e in errs if e > 0.0]
@@ -31,3 +34,7 @@ for key, ratio_key, label in [('levenshteinDistance', 'levenshteinDistanceRatio'
     print(f"Pearson {label} distance vs log10(1-reward): {corr(xs, logs):.6f}")
     print(f"Pearson {label} ratio vs raw 1-reward: {corr(ratios, errs):.6f}")
     print(f"Pearson {label} ratio vs log10(1-reward): {corr(ratios, logs):.6f}")
+for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalSize', 'canonicalDistanceRatio', 'Canonical')]:
+    xs = [float(r[size_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]
+    ys = [float(r[ratio_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]
+    print(f"Pearson {label} repair ratio vs representation size: {corr(xs, ys):.6f}")

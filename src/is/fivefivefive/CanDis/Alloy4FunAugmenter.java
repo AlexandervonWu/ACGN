@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,9 @@ public class Alloy4FunAugmenter {
     private static final String DEFAULT_OUTPUT = "alloy4fun-augmented";
     private static final int DEFAULT_THREAD_COUNT = 32;
     private static final int DEFAULT_REWARD_POOL_SIZE = 10;
+    private static final int[] REPAIR_RADII = { 1, 2, 5, 10 };
+    private static final double[] RELATIVE_REPAIR_RADII = { 0.05, 0.10, 0.20, 0.50 };
+    private static final int RELATIVE_REPAIR_CURVE_STEPS = 100;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -63,6 +67,8 @@ public class Alloy4FunAugmenter {
         writeMarkdown(options.outputDir.resolve("summary.md"), options, files.size(), groups, records, matches, unmatched);
         writeRewardCsv(options.outputDir.resolve("canonical_reward_points.csv"), matches);
         writeRewardPlots(options.outputDir, matches);
+        writeRelativeRepairCoveragePlot(options.outputDir.resolve("relative_repair_coverage_comparison.svg"), matches);
+        writeRawEditRepairCoveragePlot(options.outputDir.resolve("raw_edit_repair_coverage_ast_canonical.svg"), matches);
         writePlotScript(options.outputDir.resolve("plot_canonical_rewards.py"));
         System.out.println("Wrote " + options.outputDir);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
@@ -70,6 +76,8 @@ public class Alloy4FunAugmenter {
         System.out.println("Wrote " + options.outputDir.resolve("canonical_reward_points.csv"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_distance_vs_reward_error_raw.svg"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_distance_vs_reward_error_log.svg"));
+        System.out.println("Wrote " + options.outputDir.resolve("relative_repair_coverage_comparison.svg"));
+        System.out.println("Wrote " + options.outputDir.resolve("raw_edit_repair_coverage_ast_canonical.svg"));
         System.out.println("Wrote " + options.outputDir.resolve("plot_canonical_rewards.py"));
     }
 
@@ -393,6 +401,10 @@ public class Alloy4FunAugmenter {
         Map<String, RankingModeStats> modeStats = rankingModeStats(groups);
         DistanceStats allDistances = distanceStats(matches);
         Map<String, DistanceStats> statusDistances = statusDistanceStats(matches);
+        Map<String, RepairRadiusStats> repairOverall = repairRadiusStatsOverall(matches);
+        Map<String, RepairRadiusStats> repairByStatus = repairRadiusStatsByStatus(matches);
+        Map<String, RepairRadiusStats> repairByQuestionSet = repairRadiusStatsByQuestionSet(matches);
+        Map<String, RepairRadiusStats> repairByQuestionSetAndStatus = repairRadiusStatsByQuestionSetAndStatus(matches);
 
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("# Alloy4Fun Augmented Dataset Summary\n\n");
@@ -455,6 +467,50 @@ public class Alloy4FunAugmenter {
             }
             writer.write("\n");
 
+            writer.write("## Relative Repair Coverage Comparison\n\n");
+            writer.write("The SVG plots smooth empirical coverage curves from 0% to 100% of each metric's representation size. The table gives selected checkpoints.\n\n");
+            writer.write("| Fraction of representation size | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |\n");
+            writer.write("| --- | ---: | ---: | ---: |\n");
+            RepairRadiusStats allRepairCoverage = repairOverall.get("All incorrect");
+            if (allRepairCoverage != null) {
+                for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                    writer.write("| <= " + percentLabel(RELATIVE_REPAIR_RADII[i]) + " | "
+                            + countPercent(allRepairCoverage.levenshteinRelativeWithin[i], allRepairCoverage.count)
+                            + " | " + countPercent(allRepairCoverage.rawAstRelativeWithin[i], allRepairCoverage.count)
+                            + " | " + countPercent(allRepairCoverage.canonicalRelativeWithin[i], allRepairCoverage.count)
+                            + " |\n");
+                }
+            }
+            writer.write("\n");
+            writer.write("- Plot: `relative_repair_coverage_comparison.svg`\n\n");
+
+            writer.write("## Raw Edit Distance Coverage Comparison\n\n");
+            writer.write("The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST and Canonical repairs.\n\n");
+            writer.write("| Edit-distance radius | Raw AST | Canonical |\n");
+            writer.write("| --- | ---: | ---: |\n");
+            if (allRepairCoverage != null) {
+                for (int i = 0; i < REPAIR_RADII.length; i++) {
+                    writer.write("| <= " + REPAIR_RADII[i] + " | "
+                            + countPercent(allRepairCoverage.rawAstWithin[i], allRepairCoverage.count)
+                            + " | " + countPercent(allRepairCoverage.canonicalWithin[i], allRepairCoverage.count)
+                            + " |\n");
+                }
+            }
+            writer.write("\n");
+            writer.write("- Plot: `raw_edit_repair_coverage_ast_canonical.svg`\n\n");
+
+            writer.write("## Repair Radius Coverage\n\n");
+            writer.write("Counts show incorrect predicates whose nearest CORRECT reference is within the inclusive repair radius.\n\n");
+            writer.write("Absolute radii use edit-distance units. Relative radii use distance divided by the incorrect predicate's own representation size.\n\n");
+            writeRepairRadiusTable(writer, "Overall", repairOverall);
+            writeRepairRadiusTable(writer, "By Incorrectness Status", repairByStatus);
+            writeRepairRadiusTable(writer, "By Question Set", repairByQuestionSet);
+            writeRepairRadiusTable(writer, "By Question Set and Status", repairByQuestionSetAndStatus);
+            writeRelativeRepairRadiusTable(writer, "Overall Relative", repairOverall);
+            writeRelativeRepairRadiusTable(writer, "Relative by Incorrectness Status", repairByStatus);
+            writeRelativeRepairRadiusTable(writer, "Relative by Question Set", repairByQuestionSet);
+            writeRelativeRepairRadiusTable(writer, "Relative by Question Set and Status", repairByQuestionSetAndStatus);
+
             writer.write("## Reward Error Correlations\n\n");
             RewardDistanceStats levenshteinReward = rewardDistanceStats(matches, "levenshtein");
             RewardDistanceStats rawAstReward = rewardDistanceStats(matches, "rawAst");
@@ -490,6 +546,83 @@ public class Alloy4FunAugmenter {
                         + " | " + stats.oracleOnlyGroups + " |\n");
             }
         }
+    }
+
+    private static void writeRepairRadiusTable(
+            Writer writer,
+            String title,
+            Map<String, RepairRadiusStats> stats) throws IOException {
+        writer.write("### " + title + "\n\n");
+        writer.write("| Slice | Count");
+        for (int radius : REPAIR_RADII) {
+            writer.write(" | AST <= " + radius);
+        }
+        for (int radius : REPAIR_RADII) {
+            writer.write(" | Canonical <= " + radius);
+        }
+        writer.write(" |\n");
+        writer.write("| --- | ---:");
+        for (int ignored : REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
+        for (int ignored : REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
+        writer.write(" |\n");
+        for (RepairRadiusStats row : stats.values()) {
+            writer.write("| " + row.label + " | " + row.count);
+            for (int i = 0; i < REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.rawAstWithin[i], row.count));
+            }
+            for (int i = 0; i < REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.canonicalWithin[i], row.count));
+            }
+            writer.write(" |\n");
+        }
+        writer.write("\n");
+    }
+
+    private static void writeRelativeRepairRadiusTable(
+            Writer writer,
+            String title,
+            Map<String, RepairRadiusStats> stats) throws IOException {
+        writer.write("### " + title + "\n\n");
+        writer.write("| Slice | Count");
+        for (double radius : RELATIVE_REPAIR_RADII) {
+            writer.write(" | Levenshtein <= " + percentLabel(radius));
+        }
+        for (double radius : RELATIVE_REPAIR_RADII) {
+            writer.write(" | AST <= " + percentLabel(radius));
+        }
+        for (double radius : RELATIVE_REPAIR_RADII) {
+            writer.write(" | Canonical <= " + percentLabel(radius));
+        }
+        writer.write(" |\n");
+        writer.write("| --- | ---:");
+        for (double ignored : RELATIVE_REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
+        for (double ignored : RELATIVE_REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
+        for (double ignored : RELATIVE_REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
+        writer.write(" |\n");
+        for (RepairRadiusStats row : stats.values()) {
+            writer.write("| " + row.label + " | " + row.count);
+            for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.levenshteinRelativeWithin[i], row.count));
+            }
+            for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.rawAstRelativeWithin[i], row.count));
+            }
+            for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.canonicalRelativeWithin[i], row.count));
+            }
+            writer.write(" |\n");
+        }
+        writer.write("\n");
     }
 
     private static void writeGroupJson(Writer writer, QuestionGroup group) throws IOException {
@@ -645,6 +778,427 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static void writeRelativeRepairCoveragePlot(Path path, List<IncorrectMatch> matches) throws IOException {
+        if (matches.isEmpty()) {
+            return;
+        }
+        double[] levenshteinRatios = relativeRepairRatios(matches, "levenshtein");
+        double[] rawAstRatios = relativeRepairRatios(matches, "rawAst");
+        double[] canonicalRatios = relativeRepairRatios(matches, "canonical");
+        int width = 980;
+        int height = 620;
+        int left = 88;
+        int right = 42;
+        int top = 70;
+        int bottom = 86;
+        int plotWidth = width - left - right;
+        int plotHeight = height - top - bottom;
+        int baseline = top + plotHeight;
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
+                    + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
+            writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
+            writer.write("<text x=\"" + (width / 2) + "\" y=\"34\" text-anchor=\"middle\" "
+                    + "font-family=\"sans-serif\" font-size=\"20\">Relative repair coverage by metric</text>\n");
+            writer.write("<text x=\"" + (width / 2) + "\" y=\"54\" text-anchor=\"middle\" "
+                    + "font-family=\"sans-serif\" font-size=\"12\" fill=\"#555\">Empirical coverage curve for nearest correct repairs from 0% to 100% of representation size</text>\n");
+            writer.write("<line x1=\"" + left + "\" y1=\"" + baseline + "\" x2=\""
+                    + (left + plotWidth) + "\" y2=\"" + baseline
+                    + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+            writer.write("<line x1=\"" + left + "\" y1=\"" + top + "\" x2=\"" + left + "\" y2=\""
+                    + baseline + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+            for (int tick = 0; tick <= 5; tick++) {
+                double yValue = tick / 5.0;
+                double y = baseline - yValue * plotHeight;
+                writer.write("<line x1=\"" + left + "\" y1=\"" + number(y)
+                        + "\" x2=\"" + (left + plotWidth) + "\" y2=\"" + number(y)
+                        + "\" stroke=\"#e8e8e8\"/>\n");
+                writer.write("<line x1=\"" + (left - 5) + "\" y1=\"" + number(y)
+                        + "\" x2=\"" + left + "\" y2=\"" + number(y) + "\" stroke=\"#222\"/>\n");
+                writer.write("<text x=\"" + (left - 10) + "\" y=\"" + number(y + 4)
+                        + "\" text-anchor=\"end\" font-family=\"sans-serif\" font-size=\"12\">"
+                        + escapeXml(percentLabel(yValue)) + "</text>\n");
+            }
+            for (int tick = 0; tick <= 5; tick++) {
+                double fraction = tick / 5.0;
+                double x = left + fraction * plotWidth;
+                writer.write("<line x1=\"" + number(x) + "\" y1=\"" + top
+                        + "\" x2=\"" + number(x) + "\" y2=\"" + baseline
+                        + "\" stroke=\"#f0f0f0\"/>\n");
+                writer.write("<line x1=\"" + number(x) + "\" y1=\"" + baseline
+                        + "\" x2=\"" + number(x) + "\" y2=\"" + (baseline + 5)
+                        + "\" stroke=\"#222\"/>\n");
+                writer.write("<text x=\"" + number(x) + "\" y=\"" + (baseline + 24)
+                        + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"12\">"
+                        + escapeXml(percentLabel(fraction)) + "</text>\n");
+            }
+            writeRelativeCoverageSeries(writer, levenshteinRatios, "levenshtein", left, top, plotWidth, plotHeight);
+            writeRelativeCoverageSeries(writer, rawAstRatios, "rawAst", left, top, plotWidth, plotHeight);
+            writeRelativeCoverageSeries(writer, canonicalRatios, "canonical", left, top, plotWidth, plotHeight);
+            writeMetricLegendItem(writer, width - 340, 82, "Levenshtein / lexical size", metricColor("levenshtein"));
+            writeMetricLegendItem(writer, width - 340, 104, "Raw AST / AST size", metricColor("rawAst"));
+            writeMetricLegendItem(writer, width - 340, 126, "Canonical / canonical size", metricColor("canonical"));
+            writer.write("<text x=\"" + (left + plotWidth / 2) + "\" y=\"" + (height - 26)
+                    + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"14\">Repair radius as fraction of representation size</text>\n");
+            writer.write("<text x=\"22\" y=\"" + (top + plotHeight / 2)
+                    + "\" transform=\"rotate(-90 22 " + (top + plotHeight / 2)
+                    + ")\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"14\">Incorrect predicates repaired within radius</text>\n");
+            writer.write("</svg>\n");
+        }
+    }
+
+    private static void writeRawEditRepairCoveragePlot(Path path, List<IncorrectMatch> matches) throws IOException {
+        if (matches.isEmpty()) {
+            return;
+        }
+        int[] rawAstDistances = rawRepairDistances(matches, "rawAst");
+        int[] canonicalDistances = rawRepairDistances(matches, "canonical");
+        int xMax = Math.max(maxDistance(rawAstDistances), maxDistance(canonicalDistances));
+        xMax = Math.max(1, xMax);
+        int width = 980;
+        int height = 620;
+        int left = 88;
+        int right = 42;
+        int top = 70;
+        int bottom = 86;
+        int plotWidth = width - left - right;
+        int plotHeight = height - top - bottom;
+        int baseline = top + plotHeight;
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
+                    + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
+            writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
+            writer.write("<text x=\"" + (width / 2) + "\" y=\"34\" text-anchor=\"middle\" "
+                    + "font-family=\"sans-serif\" font-size=\"20\">Repair coverage by raw edit distance</text>\n");
+            writer.write("<text x=\"" + (width / 2) + "\" y=\"54\" text-anchor=\"middle\" "
+                    + "font-family=\"sans-serif\" font-size=\"12\" fill=\"#555\">Empirical coverage curve for nearest correct repairs, excluding Levenshtein</text>\n");
+            writer.write("<line x1=\"" + left + "\" y1=\"" + baseline + "\" x2=\""
+                    + (left + plotWidth) + "\" y2=\"" + baseline
+                    + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+            writer.write("<line x1=\"" + left + "\" y1=\"" + top + "\" x2=\"" + left + "\" y2=\""
+                    + baseline + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+            for (int tick = 0; tick <= 5; tick++) {
+                double yValue = tick / 5.0;
+                double y = baseline - yValue * plotHeight;
+                writer.write("<line x1=\"" + left + "\" y1=\"" + number(y)
+                        + "\" x2=\"" + (left + plotWidth) + "\" y2=\"" + number(y)
+                        + "\" stroke=\"#e8e8e8\"/>\n");
+                writer.write("<line x1=\"" + (left - 5) + "\" y1=\"" + number(y)
+                        + "\" x2=\"" + left + "\" y2=\"" + number(y) + "\" stroke=\"#222\"/>\n");
+                writer.write("<text x=\"" + (left - 10) + "\" y=\"" + number(y + 4)
+                        + "\" text-anchor=\"end\" font-family=\"sans-serif\" font-size=\"12\">"
+                        + escapeXml(percentLabel(yValue)) + "</text>\n");
+            }
+            for (int tick = 0; tick <= 5; tick++) {
+                int radius = (int) Math.round(xMax * tick / 5.0);
+                double x = left + radius * plotWidth / (double) xMax;
+                writer.write("<line x1=\"" + number(x) + "\" y1=\"" + top
+                        + "\" x2=\"" + number(x) + "\" y2=\"" + baseline
+                        + "\" stroke=\"#f0f0f0\"/>\n");
+                writer.write("<line x1=\"" + number(x) + "\" y1=\"" + baseline
+                        + "\" x2=\"" + number(x) + "\" y2=\"" + (baseline + 5)
+                        + "\" stroke=\"#222\"/>\n");
+                writer.write("<text x=\"" + number(x) + "\" y=\"" + (baseline + 24)
+                        + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"12\">"
+                        + radius + "</text>\n");
+            }
+            writeRawEditCoverageSeries(writer, rawAstDistances, "rawAst", xMax, left, top, plotWidth, plotHeight);
+            writeRawEditCoverageSeries(writer, canonicalDistances, "canonical", xMax, left, top, plotWidth, plotHeight);
+            writeMetricLegendItem(writer, width - 320, 82, "Raw AST", metricColor("rawAst"));
+            writeMetricLegendItem(writer, width - 320, 104, "Canonical", metricColor("canonical"));
+            writer.write("<text x=\"" + (left + plotWidth / 2) + "\" y=\"" + (height - 26)
+                    + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"14\">Absolute edit-distance repair radius</text>\n");
+            writer.write("<text x=\"22\" y=\"" + (top + plotHeight / 2)
+                    + "\" transform=\"rotate(-90 22 " + (top + plotHeight / 2)
+                    + ")\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"14\">Incorrect predicates repaired within radius</text>\n");
+            writer.write("</svg>\n");
+        }
+    }
+
+    private static void writeRawEditCoverageSeries(
+            Writer writer,
+            int[] sortedDistances,
+            String metric,
+            int xMax,
+            int left,
+            int top,
+            int plotWidth,
+            int plotHeight) throws IOException {
+        String color = metricColor(metric);
+        StringBuilder path = new StringBuilder();
+        for (int radius = 0; radius <= xMax; radius++) {
+            double covered = sortedDistances.length == 0
+                    ? 0.0
+                    : upperBound(sortedDistances, radius) / (double) sortedDistances.length;
+            double x = left + radius * plotWidth / (double) xMax;
+            double y = top + plotHeight - covered * plotHeight;
+            path.append(radius == 0 ? "M " : " L ")
+                    .append(number(x))
+                    .append(' ')
+                    .append(number(y));
+        }
+        writer.write("<path d=\"" + path + "\" fill=\"none\" stroke=\"" + color
+                + "\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n");
+        for (int radius : REPAIR_RADII) {
+            if (radius > xMax) {
+                continue;
+            }
+            int count = upperBound(sortedDistances, radius);
+            double covered = sortedDistances.length == 0 ? 0.0 : count / (double) sortedDistances.length;
+            double x = left + radius * plotWidth / (double) xMax;
+            double y = top + plotHeight - covered * plotHeight;
+            writer.write("<circle cx=\"" + number(x) + "\" cy=\"" + number(y)
+                    + "\" r=\"5\" fill=\"" + color + "\"><title>"
+                    + escapeXml(repairMetricTitle(metric) + " <= " + radius + ": "
+                            + countPercent(count, sortedDistances.length))
+                    + "</title></circle>\n");
+        }
+    }
+
+    private static void writeRelativeCoverageSeries(
+            Writer writer,
+            double[] sortedRatios,
+            String metric,
+            int left,
+            int top,
+            int plotWidth,
+            int plotHeight) throws IOException {
+        String color = metricColor(metric);
+        StringBuilder path = new StringBuilder();
+        for (int i = 0; i <= RELATIVE_REPAIR_CURVE_STEPS; i++) {
+            double fraction = i / (double) RELATIVE_REPAIR_CURVE_STEPS;
+            double covered = relativeCoverageRatio(sortedRatios, fraction);
+            double x = left + fraction * plotWidth;
+            double y = top + plotHeight - covered * plotHeight;
+            path.append(i == 0 ? "M " : " L ")
+                    .append(number(x))
+                    .append(' ')
+                    .append(number(y));
+        }
+        writer.write("<path d=\"" + path + "\" fill=\"none\" stroke=\"" + color
+                + "\" stroke-width=\"3\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/>\n");
+        for (double radius : RELATIVE_REPAIR_RADII) {
+            int count = upperBound(sortedRatios, radius);
+            double covered = sortedRatios.length == 0 ? 0.0 : count / (double) sortedRatios.length;
+            double x = left + radius * plotWidth;
+            double y = top + plotHeight - covered * plotHeight;
+            writer.write("<circle cx=\"" + number(x) + "\" cy=\"" + number(y)
+                    + "\" r=\"5\" fill=\"" + color + "\"><title>"
+                    + escapeXml(repairMetricTitle(metric) + " <= " + percentLabel(radius)
+                            + ": " + countPercent(count, sortedRatios.length))
+                    + "</title></circle>\n");
+        }
+    }
+
+    private static double[] relativeRepairRatios(List<IncorrectMatch> matches, String metric) {
+        double[] ratios = new double[matches.size()];
+        for (int i = 0; i < matches.size(); i++) {
+            ratios[i] = repairMetricRatio(matches.get(i), metric);
+        }
+        Arrays.sort(ratios);
+        return ratios;
+    }
+
+    private static int[] rawRepairDistances(List<IncorrectMatch> matches, String metric) {
+        int[] distances = new int[matches.size()];
+        for (int i = 0; i < matches.size(); i++) {
+            distances[i] = repairMetricDistance(matches.get(i), metric);
+        }
+        Arrays.sort(distances);
+        return distances;
+    }
+
+    private static int maxDistance(int[] sortedDistances) {
+        return sortedDistances.length == 0 ? 0 : sortedDistances[sortedDistances.length - 1];
+    }
+
+    private static double relativeCoverageRatio(double[] sortedRatios, double radiusFraction) {
+        return sortedRatios.length == 0 ? 0.0 : upperBound(sortedRatios, radiusFraction) / (double) sortedRatios.length;
+    }
+
+    private static int upperBound(double[] sortedValues, double value) {
+        int low = 0;
+        int high = sortedValues.length;
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (sortedValues[mid] <= value) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    private static int upperBound(int[] sortedValues, int value) {
+        int low = 0;
+        int high = sortedValues.length;
+        while (low < high) {
+            int mid = (low + high) >>> 1;
+            if (sortedValues[mid] <= value) {
+                low = mid + 1;
+            } else {
+                high = mid;
+            }
+        }
+        return low;
+    }
+
+    private static int relativeCoverageCount(RepairRadiusStats coverage, String metric, int index) {
+        if ("levenshtein".equals(metric)) {
+            return coverage.levenshteinRelativeWithin[index];
+        }
+        if ("rawAst".equals(metric)) {
+            return coverage.rawAstRelativeWithin[index];
+        }
+        return coverage.canonicalRelativeWithin[index];
+    }
+
+    private static double relativeCoverageRatio(RepairRadiusStats coverage, String metric, int index) {
+        return coverage.count == 0 ? 0.0 : relativeCoverageCount(coverage, metric, index) / (double) coverage.count;
+    }
+
+    private static String metricColor(String metric) {
+        if ("levenshtein".equals(metric)) {
+            return "#2ca02c";
+        }
+        if ("rawAst".equals(metric)) {
+            return "#ff7f0e";
+        }
+        return "#1f77b4";
+    }
+
+    private static void writeMetricLegendItem(Writer writer, int x, int y, String label, String color) throws IOException {
+        writer.write("<line x1=\"" + x + "\" y1=\"" + y + "\" x2=\"" + (x + 24)
+                + "\" y2=\"" + y + "\" stroke=\"" + color + "\" stroke-width=\"3\"/>\n");
+        writer.write("<circle cx=\"" + (x + 12) + "\" cy=\"" + y + "\" r=\"4\" fill=\"" + color + "\"/>\n");
+        writer.write("<text x=\"" + (x + 32) + "\" y=\"" + (y + 4)
+                + "\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#333\">"
+                + escapeXml(label) + "</text>\n");
+    }
+
+    private static void writeRepairRatioRegressionPlot(Path path, List<IncorrectMatch> matches) throws IOException {
+        if (matches.isEmpty()) {
+            return;
+        }
+        int width = 1150;
+        int height = 1040;
+        int left = 92;
+        int right = 34;
+        int top = 72;
+        int bottom = 72;
+        int gap = 70;
+        int plotWidth = width - left - right;
+        int plotHeight = (height - top - bottom - 2 * gap) / 3;
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
+                    + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
+            writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
+            writer.write("<text x=\"" + (width / 2) + "\" y=\"34\" text-anchor=\"middle\" "
+                    + "font-family=\"sans-serif\" font-size=\"20\">Repair distance ratio vs representation size</text>\n");
+            writeRepairRatioLegend(writer, width - 430, 22);
+            writeRepairRatioPanel(writer, matches, "levenshtein", left, top, plotWidth, plotHeight);
+            writeRepairRatioPanel(writer, matches, "rawAst", left, top + plotHeight + gap, plotWidth, plotHeight);
+            writeRepairRatioPanel(writer, matches, "canonical", left, top + 2 * (plotHeight + gap), plotWidth, plotHeight);
+            writer.write("</svg>\n");
+        }
+    }
+
+    private static void writeRepairRatioPanel(
+            Writer writer,
+            List<IncorrectMatch> matches,
+            String metric,
+            int left,
+            int top,
+            int plotWidth,
+            int plotHeight) throws IOException {
+        double xMax = 1.0;
+        double yMax = 1.0;
+        for (IncorrectMatch match : matches) {
+            xMax = Math.max(xMax, repairMetricSize(match, metric));
+            yMax = Math.max(yMax, repairMetricRatio(match, metric));
+        }
+        yMax = Math.max(1.0, yMax * 1.08);
+        RepairRatioRegressionStats stats = repairRatioRegressionStats(matches, metric);
+        int baseline = top + plotHeight;
+        writer.write("<text x=\"" + left + "\" y=\"" + (top - 20)
+                + "\" font-family=\"sans-serif\" font-size=\"16\" font-weight=\"600\">"
+                + escapeXml(repairMetricTitle(metric)) + "</text>\n");
+        writer.write("<text x=\"" + left + "\" y=\"" + (top - 4)
+                + "\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#555\">Pearson r="
+                + number(stats.correlation()) + ", slope=" + number(stats.slope()) + "</text>\n");
+        writer.write("<line x1=\"" + left + "\" y1=\"" + baseline + "\" x2=\""
+                + (left + plotWidth) + "\" y2=\"" + baseline
+                + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+        writer.write("<line x1=\"" + left + "\" y1=\"" + top + "\" x2=\"" + left + "\" y2=\""
+                + baseline + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
+        for (int tick = 0; tick <= 5; tick++) {
+            double xValue = xMax * tick / 5.0;
+            double x = left + xValue * plotWidth / xMax;
+            writer.write("<line x1=\"" + number(x) + "\" y1=\"" + top
+                    + "\" x2=\"" + number(x) + "\" y2=\"" + baseline
+                    + "\" stroke=\"#e6e6e6\"/>\n");
+            writer.write("<line x1=\"" + number(x) + "\" y1=\"" + baseline
+                    + "\" x2=\"" + number(x) + "\" y2=\"" + (baseline + 5)
+                    + "\" stroke=\"#222\"/>\n");
+            writer.write("<text x=\"" + number(x) + "\" y=\"" + (baseline + 21)
+                    + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"11\">"
+                    + escapeXml(axisNumber(xValue)) + "</text>\n");
+        }
+        for (int tick = 0; tick <= 5; tick++) {
+            double yValue = yMax * tick / 5.0;
+            double y = baseline - yValue * plotHeight / yMax;
+            writer.write("<line x1=\"" + left + "\" y1=\"" + number(y)
+                    + "\" x2=\"" + (left + plotWidth) + "\" y2=\"" + number(y)
+                    + "\" stroke=\"#e6e6e6\"/>\n");
+            writer.write("<line x1=\"" + (left - 5) + "\" y1=\"" + number(y)
+                    + "\" x2=\"" + left + "\" y2=\"" + number(y) + "\" stroke=\"#222\"/>\n");
+            writer.write("<text x=\"" + (left - 10) + "\" y=\"" + number(y + 4)
+                    + "\" text-anchor=\"end\" font-family=\"sans-serif\" font-size=\"11\">"
+                    + escapeXml(axisNumber(yValue)) + "</text>\n");
+        }
+        for (IncorrectMatch match : matches) {
+            double xValue = repairMetricSize(match, metric);
+            double yValue = repairMetricRatio(match, metric);
+            double x = left + xValue * plotWidth / xMax;
+            double y = baseline - yValue * plotHeight / yMax;
+            writer.write("<circle cx=\"" + number(x) + "\" cy=\"" + number(y)
+                    + "\" r=\"2.7\" fill=\"" + statusColor(match.record.statusFolder)
+                    + "\" fill-opacity=\"0.50\"><title>"
+                    + escapeXml(match.record.relativePath + " size=" + axisNumber(xValue)
+                            + " ratio=" + number(yValue))
+                    + "</title></circle>\n");
+        }
+        double y0 = clamp(stats.intercept(), 0.0, yMax);
+        double y1 = clamp(stats.intercept() + stats.slope() * xMax, 0.0, yMax);
+        double lineY0 = baseline - y0 * plotHeight / yMax;
+        double lineY1 = baseline - y1 * plotHeight / yMax;
+        writer.write("<line x1=\"" + left + "\" y1=\"" + number(lineY0)
+                + "\" x2=\"" + (left + plotWidth) + "\" y2=\"" + number(lineY1)
+                + "\" stroke=\"#111\" stroke-width=\"2.2\" stroke-opacity=\"0.82\"/>\n");
+        writer.write("<text x=\"" + (left + plotWidth / 2) + "\" y=\"" + (baseline + 43)
+                + "\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"12\">"
+                + escapeXml(repairMetricXAxis(metric)) + "</text>\n");
+        writer.write("<text x=\"22\" y=\"" + (top + plotHeight / 2)
+                + "\" transform=\"rotate(-90 22 " + (top + plotHeight / 2)
+                + ")\" text-anchor=\"middle\" font-family=\"sans-serif\" font-size=\"12\">"
+                + escapeXml(repairMetricYAxis(metric)) + "</text>\n");
+    }
+
+    private static void writeRepairRatioLegend(Writer writer, int x, int y) throws IOException {
+        writeLegendItem(writer, x, y, "BOTH", statusColor("BOTH"));
+        writeLegendItem(writer, x + 105, y, "OVER", statusColor("OVERCONSTRAINED"));
+        writeLegendItem(writer, x + 215, y, "UNDER", statusColor("UNDERCONSTRAINED"));
+    }
+
+    private static void writeLegendItem(Writer writer, int x, int y, String label, String color) throws IOException {
+        writer.write("<circle cx=\"" + x + "\" cy=\"" + y + "\" r=\"5\" fill=\"" + color
+                + "\" fill-opacity=\"0.72\"/>\n");
+        writer.write("<text x=\"" + (x + 10) + "\" y=\"" + (y + 4)
+                + "\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#333\">"
+                + escapeXml(label) + "</text>\n");
+    }
+
     private static void writePlotScript(Path path) throws IOException {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("#!/usr/bin/env python3\n");
@@ -660,8 +1214,11 @@ public class Alloy4FunAugmenter {
             writer.write("print('Use the generated SVG plots:')\n");
             writer.write("print(ROOT / 'canonical_distance_vs_reward_error_raw.svg')\n");
             writer.write("print(ROOT / 'canonical_distance_vs_reward_error_log.svg')\n");
+            writer.write("print(ROOT / 'relative_repair_coverage_comparison.svg')\n");
+            writer.write("print(ROOT / 'raw_edit_repair_coverage_ast_canonical.svg')\n");
             writer.write("with CSV.open() as f:\n");
-            writer.write("    rows = [r for r in csv.DictReader(f) if r.get('candidateReward')]\n");
+            writer.write("    all_rows = list(csv.DictReader(f))\n");
+            writer.write("rows = [r for r in all_rows if r.get('candidateReward')]\n");
             writer.write("print(f'Loaded {len(rows)} rewarded points from {CSV}')\n");
             writer.write("errs = [float(r['rewardError']) for r in rows]\n");
             writer.write("positive = [e for e in errs if e > 0.0]\n");
@@ -674,6 +1231,10 @@ public class Alloy4FunAugmenter {
             writer.write("    print(f\"Pearson {label} distance vs log10(1-reward): {corr(xs, logs):.6f}\")\n");
             writer.write("    print(f\"Pearson {label} ratio vs raw 1-reward: {corr(ratios, errs):.6f}\")\n");
             writer.write("    print(f\"Pearson {label} ratio vs log10(1-reward): {corr(ratios, logs):.6f}\")\n");
+            writer.write("for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalSize', 'canonicalDistanceRatio', 'Canonical')]:\n");
+            writer.write("    xs = [float(r[size_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]\n");
+            writer.write("    ys = [float(r[ratio_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]\n");
+            writer.write("    print(f\"Pearson {label} repair ratio vs representation size: {corr(xs, ys):.6f}\")\n");
         }
     }
 
@@ -823,6 +1384,58 @@ public class Alloy4FunAugmenter {
         return stats;
     }
 
+    private static Map<String, RepairRadiusStats> repairRadiusStatsOverall(List<IncorrectMatch> matches) {
+        Map<String, RepairRadiusStats> stats = new java.util.LinkedHashMap<>();
+        RepairRadiusStats all = new RepairRadiusStats("All incorrect");
+        for (IncorrectMatch match : matches) {
+            all.add(match);
+        }
+        stats.put(all.label, all);
+        return stats;
+    }
+
+    private static Map<String, RepairRadiusStats> repairRadiusStatsByStatus(List<IncorrectMatch> matches) {
+        Map<String, RepairRadiusStats> stats = new java.util.TreeMap<>();
+        for (IncorrectMatch match : matches) {
+            RepairRadiusStats row = stats.computeIfAbsent(
+                    match.record.statusFolder,
+                    RepairRadiusStats::new);
+            row.add(match);
+        }
+        return stats;
+    }
+
+    private static Map<String, RepairRadiusStats> repairRadiusStatsByQuestionSet(List<IncorrectMatch> matches) {
+        Map<String, RepairRadiusStats> stats = new java.util.TreeMap<>();
+        for (IncorrectMatch match : matches) {
+            RepairRadiusStats row = stats.computeIfAbsent(
+                    match.record.questionSet,
+                    RepairRadiusStats::new);
+            row.add(match);
+        }
+        return stats;
+    }
+
+    private static Map<String, RepairRadiusStats> repairRadiusStatsByQuestionSetAndStatus(List<IncorrectMatch> matches) {
+        Map<String, RepairRadiusStats> stats = new java.util.TreeMap<>();
+        for (IncorrectMatch match : matches) {
+            String key = match.record.questionSet + " / " + match.record.statusFolder;
+            RepairRadiusStats row = stats.computeIfAbsent(
+                    key,
+                    RepairRadiusStats::new);
+            row.add(match);
+        }
+        return stats;
+    }
+
+    private static RepairRatioRegressionStats repairRatioRegressionStats(List<IncorrectMatch> matches, String metric) {
+        RepairRatioRegressionStats stats = new RepairRatioRegressionStats();
+        for (IncorrectMatch match : matches) {
+            stats.add(repairMetricSize(match, metric), repairMetricRatio(match, metric));
+        }
+        return stats;
+    }
+
     private static RewardDistanceStats rewardDistanceStats(List<IncorrectMatch> matches, String metric) {
         RewardDistanceStats stats = new RewardDistanceStats();
         double floor = rewardErrorFloor(matches);
@@ -843,6 +1456,66 @@ public class Alloy4FunAugmenter {
             }
         }
         return stats;
+    }
+
+    private static int repairMetricDistance(IncorrectMatch match, String metric) {
+        if ("levenshtein".equals(metric)) {
+            return match.levenshtein.first().distance;
+        }
+        if ("rawAst".equals(metric)) {
+            return match.rawAst.first().distance;
+        }
+        return match.canonical.first().distance;
+    }
+
+    private static double repairMetricSize(IncorrectMatch match, String metric) {
+        if ("levenshtein".equals(metric)) {
+            return match.record.levenshteinSize;
+        }
+        if ("rawAst".equals(metric)) {
+            return match.record.rawAstSize;
+        }
+        return match.record.canonicalSize;
+    }
+
+    private static double repairMetricRatio(IncorrectMatch match, String metric) {
+        if ("levenshtein".equals(metric)) {
+            return ratio(match.levenshtein.first().distance, match.record.levenshteinSize);
+        }
+        if ("rawAst".equals(metric)) {
+            return ratio(match.rawAst.first().distance, match.record.rawAstSize);
+        }
+        return ratio(match.canonical.first().distance, match.record.canonicalSize);
+    }
+
+    private static String repairMetricTitle(String metric) {
+        if ("levenshtein".equals(metric)) {
+            return "Levenshtein repair ratio";
+        }
+        if ("rawAst".equals(metric)) {
+            return "Raw AST repair ratio";
+        }
+        return "Canonical repair ratio";
+    }
+
+    private static String repairMetricXAxis(String metric) {
+        if ("levenshtein".equals(metric)) {
+            return "Incorrect predicate body size, in characters";
+        }
+        if ("rawAst".equals(metric)) {
+            return "Incorrect raw AST size, in nodes";
+        }
+        return "Incorrect canonical-form size";
+    }
+
+    private static String repairMetricYAxis(String metric) {
+        if ("levenshtein".equals(metric)) {
+            return "Levenshtein distance / body size";
+        }
+        if ("rawAst".equals(metric)) {
+            return "AST distance / AST size";
+        }
+        return "Canonical distance / canonical size";
     }
 
     private static double rewardMetricDistance(IncorrectMatch match, String metric) {
@@ -913,6 +1586,26 @@ public class Alloy4FunAugmenter {
 
     private static String number(double value) {
         return String.format(java.util.Locale.ROOT, "%.6f", value);
+    }
+
+    private static String axisNumber(double value) {
+        if (Math.abs(value) >= 100.0 || Math.abs(value - Math.rint(value)) < 1e-9) {
+            return String.format(java.util.Locale.ROOT, "%.0f", value);
+        }
+        return String.format(java.util.Locale.ROOT, "%.2f", value);
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private static String countPercent(int value, int total) {
+        double percent = total == 0 ? 0.0 : 100.0 * value / total;
+        return value + " (" + String.format(java.util.Locale.ROOT, "%.1f%%", percent) + ")";
+    }
+
+    private static String percentLabel(double value) {
+        return String.format(java.util.Locale.ROOT, "%.0f%%", value * 100.0);
     }
 
     private static PredicatePair findPredicatePair(Path file, ModelUnit model) {
@@ -1483,6 +2176,98 @@ public class Alloy4FunAugmenter {
 
         private double averageCanonicalRatio() {
             return count == 0 ? 0.0 : canonicalRatioSum / count;
+        }
+    }
+
+    private static class RepairRadiusStats {
+        private final String label;
+        private int count;
+        private final int[] rawAstWithin = new int[REPAIR_RADII.length];
+        private final int[] canonicalWithin = new int[REPAIR_RADII.length];
+        private final int[] levenshteinRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
+        private final int[] rawAstRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
+        private final int[] canonicalRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
+
+        private RepairRadiusStats(String label) {
+            this.label = label;
+        }
+
+        private void add(IncorrectMatch match) {
+            count++;
+            int levenshteinDistance = match.levenshtein.first().distance;
+            int rawAstDistance = match.rawAst.first().distance;
+            int canonicalDistance = match.canonical.first().distance;
+            double levenshteinRatio = ratio(levenshteinDistance, match.record.levenshteinSize);
+            double rawAstRatio = ratio(rawAstDistance, match.record.rawAstSize);
+            double canonicalRatio = ratio(canonicalDistance, match.record.canonicalSize);
+            for (int i = 0; i < REPAIR_RADII.length; i++) {
+                if (rawAstDistance <= REPAIR_RADII[i]) {
+                    rawAstWithin[i]++;
+                }
+                if (canonicalDistance <= REPAIR_RADII[i]) {
+                    canonicalWithin[i]++;
+                }
+            }
+            for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                if (levenshteinRatio <= RELATIVE_REPAIR_RADII[i]) {
+                    levenshteinRelativeWithin[i]++;
+                }
+                if (rawAstRatio <= RELATIVE_REPAIR_RADII[i]) {
+                    rawAstRelativeWithin[i]++;
+                }
+                if (canonicalRatio <= RELATIVE_REPAIR_RADII[i]) {
+                    canonicalRelativeWithin[i]++;
+                }
+            }
+        }
+    }
+
+    private static class RepairRatioRegressionStats {
+        private int count;
+        private double xSum;
+        private double ySum;
+        private double xxSum;
+        private double yySum;
+        private double xySum;
+
+        private void add(double size, double ratio) {
+            count++;
+            xSum += size;
+            ySum += ratio;
+            xxSum += size * size;
+            yySum += ratio * ratio;
+            xySum += size * ratio;
+        }
+
+        private double slope() {
+            if (count < 2) {
+                return 0.0;
+            }
+            double denominator = count * xxSum - xSum * xSum;
+            if (denominator == 0.0) {
+                return 0.0;
+            }
+            return (count * xySum - xSum * ySum) / denominator;
+        }
+
+        private double intercept() {
+            if (count == 0) {
+                return 0.0;
+            }
+            return (ySum / count) - slope() * (xSum / count);
+        }
+
+        private double correlation() {
+            if (count < 2) {
+                return 0.0;
+            }
+            double numerator = count * xySum - xSum * ySum;
+            double xDenominator = count * xxSum - xSum * xSum;
+            double yDenominator = count * yySum - ySum * ySum;
+            if (xDenominator <= 0.0 || yDenominator <= 0.0) {
+                return 0.0;
+            }
+            return numerator / Math.sqrt(xDenominator * yDenominator);
         }
     }
 

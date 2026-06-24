@@ -18,6 +18,13 @@ public class QuantiVar {
         NOTONE,
         NOTLONE
     }
+    public enum Cardinality {
+        SET,
+        SOME,
+        ONE,
+        LONE,
+        EXACTLY
+    }
 
     private int id;
     private String name;
@@ -26,6 +33,7 @@ public class QuantiVar {
     private String typeName;
     private String deBruijnKey;
     private Quantifier quantifier;
+    private Cardinality cardinality;
     private boolean disj;
     private String bindingPath;
     public QuantiVar(int id, String name, Type type) {
@@ -36,6 +44,7 @@ public class QuantiVar {
         this.typeName = type == null ? null : type.toString();
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
+        this.cardinality = Cardinality.SET;
         this.disj = false;
         this.bindingPath = "";
     }
@@ -50,6 +59,7 @@ public class QuantiVar {
         this.typeName = typeName;
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
+        this.cardinality = Cardinality.SET;
         this.disj = false;
         this.bindingPath = "";
     }
@@ -79,6 +89,12 @@ public class QuantiVar {
     }
     public void setQuantifier(Quantifier quantifier) {
         this.quantifier = quantifier == null ? Quantifier.SOME : quantifier;
+    }
+    public Cardinality getCardinality() {
+        return cardinality == null ? Cardinality.SET : cardinality;
+    }
+    public void setCardinality(Cardinality cardinality) {
+        this.cardinality = cardinality == null ? Cardinality.SET : cardinality;
     }
     public boolean isDisj() {
         return disj;
@@ -111,6 +127,7 @@ public class QuantiVar {
         // in JSON form
         return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName
                 + "\", \"type\": \"" + typeName + "\", \"quantifier\": \"" + quantifier
+                + "\", \"cardinality\": \"" + getCardinality()
                 + "\", \"disj\": " + disj + ", \"deBruijnKey\": \"" + getDeBruijnKey() + "\"}";
     }
 }

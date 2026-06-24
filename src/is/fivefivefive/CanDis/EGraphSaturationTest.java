@@ -11,6 +11,7 @@ import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.macros.NormalForm;
 import is.fivefivefive.CanDis.macros.QuantiVar;
+import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
 
 public final class EGraphSaturationTest {
@@ -21,6 +22,7 @@ public final class EGraphSaturationTest {
         testAssociativeCommutativeSaturation();
         testDeMorganSaturation();
         testAssociativeNoncommutativeJoin();
+        testSetOperatorsUseBagFlexibleArity();
         testRenamedIdUnionFind();
         testDoubleNegationAndIdempotence();
         testAllNoNotQuantifierEquivalence();
@@ -28,6 +30,10 @@ public final class EGraphSaturationTest {
         testSetIdentitySaturation();
         testImplicationSaturation();
         testEmptyDomainQuantifierRewrite();
+        testIteEliminatedFromNormalForm();
+        testEndEliminatedFromNormalForm();
+        testNegatedRelationDoesNotNegateSetOperands();
+        testPrimitiveDomainConstraintNotDuplicatedInMatrix();
         testComplementEliminatesRedundantSlot();
         testSlotPermutationGroups();
         testDisjModifierIsPreserved();
@@ -47,6 +53,7 @@ public final class EGraphSaturationTest {
 
         root.saturate();
 
+        assertTrue(root.isBagFlexibleArity(), "AND must use bag flexible arity");
         assertEquals(3, root.getChildren().size(), "AND must flatten to flexible arity");
         assertEquals(Arrays.asList("a", "b", "c"), variableNames(root.getChildren()),
                 "commutative children must be canonicalized");
@@ -57,6 +64,12 @@ public final class EGraphSaturationTest {
             assertEquals(1, child.getEClass().getSlots().size(), "variable e-class must expose one slot");
             assertEquals(1, child.getSlotMap().size(), "e-class invocation must map its slot");
         }
+
+        EGraphNode disjunction = node(Opcode.OR, true, true, variable("z"), variable("y"), variable("x"));
+        disjunction.saturate();
+        assertTrue(disjunction.isBagFlexibleArity(), "OR must use bag flexible arity");
+        assertEquals(Arrays.asList("x", "y", "z"), variableNames(disjunction.getChildren()),
+                "OR bag operands must be canonicalized without preserving source order");
     }
 
     private static void testDeMorganSaturation() {
@@ -81,10 +94,36 @@ public final class EGraphSaturationTest {
         join.saturate();
 
         assertTrue(join.isFlexibleArity(), "JOIN must have flexible arity");
+        assertTrue(join.isSequenceFlexibleArity(), "JOIN must use sequence flexible arity");
         assertEquals(Arrays.asList("a", "b", "c"), variableNames(join.getChildren()),
                 "JOIN must flatten without reordering operands");
         assertTrue(join.getEClass().getNodes().size() >= 2,
                 "associated JOIN terms must share an e-class");
+    }
+
+    private static void testSetOperatorsUseBagFlexibleArity() {
+        EGraphNode nestedUnion = node(Opcode.PLUS, true, true, variable("b"), variable("a"));
+        EGraphNode union = node(Opcode.PLUS, true, true, variable("c"), nestedUnion);
+        union.saturate();
+
+        assertTrue(union.isBagFlexibleArity(), "set union PLUS must use bag flexible arity");
+        assertEquals(Arrays.asList("a", "b", "c"), variableNames(union.getChildren()),
+                "bag flexible arity must canonicalize set union operands without preserving source order");
+
+        EGraphNode nestedIntersection = node(Opcode.INTERSECT, true, true, variable("right"), variable("left"));
+        EGraphNode intersection = node(Opcode.INTERSECT, true, true, variable("tail"), nestedIntersection);
+        intersection.saturate();
+
+        assertTrue(intersection.isBagFlexibleArity(), "set intersection must use bag flexible arity");
+        assertEquals(Arrays.asList("left", "right", "tail"), variableNames(intersection.getChildren()),
+                "bag flexible arity must canonicalize set intersection operands");
+
+        EGraphNode arrow = node(Opcode.ARROW, false, true, variable("a"), node(Opcode.ARROW, false, true, variable("b"), variable("c")));
+        arrow.saturate();
+
+        assertTrue(arrow.isSequenceFlexibleArity(), "relational product ARROW must use sequence flexible arity");
+        assertEquals(Arrays.asList("a", "b", "c"), variableNames(arrow.getChildren()),
+                "sequence flexible arity must preserve relational product order");
     }
 
     private static void testRenamedIdUnionFind() {
@@ -216,6 +255,111 @@ public final class EGraphSaturationTest {
         assertEquals(Opcode.CONSTANT, universal.getMatrixEGraph().getOpcode(), "all x: none | P must be true");
         assertEquals("true", universal.getMatrixEGraph().getSourceName(), "all x: none | P must be true");
         assertEquals(0, universal.getMatrixQuantiVars().size(), "empty-domain universal must not retain a binding");
+    }
+
+    private static void testIteEliminatedFromNormalForm() {
+        NormalForm normalForm = new NormalForm();
+        normalForm.addEClass(node(
+                Opcode.ITE,
+                false,
+                false,
+                predicate("C"),
+                predicate("T"),
+                predicate("E")));
+        normalForm.normalize();
+
+        assertTrue(!containsOpcode(normalForm.getMatrixEGraph(), Opcode.ITE),
+                "boolean ITE must be expanded out of the normal-form matrix");
+        assertEquals(Opcode.OR, normalForm.getMatrixEGraph().getOpcode(),
+                "boolean ITE must normalize to disjunction of guarded branches");
+    }
+
+    private static void testEndEliminatedFromNormalForm() {
+        NormalForm normalForm = new NormalForm();
+        normalForm.addEClass(node(
+                Opcode.AND,
+                true,
+                true,
+                variable("x"),
+                node(Opcode.END, false, false)));
+        normalForm.normalize();
+
+        assertTrue(!containsOpcode(normalForm.getMatrixEGraph(), Opcode.END),
+                "normal-form matrix must not retain flexible-arity END sentinels");
+        assertEquals(Opcode.VARIABLE, normalForm.getMatrixEGraph().getOpcode(),
+                "AND with only a real operand after END pruning must collapse to that operand");
+    }
+
+    private static void testNegatedRelationDoesNotNegateSetOperands() {
+        NormalForm normalForm = new NormalForm();
+        normalForm.addEClass(node(
+                Opcode.NOT_IN,
+                false,
+                false,
+                node(Opcode.ARROW, false, true, variable("c"), variable("s"), variable("g")),
+                global("Groups")));
+        normalForm.normalize();
+
+        assertEquals(Opcode.NOT_IN, normalForm.getMatrixEGraph().getOpcode(),
+                "negated membership must stay a negated relation");
+        assertTrue(!containsOpcode(normalForm.getMatrixEGraph(), Opcode.NOT),
+                "negated membership must not push NOT into set or relation operands");
+    }
+
+    private static void testPrimitiveDomainConstraintNotDuplicatedInMatrix() {
+        NormalForm primitiveDomain = new NormalForm();
+        primitiveDomain.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDeclWithDomain(node(Opcode.ONE, false, false, global("Person")), "Person", "x"),
+                predicate("P", variable("x"))));
+        primitiveDomain.normalize();
+
+        assertEquals(Quantifier.ALL, primitiveDomain.getMatrixQuantiVars().get(0).getQuantifier(),
+                "quantifier must stay encoded in QuantiVar");
+        assertEquals("Person", primitiveDomain.getMatrixQuantiVars().get(0).getTypeName(),
+                "primitive type must stay encoded in QuantiVar");
+        assertEquals(Cardinality.ONE, primitiveDomain.getMatrixQuantiVars().get(0).getCardinality(),
+                "primitive cardinality must stay encoded in QuantiVar");
+        assertEquals(Opcode.CALL, primitiveDomain.getMatrixEGraph().getOpcode(),
+                "primitive one Person domain must not add x in one Person to the matrix");
+        assertTrue(!containsOpcode(primitiveDomain.getMatrixEGraph(), Opcode.IN),
+                "primitive domain constraint already encoded by QuantiVar must not be duplicated");
+        assertTrue(!containsOpcode(primitiveDomain.getMatrixEGraph(), Opcode.ONE),
+                "primitive multiplicity wrapper already encoded by QuantiVar must not be duplicated");
+
+        NormalForm complexDomain = new NormalForm();
+        complexDomain.addEClass(node(
+                Opcode.EXISTS,
+                false,
+                false,
+                relDeclWithDomain(
+                        node(Opcode.ONE, false, false,
+                                node(Opcode.JOIN, false, true, global("Field"), variable("owner"))),
+                        "Person",
+                        "x"),
+                predicate("P", variable("x"))));
+        complexDomain.normalize();
+
+        assertEquals(Cardinality.ONE, complexDomain.getMatrixQuantiVars().get(0).getCardinality(),
+                "complex-domain cardinality must stay encoded in QuantiVar");
+        assertTrue(containsOpcode(complexDomain.getMatrixEGraph(), Opcode.IN),
+                "non-primitive domain must still be pushed down into the matrix");
+        assertTrue(!containsOpcode(complexDomain.getMatrixEGraph(), Opcode.ONE),
+                "pushed-down complex domain must not duplicate cardinality already encoded in QuantiVar");
+
+        NormalForm plainPrimitiveDomain = new NormalForm();
+        plainPrimitiveDomain.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDeclWithDomain(global("Person"), "Person", "x"),
+                predicate("P", variable("x"))));
+        plainPrimitiveDomain.normalize();
+
+        assertTrue(normalFormDistance(primitiveDomain, plainPrimitiveDomain) > 0,
+                "one Person vs Person binding cardinality must affect quantifier distance");
     }
 
     private static void testComplementEliminatesRedundantSlot() {
@@ -586,6 +730,17 @@ public final class EGraphSaturationTest {
         for (int i = 0; i < variableNames.length; i++) {
             EGraphNode declared = variable(variableNames[i]);
             declared.setSourceType(typeName);
+            children[i + 1] = declared;
+        }
+        return node(Opcode.GENERICRELDECL, true, true, children);
+    }
+
+    private static EGraphNode relDeclWithDomain(EGraphNode domain, String primitiveTypeName, String... variableNames) {
+        EGraphNode[] children = new EGraphNode[variableNames.length + 1];
+        children[0] = domain;
+        for (int i = 0; i < variableNames.length; i++) {
+            EGraphNode declared = variable(variableNames[i]);
+            declared.setSourceType(primitiveTypeName);
             children[i + 1] = declared;
         }
         return node(Opcode.GENERICRELDECL, true, true, children);

@@ -8,6 +8,7 @@ import java.util.Comparator;
 
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
 
 import java.util.HashMap;
@@ -97,13 +98,19 @@ public class NormalForm {
             return;
         }
         matrixQuantiVars.clear();
+        matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
-        matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
+        matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
+        matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
         List<EGraphNode> constraints = new ArrayList<>();
         matrixEGraphRoot = prenex(matrixEGraphRoot, new HashMap<>(), new int[] { 0 }, false, constraints, "root");
-        matrixEGraphRoot = conjoin(matrixEGraphRoot, constraints);
-        matrixEGraphRoot = toNNF(matrixEGraphRoot, false);
+        matrixEGraphRoot = removeEndNodes(conjoin(matrixEGraphRoot, constraints));
+        matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
+        matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
+        if (matrixEGraphRoot == null) {
+            return;
+        }
         matrixEGraphRoot.saturate();
         registerQuantifierSymmetries();
     }
@@ -117,6 +124,7 @@ public class NormalForm {
             QuantiVar right = matrixQuantiVars.get(i);
             if (isSymmetricBooleanQuantifier(left.getQuantifier())
                     && left.getQuantifier() == right.getQuantifier()
+                    && left.getCardinality() == right.getCardinality()
                     && left.isDisj() == right.isDisj()
                     && normalizeType(left.getTypeName()).equals(normalizeType(right.getTypeName()))) {
                 matrixEGraphRoot.getEClass().addSlotSwap(left.getName(), right.getName());
@@ -356,9 +364,10 @@ public class NormalForm {
                     bindingPath + "/type");
         }
         EGraphNode normalizedTypeEGraph = typeEGraph == null ? null : normalizeAssociativeCommutative(toNNF(typeEGraph, false));
+        DomainDescriptor domain = domainDescriptor(normalizedTypeEGraph);
         List<QuantiVar> quantiVars = new ArrayList<>();
         Quantifier quantifier = quantifierOf(quantifierOpcode, negated);
-        if (isNone(normalizedTypeEGraph)) {
+        if (isNone(domain.domain)) {
             return new RelDeclResult(quantiVars, emptyDomainValue(quantifier));
         }
         boolean disj = isDisj(relDecl.getOpcode());
@@ -375,13 +384,15 @@ public class NormalForm {
             String varType = primitiveVarType(candidate.getSourceType());
             QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
             qv.setQuantifier(quantifier);
+            qv.setCardinality(domain.cardinality);
             qv.setDisj(disj);
             qv.setBindingPath(deBruijnBase);
-            qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + normalizeType(varType));
+            qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + qv.getCardinality()
+                    + ":" + normalizeType(varType));
             candidate.setAlphaName(alphaName);
             quantiVars.add(qv);
-            if (needsDomainConstraint(normalizedTypeEGraph, varType)) {
-                constraints.add(domainConstraint(qv, candidate, normalizedTypeEGraph));
+            if (needsDomainConstraint(domain, varType)) {
+                constraints.add(domainConstraint(qv, candidate, domain.domain));
             }
             if (parameterDecl) {
                 params.add(qv);
@@ -458,15 +469,53 @@ public class NormalForm {
         return normalized.isEmpty() ? type : normalized;
     }
 
-    private static boolean needsDomainConstraint(EGraphNode typeEGraph, String primitiveType) {
-        if (typeEGraph == null) {
+    private static boolean needsDomainConstraint(DomainDescriptor domain, String primitiveType) {
+        if (domain == null || domain.domain == null) {
             return false;
         }
-        if (typeEGraph.getOpcode() != Opcode.GLOBALBINDING) {
-            return true;
+        String primitiveDomain = primitiveDomainName(domain.domain);
+        if (primitiveDomain != null && primitiveType != null) {
+            return !normalizeType(primitiveDomain).equals(normalizeType(primitiveType));
         }
-        String typeName = firstNonEmpty(typeEGraph.getSourceName(), typeEGraph.getSourceType());
-        return typeName != null && primitiveType != null && !typeName.equals(primitiveType);
+        return true;
+    }
+
+    private static DomainDescriptor domainDescriptor(EGraphNode typeEGraph) {
+        if (typeEGraph == null) {
+            return new DomainDescriptor(null, Cardinality.SET);
+        }
+        Cardinality cardinality = cardinalityOf(typeEGraph.getOpcode());
+        if (cardinality != null && typeEGraph.getChildren().size() == 1) {
+            return new DomainDescriptor(typeEGraph.getChildren().get(0), cardinality);
+        }
+        return new DomainDescriptor(typeEGraph, Cardinality.SET);
+    }
+
+    private static String primitiveDomainName(EGraphNode typeEGraph) {
+        if (typeEGraph == null) {
+            return null;
+        }
+        if (typeEGraph.getOpcode() == Opcode.GLOBALBINDING || typeEGraph.getOpcode() == Opcode.CONSTANT) {
+            return firstNonEmpty(typeEGraph.getSourceName(), typeEGraph.getSourceType());
+        }
+        return null;
+    }
+
+    private static Cardinality cardinalityOf(Opcode opcode) {
+        switch (opcode) {
+            case ONE:
+                return Cardinality.ONE;
+            case SOME:
+                return Cardinality.SOME;
+            case LONE:
+                return Cardinality.LONE;
+            case EXACTLY:
+                return Cardinality.EXACTLY;
+            case SETOF:
+                return Cardinality.SET;
+            default:
+                return null;
+        }
     }
 
     private static boolean isNone(EGraphNode node) {
@@ -492,13 +541,19 @@ public class NormalForm {
             return null;
         }
         Opcode opcode = node.getOpcode();
+        if (opcode == Opcode.END) {
+            return null;
+        }
         if (opcode == Opcode.NOT && node.getChildren().size() == 1) {
             return toNNF(node.getChildren().get(0), !negated);
         }
         if (isQuantifierNode(node)) {
             EGraphNode rewritten = copyShallow(node, opcode);
             for (EGraphNode child : node.getChildren()) {
-                rewritten.addChild(toNNF(child, false));
+                EGraphNode rewrittenChild = toNNF(child, false);
+                if (rewrittenChild != null) {
+                    rewritten.addChild(rewrittenChild);
+                }
             }
             return negated ? syntheticUnary(node, Opcode.NOT, rewritten, -1) : rewritten;
         }
@@ -525,7 +580,10 @@ public class NormalForm {
         if (opcode == Opcode.AND || opcode == Opcode.OR) {
             EGraphNode rewritten = copyShallow(node, negated ? dualBooleanOpcode(opcode) : opcode);
             for (EGraphNode child : node.getChildren()) {
-                rewritten.addChild(toNNF(child, negated));
+                EGraphNode rewrittenChild = toNNF(child, negated);
+                if (rewrittenChild != null) {
+                    rewritten.addChild(rewrittenChild);
+                }
             }
             return rewritten;
         }
@@ -533,7 +591,10 @@ public class NormalForm {
         if (dual != null) {
             EGraphNode rewritten = copyShallow(node, dual);
             for (EGraphNode child : node.getChildren()) {
-                rewritten.addChild(toNNF(child, negated && dualNegatesChildren(opcode)));
+                EGraphNode rewrittenChild = toNNF(child, negated && dualNegatesChildren(opcode));
+                if (rewrittenChild != null) {
+                    rewritten.addChild(rewrittenChild);
+                }
             }
             return rewritten;
         }
@@ -542,7 +603,24 @@ public class NormalForm {
         }
         EGraphNode rewritten = copyShallow(node, opcode);
         for (EGraphNode child : node.getChildren()) {
-            rewritten.addChild(toNNF(child, false));
+            EGraphNode rewrittenChild = toNNF(child, false);
+            if (rewrittenChild != null) {
+                rewritten.addChild(rewrittenChild);
+            }
+        }
+        return rewritten;
+    }
+
+    private static EGraphNode removeEndNodes(EGraphNode node) {
+        if (node == null || node.getOpcode() == Opcode.END) {
+            return null;
+        }
+        EGraphNode rewritten = copyShallow(node, node.getOpcode());
+        for (EGraphNode child : node.getChildren()) {
+            EGraphNode rewrittenChild = removeEndNodes(child);
+            if (rewrittenChild != null) {
+                rewritten.addChild(rewrittenChild);
+            }
         }
         return rewritten;
     }
@@ -565,7 +643,7 @@ public class NormalForm {
                 rewritten.addChild(normalizedChild);
             }
         }
-        if (isCommutative(rewritten.getOpcode())) {
+        if (rewritten.isOrderInsensitive()) {
             List<EGraphNode> sortedChildren = new ArrayList<>(rewritten.getChildren());
             Collections.sort(sortedChildren, Comparator.comparing(NormalForm::sortKey));
             rewritten.setChildren(sortedChildren);
@@ -816,7 +894,7 @@ public class NormalForm {
             case ITE:
                 return childIndex == 0 ? !negated : negated;
             default:
-                return isNegatedFormulaOpcode(opcode) ? !negated : negated;
+                return negated;
         }
     }
 
@@ -827,11 +905,6 @@ public class NormalForm {
             path.append("/not");
         }
         return path.toString();
-    }
-
-    private static boolean isNegatedFormulaOpcode(Opcode opcode) {
-        return opcode == Opcode.NOT_EQUALS || opcode == Opcode.NOT_GT || opcode == Opcode.NOT_GTE
-                || opcode == Opcode.NOT_IN || opcode == Opcode.NOT_LT || opcode == Opcode.NOT_LTE;
     }
 
     private static boolean isRelDecl(Opcode opcode) {
@@ -880,6 +953,16 @@ public class NormalForm {
         private RelDeclResult(List<QuantiVar> quantiVars, Boolean emptyDomainValue) {
             this.quantiVars = quantiVars;
             this.emptyDomainValue = emptyDomainValue;
+        }
+    }
+
+    private static final class DomainDescriptor {
+        private final EGraphNode domain;
+        private final Cardinality cardinality;
+
+        private DomainDescriptor(EGraphNode domain, Cardinality cardinality) {
+            this.domain = domain;
+            this.cardinality = cardinality == null ? Cardinality.SET : cardinality;
         }
     }
 }
