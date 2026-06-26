@@ -245,6 +245,14 @@ public class EGraphNode {
     public List<EClassRef> getChildClasses() {
         return Collections.unmodifiableList(childClasses);
     }
+    public Map<String, Integer> getChildClassCardinalities() {
+        Map<String, Integer> cardinalities = new LinkedHashMap<>();
+        for (EClassRef child : childClasses) {
+            String key = child.getEClass().getId() + child.getSlotMap().toString();
+            cardinalities.put(key, cardinalities.getOrDefault(key, 0) + 1);
+        }
+        return Collections.unmodifiableMap(cardinalities);
+    }
     public EClass getEClass() {
         return eClass;
     }
@@ -363,8 +371,11 @@ public class EGraphNode {
             rewrittenChildren.sort(Comparator.comparing(ref -> ref.getEClass().getRepresentative().sortKey()));
         }
 
-        if (opcode == Opcode.AND || opcode == Opcode.OR) {
+        if (isIdempotentBagOperator(opcode)) {
             rewrittenChildren = removeDuplicateInvocations(rewrittenChildren);
+        }
+
+        if (opcode == Opcode.AND || opcode == Opcode.OR) {
             Boolean constantValue = booleanConstantIn(rewrittenChildren, opcode == Opcode.AND ? false : true);
             if (constantValue != null) {
                 eClass.preserveSnapshot(snapshot());
@@ -393,6 +404,14 @@ public class EGraphNode {
                 eClass.recordShape(this);
                 return true;
             }
+        }
+
+        if (isIdempotentBagOperator(opcode) && rewrittenChildren.size() == 1 && childClasses.size() != 1) {
+            eClass.preserveSnapshot(snapshot());
+            adopt(rewrittenChildren.get(0).getEClass().getRepresentative());
+            refreshEClassSlots();
+            eClass.recordShape(this);
+            return true;
         }
 
         if (!sameChildren(childClasses, rewrittenChildren)) {
@@ -719,6 +738,11 @@ public class EGraphNode {
                 || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
     }
 
+    private static boolean isIdempotentBagOperator(Opcode opcode) {
+        return opcode == Opcode.AND || opcode == Opcode.OR
+                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS;
+    }
+
     private String sortKey() {
         StringBuilder sb = new StringBuilder();
         appendSortKey(this, sb);
@@ -736,13 +760,33 @@ public class EGraphNode {
         }
         sb.append('[');
         if (node.childClasses != null) {
-            for (EClassRef childRef : node.childClasses) {
-                EGraphNode child = childRef.getEClass().getRepresentative();
-                appendSortKey(child, sb);
-                sb.append(',');
+            if (node.isBagFlexibleArity()) {
+                Map<String, Integer> multiplicities = new java.util.TreeMap<>();
+                for (EClassRef childRef : node.childClasses) {
+                    String key = invocationSortKey(childRef);
+                    multiplicities.put(key, multiplicities.getOrDefault(key, 0) + 1);
+                }
+                for (Map.Entry<String, Integer> entry : multiplicities.entrySet()) {
+                    sb.append(entry.getKey());
+                    if (entry.getValue() > 1) {
+                        sb.append('^').append(entry.getValue());
+                    }
+                    sb.append(',');
+                }
+            } else {
+                for (EClassRef childRef : node.childClasses) {
+                    sb.append(invocationSortKey(childRef)).append(',');
+                }
             }
         }
         sb.append(']');
+    }
+
+    private static String invocationSortKey(EClassRef childRef) {
+        StringBuilder key = new StringBuilder();
+        appendSortKey(childRef.getEClass().getRepresentative(), key);
+        key.append('@').append(childRef.getSlotMap());
+        return key.toString();
     }
 
     private EGraphNode snapshot() {

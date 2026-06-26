@@ -37,7 +37,9 @@ public final class EGraphSaturationTest {
         testComplementEliminatesRedundantSlot();
         testSlotPermutationGroups();
         testDisjModifierIsPreserved();
+        testDisjClassesDistinguishDeclarationGroups();
         testDisjModifierAffectsCanonicalDistance();
+        testBagMultiplicityPreservedUntilExplicitRewrite();
         testImplicationPrenexPolarityDoesNotDoubleNegate();
         testImplicationScopeAffectsCanonicalDistance();
         testIffPrenexPolarity();
@@ -167,6 +169,16 @@ public final class EGraphSaturationTest {
         EGraphNode conjunction = node(Opcode.AND, true, true, duplicateAnd, duplicateAnd);
         conjunction.saturate();
         assertEquals(Opcode.VARIABLE, conjunction.getOpcode(), "A AND A must collapse to A");
+
+        EGraphNode duplicateUnion = variable("duplicateUnionX");
+        EGraphNode union = node(Opcode.PLUS, true, true, duplicateUnion, duplicateUnion);
+        union.saturate();
+        assertEquals(Opcode.VARIABLE, union.getOpcode(), "A + A must collapse to A");
+
+        EGraphNode duplicateIntersection = variable("duplicateIntersectionX");
+        EGraphNode intersection = node(Opcode.INTERSECT, true, true, duplicateIntersection, duplicateIntersection);
+        intersection.saturate();
+        assertEquals(Opcode.VARIABLE, intersection.getOpcode(), "A & A must collapse to A");
     }
 
     private static void testAllNoNotQuantifierEquivalence() {
@@ -461,6 +473,47 @@ public final class EGraphSaturationTest {
 
         assertTrue(normalFormDistance(disjoint, plain) > 0,
                 "disj vs non-disj bindings must have nonzero canonical distance");
+    }
+
+    private static void testDisjClassesDistinguishDeclarationGroups() {
+        NormalForm grouped = new NormalForm();
+        grouped.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                disjRelDecl("x1", "x2"),
+                node(
+                        Opcode.EXISTS,
+                        false,
+                        false,
+                        disjRelDecl("x3", "x4"),
+                        predicate("P", variable("x1"), variable("x2"), variable("x3"), variable("x4")))));
+        grouped.normalize();
+
+        List<QuantiVar> bindings = grouped.getMatrixQuantiVars();
+        assertEquals(4, bindings.size(), "two disj declarations must produce four bindings");
+        assertEquals(Quantifier.ALL, bindings.get(0).getQuantifier(), "first group must stay universal");
+        assertEquals(Quantifier.SOME, bindings.get(2).getQuantifier(), "second group must stay existential");
+        assertTrue(bindings.get(0).isDisj(), "first disj group must be marked disj");
+        assertEquals(bindings.get(0).getDisjointnessClass(), bindings.get(1).getDisjointnessClass(),
+                "variables from the same disj declaration must share a class");
+        assertEquals(bindings.get(2).getDisjointnessClass(), bindings.get(3).getDisjointnessClass(),
+                "variables from the second disj declaration must share a class");
+        assertTrue(bindings.get(0).getDisjointnessClass() != bindings.get(2).getDisjointnessClass(),
+                "separate disj declarations must not be merged into one global disjointness class");
+    }
+
+    private static void testBagMultiplicityPreservedUntilExplicitRewrite() {
+        EGraphNode duplicate = variable("bagDuplicateX");
+        EGraphNode product = node(Opcode.MUL, true, true, duplicate, duplicate);
+        product.saturate();
+        assertTrue(product.isBagFlexibleArity(), "MUL must be represented as a bag flexible-arity node");
+        assertEquals(2, product.getChildClasses().size(),
+                "non-Boolean bag nodes must retain duplicate e-class invocations until an explicit rewrite removes them");
+        assertEquals(1, product.getChildClassCardinalities().size(),
+                "duplicate bag invocations should be grouped by e-class identity");
+        assertEquals(Integer.valueOf(2), product.getChildClassCardinalities().values().iterator().next(),
+                "duplicate bag invocations must expose cardinality two");
     }
 
     private static void testImplicationPrenexPolarityDoesNotDoubleNegate() {

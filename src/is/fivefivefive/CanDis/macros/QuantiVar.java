@@ -34,7 +34,7 @@ public class QuantiVar {
     private String deBruijnKey;
     private Quantifier quantifier;
     private Cardinality cardinality;
-    private boolean disj;
+    private int disjointnessClass;
     private String bindingPath;
     public QuantiVar(int id, String name, Type type) {
         this.id = id;
@@ -45,7 +45,7 @@ public class QuantiVar {
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
         this.cardinality = Cardinality.SET;
-        this.disj = false;
+        this.disjointnessClass = 0;
         this.bindingPath = "";
     }
     public QuantiVar(int id, String name, String typeName) {
@@ -60,7 +60,7 @@ public class QuantiVar {
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
         this.cardinality = Cardinality.SET;
-        this.disj = false;
+        this.disjointnessClass = 0;
         this.bindingPath = "";
     }
     public int getId() {
@@ -97,10 +97,16 @@ public class QuantiVar {
         this.cardinality = cardinality == null ? Cardinality.SET : cardinality;
     }
     public boolean isDisj() {
-        return disj;
+        return disjointnessClass > 0;
     }
     public void setDisj(boolean disj) {
-        this.disj = disj;
+        this.disjointnessClass = disj ? 1 : 0;
+    }
+    public int getDisjointnessClass() {
+        return disjointnessClass;
+    }
+    public void setDisjointnessClass(int disjointnessClass) {
+        this.disjointnessClass = Math.max(0, disjointnessClass);
     }
     public String getBindingPath() {
         return bindingPath == null ? "" : bindingPath;
@@ -128,6 +134,8 @@ public class QuantiVar {
         return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName
                 + "\", \"type\": \"" + typeName + "\", \"quantifier\": \"" + quantifier
                 + "\", \"cardinality\": \"" + getCardinality()
-                + "\", \"disj\": " + disj + ", \"deBruijnKey\": \"" + getDeBruijnKey() + "\"}";
+                + "\", \"disj\": " + isDisj()
+                + ", \"disjointnessClass\": " + getDisjointnessClass()
+                + ", \"deBruijnKey\": \"" + getDeBruijnKey() + "\"}";
     }
 }

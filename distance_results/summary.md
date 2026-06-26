@@ -6,13 +6,13 @@
 - Successful distances: 6318
 - Skipped identical raw AST predicate pairs: 283
 - Failures: 0
-- Average distance: 12.201171
+- Average distance: 12.200855
 - Average predicate-body Levenshtein distance: 52.536087
 - Average raw AST tree distance: 24.199114
 - Average raw AST size: 27.069326
-- Average canonical form size: 15.956790
+- Average canonical form size: 15.956157
 - Average normalized raw AST distance: 0.875323
-- Average normalized canonical distance: 0.732397
+- Average normalized canonical distance: 0.732443
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 15
 - Min distance: 0
 - Max distance: 76
@@ -26,13 +26,13 @@
 - Average ground-truth self reward: 1.000000
 - Average reward gap: 0.547939
 - Pearson correlation sample: non-CORRECT rewarded predicates (4827 files)
-- Pearson correlation, distance vs candidate reward: -0.021312
+- Pearson correlation, distance vs candidate reward: -0.021484
 
 - Pearson correlation, Levenshtein vs candidate reward: -0.068562
 - Pearson correlation, raw AST tree distance vs candidate reward: -0.097240
 
 - Pearson correlation, normalized raw AST distance vs candidate reward: 0.007276
-- Pearson correlation, normalized canonical distance vs candidate reward: 0.030608
+- Pearson correlation, normalized canonical distance vs candidate reward: 0.029942
 
 ## By Problem Class And Status
 
@@ -40,11 +40,11 @@
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | classroom_fol | BOTH | 1115 | 1115 | 0 | 0 | 13.503139 | 0.236341 | -0.112388 | 1 | 46 |
 | classroom_fol | CORRECT | 536 | 495 | 41 | 0 | 9.705051 | 1.000000 | 0.000000 | 0 | 45 |
-| classroom_fol | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.986547 | 0.358411 | 0.176288 | 1 | 44 |
+| classroom_fol | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.995516 | 0.358411 | 0.175450 | 1 | 44 |
 | classroom_fol | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 10.915663 | 0.225969 | 0.023410 | 1 | 43 |
 | classroom_rl | BOTH | 1115 | 1115 | 0 | 0 | 13.503139 | 0.236341 | -0.112388 | 1 | 46 |
 | classroom_rl | CORRECT | 536 | 495 | 41 | 0 | 9.705051 | 1.000000 | 0.000000 | 0 | 45 |
-| classroom_rl | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.986547 | 0.358411 | 0.176288 | 1 | 44 |
+| classroom_rl | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.995516 | 0.358411 | 0.175450 | 1 | 44 |
 | classroom_rl | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 10.915663 | 0.225969 | 0.023410 | 1 | 43 |
 | cv_v1 | BOTH | 68 | 68 | 0 | 0 | 16.544118 | 0.203547 | -0.160276 | 1 | 32 |
 | cv_v1 | CORRECT | 69 | 52 | 17 | 0 | 16.461538 | 1.000000 | 0.000000 | 1 | 42 |
@@ -68,5 +68,5 @@
 | train | UNDERCONSTRAINED | 178 | 178 | 0 | 0 | 17.606742 | 0.302345 | -0.153879 | 1 | 61 |
 | trash_rl | BOTH | 267 | 267 | 0 | 0 | 5.970037 | 0.313037 | -0.124057 | 1 | 28 |
 | trash_rl | CORRECT | 340 | 252 | 88 | 0 | 6.349206 | 1.000000 | 0.000000 | 0 | 16 |
-| trash_rl | OVERCONSTRAINED | 150 | 150 | 0 | 0 | 5.646667 | 0.393347 | 0.023927 | 1 | 24 |
+| trash_rl | OVERCONSTRAINED | 150 | 150 | 0 | 0 | 5.606667 | 0.393347 | 0.020869 | 1 | 24 |
 | trash_rl | UNDERCONSTRAINED | 63 | 63 | 0 | 0 | 9.777778 | 0.363508 | -0.230459 | 1 | 22 |

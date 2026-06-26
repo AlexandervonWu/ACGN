@@ -1212,7 +1212,7 @@
 <circle cx="91.710526" cy="301.525047" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2523_inv11.als d=1 reward=0.990099</title></circle>
 <circle cx="150.263158" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2528_inv10.als d=6 reward=0.000000</title></circle>
 <circle cx="220.526316" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2556_inv11.als d=12 reward=0.000000</title></circle>
-<circle cx="91.710526" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2620_inv3.als d=1 reward=0.000000</title></circle>
+<circle cx="115.131579" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2620_inv3.als d=3 reward=0.000000</title></circle>
 <circle cx="138.552632" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2637_inv5.als d=5 reward=0.000000</title></circle>
 <circle cx="103.421053" cy="301.525047" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2656_inv7.als d=2 reward=0.990099</title></circle>
 <circle cx="138.552632" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_fol/OVERCONSTRAINED/parsed-file2701_inv5.als d=5 reward=0.000000</title></circle>
@@ -2716,7 +2716,7 @@
 <circle cx="91.710526" cy="301.525047" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2523_inv11.als d=1 reward=0.990099</title></circle>
 <circle cx="150.263158" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2528_inv10.als d=6 reward=0.000000</title></circle>
 <circle cx="220.526316" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2556_inv11.als d=12 reward=0.000000</title></circle>
-<circle cx="91.710526" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2620_inv3.als d=1 reward=0.000000</title></circle>
+<circle cx="115.131579" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2620_inv3.als d=3 reward=0.000000</title></circle>
 <circle cx="138.552632" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2637_inv5.als d=5 reward=0.000000</title></circle>
 <circle cx="103.421053" cy="301.525047" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2656_inv7.als d=2 reward=0.990099</title></circle>
 <circle cx="138.552632" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>classroom_rl/OVERCONSTRAINED/parsed-file2701_inv5.als d=5 reward=0.000000</title></circle>
@@ -4699,7 +4699,7 @@
 <circle cx="91.710526" cy="301.525047" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1857_inv3.als d=1 reward=0.990099</title></circle>
 <circle cx="115.131579" cy="179.500000" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1901_inv5.als d=3 reward=0.900000</title></circle>
 <circle cx="115.131579" cy="179.500000" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1914_inv5.als d=3 reward=0.900000</title></circle>
-<circle cx="138.552632" cy="94.575144" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file192_inv9.als d=5 reward=0.500000</title></circle>
+<circle cx="115.131579" cy="94.575144" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file192_inv9.als d=3 reward=0.500000</title></circle>
 <circle cx="126.842105" cy="58.000000" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1939_inv4.als d=4 reward=0.000000</title></circle>
 <circle cx="173.684211" cy="179.500000" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1940_inv5.als d=8 reward=0.900000</title></circle>
 <circle cx="103.421053" cy="69.774567" r="3" fill="#d62728" fill-opacity="0.62"><title>trash_rl/OVERCONSTRAINED/parsed-file1969_inv4.als d=2 reward=0.200000</title></circle>

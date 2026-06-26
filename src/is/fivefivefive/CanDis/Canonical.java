@@ -102,7 +102,7 @@ public class Canonical {
         if (left.getQuantifier() == right.getQuantifier()
                 && sameType(left.getTypeName(), right.getTypeName())
                 && left.getCardinality() == right.getCardinality()
-                && left.isDisj() == right.isDisj()
+                && left.getDisjointnessClass() == right.getDisjointnessClass()
                 && safeEquals(left.getBindingPath(), right.getBindingPath())) {
             return 0;
         }
@@ -530,8 +530,23 @@ public class Canonical {
         if (node.isOrderInsensitive()) {
             children = sortedForMapping(children, variableMapping);
         }
-        for (EGraphNode child : children) {
-            key.append(mappedSortKey(child, variableMapping)).append(',');
+        if (node.isBagFlexibleArity()) {
+            Map<String, Integer> multiplicities = new java.util.TreeMap<>();
+            for (EGraphNode child : children) {
+                String childKey = mappedSortKey(child, variableMapping);
+                multiplicities.put(childKey, multiplicities.getOrDefault(childKey, 0) + 1);
+            }
+            for (Map.Entry<String, Integer> entry : multiplicities.entrySet()) {
+                key.append(entry.getKey());
+                if (entry.getValue() > 1) {
+                    key.append('^').append(entry.getValue());
+                }
+                key.append(',');
+            }
+        } else {
+            for (EGraphNode child : children) {
+                key.append(mappedSortKey(child, variableMapping)).append(',');
+            }
         }
         return key.append(']').toString();
     }
@@ -810,7 +825,7 @@ public class Canonical {
     }
 
     private static String quantifierFormula(QuantiVar qv) {
-        String disj = qv.isDisj() ? " disj" : "";
+        String disj = qv.isDisj() ? " disj#" + qv.getDisjointnessClass() : "";
         String cardinality = cardinalityPrefix(qv);
         return qv.getQuantifier() + disj + " " + quantiVarName(qv) + " : "
                 + cardinality + display(qv.getTypeName());

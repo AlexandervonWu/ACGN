@@ -25,6 +25,7 @@ public class NormalForm {
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
     private List<NormalForm> temporalChildren;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
+    private int nextDisjointnessClass;
     public enum TemporalOp {
         NONE,
         BEFORE,
@@ -49,6 +50,7 @@ public class NormalForm {
         this.matrixQuantiVars = new ArrayList<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = TemporalOp.NONE;
+        this.nextDisjointnessClass = 1;
     }
 
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
@@ -57,6 +59,7 @@ public class NormalForm {
         this.matrixQuantiVars = new ArrayList<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = temporalOp;
+        this.nextDisjointnessClass = 1;
     }
 
     public EGraphNode getMatrixEGraph() {
@@ -98,6 +101,7 @@ public class NormalForm {
             return;
         }
         matrixQuantiVars.clear();
+        nextDisjointnessClass = 1;
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
@@ -125,7 +129,7 @@ public class NormalForm {
             if (isSymmetricBooleanQuantifier(left.getQuantifier())
                     && left.getQuantifier() == right.getQuantifier()
                     && left.getCardinality() == right.getCardinality()
-                    && left.isDisj() == right.isDisj()
+                    && left.getDisjointnessClass() == right.getDisjointnessClass()
                     && normalizeType(left.getTypeName()).equals(normalizeType(right.getTypeName()))) {
                 matrixEGraphRoot.getEClass().addSlotSwap(left.getName(), right.getName());
             }
@@ -371,6 +375,7 @@ public class NormalForm {
             return new RelDeclResult(quantiVars, emptyDomainValue(quantifier));
         }
         boolean disj = isDisj(relDecl.getOpcode());
+        int disjointnessClass = disj ? nextDisjointnessClass++ : 0;
         String deBruijnBase = bindingPath + (negated ? "@neg" : "@pos");
 
         List<EGraphNode> children = relDecl.getChildren();
@@ -385,7 +390,7 @@ public class NormalForm {
             QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
             qv.setQuantifier(quantifier);
             qv.setCardinality(domain.cardinality);
-            qv.setDisj(disj);
+            qv.setDisjointnessClass(disjointnessClass);
             qv.setBindingPath(deBruijnBase);
             qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + qv.getCardinality()
                     + ":" + normalizeType(varType));
