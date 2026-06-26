@@ -58,6 +58,7 @@ public class Alloy4FunAugmenter {
             group.buildReferences();
         }
         writeAugmentedFiles(groups, options.outputDir);
+        writeCorrectPoolEquivalenceJson(options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"), options, groups);
         List<IncorrectMatch> matches = nearestIncorrectMatches(groups, options);
         if (!options.skipRewards) {
             computeRewards(matches, options);
@@ -72,6 +73,7 @@ public class Alloy4FunAugmenter {
         writePlotScript(options.outputDir.resolve("plot_canonical_rewards.py"));
         System.out.println("Wrote " + options.outputDir);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
+        System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"));
         System.out.println("Wrote " + options.outputDir.resolve("summary.md"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_reward_points.csv"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_distance_vs_reward_error_raw.svg"));
@@ -325,6 +327,80 @@ public class Alloy4FunAugmenter {
                 }
             }
         }
+    }
+
+    private static void writeCorrectPoolEquivalenceJson(
+            Path path,
+            Options options,
+            Map<String, QuestionGroup> groups) throws IOException {
+        List<CorrectPoolPair> pairs = correctAstDifferentCanonicalEquivalentPairs(groups);
+        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write("{\n");
+            writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
+            writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
+            writer.write("  \"outputRoot\": \"" + escape(options.outputDir.toString()) + "\",\n");
+            writer.write("  \"criterion\": \"Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.\",\n");
+            writer.write("  \"pairCount\": " + pairs.size() + ",\n");
+            writer.write("  \"pairs\": [\n");
+            for (int i = 0; i < pairs.size(); i++) {
+                if (i > 0) {
+                    writer.write(",\n");
+                }
+                writeCorrectPoolPairJson(writer, pairs.get(i));
+            }
+            writer.write("\n  ]\n");
+            writer.write("}\n");
+        }
+    }
+
+    private static List<CorrectPoolPair> correctAstDifferentCanonicalEquivalentPairs(Map<String, QuestionGroup> groups) {
+        List<CorrectPoolPair> pairs = new ArrayList<>();
+        for (QuestionGroup group : groups.values()) {
+            List<Reference> references = group.references;
+            for (int i = 0; i < references.size(); i++) {
+                for (int j = i + 1; j < references.size(); j++) {
+                    Reference left = references.get(i);
+                    Reference right = references.get(j);
+                    int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
+                    if (rawAstDistance <= 0) {
+                        continue;
+                    }
+                    int canonicalDistance = Canonical.distance(left.graph, right.graph);
+                    if (canonicalDistance == 0) {
+                        pairs.add(new CorrectPoolPair(group, left, right, rawAstDistance, canonicalDistance));
+                    }
+                }
+            }
+        }
+        pairs.sort(Comparator
+                .comparing((CorrectPoolPair pair) -> pair.group.questionSet)
+                .thenComparing(pair -> pair.group.invariantId)
+                .thenComparing(pair -> pair.left.augmentedName)
+                .thenComparing(pair -> pair.right.augmentedName));
+        return pairs;
+    }
+
+    private static void writeCorrectPoolPairJson(Writer writer, CorrectPoolPair pair) throws IOException {
+        writer.write("    {\n");
+        writer.write("      \"questionSet\": \"" + escape(pair.group.questionSet) + "\",\n");
+        writer.write("      \"invariantId\": \"" + escape(pair.group.invariantId) + "\",\n");
+        writer.write("      \"augmentedFile\": \"" + escape("correct/" + pair.group.questionSet + "/" + pair.group.invariantId + ".als") + "\",\n");
+        writer.write("      \"rawAstDistance\": " + pair.rawAstDistance + ",\n");
+        writer.write("      \"canonicalDistance\": " + pair.canonicalDistance + ",\n");
+        writer.write("      \"left\": ");
+        writeReferenceJson(writer, pair.left);
+        writer.write(",\n");
+        writer.write("      \"right\": ");
+        writeReferenceJson(writer, pair.right);
+        writer.write("\n");
+        writer.write("    }");
+    }
+
+    private static void writeReferenceJson(Writer writer, Reference reference) throws IOException {
+        writer.write("{\"name\": \"" + escape(reference.augmentedName)
+                + "\", \"kind\": \"" + escape(reference.kind)
+                + "\", \"source\": \"" + escape(reference.source.relativePath)
+                + "\", \"body\": \"" + escape(reference.body.trim()) + "\"}");
     }
 
     private static void writeJson(
@@ -2031,6 +2107,27 @@ public class Alloy4FunAugmenter {
             this.ast = ast;
             this.graph = graph;
             this.source = source;
+        }
+    }
+
+    private static class CorrectPoolPair {
+        private final QuestionGroup group;
+        private final Reference left;
+        private final Reference right;
+        private final int rawAstDistance;
+        private final int canonicalDistance;
+
+        private CorrectPoolPair(
+                QuestionGroup group,
+                Reference left,
+                Reference right,
+                int rawAstDistance,
+                int canonicalDistance) {
+            this.group = group;
+            this.left = left;
+            this.right = right;
+            this.rawAstDistance = rawAstDistance;
+            this.canonicalDistance = canonicalDistance;
         }
     }
 
