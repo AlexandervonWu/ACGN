@@ -6,16 +6,16 @@
 - Successful distances: 6318
 - Skipped identical raw AST predicate pairs: 283
 - Failures: 0
-- Average distance: 12.200855
+- Average distance: 12.466920
 - Average predicate-body Levenshtein distance: 52.536087
 - Average raw AST tree distance: 24.199114
 - Average raw AST size: 27.069326
-- Average canonical form size: 15.956157
+- Average canonical form size: 15.921494
 - Average normalized raw AST distance: 0.875323
-- Average normalized canonical distance: 0.732443
+- Average normalized canonical distance: 0.746579
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 15
 - Min distance: 0
-- Max distance: 76
+- Max distance: 94
 
 ## Reward Comparison
 
@@ -26,47 +26,47 @@
 - Average ground-truth self reward: 1.000000
 - Average reward gap: 0.547939
 - Pearson correlation sample: non-CORRECT rewarded predicates (4827 files)
-- Pearson correlation, distance vs candidate reward: -0.021484
+- Pearson correlation, distance vs candidate reward: -0.029143
 
 - Pearson correlation, Levenshtein vs candidate reward: -0.068562
 - Pearson correlation, raw AST tree distance vs candidate reward: -0.097240
 
 - Pearson correlation, normalized raw AST distance vs candidate reward: 0.007276
-- Pearson correlation, normalized canonical distance vs candidate reward: 0.029942
+- Pearson correlation, normalized canonical distance vs candidate reward: 0.045509
 
 ## By Problem Class And Status
 
 | Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1115 | 1115 | 0 | 0 | 13.503139 | 0.236341 | -0.112388 | 1 | 46 |
-| classroom_fol | CORRECT | 536 | 495 | 41 | 0 | 9.705051 | 1.000000 | 0.000000 | 0 | 45 |
-| classroom_fol | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.995516 | 0.358411 | 0.175450 | 1 | 44 |
-| classroom_fol | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 10.915663 | 0.225969 | 0.023410 | 1 | 43 |
-| classroom_rl | BOTH | 1115 | 1115 | 0 | 0 | 13.503139 | 0.236341 | -0.112388 | 1 | 46 |
-| classroom_rl | CORRECT | 536 | 495 | 41 | 0 | 9.705051 | 1.000000 | 0.000000 | 0 | 45 |
-| classroom_rl | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 10.995516 | 0.358411 | 0.175450 | 1 | 44 |
-| classroom_rl | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 10.915663 | 0.225969 | 0.023410 | 1 | 43 |
-| cv_v1 | BOTH | 68 | 68 | 0 | 0 | 16.544118 | 0.203547 | -0.160276 | 1 | 32 |
-| cv_v1 | CORRECT | 69 | 52 | 17 | 0 | 16.461538 | 1.000000 | 0.000000 | 1 | 42 |
-| cv_v1 | OVERCONSTRAINED | 118 | 118 | 0 | 0 | 17.627119 | 0.206796 | -0.404155 | 1 | 43 |
-| cv_v1 | UNDERCONSTRAINED | 55 | 55 | 0 | 0 | 16.581818 | 0.101278 | 0.012469 | 3 | 37 |
-| cv_v2 | BOTH | 21 | 21 | 0 | 0 | 20.142857 | 0.346685 | -0.141772 | 7 | 36 |
-| cv_v2 | CORRECT | 34 | 31 | 3 | 0 | 18.612903 | 1.000000 | 0.000000 | 6 | 42 |
-| cv_v2 | OVERCONSTRAINED | 40 | 40 | 0 | 0 | 23.025000 | 0.278267 | -0.405322 | 6 | 45 |
-| cv_v2 | UNDERCONSTRAINED | 12 | 12 | 0 | 0 | 15.583333 | 0.108333 | -0.344285 | 2 | 43 |
-| lts | BOTH | 138 | 138 | 0 | 0 | 11.434783 | 0.146087 | 0.161681 | 1 | 38 |
+| classroom_fol | BOTH | 1115 | 1115 | 0 | 0 | 14.209865 | 0.236341 | -0.146388 | 1 | 51 |
+| classroom_fol | CORRECT | 536 | 495 | 41 | 0 | 10.060606 | 1.000000 | 0.000000 | 0 | 64 |
+| classroom_fol | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 11.529148 | 0.358411 | 0.133882 | 1 | 44 |
+| classroom_fol | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 12.680723 | 0.225969 | 0.124693 | 1 | 43 |
+| classroom_rl | BOTH | 1115 | 1115 | 0 | 0 | 14.209865 | 0.236341 | -0.146388 | 1 | 51 |
+| classroom_rl | CORRECT | 536 | 495 | 41 | 0 | 10.060606 | 1.000000 | 0.000000 | 0 | 64 |
+| classroom_rl | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 11.529148 | 0.358411 | 0.133882 | 1 | 44 |
+| classroom_rl | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 12.680723 | 0.225969 | 0.124693 | 1 | 43 |
+| cv_v1 | BOTH | 68 | 68 | 0 | 0 | 17.897059 | 0.203547 | -0.210896 | 1 | 31 |
+| cv_v1 | CORRECT | 69 | 52 | 17 | 0 | 19.038462 | 1.000000 | 0.000000 | 1 | 42 |
+| cv_v1 | OVERCONSTRAINED | 118 | 118 | 0 | 0 | 19.296610 | 0.206796 | -0.268161 | 3 | 43 |
+| cv_v1 | UNDERCONSTRAINED | 55 | 55 | 0 | 0 | 18.109091 | 0.101278 | 0.010752 | 3 | 37 |
+| cv_v2 | BOTH | 21 | 21 | 0 | 0 | 22.571429 | 0.346685 | -0.153494 | 12 | 39 |
+| cv_v2 | CORRECT | 34 | 31 | 3 | 0 | 20.774194 | 1.000000 | 0.000000 | 7 | 42 |
+| cv_v2 | OVERCONSTRAINED | 40 | 40 | 0 | 0 | 25.225000 | 0.278267 | -0.198180 | 12 | 45 |
+| cv_v2 | UNDERCONSTRAINED | 12 | 12 | 0 | 0 | 16.833333 | 0.108333 | -0.385959 | 2 | 43 |
+| lts | BOTH | 138 | 138 | 0 | 0 | 7.833333 | 0.146087 | 0.160564 | 1 | 25 |
 | lts | CORRECT | 112 | 65 | 47 | 0 | 5.338462 | 1.000000 | 0.000000 | 0 | 27 |
-| lts | OVERCONSTRAINED | 113 | 113 | 0 | 0 | 10.575221 | 0.299921 | -0.015140 | 1 | 33 |
-| lts | UNDERCONSTRAINED | 66 | 66 | 0 | 0 | 8.272727 | 0.083033 | 0.211706 | 1 | 24 |
+| lts | OVERCONSTRAINED | 113 | 113 | 0 | 0 | 7.088496 | 0.299921 | 0.068993 | 1 | 20 |
+| lts | UNDERCONSTRAINED | 66 | 66 | 0 | 0 | 7.287879 | 0.083033 | 0.259705 | 1 | 24 |
 | production | BOTH | 22 | 22 | 0 | 0 | 7.409091 | 0.089563 | 0.523127 | 1 | 24 |
 | production | CORRECT | 45 | 25 | 20 | 0 | 6.840000 | 1.000000 | 0.000000 | 0 | 10 |
-| production | OVERCONSTRAINED | 25 | 25 | 0 | 0 | 6.440000 | 0.000000 | 0.000000 | 1 | 17 |
-| production | UNDERCONSTRAINED | 36 | 36 | 0 | 0 | 6.861111 | 0.880088 | 0.182854 | 2 | 21 |
-| train | BOTH | 277 | 277 | 0 | 0 | 22.574007 | 0.393268 | 0.130498 | 2 | 76 |
-| train | CORRECT | 102 | 76 | 26 | 0 | 10.026316 | 0.995215 | 0.000000 | 0 | 34 |
-| train | OVERCONSTRAINED | 170 | 170 | 0 | 0 | 14.988235 | 0.697817 | -0.013290 | 1 | 46 |
-| train | UNDERCONSTRAINED | 178 | 178 | 0 | 0 | 17.606742 | 0.302345 | -0.153879 | 1 | 61 |
-| trash_rl | BOTH | 267 | 267 | 0 | 0 | 5.970037 | 0.313037 | -0.124057 | 1 | 28 |
-| trash_rl | CORRECT | 340 | 252 | 88 | 0 | 6.349206 | 1.000000 | 0.000000 | 0 | 16 |
-| trash_rl | OVERCONSTRAINED | 150 | 150 | 0 | 0 | 5.606667 | 0.393347 | 0.020869 | 1 | 24 |
-| trash_rl | UNDERCONSTRAINED | 63 | 63 | 0 | 0 | 9.777778 | 0.363508 | -0.230459 | 1 | 22 |
+| production | OVERCONSTRAINED | 25 | 25 | 0 | 0 | 6.400000 | 0.000000 | 0.000000 | 1 | 17 |
+| production | UNDERCONSTRAINED | 36 | 36 | 0 | 0 | 6.805556 | 0.880088 | 0.182063 | 2 | 21 |
+| train | BOTH | 277 | 277 | 0 | 0 | 21.064982 | 0.393268 | 0.154983 | 2 | 94 |
+| train | CORRECT | 102 | 76 | 26 | 0 | 9.710526 | 0.995215 | 0.000000 | 0 | 40 |
+| train | OVERCONSTRAINED | 170 | 170 | 0 | 0 | 14.411765 | 0.697817 | -0.002259 | 1 | 47 |
+| train | UNDERCONSTRAINED | 178 | 178 | 0 | 0 | 15.696629 | 0.302345 | -0.144203 | 1 | 62 |
+| trash_rl | BOTH | 267 | 267 | 0 | 0 | 5.981273 | 0.313037 | -0.095787 | 1 | 29 |
+| trash_rl | CORRECT | 340 | 252 | 88 | 0 | 6.468254 | 1.000000 | 0.000000 | 0 | 37 |
+| trash_rl | OVERCONSTRAINED | 150 | 150 | 0 | 0 | 5.686667 | 0.393347 | 0.020431 | 1 | 24 |
+| trash_rl | UNDERCONSTRAINED | 63 | 63 | 0 | 0 | 9.698413 | 0.363508 | -0.229267 | 1 | 22 |

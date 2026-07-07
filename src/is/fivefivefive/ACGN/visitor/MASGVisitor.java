@@ -993,15 +993,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         arg.getAffliation().addVertex(opNode);
         updateTimeOfVisit(opNode, arg);
+        int listTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(opNode, 1);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
             // globalVariables.addEdge(opNode, argChildNode, iter);
-            visitAndConnect(opNode, argChildNode, iter, arg);
+            visitAndConnectAt(opNode, argChildNode, iter, arg, listTimeOfVisit);
             iter++;
         }
         // globalVariables.addEdge(opNode, END_NODE, iter);
-        visitAndConnect(opNode, END_NODE, iter, arg);
+        visitAndConnectAt(opNode, END_NODE, iter, arg, listTimeOfVisit);
         return opNode;
     }
 
@@ -1023,14 +1024,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             uniqueNode.put(opSymbol, opNode);
         }
         updateTimeOfVisit(opNode, arg);
+        int listTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(opNode, 1);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
             // globalVariables.addEdge(opNode, argChildNode, iter);
-            visitAndConnect(opNode, argChildNode, iter, arg);
+            visitAndConnectAt(opNode, argChildNode, iter, arg, listTimeOfVisit);
             iter++;
         }
-        visitAndConnect(opNode, END_NODE, iter, arg);
+        visitAndConnectAt(opNode, END_NODE, iter, arg, listTimeOfVisit);
         return opNode;
     }
 

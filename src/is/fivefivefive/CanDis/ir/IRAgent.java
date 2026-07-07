@@ -1,9 +1,11 @@
 package is.fivefivefive.CanDis.ir;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -42,7 +44,7 @@ public class IRAgent {
             nfs.add(rootNf);
             Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
             int[] nextId = new int[] { 0 };
-            rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId));
+            rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId, new HashSet<>()));
             for (NormalForm nf : nfs) {
                 nf.normalize();
             }
@@ -51,12 +53,23 @@ public class IRAgent {
         }
     }
 
-    private EGraphNode buildEGraph(AugmentedNode node, int tov, NormalForm nf, Map<AugmentedNode, Integer> tovTracker, int[] nextId) {
-        List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(graph, tov);
+    private EGraphNode buildEGraph(
+            AugmentedNode node,
+            int tov,
+            NormalForm nf,
+            Map<AugmentedNode, Integer> tovTracker,
+            int[] nextId,
+            Set<String> activePath) {
         Opcode opcode = opcodeOf(node);
+        String activeKey = node.hashCode() + "@" + tov;
+        List<MASGEdge> downlinks = downlinksFor(node, tov, opcode);
         EGraphNode current = new EGraphNode(nextId[0]++, opcode, new ArrayList<>(), isCommutative(opcode), maxArity(opcode), isFlexibleArity(opcode), metatypeOf(node, opcode));
         attachSourceMetadata(current, node);
 
+        if (!activePath.add(activeKey)) {
+            return current;
+        }
+        try {
         if (downlinks == null || downlinks.isEmpty()) {
             return current;
         }
@@ -69,8 +82,8 @@ public class IRAgent {
             nf.addTemporalChild(rightNf);
             nfs.add(leftNf);
             nfs.add(rightNf);
-            addTemporalChild(leftNf, downlinks.get(0).getTarget(), tovTracker, nextId);
-            addTemporalChild(rightNf, downlinks.get(1).getTarget(), tovTracker, nextId);
+            addTemporalChild(leftNf, downlinks.get(0).getTarget(), tovTracker, nextId, activePath);
+            addTemporalChild(rightNf, downlinks.get(1).getTarget(), tovTracker, nextId, activePath);
             return current;
         }
         TemporalOp unaryTemporalOp = unaryTemporalOpOf(opcode);
@@ -78,15 +91,135 @@ public class IRAgent {
             NormalForm temporalNf = new NormalForm(nf, unaryTemporalOp, nextId[0]++);
             nf.addTemporalChild(temporalNf);
             nfs.add(temporalNf);
-            addTemporalChild(temporalNf, downlinks.get(0).getTarget(), tovTracker, nextId);
+            addTemporalChild(temporalNf, downlinks.get(0).getTarget(), tovTracker, nextId, activePath);
             return current;
         }
 
         for (MASGEdge downlink : downlinks) {
             AugmentedNode child = downlink.getTarget();
-            current.addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId));
+            current.addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId, activePath));
         }
         return current;
+        } finally {
+            activePath.remove(activeKey);
+        }
+    }
+
+    private List<MASGEdge> downlinksFor(AugmentedNode node, int tov, Opcode opcode) {
+        int maxTov = graph.getTimeOfVisitMap().getOrDefault(node, tov);
+        if (tov > maxTov) {
+            return null;
+        }
+        List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(graph, tov);
+        int expected = expectedDownlinkCount(opcode);
+        if (isQuantifierOpcode(opcode) && hasQuantifierBodyEdge(downlinks)) {
+            return downlinks;
+        }
+        if (isQuantifierOpcode(opcode)) {
+            List<MASGEdge> candidate = nearestQuantifierVisitWithBody(node, tov, maxTov);
+            if (candidate != null) {
+                return candidate;
+            }
+            return downlinks;
+        }
+        if (expected <= 0 || (downlinks != null && downlinks.size() >= expected)) {
+            return downlinks;
+        }
+        for (int candidateTov = Math.max(1, tov); candidateTov <= maxTov; candidateTov++) {
+            List<MASGEdge> candidate = node.getDownlinksAtTimeOfVisit(graph, candidateTov);
+            if (candidate != null && candidate.size() >= expected) {
+                return candidate;
+            }
+        }
+        for (int candidateTov = Math.min(tov - 1, maxTov); candidateTov >= 1; candidateTov--) {
+            List<MASGEdge> candidate = node.getDownlinksAtTimeOfVisit(graph, candidateTov);
+            if (candidate != null && candidate.size() >= expected) {
+                return candidate;
+            }
+        }
+        return downlinks;
+    }
+
+    private List<MASGEdge> nearestQuantifierVisitWithBody(AugmentedNode node, int tov, int maxTov) {
+        List<MASGEdge> best = null;
+        int bestScore = -1;
+        int bestDistance = Integer.MAX_VALUE;
+        for (int candidateTov = 1; candidateTov <= maxTov; candidateTov++) {
+            List<MASGEdge> candidate = node.getDownlinksAtTimeOfVisit(graph, candidateTov);
+            int score = quantifierBodyScore(candidate);
+            if (score <= 0) {
+                continue;
+            }
+            int distance = Math.abs(candidateTov - tov);
+            if (score > bestScore || (score == bestScore && distance < bestDistance)) {
+                best = candidate;
+                bestScore = score;
+                bestDistance = distance;
+            }
+        }
+        return best;
+    }
+
+    private static boolean hasQuantifierBodyEdge(List<MASGEdge> downlinks) {
+        return quantifierBodyScore(downlinks) > 0;
+    }
+
+    private static int quantifierBodyScore(List<MASGEdge> downlinks) {
+        if (downlinks == null) {
+            return 0;
+        }
+        int score = 0;
+        for (MASGEdge edge : downlinks) {
+            Opcode childOpcode = opcodeOf(edge.getTarget());
+            if (childOpcode != Opcode.END && !isRelDeclOpcode(childOpcode)) {
+                score = Math.max(score, quantifierBodyOpcodeScore(childOpcode));
+            }
+        }
+        return score;
+    }
+
+    private static int quantifierBodyOpcodeScore(Opcode opcode) {
+        switch (opcode) {
+            case IMPLIES:
+            case IFF:
+            case AND:
+            case OR:
+            case FORALL:
+            case EXISTS:
+            case NO:
+            case ONE:
+            case LONE:
+                return 4;
+            case NOT:
+            case SOME:
+            case IN:
+            case NOT_IN:
+            case EQUALS:
+            case NOT_EQUALS:
+            case GT:
+            case GTE:
+            case LT:
+            case LTE:
+                return 2;
+            default:
+                return 1;
+        }
+    }
+
+    private static boolean isQuantifierOpcode(Opcode opcode) {
+        return opcode == Opcode.FORALL || opcode == Opcode.EXISTS || opcode == Opcode.NO
+                || opcode == Opcode.LONE || opcode == Opcode.ONE || opcode == Opcode.SUM
+                || opcode == Opcode.COMPREHENSION;
+    }
+
+    private static int expectedDownlinkCount(Opcode opcode) {
+        if (opcode == Opcode.ITE) {
+            return 3;
+        }
+        if (isFormulaBinary(opcode)) {
+            return 2;
+        }
+        return -1;
     }
 
     private static void attachSourceMetadata(EGraphNode eGraphNode, AugmentedNode sourceNode) {
@@ -101,8 +234,13 @@ public class IRAgent {
         }
     }
 
-    private void addTemporalChild(NormalForm nf, AugmentedNode child, Map<AugmentedNode, Integer> tovTracker, int[] nextId) {
-        nf.getMatrixEGraph().addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId));
+    private void addTemporalChild(
+            NormalForm nf,
+            AugmentedNode child,
+            Map<AugmentedNode, Integer> tovTracker,
+            int[] nextId,
+            Set<String> activePath) {
+        nf.getMatrixEGraph().addChild(buildEGraph(child, nextTov(tovTracker, child), nf, tovTracker, nextId, activePath));
     }
 
     private static int nextTov(Map<AugmentedNode, Integer> tovTracker, AugmentedNode node) {
@@ -503,6 +641,34 @@ public class IRAgent {
                 || opcode == Opcode.PRIME || opcode == Opcode.BEFORE || opcode == Opcode.HISTORICALLY
                 || opcode == Opcode.ONCE || opcode == Opcode.ALWAYS || opcode == Opcode.EVENTUALLY
                 || opcode == Opcode.AFTER;
+    }
+
+    private static boolean isFormulaBinary(Opcode opcode) {
+        switch (opcode) {
+            case AND:
+            case OR:
+            case IMPLIES:
+            case IFF:
+            case EQUALS:
+            case NOT_EQUALS:
+            case IN:
+            case NOT_IN:
+            case GT:
+            case GTE:
+            case LT:
+            case LTE:
+            case NOT_GT:
+            case NOT_GTE:
+            case NOT_LT:
+            case NOT_LTE:
+            case RELEASES:
+            case SINCE:
+            case TRIGGERED:
+            case UNTIL:
+                return true;
+            default:
+                return false;
+        }
     }
 
     private static boolean isRelDeclOpcode(Opcode opcode) {

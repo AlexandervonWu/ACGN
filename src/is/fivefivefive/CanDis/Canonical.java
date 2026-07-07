@@ -530,7 +530,15 @@ public class Canonical {
         if (node.isOrderInsensitive()) {
             children = sortedForMapping(children, variableMapping);
         }
-        if (node.isBagFlexibleArity()) {
+        if (node.isSetFlexibleArity()) {
+            java.util.Set<String> members = new java.util.TreeSet<>();
+            for (EGraphNode child : children) {
+                members.add(mappedSortKey(child, variableMapping));
+            }
+            for (String member : members) {
+                key.append(member).append(',');
+            }
+        } else if (node.isBagFlexibleArity()) {
             Map<String, Integer> multiplicities = new java.util.TreeMap<>();
             for (EGraphNode child : children) {
                 String childKey = mappedSortKey(child, variableMapping);

@@ -22,7 +22,7 @@ public final class EGraphSaturationTest {
         testAssociativeCommutativeSaturation();
         testDeMorganSaturation();
         testAssociativeNoncommutativeJoin();
-        testSetOperatorsUseBagFlexibleArity();
+        testSetOperatorsUseSetFlexibleArity();
         testRenamedIdUnionFind();
         testDoubleNegationAndIdempotence();
         testAllNoNotQuantifierEquivalence();
@@ -55,7 +55,7 @@ public final class EGraphSaturationTest {
 
         root.saturate();
 
-        assertTrue(root.isBagFlexibleArity(), "AND must use bag flexible arity");
+        assertTrue(root.isSetFlexibleArity(), "AND must use set flexible arity");
         assertEquals(3, root.getChildren().size(), "AND must flatten to flexible arity");
         assertEquals(Arrays.asList("a", "b", "c"), variableNames(root.getChildren()),
                 "commutative children must be canonicalized");
@@ -69,9 +69,9 @@ public final class EGraphSaturationTest {
 
         EGraphNode disjunction = node(Opcode.OR, true, true, variable("z"), variable("y"), variable("x"));
         disjunction.saturate();
-        assertTrue(disjunction.isBagFlexibleArity(), "OR must use bag flexible arity");
+        assertTrue(disjunction.isSetFlexibleArity(), "OR must use set flexible arity");
         assertEquals(Arrays.asList("x", "y", "z"), variableNames(disjunction.getChildren()),
-                "OR bag operands must be canonicalized without preserving source order");
+                "OR set operands must be canonicalized without preserving source order");
     }
 
     private static void testDeMorganSaturation() {
@@ -103,22 +103,22 @@ public final class EGraphSaturationTest {
                 "associated JOIN terms must share an e-class");
     }
 
-    private static void testSetOperatorsUseBagFlexibleArity() {
+    private static void testSetOperatorsUseSetFlexibleArity() {
         EGraphNode nestedUnion = node(Opcode.PLUS, true, true, variable("b"), variable("a"));
         EGraphNode union = node(Opcode.PLUS, true, true, variable("c"), nestedUnion);
         union.saturate();
 
-        assertTrue(union.isBagFlexibleArity(), "set union PLUS must use bag flexible arity");
+        assertTrue(union.isSetFlexibleArity(), "set union PLUS must use set flexible arity");
         assertEquals(Arrays.asList("a", "b", "c"), variableNames(union.getChildren()),
-                "bag flexible arity must canonicalize set union operands without preserving source order");
+                "set flexible arity must canonicalize set union operands without preserving source order");
 
         EGraphNode nestedIntersection = node(Opcode.INTERSECT, true, true, variable("right"), variable("left"));
         EGraphNode intersection = node(Opcode.INTERSECT, true, true, variable("tail"), nestedIntersection);
         intersection.saturate();
 
-        assertTrue(intersection.isBagFlexibleArity(), "set intersection must use bag flexible arity");
+        assertTrue(intersection.isSetFlexibleArity(), "set intersection must use set flexible arity");
         assertEquals(Arrays.asList("left", "right", "tail"), variableNames(intersection.getChildren()),
-                "bag flexible arity must canonicalize set intersection operands");
+                "set flexible arity must canonicalize set intersection operands");
 
         EGraphNode arrow = node(Opcode.ARROW, false, true, variable("a"), node(Opcode.ARROW, false, true, variable("b"), variable("c")));
         arrow.saturate();
@@ -527,9 +527,13 @@ public final class EGraphSaturationTest {
         antecedentQuantifier.normalize();
 
         assertEquals(Quantifier.SOME, antecedentQuantifier.getMatrixQuantiVars().get(0).getQuantifier(),
-                "forall in an implication antecedent must become some after NNF");
+                "forall in an implication antecedent must become some after branch rewriting and NNF");
+        assertEquals("univ", antecedentQuantifier.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "unsafe existential lift across OR must use a nonempty carrier");
+        assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.IN),
+                "unsafe existential lift across OR must guard the original domain in the matrix");
         assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.NOT),
-                "the antecedent matrix must remain negated exactly once after prenexing");
+                "the antecedent matrix must remain negated exactly once after strict prenexing");
 
         NormalForm scopedImplication = new NormalForm();
         scopedImplication.addEClass(node(
@@ -581,6 +585,8 @@ public final class EGraphSaturationTest {
                 "IFF expansion must account for the implicit negated implication branch");
         assertTrue(hasQuantifier(iff.getMatrixQuantiVars(), Quantifier.SOME),
                 "IFF expansion must retain the positive implication branch");
+        assertTrue(containsOpcode(iff.getMatrixEGraph(), Opcode.NOT),
+                "IFF expansion must account for the implicit negated implication branch");
     }
 
     private static void testAlphaRenamingKeepsCanonicalDistanceZero() {
@@ -656,16 +662,16 @@ public final class EGraphSaturationTest {
         assertNegatedQuantifier(Opcode.NO, Quantifier.SOME, Opcode.CALL,
                 "not no x must become some x without negating the matrix");
 
-        assertAntecedentQuantifier(Opcode.FORALL, Quantifier.SOME, true,
-                "ALL in an implication antecedent must become SOME with a negated matrix");
-        assertAntecedentQuantifier(Opcode.EXISTS, Quantifier.ALL, true,
-                "SOME in an implication antecedent must become ALL with a negated matrix");
-        assertAntecedentQuantifier(Opcode.NO, Quantifier.SOME, false,
-                "NO in an implication antecedent must become SOME without negating the matrix");
-        assertAntecedentQuantifier(Opcode.ONE, Quantifier.NOTONE, false,
-                "ONE in an implication antecedent must become NOTONE without negating the matrix");
-        assertAntecedentQuantifier(Opcode.LONE, Quantifier.NOTLONE, false,
-                "LONE in an implication antecedent must become NOTLONE without negating the matrix");
+        assertAntecedentQuantifierLifted(Opcode.FORALL, Quantifier.SOME, true, "univ",
+                "ALL in an implication antecedent must become SOME with a relativized matrix");
+        assertAntecedentQuantifierLifted(Opcode.EXISTS, Quantifier.ALL, true, "S",
+                "SOME in an implication antecedent may become ALL and cross OR safely");
+        assertAntecedentQuantifierLifted(Opcode.NO, Quantifier.SOME, false, "univ",
+                "NO in an implication antecedent must become SOME with a relativized matrix");
+        assertAntecedentQuantifierLifted(Opcode.ONE, Quantifier.NOTONE, false, "univ",
+                "ONE in an implication antecedent must become NOTONE with a relativized matrix");
+        assertAntecedentQuantifierLifted(Opcode.LONE, Quantifier.NOTLONE, false, "univ",
+                "LONE in an implication antecedent must become NOTLONE with a relativized matrix");
     }
 
     private static void assertNegatedQuantifier(
@@ -681,16 +687,18 @@ public final class EGraphSaturationTest {
         assertEquals(expectedMatrixRoot, normalForm.getMatrixEGraph().getOpcode(), message);
     }
 
-    private static void assertAntecedentQuantifier(
+    private static void assertAntecedentQuantifierLifted(
             Opcode source,
             Quantifier expectedQuantifier,
             boolean expectedMatrixNegation,
+            String expectedCarrierType,
             String message) {
         NormalForm normalForm = new NormalForm();
         EGraphNode quantified = node(source, false, false, relDecl("a"), predicate("P", variable("a")));
         normalForm.addEClass(node(Opcode.IMPLIES, false, false, quantified, predicate("Q")));
         normalForm.normalize();
         assertEquals(expectedQuantifier, normalForm.getMatrixQuantiVars().get(0).getQuantifier(), message);
+        assertEquals(expectedCarrierType, normalForm.getMatrixQuantiVars().get(0).getCarrierTypeName(), message);
         assertEquals(expectedMatrixNegation, containsOpcode(normalForm.getMatrixEGraph(), Opcode.NOT), message);
     }
 

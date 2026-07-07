@@ -48,6 +48,7 @@ public class EGraphNode {
     }
     public enum FlexibleArityKind {
         FIXED,
+        SET,
         BAG,
         SEQUENCE
     }
@@ -224,7 +225,13 @@ public class EGraphNode {
         if (!flexibleArity) {
             return FlexibleArityKind.FIXED;
         }
+        if (isSetFlexibleArityOperator(opcode)) {
+            return FlexibleArityKind.SET;
+        }
         return isCommutative ? FlexibleArityKind.BAG : FlexibleArityKind.SEQUENCE;
+    }
+    public boolean isSetFlexibleArity() {
+        return getFlexibleArityKind() == FlexibleArityKind.SET;
     }
     public boolean isBagFlexibleArity() {
         return getFlexibleArityKind() == FlexibleArityKind.BAG;
@@ -371,7 +378,7 @@ public class EGraphNode {
             rewrittenChildren.sort(Comparator.comparing(ref -> ref.getEClass().getRepresentative().sortKey()));
         }
 
-        if (isIdempotentBagOperator(opcode)) {
+        if (isSetFlexibleArityOperator(opcode)) {
             rewrittenChildren = removeDuplicateInvocations(rewrittenChildren);
         }
 
@@ -406,7 +413,7 @@ public class EGraphNode {
             }
         }
 
-        if (isIdempotentBagOperator(opcode) && rewrittenChildren.size() == 1 && childClasses.size() != 1) {
+        if (isSetFlexibleArityOperator(opcode) && rewrittenChildren.size() == 1 && childClasses.size() != 1) {
             eClass.preserveSnapshot(snapshot());
             adopt(rewrittenChildren.get(0).getEClass().getRepresentative());
             refreshEClassSlots();
@@ -738,7 +745,7 @@ public class EGraphNode {
                 || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
     }
 
-    private static boolean isIdempotentBagOperator(Opcode opcode) {
+    private static boolean isSetFlexibleArityOperator(Opcode opcode) {
         return opcode == Opcode.AND || opcode == Opcode.OR
                 || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS;
     }
@@ -760,7 +767,15 @@ public class EGraphNode {
         }
         sb.append('[');
         if (node.childClasses != null) {
-            if (node.isBagFlexibleArity()) {
+            if (node.isSetFlexibleArity()) {
+                Set<String> members = new java.util.TreeSet<>();
+                for (EClassRef childRef : node.childClasses) {
+                    members.add(invocationSortKey(childRef));
+                }
+                for (String member : members) {
+                    sb.append(member).append(',');
+                }
+            } else if (node.isBagFlexibleArity()) {
                 Map<String, Integer> multiplicities = new java.util.TreeMap<>();
                 for (EClassRef childRef : node.childClasses) {
                     String key = invocationSortKey(childRef);

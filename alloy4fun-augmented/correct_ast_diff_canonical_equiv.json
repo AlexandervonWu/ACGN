@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-06-26T15:47:28.657641600Z",
+  "generatedAt": "2026-07-07T21:14:38.607281443Z",
   "inputRoot": "classified-data",
   "outputRoot": "alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.",
-  "pairCount": 479,
+  "pairCount": 478,
   "pairs": [
     {
       "questionSet": "classroom_fol",
@@ -3865,15 +3865,6 @@
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_5", "kind": "correct-student", "source": "trash_rl/CORRECT/parsed-file1860_inv10.als", "body": "(all f: (one Trash) {\n((f.link) in Trash)\n})"},
       "right": {"name": "inv10_correct_7", "kind": "correct-student", "source": "trash_rl/CORRECT/parsed-file1932_inv10.als", "body": "(all t: (one Trash) {\n((t.link) in Trash)\n})"}
-    },
-    {
-      "questionSet": "trash_rl",
-      "invariantId": "inv10",
-      "augmentedFile": "correct/trash_rl/inv10.als",
-      "rawAstDistance": 17,
-      "canonicalDistance": 0,
-      "left": {"name": "inv10_correct_8", "kind": "correct-student", "source": "trash_rl/CORRECT/parsed-file2092_inv10.als", "body": "(let x = (File & Trash) {\n((x.link) in Trash)\n})"},
-      "right": {"name": "inv10_correct_15", "kind": "correct-student", "source": "trash_rl/CORRECT/parsed-file373_inv10.als", "body": "(((File & Trash).link) in Trash)"}
     },
     {
       "questionSet": "trash_rl",

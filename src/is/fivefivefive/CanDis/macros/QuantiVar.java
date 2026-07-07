@@ -31,6 +31,7 @@ public class QuantiVar {
     private String originalName;
     private Type type;
     private String typeName;
+    private String carrierTypeName;
     private String deBruijnKey;
     private Quantifier quantifier;
     private Cardinality cardinality;
@@ -42,6 +43,7 @@ public class QuantiVar {
         this.originalName = name;
         this.type = type;
         this.typeName = type == null ? null : type.toString();
+        this.carrierTypeName = this.typeName;
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
         this.cardinality = Cardinality.SET;
@@ -57,6 +59,7 @@ public class QuantiVar {
         this.originalName = originalName;
         this.type = null;
         this.typeName = typeName;
+        this.carrierTypeName = typeName;
         this.deBruijnKey = name;
         this.quantifier = Quantifier.SOME;
         this.cardinality = Cardinality.SET;
@@ -77,6 +80,12 @@ public class QuantiVar {
     }
     public String getTypeName() {
         return typeName;
+    }
+    public String getCarrierTypeName() {
+        return carrierTypeName == null || carrierTypeName.isEmpty() ? typeName : carrierTypeName;
+    }
+    public void setCarrierTypeName(String carrierTypeName) {
+        this.carrierTypeName = carrierTypeName;
     }
     public String getDeBruijnKey() {
         return deBruijnKey == null ? name : deBruijnKey;
@@ -133,6 +142,7 @@ public class QuantiVar {
         // in JSON form
         return "{\"id\": " + id + ", \"name\": \"" + name + "\", \"originalName\": \"" + originalName
                 + "\", \"type\": \"" + typeName + "\", \"quantifier\": \"" + quantifier
+                + "\", \"carrierType\": \"" + getCarrierTypeName()
                 + "\", \"cardinality\": \"" + getCardinality()
                 + "\", \"disj\": " + isDisj()
                 + ", \"disjointnessClass\": " + getDisjointnessClass()
