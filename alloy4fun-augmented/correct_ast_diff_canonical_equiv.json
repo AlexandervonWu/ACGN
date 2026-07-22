@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-07T21:14:38.607281443Z",
+  "generatedAt": "2026-07-22T14:57:04.149983526Z",
   "inputRoot": "classified-data",
   "outputRoot": "alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.",

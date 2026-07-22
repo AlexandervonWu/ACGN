@@ -140,11 +140,6 @@ public class CanonicalBatchTest {
             result.rawAstSize = Math.max(result.leftRawAstSize, result.rightRawAstSize);
             result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
-            if (result.rawAstTreeDistance == 0) {
-                result.skipped = true;
-                result.skipReason = "Identical raw AST predicate body.";
-                return result;
-            }
 
             MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
             visitor.visit(model, null);
@@ -161,10 +156,16 @@ public class CanonicalBatchTest {
             result.predicateBodyLevenshteinDistance = levenshteinDistance(leftBody, rightBody);
             result.leftVertices = left.size();
             result.rightVertices = right.size();
-            result.distance = Canonical.distance(left, right);
             result.leftCanonicalFormSize = Canonical.canonicalFormSize(left);
             result.rightCanonicalFormSize = Canonical.canonicalFormSize(right);
             result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
+            result.representationSizesAvailable = true;
+            if (result.rawAstTreeDistance == 0) {
+                result.skipped = true;
+                result.skipReason = "Identical raw AST predicate body.";
+                return result;
+            }
+            result.distance = Canonical.distance(left, right);
             result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
             result.leftIRTemporalFOL = Canonical.irTemporalFol(left);
             result.rightIRTemporalFOL = Canonical.irTemporalFol(right);
@@ -432,9 +433,36 @@ public class CanonicalBatchTest {
         writer.write("    \"normalizedRawAstCandidateRewardPearson\": "
                 + number(summary.normalizedRawAstRewardCorrelation()) + ",\n");
         writer.write("    \"normalizedCanonicalCandidateRewardPearson\": "
-                + number(summary.normalizedCanonicalRewardCorrelation()) + "\n");
+                + number(summary.normalizedCanonicalRewardCorrelation()) + ",\n");
+        writer.write("    \"representationSamples\": " + summary.representationSamples + ",\n");
+        writer.write("    \"averageStudentRawAstSize\": " + number(summary.averageStudentRawAstSize()) + ",\n");
+        writer.write("    \"averageStudentCanonicalFormSize\": "
+                + number(summary.averageStudentCanonicalFormSize()) + ",\n");
+        writer.write("    \"studentCanonicalCompressionRatePercent\": "
+                + number(summary.studentCanonicalCompressionRatePercent()) + ",\n");
+        writer.write("    \"representationByProblemClassAndStatus\": [\n");
+        writeJsonRepresentationGroups(writer, summary.groupStats);
+        writer.write("\n    ]\n");
         writer.write("  }\n");
         writer.write("}\n");
+    }
+
+    private static void writeJsonRepresentationGroups(Writer writer, Map<String, Stats> groups) throws IOException {
+        int index = 0;
+        for (Stats stats : groups.values()) {
+            if (index++ > 0) {
+                writer.write(",\n");
+            }
+            writer.write("      {\"problemClass\": \"" + escape(stats.problemClass)
+                    + "\", \"statusFolder\": \"" + escape(stats.statusFolder)
+                    + "\", \"modelCount\": " + stats.representationSamples
+                    + ", \"totalRawAstSize\": " + stats.studentRawAstSizeSum
+                    + ", \"totalCanonicalFormSize\": " + stats.studentCanonicalFormSizeSum
+                    + ", \"averageRawAstSize\": " + number(stats.averageStudentRawAstSize())
+                    + ", \"averageCanonicalFormSize\": " + number(stats.averageStudentCanonicalFormSize())
+                    + ", \"compressionRatePercent\": "
+                    + number(stats.studentCanonicalCompressionRatePercent()) + "}");
+        }
     }
 
     private static void writeJsonResult(Writer writer, FileResult result) throws IOException {
@@ -460,6 +488,8 @@ public class CanonicalBatchTest {
             writer.write("      \"leftCanonicalFormSize\": " + result.leftCanonicalFormSize + ",\n");
             writer.write("      \"rightCanonicalFormSize\": " + result.rightCanonicalFormSize + ",\n");
             writer.write("      \"canonicalFormSize\": " + result.canonicalFormSize + ",\n");
+            writer.write("      \"leftCanonicalCompressionRatePercent\": "
+                    + number(result.leftCanonicalCompressionRatePercent()) + ",\n");
             writer.write("      \"distance\": " + result.distance + ",\n");
             writer.write("      \"normalizedCanonicalDistance\": " + number(result.normalizedCanonicalDistance) + ",\n");
             writer.write("      \"rewardPoolSize\": " + result.rewardPoolSize + ",\n");
@@ -490,6 +520,11 @@ public class CanonicalBatchTest {
             writer.write("      \"leftRawAstSize\": " + result.leftRawAstSize + ",\n");
             writer.write("      \"rightRawAstSize\": " + result.rightRawAstSize + ",\n");
             writer.write("      \"rawAstSize\": " + result.rawAstSize + ",\n");
+            writer.write("      \"leftCanonicalFormSize\": " + result.leftCanonicalFormSize + ",\n");
+            writer.write("      \"rightCanonicalFormSize\": " + result.rightCanonicalFormSize + ",\n");
+            writer.write("      \"canonicalFormSize\": " + result.canonicalFormSize + ",\n");
+            writer.write("      \"leftCanonicalCompressionRatePercent\": "
+                    + number(result.leftCanonicalCompressionRatePercent()) + ",\n");
             writer.write("      \"rawAstTreeDistance\": " + result.rawAstTreeDistance + ",\n");
             writer.write("      \"skipReason\": \"" + escape(result.skipReason) + "\"\n");
         } else {
@@ -522,6 +557,21 @@ public class CanonicalBatchTest {
                     + summary.correctCanonicalZeroRawAstNonzero + "\n");
             writer.write("- Min distance: " + summary.minDistanceMarkdown() + "\n");
             writer.write("- Max distance: " + summary.maxDistanceMarkdown() + "\n\n");
+
+            writer.write("## Canonical Representation Compression\n\n");
+            writer.write("Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`. "
+                    + "Negative values indicate expansion. Sizes are for the student predicate associated with "
+                    + "the directory label; identical-AST pairs are included.\n\n");
+            writer.write("| Problem class | Correctness division | Models | Avg raw AST size | Avg canonical size | Compression rate |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: |\n");
+            for (Stats stats : summary.groupStats.values()) {
+                writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
+                        + stats.representationSamples + " | " + number(stats.averageStudentRawAstSize()) + " | "
+                        + number(stats.averageStudentCanonicalFormSize()) + " | "
+                        + number(stats.studentCanonicalCompressionRatePercent()) + "% |\n");
+            }
+            writer.write("\n");
+
             writer.write("## Reward Comparison\n\n");
             writer.write("- Rewarded files: " + summary.rewardSuccesses + "\n");
             writer.write("- Reward failures: " + summary.rewardFailures() + "\n");
@@ -613,6 +663,13 @@ public class CanonicalBatchTest {
         return String.format(java.util.Locale.ROOT, "%.6f", value);
     }
 
+    private static double compressionRatePercent(long rawAstSize, long canonicalFormSize) {
+        if (rawAstSize <= 0) {
+            return 0.0;
+        }
+        return 100.0 * (rawAstSize - canonicalFormSize) / rawAstSize;
+    }
+
     private static class Options {
         private Path inputDir = Paths.get(DEFAULT_INPUT);
         private Path outputDir = Paths.get(DEFAULT_OUTPUT);
@@ -693,6 +750,7 @@ public class CanonicalBatchTest {
         private List<String> leftIRTemporalFOL = new ArrayList<>();
         private List<String> rightIRTemporalFOL = new ArrayList<>();
         private List<String> edits = new ArrayList<>();
+        private boolean representationSizesAvailable;
         private boolean skipped;
         private String skipReason;
         private String error;
@@ -707,6 +765,10 @@ public class CanonicalBatchTest {
 
         private boolean success() {
             return error == null && !skipped;
+        }
+
+        private double leftCanonicalCompressionRatePercent() {
+            return compressionRatePercent(leftRawAstSize, leftCanonicalFormSize);
         }
 
         private String status() {
@@ -754,6 +816,9 @@ public class CanonicalBatchTest {
         private double normalizedCanonicalRewardXSum;
         private double normalizedCanonicalRewardXXSum;
         private double normalizedCanonicalRewardXYSum;
+        private int representationSamples;
+        private long studentRawAstSizeSum;
+        private long studentCanonicalFormSizeSum;
         private Map<String, Stats> groupStats = new java.util.TreeMap<>();
         private List<FileResult> failureSamples = new ArrayList<>();
 
@@ -763,6 +828,11 @@ public class CanonicalBatchTest {
                     result.problemClass + "/" + result.statusFolder,
                     key -> new Stats(result.problemClass, result.statusFolder));
             stats.add(result);
+            if (result.representationSizesAvailable) {
+                representationSamples++;
+                studentRawAstSizeSum += result.leftRawAstSize;
+                studentCanonicalFormSizeSum += result.leftCanonicalFormSize;
+            }
             if (result.skipped) {
                 skipped++;
             } else if (result.success()) {
@@ -844,6 +914,18 @@ public class CanonicalBatchTest {
 
         private double averageNormalizedCanonicalDistance() {
             return successes == 0 ? 0.0 : normalizedCanonicalDistanceSum / successes;
+        }
+
+        private double averageStudentRawAstSize() {
+            return representationSamples == 0 ? 0.0 : (double) studentRawAstSizeSum / representationSamples;
+        }
+
+        private double averageStudentCanonicalFormSize() {
+            return representationSamples == 0 ? 0.0 : (double) studentCanonicalFormSizeSum / representationSamples;
+        }
+
+        private double studentCanonicalCompressionRatePercent() {
+            return compressionRatePercent(studentRawAstSizeSum, studentCanonicalFormSizeSum);
         }
 
         private int rewardFailures() {
@@ -947,6 +1029,9 @@ public class CanonicalBatchTest {
         private double distanceRewardXXSum;
         private double distanceRewardYYSum;
         private double distanceRewardXYSum;
+        private int representationSamples;
+        private long studentRawAstSizeSum;
+        private long studentCanonicalFormSizeSum;
 
         private Stats(String problemClass, String statusFolder) {
             this.problemClass = problemClass;
@@ -955,6 +1040,11 @@ public class CanonicalBatchTest {
 
         private void add(FileResult result) {
             total++;
+            if (result.representationSizesAvailable) {
+                representationSamples++;
+                studentRawAstSizeSum += result.leftRawAstSize;
+                studentCanonicalFormSizeSum += result.leftCanonicalFormSize;
+            }
             if (result.skipped) {
                 skipped++;
             } else if (result.success()) {
@@ -985,6 +1075,18 @@ public class CanonicalBatchTest {
 
         private double averageCandidateReward() {
             return rewardSuccesses == 0 ? 0.0 : candidateRewardSum / rewardSuccesses;
+        }
+
+        private double averageStudentRawAstSize() {
+            return representationSamples == 0 ? 0.0 : (double) studentRawAstSizeSum / representationSamples;
+        }
+
+        private double averageStudentCanonicalFormSize() {
+            return representationSamples == 0 ? 0.0 : (double) studentCanonicalFormSizeSum / representationSamples;
+        }
+
+        private double studentCanonicalCompressionRatePercent() {
+            return compressionRatePercent(studentRawAstSizeSum, studentCanonicalFormSizeSum);
         }
 
         private double distanceRewardCorrelation() {
