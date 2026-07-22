@@ -105,6 +105,15 @@ public class CanonicalBatchTest {
                             cause.getClass().getSimpleName() + ": " + cause.getMessage()));
                 }
             }
+            for (int i = 0; i < results.size(); i++) {
+                if (results.get(i).error == null) {
+                    continue;
+                }
+                FileResult retry = processFile(options.inputDir, files.get(i), options);
+                if (retry.error == null) {
+                    results.set(i, retry);
+                }
+            }
             return results;
         } finally {
             executor.shutdownNow();

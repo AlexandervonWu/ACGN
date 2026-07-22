@@ -17,6 +17,45 @@
 - Min distance: 0
 - Max distance: 94
 
+## Canonical Representation Compression
+
+Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`. Negative values indicate expansion. Sizes are for the student predicate associated with the directory label; identical-AST pairs are included.
+
+| Problem class | Correctness division | Models | Avg raw AST size | Avg canonical size | Compression rate |
+| --- | --- | ---: | ---: | ---: | ---: |
+| classroom_fol | BOTH | 1115 | 30.623318 | 16.774888 | 45.221848% |
+| classroom_fol | CORRECT | 536 | 23.082090 | 13.447761 | 41.739412% |
+| classroom_fol | OVERCONSTRAINED | 223 | 23.941704 | 13.654709 | 42.966848% |
+| classroom_fol | UNDERCONSTRAINED | 166 | 32.373494 | 18.638554 | 42.426498% |
+| classroom_rl | BOTH | 1115 | 30.623318 | 16.774888 | 45.221848% |
+| classroom_rl | CORRECT | 536 | 23.082090 | 13.447761 | 41.739412% |
+| classroom_rl | OVERCONSTRAINED | 223 | 23.941704 | 13.654709 | 42.966848% |
+| classroom_rl | UNDERCONSTRAINED | 166 | 32.373494 | 18.638554 | 42.426498% |
+| cv_v1 | BOTH | 68 | 23.764706 | 15.441176 | 35.024752% |
+| cv_v1 | CORRECT | 69 | 24.130435 | 15.855072 | 34.294294% |
+| cv_v1 | OVERCONSTRAINED | 118 | 26.033898 | 17.186441 | 33.984375% |
+| cv_v1 | UNDERCONSTRAINED | 55 | 21.963636 | 14.763636 | 32.781457% |
+| cv_v2 | BOTH | 21 | 26.619048 | 20.333333 | 23.613596% |
+| cv_v2 | CORRECT | 34 | 23.000000 | 17.617647 | 23.401535% |
+| cv_v2 | OVERCONSTRAINED | 40 | 27.275000 | 20.600000 | 24.472961% |
+| cv_v2 | UNDERCONSTRAINED | 12 | 18.250000 | 13.833333 | 24.200913% |
+| lts | BOTH | 138 | 17.862319 | 10.318841 | 42.231237% |
+| lts | CORRECT | 112 | 16.776786 | 9.857143 | 41.245343% |
+| lts | OVERCONSTRAINED | 113 | 16.681416 | 9.610619 | 42.387268% |
+| lts | UNDERCONSTRAINED | 66 | 17.818182 | 10.106061 | 43.282313% |
+| production | BOTH | 22 | 13.818182 | 9.863636 | 28.618421% |
+| production | CORRECT | 45 | 13.866667 | 8.755556 | 36.858974% |
+| production | OVERCONSTRAINED | 25 | 13.960000 | 9.080000 | 34.957020% |
+| production | UNDERCONSTRAINED | 36 | 13.944444 | 9.416667 | 32.470120% |
+| train | BOTH | 277 | 23.924188 | 16.512635 | 30.979327% |
+| train | CORRECT | 102 | 17.774510 | 12.166667 | 31.549917% |
+| train | OVERCONSTRAINED | 170 | 18.735294 | 14.164706 | 24.395604% |
+| train | UNDERCONSTRAINED | 178 | 23.050562 | 14.893258 | 35.388740% |
+| trash_rl | BOTH | 267 | 12.370787 | 8.468165 | 31.547078% |
+| trash_rl | CORRECT | 340 | 12.482353 | 8.423529 | 32.516494% |
+| trash_rl | OVERCONSTRAINED | 150 | 12.013333 | 8.473333 | 29.467259% |
+| trash_rl | UNDERCONSTRAINED | 63 | 19.333333 | 11.968254 | 38.095238% |
+
 ## Reward Comparison
 
 - Rewarded files: 6318
