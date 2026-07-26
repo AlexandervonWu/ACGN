@@ -21,34 +21,30 @@ pred inv5_correct_1[] {
 }
 
 pred inv5_correct_2[] {
-((File - Protected) in Trash)
-}
-
-pred inv5_correct_3[] {
 (all f: (one (File - Protected)) {
 (f in Trash)
 })
 }
 
-pred inv5_correct_4[] {
+pred inv5_correct_3[] {
 (Trash = (File - (Protected - Trash)))
 }
 
-pred inv5_correct_5[] {
+pred inv5_correct_4[] {
 (all f: (one File) {
 ((f !in Protected) => (f in Trash))
 })
 }
 
-pred inv5_correct_6[] {
+pred inv5_correct_5[] {
 (File = (Trash + Protected))
 }
 
-pred inv5_correct_7[] {
+pred inv5_correct_6[] {
 (File = (Protected + Trash))
 }
 
-pred inv5_correct_8[] {
+pred inv5_correct_7[] {
 (all x: (one File) {
 ((x !in Protected) => (x in Trash))
 })

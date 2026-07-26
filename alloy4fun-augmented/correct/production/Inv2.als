@@ -25,44 +25,38 @@ pred Inv2_correct_0[] {
 }
 
 pred Inv2_correct_1[] {
-(all c: (one Component) {
-(c !in (c.(^parts)))
-})
-}
-
-pred Inv2_correct_2[] {
 (no ((^parts) & iden))
 }
 
-pred Inv2_correct_3[] {
+pred Inv2_correct_2[] {
 (all c: (one Component) {
 (no ((c.(^parts)) & c))
 })
 }
 
-pred Inv2_correct_4[] {
+pred Inv2_correct_3[] {
 (no (iden & (^parts)))
 }
 
-pred Inv2_correct_5[] {
+pred Inv2_correct_4[] {
 (no c: (one Component) {
 (c in (c.(^parts)))
 })
 }
 
-pred Inv2_correct_6[] {
+pred Inv2_correct_5[] {
 (all c: (one Component) {
 (c !in ((c.parts).(*parts)))
 })
 }
 
-pred Inv2_correct_7[] {
+pred Inv2_correct_6[] {
 (all c: (one Product) {
 (c !in (c.(^parts)))
 })
 }
 
-pred Inv2_correct_8[] {
+pred Inv2_correct_7[] {
 (all c: (one Component) {
 (c !in ((c.parts).(^parts)))
 })

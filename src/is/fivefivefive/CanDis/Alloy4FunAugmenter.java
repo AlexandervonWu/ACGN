@@ -1,7 +1,9 @@
 package is.fivefivefive.CanDis;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -13,10 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.Set;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -42,6 +50,7 @@ public class Alloy4FunAugmenter {
     private static final int[] REPAIR_RADII = { 1, 2, 5, 10 };
     private static final double[] RELATIVE_REPAIR_RADII = { 0.05, 0.10, 0.20, 0.50 };
     private static final int RELATIVE_REPAIR_CURVE_STEPS = 100;
+    private static final int REPORT_BUFFER_SIZE = 1024 * 1024;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -52,25 +61,58 @@ public class Alloy4FunAugmenter {
             files = new ArrayList<>(files.subList(0, options.limit));
         }
 
+        long stageStarted = beginStage("Parsing " + files.size() + " Alloy models");
         List<ModelRecord> records = parseRecords(files, options);
+        endStage("Parsing Alloy models", stageStarted);
+
+        stageStarted = beginStage("Building correct-reference pools");
         Map<String, QuestionGroup> groups = groups(records);
         for (QuestionGroup group : groups.values()) {
-            group.buildReferences();
+            group.buildReferences(options.verbose);
         }
+        endStage("Building correct-reference pools", stageStarted);
+
+        stageStarted = beginStage("Writing augmented correct pools");
         writeAugmentedFiles(groups, options.outputDir);
-        writeCorrectPoolEquivalenceJson(options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"), options, groups);
+        endStage("Writing augmented correct pools", stageStarted);
+
+        stageStarted = beginStage("Comparing canonically equivalent correct pairs");
+        List<CorrectPoolPair> correctPoolPairs =
+                correctAstDifferentCanonicalEquivalentPairs(groups, options.threadCount);
+        writeCorrectPoolEquivalenceJson(
+                options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"),
+                options,
+                correctPoolPairs);
+        endStage("Comparing canonically equivalent correct pairs", stageStarted);
+        logRankingWork(groups);
+
+        stageStarted = beginStage("Ranking incorrect predicates");
         List<IncorrectMatch> matches = nearestIncorrectMatches(groups, options);
+        endStage("Ranking incorrect predicates", stageStarted);
         if (!options.skipRewards) {
+            stageStarted = beginStage("Computing rewards");
             computeRewards(matches, options);
+            endStage("Computing rewards", stageStarted);
         }
+
+        stageStarted = beginStage("Writing reports and plots");
         List<ModelRecord> unmatched = incorrectWithoutReference(groups);
         writeJson(options.outputDir.resolve("index.json"), options, files.size(), groups, records, matches, unmatched);
-        writeMarkdown(options.outputDir.resolve("summary.md"), options, files.size(), groups, records, matches, unmatched);
+        writeMarkdown(
+                options.outputDir.resolve("summary.md"),
+                options,
+                files.size(),
+                groups,
+                records,
+                matches,
+                unmatched,
+                correctPoolPairs);
         writeRewardCsv(options.outputDir.resolve("canonical_reward_points.csv"), matches);
         writeRewardPlots(options.outputDir, matches);
         writeRelativeRepairCoveragePlot(options.outputDir.resolve("relative_repair_coverage_comparison.svg"), matches);
         writeRawEditRepairCoveragePlot(options.outputDir.resolve("raw_edit_repair_coverage_ast_canonical.svg"), matches);
         writePlotScript(options.outputDir.resolve("plot_canonical_rewards.py"));
+        endStage("Writing reports and plots", stageStarted);
         System.out.println("Wrote " + options.outputDir);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
         System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"));
@@ -83,9 +125,22 @@ public class Alloy4FunAugmenter {
         System.out.println("Wrote " + options.outputDir.resolve("plot_canonical_rewards.py"));
     }
 
+    private static long beginStage(String label) {
+        System.err.println("[Alloy4FunAugmenter] " + label + "...");
+        return System.nanoTime();
+    }
+
+    private static void endStage(String label, long started) {
+        double seconds = (System.nanoTime() - started) / 1_000_000_000.0;
+        System.err.println("[Alloy4FunAugmenter] " + label + " completed in "
+                + String.format(java.util.Locale.ROOT, "%.3f", seconds) + " s");
+    }
+
     private static List<ModelRecord> parseRecords(List<Path> files, Options options) {
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
+        ConcurrentMap<String, RawAstTree> astCache = new ConcurrentHashMap<>();
+        ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache = new ConcurrentHashMap<>();
         if (!options.verbose) {
             PrintStream sink = new PrintStream(new OutputStream() {
                 @Override
@@ -99,7 +154,8 @@ public class Alloy4FunAugmenter {
         try {
             List<Future<ModelRecord>> futures = new ArrayList<>(files.size());
             for (Path file : files) {
-                futures.add(executor.submit(() -> parseRecord(options.inputDir, file, options.verbose)));
+                futures.add(executor.submit(
+                        () -> parseRecord(options.inputDir, file, options.verbose, astCache, canonicalCache)));
             }
             List<ModelRecord> records = new ArrayList<>(files.size());
             for (int i = 0; i < futures.size(); i++) {
@@ -114,14 +170,39 @@ public class Alloy4FunAugmenter {
                             cause.getClass().getSimpleName() + ": " + cause.getMessage()));
                 }
             }
+            List<Integer> failedIndexes = new ArrayList<>();
+            List<Future<ModelRecord>> retries = new ArrayList<>();
             for (int i = 0; i < records.size(); i++) {
                 if (!records.get(i).success()) {
-                    ModelRecord retry = parseRecord(options.inputDir, files.get(i), options.verbose);
-                    if (retry.success()) {
-                        records.set(i, retry);
-                    }
+                    final int failedIndex = i;
+                    failedIndexes.add(failedIndex);
+                    retries.add(executor.submit(
+                            () -> parseRecord(
+                                    options.inputDir,
+                                    files.get(failedIndex),
+                                    options.verbose,
+                                    astCache,
+                                    canonicalCache)));
                 }
             }
+            if (!retries.isEmpty()) {
+                originalErr.println("[Alloy4FunAugmenter] Retrying " + retries.size()
+                        + " parse failures in parallel...");
+            }
+            for (int i = 0; i < retries.size(); i++) {
+                try {
+                    ModelRecord retry = retries.get(i).get();
+                    if (retry.success()) {
+                        records.set(failedIndexes.get(i), retry);
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (ExecutionException ignored) {
+                }
+            }
+            astCache.clear();
+            canonicalCache.clear();
             return records;
         } finally {
             executor.shutdownNow();
@@ -132,14 +213,19 @@ public class Alloy4FunAugmenter {
         }
     }
 
-    private static ModelRecord parseRecord(Path inputRoot, Path file, boolean verbose) {
+    private static ModelRecord parseRecord(
+            Path inputRoot,
+            Path file,
+            boolean verbose,
+            ConcurrentMap<String, RawAstTree> astCache,
+            ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache) {
         ModelRecord record = new ModelRecord(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
             ModelUnit model = new ModelUnit(null, module);
             PredicatePair pair = findPredicatePair(file, model);
             if (pair == null) {
-                record.error = "No predicate pair of the form X and XC found.";
+                record.error = "No predicate pair of the form X and X[Cc] found.";
                 return record;
             }
             record.leftPredicate = pair.leftName;
@@ -148,19 +234,28 @@ public class Alloy4FunAugmenter {
             record.oracleBody = predicateBody(file, pair.rightName, pair.right);
             record.levenshteinSize = record.studentBody.length();
             record.prelude = preludeBeforePredicate(Files.readString(file, StandardCharsets.UTF_8), pair.leftName);
-            record.studentAst = pair.left.getBody();
-            record.oracleAst = pair.right.getBody();
-            record.rawAstSize = rawAstSize(record.studentAst);
+            record.studentAst = internAst(RawAstTree.from(pair.left.getBody()), astCache);
+            record.oracleAst = internAst(RawAstTree.from(pair.right.getBody()), astCache);
+            record.rawAstSize = record.studentAst.size;
 
+            if (!"CORRECT".equals(record.statusFolder)) {
+                return record;
+            }
             MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
             visitor.visit(model, null);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-            record.studentGraph = forest.get(pair.leftId);
-            record.oracleGraph = forest.get(pair.rightId);
-            if (record.studentGraph == null || record.oracleGraph == null) {
+            Multigraph studentGraph = forest.get(pair.leftId);
+            Multigraph oracleGraph = forest.get(pair.rightId);
+            if (studentGraph == null || oracleGraph == null) {
                 record.error = "Could not find both predicate graphs in MASG forest.";
             } else {
-                record.canonicalSize = Canonical.canonicalFormSize(record.studentGraph);
+                record.studentCanonical = canonicalCache.computeIfAbsent(
+                        RepresentationKey.student(record),
+                        key -> Canonical.prepare(studentGraph));
+                record.oracleCanonical = canonicalCache.computeIfAbsent(
+                        RepresentationKey.oracle(record),
+                        key -> Canonical.prepare(oracleGraph));
+                record.canonicalSize = Canonical.canonicalFormSize(record.studentCanonical);
             }
         } catch (Throwable t) {
             if (verbose) {
@@ -169,6 +264,58 @@ public class Alloy4FunAugmenter {
             record.error = t.getClass().getSimpleName() + ": " + t.getMessage();
         }
         return record;
+    }
+
+    private static Canonical.Prepared loadCanonical(ModelRecord record, boolean oracle) {
+        try {
+            CompModule module = AlloyUtil.compileAlloyModule(record.file.toString());
+            ModelUnit model = new ModelUnit(null, module);
+            PredicatePair pair = findPredicatePair(record.file, model);
+            if (pair == null) {
+                throw new IllegalStateException("No predicate pair of the form X and X[Cc] found.");
+            }
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            visitor.visit(model, null);
+            Multigraph graph = visitor.getForest().get(oracle ? pair.rightId : pair.leftId);
+            if (graph == null) {
+                throw new IllegalStateException("Could not find predicate graph in MASG forest.");
+            }
+            return Canonical.prepare(graph);
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Throwable t) {
+            throw new IllegalStateException(
+                    "Could not prepare " + (oracle ? "oracle" : "student") + " canonical form for "
+                            + record.relativePath,
+                    t);
+        }
+    }
+
+    private static Canonical.Prepared loadCanonicalQuietly(ModelRecord record, boolean oracle, boolean verbose) {
+        if (verbose) {
+            return loadCanonical(record, oracle);
+        }
+        PrintStream originalOut = System.out;
+        PrintStream originalErr = System.err;
+        PrintStream sink = new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) {
+            }
+        });
+        System.setOut(sink);
+        System.setErr(sink);
+        try {
+            return loadCanonical(record, oracle);
+        } finally {
+            System.setOut(originalOut);
+            System.setErr(originalErr);
+            sink.close();
+        }
+    }
+
+    private static RawAstTree internAst(RawAstTree ast, ConcurrentMap<String, RawAstTree> cache) {
+        RawAstTree existing = cache.putIfAbsent(ast.fingerprint, ast);
+        return existing == null ? ast : existing;
     }
 
     private static Map<String, QuestionGroup> groups(List<ModelRecord> records) {
@@ -188,31 +335,53 @@ public class Alloy4FunAugmenter {
     }
 
     private static List<IncorrectMatch> nearestIncorrectMatches(Map<String, QuestionGroup> groups, Options options) {
-        List<Callable<List<IncorrectMatch>>> tasks = new ArrayList<>();
-        for (QuestionGroup group : groups.values()) {
-            tasks.add(() -> {
-                List<IncorrectMatch> matches = new ArrayList<>();
-                if (group.rankingReferences().isEmpty()) {
-                    return matches;
+        PrintStream originalOut = System.out;
+        PrintStream originalErr = System.err;
+        if (!options.verbose) {
+            PrintStream sink = new PrintStream(new OutputStream() {
+                @Override
+                public void write(int b) {
                 }
-                for (ModelRecord incorrect : group.incorrect) {
-                    matches.add(nearestIncorrectMatch(group, incorrect));
-                }
-                return matches;
             });
+            System.setOut(sink);
+            System.setErr(sink);
         }
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
         try {
-            List<Future<List<IncorrectMatch>>> futures = new ArrayList<>(tasks.size());
-            for (Callable<List<IncorrectMatch>> task : tasks) {
-                futures.add(executor.submit(task));
+            CompletionService<RankingBatch> completion = new ExecutorCompletionService<>(executor);
+            int taskCount = 0;
+            for (QuestionGroup group : groups.values()) {
+                if (group.rankingReferences().isEmpty()) {
+                    continue;
+                }
+                Map<RepresentationKey, List<ModelRecord>> duplicates = new LinkedHashMap<>();
+                for (ModelRecord record : group.incorrect) {
+                    duplicates.computeIfAbsent(RepresentationKey.student(record), key -> new ArrayList<>())
+                            .add(record);
+                }
+                for (List<ModelRecord> equivalentRecords : duplicates.values()) {
+                    ModelRecord representative = equivalentRecords.get(0);
+                    completion.submit(() -> new RankingBatch(
+                            equivalentRecords,
+                            nearestIncorrectMatch(group, representative)));
+                    taskCount++;
+                }
             }
             List<IncorrectMatch> matches = new ArrayList<>();
-            for (Future<List<IncorrectMatch>> future : futures) {
+            for (int i = 0; i < taskCount; i++) {
                 try {
-                    matches.addAll(future.get());
+                    RankingBatch batch = completion.take().get();
+                    IncorrectMatch template = batch.template;
+                    for (ModelRecord record : batch.records) {
+                        record.canonicalSize = template.record.canonicalSize;
+                        matches.add(record == template.record
+                                ? template
+                                : new IncorrectMatch(record, template));
+                        releaseRankingRepresentation(record);
+                    }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
+                    break;
                 } catch (ExecutionException ignored) {
                 }
             }
@@ -220,7 +389,40 @@ public class Alloy4FunAugmenter {
             return matches;
         } finally {
             executor.shutdownNow();
+            if (!options.verbose) {
+                System.setOut(originalOut);
+                System.setErr(originalErr);
+            }
         }
+    }
+
+    private static void releaseRankingRepresentation(ModelRecord record) {
+        record.studentAst = null;
+        record.studentCanonical = null;
+        record.studentBody = null;
+        record.prelude = null;
+    }
+
+    private static void logRankingWork(Map<String, QuestionGroup> groups) {
+        long comparisons = 0;
+        long deduplicatedComparisons = 0;
+        int incorrect = 0;
+        int uniqueIncorrectRepresentations = 0;
+        for (QuestionGroup group : groups.values()) {
+            int referenceCount = group.rankingReferences().size();
+            incorrect += group.incorrect.size();
+            comparisons += (long) group.incorrect.size() * referenceCount;
+            Set<RepresentationKey> representations = new HashSet<>();
+            for (ModelRecord record : group.incorrect) {
+                representations.add(RepresentationKey.student(record));
+            }
+            uniqueIncorrectRepresentations += representations.size();
+            deduplicatedComparisons += (long) representations.size() * referenceCount;
+        }
+        System.err.println("[Alloy4FunAugmenter] Ranking workload: " + incorrect
+                + " incorrect predicates, " + uniqueIncorrectRepresentations
+                + " unique representations, " + comparisons + " logical comparisons, "
+                + deduplicatedComparisons + " computed comparisons.");
     }
 
     private static List<ModelRecord> incorrectWithoutReference(Map<String, QuestionGroup> groups) {
@@ -235,11 +437,15 @@ public class Alloy4FunAugmenter {
     }
 
     private static IncorrectMatch nearestIncorrectMatch(QuestionGroup group, ModelRecord incorrect) {
+        if (incorrect.studentCanonical == null) {
+            incorrect.studentCanonical = loadCanonical(incorrect, false);
+            incorrect.canonicalSize = Canonical.canonicalFormSize(incorrect.studentCanonical);
+        }
         IncorrectMatch match = new IncorrectMatch(incorrect);
         for (Reference reference : group.rankingReferences()) {
             int levenshtein = levenshteinDistance(incorrect.studentBody, reference.body);
             int rawAst = rawAstTreeDistance(incorrect.studentAst, reference.ast);
-            int canonical = Canonical.distance(incorrect.studentGraph, reference.graph);
+            int canonical = Canonical.distance(incorrect.studentCanonical, reference.canonical);
             match.levenshtein.add(reference, levenshtein);
             match.rawAst.add(reference, rawAst);
             match.canonical.add(reference, canonical);
@@ -312,7 +518,7 @@ public class Alloy4FunAugmenter {
             }
             Files.createDirectories(correctRoot.resolve(group.questionSet));
             Path file = correctRoot.resolve(group.questionSet).resolve(group.invariantId + ".als");
-            try (Writer writer = Files.newBufferedWriter(file, StandardCharsets.UTF_8)) {
+            try (Writer writer = outputWriter(file)) {
                 writer.write("module alloy4fun_augmented_" + sanitize(group.questionSet) + "_" + sanitize(group.invariantId) + "\n");
                 String prelude = group.prelude();
                 int line = prelude.indexOf('\n');
@@ -332,9 +538,8 @@ public class Alloy4FunAugmenter {
     private static void writeCorrectPoolEquivalenceJson(
             Path path,
             Options options,
-            Map<String, QuestionGroup> groups) throws IOException {
-        List<CorrectPoolPair> pairs = correctAstDifferentCanonicalEquivalentPairs(groups);
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            List<CorrectPoolPair> pairs) throws IOException {
+        try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
             writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
@@ -353,30 +558,60 @@ public class Alloy4FunAugmenter {
         }
     }
 
-    private static List<CorrectPoolPair> correctAstDifferentCanonicalEquivalentPairs(Map<String, QuestionGroup> groups) {
-        List<CorrectPoolPair> pairs = new ArrayList<>();
-        for (QuestionGroup group : groups.values()) {
-            List<Reference> references = group.references;
-            for (int i = 0; i < references.size(); i++) {
-                for (int j = i + 1; j < references.size(); j++) {
-                    Reference left = references.get(i);
-                    Reference right = references.get(j);
-                    int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
-                    if (rawAstDistance <= 0) {
-                        continue;
-                    }
-                    int canonicalDistance = Canonical.distance(left.graph, right.graph);
-                    if (canonicalDistance == 0) {
-                        pairs.add(new CorrectPoolPair(group, left, right, rawAstDistance, canonicalDistance));
-                    }
+    private static List<CorrectPoolPair> correctAstDifferentCanonicalEquivalentPairs(
+            Map<String, QuestionGroup> groups,
+            int threadCount) {
+        ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, threadCount));
+        try {
+            List<Future<List<CorrectPoolPair>>> futures = new ArrayList<>();
+            for (QuestionGroup group : groups.values()) {
+                List<Reference> references = group.references;
+                for (int i = 0; i < references.size(); i++) {
+                    final int leftIndex = i;
+                    futures.add(executor.submit(() -> correctPoolPairsForLeft(group, references, leftIndex)));
                 }
             }
+            List<CorrectPoolPair> pairs = new ArrayList<>();
+            for (Future<List<CorrectPoolPair>> future : futures) {
+                try {
+                    pairs.addAll(future.get());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                } catch (ExecutionException ignored) {
+                }
+            }
+            pairs.sort(Comparator
+                    .comparing((CorrectPoolPair pair) -> pair.group.questionSet)
+                    .thenComparing(pair -> pair.group.invariantId)
+                    .thenComparing(pair -> pair.left.augmentedName)
+                    .thenComparing(pair -> pair.right.augmentedName));
+            return pairs;
+        } finally {
+            executor.shutdownNow();
         }
-        pairs.sort(Comparator
-                .comparing((CorrectPoolPair pair) -> pair.group.questionSet)
-                .thenComparing(pair -> pair.group.invariantId)
-                .thenComparing(pair -> pair.left.augmentedName)
-                .thenComparing(pair -> pair.right.augmentedName));
+    }
+
+    private static List<CorrectPoolPair> correctPoolPairsForLeft(
+            QuestionGroup group,
+            List<Reference> references,
+            int leftIndex) {
+        List<CorrectPoolPair> pairs = new ArrayList<>();
+        Reference left = references.get(leftIndex);
+        for (int j = leftIndex + 1; j < references.size(); j++) {
+            Reference right = references.get(j);
+            if (left.ast.fingerprint.equals(right.ast.fingerprint)) {
+                continue;
+            }
+            if (left.canonicalSize != right.canonicalSize) {
+                continue;
+            }
+            int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
+            int canonicalDistance = Canonical.distance(left.canonical, right.canonical);
+            if (canonicalDistance == 0) {
+                pairs.add(new CorrectPoolPair(group, left, right, rawAstDistance, canonicalDistance));
+            }
+        }
         return pairs;
     }
 
@@ -412,7 +647,7 @@ public class Alloy4FunAugmenter {
             List<IncorrectMatch> matches,
             List<ModelRecord> unmatched) throws IOException {
         Summary summary = new Summary(groups, records, matches, unmatched);
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
             writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
@@ -471,9 +706,11 @@ public class Alloy4FunAugmenter {
             Map<String, QuestionGroup> groups,
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
-            List<ModelRecord> unmatched) throws IOException {
+            List<ModelRecord> unmatched,
+            List<CorrectPoolPair> correctPoolPairs) throws IOException {
         Summary summary = new Summary(groups, records, matches, unmatched);
         Map<String, QuestionSetStats> questionStats = questionSetStats(groups, matches);
+        Map<String, CorrectTruthStats> correctTruthStats = correctTruthStats(groups, correctPoolPairs);
         Map<String, RankingModeStats> modeStats = rankingModeStats(groups);
         DistanceStats allDistances = distanceStats(matches);
         Map<String, DistanceStats> statusDistances = statusDistanceStats(matches);
@@ -482,7 +719,7 @@ public class Alloy4FunAugmenter {
         Map<String, RepairRadiusStats> repairByQuestionSet = repairRadiusStatsByQuestionSet(matches);
         Map<String, RepairRadiusStats> repairByQuestionSetAndStatus = repairRadiusStatsByQuestionSetAndStatus(matches);
 
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("# Alloy4Fun Augmented Dataset Summary\n\n");
             writer.write("- Generated at: `" + Instant.now().toString() + "`\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
@@ -505,6 +742,26 @@ public class Alloy4FunAugmenter {
             writer.write("- Reward failures: " + summary.rewardFailures + "\n");
             writer.write("- Average candidate reward: " + number(summary.averageCandidateReward()) + "\n");
             writer.write("- Average reward error `(1 - reward)`: " + number(summary.averageRewardError()) + "\n\n");
+
+            writer.write("## Correct Truth Pools\n\n");
+            writer.write("Truth predicates include one oracle predicate per invariant together with every CORRECT "
+                    + "student predicate. AST deduplication is applied to this combined pool; the final column "
+                    + "counts unordered pairs of AST-distinct truths whose canonical distance is zero. Unique "
+                    + "canonical forms are connected components under that zero-distance relation.\n\n");
+            writer.write("| Problem class | Correct truth predicates | AST-distinct truths | "
+                    + "Unique canonical forms | AST-different, canonically equivalent pairs |\n");
+            writer.write("| --- | ---: | ---: | ---: | ---: |\n");
+            CorrectTruthStats totalTruthStats = new CorrectTruthStats("Total");
+            for (CorrectTruthStats stats : correctTruthStats.values()) {
+                writer.write("| " + stats.questionSet + " | " + stats.correctPredicates + " | "
+                        + stats.astDistinctPredicates + " | " + stats.uniqueCanonicalForms + " | "
+                        + stats.canonicalEquivalentPairs + " |\n");
+                totalTruthStats.add(stats);
+            }
+            writer.write("| **Total** | **" + totalTruthStats.correctPredicates + "** | **"
+                    + totalTruthStats.astDistinctPredicates + "** | **"
+                    + totalTruthStats.uniqueCanonicalForms + "** | **"
+                    + totalTruthStats.canonicalEquivalentPairs + "** |\n\n");
 
             writer.write("## Ranking Pools\n\n");
             writer.write("| Mode | Groups | Incorrect predicates | Min refs | Max refs |\n");
@@ -709,6 +966,9 @@ public class Alloy4FunAugmenter {
         writer.write("      \"correctCount\": " + group.correct.size() + ",\n");
         writer.write("      \"incorrectCount\": " + group.incorrect.size() + ",\n");
         writer.write("      \"parseFailureCount\": " + group.failures.size() + ",\n");
+        writer.write("      \"truthCandidateCount\": " + group.truthCandidateCount + ",\n");
+        writer.write("      \"astDistinctTruthCount\": " + group.references.size() + ",\n");
+        writer.write("      \"astDuplicateTruthCount\": " + group.astDuplicateTruthCount + ",\n");
         writer.write("      \"referenceCount\": " + group.references.size() + ",\n");
         writer.write("      \"rankingMode\": \"" + escape(group.rankingMode()) + "\",\n");
         writer.write("      \"rankingReferenceCount\": " + group.rankingReferences().size() + ",\n");
@@ -726,7 +986,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static void writeRewardCsv(Path path, List<IncorrectMatch> matches) throws IOException {
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("relativePath,questionSet,statusFolder,invariantId,levenshteinDistance,rawAstDistance,canonicalDistance,levenshteinSize,rawAstSize,canonicalSize,levenshteinDistanceRatio,rawAstDistanceRatio,canonicalDistanceRatio,candidateReward,rewardError,rewardPoolSize,rewardErrorMessage\n");
             for (IncorrectMatch match : matches) {
                 writer.write(csv(match.record.relativePath) + ",");
@@ -802,7 +1062,7 @@ public class Alloy4FunAugmenter {
         if (yPlotMin == yPlotMax) {
             yPlotMax += 1.0;
         }
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
                     + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
             writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
@@ -870,7 +1130,7 @@ public class Alloy4FunAugmenter {
         int plotWidth = width - left - right;
         int plotHeight = height - top - bottom;
         int baseline = top + plotHeight;
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
                     + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
             writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
@@ -940,7 +1200,7 @@ public class Alloy4FunAugmenter {
         int plotWidth = width - left - right;
         int plotHeight = height - top - bottom;
         int baseline = top + plotHeight;
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
                     + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
             writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
@@ -1166,7 +1426,7 @@ public class Alloy4FunAugmenter {
         int gap = 70;
         int plotWidth = width - left - right;
         int plotHeight = (height - top - bottom - 2 * gap) / 3;
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"" + width + "\" height=\"" + height
                     + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
             writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
@@ -1276,7 +1536,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static void writePlotScript(Path path) throws IOException {
-        try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+        try (Writer writer = outputWriter(path)) {
             writer.write("#!/usr/bin/env python3\n");
             writer.write("import csv, math\nfrom pathlib import Path\n\n");
             writer.write("ROOT = Path(__file__).resolve().parent\nCSV = ROOT / 'canonical_reward_points.csv'\n");
@@ -1424,6 +1684,63 @@ public class Alloy4FunAugmenter {
             setStats.rankedIncorrect++;
         }
         return stats;
+    }
+
+    private static Map<String, CorrectTruthStats> correctTruthStats(
+            Map<String, QuestionGroup> groups,
+            List<CorrectPoolPair> correctPoolPairs) {
+        Map<String, CorrectTruthStats> stats = new java.util.TreeMap<>();
+        Map<Reference, Reference> canonicalParents = new java.util.IdentityHashMap<>();
+        for (QuestionGroup group : groups.values()) {
+            CorrectTruthStats setStats = stats.computeIfAbsent(
+                    group.questionSet,
+                    CorrectTruthStats::new);
+            setStats.correctPredicates += group.truthCandidateCount;
+            setStats.astDistinctPredicates += group.references.size();
+            for (Reference reference : group.references) {
+                canonicalParents.put(reference, reference);
+            }
+        }
+        for (CorrectPoolPair pair : correctPoolPairs) {
+            stats.computeIfAbsent(pair.group.questionSet, CorrectTruthStats::new)
+                    .canonicalEquivalentPairs++;
+            unionCanonicalForms(canonicalParents, pair.left, pair.right);
+        }
+        for (QuestionGroup group : groups.values()) {
+            Set<Reference> canonicalForms =
+                    java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+            for (Reference reference : group.references) {
+                canonicalForms.add(canonicalRoot(canonicalParents, reference));
+            }
+            stats.get(group.questionSet).uniqueCanonicalForms += canonicalForms.size();
+        }
+        return stats;
+    }
+
+    private static void unionCanonicalForms(
+            Map<Reference, Reference> parents,
+            Reference left,
+            Reference right) {
+        Reference leftRoot = canonicalRoot(parents, left);
+        Reference rightRoot = canonicalRoot(parents, right);
+        if (leftRoot != rightRoot) {
+            parents.put(rightRoot, leftRoot);
+        }
+    }
+
+    private static Reference canonicalRoot(
+            Map<Reference, Reference> parents,
+            Reference reference) {
+        Reference root = reference;
+        while (parents.get(root) != root) {
+            root = parents.get(root);
+        }
+        while (reference != root) {
+            Reference next = parents.get(reference);
+            parents.put(reference, root);
+            reference = next;
+        }
+        return root;
     }
 
     private static Map<String, RankingModeStats> rankingModeStats(Map<String, QuestionGroup> groups) {
@@ -1692,21 +2009,14 @@ public class Alloy4FunAugmenter {
             predicates.put(predicate.getName(), predicate);
             ids.put(predicate.getName(), id++);
         }
-        String preferred = preferredPredicateBase(file);
-        if (preferred != null && ids.containsKey(preferred) && ids.containsKey(preferred + "C")) {
-            return new PredicatePair(preferred, preferred + "C", ids.get(preferred), ids.get(preferred + "C"),
-                    predicates.get(preferred), predicates.get(preferred + "C"));
+        String[] names = DatasetConventions.findPredicatePairNames(preferredPredicateBase(file), predicates);
+        if (names == null) {
+            return null;
         }
-        for (String name : ids.keySet()) {
-            if (name.endsWith("C") && name.length() > 1) {
-                String base = name.substring(0, name.length() - 1);
-                if (ids.containsKey(base)) {
-                    return new PredicatePair(base, name, ids.get(base), ids.get(name),
-                            predicates.get(base), predicates.get(name));
-                }
-            }
-        }
-        return null;
+        String left = names[0];
+        String right = names[1];
+        return new PredicatePair(left, right, ids.get(left), ids.get(right),
+                predicates.get(left), predicates.get(right));
     }
 
     private static String predicateBody(Path file, String predicateName, Predicate predicate) {
@@ -1766,15 +2076,56 @@ public class Alloy4FunAugmenter {
     }
 
     private static int levenshteinDistance(String left, String right) {
-        int[] previous = new int[right.length() + 1];
-        int[] current = new int[right.length() + 1];
-        for (int j = 0; j <= right.length(); j++) {
+        if (left.equals(right)) {
+            return 0;
+        }
+        int prefix = 0;
+        int sharedLength = Math.min(left.length(), right.length());
+        while (prefix < sharedLength && left.charAt(prefix) == right.charAt(prefix)) {
+            prefix++;
+        }
+        int leftEnd = left.length();
+        int rightEnd = right.length();
+        while (leftEnd > prefix
+                && rightEnd > prefix
+                && left.charAt(leftEnd - 1) == right.charAt(rightEnd - 1)) {
+            leftEnd--;
+            rightEnd--;
+        }
+        int leftLength = leftEnd - prefix;
+        int rightLength = rightEnd - prefix;
+        if (leftLength == 0 || rightLength == 0) {
+            return Math.max(leftLength, rightLength);
+        }
+
+        String rows = left;
+        String columns = right;
+        int rowEnd = leftEnd;
+        int columnEnd = rightEnd;
+        if (rightLength < leftLength) {
+            rows = left;
+            columns = right;
+        } else {
+            rows = right;
+            columns = left;
+            rowEnd = rightEnd;
+            columnEnd = leftEnd;
+            int swap = leftLength;
+            leftLength = rightLength;
+            rightLength = swap;
+        }
+
+        int[] previous = new int[rightLength + 1];
+        int[] current = new int[rightLength + 1];
+        for (int j = 0; j <= rightLength; j++) {
             previous[j] = j;
         }
-        for (int i = 1; i <= left.length(); i++) {
+        for (int i = 1; i <= leftLength; i++) {
             current[0] = i;
-            for (int j = 1; j <= right.length(); j++) {
-                int replace = previous[j - 1] + (left.charAt(i - 1) == right.charAt(j - 1) ? 0 : 1);
+            char rowCharacter = rows.charAt(rowEnd - leftLength + i - 1);
+            for (int j = 1; j <= rightLength; j++) {
+                char columnCharacter = columns.charAt(columnEnd - rightLength + j - 1);
+                int replace = previous[j - 1] + (rowCharacter == columnCharacter ? 0 : 1);
                 int delete = previous[j] + 1;
                 int insert = current[j - 1] + 1;
                 current[j] = Math.min(replace, Math.min(delete, insert));
@@ -1783,49 +2134,58 @@ public class Alloy4FunAugmenter {
             previous = current;
             current = temp;
         }
-        return previous[right.length()];
+        return previous[rightLength];
     }
 
-    private static int rawAstTreeDistance(Node left, Node right) {
+    private static int rawAstTreeDistance(RawAstTree left, RawAstTree right) {
         if (left == null) {
-            return rawAstSize(right);
+            return right == null ? 0 : right.size;
         }
         if (right == null) {
-            return rawAstSize(left);
+            return left.size;
         }
-        int distance = rawAstLabel(left).equals(rawAstLabel(right)) ? 0 : 1;
-        distance += rawAstForestDistance(left.getChildren(), right.getChildren());
+        int distance = left.label.equals(right.label) ? 0 : 1;
+        distance += rawAstForestDistance(left.children, right.children);
         return distance;
     }
 
-    private static int rawAstForestDistance(List<Node> left, List<Node> right) {
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
-        for (int i = 1; i <= left.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + rawAstSize(left.get(i - 1));
-        }
-        for (int j = 1; j <= right.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + rawAstSize(right.get(j - 1));
-        }
-        for (int i = 1; i <= left.size(); i++) {
-            for (int j = 1; j <= right.size(); j++) {
-                int delete = dp[i - 1][j] + rawAstSize(left.get(i - 1));
-                int insert = dp[i][j - 1] + rawAstSize(right.get(j - 1));
-                int update = dp[i - 1][j - 1] + rawAstTreeDistance(left.get(i - 1), right.get(j - 1));
-                dp[i][j] = Math.min(update, Math.min(delete, insert));
+    private static int rawAstForestDistance(List<RawAstTree> left, List<RawAstTree> right) {
+        if (left.isEmpty()) {
+            int distance = 0;
+            for (RawAstTree tree : right) {
+                distance += tree.size;
             }
+            return distance;
         }
-        return dp[left.size()][right.size()];
-    }
+        if (right.isEmpty()) {
+            int distance = 0;
+            for (RawAstTree tree : left) {
+                distance += tree.size;
+            }
+            return distance;
+        }
+        if (left.size() == 1 && right.size() == 1) {
+            return rawAstTreeDistance(left.get(0), right.get(0));
+        }
 
-    private static int rawAstSize(Node node) {
-        if (node == null) {
-            return 0;
+        int[] previous = new int[right.size() + 1];
+        int[] current = new int[right.size() + 1];
+        for (int j = 1; j <= right.size(); j++) {
+            previous[j] = previous[j - 1] + right.get(j - 1).size;
         }
-        int size = 1;
-        for (Node child : node.getChildren()) {
-            size += rawAstSize(child);
+        for (int i = 1; i <= left.size(); i++) {
+            current[0] = previous[0] + left.get(i - 1).size;
+            for (int j = 1; j <= right.size(); j++) {
+                int delete = previous[j] + left.get(i - 1).size;
+                int insert = current[j - 1] + right.get(j - 1).size;
+                int update = previous[j - 1] + rawAstTreeDistance(left.get(i - 1), right.get(j - 1));
+                current[j] = Math.min(update, Math.min(delete, insert));
+            }
+            int[] swap = previous;
+            previous = current;
+            current = swap;
         }
-        return size;
+        return previous[right.size()];
     }
 
     private static String rawAstLabel(Node node) {
@@ -1875,6 +2235,12 @@ public class Alloy4FunAugmenter {
 
     private static String sanitize(String value) {
         return value.replaceAll("[^A-Za-z0-9_]", "_");
+    }
+
+    private static Writer outputWriter(Path path) throws IOException {
+        return new BufferedWriter(
+                new OutputStreamWriter(Files.newOutputStream(path), StandardCharsets.UTF_8),
+                REPORT_BUFFER_SIZE);
     }
 
     private static String escape(String value) {
@@ -1964,6 +2330,44 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static final class RawAstTree {
+        private final String label;
+        private final List<RawAstTree> children;
+        private final int size;
+        private final String fingerprint;
+
+        private RawAstTree(String label, List<RawAstTree> children, int size, String fingerprint) {
+            this.label = label;
+            this.children = children;
+            this.size = size;
+            this.fingerprint = fingerprint;
+        }
+
+        private static RawAstTree from(Node node) {
+            if (node == null) {
+                return null;
+            }
+            String label = rawAstLabel(node);
+            List<RawAstTree> children = new ArrayList<>(node.getChildren().size());
+            int size = 1;
+            StringBuilder fingerprint = new StringBuilder();
+            appendFingerprintPart(fingerprint, label);
+            fingerprint.append('[');
+            for (Node childNode : node.getChildren()) {
+                RawAstTree child = from(childNode);
+                children.add(child);
+                size += child.size;
+                appendFingerprintPart(fingerprint, child.fingerprint);
+            }
+            fingerprint.append(']');
+            return new RawAstTree(label, children, size, fingerprint.toString());
+        }
+
+        private static void appendFingerprintPart(StringBuilder target, String value) {
+            target.append(value.length()).append(':').append(value);
+        }
+    }
+
     private static class ModelRecord {
         private final Path file;
         private final String fileName;
@@ -1976,10 +2380,10 @@ public class Alloy4FunAugmenter {
         private String studentBody;
         private String oracleBody;
         private String prelude;
-        private Node studentAst;
-        private Node oracleAst;
-        private Multigraph studentGraph;
-        private Multigraph oracleGraph;
+        private RawAstTree studentAst;
+        private RawAstTree oracleAst;
+        private Canonical.Prepared studentCanonical;
+        private Canonical.Prepared oracleCanonical;
         private int levenshteinSize;
         private int rawAstSize;
         private int canonicalSize;
@@ -1991,7 +2395,8 @@ public class Alloy4FunAugmenter {
             this.fileName = file.getFileName().toString();
             this.relativePath = relative.toString().replace('\\', '/');
             this.questionSet = relative.getNameCount() > 0 ? relative.getName(0).toString() : "";
-            this.statusFolder = relative.getNameCount() > 1 ? relative.getName(1).toString() : "";
+            this.statusFolder = DatasetConventions.normalizeStatusFolder(
+                    relative.getNameCount() > 1 ? relative.getName(1).toString() : "");
             this.invariantId = preferredPredicateBase(file);
         }
 
@@ -2018,48 +2423,72 @@ public class Alloy4FunAugmenter {
         private final List<ModelRecord> incorrect = new ArrayList<>();
         private final List<ModelRecord> failures = new ArrayList<>();
         private final List<Reference> references = new ArrayList<>();
-        private final List<Reference> correctStudentReferences = new ArrayList<>();
-        private final List<Reference> oracleReferences = new ArrayList<>();
+        private int truthCandidateCount;
+        private int astDuplicateTruthCount;
 
         private QuestionGroup(String questionSet, String invariantId) {
             this.questionSet = questionSet;
             this.invariantId = invariantId;
         }
 
-        private void buildReferences() {
+        private void buildReferences(boolean verbose) {
             ModelRecord oracleSource = oracleSource();
             if (oracleSource == null) {
+                releaseOracleRepresentations();
                 return;
+            }
+            if (oracleSource.oracleCanonical == null) {
+                oracleSource.oracleCanonical = loadCanonicalQuietly(oracleSource, true, verbose);
             }
             Reference oracle = new Reference(
                     invariantId + "_oracle",
                     "oracle",
                     oracleSource.oracleBody,
                     oracleSource.oracleAst,
-                    oracleSource.oracleGraph,
+                    oracleSource.oracleCanonical,
                     oracleSource);
-            references.add(oracle);
-            oracleReferences.add(oracle);
+            Set<String> fingerprints = new HashSet<>();
+            truthCandidateCount++;
+            addAstDistinctReference(oracle, fingerprints);
             int index = 0;
             for (ModelRecord record : correct) {
-                boolean duplicate = false;
-                for (Reference reference : correctStudentReferences) {
-                    if (rawAstTreeDistance(record.studentAst, reference.ast) == 0) {
-                        duplicate = true;
-                        break;
-                    }
+                truthCandidateCount++;
+                Reference reference = new Reference(
+                        invariantId + "_correct_" + index,
+                        "correct-student",
+                        record.studentBody,
+                        record.studentAst,
+                        record.studentCanonical,
+                        record);
+                if (addAstDistinctReference(reference, fingerprints)) {
+                    index++;
                 }
-                if (!duplicate) {
-                    Reference reference = new Reference(
-                            invariantId + "_correct_" + index++,
-                            "correct-student",
-                            record.studentBody,
-                            record.studentAst,
-                            record.studentGraph,
-                            record);
-                    references.add(reference);
-                    correctStudentReferences.add(reference);
-                }
+            }
+            releaseCorrectRepresentations();
+            releaseOracleRepresentations();
+        }
+
+        private boolean addAstDistinctReference(Reference reference, Set<String> fingerprints) {
+            if (!fingerprints.add(reference.ast.fingerprint)) {
+                astDuplicateTruthCount++;
+                return false;
+            }
+            references.add(reference);
+            return true;
+        }
+
+        private void releaseCorrectRepresentations() {
+            for (ModelRecord record : correct) {
+                record.studentAst = null;
+                record.studentCanonical = null;
+            }
+        }
+
+        private void releaseOracleRepresentations() {
+            for (ModelRecord record : records) {
+                record.oracleCanonical = null;
+                record.oracleAst = null;
+                record.oracleBody = null;
             }
         }
 
@@ -2080,7 +2509,7 @@ public class Alloy4FunAugmenter {
         }
 
         private String rankingMode() {
-            return correctStudentReferences.isEmpty() ? "oracle-only" : "oracle+correct-student";
+            return correct.isEmpty() ? "oracle-only" : "oracle+correct-student";
         }
 
         private String prelude() {
@@ -2096,16 +2525,24 @@ public class Alloy4FunAugmenter {
         private final String augmentedName;
         private final String kind;
         private final String body;
-        private final Node ast;
-        private final Multigraph graph;
+        private final RawAstTree ast;
+        private final Canonical.Prepared canonical;
+        private final int canonicalSize;
         private final ModelRecord source;
 
-        private Reference(String augmentedName, String kind, String body, Node ast, Multigraph graph, ModelRecord source) {
+        private Reference(
+                String augmentedName,
+                String kind,
+                String body,
+                RawAstTree ast,
+                Canonical.Prepared canonical,
+                ModelRecord source) {
             this.augmentedName = augmentedName;
             this.kind = kind;
             this.body = body;
             this.ast = ast;
-            this.graph = graph;
+            this.canonical = canonical;
+            this.canonicalSize = Canonical.canonicalFormSize(canonical);
             this.source = source;
         }
     }
@@ -2131,11 +2568,65 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static final class RepresentationKey {
+        private final String context;
+        private final String body;
+        private final String astFingerprint;
+
+        private RepresentationKey(String context, String body, String astFingerprint) {
+            this.context = context;
+            this.body = body;
+            this.astFingerprint = astFingerprint;
+        }
+
+        private static RepresentationKey student(ModelRecord record) {
+            return new RepresentationKey(
+                    record.groupKey() + '\0' + record.prelude,
+                    record.studentBody,
+                    record.studentAst.fingerprint);
+        }
+
+        private static RepresentationKey oracle(ModelRecord record) {
+            return new RepresentationKey(
+                    record.groupKey() + '\0' + record.prelude,
+                    record.oracleBody,
+                    record.oracleAst.fingerprint);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof RepresentationKey)) {
+                return false;
+            }
+            RepresentationKey representation = (RepresentationKey) other;
+            return context.equals(representation.context)
+                    && body.equals(representation.body)
+                    && astFingerprint.equals(representation.astFingerprint);
+        }
+
+        @Override
+        public int hashCode() {
+            int result = context.hashCode();
+            result = 31 * result + body.hashCode();
+            return 31 * result + astFingerprint.hashCode();
+        }
+    }
+
+    private static final class RankingBatch {
+        private final List<ModelRecord> records;
+        private final IncorrectMatch template;
+
+        private RankingBatch(List<ModelRecord> records, IncorrectMatch template) {
+            this.records = records;
+            this.template = template;
+        }
+    }
+
     private static class IncorrectMatch {
         private final ModelRecord record;
-        private final Nearest levenshtein = new Nearest();
-        private final Nearest rawAst = new Nearest();
-        private final Nearest canonical = new Nearest();
+        private final Nearest levenshtein;
+        private final Nearest rawAst;
+        private final Nearest canonical;
         private int rewardPoolSize;
         private double candidateReward;
         private double rewardError;
@@ -2144,6 +2635,16 @@ public class Alloy4FunAugmenter {
 
         private IncorrectMatch(ModelRecord record) {
             this.record = record;
+            this.levenshtein = new Nearest();
+            this.rawAst = new Nearest();
+            this.canonical = new Nearest();
+        }
+
+        private IncorrectMatch(ModelRecord record, IncorrectMatch template) {
+            this.record = record;
+            this.levenshtein = template.levenshtein;
+            this.rawAst = template.rawAst;
+            this.canonical = template.canonical;
         }
 
         private void sortRankings() {
@@ -2204,6 +2705,25 @@ public class Alloy4FunAugmenter {
 
         private QuestionSetStats(String questionSet) {
             this.questionSet = questionSet;
+        }
+    }
+
+    private static class CorrectTruthStats {
+        private final String questionSet;
+        private int correctPredicates;
+        private int astDistinctPredicates;
+        private int uniqueCanonicalForms;
+        private int canonicalEquivalentPairs;
+
+        private CorrectTruthStats(String questionSet) {
+            this.questionSet = questionSet;
+        }
+
+        private void add(CorrectTruthStats other) {
+            correctPredicates += other.correctPredicates;
+            astDistinctPredicates += other.astDistinctPredicates;
+            uniqueCanonicalForms += other.uniqueCanonicalForms;
+            canonicalEquivalentPairs += other.canonicalEquivalentPairs;
         }
     }
 

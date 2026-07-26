@@ -27,8 +27,6 @@ import parser.etc.Pair;
  */
 // TODO: Implement LFU Cache for the pool of instances.
 public class Rewarder {
-    private static final int COMMAND_CHECKER = 3; // after the third command, we can insert the new commands.
-    private static final int POOL_REPLACEMENT = 5; // the number of instances to replace in the pool if overcoverage or undercoverage is detected.
     /**
      * Compiles an Alloy model from a file and returns the CompModule representation.
      * This method is used to parse the Alloy model and create a CompModule object that can be used for further processing.
@@ -131,8 +129,21 @@ public class Rewarder {
                 System.out.flush();
             }
         };
-        Command commandPositive = cm.getAllCommands().get(COMMAND_CHECKER);
-        Command commandNegative = cm.getAllCommands().get(COMMAND_CHECKER + 1);
+        String oracleExpression = asAlloyExpression(predName);
+        Expr positiveExpression = CompUtil.parseOneExpression_fromString(cm, oracleExpression);
+        Expr negativeExpression = CompUtil.parseOneExpression_fromString(cm, "!(" + oracleExpression + ")");
+        Command commandPositive = new Command(
+                true,
+                Hyperparams.SCOPE,
+                Hyperparams.SCOPE,
+                Hyperparams.SCOPE,
+                positiveExpression);
+        Command commandNegative = new Command(
+                true,
+                Hyperparams.SCOPE,
+                Hyperparams.SCOPE,
+                Hyperparams.SCOPE,
+                negativeExpression);
         A4Options options = new A4Options();
         options.solver = A4Options.SatSolver.SAT4J;
         A4Solution posInstance = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), commandPositive, options);
@@ -148,13 +159,19 @@ public class Rewarder {
         InstancePool negInstancePool = new InstancePool(poolSize);
         // Add the first instances to the pools
         posInstancePool.add(posInstance);
-        for (int i = 1; i < poolSize && posInstance.next() != null; i++) {
-            posInstance = posInstance.next(); // get next instance
+        for (int i = 1; i < poolSize; i++) {
+            posInstance = posInstance.next();
+            if (posInstance == null || !posInstance.satisfiable()) {
+                break;
+            }
             posInstancePool.add(posInstance);
         }
         negInstancePool.add(negInstance);
-        for (int i = 1; i < poolSize && negInstance.next() != null; i++) {
-            negInstance = negInstance.next(); // get next instance
+        for (int i = 1; i < poolSize; i++) {
+            negInstance = negInstance.next();
+            if (negInstance == null || !negInstance.satisfiable()) {
+                break;
+            }
             negInstancePool.add(negInstance);
         }
         // Return the instances as a Pair

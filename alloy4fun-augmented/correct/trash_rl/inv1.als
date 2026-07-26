@@ -11,48 +11,44 @@ pred inv1_oracle[] {
 }
 
 pred inv1_correct_0[] {
-(no Trash)
-}
-
-pred inv1_correct_1[] {
 (no f: (one File) {
 (f in Trash)
 })
 }
 
-pred inv1_correct_2[] {
+pred inv1_correct_1[] {
 (all t: (one Trash) {
 (t in none)
 })
 }
 
-pred inv1_correct_3[] {
+pred inv1_correct_2[] {
 (Trash = none)
 }
 
-pred inv1_correct_4[] {
+pred inv1_correct_3[] {
 (all f: (one File) {
 (!(f in Trash))
 })
 }
 
-pred inv1_correct_5[] {
+pred inv1_correct_4[] {
 (Trash in none)
 }
 
-pred inv1_correct_6[] {
+pred inv1_correct_5[] {
 (all f: (one File) {
 (no Trash)
 })
 }
 
-pred inv1_correct_7[] {
+pred inv1_correct_6[] {
 (all f: (one File) {
 (f !in Trash)
 })
 }
 
-pred inv1_correct_8[] {
+pred inv1_correct_7[] {
 (always (no Trash))
 }
 

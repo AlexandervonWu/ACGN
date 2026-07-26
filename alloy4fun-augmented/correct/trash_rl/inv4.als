@@ -27,50 +27,46 @@ pred inv4_correct_2[] {
 }
 
 pred inv4_correct_3[] {
-(no (Protected & Trash))
-}
-
-pred inv4_correct_4[] {
 (all f: (one Protected) {
 (f !in Trash)
 })
 }
 
-pred inv4_correct_5[] {
+pred inv4_correct_4[] {
 (!(some f: (one Protected) {
 (f in Trash)
 }))
 }
 
-pred inv4_correct_6[] {
+pred inv4_correct_5[] {
 (all w: (one File) {
 ((w in Protected) => (w !in Trash))
 })
 }
 
-pred inv4_correct_7[] {
+pred inv4_correct_6[] {
 (all x: (one Protected) {
 (x !in Trash)
 })
 }
 
-pred inv4_correct_8[] {
+pred inv4_correct_7[] {
 (all f: (one Protected) {
 (!(f in Trash))
 })
 }
 
-pred inv4_correct_9[] {
+pred inv4_correct_8[] {
 (no f: (one File) {
 ((f in Protected) && (f in Trash))
 })
 }
 
-pred inv4_correct_10[] {
+pred inv4_correct_9[] {
 ((Protected & Trash) = none)
 }
 
-pred inv4_correct_11[] {
+pred inv4_correct_10[] {
 (no (Trash & Protected))
 }
 

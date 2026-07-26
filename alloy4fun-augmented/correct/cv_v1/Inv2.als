@@ -75,32 +75,24 @@ pred Inv2_correct_7[] {
 }
 
 pred Inv2_correct_8[] {
-(all u: (one User),w: (one Work) {
-((w in (u.profile)) => ((u in (w.source)) || (some i: (one Institution) {
-(i in (w.source))
-})))
-})
-}
-
-pred Inv2_correct_9[] {
 (all u: (one User) {
 ((u.profile) in ((source.Institution) + (source.u)))
 })
 }
 
-pred Inv2_correct_10[] {
+pred Inv2_correct_9[] {
 (all w: (one Work),u: (one User) {
 ((w in (u.profile)) => ((u in (w.source)) || ((w.source) in Institution)))
 })
 }
 
-pred Inv2_correct_11[] {
+pred Inv2_correct_10[] {
 (all u: (one User),w: (one (u.profile)) {
 (((w.source) = u) || ((w.source) in Institution))
 })
 }
 
-pred Inv2_correct_12[] {
+pred Inv2_correct_11[] {
 (all u: (one User) {
 (all work: (one (u.profile)) {
 ((work.source) in (u + Institution))
@@ -108,13 +100,13 @@ pred Inv2_correct_12[] {
 })
 }
 
-pred Inv2_correct_13[] {
+pred Inv2_correct_12[] {
 (all w: (one Work),u: (one User) {
 (((u->w) in profile) => (one (((w.source) :> u) + ((w.source) :> Institution))))
 })
 }
 
-pred Inv2_correct_14[] {
+pred Inv2_correct_13[] {
 (all u: (one User) {
 ((u.profile) in ((source.u) + (source.Institution)))
 })

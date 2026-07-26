@@ -19,34 +19,28 @@ pred Inv1_oracle[] {
 }
 
 pred Inv1_correct_0[] {
-(all u: (one User) {
-((u.visible) in (u.profile))
-})
-}
-
-pred Inv1_correct_1[] {
 (all u: (one User),v: (one (u.visible)) {
 (v in (u.profile))
 })
 }
 
-pred Inv1_correct_2[] {
+pred Inv1_correct_1[] {
 (visible in profile)
 }
 
-pred Inv1_correct_3[] {
+pred Inv1_correct_2[] {
 (always (all u: (one User),v: (one (u.visible)) {
 (v in (u.profile))
 }))
 }
 
-pred Inv1_correct_4[] {
+pred Inv1_correct_3[] {
 (all w: (one Work),u: (one User) {
 ((w in (u.visible)) => (w in (u.profile)))
 })
 }
 
-pred Inv1_correct_5[] {
+pred Inv1_correct_4[] {
 (visible = (visible & profile))
 }
 

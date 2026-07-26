@@ -2,20 +2,20 @@
 
 - Input root: `classified-data`
 - Thread count: 32
-- Total files: 6601
-- Successful distances: 6318
-- Skipped identical raw AST predicate pairs: 283
+- Total files: 23910
+- Successful distances: 23240
+- Skipped identical raw AST predicate pairs: 670
 - Failures: 0
-- Average distance: 12.466920
-- Average predicate-body Levenshtein distance: 52.536087
-- Average raw AST tree distance: 24.199114
-- Average raw AST size: 27.069326
-- Average canonical form size: 15.921494
-- Average normalized raw AST distance: 0.875323
-- Average normalized canonical distance: 0.746579
-- CORRECT models with canonical distance 0 and raw AST distance > 0: 15
+- Average distance: 15.225086
+- Average predicate-body Levenshtein distance: 44.141308
+- Average raw AST tree distance: 23.746213
+- Average raw AST size: 27.477453
+- Average canonical form size: 18.365232
+- Average normalized raw AST distance: 0.814866
+- Average normalized canonical distance: 0.757063
+- CORRECT models with canonical distance 0 and raw AST distance > 0: 1018
 - Min distance: 0
-- Max distance: 94
+- Max distance: 141
 
 ## Canonical Representation Compression
 
@@ -23,14 +23,14 @@ Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`.
 
 | Problem class | Correctness division | Models | Avg raw AST size | Avg canonical size | Compression rate |
 | --- | --- | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1115 | 30.623318 | 16.774888 | 45.221848% |
-| classroom_fol | CORRECT | 536 | 23.082090 | 13.447761 | 41.739412% |
-| classroom_fol | OVERCONSTRAINED | 223 | 23.941704 | 13.654709 | 42.966848% |
-| classroom_fol | UNDERCONSTRAINED | 166 | 32.373494 | 18.638554 | 42.426498% |
-| classroom_rl | BOTH | 1115 | 30.623318 | 16.774888 | 45.221848% |
-| classroom_rl | CORRECT | 536 | 23.082090 | 13.447761 | 41.739412% |
-| classroom_rl | OVERCONSTRAINED | 223 | 23.941704 | 13.654709 | 42.966848% |
-| classroom_rl | UNDERCONSTRAINED | 166 | 32.373494 | 18.638554 | 42.426498% |
+| classroom | BOTH | 1115 | 30.623318 | 16.774888 | 45.221848% |
+| classroom | CORRECT | 536 | 23.082090 | 13.447761 | 41.739412% |
+| classroom | OVERCONSTRAINED | 223 | 23.941704 | 13.654709 | 42.966848% |
+| classroom | UNDERCONSTRAINED | 166 | 32.373494 | 18.638554 | 42.426498% |
+| courses | BOTH | 1803 | 28.258458 | 18.018303 | 36.237488% |
+| courses | CORRECT | 1371 | 22.671043 | 14.275711 | 37.031079% |
+| courses | OVERCONSTRAINED | 327 | 22.602446 | 13.507645 | 40.238127% |
+| courses | UNDERCONSTRAINED | 1453 | 26.898830 | 17.209222 | 36.022413% |
 | cv_v1 | BOTH | 68 | 23.764706 | 15.441176 | 35.024752% |
 | cv_v1 | CORRECT | 69 | 24.130435 | 15.855072 | 34.294294% |
 | cv_v1 | OVERCONSTRAINED | 118 | 26.033898 | 17.186441 | 33.984375% |
@@ -47,6 +47,10 @@ Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`.
 | production | CORRECT | 45 | 13.866667 | 8.755556 | 36.858974% |
 | production | OVERCONSTRAINED | 25 | 13.960000 | 9.080000 | 34.957020% |
 | production | UNDERCONSTRAINED | 36 | 13.944444 | 9.416667 | 32.470120% |
+| socialMedia | BOTH | 4982 | 30.027298 | 20.960458 | 30.195326% |
+| socialMedia | CORRECT | 4945 | 23.137513 | 15.310212 | 33.829480% |
+| socialMedia | OVERCONSTRAINED | 1597 | 30.384471 | 22.088917 | 27.301954% |
+| socialMedia | UNDERCONSTRAINED | 2871 | 27.824800 | 19.145942 | 31.191087% |
 | train | BOTH | 277 | 23.924188 | 16.512635 | 30.979327% |
 | train | CORRECT | 102 | 17.774510 | 12.166667 | 31.549917% |
 | train | OVERCONSTRAINED | 170 | 18.735294 | 14.164706 | 24.395604% |
@@ -58,33 +62,33 @@ Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`.
 
 ## Reward Comparison
 
-- Rewarded files: 6318
+- Rewarded files: 23240
 - Reward failures: 0
 - Reward pool size: 10
-- Average candidate reward: 0.452061
+- Average candidate reward: 0.538938
 - Average ground-truth self reward: 1.000000
-- Average reward gap: 0.547939
-- Pearson correlation sample: non-CORRECT rewarded predicates (4827 files)
-- Pearson correlation, distance vs candidate reward: -0.029143
+- Average reward gap: 0.461062
+- Pearson correlation sample: non-CORRECT rewarded predicates (16356 files)
+- Pearson correlation, distance vs candidate reward: 0.031251
 
-- Pearson correlation, Levenshtein vs candidate reward: -0.068562
-- Pearson correlation, raw AST tree distance vs candidate reward: -0.097240
+- Pearson correlation, Levenshtein vs candidate reward: -0.038049
+- Pearson correlation, raw AST tree distance vs candidate reward: -0.032426
 
-- Pearson correlation, normalized raw AST distance vs candidate reward: 0.007276
-- Pearson correlation, normalized canonical distance vs candidate reward: 0.045509
+- Pearson correlation, normalized raw AST distance vs candidate reward: -0.019787
+- Pearson correlation, normalized canonical distance vs candidate reward: 0.031765
 
 ## By Problem Class And Status
 
 | Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1115 | 1115 | 0 | 0 | 14.209865 | 0.236341 | -0.146388 | 1 | 51 |
-| classroom_fol | CORRECT | 536 | 495 | 41 | 0 | 10.060606 | 1.000000 | 0.000000 | 0 | 64 |
-| classroom_fol | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 11.529148 | 0.358411 | 0.133882 | 1 | 44 |
-| classroom_fol | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 12.680723 | 0.225969 | 0.124693 | 1 | 43 |
-| classroom_rl | BOTH | 1115 | 1115 | 0 | 0 | 14.209865 | 0.236341 | -0.146388 | 1 | 51 |
-| classroom_rl | CORRECT | 536 | 495 | 41 | 0 | 10.060606 | 1.000000 | 0.000000 | 0 | 64 |
-| classroom_rl | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 11.529148 | 0.358411 | 0.133882 | 1 | 44 |
-| classroom_rl | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 12.680723 | 0.225969 | 0.124693 | 1 | 43 |
+| classroom | BOTH | 1115 | 1115 | 0 | 0 | 14.209865 | 0.236341 | -0.146388 | 1 | 51 |
+| classroom | CORRECT | 536 | 495 | 41 | 0 | 10.060606 | 1.000000 | 0.000000 | 0 | 64 |
+| classroom | OVERCONSTRAINED | 223 | 223 | 0 | 0 | 11.529148 | 0.358411 | 0.133882 | 1 | 44 |
+| classroom | UNDERCONSTRAINED | 166 | 166 | 0 | 0 | 12.680723 | 0.225969 | 0.124693 | 1 | 43 |
+| courses | BOTH | 1803 | 1803 | 0 | 0 | 18.135885 | 0.204531 | -0.195589 | 1 | 52 |
+| courses | CORRECT | 1371 | 1338 | 33 | 0 | 10.989537 | 1.000000 | 0.000000 | 0 | 47 |
+| courses | OVERCONSTRAINED | 327 | 327 | 0 | 0 | 11.110092 | 0.660952 | -0.243459 | 1 | 48 |
+| courses | UNDERCONSTRAINED | 1453 | 1453 | 0 | 0 | 16.791466 | 0.540435 | -0.143380 | 1 | 48 |
 | cv_v1 | BOTH | 68 | 68 | 0 | 0 | 17.897059 | 0.203547 | -0.210896 | 1 | 31 |
 | cv_v1 | CORRECT | 69 | 52 | 17 | 0 | 19.038462 | 1.000000 | 0.000000 | 1 | 42 |
 | cv_v1 | OVERCONSTRAINED | 118 | 118 | 0 | 0 | 19.296610 | 0.206796 | -0.268161 | 3 | 43 |
@@ -101,10 +105,14 @@ Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`.
 | production | CORRECT | 45 | 25 | 20 | 0 | 6.840000 | 1.000000 | 0.000000 | 0 | 10 |
 | production | OVERCONSTRAINED | 25 | 25 | 0 | 0 | 6.400000 | 0.000000 | 0.000000 | 1 | 17 |
 | production | UNDERCONSTRAINED | 36 | 36 | 0 | 0 | 6.805556 | 0.880088 | 0.182063 | 2 | 21 |
-| train | BOTH | 277 | 277 | 0 | 0 | 21.064982 | 0.393268 | 0.154983 | 2 | 94 |
-| train | CORRECT | 102 | 76 | 26 | 0 | 9.710526 | 0.995215 | 0.000000 | 0 | 40 |
-| train | OVERCONSTRAINED | 170 | 170 | 0 | 0 | 14.411765 | 0.697817 | -0.002259 | 1 | 47 |
-| train | UNDERCONSTRAINED | 178 | 178 | 0 | 0 | 15.696629 | 0.302345 | -0.144203 | 1 | 62 |
+| socialMedia | BOTH | 4982 | 4982 | 0 | 0 | 18.894219 | 0.244656 | 0.154683 | 1 | 106 |
+| socialMedia | CORRECT | 4945 | 4550 | 395 | 0 | 11.056264 | 0.999560 | 0.000000 | 0 | 141 |
+| socialMedia | OVERCONSTRAINED | 1597 | 1597 | 0 | 0 | 19.398873 | 0.179442 | 0.004670 | 1 | 107 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 2871 | 0 | 0 | 17.315918 | 0.633007 | 0.241927 | 1 | 79 |
+| train | BOTH | 277 | 277 | 0 | 0 | 21.064982 | 0.291852 | 0.200395 | 2 | 94 |
+| train | CORRECT | 102 | 76 | 26 | 0 | 9.710526 | 0.999479 | 0.000000 | 0 | 40 |
+| train | OVERCONSTRAINED | 170 | 170 | 0 | 0 | 14.411765 | 0.579241 | 0.052082 | 1 | 47 |
+| train | UNDERCONSTRAINED | 178 | 178 | 0 | 0 | 15.696629 | 0.379356 | -0.199896 | 1 | 62 |
 | trash_rl | BOTH | 267 | 267 | 0 | 0 | 5.981273 | 0.313037 | -0.095787 | 1 | 29 |
 | trash_rl | CORRECT | 340 | 252 | 88 | 0 | 6.468254 | 1.000000 | 0.000000 | 0 | 37 |
 | trash_rl | OVERCONSTRAINED | 150 | 150 | 0 | 0 | 5.686667 | 0.393347 | 0.020431 | 1 | 24 |

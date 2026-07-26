@@ -23,56 +23,52 @@ pred inv8_correct_1[] {
 }
 
 pred inv8_correct_2[] {
-(no link)
-}
-
-pred inv8_correct_3[] {
 (all f: (one File) {
 (no (f.link))
 })
 }
 
-pred inv8_correct_4[] {
+pred inv8_correct_3[] {
 (no (link.File))
 }
 
-pred inv8_correct_5[] {
+pred inv8_correct_4[] {
 (all f1,f2: (one File) {
 (!((f1->f2) in link))
 })
 }
 
-pred inv8_correct_6[] {
+pred inv8_correct_5[] {
 (all f,l: (one File) {
 ((f->l) !in link)
 })
 }
 
-pred inv8_correct_7[] {
+pred inv8_correct_6[] {
 (all f: (one File) {
 (no (f->link))
 })
 }
 
-pred inv8_correct_8[] {
+pred inv8_correct_7[] {
 (no (File.link))
 }
 
-pred inv8_correct_9[] {
+pred inv8_correct_8[] {
 (link in (none->none))
 }
 
-pred inv8_correct_10[] {
+pred inv8_correct_9[] {
 (all x: (one File),y: (one File) {
 ((x->y) !in link)
 })
 }
 
-pred inv8_correct_11[] {
+pred inv8_correct_10[] {
 ((no (link.File)) && (no link))
 }
 
-pred inv8_correct_12[] {
+pred inv8_correct_11[] {
 (all x: (one File) {
 (no (x.link))
 })

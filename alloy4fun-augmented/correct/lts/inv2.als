@@ -15,10 +15,6 @@ pred inv2_correct_0[] {
 }
 
 pred inv2_correct_1[] {
-(one Init)
-}
-
-pred inv2_correct_2[] {
 (one s: (one State) {
 (s in Init)
 })

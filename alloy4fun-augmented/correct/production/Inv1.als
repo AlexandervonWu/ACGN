@@ -33,16 +33,10 @@ pred Inv1_correct_2[] {
 }
 
 pred Inv1_correct_3[] {
-(all c: (one Component) {
-(some (c.parts))
-})
-}
-
-pred Inv1_correct_4[] {
 ((iden & (Component->Product)) in (parts.(~parts)))
 }
 
-pred Inv1_correct_5[] {
+pred Inv1_correct_4[] {
 (parts in (Component->some Product))
 }
 

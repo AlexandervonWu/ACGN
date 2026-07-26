@@ -3,6 +3,7 @@ package is.fivefivefive.CanDis;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -17,21 +18,25 @@ import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
 public class Canonical {
 
     public static int distance(Multigraph left, Multigraph right) {
-        List<NormalForm> leftNfs = normalForms(left);
-        List<NormalForm> rightNfs = normalForms(right);
-        int temporalDistance = treeDistance(temporalTree(leftNfs), temporalTree(rightNfs));
-        int quantificationDistance = quantificationDistance(leftNfs, rightNfs);
-        int matrixDistance = matrixDistance(leftNfs, rightNfs);
+        return distance(prepare(left), prepare(right));
+    }
+
+    public static int distance(Prepared left, Prepared right) {
+        int temporalDistance = treeDistance(left.temporalTree, right.temporalTree);
+        int quantificationDistance = quantificationDistance(left.normalForms, right.normalForms);
+        int matrixDistance = matrixDistance(left.normalForms, right.normalForms, left.metadata, right.metadata);
         return temporalDistance + quantificationDistance + matrixDistance;
     }
 
     public static List<String> edits(Multigraph left, Multigraph right) {
-        List<NormalForm> leftNfs = normalForms(left);
-        List<NormalForm> rightNfs = normalForms(right);
+        return edits(prepare(left), prepare(right));
+    }
+
+    public static List<String> edits(Prepared left, Prepared right) {
         List<String> edits = new ArrayList<>();
-        temporalEdits(temporalTree(leftNfs), temporalTree(rightNfs), "temporal", edits);
-        quantificationEdits(leftNfs, rightNfs, edits);
-        matrixEdits(leftNfs, rightNfs, edits);
+        temporalEdits(left.temporalTree, right.temporalTree, "temporal", edits);
+        quantificationEdits(left.normalForms, right.normalForms, edits);
+        matrixEdits(left.normalForms, right.normalForms, edits);
         if (edits.isEmpty()) {
             edits.add("no-op");
         }
@@ -39,23 +44,53 @@ public class Canonical {
     }
 
     public static List<String> irTemporalFol(Multigraph graph) {
-        List<NormalForm> nfs = normalForms(graph);
+        return irTemporalFol(prepare(graph));
+    }
+
+    public static List<String> irTemporalFol(Prepared prepared) {
         List<String> formulas = new ArrayList<>();
-        for (int i = 0; i < nfs.size(); i++) {
-            formulas.add(normalFormPath(nfs.get(i), i) + " := " + quantifierPrefix(nfs.get(i).getMatrixQuantiVars())
-                    + eGraphFormula(nfs.get(i).getMatrixEGraph()));
+        for (int i = 0; i < prepared.normalForms.size(); i++) {
+            NormalForm normalForm = prepared.normalForms.get(i);
+            formulas.add(normalFormPath(normalForm, i) + " := " + quantifierPrefix(normalForm.getMatrixQuantiVars())
+                    + eGraphFormula(normalForm.getMatrixEGraph()));
         }
         return formulas;
     }
 
     public static int canonicalFormSize(Multigraph graph) {
-        List<NormalForm> nfs = normalForms(graph);
+        return prepare(graph).size;
+    }
+
+    public static int canonicalFormSize(Prepared prepared) {
+        return prepared.size;
+    }
+
+    public static Prepared prepare(Multigraph graph) {
+        List<NormalForm> normalForms = normalForms(graph);
+        return new Prepared(normalForms, temporalTree(normalForms), canonicalFormSize(normalForms));
+    }
+
+    private static int canonicalFormSize(List<NormalForm> nfs) {
         int size = nfs.size();
         for (NormalForm nf : nfs) {
             size += eGraphSize(nf.getMatrixEGraph());
             size += quantificationSize(nf.getMatrixQuantiVars());
         }
         return size;
+    }
+
+    public static final class Prepared {
+        private final List<NormalForm> normalForms;
+        private final TemporalTree temporalTree;
+        private final int size;
+        private final EGraphMetadata metadata;
+
+        private Prepared(List<NormalForm> normalForms, TemporalTree temporalTree, int size) {
+            this.normalForms = normalForms;
+            this.temporalTree = temporalTree;
+            this.size = size;
+            this.metadata = new EGraphMetadata(normalForms);
+        }
     }
 
     private static List<NormalForm> normalForms(Multigraph graph) {
@@ -188,21 +223,37 @@ public class Canonical {
     }
 
     private static int matrixDistance(List<NormalForm> left, List<NormalForm> right) {
+        return matrixDistance(left, right, null, null);
+    }
+
+    private static int matrixDistance(
+            List<NormalForm> left,
+            List<NormalForm> right,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
         int size = Math.max(left.size(), right.size());
         int distance = 0;
         for (int i = 0; i < size; i++) {
             if (i >= left.size()) {
-                distance += eGraphSize(right.get(i).getMatrixEGraph());
+                distance += eGraphSize(right.get(i).getMatrixEGraph(), rightMetadata);
             } else if (i >= right.size()) {
-                distance += eGraphSize(left.get(i).getMatrixEGraph());
+                distance += eGraphSize(left.get(i).getMatrixEGraph(), leftMetadata);
             } else {
-                distance += matrixDistance(left.get(i), right.get(i));
+                distance += matrixDistance(left.get(i), right.get(i), leftMetadata, rightMetadata);
             }
         }
         return distance;
     }
 
     private static int matrixDistance(NormalForm left, NormalForm right) {
+        return matrixDistance(left, right, null, null);
+    }
+
+    private static int matrixDistance(
+            NormalForm left,
+            NormalForm right,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
         Map<String, String> leftTypes = variableTypes(left);
         Map<String, String> rightTypes = variableTypes(right);
         leftTypes.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
@@ -221,7 +272,9 @@ public class Canonical {
                 mapping,
                 new HashSet<>(),
                 0,
-                Integer.MAX_VALUE);
+                Integer.MAX_VALUE,
+                leftMetadata,
+                rightMetadata);
     }
 
     private static void matrixEdits(List<NormalForm> left, List<NormalForm> right, List<String> edits) {
@@ -327,9 +380,11 @@ public class Canonical {
             Map<String, String> mapping,
             Set<String> usedRightNames,
             int index,
-            int best) {
+            int best,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
         if (index == leftNames.size()) {
-            return Math.min(best, eGraphDistance(left, right, mapping));
+            return Math.min(best, eGraphDistance(left, right, mapping, leftMetadata, rightMetadata));
         }
         String leftName = leftNames.get(index);
         String leftType = leftTypes.get(leftName);
@@ -341,7 +396,18 @@ public class Canonical {
             mapped = true;
             mapping.put(leftName, rightEntry.getKey());
             usedRightNames.add(rightEntry.getKey());
-            best = bestMappedDistance(left, right, leftNames, leftTypes, rightTypes, mapping, usedRightNames, index + 1, best);
+            best = bestMappedDistance(
+                    left,
+                    right,
+                    leftNames,
+                    leftTypes,
+                    rightTypes,
+                    mapping,
+                    usedRightNames,
+                    index + 1,
+                    best,
+                    leftMetadata,
+                    rightMetadata);
             usedRightNames.remove(rightEntry.getKey());
             mapping.remove(leftName);
             if (best == 0) {
@@ -349,7 +415,18 @@ public class Canonical {
             }
         }
         if (!mapped) {
-            best = bestMappedDistance(left, right, leftNames, leftTypes, rightTypes, mapping, usedRightNames, index + 1, best);
+            best = bestMappedDistance(
+                    left,
+                    right,
+                    leftNames,
+                    leftTypes,
+                    rightTypes,
+                    mapping,
+                    usedRightNames,
+                    index + 1,
+                    best,
+                    leftMetadata,
+                    rightMetadata);
         }
         return best;
     }
@@ -490,29 +567,27 @@ public class Canonical {
     }
 
     private static int eGraphDistance(EGraphNode left, EGraphNode right, Map<String, String> variableMapping) {
-        if (left == null) {
-            return eGraphSize(right);
-        }
-        if (right == null) {
-            return eGraphSize(left);
-        }
-        int distance = nodeUpdateCost(left, right, variableMapping);
-        List<EGraphNode> leftChildren = left.getChildren();
-        List<EGraphNode> rightChildren = right.getChildren();
-        if (left.getOpcode() == right.getOpcode() && left.isOrderInsensitive() && right.isOrderInsensitive()) {
-            leftChildren = sortedForMapping(leftChildren, variableMapping);
-            rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
-        }
-        distance += childDistance(leftChildren, rightChildren, variableMapping);
-        return distance;
+        return eGraphDistance(left, right, variableMapping, null, null);
+    }
+
+    private static int eGraphDistance(
+            EGraphNode left,
+            EGraphNode right,
+            Map<String, String> variableMapping,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
+        return new EGraphDistanceContext(variableMapping, leftMetadata, rightMetadata).distance(left, right);
     }
 
     private static List<EGraphNode> sortedForMapping(
             List<EGraphNode> children,
             Map<String, String> variableMapping) {
         List<EGraphNode> sorted = new ArrayList<>(children);
-        sorted.sort((left, right) -> mappedSortKey(left, variableMapping)
-                .compareTo(mappedSortKey(right, variableMapping)));
+        Map<EGraphNode, String> keys = new IdentityHashMap<>();
+        for (EGraphNode child : sorted) {
+            keys.put(child, mappedSortKey(child, variableMapping));
+        }
+        sorted.sort((left, right) -> keys.get(left).compareTo(keys.get(right)));
         return sorted;
     }
 
@@ -559,25 +634,6 @@ public class Canonical {
         return key.append(']').toString();
     }
 
-    private static int childDistance(List<EGraphNode> left, List<EGraphNode> right, Map<String, String> variableMapping) {
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
-        for (int i = 1; i <= left.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + eGraphSize(left.get(i - 1));
-        }
-        for (int j = 1; j <= right.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + eGraphSize(right.get(j - 1));
-        }
-        for (int i = 1; i <= left.size(); i++) {
-            for (int j = 1; j <= right.size(); j++) {
-                int delete = dp[i - 1][j] + eGraphSize(left.get(i - 1));
-                int insert = dp[i][j - 1] + eGraphSize(right.get(j - 1));
-                int update = dp[i - 1][j - 1] + eGraphDistance(left.get(i - 1), right.get(j - 1), variableMapping);
-                dp[i][j] = Math.min(update, Math.min(delete, insert));
-            }
-        }
-        return dp[left.size()][right.size()];
-    }
-
     private static int nodeUpdateCost(EGraphNode left, EGraphNode right, Map<String, String> variableMapping) {
         if (left.getOpcode() != right.getOpcode()) {
             return 1;
@@ -597,15 +653,284 @@ public class Canonical {
         return 0;
     }
 
+    private static final class EGraphMetadata {
+        private final IdentityHashMap<EGraphNode, Integer> sizes = new IdentityHashMap<>();
+        private final IdentityHashMap<EGraphNode, String> sortKeys = new IdentityHashMap<>();
+        private final IdentityHashMap<EGraphNode, List<EGraphNode>> sortedChildren = new IdentityHashMap<>();
+
+        private EGraphMetadata(List<NormalForm> normalForms) {
+            for (NormalForm normalForm : normalForms) {
+                prepare(normalForm.getMatrixEGraph());
+            }
+        }
+
+        private void prepare(EGraphNode node) {
+            if (node == null || sizes.containsKey(node)) {
+                return;
+            }
+            List<EGraphNode> children = node.getChildren();
+            int size = 1;
+            for (int i = 0; i < children.size(); i++) {
+                EGraphNode child = children.get(i);
+                prepare(child);
+                size += sizes.get(child);
+            }
+            sizes.put(node, size);
+            sortKey(node);
+            if (node.isOrderInsensitive()) {
+                List<EGraphNode> sorted = new ArrayList<>(children);
+                sorted.sort((left, right) -> sortKey(left).compareTo(sortKey(right)));
+                sortedChildren.put(node, sorted);
+            }
+        }
+
+        private int size(EGraphNode node) {
+            if (node == null) {
+                return 0;
+            }
+            Integer size = sizes.get(node);
+            if (size == null) {
+                prepare(node);
+                size = sizes.get(node);
+            }
+            return size;
+        }
+
+        private List<EGraphNode> sortedChildren(EGraphNode node) {
+            List<EGraphNode> sorted = sortedChildren.get(node);
+            return sorted == null ? node.getChildren() : sorted;
+        }
+
+        private String sortKey(EGraphNode node) {
+            String cached = sortKeys.get(node);
+            if (cached != null) {
+                return cached;
+            }
+            StringBuilder key = new StringBuilder(node.getOpcode().toString())
+                    .append('{').append(node.getFlexibleArityKind()).append("}:");
+            if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
+                key.append(variableName(node));
+            } else if (node.getSourceName() != null) {
+                key.append(node.getSourceName());
+            }
+            key.append('[');
+            List<EGraphNode> children = node.getChildren();
+            List<EGraphNode> ordered = children;
+            if (node.isOrderInsensitive()) {
+                ordered = new ArrayList<>(children);
+                ordered.sort((left, right) -> sortKey(left).compareTo(sortKey(right)));
+            }
+            if (node.isSetFlexibleArity()) {
+                Set<String> members = new java.util.TreeSet<>();
+                for (int i = 0; i < ordered.size(); i++) {
+                    members.add(sortKey(ordered.get(i)));
+                }
+                for (String member : members) {
+                    key.append(member).append(',');
+                }
+            } else if (node.isBagFlexibleArity()) {
+                Map<String, Integer> multiplicities = new java.util.TreeMap<>();
+                for (int i = 0; i < ordered.size(); i++) {
+                    String childKey = sortKey(ordered.get(i));
+                    multiplicities.put(childKey, multiplicities.getOrDefault(childKey, 0) + 1);
+                }
+                for (Map.Entry<String, Integer> entry : multiplicities.entrySet()) {
+                    key.append(entry.getKey());
+                    if (entry.getValue() > 1) {
+                        key.append('^').append(entry.getValue());
+                    }
+                    key.append(',');
+                }
+            } else {
+                for (int i = 0; i < ordered.size(); i++) {
+                    key.append(sortKey(ordered.get(i))).append(',');
+                }
+            }
+            String result = key.append(']').toString();
+            sortKeys.put(node, result);
+            return result;
+        }
+    }
+
+    private static final class EGraphDistanceContext {
+        private final Map<String, String> variableMapping;
+        private final boolean identityMapping;
+        private final EGraphMetadata leftMetadata;
+        private final EGraphMetadata rightMetadata;
+        private IdentityHashMap<EGraphNode, String> leftSortKeys;
+        private IdentityHashMap<EGraphNode, String> rightSortKeys;
+
+        private EGraphDistanceContext(
+                Map<String, String> variableMapping,
+                EGraphMetadata leftMetadata,
+                EGraphMetadata rightMetadata) {
+            this.variableMapping = variableMapping;
+            this.leftMetadata = leftMetadata;
+            this.rightMetadata = rightMetadata;
+            boolean identity = true;
+            for (Map.Entry<String, String> entry : variableMapping.entrySet()) {
+                if (!entry.getKey().equals(entry.getValue())) {
+                    identity = false;
+                    break;
+                }
+            }
+            this.identityMapping = identity;
+        }
+
+        private int distance(EGraphNode left, EGraphNode right) {
+            if (left == null) {
+                return nodeSize(right, false);
+            }
+            if (right == null) {
+                return nodeSize(left, true);
+            }
+
+            List<EGraphNode> leftChildren = left.getChildren();
+            List<EGraphNode> rightChildren = right.getChildren();
+            if (left.getOpcode() == right.getOpcode()
+                    && left.isOrderInsensitive()
+                    && right.isOrderInsensitive()) {
+                if (identityMapping && leftMetadata != null && rightMetadata != null) {
+                    leftChildren = leftMetadata.sortedChildren(left);
+                    rightChildren = rightMetadata.sortedChildren(right);
+                } else {
+                    leftChildren = sortedChildren(left, true);
+                    rightChildren = sortedChildren(right, false);
+                }
+            }
+            return nodeUpdateCost(left, right, variableMapping)
+                    + childDistance(leftChildren, rightChildren);
+        }
+
+        private int childDistance(List<EGraphNode> left, List<EGraphNode> right) {
+            if (left.isEmpty()) {
+                int distance = 0;
+                for (int i = 0; i < right.size(); i++) {
+                    distance += nodeSize(right.get(i), false);
+                }
+                return distance;
+            }
+            if (right.isEmpty()) {
+                int distance = 0;
+                for (int i = 0; i < left.size(); i++) {
+                    distance += nodeSize(left.get(i), true);
+                }
+                return distance;
+            }
+            if (left.size() == 1 && right.size() == 1) {
+                return distance(left.get(0), right.get(0));
+            }
+
+            int[] previous = new int[right.size() + 1];
+            int[] current = new int[right.size() + 1];
+            for (int j = 1; j <= right.size(); j++) {
+                previous[j] = previous[j - 1] + nodeSize(right.get(j - 1), false);
+            }
+            for (int i = 1; i <= left.size(); i++) {
+                current[0] = previous[0] + nodeSize(left.get(i - 1), true);
+                for (int j = 1; j <= right.size(); j++) {
+                    int delete = previous[j] + nodeSize(left.get(i - 1), true);
+                    int insert = current[j - 1] + nodeSize(right.get(j - 1), false);
+                    int update = previous[j - 1] + distance(left.get(i - 1), right.get(j - 1));
+                    current[j] = Math.min(update, Math.min(delete, insert));
+                }
+                int[] swap = previous;
+                previous = current;
+                current = swap;
+            }
+            return previous[right.size()];
+        }
+
+        private int nodeSize(EGraphNode node, boolean leftSide) {
+            EGraphMetadata metadata = leftSide ? leftMetadata : rightMetadata;
+            return metadata == null ? eGraphSize(node) : metadata.size(node);
+        }
+
+        private List<EGraphNode> sortedChildren(EGraphNode node, boolean leftSide) {
+            List<EGraphNode> sorted = new ArrayList<>(node.getChildren());
+            sorted.sort((left, right) -> sortKey(left, leftSide).compareTo(sortKey(right, leftSide)));
+            return sorted;
+        }
+
+        private String sortKey(EGraphNode node, boolean leftSide) {
+            IdentityHashMap<EGraphNode, String> cache;
+            if (leftSide) {
+                if (leftSortKeys == null) {
+                    leftSortKeys = new IdentityHashMap<>();
+                }
+                cache = leftSortKeys;
+            } else {
+                if (rightSortKeys == null) {
+                    rightSortKeys = new IdentityHashMap<>();
+                }
+                cache = rightSortKeys;
+            }
+            String cached = cache.get(node);
+            if (cached != null) {
+                return cached;
+            }
+            StringBuilder key = new StringBuilder(node.getOpcode().toString())
+                    .append('{').append(node.getFlexibleArityKind()).append("}:");
+            if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
+                String name = variableName(node);
+                key.append(leftSide ? variableMapping.getOrDefault(name, name) : name);
+            } else if (node.getSourceName() != null) {
+                key.append(node.getSourceName());
+            }
+            key.append('[');
+            List<String> childKeys = new ArrayList<>(node.getChildren().size());
+            for (EGraphNode child : node.getChildren()) {
+                childKeys.add(sortKey(child, leftSide));
+            }
+            if (node.isOrderInsensitive()) {
+                childKeys.sort(String::compareTo);
+            }
+            if (node.isSetFlexibleArity()) {
+                String previous = null;
+                for (String childKey : childKeys) {
+                    if (!childKey.equals(previous)) {
+                        key.append(childKey).append(',');
+                        previous = childKey;
+                    }
+                }
+            } else if (node.isBagFlexibleArity()) {
+                for (int i = 0; i < childKeys.size();) {
+                    int end = i + 1;
+                    while (end < childKeys.size() && childKeys.get(i).equals(childKeys.get(end))) {
+                        end++;
+                    }
+                    key.append(childKeys.get(i));
+                    if (end - i > 1) {
+                        key.append('^').append(end - i);
+                    }
+                    key.append(',');
+                    i = end;
+                }
+            } else {
+                for (String childKey : childKeys) {
+                    key.append(childKey).append(',');
+                }
+            }
+            String result = key.append(']').toString();
+            cache.put(node, result);
+            return result;
+        }
+    }
+
     private static int eGraphSize(EGraphNode node) {
         if (node == null) {
             return 0;
         }
         int size = 1;
-        for (EGraphNode child : node.getChildren()) {
-            size += eGraphSize(child);
+        List<EGraphNode> children = node.getChildren();
+        for (int i = 0; i < children.size(); i++) {
+            size += eGraphSize(children.get(i));
         }
         return size;
+    }
+
+    private static int eGraphSize(EGraphNode node, EGraphMetadata metadata) {
+        return metadata == null ? eGraphSize(node) : metadata.size(node);
     }
 
     private static TemporalTree temporalTree(List<NormalForm> nfs) {

@@ -55,42 +55,36 @@ pred inv5_correct_6[] {
 }
 
 pred inv5_correct_7[] {
-(all s: (one State),s1: (one State) {
-(((s.trans).State) = ((s1.trans).State))
-})
-}
-
-pred inv5_correct_8[] {
 (all s: (one State) {
 (((s.trans).State) = ((State.trans).State))
 })
 }
 
-pred inv5_correct_9[] {
+pred inv5_correct_8[] {
 (all disj s1,s2: (one State) {
 ((no (((s1.trans).State) - ((s2.trans).State))) && (no (((s2.trans).State) - ((s1.trans).State))))
 })
 }
 
-pred inv5_correct_10[] {
+pred inv5_correct_9[] {
 (all s,s1: (one State) {
 (no (((s.trans).State) - ((s1.trans).State)))
 })
 }
 
-pred inv5_correct_11[] {
+pred inv5_correct_10[] {
 (all s,r: (one State) {
 (((s.trans).State) = ((r.trans).State))
 })
 }
 
-pred inv5_correct_12[] {
+pred inv5_correct_11[] {
 (all disj s1,s2: (one State) {
 ((State.(~(s1.trans))) = (State.(~(s2.trans))))
 })
 }
 
-pred inv5_correct_13[] {
+pred inv5_correct_12[] {
 (all s1,s2: (one State),e: (one Event) {
 (((s1.trans).State) = ((s2.trans).State))
 })

@@ -60,12 +60,6 @@ pred prop4_correct_6[] {
 }
 
 pred prop4_correct_7[] {
-(always (all t: (one Track) {
-(lone (pos.t))
-}))
-}
-
-pred prop4_correct_8[] {
 (all t: (one Track) {
 (always (lone (t.(~pos))))
 })

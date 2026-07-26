@@ -25,24 +25,18 @@ pred Inv3_correct_0[] {
 }
 
 pred Inv3_correct_1[] {
-(all w1,w2: (one Work),u: (one User) {
-(((w1 != w2) && ((w1 + w2) in (u.profile)) && ((w1.source) = (w2.source))) => (no ((w1.ids) & (w2.ids))))
-})
-}
-
-pred Inv3_correct_2[] {
 (all s: (one Source),u: (one User),i: (one Id) {
 (lone (((u.profile) & (source.s)) & (ids.i)))
 })
 }
 
-pred Inv3_correct_3[] {
+pred Inv3_correct_2[] {
 (all s: (one Source),u: (one User) {
 (((((source.s) & (u.profile)) <: ids).(~(((source.s) & (u.profile)) <: ids))) in iden)
 })
 }
 
-pred Inv3_correct_4[] {
+pred Inv3_correct_3[] {
 (all w1,w2: (one Work) {
 (all u: (one User) {
 (((w1 != w2) && ((w1 + w2) in (u.profile)) && ((w1.source) = (w2.source))) => (no ((w1.ids) & (w2.ids))))
@@ -50,13 +44,13 @@ pred Inv3_correct_4[] {
 })
 }
 
-pred Inv3_correct_5[] {
+pred Inv3_correct_4[] {
 (all s: (one Source),u: (one User) {
 ((((u.profile) & (source.s)) <: ids) in (Work lone->Id))
 })
 }
 
-pred Inv3_correct_6[] {
+pred Inv3_correct_5[] {
 (all s: (one Source),u: (one User) {
 (all disj w1,w2: (one ((u.profile) & (source.s))) {
 (no ((w1.ids) & (w2.ids)))
@@ -64,7 +58,7 @@ pred Inv3_correct_6[] {
 })
 }
 
-pred Inv3_correct_7[] {
+pred Inv3_correct_6[] {
 (all s: (one Source),u: (one User),disj w1,w2: (one ((u.profile) & (source.s))) {
 (no ((w1.ids) & (w2.ids)))
 })

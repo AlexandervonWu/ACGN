@@ -17,24 +17,20 @@ pred inv2_correct_0[] {
 }
 
 pred inv2_correct_1[] {
-(File in Trash)
-}
-
-pred inv2_correct_2[] {
 (all f: (one File) {
 (f in Trash)
 })
 }
 
-pred inv2_correct_3[] {
+pred inv2_correct_2[] {
 (File = Trash)
 }
 
-pred inv2_correct_4[] {
+pred inv2_correct_3[] {
 (Trash = File)
 }
 
-pred inv2_correct_5[] {
+pred inv2_correct_4[] {
 (no (File - Trash))
 }
 

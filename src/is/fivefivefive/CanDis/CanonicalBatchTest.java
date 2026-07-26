@@ -137,7 +137,7 @@ public class CanonicalBatchTest {
             ModelUnit model = new ModelUnit(null, module);
             PredicatePair pair = findPredicatePair(file, model);
             if (pair == null) {
-                result.error = "No predicate pair of the form X and XC found.";
+                result.error = "No predicate pair of the form X and X[Cc] found.";
                 return result;
             }
             String leftBody = predicateBody(file, pair.leftName, pair.left);
@@ -165,8 +165,10 @@ public class CanonicalBatchTest {
             result.predicateBodyLevenshteinDistance = levenshteinDistance(leftBody, rightBody);
             result.leftVertices = left.size();
             result.rightVertices = right.size();
-            result.leftCanonicalFormSize = Canonical.canonicalFormSize(left);
-            result.rightCanonicalFormSize = Canonical.canonicalFormSize(right);
+            Canonical.Prepared leftCanonical = Canonical.prepare(left);
+            Canonical.Prepared rightCanonical = Canonical.prepare(right);
+            result.leftCanonicalFormSize = Canonical.canonicalFormSize(leftCanonical);
+            result.rightCanonicalFormSize = Canonical.canonicalFormSize(rightCanonical);
             result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
             result.representationSizesAvailable = true;
             if (result.rawAstTreeDistance == 0) {
@@ -174,11 +176,11 @@ public class CanonicalBatchTest {
                 result.skipReason = "Identical raw AST predicate body.";
                 return result;
             }
-            result.distance = Canonical.distance(left, right);
+            result.distance = Canonical.distance(leftCanonical, rightCanonical);
             result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
-            result.leftIRTemporalFOL = Canonical.irTemporalFol(left);
-            result.rightIRTemporalFOL = Canonical.irTemporalFol(right);
-            result.edits = Canonical.edits(left, right);
+            result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
+            result.rightIRTemporalFOL = Canonical.irTemporalFol(rightCanonical);
+            result.edits = Canonical.edits(leftCanonical, rightCanonical);
             computeRewardMetrics(module, result, options.rewardPoolSize);
             return result;
         } catch (Throwable t) {
@@ -223,22 +225,14 @@ public class CanonicalBatchTest {
             ids.put(predicate.getName(), id++);
         }
 
-        String preferred = preferredPredicateBase(file);
-        if (preferred != null && ids.containsKey(preferred) && ids.containsKey(preferred + "C")) {
-            return new PredicatePair(preferred, preferred + "C", ids.get(preferred), ids.get(preferred + "C"),
-                    predicates.get(preferred), predicates.get(preferred + "C"));
+        String[] names = DatasetConventions.findPredicatePairNames(preferredPredicateBase(file), predicates);
+        if (names == null) {
+            return null;
         }
-
-        for (String name : ids.keySet()) {
-            if (name.endsWith("C") && name.length() > 1) {
-                String base = name.substring(0, name.length() - 1);
-                if (ids.containsKey(base)) {
-                    return new PredicatePair(base, name, ids.get(base), ids.get(name),
-                            predicates.get(base), predicates.get(name));
-                }
-            }
-        }
-        return null;
+        String left = names[0];
+        String right = names[1];
+        return new PredicatePair(left, right, ids.get(left), ids.get(right),
+                predicates.get(left), predicates.get(right));
     }
 
     private static String predicateBody(Path file, String predicateName, Predicate predicate) {
@@ -769,7 +763,8 @@ public class CanonicalBatchTest {
             this.fileName = file.getFileName().toString();
             this.relativePath = relative.toString().replace('\\', '/');
             this.problemClass = relative.getNameCount() > 0 ? relative.getName(0).toString() : "";
-            this.statusFolder = relative.getNameCount() > 1 ? relative.getName(1).toString() : "";
+            this.statusFolder = DatasetConventions.normalizeStatusFolder(
+                    relative.getNameCount() > 1 ? relative.getName(1).toString() : "");
         }
 
         private boolean success() {

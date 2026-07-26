@@ -18,10 +18,6 @@ pred prop1_oracle[] {
 }
 
 pred prop1_correct_0[] {
-(no Green)
-}
-
-pred prop1_correct_1[] {
 ((some s: (one Signal) {
 (s in Green)
 }) since (historically (all s: (one Signal) {
@@ -29,27 +25,27 @@ pred prop1_correct_1[] {
 })))
 }
 
-pred prop1_correct_2[] {
+pred prop1_correct_1[] {
 (no s: (one Green) {
 (s in Signal)
 })
 }
 
-pred prop1_correct_3[] {
+pred prop1_correct_2[] {
 (all s: (one Signal) {
 (s !in Green)
 })
 }
 
-pred prop1_correct_4[] {
+pred prop1_correct_3[] {
 (historically (no Green))
 }
 
-pred prop1_correct_5[] {
+pred prop1_correct_4[] {
 (no (Signal & Green))
 }
 
-pred prop1_correct_6[] {
+pred prop1_correct_5[] {
 (all s: (one Signal) {
 (no Green)
 })

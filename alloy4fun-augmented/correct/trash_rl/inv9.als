@@ -11,16 +11,12 @@ pred inv9_oracle[] {
 }
 
 pred inv9_correct_0[] {
-(no (link.link))
-}
-
-pred inv9_correct_1[] {
 (all f,f1,f2: (one File) {
 (((f->f1) in link) => ((f1->f2) !in link))
 })
 }
 
-pred inv9_correct_2[] {
+pred inv9_correct_1[] {
 (all x: (one File) {
 (all y,z: (one File) {
 (((x->y) in link) => ((y->z) !in link))
@@ -28,85 +24,85 @@ pred inv9_correct_2[] {
 })
 }
 
-pred inv9_correct_3[] {
+pred inv9_correct_2[] {
 (all f: (one File) {
 ((some (f.link)) => (no (link.f)))
 })
 }
 
-pred inv9_correct_4[] {
+pred inv9_correct_3[] {
 (all f,l1,l2: (one File) {
 (((f->l1) in link) => ((l1->l2) !in link))
 })
 }
 
-pred inv9_correct_5[] {
+pred inv9_correct_4[] {
 (no ((File.link).link))
 }
 
-pred inv9_correct_6[] {
+pred inv9_correct_5[] {
 (all f,g,h: (one File) {
 (((f->g) in link) => ((g->h) !in link))
 })
 }
 
-pred inv9_correct_7[] {
+pred inv9_correct_6[] {
 (all f: (one (File.link)) {
 (no (f.link))
 })
 }
 
-pred inv9_correct_8[] {
+pred inv9_correct_7[] {
 (all l1: (one (File.link)) {
 ((l1.link) = none)
 })
 }
 
-pred inv9_correct_9[] {
+pred inv9_correct_8[] {
 (all f: (one File) {
 (no ((f.link).link))
 })
 }
 
-pred inv9_correct_10[] {
+pred inv9_correct_9[] {
 (all f: (one File) {
 ((some (link.f)) => (no (f.link)))
 })
 }
 
-pred inv9_correct_11[] {
+pred inv9_correct_10[] {
 (all f1,f2: (one File) {
 (no ((f1.link) & (f2.(~link))))
 })
 }
 
-pred inv9_correct_12[] {
+pred inv9_correct_11[] {
 (((File.link).link) = none)
 }
 
-pred inv9_correct_13[] {
+pred inv9_correct_12[] {
 (no ((link.File) & (File.link)))
 }
 
-pred inv9_correct_14[] {
+pred inv9_correct_13[] {
 (all f: (one File) {
 ((some (f.link)) => (no ((f.link).link)))
 })
 }
 
-pred inv9_correct_15[] {
+pred inv9_correct_14[] {
 (all l: (one (File.link)) {
 (no (l.link))
 })
 }
 
-pred inv9_correct_16[] {
+pred inv9_correct_15[] {
 (all f1,f2,f3: (one File) {
 (((f1->f2) in link) => ((f2->f3) !in link))
 })
 }
 
-pred inv9_correct_17[] {
+pred inv9_correct_16[] {
 (all f,g: (one File) {
 (((f->g) in link) => (no (g.link)))
 })

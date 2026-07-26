@@ -57,26 +57,22 @@ pred inv7_correct_7[] {
 }
 
 pred inv7_correct_8[] {
-(no (link.Trash))
-}
-
-pred inv7_correct_9[] {
 (all l: (one (File.link)) {
 (l !in Trash)
 })
 }
 
-pred inv7_correct_10[] {
+pred inv7_correct_9[] {
 (all f,f1: (one File) {
 (((f->f1) in link) => (f1 !in Trash))
 })
 }
 
-pred inv7_correct_11[] {
+pred inv7_correct_10[] {
 (no (link :> Trash))
 }
 
-pred inv7_correct_12[] {
+pred inv7_correct_11[] {
 (all f: (one File) {
 (all l: (one (f.link)) {
 (l !in Trash)
@@ -84,51 +80,51 @@ pred inv7_correct_12[] {
 })
 }
 
-pred inv7_correct_13[] {
+pred inv7_correct_12[] {
 (all f: (one File) {
 (no ((f.link) & Trash))
 })
 }
 
-pred inv7_correct_14[] {
+pred inv7_correct_13[] {
 (all f: (one File),l: (one (f.link)) {
 (l !in Trash)
 })
 }
 
-pred inv7_correct_15[] {
+pred inv7_correct_14[] {
 (((File.link) & Trash) = none)
 }
 
-pred inv7_correct_16[] {
+pred inv7_correct_15[] {
 (Trash in (Trash - (File.link)))
 }
 
-pred inv7_correct_17[] {
+pred inv7_correct_16[] {
 (all f1,f2: (one File) {
 (((f1->f2) in link) => (f2 !in Trash))
 })
 }
 
-pred inv7_correct_18[] {
+pred inv7_correct_17[] {
 (all x: (one File),y: (one File) {
 (((x->y) in link) => (y !in Trash))
 })
 }
 
-pred inv7_correct_19[] {
+pred inv7_correct_18[] {
 (all f1,f2: (one File) {
 (((f1->f2) in link) => (!(f2 in Trash)))
 })
 }
 
-pred inv7_correct_20[] {
+pred inv7_correct_19[] {
 (all f: (one File) {
 ((some (link.f)) => (f !in Trash))
 })
 }
 
-pred inv7_correct_21[] {
+pred inv7_correct_20[] {
 (all f: (one File) {
 (no (link.Trash))
 })

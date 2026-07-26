@@ -13,12 +13,6 @@ pred inv3_oracle[] {
 }
 
 pred inv3_correct_0[] {
-(all s: (one State),e: (one Event) {
-(lone (e.(s.trans)))
-})
-}
-
-pred inv3_correct_1[] {
 (all s: (one State) {
 (all e: (one Event) {
 (lone (e.(s.trans)))
@@ -26,61 +20,61 @@ pred inv3_correct_1[] {
 })
 }
 
-pred inv3_correct_2[] {
+pred inv3_correct_1[] {
 (all s: (one State),e: (one Event) {
 (lone ((e->State) & (s.trans)))
 })
 }
 
-pred inv3_correct_3[] {
+pred inv3_correct_2[] {
 (all s: (one State),e: (one Event) {
 (lone ((~(s.trans)).e))
 })
 }
 
-pred inv3_correct_4[] {
+pred inv3_correct_3[] {
 (all s: (one State) {
 (((~(s.trans)).(s.trans)) in iden)
 })
 }
 
-pred inv3_correct_5[] {
+pred inv3_correct_4[] {
 (all e: (one Event),s: (one State) {
 (lone (e <: (s.trans)))
 })
 }
 
-pred inv3_correct_6[] {
+pred inv3_correct_5[] {
 (all s: (one State),e: (one Event) {
 (lone (e <: (s.trans)))
 })
 }
 
-pred inv3_correct_7[] {
+pred inv3_correct_6[] {
 (all s,s1,s2: (one State),e: (one Event) {
 ((((s->(e->s1)) in trans) && ((s->(e->s2)) in trans)) => (s1 = s2))
 })
 }
 
-pred inv3_correct_8[] {
+pred inv3_correct_7[] {
 (all x: (one State),y: (one Event) {
 (lone (y.(x.trans)))
 })
 }
 
-pred inv3_correct_9[] {
+pred inv3_correct_8[] {
 (all e: (one Event),s: (one State) {
 (lone (e.(s.trans)))
 })
 }
 
-pred inv3_correct_10[] {
+pred inv3_correct_9[] {
 (all x,z,v: (one State),y: (one Event) {
 ((((x->(y->z)) in trans) && ((x->(y->v)) in trans)) => (z = v))
 })
 }
 
-pred inv3_correct_11[] {
+pred inv3_correct_10[] {
 (trans in (State->(Event->lone State)))
 }
 

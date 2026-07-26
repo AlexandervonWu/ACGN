@@ -24,50 +24,46 @@ pred prop3_correct_0[] {
 }
 
 pred prop3_correct_1[] {
-(always ((pos') = pos))
-}
-
-pred prop3_correct_2[] {
 (always (pos = (pos')))
 }
 
-pred prop3_correct_3[] {
+pred prop3_correct_2[] {
 (all t: (one Train) {
 (always ((t.pos) = (t.(pos'))))
 })
 }
 
-pred prop3_correct_4[] {
+pred prop3_correct_3[] {
 (always (all t: (one Train) {
 ((t.(pos')) = (t.pos))
 }))
 }
 
-pred prop3_correct_5[] {
+pred prop3_correct_4[] {
 (always (all t: (one Train),tk: (one Track) {
 ((((t->tk) in pos) => (always ((t->tk) in pos))) && (((t->tk) !in pos) => (always ((t->tk) !in pos))))
 }))
 }
 
-pred prop3_correct_6[] {
+pred prop3_correct_5[] {
 (always (all t: (one Train) {
 (((t.pos)') = (t.pos))
 }))
 }
 
-pred prop3_correct_7[] {
+pred prop3_correct_6[] {
 (all t: (one Train),tk: (one Track) {
 ((((t->tk) in pos) => (always ((t->tk) in pos))) && (((t->tk) !in pos) => (always ((t->tk) !in pos))))
 })
 }
 
-pred prop3_correct_8[] {
+pred prop3_correct_7[] {
 (always (all t: (one Train) {
 ((t.pos) = (t.(pos')))
 }))
 }
 
-pred prop3_correct_9[] {
+pred prop3_correct_8[] {
 (always (all t: (one Train) {
 (always ((t.(pos')) = (t.pos)))
 }))

@@ -5,6 +5,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 
+import edu.mit.csail.sdg.ast.Sig.PrimSig;
+import edu.mit.csail.sdg.ast.Type;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
@@ -94,8 +96,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // for each coarse symbol except local variables or predicate roots, the set of symbols that can be used to expand it in the fine-grained generation.
     public static final Symbol END_SYMBOL = new EndSymbol();
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
-    private final Symbol EMPTY_SET_SYMBOL = new SigSymbol("none");
+    private final SigSymbol EMPTY_SET_SYMBOL = new SigSymbol("none");
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
+    private final SigSymbol UNIVERSAL_SET_SYMBOL = new SigSymbol("univ");
+    private final AugmentedNode UNIVERSAL_SET_NODE = new AugmentedNode(126, 1, UNIVERSAL_SET_SYMBOL);
     public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
     public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
@@ -117,11 +121,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         uniqueNode.put(END_SYMBOL, END_NODE);
         uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
         uniqueNode.put(SHADOW_SYMBOL, SHADOW_NODE);
+        uniqueNode.put(UNIVERSAL_SET_SYMBOL, UNIVERSAL_SET_NODE);
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
         nodeDict.put(1, EMPTY_SET_NODE);
         nodeDict.put(2, SHADOW_NODE);
+        nodeDict.put(3, UNIVERSAL_SET_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
+        aame.addSymbol("none", EMPTY_SET_SYMBOL);
+        aame.addSymbol("univ", UNIVERSAL_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
         coarseToFineBin = new HashMap<>();
         for (DummySymbol ds : DummySymbol.ALL_DUMMIES) {
@@ -130,6 +138,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         END_NODE.setMaxDownlinks(0);
         EMPTY_SET_NODE.setMaxDownlinks(0);
         SHADOW_NODE.setMaxDownlinks(0);
+        UNIVERSAL_SET_NODE.setMaxDownlinks(0);
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -203,6 +212,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         forest.put(0, demoGraph);
         rootScope = new ScopeTreeNode(0, null, demoGraph);
         rootScope.addSymbol(EMPTY_SET_SYMBOL);
+        rootScope.addSymbol(UNIVERSAL_SET_SYMBOL);
         demoGraph.addVertex(mu);
         AugmentedNode md = n.getModuleDecl().accept(this, rootScope);
         demoGraph.addVertex(md);
@@ -406,8 +416,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // SigSymbol sigSymbol = sigPair.a;
         // TODO: not actually sigs; need to capture complex type expressions. 
         SigSymbol sigSymbol = typeCheckExpr(expr);
+        if (sigSymbol == null) {
+            sigSymbol = UNIVERSAL_SET_SYMBOL;
+        }
+        Integer graphId = forest.rget(graph);
+        int variableScope = graphId == null ? -Math.max(1, arg.getId()) : graphId;
         for (String name : n.getNames()) {
-            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, forest.rget(graph), exprNode);
+            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, variableScope, exprNode);
             if (arg.getParent() == null) {
                 // it is rootscope
                 coarseToFineBin.get(DummySymbol.DUMMY_GLOBAL_VAR).add(varSym);
@@ -1619,13 +1634,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private SigSymbol typeCheckExpr(ExprOrFormula e) {
         // use this function to check the overall set / type of the expression
         // System.out.println(e);
+        SigSymbol inferred = null;
         if (e instanceof SigExpr) {
             SigExpr sigExpr = (SigExpr) e;
             String sigName = sigExpr.getName();
             Symbol sigSymbol = aame.getSymbol(sigName);
-            return (SigSymbol) sigSymbol;
-        }
-        if (e instanceof FieldExpr) {
+            if (sigSymbol instanceof SigSymbol) {
+                inferred = (SigSymbol) sigSymbol;
+            }
+        } else if (e instanceof FieldExpr) {
             FieldExpr fieldExpr = (FieldExpr) e;
             String fieldName = fieldExpr.getName();
             Symbol fieldSymbol = aame.getSymbol(fieldName);
@@ -1635,42 +1652,59 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 while (iterSym instanceof FieldRelation) {
                     iterSym = ((FieldRelation) iterSym).getTarget();
                 }
-                return (SigSymbol) iterSym;
-            } else {
-                throw new RuntimeException("Field " + fieldName + " is not a field relation");
+                if (iterSym instanceof SigSymbol) {
+                    inferred = (SigSymbol) iterSym;
+                }
             }
-        }
-        if (e instanceof UnaryExpr) {
+        } else if (e instanceof UnaryExpr) {
             UnaryExpr unaryExpr = (UnaryExpr) e;
             ExprOrFormula sub = unaryExpr.getSub();
-            return typeCheckExpr(sub);
-        }
-        if (e instanceof BinaryExpr) {
+            inferred = typeCheckExpr(sub);
+        } else if (e instanceof BinaryExpr) {
             BinaryExpr binaryExpr = (BinaryExpr) e;
             if (binaryExpr.getOp() == BinaryOp.JOIN) {
                 // see if its left or right is a field. Fields first. 
                 ExprOrFormula left = binaryExpr.getLeft();
                 ExprOrFormula right = binaryExpr.getRight();
                 if (isSigOrField(right)) {
-                    return typeCheckExpr(right);
+                    inferred = typeCheckExpr(right);
                 } else {
-                    return typeCheckExpr(left);
+                    inferred = typeCheckExpr(left);
                 }
             } else {
                 // select one branch and find its type
-                return typeCheckExpr(binaryExpr.getLeft());
+                inferred = typeCheckExpr(binaryExpr.getLeft());
             }
-        }
-        if (e instanceof ITEExpr) {
+        } else if (e instanceof ITEExpr) {
             // use its THEN branch\
-            return typeCheckExpr(((ITEExpr) e).getThenClause());
+            inferred = typeCheckExpr(((ITEExpr) e).getThenClause());
         }
-        if (e instanceof VarExpr) {
-            VarExpr varExpr = (VarExpr) e;
-            String varName = varExpr.getName();
-            System.out.println("Unknown expression type: " + e.getClass() + " " + varName);
+        return inferred == null ? typeCheckAnnotatedExpr(e) : inferred;
+    }
+
+    private SigSymbol typeCheckAnnotatedExpr(ExprOrFormula expr) {
+        Type type = expr.getType();
+        if (type == null || !type.hasTuple()) {
+            return null;
         }
-        return null;
+        PrimSig commonType = null;
+        for (Type.ProductType product : type) {
+            if (product.isEmpty()) {
+                continue;
+            }
+            PrimSig candidate = product.get(product.arity() - 1);
+            commonType = commonType == null ? candidate : commonType.leastParent(candidate);
+        }
+        if (commonType == null) {
+            return null;
+        }
+        String typeName = commonType.label;
+        int separator = typeName.lastIndexOf('/');
+        if (separator >= 0) {
+            typeName = typeName.substring(separator + 1);
+        }
+        Symbol knownType = aame.getSymbol(typeName);
+        return knownType instanceof SigSymbol ? (SigSymbol) knownType : new SigSymbol(typeName);
     }
     private boolean isSigOrField(ExprOrFormula e) {
         if (e instanceof SigExpr) {

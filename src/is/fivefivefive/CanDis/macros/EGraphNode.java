@@ -1,5 +1,6 @@
 package is.fivefivefive.CanDis.macros;
 
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,6 +33,7 @@ public class EGraphNode {
     private int id;
     private Opcode opcode; // the semantic operator of this node with a corresponding opcode
     private List<EClassRef> childClasses;
+    private final List<EGraphNode> childrenView;
     private EClass eClass;
     private EGraphArena arena;
     private boolean isCommutative; // whether the operator of this node is commutative, which can help to capture the symmetry of the formula
@@ -179,6 +181,17 @@ public class EGraphNode {
         this.opcode = opcode;
         this.arena = CURRENT_ARENA.get();
         this.childClasses = new ArrayList<>();
+        this.childrenView = new AbstractList<EGraphNode>() {
+            @Override
+            public EGraphNode get(int index) {
+                return childClasses.get(index).getEClass().getRepresentative();
+            }
+
+            @Override
+            public int size() {
+                return childClasses.size();
+            }
+        };
         this.isCommutative = isCommutative;
         this.maxArity = maxArity;
         this.flexibleArity = flexibleArity;
@@ -197,11 +210,7 @@ public class EGraphNode {
         return opcode;
     }
     public List<EGraphNode> getChildren() {
-        List<EGraphNode> representatives = new ArrayList<>(childClasses.size());
-        for (EClassRef child : childClasses) {
-            representatives.add(child.getEClass().getRepresentative());
-        }
-        return Collections.unmodifiableList(representatives);
+        return childrenView;
     }
     public void setChildren(List<EGraphNode> children) {
         childClasses.clear();

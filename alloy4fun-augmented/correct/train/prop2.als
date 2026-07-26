@@ -20,24 +20,18 @@ pred prop2_oracle[] {
 }
 
 pred prop2_correct_0[] {
-(all s: (one Signal) {
-(eventually (s in Green))
-})
-}
-
-pred prop2_correct_1[] {
 (eventually (all s: (one Signal) {
 (eventually (s in Green))
 }))
 }
 
-pred prop2_correct_2[] {
+pred prop2_correct_1[] {
 (all s: (one (Signal - Green)) {
 (eventually (s in Green))
 })
 }
 
-pred prop2_correct_3[] {
+pred prop2_correct_2[] {
 (all t: (one Track) {
 (eventually ((t.signal) in Green))
 })

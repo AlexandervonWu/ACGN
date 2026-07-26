@@ -15,26 +15,22 @@ pred inv3_correct_0[] {
 }
 
 pred inv3_correct_1[] {
-(some Trash)
-}
-
-pred inv3_correct_2[] {
 (some x: (one File) {
 (x in Trash)
 })
 }
 
-pred inv3_correct_3[] {
+pred inv3_correct_2[] {
 (some f: (one File) {
 (f in Trash)
 })
 }
 
-pred inv3_correct_4[] {
+pred inv3_correct_3[] {
 (some (Trash <: File))
 }
 
-pred inv3_correct_5[] {
+pred inv3_correct_4[] {
 (some (File->Trash))
 }
 
