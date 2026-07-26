@@ -1,0 +1,31 @@
+sig User {
+	follows : set User,
+	sees : set Photo,
+	posts : set Photo,
+	suggested : set User
+}
+
+sig Influencer extends User {}
+
+sig Photo {
+	date : one Day
+}
+sig Ad extends Photo {}
+
+sig Day {}
+
+pred inv3 {
+all p : Photo | all u1 : User-Influencer | all u2 : User | all i : Influencer |
+(p in u1.sees implies ((p in u2.posts and u2 in u1.follows and p not in Ad) or (p in Ad))) or (p in u1.sees implies p in i.posts)
+}
+
+pred inv3c {
+	all p : User | p.sees - Ad in p.follows.posts
+}
+
+check correct { inv3 <=> inv3c}
+pred under { inv3 and !inv3c}
+pred over { !inv3 and inv3c}
+run over 
+run under 
+

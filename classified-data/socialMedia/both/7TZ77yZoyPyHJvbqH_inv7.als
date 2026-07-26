@@ -1,0 +1,31 @@
+sig User {
+	follows : set User,
+	sees : set Photo,
+	posts : set Photo,
+	suggested : set User
+}
+
+sig Influencer extends User {}
+
+sig Photo {
+	date : one Day
+}
+sig Ad extends Photo {}
+
+sig Day {}
+
+pred inv7 {
+no suggested & iden
+all u1 : User, u2 : u1.follows, u3 : u2.follows |  (u3 != u1 and u3 not in u1.follows) iff u1 in u3.suggested
+}
+
+pred inv7c {
+	all u : User | u.suggested = u.follows.follows - u.follows - u
+}
+
+check correct { inv7 <=> inv7c}
+pred under { inv7 and !inv7c}
+pred over { !inv7 and inv7c}
+run over 
+run under 
+
