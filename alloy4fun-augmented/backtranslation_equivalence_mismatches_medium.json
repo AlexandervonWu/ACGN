@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-07-07T21:04:51.541099692Z",
+  "inputRoot": "classified-data",
+  "scope": 3,
+  "fileCount": 250,
+  "predicateCount": 500,
+  "mismatchCount": 0,
+  "failureCount": 0,
+  "mismatches": [
+
+  ]
+}
