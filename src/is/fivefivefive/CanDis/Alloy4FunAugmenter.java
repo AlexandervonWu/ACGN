@@ -1205,9 +1205,9 @@ public class Alloy4FunAugmenter {
                     + "\" viewBox=\"0 0 " + width + " " + height + "\">\n");
             writer.write("<rect width=\"100%\" height=\"100%\" fill=\"white\"/>\n");
             writer.write("<text x=\"" + (width / 2) + "\" y=\"34\" text-anchor=\"middle\" "
-                    + "font-family=\"sans-serif\" font-size=\"20\">Repair coverage by raw edit distance</text>\n");
-            writer.write("<text x=\"" + (width / 2) + "\" y=\"54\" text-anchor=\"middle\" "
-                    + "font-family=\"sans-serif\" font-size=\"12\" fill=\"#555\">Empirical coverage curve for nearest correct repairs, excluding Levenshtein</text>\n");
+                    + "font-family=\"sans-serif\" font-size=\"20\">Repair coverage by edit distance</text>\n");
+            //writer.write("<text x=\"" + (width / 2) + "\" y=\"54\" text-anchor=\"middle\" "
+            //        + "font-family=\"sans-serif\" font-size=\"12\" fill=\"#555\">Empirical coverage curve for nearest correct repairs, excluding Levenshtein</text>\n");
             writer.write("<line x1=\"" + left + "\" y1=\"" + baseline + "\" x2=\""
                     + (left + plotWidth) + "\" y2=\"" + baseline
                     + "\" stroke=\"#222\" stroke-width=\"1\"/>\n");
