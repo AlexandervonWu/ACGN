@@ -1,6 +1,6 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-07-26T01:46:01.101820986Z`
+- Generated at: `2026-07-27T02:00:26.549886114Z`
 - Input root: `classified-data`
 - Output root: `alloy4fun-augmented`
 - Source Alloy files: 23910
@@ -49,23 +49,40 @@ Truth predicates include one oracle predicate per invariant together with every 
 | oracle+correct-student | 71 | 16044 | 2 | 200 |
 | oracle-only | 8 | 312 | 1 | 1 |
 
-## Nearest Distance Averages
+## Nearest Correct-Predicate Distance Averages
 
-| Slice | Count | Levenshtein | Raw AST | Canonical |
-| --- | ---: | ---: | ---: | ---: |
-| All incorrect | 16356 | 30.275312 | 15.601431 | 11.393862 |
-| BOTH | 8693 | 34.002991 | 17.502013 | 12.320488 |
-| OVERCONSTRAINED | 2763 | 25.310532 | 13.512125 | 9.344553 |
-| UNDERCONSTRAINED | 4900 | 26.461633 | 13.407755 | 10.905510 |
+For each incorrect predicate and metric, the distance is the minimum over every AST-distinct correct predicate in the same invariant's truth pool, including the oracle. The three metrics may select different nearest predicates. Relative distances divide by the incorrect predicate's own body length, raw AST size, or canonical-form size. CORRECT predicates are excluded.
 
-## Relative Distance Averages
-
-| Slice | Count | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |
-| --- | ---: | ---: | ---: | ---: |
-| All incorrect | 16356 | 0.389490 | 0.565617 | 0.608167 |
-| BOTH | 8693 | 0.421277 | 0.614813 | 0.650434 |
-| OVERCONSTRAINED | 2763 | 0.373140 | 0.523653 | 0.496462 |
-| UNDERCONSTRAINED | 4900 | 0.342316 | 0.502004 | 0.596169 |
+| Problem class | Incorrectness class | Incorrect predicates | Avg nearest Levenshtein | Avg nearest raw AST | Avg nearest canonical | Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| **All problem classes** | **All incorrectness classes** | **16356** | **30.275312** | **15.601431** | **11.393862** | **0.389490** | **0.565617** | **0.608167** |
+| classroom | BOTH | 1115 | 35.252018 | 17.400000 | 10.629596 | 0.345150 | 0.580258 | 0.646965 |
+| classroom | OVERCONSTRAINED | 223 | 24.313901 | 11.327354 | 6.856502 | 0.349863 | 0.516975 | 0.528764 |
+| classroom | UNDERCONSTRAINED | 166 | 26.198795 | 11.620482 | 8.855422 | 0.277859 | 0.414818 | 0.496942 |
+| courses | BOTH | 1803 | 42.955630 | 21.097615 | 13.342762 | 0.522528 | 0.738454 | 0.741121 |
+| courses | OVERCONSTRAINED | 327 | 18.244648 | 7.700306 | 5.917431 | 0.291859 | 0.317719 | 0.401122 |
+| courses | UNDERCONSTRAINED | 1453 | 31.355816 | 15.343427 | 10.043359 | 0.405924 | 0.554660 | 0.564404 |
+| cv_v1 | BOTH | 68 | 42.911765 | 17.573529 | 10.441176 | 0.800326 | 0.914820 | 0.785175 |
+| cv_v1 | OVERCONSTRAINED | 118 | 37.483051 | 16.372881 | 11.364407 | 0.652109 | 0.771302 | 0.711274 |
+| cv_v1 | UNDERCONSTRAINED | 55 | 29.472727 | 14.818182 | 9.236364 | 0.444077 | 0.953380 | 0.714195 |
+| cv_v2 | BOTH | 21 | 44.190476 | 23.714286 | 14.666667 | 0.594629 | 0.964263 | 0.911012 |
+| cv_v2 | OVERCONSTRAINED | 40 | 36.425000 | 18.725000 | 16.450000 | 0.428466 | 0.714209 | 0.889501 |
+| cv_v2 | UNDERCONSTRAINED | 12 | 26.583333 | 14.416667 | 10.833333 | 0.429075 | 0.788903 | 0.687678 |
+| lts | BOTH | 138 | 51.507246 | 24.195652 | 7.268116 | 1.044517 | 1.410244 | 0.692566 |
+| lts | OVERCONSTRAINED | 113 | 51.238938 | 23.035398 | 6.292035 | 1.143105 | 1.437992 | 0.654474 |
+| lts | UNDERCONSTRAINED | 66 | 29.257576 | 14.136364 | 6.045455 | 0.663278 | 0.836251 | 0.578342 |
+| production | BOTH | 22 | 22.363636 | 9.681818 | 6.681818 | 0.593273 | 0.798643 | 0.661607 |
+| production | OVERCONSTRAINED | 25 | 14.320000 | 7.080000 | 4.760000 | 0.356340 | 0.499352 | 0.496048 |
+| production | UNDERCONSTRAINED | 36 | 8.638889 | 6.027778 | 5.166667 | 0.171592 | 0.427442 | 0.502445 |
+| socialMedia | BOTH | 4982 | 30.233440 | 16.035327 | 12.569851 | 0.367578 | 0.520782 | 0.597049 |
+| socialMedia | OVERCONSTRAINED | 1597 | 24.271133 | 14.410770 | 10.637445 | 0.292575 | 0.428101 | 0.448801 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 23.887496 | 12.288750 | 11.710206 | 0.304425 | 0.430141 | 0.600141 |
+| train | BOTH | 277 | 49.927798 | 28.978339 | 19.288809 | 0.695453 | 1.229352 | 1.144596 |
+| train | OVERCONSTRAINED | 170 | 34.441176 | 16.835294 | 11.505882 | 0.583585 | 0.944476 | 0.787791 |
+| train | UNDERCONSTRAINED | 178 | 33.011236 | 19.011236 | 12.735955 | 0.389879 | 1.025832 | 0.927137 |
+| trash_rl | BOTH | 267 | 10.988764 | 5.786517 | 3.966292 | 0.326527 | 0.511002 | 0.458486 |
+| trash_rl | OVERCONSTRAINED | 150 | 12.673333 | 6.353333 | 3.880000 | 0.392726 | 0.592516 | 0.440773 |
+| trash_rl | UNDERCONSTRAINED | 63 | 17.682540 | 10.666667 | 4.190476 | 0.293464 | 0.555899 | 0.425894 |
 
 ## Relative Repair Coverage Comparison
 
@@ -82,7 +99,7 @@ The SVG plots smooth empirical coverage curves from 0% to 100% of each metric's 
 
 ## Raw Edit Distance Coverage Comparison
 
-The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST and Canonical repairs.
+The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST and Canonical repairs. Its x-axis is capped at 50 edits; predicates beyond that radius remain in the coverage denominator.
 
 | Edit-distance radius | Raw AST | Canonical |
 | --- | ---: | ---: |

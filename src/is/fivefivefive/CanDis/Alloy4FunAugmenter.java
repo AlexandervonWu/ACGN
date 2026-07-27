@@ -50,6 +50,8 @@ public class Alloy4FunAugmenter {
     private static final int[] REPAIR_RADII = { 1, 2, 5, 10 };
     private static final double[] RELATIVE_REPAIR_RADII = { 0.05, 0.10, 0.20, 0.50 };
     private static final int RELATIVE_REPAIR_CURVE_STEPS = 100;
+    private static final int RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE = 50;
+    private static final int RAW_EDIT_REPAIR_PLOT_TICK_COUNT = 5;
     private static final int REPORT_BUFFER_SIZE = 1024 * 1024;
 
     public static void main(String[] args) throws IOException {
@@ -712,8 +714,7 @@ public class Alloy4FunAugmenter {
         Map<String, QuestionSetStats> questionStats = questionSetStats(groups, matches);
         Map<String, CorrectTruthStats> correctTruthStats = correctTruthStats(groups, correctPoolPairs);
         Map<String, RankingModeStats> modeStats = rankingModeStats(groups);
-        DistanceStats allDistances = distanceStats(matches);
-        Map<String, DistanceStats> statusDistances = statusDistanceStats(matches);
+        DistanceTableStats distanceTable = distanceTableStats(matches);
         Map<String, RepairRadiusStats> repairOverall = repairRadiusStatsOverall(matches);
         Map<String, RepairRadiusStats> repairByStatus = repairRadiusStatsByStatus(matches);
         Map<String, RepairRadiusStats> repairByQuestionSet = repairRadiusStatsByQuestionSet(matches);
@@ -772,28 +773,28 @@ public class Alloy4FunAugmenter {
             }
             writer.write("\n");
 
-            writer.write("## Nearest Distance Averages\n\n");
-            writer.write("| Slice | Count | Levenshtein | Raw AST | Canonical |\n");
-            writer.write("| --- | ---: | ---: | ---: | ---: |\n");
-            writer.write("| All incorrect | " + allDistances.count + " | " + number(allDistances.averageLevenshtein())
-                    + " | " + number(allDistances.averageRawAst()) + " | "
-                    + number(allDistances.averageCanonical()) + " |\n");
-            for (DistanceStats stats : statusDistances.values()) {
-                writer.write("| " + stats.label + " | " + stats.count + " | "
-                        + number(stats.averageLevenshtein()) + " | " + number(stats.averageRawAst())
-                        + " | " + number(stats.averageCanonical()) + " |\n");
-            }
-            writer.write("\n");
-
-            writer.write("## Relative Distance Averages\n\n");
-            writer.write("| Slice | Count | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |\n");
-            writer.write("| --- | ---: | ---: | ---: | ---: |\n");
-            writer.write("| All incorrect | " + allDistances.count + " | "
-                    + number(allDistances.averageLevenshteinRatio()) + " | "
-                    + number(allDistances.averageRawAstRatio()) + " | "
-                    + number(allDistances.averageCanonicalRatio()) + " |\n");
-            for (DistanceStats stats : statusDistances.values()) {
-                writer.write("| " + stats.label + " | " + stats.count + " | "
+            writer.write("## Nearest Correct-Predicate Distance Averages\n\n");
+            writer.write("For each incorrect predicate and metric, the distance is the minimum over every "
+                    + "AST-distinct correct predicate in the same invariant's truth pool, including the oracle. "
+                    + "The three metrics may select different nearest predicates. Relative distances divide by "
+                    + "the incorrect predicate's own body length, raw AST size, or canonical-form size. "
+                    + "CORRECT predicates are excluded.\n\n");
+            writer.write("| Problem class | Incorrectness class | Incorrect predicates | "
+                    + "Avg nearest Levenshtein | Avg nearest raw AST | Avg nearest canonical | "
+                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+            DistanceStats allDistances = distanceTable.overall;
+            writer.write("| **All problem classes** | **All incorrectness classes** | **"
+                    + allDistances.count + "** | **" + number(allDistances.averageLevenshtein())
+                    + "** | **" + number(allDistances.averageRawAst())
+                    + "** | **" + number(allDistances.averageCanonical())
+                    + "** | **" + number(allDistances.averageLevenshteinRatio())
+                    + "** | **" + number(allDistances.averageRawAstRatio())
+                    + "** | **" + number(allDistances.averageCanonicalRatio()) + "** |\n");
+            for (DistanceStats stats : distanceTable.byProblemAndStatus.values()) {
+                writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
+                        + stats.count + " | " + number(stats.averageLevenshtein()) + " | "
+                        + number(stats.averageRawAst()) + " | " + number(stats.averageCanonical()) + " | "
                         + number(stats.averageLevenshteinRatio()) + " | "
                         + number(stats.averageRawAstRatio()) + " | "
                         + number(stats.averageCanonicalRatio()) + " |\n");
@@ -818,7 +819,9 @@ public class Alloy4FunAugmenter {
             writer.write("- Plot: `relative_repair_coverage_comparison.svg`\n\n");
 
             writer.write("## Raw Edit Distance Coverage Comparison\n\n");
-            writer.write("The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST and Canonical repairs.\n\n");
+            writer.write("The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST "
+                    + "and Canonical repairs. Its x-axis is capped at " + RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE
+                    + " edits; predicates beyond that radius remain in the coverage denominator.\n\n");
             writer.write("| Edit-distance radius | Raw AST | Canonical |\n");
             writer.write("| --- | ---: | ---: |\n");
             if (allRepairCoverage != null) {
@@ -1189,8 +1192,7 @@ public class Alloy4FunAugmenter {
         }
         int[] rawAstDistances = rawRepairDistances(matches, "rawAst");
         int[] canonicalDistances = rawRepairDistances(matches, "canonical");
-        int xMax = Math.max(maxDistance(rawAstDistances), maxDistance(canonicalDistances));
-        xMax = Math.max(1, xMax);
+        int xMax = RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE;
         int width = 980;
         int height = 620;
         int left = 88;
@@ -1225,8 +1227,8 @@ public class Alloy4FunAugmenter {
                         + "\" text-anchor=\"end\" font-family=\"sans-serif\" font-size=\"12\">"
                         + escapeXml(percentLabel(yValue)) + "</text>\n");
             }
-            for (int tick = 0; tick <= 5; tick++) {
-                int radius = (int) Math.round(xMax * tick / 5.0);
+            for (int tick = 0; tick <= RAW_EDIT_REPAIR_PLOT_TICK_COUNT; tick++) {
+                int radius = (int) Math.round(xMax * tick / (double) RAW_EDIT_REPAIR_PLOT_TICK_COUNT);
                 double x = left + radius * plotWidth / (double) xMax;
                 writer.write("<line x1=\"" + number(x) + "\" y1=\"" + top
                         + "\" x2=\"" + number(x) + "\" y2=\"" + baseline
@@ -1342,10 +1344,6 @@ public class Alloy4FunAugmenter {
         }
         Arrays.sort(distances);
         return distances;
-    }
-
-    private static int maxDistance(int[] sortedDistances) {
-        return sortedDistances.length == 0 ? 0 : sortedDistances[sortedDistances.length - 1];
     }
 
     private static double relativeCoverageRatio(double[] sortedRatios, double radiusFraction) {
@@ -1758,23 +1756,12 @@ public class Alloy4FunAugmenter {
         return stats;
     }
 
-    private static DistanceStats distanceStats(List<IncorrectMatch> matches) {
-        DistanceStats stats = new DistanceStats("All incorrect");
+    private static DistanceTableStats distanceTableStats(List<IncorrectMatch> matches) {
+        DistanceTableStats table = new DistanceTableStats();
         for (IncorrectMatch match : matches) {
-            stats.add(match);
+            table.add(match);
         }
-        return stats;
-    }
-
-    private static Map<String, DistanceStats> statusDistanceStats(List<IncorrectMatch> matches) {
-        Map<String, DistanceStats> stats = new java.util.TreeMap<>();
-        for (IncorrectMatch match : matches) {
-            DistanceStats statusStats = stats.computeIfAbsent(
-                    match.record.statusFolder,
-                    DistanceStats::new);
-            statusStats.add(match);
-        }
-        return stats;
+        return table;
     }
 
     private static Map<String, RepairRadiusStats> repairRadiusStatsOverall(List<IncorrectMatch> matches) {
@@ -2747,8 +2734,24 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static class DistanceTableStats {
+        private final DistanceStats overall =
+                new DistanceStats("All problem classes", "All incorrectness classes");
+        private final Map<String, DistanceStats> byProblemAndStatus = new java.util.TreeMap<>();
+
+        private void add(IncorrectMatch match) {
+            overall.add(match);
+            String key = match.record.questionSet + '\0' + match.record.statusFolder;
+            DistanceStats group = byProblemAndStatus.computeIfAbsent(
+                    key,
+                    ignored -> new DistanceStats(match.record.questionSet, match.record.statusFolder));
+            group.add(match);
+        }
+    }
+
     private static class DistanceStats {
-        private final String label;
+        private final String problemClass;
+        private final String statusFolder;
         private int count;
         private long levenshteinSum;
         private long rawAstSum;
@@ -2757,8 +2760,9 @@ public class Alloy4FunAugmenter {
         private double rawAstRatioSum;
         private double canonicalRatioSum;
 
-        private DistanceStats(String label) {
-            this.label = label;
+        private DistanceStats(String problemClass, String statusFolder) {
+            this.problemClass = problemClass;
+            this.statusFolder = statusFolder;
         }
 
         private void add(IncorrectMatch match) {
