@@ -11,6 +11,7 @@
 - Average raw AST tree distance: 23.746213
 - Average raw AST size: 27.477453
 - Average canonical form size: 18.365232
+- Average normalized predicate-body Levenshtein distance: 0.535694
 - Average normalized raw AST distance: 0.814866
 - Average normalized canonical distance: 0.757063
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 1018
@@ -59,6 +60,50 @@ Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`.
 | trash_rl | CORRECT | 340 | 12.482353 | 8.423529 | 32.516494% |
 | trash_rl | OVERCONSTRAINED | 150 | 12.013333 | 8.473333 | 29.467259% |
 | trash_rl | UNDERCONSTRAINED | 63 | 19.333333 | 11.968254 | 38.095238% |
+
+## Distance Averages Overall And By Problem Class And Status
+
+Raw columns use edit-distance units. Relative columns divide each distance by the larger corresponding representation of the student-oracle pair: body characters for Levenshtein, raw AST nodes for AST distance, and canonical-form size for canonical distance. Identical raw-AST pairs skipped by the test are excluded.
+
+| Problem class | Semantic correctness class | Comparisons | Avg Levenshtein | Avg raw AST | Avg canonical | Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| **All problem classes** | **All statuses** | **23240** | **44.141308** | **23.746213** | **15.225086** | **0.535694** | **0.814866** | **0.757063** |
+| classroom | BOTH | 1115 | 62.820628 | 29.493274 | 14.209865 | 0.552083 | 0.909231 | 0.795018 |
+| classroom | CORRECT | 495 | 48.232323 | 20.854545 | 10.060606 | 0.549318 | 0.875783 | 0.702131 |
+| classroom | OVERCONSTRAINED | 223 | 52.242152 | 20.820628 | 11.529148 | 0.543145 | 0.812511 | 0.762971 |
+| classroom | UNDERCONSTRAINED | 166 | 54.969880 | 25.325301 | 12.680723 | 0.475413 | 0.772406 | 0.664133 |
+| courses | BOTH | 1803 | 53.808098 | 29.019967 | 18.135885 | 0.614704 | 0.951285 | 0.914025 |
+| courses | CORRECT | 1338 | 38.111360 | 20.403587 | 10.989537 | 0.589369 | 0.901034 | 0.754913 |
+| courses | OVERCONSTRAINED | 327 | 43.134557 | 21.651376 | 11.110092 | 0.664941 | 0.926437 | 0.738424 |
+| courses | UNDERCONSTRAINED | 1453 | 44.737784 | 25.157605 | 16.791466 | 0.528858 | 0.876489 | 0.856445 |
+| cv_v1 | BOTH | 68 | 68.617647 | 30.441176 | 17.897059 | 0.547500 | 0.841271 | 0.717625 |
+| cv_v1 | CORRECT | 52 | 54.730769 | 28.076923 | 19.038462 | 0.454744 | 0.808262 | 0.801557 |
+| cv_v1 | OVERCONSTRAINED | 118 | 64.347458 | 27.025424 | 19.296610 | 0.484371 | 0.714714 | 0.729350 |
+| cv_v1 | UNDERCONSTRAINED | 55 | 58.872727 | 27.254545 | 18.109091 | 0.515567 | 0.862448 | 0.788301 |
+| cv_v2 | BOTH | 21 | 79.476190 | 38.380952 | 22.571429 | 0.579035 | 0.980777 | 0.837604 |
+| cv_v2 | CORRECT | 31 | 56.387097 | 29.806452 | 20.774194 | 0.461772 | 0.864989 | 0.853317 |
+| cv_v2 | OVERCONSTRAINED | 40 | 76.375000 | 35.500000 | 25.225000 | 0.537542 | 0.868479 | 0.861529 |
+| cv_v2 | UNDERCONSTRAINED | 12 | 56.333333 | 26.833333 | 16.833333 | 0.508296 | 0.871990 | 0.746644 |
+| lts | BOTH | 138 | 55.652174 | 26.007246 | 7.833333 | 0.558523 | 0.875311 | 0.667265 |
+| lts | CORRECT | 65 | 20.800000 | 9.784615 | 5.338462 | 0.317106 | 0.497185 | 0.428426 |
+| lts | OVERCONSTRAINED | 113 | 55.805310 | 24.946903 | 7.088496 | 0.564089 | 0.830098 | 0.626207 |
+| lts | UNDERCONSTRAINED | 66 | 35.984848 | 17.045455 | 7.287879 | 0.459294 | 0.696807 | 0.616571 |
+| production | BOTH | 22 | 32.181818 | 13.000000 | 7.409091 | 0.528093 | 0.778856 | 0.627805 |
+| production | CORRECT | 25 | 21.000000 | 11.400000 | 6.840000 | 0.417864 | 0.710263 | 0.673968 |
+| production | OVERCONSTRAINED | 25 | 22.720000 | 11.480000 | 6.400000 | 0.439780 | 0.749406 | 0.624341 |
+| production | UNDERCONSTRAINED | 36 | 13.777778 | 8.916667 | 6.805556 | 0.254880 | 0.573409 | 0.645966 |
+| socialMedia | BOTH | 4982 | 50.487756 | 27.382979 | 18.894219 | 0.581993 | 0.845408 | 0.825032 |
+| socialMedia | CORRECT | 4550 | 28.614945 | 18.061099 | 11.056264 | 0.419222 | 0.650753 | 0.554074 |
+| socialMedia | OVERCONSTRAINED | 1597 | 46.153413 | 27.669380 | 19.398873 | 0.543362 | 0.822909 | 0.784437 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 43.909091 | 22.633925 | 17.315918 | 0.533680 | 0.759227 | 0.823274 |
+| train | BOTH | 277 | 59.989170 | 32.075812 | 21.064982 | 0.586637 | 1.029340 | 0.945569 |
+| train | CORRECT | 76 | 37.105263 | 18.039474 | 9.710526 | 0.486409 | 0.832833 | 0.639272 |
+| train | OVERCONSTRAINED | 170 | 42.717647 | 21.394118 | 14.411765 | 0.509459 | 0.960846 | 0.865660 |
+| train | UNDERCONSTRAINED | 178 | 50.348315 | 24.365169 | 15.696629 | 0.554374 | 0.914377 | 0.902151 |
+| trash_rl | BOTH | 267 | 25.509363 | 11.689139 | 5.981273 | 0.593384 | 0.867258 | 0.632436 |
+| trash_rl | CORRECT | 252 | 30.519841 | 13.956349 | 6.468254 | 0.631827 | 0.936441 | 0.632553 |
+| trash_rl | OVERCONSTRAINED | 150 | 25.753333 | 11.373333 | 5.686667 | 0.611112 | 0.847728 | 0.584165 |
+| trash_rl | UNDERCONSTRAINED | 63 | 47.714286 | 18.539683 | 9.698413 | 0.695802 | 0.902303 | 0.725390 |
 
 ## Reward Comparison
 

@@ -144,6 +144,7 @@ public class CanonicalBatchTest {
             String rightBody = predicateBody(file, pair.rightName, pair.right);
             result.leftPredicate = pair.leftName;
             result.rightPredicate = pair.rightName;
+            result.predicateBodySize = Math.max(leftBody.length(), rightBody.length());
             result.leftRawAstSize = rawAstSize(pair.left.getBody());
             result.rightRawAstSize = rawAstSize(pair.right.getBody());
             result.rawAstSize = Math.max(result.leftRawAstSize, result.rightRawAstSize);
@@ -163,6 +164,9 @@ public class CanonicalBatchTest {
             result.leftGraphId = pair.leftId;
             result.rightGraphId = pair.rightId;
             result.predicateBodyLevenshteinDistance = levenshteinDistance(leftBody, rightBody);
+            result.normalizedLevenshteinDistance = normalizedDistance(
+                    result.predicateBodyLevenshteinDistance,
+                    result.predicateBodySize);
             result.leftVertices = left.size();
             result.rightVertices = right.size();
             Canonical.Prepared leftCanonical = Canonical.prepare(left);
@@ -418,6 +422,8 @@ public class CanonicalBatchTest {
         writer.write("    \"averageRawAstTreeDistance\": " + number(summary.averageRawAstTreeDistance()) + ",\n");
         writer.write("    \"averageRawAstSize\": " + number(summary.averageRawAstSize()) + ",\n");
         writer.write("    \"averageCanonicalFormSize\": " + number(summary.averageCanonicalFormSize()) + ",\n");
+        writer.write("    \"averageNormalizedLevenshteinDistance\": "
+                + number(summary.averageNormalizedLevenshteinDistance()) + ",\n");
         writer.write("    \"averageNormalizedRawAstDistance\": " + number(summary.averageNormalizedRawAstDistance()) + ",\n");
         writer.write("    \"averageNormalizedCanonicalDistance\": " + number(summary.averageNormalizedCanonicalDistance()) + ",\n");
         writer.write("    \"correctCanonicalZeroRawAstNonzero\": "
@@ -485,7 +491,10 @@ public class CanonicalBatchTest {
             writer.write("      \"leftRawAstSize\": " + result.leftRawAstSize + ",\n");
             writer.write("      \"rightRawAstSize\": " + result.rightRawAstSize + ",\n");
             writer.write("      \"rawAstSize\": " + result.rawAstSize + ",\n");
+            writer.write("      \"predicateBodySize\": " + result.predicateBodySize + ",\n");
             writer.write("      \"predicateBodyLevenshteinDistance\": " + result.predicateBodyLevenshteinDistance + ",\n");
+            writer.write("      \"normalizedLevenshteinDistance\": "
+                    + number(result.normalizedLevenshteinDistance) + ",\n");
             writer.write("      \"rawAstTreeDistance\": " + result.rawAstTreeDistance + ",\n");
             writer.write("      \"normalizedRawAstDistance\": " + number(result.normalizedRawAstDistance) + ",\n");
             writer.write("      \"leftCanonicalFormSize\": " + result.leftCanonicalFormSize + ",\n");
@@ -523,6 +532,11 @@ public class CanonicalBatchTest {
             writer.write("      \"leftRawAstSize\": " + result.leftRawAstSize + ",\n");
             writer.write("      \"rightRawAstSize\": " + result.rightRawAstSize + ",\n");
             writer.write("      \"rawAstSize\": " + result.rawAstSize + ",\n");
+            writer.write("      \"predicateBodySize\": " + result.predicateBodySize + ",\n");
+            writer.write("      \"predicateBodyLevenshteinDistance\": "
+                    + result.predicateBodyLevenshteinDistance + ",\n");
+            writer.write("      \"normalizedLevenshteinDistance\": "
+                    + number(result.normalizedLevenshteinDistance) + ",\n");
             writer.write("      \"leftCanonicalFormSize\": " + result.leftCanonicalFormSize + ",\n");
             writer.write("      \"rightCanonicalFormSize\": " + result.rightCanonicalFormSize + ",\n");
             writer.write("      \"canonicalFormSize\": " + result.canonicalFormSize + ",\n");
@@ -552,6 +566,8 @@ public class CanonicalBatchTest {
             writer.write("- Average raw AST tree distance: " + number(summary.averageRawAstTreeDistance()) + "\n");
             writer.write("- Average raw AST size: " + number(summary.averageRawAstSize()) + "\n");
             writer.write("- Average canonical form size: " + number(summary.averageCanonicalFormSize()) + "\n");
+            writer.write("- Average normalized predicate-body Levenshtein distance: "
+                    + number(summary.averageNormalizedLevenshteinDistance()) + "\n");
             writer.write("- Average normalized raw AST distance: "
                     + number(summary.averageNormalizedRawAstDistance()) + "\n");
             writer.write("- Average normalized canonical distance: "
@@ -572,6 +588,33 @@ public class CanonicalBatchTest {
                         + stats.representationSamples + " | " + number(stats.averageStudentRawAstSize()) + " | "
                         + number(stats.averageStudentCanonicalFormSize()) + " | "
                         + number(stats.studentCanonicalCompressionRatePercent()) + "% |\n");
+            }
+            writer.write("\n");
+
+            writer.write("## Distance Averages Overall And By Problem Class And Status\n\n");
+            writer.write("Raw columns use edit-distance units. Relative columns divide each distance by the larger "
+                    + "corresponding representation of the student-oracle pair: body characters for Levenshtein, "
+                    + "raw AST nodes for AST distance, and canonical-form size for canonical distance. Identical "
+                    + "raw-AST pairs skipped by the test are excluded.\n\n");
+            writer.write("| Problem class | Semantic correctness class | Comparisons | "
+                    + "Avg Levenshtein | Avg raw AST | Avg canonical | "
+                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+            writer.write("| **All problem classes** | **All statuses** | **" + summary.successes + "** | **"
+                    + number(summary.averageLevenshteinDistance()) + "** | **"
+                    + number(summary.averageRawAstTreeDistance()) + "** | **"
+                    + number(summary.averageDistance()) + "** | **"
+                    + number(summary.averageNormalizedLevenshteinDistance()) + "** | **"
+                    + number(summary.averageNormalizedRawAstDistance()) + "** | **"
+                    + number(summary.averageNormalizedCanonicalDistance()) + "** |\n");
+            for (Stats stats : summary.groupStats.values()) {
+                writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
+                        + stats.successes + " | " + number(stats.averageLevenshteinDistance()) + " | "
+                        + number(stats.averageRawAstTreeDistance()) + " | "
+                        + number(stats.averageDistance()) + " | "
+                        + number(stats.averageNormalizedLevenshteinDistance()) + " | "
+                        + number(stats.averageNormalizedRawAstDistance()) + " | "
+                        + number(stats.averageNormalizedCanonicalDistance()) + " |\n");
             }
             writer.write("\n");
 
@@ -737,7 +780,9 @@ public class CanonicalBatchTest {
         private int leftRawAstSize;
         private int rightRawAstSize;
         private int rawAstSize;
+        private int predicateBodySize;
         private int predicateBodyLevenshteinDistance;
+        private double normalizedLevenshteinDistance;
         private int rawAstTreeDistance;
         private double normalizedRawAstDistance;
         private int leftCanonicalFormSize;
@@ -793,6 +838,7 @@ public class CanonicalBatchTest {
         private long rawAstTreeDistanceSum;
         private long rawAstSizeSum;
         private long canonicalFormSizeSum;
+        private double normalizedLevenshteinDistanceSum;
         private double normalizedRawAstDistanceSum;
         private double normalizedCanonicalDistanceSum;
         private int correctCanonicalZeroRawAstNonzero;
@@ -846,6 +892,7 @@ public class CanonicalBatchTest {
                 rawAstTreeDistanceSum += result.rawAstTreeDistance;
                 rawAstSizeSum += result.rawAstSize;
                 canonicalFormSizeSum += result.canonicalFormSize;
+                normalizedLevenshteinDistanceSum += result.normalizedLevenshteinDistance;
                 normalizedRawAstDistanceSum += result.normalizedRawAstDistance;
                 normalizedCanonicalDistanceSum += result.normalizedCanonicalDistance;
                 if ("CORRECT".equals(result.statusFolder)
@@ -910,6 +957,10 @@ public class CanonicalBatchTest {
 
         private double averageCanonicalFormSize() {
             return successes == 0 ? 0.0 : (double) canonicalFormSizeSum / successes;
+        }
+
+        private double averageNormalizedLevenshteinDistance() {
+            return successes == 0 ? 0.0 : normalizedLevenshteinDistanceSum / successes;
         }
 
         private double averageNormalizedRawAstDistance() {
@@ -1023,6 +1074,11 @@ public class CanonicalBatchTest {
         private int skipped;
         private int failures;
         private long distanceSum;
+        private long levenshteinDistanceSum;
+        private long rawAstTreeDistanceSum;
+        private double normalizedLevenshteinDistanceSum;
+        private double normalizedRawAstDistanceSum;
+        private double normalizedCanonicalDistanceSum;
         private Integer minDistance;
         private Integer maxDistance;
         private int rewardSuccesses;
@@ -1054,6 +1110,11 @@ public class CanonicalBatchTest {
             } else if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
+                levenshteinDistanceSum += result.predicateBodyLevenshteinDistance;
+                rawAstTreeDistanceSum += result.rawAstTreeDistance;
+                normalizedLevenshteinDistanceSum += result.normalizedLevenshteinDistance;
+                normalizedRawAstDistanceSum += result.normalizedRawAstDistance;
+                normalizedCanonicalDistanceSum += result.normalizedCanonicalDistance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
                 if (result.rewardError == null) {
@@ -1075,6 +1136,26 @@ public class CanonicalBatchTest {
 
         private double averageDistance() {
             return successes == 0 ? 0.0 : (double) distanceSum / successes;
+        }
+
+        private double averageLevenshteinDistance() {
+            return successes == 0 ? 0.0 : (double) levenshteinDistanceSum / successes;
+        }
+
+        private double averageRawAstTreeDistance() {
+            return successes == 0 ? 0.0 : (double) rawAstTreeDistanceSum / successes;
+        }
+
+        private double averageNormalizedLevenshteinDistance() {
+            return successes == 0 ? 0.0 : normalizedLevenshteinDistanceSum / successes;
+        }
+
+        private double averageNormalizedRawAstDistance() {
+            return successes == 0 ? 0.0 : normalizedRawAstDistanceSum / successes;
+        }
+
+        private double averageNormalizedCanonicalDistance() {
+            return successes == 0 ? 0.0 : normalizedCanonicalDistanceSum / successes;
         }
 
         private double averageCandidateReward() {
