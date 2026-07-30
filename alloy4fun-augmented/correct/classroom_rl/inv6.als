@@ -1,93 +1,71 @@
 module alloy4fun_augmented_classroom_rl_inv6
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv6_oracle[] {
-(Teacher in (Teaches.Class))
+all t:Teacher | some t.Teaches
 }
 
 pred inv6_correct_0[] {
-(all t: (one Teacher) {
-(some c: (one Class) {
-((t->c) in Teaches)
-})
-})
+Teacher in Teaches.Class
 }
 
 pred inv6_correct_1[] {
-(all t: (one Teacher) {
-(some x: (one Class) {
-((t->x) in Teaches)
-})
-})
+all t : Teacher | #t.Teaches > 0
 }
 
 pred inv6_correct_2[] {
-(all t: (one Teacher) {
-(some c: (one Class) {
-(c in (t.Teaches))
-})
-})
+all t: Teacher | t.Teaches != none
 }
 
 pred inv6_correct_3[] {
-(all x: (one Teacher) {
-(some c: (one Class) {
-((x->c) in Teaches)
-})
-})
+all p : Person | p in Teacher implies some p.Teaches
 }
 
 pred inv6_correct_4[] {
-(all t: (one Teacher) {
-(some (t.Teaches))
-})
+Teacher in Class.~Teaches
 }
 
 pred inv6_correct_5[] {
-(all p: (one Teacher) {
-(some c: (one Class) {
-((p in Teacher) => ((p->c) in Teaches))
-})
-})
+iden & Teacher->Teacher in Teaches.~Teaches
 }
 
 pred inv6_correct_6[] {
-(all t: (one Teacher) {
-((#(t.Teaches)) > 0)
-})
+all t : Teacher | some c : Class | t->c in Teaches
 }
 
 pred inv6_correct_7[] {
-(Teacher in (Teaches.Class))
+all p:Teacher | some c:Class | p->c in Teaches
 }
 
 pred inv6_correct_8[] {
-(Teacher in (Class.(~Teaches)))
+Teacher in Class.~Teaches
+  	Teacher in Teaches.Class
 }
 
 pred inv6_correct_9[] {
-(all p: (one Teacher) {
-(some c: (one Class) {
-((p->c) in Teaches)
-})
-})
+(Teaches.Class & Teacher) = Teacher
 }
 
 pred inv6_correct_10[] {
-(all x: (one Teacher) {
-(some y: (one Class) {
-((x->y) in Teaches)
-})
-})
+all t : Teacher | some c : Class | c in t.Teaches
+}
+
+pred inv6_correct_11[] {
+Teacher in Teacher.Teaches.~Teaches
+}
+
+pred inv6_correct_12[] {
+all t: Teacher | not no t.Teaches
 }
 

@@ -1,53 +1,50 @@
 module alloy4fun_augmented_classroom_fol_inv1
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv1_oracle[] {
-(Person in Student)
+Person in Student
 }
 
 pred inv1_correct_0[] {
-(Person in Student)
+all p:Person | p in Student
 }
 
 pred inv1_correct_1[] {
-(all p: (one Person) {
-(p in Student)
-})
+all x : Person | x in Student
 }
 
 pred inv1_correct_2[] {
-(all x: (one Person) {
-(x in Student)
-})
+Person = Student
 }
 
 pred inv1_correct_3[] {
-(all s: (one Person) {
-(s in Student)
-})
+Student = Person
 }
 
 pred inv1_correct_4[] {
-(no (Person - Student))
+all f : Person | f in Student
 }
 
 pred inv1_correct_5[] {
-(Person = Student)
+(Person & Student) = Person
 }
 
 pred inv1_correct_6[] {
-(all f: (one Person) {
-(f in Student)
-})
+no (Person-Student)
+}
+
+pred inv1_correct_7[] {
+all s : Person | s in Student
 }
 

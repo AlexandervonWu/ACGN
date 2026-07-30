@@ -1,36 +1,62 @@
 module alloy4fun_augmented_trash_rl_inv3
-open util/integer [] as integer
-sig File {
-link: (set File)
+/* A file is potentially a link to other files. */
+	link : set File
 }
+/* The set of files in the trash. */
 sig Trash in File {}
+
+/* The set of protected files. */
 sig Protected in File {}
 
 pred inv3_oracle[] {
-(some Trash)
+some Trash
 }
 
 pred inv3_correct_0[] {
-(some (File & Trash))
+some f: File | f in Trash
 }
 
 pred inv3_correct_1[] {
-(some x: (one File) {
-(x in Trash)
-})
+some f : File | f in Trash
+
+
+
+
+
+some Trash
 }
 
 pred inv3_correct_2[] {
-(some f: (one File) {
-(f in Trash)
-})
+some (File & Trash)
 }
 
 pred inv3_correct_3[] {
-(some (Trash <: File))
+some file: File |
+file in Trash
 }
 
 pred inv3_correct_4[] {
-(some (File->Trash))
+some File -> Trash
+}
+
+pred inv3_correct_5[] {
+some s : File | s in Trash
+}
+
+pred inv3_correct_6[] {
+some Trash & File
+}
+
+pred inv3_correct_7[] {
+some f:File | one t:Trash | f in t
+}
+
+pred inv3_correct_8[] {
+some File
+some Trash
+}
+
+pred inv3_correct_9[] {
+some Trash <: File
 }
 

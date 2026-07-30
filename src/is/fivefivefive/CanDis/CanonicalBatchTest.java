@@ -134,6 +134,10 @@ public class CanonicalBatchTest {
         FileResult result = new FileResult(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
+            if (module == null) {
+                result.error = "Alloy parser returned no module.";
+                return result;
+            }
             ModelUnit model = new ModelUnit(null, module);
             PredicatePair pair = findPredicatePair(file, model);
             if (pair == null) {

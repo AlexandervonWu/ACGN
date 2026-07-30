@@ -1,55 +1,46 @@
 module alloy4fun_augmented_classroom_rl_inv2
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv2_oracle[] {
-(no Teacher)
+no Teacher
 }
 
 pred inv2_correct_0[] {
-(all p: (one Person) {
-(p !in Teacher)
-})
+Teacher = none
 }
 
 pred inv2_correct_1[] {
-(all t: (one Teacher) {
-(t !in Teacher)
-})
+no p:Person | p in Teacher
 }
 
 pred inv2_correct_2[] {
-(no Teacher)
+all p:Person | p not in Teacher
 }
 
 pred inv2_correct_3[] {
-(always (no Teacher))
+not some p:Person | p in Teacher
 }
 
 pred inv2_correct_4[] {
-(all t: (one Person) {
-(t !in Teacher)
-})
+all p : Person | p not in Teacher
+  
+  
+  
+  no Teacher
 }
 
 pred inv2_correct_5[] {
-(all x: (one Person) {
-(x !in Teacher)
-})
-}
-
-pred inv2_correct_6[] {
-(all f: (one Person) {
-(f !in Teacher)
-})
+no Person&Teacher
 }
 

@@ -1,0 +1,25 @@
+sig Track {
+	succs : set Track,
+	signals : set Signal
+}
+sig Junction, Entry, Exit in Track {}
+
+sig Signal {}
+sig Semaphore, Speed extends Signal {}
+
+pred inv3 {
+all t1,t2:Track | t2 in t1.succs implies no (t1 & Exit)
+
+all t1:Track | no (t1 & Exit) implies (some t2:Track | t2 in t1.succs)
+}
+
+pred inv3c {
+	all t : Track | t in Exit iff no t.succs
+}
+
+check correct { inv3 <=> inv3c}
+pred under { inv3 and !inv3c}
+pred over { !inv3 and inv3c}
+run over 
+run under 
+

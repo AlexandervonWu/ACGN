@@ -1,0 +1,38 @@
+sig Workstation {
+	workers : set Worker,
+	succ : set Workstation
+}
+one sig begin, end in Workstation {}
+
+sig Worker {}
+sig Human, Robot extends Worker {}
+
+abstract sig Product {
+	parts : set Product	
+}
+
+sig Material extends Product {}
+
+sig Component extends Product {
+	workstation : set Workstation
+}
+
+sig Dangerous in Product {}
+pred inv8 {
+all c:Component,ws:c.workstation | c in Dangerous implies no w: ws.workers | w in Human
+all c:Dangerous,ws:c.workstation | no w: ws.workers | w in Human
+all c:Dangerous,ws:c.workstation,w: ws.workers | w not in Human
+all c:Dangerous | no c.workstation.workers & Human
+no Dangerous.workstation.workers & Human
+}
+
+pred inv8c {
+	all c : Component & Dangerous | no c.workstation.workers & Human
+}
+
+check correct { inv8 <=> inv8c}
+pred under { inv8 and !inv8c}
+pred over { !inv8 and inv8c}
+run over 
+run under 
+

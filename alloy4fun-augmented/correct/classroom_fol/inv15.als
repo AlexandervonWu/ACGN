@@ -1,47 +1,56 @@
 module alloy4fun_augmented_classroom_fol_inv15
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv15_oracle[] {
-(all s: (one Person) {
-(some (Teacher & ((^Tutors).s)))
-})
+all p:Person | some Teacher&(^Tutors).p
 }
 
 pred inv15_correct_0[] {
-(all p: (one Person) {
-(some t: (one Teacher) {
-(t in (p.(^(~Tutors))))
-})
-})
+all p:Person | some t:Teacher | t in p.^(~Tutors)
 }
 
 pred inv15_correct_1[] {
-(all p1: (one Person) {
-((some p2: (one Teacher) {
-((p2->p1) in Tutors)
-}) || (some p2,p3: (one Person) {
-(((p2->p1) in Tutors) && ((p3->p2) in Tutors) && (p3 in Teacher))
-}) || (some p2,p3,p4: (one Person) {
-(((p2->p1) in Tutors) && ((p3->p2) in Tutors) && ((p4->p3) in Tutors) && (p4 in Teacher))
-}))
-})
+all p1 : Person | some p2, p3 : Person |
+  (p2->p1 in Tutors) and ((p2 in Teacher) or
+  (p3->p2 in Tutors) and ((p3 in Teacher) or
+  (p1->p3 in Tutors) and  (p1 in Teacher)))
 }
 
 pred inv15_correct_2[] {
-(all p: (one Person) {
-(some q,r: (one Person),t: (one Teacher) {
-(((t->p) in Tutors) || (((q->p) in Tutors) && ((t->q) in Tutors)) || (((t->r) in Tutors) && ((r->q) in Tutors) && ((q->p) in Tutors)))
-})
-})
+all p : Person | some q,r : Person, t : Teacher | t->p in Tutors or (q->p in Tutors and t->q in Tutors) or (t->r in Tutors and r->q in Tutors and q->p in Tutors)
+}
+
+pred inv15_correct_3[] {
+all p:Person | some t :Teacher | t in ^Tutors.p
+}
+
+pred inv15_correct_4[] {
+all p : Person {
+  	(some (p.(~Tutors) & Teacher)) or
+  	(some (p.(~Tutors).(~Tutors) & Teacher)) or
+	(some (p.(~Tutors).(~Tutors).(~Tutors) & Teacher))
+  }
+}
+
+pred inv15_correct_5[] {
+all p1 : Person | some p2, p3 : Person |
+  (p2->p1 in Tutors and p2 in Teacher) or
+  (p3->p2 in Tutors and p2->p1 in Tutors and p3 in Teacher) or
+  (p1->p3 in Tutors and p3->p2 in Tutors and p2->p1 in Tutors and p1 in Teacher)
+}
+
+pred inv15_correct_6[] {
+all p1 : Person | (some p2 : Teacher | p2 -> p1 in Tutors) or (some p2, p3 : Person | p2 -> p1 in Tutors and p3 -> p2 in Tutors and p3 in Teacher) or (some p2, p3, p4 : Person | p2 -> p1 in Tutors and p3 -> p2 in Tutors and p4 -> p3 in Tutors and p4 in Teacher)
 }
 

@@ -1,109 +1,100 @@
 module alloy4fun_augmented_classroom_rl_inv7
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv7_oracle[] {
-(Class in (Teacher.Teaches))
+all c:Class | some Teacher&Teaches.c
 }
 
 pred inv7_correct_0[] {
-(all c: (one Class) {
-(some t: (one Teacher) {
-((t->c) in Teaches)
-})
-})
+all c : Class | c in Teacher.Teaches
 }
 
 pred inv7_correct_1[] {
-((Teacher.Teaches) = Class)
+Teacher.Teaches = Class
 }
 
 pred inv7_correct_2[] {
-(all c: (one Class) {
-(some ((c.(~Teaches)) & Teacher))
-})
+Class in Teacher.Teaches
 }
 
 pred inv7_correct_3[] {
-(all y: (one Class) {
-(some x: (one Teacher) {
-((x->y) in Teaches)
-})
-})
+all c:Class | some t:Teacher | t->c in Teaches
 }
 
 pred inv7_correct_4[] {
-(all c: (one Class) {
-(some t: (one Teacher) {
-(c in (t.Teaches))
-})
-})
+Class = Teacher.Teaches
 }
 
 pred inv7_correct_5[] {
-(all c: (one Class) {
-(some t: (one Teacher) {
-(t in (Teaches.c))
-})
-})
+all c : Class | some Teaches.c & Teacher
 }
 
 pred inv7_correct_6[] {
-(all c: (one Class) {
-(c in (Teacher.Teaches))
-})
+all c:Class{ some t:Teacher | t in c.~Teaches }
 }
 
 pred inv7_correct_7[] {
-((all c: (one Class) {
-(some t: (one Teacher) {
-(t in (c.(~Teaches)))
-})
-}) && (Class in (Teacher.Teaches)))
+all c:Class | some Teacher.Teaches:>c
 }
 
 pred inv7_correct_8[] {
-(all c: (one Class) {
-(some t: (one Teacher) {
-(t in (c.(~Teaches)))
-})
-})
+all c : Class | some t : Teacher | c in t.Teaches
 }
 
 pred inv7_correct_9[] {
-(all x: (one Class) {
-(some t: (one Teacher) {
-((t->x) in Teaches)
-})
-})
+all c : Class | (#Teaches.c & Teacher) > 0
 }
 
 pred inv7_correct_10[] {
-(Class in (Teacher.Teaches))
+all c:Class | some t:Teacher | t in Teaches.c
 }
 
 pred inv7_correct_11[] {
-(all c: (one Class) {
-(some x: (one Teacher) {
-((x->c) in Teaches)
-})
-})
+all c : Class | some x : Teacher | x->c in Teaches
 }
 
 pred inv7_correct_12[] {
-(all x: (one Class) {
-(some y: (one Teacher) {
-((y->x) in Teaches)
-})
-})
+all c: Class | some c.~Teaches & Teacher
+}
+
+pred inv7_correct_13[] {
+all c : Class | some ( Teacher <:Teaches.c)
+}
+
+pred inv7_correct_14[] {
+Class in ~Teaches.Teacher
+}
+
+pred inv7_correct_15[] {
+all c : Class | some Teacher -> c & Teaches
+}
+
+pred inv7_correct_16[] {
+all c : Class | some (Teaches.c & Teacher)
+  
+  Class in Teacher.Teaches
+}
+
+pred inv7_correct_17[] {
+#(~Teaches.Teacher) >= #Class
+}
+
+pred inv7_correct_18[] {
+(Class & Teacher.Teaches) = Class
+}
+
+pred inv7_correct_19[] {
+all c : Class | some (Teaches.c :> Teacher)
 }
 

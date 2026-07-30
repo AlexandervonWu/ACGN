@@ -46,7 +46,7 @@ public class Alloy4FunAugmenter {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "alloy4fun-augmented";
     private static final int DEFAULT_THREAD_COUNT = 32;
-    private static final int DEFAULT_REWARD_POOL_SIZE = 10;
+    private static final int DEFAULT_REWARD_POOL_SIZE = 100;
     private static final int[] REPAIR_RADII = { 1, 2, 5, 10 };
     private static final double[] RELATIVE_REPAIR_RADII = { 0.05, 0.10, 0.20, 0.50 };
     private static final int RELATIVE_REPAIR_CURVE_STEPS = 100;
@@ -224,11 +224,18 @@ public class Alloy4FunAugmenter {
         ModelRecord record = new ModelRecord(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
+            if (module == null) {
+                record.error = "Alloy parser returned no module.";
+                return record;
+            }
             ModelUnit model = new ModelUnit(null, module);
             PredicatePair pair = findPredicatePair(file, model);
             if (pair == null) {
                 record.error = "No predicate pair of the form X and X[Cc] found.";
                 return record;
+            }
+            if (record.invariantId == null || record.invariantId.isEmpty()) {
+                record.invariantId = pair.leftName;
             }
             record.leftPredicate = pair.leftName;
             record.rightPredicate = pair.rightName;
@@ -2361,7 +2368,7 @@ public class Alloy4FunAugmenter {
         private final String relativePath;
         private final String questionSet;
         private final String statusFolder;
-        private final String invariantId;
+        private String invariantId;
         private String leftPredicate;
         private String rightPredicate;
         private String studentBody;

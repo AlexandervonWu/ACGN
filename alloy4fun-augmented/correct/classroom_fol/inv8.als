@@ -1,157 +1,114 @@
 module alloy4fun_augmented_classroom_fol_inv8
-open util/integer [] as integer
-sig Person {
-Tutors: (set Person),
-Teaches: (set Class)
+Tutors : set Person,
+	Teaches : set Class
 }
 sig Group {}
-sig Class {
-Groups: (Person->Group)
+
+sig Class  {
+	Groups : Person -> Group
 }
-sig Teacher in Person {}
-sig Student in Person {}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
 
 pred inv8_oracle[] {
-(all t: (one Teacher) {
-(lone (t.Teaches))
-})
+all t:Teacher | lone t.Teaches
 }
 
 pred inv8_correct_0[] {
-(all x: (one Teacher),y,z: (one Class) {
-((((x->y) in Teaches) && ((x->z) in Teaches)) => (y = z))
-})
+all t : Teacher | all c1,c2 : Class | t->c1 in Teaches and t->c2 in Teaches implies c1=c2
 }
 
 pred inv8_correct_1[] {
-(all t: (one Teacher) {
-((#(t.Teaches)) < 2)
-})
+all x,y:Class, t:Teacher | t->x in Teaches and t->y in Teaches implies x=y
 }
 
 pred inv8_correct_2[] {
-(all t: (one Teacher) {
-(lone c: (one Class) {
-((t->c) in Teaches)
-})
-})
+all t : Teacher, c1, c2 : Class | (t->c1 in Teaches) and (t->c2 in Teaches) => (c1 = c2)
 }
 
 pred inv8_correct_3[] {
-(all t: (one Teacher),c,c1: (one Class) {
-((((t->c) in Teaches) && ((t->c1) in Teaches)) => (c = c1))
-})
+all p:Teacher, c1, c2:Class | p->c1 in Teaches and p->c2 in Teaches => c1=c2
 }
 
 pred inv8_correct_4[] {
-(all t: (one Teacher),c1,c2: (one Class) {
-((((t->c1) in Teaches) && ((t->c2) in Teaches)) => (c1 = c2))
-})
+all t : Teacher | lone c : Class | t->c in Teaches
 }
 
 pred inv8_correct_5[] {
-(all c1: (one Class),c2: (one Class),t: (one Teacher) {
-((((t->c1) in Teaches) && ((t->c2) in Teaches)) => (c1 = c2))
-})
+all c1:Class,c2:Class,t:Teacher | (t->c1 in Teaches and t->c2 in Teaches) implies c1 = c2
 }
 
 pred inv8_correct_6[] {
-(all x,y: (one Class),t: (one Teacher) {
-((((t->x) in Teaches) && ((t->y) in Teaches)) => (x = y))
-})
+all x: Teacher, y,z: Class | x->y in Teaches and x->z in Teaches implies y=z
 }
 
 pred inv8_correct_7[] {
-(all t: (one Teacher) {
-(all c1,c2: (one Class) {
-((((t->c1) in Teaches) && ((t->c2) in Teaches)) => (c1 = c2))
-})
-})
+all x : Teacher, y, t : Class | x -> y in Teaches and x -> t in Teaches implies y = t
 }
 
 pred inv8_correct_8[] {
-(all t: (one Teacher) {
-(all c,u: (one Class) {
-((((t->c) in Teaches) && ((t->u) in Teaches)) => (c = u))
-})
-})
+all t : Teacher | all x,y : Class | t->x in Teaches and t->y in Teaches implies x=y
 }
 
 pred inv8_correct_9[] {
-(all t: (one Teacher) {
-(lone (t.Teaches))
-})
+~(Teacher<:Teaches).(Teacher<:Teaches) in iden
 }
 
 pred inv8_correct_10[] {
-(all t: (one Teacher),c,d: (one Class) {
-((((t->c) in Teaches) && ((t->d) in Teaches)) => (c = d))
-})
+all t:Teacher,c1,c2:Class | c1 in t.Teaches and c2 in t.Teaches implies c1=c2
 }
 
 pred inv8_correct_11[] {
-((all t: (one Teacher) {
-(lone (t.Teaches))
-}) && (((~(Teacher <: Teaches)).(Teacher <: Teaches)) in iden))
+all t : Teacher, c,d:Class | t->c in Teaches and t->d in Teaches implies c=d
 }
 
 pred inv8_correct_12[] {
-(all t: (one Teacher) {
-(all x,y: (one Class) {
-((((t->x) in Teaches) && ((t->y) in Teaches)) => (x = y))
-})
-})
+(all t : Teacher | all c,u : Class | (t->c in Teaches and t->u in Teaches) implies c=u)
 }
 
 pred inv8_correct_13[] {
-(all c1,c2: (one Class) {
-(all t: (one Teacher) {
-((((t->c1) in Teaches) && ((t->c2) in Teaches)) => (c1 = c2))
-})
-})
+all t : Teacher | #(t.Teaches) < 2
 }
 
 pred inv8_correct_14[] {
-(all c1,c2: (one Class),t: (one Teacher) {
-((((t->c1) in Teaches) && ((t->c2) in Teaches)) => (c1 = c2))
-})
+all p:Teacher, c1, c2:Class | c1 = c2 or not (p->c1 in Teaches and p->c2 in Teaches)
 }
 
 pred inv8_correct_15[] {
-(((~(Teacher <: Teaches)).(Teacher <: Teaches)) in iden)
+all t : Teacher, x, y : Class | t->x in Teaches and t->y in Teaches implies x = y
 }
 
 pred inv8_correct_16[] {
-(all t: (one Teacher),c1,c2: (one Class) {
-(((c1 in (t.Teaches)) && (c2 in (t.Teaches))) => (c1 = c2))
-})
+all c1,c2 : Class | all t : Teacher | t->c1 in Teaches and t->c2 in Teaches implies c1=c2
 }
 
 pred inv8_correct_17[] {
-(all x: (one Teacher),y,t: (one Class) {
-((((x->y) in Teaches) && ((x->t) in Teaches)) => (y = t))
-})
+all t : Teacher , c,u : Class | t->c in Teaches and t->u in Teaches implies c=u
 }
 
 pred inv8_correct_18[] {
-(all x: (one Teacher) {
-(all c: (one Class) {
-(all d: (one Class) {
-((((x->c) in Teaches) && (c != d)) => ((x->d) !in Teaches))
-})
-})
-})
+all c1, c2 : Class | all p : Person | p in Teacher and (p -> c1 in Teaches && p -> c2 in Teaches) => c1 = c2
 }
 
 pred inv8_correct_19[] {
-(all t: (one Teacher),x,y: (one Class) {
-((((t->x) in Teaches) && ((t->y) in Teaches)) => (x = y))
-})
+all x : Teacher | all c : Class | all d : Class | x->c in Teaches and c!=d implies x->d not in Teaches
 }
 
 pred inv8_correct_20[] {
-(all t: (one Teacher),c,u: (one Class) {
-((((t->c) in Teaches) && ((t->u) in Teaches)) => (c = u))
-})
+all p : Teacher | all c1, c2 : Class | (p->c1 in Teaches and p->c2 in Teaches) => c1 = c2
+}
+
+pred inv8_correct_21[] {
+all c1,c2:Class,t:Teacher | t->c1 in Teaches and t->c2 in Teaches implies c1=c2
+}
+
+pred inv8_correct_22[] {
+all c1, c2 : Class, p : Person | p in Teacher and (p -> c1 in Teaches && p -> c2 in Teaches) => c1 = c2
+}
+
+pred inv8_correct_23[] {
+all t : Teacher, c, c1 : Class | t->c in Teaches and t->c1 in Teaches implies c = c1
 }
 
