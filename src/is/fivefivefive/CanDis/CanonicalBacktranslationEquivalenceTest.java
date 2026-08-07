@@ -159,19 +159,8 @@ public final class CanonicalBacktranslationEquivalenceTest {
     }
 
     private static PredicatePair predicatePair(Path file, Map<String, Predicate> predicates) {
-        String preferred = preferredPredicateBase(file);
-        if (preferred != null && predicates.containsKey(preferred) && predicates.containsKey(preferred + "C")) {
-            return new PredicatePair(preferred, preferred + "C");
-        }
-        for (String name : predicates.keySet()) {
-            if (name.endsWith("C") && name.length() > 1) {
-                String base = name.substring(0, name.length() - 1);
-                if (predicates.containsKey(base)) {
-                    return new PredicatePair(base, name);
-                }
-            }
-        }
-        return null;
+        String[] names = DatasetConventions.findPredicatePairNames(preferredPredicateBase(file), predicates);
+        return names == null ? null : new PredicatePair(names[0], names[1]);
     }
 
     private static String preferredPredicateBase(Path file) {

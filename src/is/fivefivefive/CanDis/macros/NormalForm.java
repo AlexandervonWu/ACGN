@@ -23,6 +23,7 @@ public class NormalForm {
     private EGraphNode matrixEGraphRoot;
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
+    private List<QuantiVar> inheritedQuantiVars; // bindings owned by ancestor temporal phases and visible in this matrix.
     private List<NormalForm> temporalChildren;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
     private int nextDisjointnessClass;
@@ -48,6 +49,7 @@ public class NormalForm {
         this.matrixEGraphRoot = null;
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
+        this.inheritedQuantiVars = new ArrayList<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = TemporalOp.NONE;
         this.nextDisjointnessClass = 1;
@@ -57,6 +59,7 @@ public class NormalForm {
         this.matrixEGraphRoot = new EGraphNode(egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false, Metatype.BOOLEAN);
         this.params = new ArrayList<>(parent.params);
         this.matrixQuantiVars = new ArrayList<>();
+        this.inheritedQuantiVars = new ArrayList<>();
         this.temporalChildren = new ArrayList<>();
         this.temporalOp = temporalOp;
         this.nextDisjointnessClass = 1;
@@ -70,6 +73,9 @@ public class NormalForm {
     }
     public List<QuantiVar> getMatrixQuantiVars() {
         return this.matrixQuantiVars;
+    }
+    public List<QuantiVar> getInheritedQuantiVars() {
+        return this.inheritedQuantiVars;
     }
     public void addEClass(EGraphNode node) {
         if (this.matrixEGraphRoot == null) {
@@ -97,18 +103,33 @@ public class NormalForm {
         normalize();
     }
     public void normalize() {
+        normalize(new HashMap<>(), new int[] { 0 });
+    }
+    public void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
         if (matrixEGraphRoot == null) {
             return;
         }
         matrixQuantiVars.clear();
+        inheritedQuantiVars = new ArrayList<>(new java.util.LinkedHashSet<>(inheritedBindings.values()));
+        inheritedQuantiVars.sort(java.util.Comparator.comparingInt(QuantiVar::getId));
         nextDisjointnessClass = 1;
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
+        Map<String, String> inheritedAlphaNames = new HashMap<>();
+        for (Map.Entry<String, QuantiVar> entry : inheritedBindings.entrySet()) {
+            inheritedAlphaNames.put(entry.getKey(), entry.getValue().getName());
+        }
+        matrixEGraphRoot = alphaRenameBoundVariables(
+                matrixEGraphRoot, inheritedAlphaNames, new int[] { 0 });
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
         List<EGraphNode> constraints = new ArrayList<>();
-        matrixEGraphRoot = prenex(matrixEGraphRoot, new HashMap<>(), new int[] { 0 }, false, constraints, "root",
+        Map<String, QuantiVar> prenexBindings = new HashMap<>(inheritedBindings);
+        for (QuantiVar inherited : inheritedBindings.values()) {
+            prenexBindings.put(inherited.getName(), inherited);
+        }
+        matrixEGraphRoot = prenex(matrixEGraphRoot, prenexBindings, nextVarId, false, constraints, "root",
                 true, true, true);
         matrixEGraphRoot = removeEndNodes(conjoin(matrixEGraphRoot, constraints));
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
@@ -120,6 +141,104 @@ public class NormalForm {
         }
         matrixEGraphRoot.saturate();
         registerQuantifierSymmetries();
+    }
+
+    private static EGraphNode alphaRenameBoundVariables(
+            EGraphNode node,
+            Map<String, String> scope,
+            int[] nextBinderId) {
+        if (node == null) {
+            return null;
+        }
+        if (node.getOpcode() == Opcode.VARIABLE
+                || (node.getOpcode() == Opcode.LET && node.getChildren().isEmpty())) {
+            EGraphNode renamed = copyShallow(node, node.getOpcode());
+            String alphaName = scope.get(node.getSourceName());
+            if (alphaName != null) {
+                renamed.setAlphaName(alphaName);
+            }
+            return renamed;
+        }
+        if (node.getOpcode() == Opcode.LET && node.getChildren().size() >= 2) {
+            EGraphNode renamed = copyShallow(node, Opcode.LET);
+            renamed.addChild(alphaRenameBoundVariables(node.getChildren().get(0), scope, nextBinderId));
+            String alphaName = "@let:" + nextBinderId[0]++;
+            renamed.setAlphaName(alphaName);
+            Map<String, String> bodyScope = new HashMap<>(scope);
+            if (node.getSourceName() != null) {
+                bodyScope.put(node.getSourceName(), alphaName);
+            }
+            for (int i = 1; i < node.getChildren().size(); i++) {
+                renamed.addChild(alphaRenameBoundVariables(node.getChildren().get(i), bodyScope, nextBinderId));
+            }
+            return renamed;
+        }
+        if (bindsRelDeclarations(node)) {
+            EGraphNode renamed = copyShallow(node, node.getOpcode());
+            Map<String, String> bodyScope = new HashMap<>(scope);
+            Map<Integer, EGraphNode> declarations = new HashMap<>();
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                EGraphNode child = node.getChildren().get(i);
+                if (isRelDecl(child.getOpcode())) {
+                    declarations.put(i, alphaRenameRelDecl(child, bodyScope, nextBinderId));
+                }
+            }
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                EGraphNode declaration = declarations.get(i);
+                renamed.addChild(declaration == null
+                        ? alphaRenameBoundVariables(node.getChildren().get(i), bodyScope, nextBinderId)
+                        : declaration);
+            }
+            return renamed;
+        }
+        EGraphNode renamed = copyShallow(node, node.getOpcode());
+        for (EGraphNode child : node.getChildren()) {
+            renamed.addChild(alphaRenameBoundVariables(child, scope, nextBinderId));
+        }
+        return renamed;
+    }
+
+    private static EGraphNode alphaRenameRelDecl(
+            EGraphNode declaration,
+            Map<String, String> bodyScope,
+            int[] nextBinderId) {
+        EGraphNode renamed = copyShallow(declaration, declaration.getOpcode());
+        List<EGraphNode> children = declaration.getChildren();
+        if (!children.isEmpty()) {
+            renamed.addChild(alphaRenameBoundVariables(children.get(0), bodyScope, nextBinderId));
+        }
+        for (int i = 1; i < children.size(); i++) {
+            EGraphNode child = children.get(i);
+            if (child.getOpcode() != Opcode.VARIABLE) {
+                renamed.addChild(alphaRenameBoundVariables(child, bodyScope, nextBinderId));
+                continue;
+            }
+            EGraphNode variable = copyShallow(child, Opcode.VARIABLE);
+            String alphaName = "@bind:" + nextBinderId[0]++;
+            variable.setAlphaName(alphaName);
+            renamed.addChild(variable);
+            if (child.getSourceName() != null) {
+                bodyScope.put(child.getSourceName(), alphaName);
+            }
+        }
+        return renamed;
+    }
+
+    private static boolean bindsRelDeclarations(EGraphNode node) {
+        if (node.getOpcode() != Opcode.PREDICATE && node.getOpcode() != Opcode.FUNCTION
+                && node.getOpcode() != Opcode.TEMPORALROOT && !isQuantifierNode(node)) {
+            return false;
+        }
+        for (EGraphNode child : node.getChildren()) {
+            if (isRelDecl(child.getOpcode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String bindingKey(EGraphNode node) {
+        return firstNonEmpty(node.getAlphaName(), node.getSourceName());
     }
 
     private void registerQuantifierSymmetries() {
@@ -209,18 +328,19 @@ public class NormalForm {
             return null;
         }
         if (node.getOpcode() == Opcode.VARIABLE) {
-            EGraphNode replacement = bindings.get(node.getSourceName());
+            EGraphNode replacement = bindings.get(bindingKey(node));
             return replacement == null ? node : cloneEGraph(replacement);
         }
         if (node.getOpcode() == Opcode.LET && node.getChildren().isEmpty()) {
-            EGraphNode replacement = bindings.get(node.getSourceName());
+            EGraphNode replacement = bindings.get(bindingKey(node));
             return replacement == null ? node : cloneEGraph(replacement);
         }
         if (node.getOpcode() == Opcode.LET && node.getChildren().size() >= 2) {
             EGraphNode bound = betaRewriteLet(node.getChildren().get(0), bindings);
             Map<String, EGraphNode> scopedBindings = new HashMap<>(bindings);
-            if (node.getSourceName() != null) {
-                scopedBindings.put(node.getSourceName(), bound);
+            String key = bindingKey(node);
+            if (key != null) {
+                scopedBindings.put(key, bound);
             }
             return betaRewriteLet(node.getChildren().get(1), scopedBindings);
         }
@@ -269,8 +389,8 @@ public class NormalForm {
         List<EGraphNode> children = relDecl.getChildren();
         for (int i = 1; i < children.size(); i++) {
             EGraphNode candidate = children.get(i);
-            if (candidate.getOpcode() == Opcode.VARIABLE && candidate.getSourceName() != null) {
-                bindings.remove(candidate.getSourceName());
+            if (candidate.getOpcode() == Opcode.VARIABLE && bindingKey(candidate) != null) {
+                bindings.remove(bindingKey(candidate));
             }
         }
     }
@@ -289,7 +409,7 @@ public class NormalForm {
             return null;
         }
         if (node.getOpcode() == Opcode.VARIABLE) {
-            QuantiVar qv = env.get(node.getSourceName());
+            QuantiVar qv = env.get(bindingKey(node));
             if (qv != null) {
                 node.setAlphaName(qv.getName());
             }
@@ -314,6 +434,9 @@ public class NormalForm {
             return rewritten.size() == 1 ? rewritten.get(0) : conjoin(null, rewritten);
         }
         if (isQuantifierNode(node)) {
+            if (node.getOpcode() == Opcode.COMPREHENSION || node.getOpcode() == Opcode.SUM) {
+                return localQuantifier(node, env, nextVarId, negated, bindingPath);
+            }
             Quantifier quantifier = quantifierOf(node.getOpcode(), negated);
             if (!globalLift) {
                 return localQuantifier(node, env, nextVarId, negated, bindingPath);
@@ -552,8 +675,9 @@ public class NormalForm {
                 if (needsDomainConstraint(domain, varType)) {
                     constraints.add(domainConstraint(qv, candidateCopy, domain.domain));
                 }
-                if (originalName != null) {
-                    env.put(originalName, qv);
+                String key = bindingKey(candidate);
+                if (key != null) {
+                    env.put(key, qv);
                 }
             }
             copy.addChild(candidateCopy);
@@ -593,6 +717,7 @@ public class NormalForm {
             if (candidate.getOpcode() != Opcode.VARIABLE) {
                 continue;
             }
+            String key = bindingKey(candidate);
             String originalName = candidate.getSourceName();
             String alphaName = "_q" + nextVarId[0];
             String varType = primitiveVarType(candidate.getSourceType());
@@ -616,8 +741,8 @@ public class NormalForm {
             } else {
                 matrixQuantiVars.add(qv);
             }
-            if (originalName != null) {
-                env.put(originalName, qv);
+            if (key != null) {
+                env.put(key, qv);
             }
         }
         return new RelDeclResult(quantiVars, null);
@@ -863,6 +988,8 @@ public class NormalForm {
             case GLOBALBINDING:
             case CONSTANT:
             case CALL:
+            case REF:
+            case LET:
             case PREDICATE:
             case FUNCTION:
                 return false;

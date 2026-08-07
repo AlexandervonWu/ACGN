@@ -1,0 +1,688 @@
+package is.fivefivefive.CanDis;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+/** Launches each ablation arm in a fresh JVM and combines time/RSS measurements. */
+public final class EGraphAblationSuite {
+    private static final List<String> ENGINES = List.of(
+            "raw-egraph", "java-egglog", "slotted-egraph", "canonical");
+
+    private EGraphAblationSuite() {
+    }
+
+    public static void main(String[] args) throws Exception {
+        Options options = Options.parse(args);
+        Files.createDirectories(options.output);
+        List<RunMetrics> runs = new ArrayList<>();
+        for (String engine : ENGINES) {
+            if (options.reportOnly) {
+                Path engineDir = options.output.resolve(engine);
+                runs.add(RunMetrics.read(
+                        engineDir.resolve("metrics.properties"),
+                        engineDir.resolve("process.time"),
+                        engineDir.resolve("pairs.csv")));
+            } else {
+                System.out.println("Running " + engine + "...");
+                runs.add(runEngine(engine, options));
+            }
+        }
+        writeComparisonJson(options.output.resolve("comparison.json"), options, runs);
+        writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
+        writeDisagreements(options.output.resolve("equivalence_disagreements.csv"), runs);
+        writeMarkdown(options.output.resolve("summary.md"), options, runs);
+        System.out.println("Wrote " + options.output.resolve("comparison.json"));
+        System.out.println("Wrote " + options.output.resolve("minimum_distances.csv"));
+        System.out.println("Wrote " + options.output.resolve("equivalence_disagreements.csv"));
+        System.out.println("Wrote " + options.output.resolve("summary.md"));
+    }
+
+    private static RunMetrics runEngine(String engine, Options options) throws Exception {
+        Path engineDir = options.output.resolve(engine);
+        Files.createDirectories(engineDir);
+        Path timeFile = engineDir.resolve("process.time");
+        Path logFile = engineDir.resolve("run.log");
+        String java = Paths.get(System.getProperty("java.home"), "bin", "java").toString();
+        List<String> command = new ArrayList<>();
+        command.add("/usr/bin/time");
+        command.add("-v");
+        command.add("-o");
+        command.add(timeFile.toString());
+        command.add(java);
+        command.add("-Xms32m");
+        command.add("-Xmx" + options.maxHeap);
+        command.add("-cp");
+        command.add(System.getProperty("java.class.path"));
+        command.add(EGraphAblationStudy.class.getName());
+        command.add("--input");
+        command.add(options.input.toString());
+        command.add("--output");
+        command.add(engineDir.toString());
+        command.add("--engine");
+        command.add(engine);
+        command.add("--threads");
+        command.add(Integer.toString(options.threads));
+        if (options.limit > 0) {
+            command.add("--limit");
+            command.add(Integer.toString(options.limit));
+        }
+        if (options.verbose) {
+            command.add("--verbose");
+        }
+
+        ProcessBuilder builder = new ProcessBuilder(command);
+        builder.directory(Paths.get("").toAbsolutePath().toFile());
+        builder.redirectErrorStream(true);
+        builder.redirectOutput(logFile.toFile());
+        Process process = builder.start();
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new IllegalStateException(engine + " exited with " + exitCode + "; see " + logFile);
+        }
+        Path propertiesPath = engineDir.resolve("metrics.properties");
+        if (!Files.isRegularFile(propertiesPath)) {
+            throw new IllegalStateException(engine + " did not produce " + propertiesPath);
+        }
+        return RunMetrics.read(propertiesPath, timeFile, engineDir.resolve("pairs.csv"));
+    }
+
+    private static void writeComparisonJson(Path path, Options options, List<RunMetrics> runs) throws IOException {
+        JSONObject root = new JSONObject();
+        root.put("generatedAt", Instant.now().toString());
+        root.put("inputRoot", options.input.toString());
+        root.put("threadCount", options.threads);
+        root.put("maxHeap", options.maxHeap);
+        root.put("limit", options.limit);
+        root.put("javaVersion", System.getProperty("java.version"));
+        JSONArray runArray = new JSONArray();
+        for (RunMetrics run : runs) {
+            runArray.put(run.toJson());
+        }
+        root.put("runs", runArray);
+        JSONArray transitions = new JSONArray();
+        for (int i = 1; i < runs.size(); i++) {
+            transitions.put(transitionJson(runs.get(i - 1), runs.get(i)));
+        }
+        root.put("equivalenceTransitions", transitions);
+        root.put("equivalenceDisagreementPairs", disagreementCount(runs));
+        Files.writeString(path, root.toString(2) + "\n", StandardCharsets.UTF_8);
+    }
+
+    private static void writeDisagreements(Path path, List<RunMetrics> runs) throws IOException {
+        Set<String> paths = new TreeSet<>();
+        for (RunMetrics run : runs) {
+            paths.addAll(run.statusByPath.keySet());
+        }
+        StringBuilder csv = new StringBuilder("relativePath,status");
+        for (RunMetrics run : runs) {
+            csv.append(',').append(run.engine);
+        }
+        csv.append('\n');
+        for (String predicatePath : paths) {
+            boolean first = runs.get(0).equivalentPaths.contains(predicatePath);
+            boolean differs = false;
+            for (int i = 1; i < runs.size(); i++) {
+                differs |= runs.get(i).equivalentPaths.contains(predicatePath) != first;
+            }
+            if (!differs) {
+                continue;
+            }
+            csv.append(csvValue(predicatePath)).append(',')
+                    .append(csvValue(runs.get(0).statusByPath.getOrDefault(predicatePath, "")));
+            for (RunMetrics run : runs) {
+                csv.append(',').append(run.equivalentPaths.contains(predicatePath));
+            }
+            csv.append('\n');
+        }
+        Files.writeString(path, csv.toString(), StandardCharsets.UTF_8);
+    }
+
+    private static void writeMinimumDistances(Path path, List<RunMetrics> runs) throws IOException {
+        Set<String> paths = new TreeSet<>();
+        for (RunMetrics run : runs) {
+            paths.addAll(run.statusByPath.keySet());
+        }
+        StringBuilder csv = new StringBuilder("relativePath,status");
+        for (RunMetrics run : runs) {
+            csv.append(',').append(run.engine);
+        }
+        csv.append('\n');
+        for (String predicatePath : paths) {
+            csv.append(csvValue(predicatePath)).append(',')
+                    .append(csvValue(statusFor(predicatePath, runs)));
+            for (RunMetrics run : runs) {
+                Integer distance = run.distanceByPath.get(predicatePath);
+                csv.append(',');
+                if (distance != null) {
+                    csv.append(distance);
+                }
+            }
+            csv.append('\n');
+        }
+        Files.writeString(path, csv.toString(), StandardCharsets.UTF_8);
+    }
+
+    private static String statusFor(String path, List<RunMetrics> runs) {
+        for (RunMetrics run : runs) {
+            String status = run.statusByPath.get(path);
+            if (status != null) {
+                return status;
+            }
+        }
+        return "";
+    }
+
+    private static void writeMarkdown(Path path, Options options, List<RunMetrics> runs) throws IOException {
+        RunMetrics canonical = findRun(runs, "canonical");
+        StringBuilder markdown = new StringBuilder();
+        markdown.append("# Alloy E-Graph Ablation\n\n");
+        markdown.append("- Generated at: `").append(Instant.now()).append("`\n");
+        markdown.append("- Input root: `").append(options.input).append("`\n");
+        markdown.append("- Predicate-pair limit: ")
+                .append(options.limit == 0 ? "full corpus" : Integer.toString(options.limit)).append("\n");
+        markdown.append("- Threads per arm: ").append(options.threads).append("\n");
+        markdown.append("- JVM heap cap per arm: `").append(options.maxHeap).append("`\n");
+        markdown.append("- Java: `").append(System.getProperty("java.version")).append("`\n\n");
+
+        markdown.append("## Arms\n\n");
+        markdown.append("1. **Raw e-graph:** exact Alloy AST constructors, union-find, and hash-consing only.\n");
+        markdown.append("2. **Java egglog core:** the raw terms plus union facts, semi-naive rule rounds, "
+                + "and congruence rebuilding. This is a Java replica of the egglog execution core used here, "
+                + "not a textual-language-compatible port of every egglog feature.\n");
+        markdown.append("3. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
+                + "renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.\n");
+        markdown.append("4. **Canonical:** the current method, adding temporal-phase partitioning, connective "
+                + "elimination, strict per-phase prenexing, primitive binding tuples, and canonical variadic matrices.\n\n");
+
+        markdown.append("## Runtime And Memory\n\n");
+        markdown.append("Each arm ran in a fresh JVM. Wall time and maximum RSS come from `/usr/bin/time -v`; "
+                + "peak used heap is sampled every 10 ms inside that JVM. Engine CPU time is the sum of timed "
+                + "representation construction, saturation, and comparison across worker tasks, excluding parsing.\n\n");
+        markdown.append("| Arm | Successful / files | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Engine CPU s | "
+                + "Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(run.successes).append(" / ").append(run.files).append(" | ")
+                    .append(run.equivalentPairs).append(" | ")
+                    .append(number(run.processElapsedSeconds)).append(" | ")
+                    .append(number(run.wallNanos / 1_000_000_000.0)).append(" | ")
+                    .append(number(run.throughput())).append(" | ")
+                    .append(number(run.engineCpuNanos / 1_000_000_000.0)).append(" | ")
+                    .append(number(run.averageEngineNanos / 1_000_000.0)).append(" | ")
+                    .append(number(run.p50EngineNanos / 1_000_000.0)).append(" | ")
+                    .append(number(run.p95EngineNanos / 1_000_000.0)).append(" | ")
+                    .append(number(mib(run.peakUsedHeapBytes))).append(" | ")
+                    .append(number(run.maxRssKb / 1024.0)).append(" | ")
+                    .append(number(run.averageEstimatedBytes / 1024.0)).append(" |\n");
+        }
+
+        RunMetrics raw = findRun(runs, "raw-egraph");
+        RunMetrics egglog = findRun(runs, "java-egglog");
+        RunMetrics slotted = findRun(runs, "slotted-egraph");
+        markdown.append("\n## Observations\n\n");
+        markdown.append("- Egglog-style saturation adds ")
+                .append(differenceSize(egglog.equivalentPaths, raw.equivalentPaths))
+                .append(" zero-distance pairs over raw hash-consing, with ")
+                .append(differenceSize(raw.equivalentPaths, egglog.equivalentPaths)).append(" losses.\n");
+        markdown.append("- Slot-aware shapes add ")
+                .append(differenceSize(slotted.equivalentPaths, egglog.equivalentPaths))
+                .append(" pairs over the egglog arm, with ")
+                .append(differenceSize(egglog.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
+        markdown.append("- The current canonical method is not a strict superset on this corpus: it adds ")
+                .append(differenceSize(canonical.equivalentPaths, slotted.equivalentPaths))
+                .append(" zeroes and loses ")
+                .append(differenceSize(slotted.equivalentPaths, canonical.equivalentPaths))
+                .append(" relative to raw slots. Its zero set contains ")
+                .append(canonical.incorrectEquivalent).append(" predicates labeled incorrect; the slotted arm contains ")
+                .append(slotted.incorrectEquivalent).append(".\n");
+        markdown.append("- Relative to the full method, the slotted arm uses ")
+                .append(number(ratio(slotted.engineCpuNanos, canonical.engineCpuNanos) * 100.0))
+                .append("% of engine CPU time and ")
+                .append(number(ratio(slotted.maxRssKb, canonical.maxRssKb) * 100.0))
+                .append("% of maximum RSS. End-to-end wall time is parser-dominated.\n");
+
+        markdown.append("\n## Agreement With Dataset Labels\n\n");
+        markdown.append("`Equivalent` means eclass equality or canonical distance zero; it is not an additional SAT proof. "
+                + "The dataset's `CORRECT` label is the positive semantic-equivalence class, and every other status is negative.\n\n");
+        markdown.append("| Arm | CORRECT zero / CORRECT | CORRECT coverage | Incorrect zero / incorrect | Incorrect zero rate |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(run.correctEquivalent).append(" / ").append(run.correctPairs).append(" | ")
+                    .append(number(ratio(run.correctEquivalent, run.correctPairs) * 100.0)).append("% | ")
+                    .append(run.incorrectEquivalent).append(" / ").append(run.incorrectPairs).append(" | ")
+                    .append(number(ratio(run.incorrectEquivalent, run.incorrectPairs) * 100.0)).append("% |\n");
+        }
+
+        markdown.append("\n## Minimum Edit Distance\n\n");
+        markdown.append("For the three e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
+                .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
+                .append("under alpha-renaming and declaration permutation groups. Eclass equality has distance zero. ")
+                .append("The canonical arm uses the production canonical edit distance.\n\n");
+        markdown.append("| Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(run.distancePairs).append(" | ")
+                    .append(number(run.averageDistance())).append(" | ")
+                    .append(number(run.averageCorrectDistance())).append(" | ")
+                    .append(number(run.averageIncorrectDistance())).append(" | ")
+                    .append(run.distancePercentile(0.50)).append(" | ")
+                    .append(run.distancePercentile(0.95)).append(" |\n");
+        }
+
+        markdown.append("\n## Relative To Full Method\n\n");
+        markdown.append("Ratios below use engine CPU time and maximum RSS; values below 1 use less than the "
+                + "current full canonical arm.\n\n");
+        markdown.append("| Arm | Engine CPU ratio | Max RSS ratio | Representation-unit ratio |\n");
+        markdown.append("| --- | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(number(ratio(run.engineCpuNanos, canonical.engineCpuNanos))).append(" | ")
+                    .append(number(ratio(run.maxRssKb, canonical.maxRssKb))).append(" | ")
+                    .append(number(ratio(run.averageRepresentationUnits, canonical.averageRepresentationUnits)))
+                    .append(" |\n");
+        }
+
+        markdown.append("\n## Pair-Level Transitions\n\n");
+        markdown.append("These counts make clear whether each successive arm is a strict extension on this corpus.\n\n");
+        markdown.append("| Transition | Retained zeroes | Newly zero | No longer zero |\n");
+        markdown.append("| --- | ---: | ---: | ---: |\n");
+        for (int i = 1; i < runs.size(); i++) {
+            RunMetrics before = runs.get(i - 1);
+            RunMetrics after = runs.get(i);
+            markdown.append("| ").append(before.engine).append(" -> ").append(after.engine).append(" | ")
+                    .append(intersectionSize(before.equivalentPaths, after.equivalentPaths)).append(" | ")
+                    .append(differenceSize(after.equivalentPaths, before.equivalentPaths)).append(" | ")
+                    .append(differenceSize(before.equivalentPaths, after.equivalentPaths)).append(" |\n");
+        }
+
+        markdown.append("\n## Representation\n\n");
+        markdown.append("| Arm | Avg units | Avg eclasses | Avg enodes | Avg estimated bytes | Peak estimated bytes |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(number(run.averageRepresentationUnits)).append(" | ")
+                    .append("canonical".equals(run.engine) ? "n/a" : number(run.averageEclasses)).append(" | ")
+                    .append("canonical".equals(run.engine) ? "n/a" : number(run.averageEnodes)).append(" | ")
+                    .append(number(run.averageEstimatedBytes)).append(" | ")
+                    .append(run.peakEstimatedBytes).append(" |\n");
+        }
+        markdown.append("\nThe structural byte count is an implementation-level estimate for graph objects; "
+                + "Max RSS is the primary measured memory result. Canonical representation units are the existing "
+                + "canonical-form size, while the three baseline units are retained e-nodes.\n");
+        markdown.append("\n## Reproduce\n\n");
+        markdown.append("```bash\n");
+        markdown.append("./scripts/run_egraph_ablation.sh --input ").append(options.input)
+                .append(" --output ").append(options.output)
+                .append(" --threads ").append(options.threads)
+                .append(" --max-heap ").append(options.maxHeap).append("\n");
+        markdown.append("```\n\n");
+        markdown.append("Use `--limit N` for a smoke run. Use `--report-only` to regenerate the combined JSON, "
+                + "disagreement CSV, and Markdown from retained per-arm files without rerunning the engines.\n");
+        Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
+    }
+
+    private static RunMetrics findRun(List<RunMetrics> runs, String engine) {
+        for (RunMetrics run : runs) {
+            if (engine.equals(run.engine)) {
+                return run;
+            }
+        }
+        throw new IllegalStateException("Missing run: " + engine);
+    }
+
+    private static double ratio(double value, double baseline) {
+        return baseline == 0.0 ? 0.0 : value / baseline;
+    }
+
+    private static double mib(long bytes) {
+        return bytes / (1024.0 * 1024.0);
+    }
+
+    private static String number(double value) {
+        return String.format(Locale.ROOT, "%.3f", value);
+    }
+
+    private static final class Options {
+        private Path input = Paths.get("classified-data");
+        private Path output = Paths.get("egraph_ablation");
+        private int threads = 32;
+        private int limit;
+        private String maxHeap = "12g";
+        private boolean verbose;
+        private boolean reportOnly;
+
+        private static Options parse(String[] args) {
+            Options options = new Options();
+            for (int i = 0; i < args.length; i++) {
+                switch (args[i]) {
+                    case "--input":
+                        options.input = Paths.get(value(args, ++i, "--input"));
+                        break;
+                    case "--output":
+                        options.output = Paths.get(value(args, ++i, "--output"));
+                        break;
+                    case "--threads":
+                        options.threads = Math.max(1, Integer.parseInt(value(args, ++i, "--threads")));
+                        break;
+                    case "--limit":
+                        options.limit = Math.max(0, Integer.parseInt(value(args, ++i, "--limit")));
+                        break;
+                    case "--max-heap":
+                        options.maxHeap = value(args, ++i, "--max-heap");
+                        break;
+                    case "--verbose":
+                        options.verbose = true;
+                        break;
+                    case "--report-only":
+                        options.reportOnly = true;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unknown option: " + args[i]);
+                }
+            }
+            return options;
+        }
+
+        private static String value(String[] args, int index, String option) {
+            if (index >= args.length) {
+                throw new IllegalArgumentException("Missing value for " + option);
+            }
+            return args[index];
+        }
+    }
+
+    private static final class RunMetrics {
+        private String engine;
+        private String description;
+        private long files;
+        private long successes;
+        private long failures;
+        private long equivalentPairs;
+        private long wallNanos;
+        private long peakUsedHeapBytes;
+        private long engineCpuNanos;
+        private double averageEngineNanos;
+        private long p50EngineNanos;
+        private long p95EngineNanos;
+        private double averageRepresentationUnits;
+        private double averageEclasses;
+        private double averageEnodes;
+        private double averageEstimatedBytes;
+        private long peakEstimatedBytes;
+        private long maxRssKb;
+        private double userSeconds;
+        private double systemSeconds;
+        private double processElapsedSeconds;
+        private long correctPairs;
+        private long correctEquivalent;
+        private long incorrectPairs;
+        private long incorrectEquivalent;
+        private long distancePairs;
+        private long totalDistance;
+        private long correctDistancePairs;
+        private long correctDistance;
+        private long incorrectDistancePairs;
+        private long incorrectDistance;
+        private final Set<String> equivalentPaths = new HashSet<>();
+        private final Map<String, String> statusByPath = new HashMap<>();
+        private final Map<String, Integer> distanceByPath = new HashMap<>();
+        private final List<Integer> distances = new ArrayList<>();
+
+        private static RunMetrics read(Path propertiesPath, Path timePath, Path pairsPath) throws IOException {
+            Properties properties = new Properties();
+            try (InputStream input = Files.newInputStream(propertiesPath)) {
+                properties.load(input);
+            }
+            RunMetrics run = new RunMetrics();
+            run.engine = properties.getProperty("engine");
+            run.description = properties.getProperty("description", "");
+            run.files = longValue(properties, "files");
+            run.successes = longValue(properties, "successes");
+            run.failures = longValue(properties, "failures");
+            run.equivalentPairs = longValue(properties, "equivalentPairs");
+            run.wallNanos = longValue(properties, "wallNanos");
+            run.peakUsedHeapBytes = longValue(properties, "peakUsedHeapBytes");
+            run.engineCpuNanos = longValue(properties, "engineCpuNanos");
+            run.averageEngineNanos = doubleValue(properties, "averageEngineNanos");
+            run.p50EngineNanos = longValue(properties, "p50EngineNanos");
+            run.p95EngineNanos = longValue(properties, "p95EngineNanos");
+            run.averageRepresentationUnits = doubleValue(properties, "averageRepresentationUnits");
+            run.averageEclasses = doubleValue(properties, "averageEclasses");
+            run.averageEnodes = doubleValue(properties, "averageEnodes");
+            run.averageEstimatedBytes = doubleValue(properties, "averageEstimatedBytes");
+            run.peakEstimatedBytes = longValue(properties, "peakEstimatedBytes");
+            for (String line : Files.readAllLines(timePath, StandardCharsets.UTF_8)) {
+                String trimmed = line.trim();
+                if (trimmed.startsWith("Maximum resident set size (kbytes):")) {
+                    run.maxRssKb = Long.parseLong(afterColon(trimmed));
+                } else if (trimmed.startsWith("User time (seconds):")) {
+                    run.userSeconds = Double.parseDouble(afterColon(trimmed));
+                } else if (trimmed.startsWith("System time (seconds):")) {
+                    run.systemSeconds = Double.parseDouble(afterColon(trimmed));
+                } else if (trimmed.startsWith("Elapsed (wall clock) time")) {
+                    int marker = trimmed.indexOf("): ");
+                    if (marker >= 0) {
+                        run.processElapsedSeconds = parseElapsed(trimmed.substring(marker + 3).trim());
+                    }
+                }
+            }
+            List<String> pairLines = Files.readAllLines(pairsPath, StandardCharsets.UTF_8);
+            int distanceIndex = pairLines.isEmpty() ? -1 : parseCsv(pairLines.get(0)).indexOf("distance");
+            for (int i = 1; i < pairLines.size(); i++) {
+                List<String> fields = parseCsv(pairLines.get(i));
+                if (fields.size() < 7 || !Boolean.parseBoolean(fields.get(5))) {
+                    continue;
+                }
+                boolean equivalent = Boolean.parseBoolean(fields.get(6));
+                String predicatePath = fields.get(0);
+                String status = fields.get(2);
+                run.statusByPath.put(predicatePath, status);
+                if ("CORRECT".equals(status)) {
+                    run.correctPairs++;
+                    run.correctEquivalent += equivalent ? 1 : 0;
+                } else {
+                    run.incorrectPairs++;
+                    run.incorrectEquivalent += equivalent ? 1 : 0;
+                }
+                if (equivalent) {
+                    run.equivalentPaths.add(predicatePath);
+                }
+                if (distanceIndex >= 0 && distanceIndex < fields.size()
+                        && !fields.get(distanceIndex).isEmpty()) {
+                    int distance = Integer.parseInt(fields.get(distanceIndex));
+                    run.distanceByPath.put(predicatePath, distance);
+                    run.distances.add(distance);
+                    run.distancePairs++;
+                    run.totalDistance += distance;
+                    if ("CORRECT".equals(status)) {
+                        run.correctDistancePairs++;
+                        run.correctDistance += distance;
+                    } else {
+                        run.incorrectDistancePairs++;
+                        run.incorrectDistance += distance;
+                    }
+                }
+            }
+            return run;
+        }
+
+        private double throughput() {
+            return wallNanos == 0 ? 0.0 : successes * 1_000_000_000.0 / wallNanos;
+        }
+
+        private double averageDistance() {
+            return ratio(totalDistance, distancePairs);
+        }
+
+        private double averageCorrectDistance() {
+            return ratio(correctDistance, correctDistancePairs);
+        }
+
+        private double averageIncorrectDistance() {
+            return ratio(incorrectDistance, incorrectDistancePairs);
+        }
+
+        private int distancePercentile(double percentile) {
+            if (distances.isEmpty()) {
+                return 0;
+            }
+            List<Integer> sorted = new ArrayList<>(distances);
+            sorted.sort(Integer::compareTo);
+            int index = (int) Math.ceil(percentile * sorted.size()) - 1;
+            return sorted.get(Math.max(0, Math.min(index, sorted.size() - 1)));
+        }
+
+        private JSONObject toJson() {
+            return new JSONObject()
+                    .put("engine", engine)
+                    .put("description", description)
+                    .put("files", files)
+                    .put("successes", successes)
+                    .put("failures", failures)
+                    .put("equivalentPairs", equivalentPairs)
+                    .put("wallNanos", wallNanos)
+                    .put("throughputPairsPerSecond", throughput())
+                    .put("engineCpuNanos", engineCpuNanos)
+                    .put("averageEngineNanos", averageEngineNanos)
+                    .put("p50EngineNanos", p50EngineNanos)
+                    .put("p95EngineNanos", p95EngineNanos)
+                    .put("peakUsedHeapBytes", peakUsedHeapBytes)
+                    .put("maximumRssKb", maxRssKb)
+                    .put("processUserSeconds", userSeconds)
+                    .put("processSystemSeconds", systemSeconds)
+                    .put("processElapsedSeconds", processElapsedSeconds)
+                    .put("correctPairs", correctPairs)
+                    .put("correctEquivalentPairs", correctEquivalent)
+                    .put("correctCoverage", ratio(correctEquivalent, correctPairs))
+                    .put("incorrectPairs", incorrectPairs)
+                    .put("incorrectEquivalentPairs", incorrectEquivalent)
+                    .put("incorrectZeroRate", ratio(incorrectEquivalent, incorrectPairs))
+                    .put("distancePairs", distancePairs)
+                    .put("totalDistance", totalDistance)
+                    .put("averageDistance", averageDistance())
+                    .put("averageCorrectDistance", averageCorrectDistance())
+                    .put("averageIncorrectDistance", averageIncorrectDistance())
+                    .put("p50Distance", distancePercentile(0.50))
+                    .put("p95Distance", distancePercentile(0.95))
+                    .put("averageRepresentationUnits", averageRepresentationUnits)
+                    .put("averageEclasses", averageEclasses)
+                    .put("averageEnodes", averageEnodes)
+                    .put("averageEstimatedBytes", averageEstimatedBytes)
+                    .put("peakEstimatedBytes", peakEstimatedBytes);
+        }
+
+        private static long longValue(Properties properties, String key) {
+            return Long.parseLong(properties.getProperty(key, "0"));
+        }
+
+        private static double doubleValue(Properties properties, String key) {
+            return Double.parseDouble(properties.getProperty(key, "0"));
+        }
+
+        private static String afterColon(String line) {
+            return line.substring(line.lastIndexOf(':') + 1).trim();
+        }
+
+        private static double parseElapsed(String value) {
+            String[] fields = value.split(":");
+            double seconds = 0.0;
+            for (String field : fields) {
+                seconds = seconds * 60.0 + Double.parseDouble(field);
+            }
+            return seconds;
+        }
+
+        private static List<String> parseCsv(String line) {
+            List<String> fields = new ArrayList<>();
+            StringBuilder field = new StringBuilder();
+            boolean quoted = false;
+            for (int i = 0; i < line.length(); i++) {
+                char value = line.charAt(i);
+                if (value == '"') {
+                    if (quoted && i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                        field.append('"');
+                        i++;
+                    } else {
+                        quoted = !quoted;
+                    }
+                } else if (value == ',' && !quoted) {
+                    fields.add(field.toString());
+                    field.setLength(0);
+                } else {
+                    field.append(value);
+                }
+            }
+            fields.add(field.toString());
+            return fields;
+        }
+    }
+
+    private static JSONObject transitionJson(RunMetrics before, RunMetrics after) {
+        return new JSONObject()
+                .put("from", before.engine)
+                .put("to", after.engine)
+                .put("retained", intersectionSize(before.equivalentPaths, after.equivalentPaths))
+                .put("newlyEquivalent", differenceSize(after.equivalentPaths, before.equivalentPaths))
+                .put("noLongerEquivalent", differenceSize(before.equivalentPaths, after.equivalentPaths));
+    }
+
+    private static int intersectionSize(Set<String> left, Set<String> right) {
+        Set<String> smaller = left.size() <= right.size() ? left : right;
+        Set<String> larger = smaller == left ? right : left;
+        int count = 0;
+        for (String value : smaller) {
+            count += larger.contains(value) ? 1 : 0;
+        }
+        return count;
+    }
+
+    private static int differenceSize(Set<String> left, Set<String> right) {
+        int count = 0;
+        for (String value : left) {
+            count += right.contains(value) ? 0 : 1;
+        }
+        return count;
+    }
+
+    private static int disagreementCount(List<RunMetrics> runs) {
+        Set<String> paths = new HashSet<>();
+        for (RunMetrics run : runs) {
+            paths.addAll(run.statusByPath.keySet());
+        }
+        int count = 0;
+        for (String path : paths) {
+            boolean first = runs.get(0).equivalentPaths.contains(path);
+            for (int i = 1; i < runs.size(); i++) {
+                if (runs.get(i).equivalentPaths.contains(path) != first) {
+                    count++;
+                    break;
+                }
+            }
+        }
+        return count;
+    }
+
+    private static String csvValue(String value) {
+        return '"' + value.replace("\"", "\"\"") + '"';
+    }
+}

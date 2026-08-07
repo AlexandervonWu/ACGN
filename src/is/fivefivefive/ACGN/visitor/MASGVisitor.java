@@ -1560,7 +1560,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(VarExpr n, ScopeTreeNode arg) {
         String name = n.getName();
-        return visitAbsorbing(n, arg, name);
+        Symbol scoped = arg == null ? null : arg.getSymbol(name);
+        if (scoped != null) {
+            return uniqueNode.get(scoped);
+        }
+        return aame.hasSymbol(name) ? uniqueNode.get(aame.getSymbol(name)) : null;
     }
 
     // TODO: How about fields? 

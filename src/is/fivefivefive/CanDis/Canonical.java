@@ -254,21 +254,21 @@ public class Canonical {
             NormalForm right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
-        Map<String, String> leftTypes = variableTypes(left);
-        Map<String, String> rightTypes = variableTypes(right);
-        leftTypes.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
-        rightTypes.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
-        List<String> leftNames = new ArrayList<>(leftTypes.keySet());
+        Map<String, BindingDescriptor> leftBindings = variableBindings(left);
+        Map<String, BindingDescriptor> rightBindings = variableBindings(right);
+        leftBindings.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
+        rightBindings.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
+        List<String> leftNames = new ArrayList<>(leftBindings.keySet());
         leftNames.sort((a, b) -> Integer.compare(
-                candidateCount(a, leftTypes, rightTypes),
-                candidateCount(b, leftTypes, rightTypes)));
+                candidateCount(a, leftBindings, rightBindings),
+                candidateCount(b, leftBindings, rightBindings)));
         Map<String, String> mapping = new HashMap<>();
         return bestMappedDistance(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
                 leftNames,
-                leftTypes,
-                rightTypes,
+                leftBindings,
+                rightBindings,
                 mapping,
                 new HashSet<>(),
                 0,
@@ -298,21 +298,21 @@ public class Canonical {
     }
 
     private static Map<String, String> bestVariableMapping(NormalForm left, NormalForm right) {
-        Map<String, String> leftTypes = variableTypes(left);
-        Map<String, String> rightTypes = variableTypes(right);
-        leftTypes.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
-        rightTypes.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
-        List<String> leftNames = new ArrayList<>(leftTypes.keySet());
+        Map<String, BindingDescriptor> leftBindings = variableBindings(left);
+        Map<String, BindingDescriptor> rightBindings = variableBindings(right);
+        leftBindings.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
+        rightBindings.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
+        List<String> leftNames = new ArrayList<>(leftBindings.keySet());
         leftNames.sort((a, b) -> Integer.compare(
-                candidateCount(a, leftTypes, rightTypes),
-                candidateCount(b, leftTypes, rightTypes)));
+                candidateCount(a, leftBindings, rightBindings),
+                candidateCount(b, leftBindings, rightBindings)));
         BestMapping best = new BestMapping();
         searchBestMapping(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
                 leftNames,
-                leftTypes,
-                rightTypes,
+                leftBindings,
+                rightBindings,
                 new HashMap<>(),
                 new HashSet<>(),
                 0,
@@ -324,8 +324,8 @@ public class Canonical {
             EGraphNode left,
             EGraphNode right,
             List<String> leftNames,
-            Map<String, String> leftTypes,
-            Map<String, String> rightTypes,
+            Map<String, BindingDescriptor> leftBindings,
+            Map<String, BindingDescriptor> rightBindings,
             Map<String, String> mapping,
             Set<String> usedRightNames,
             int index,
@@ -339,16 +339,18 @@ public class Canonical {
             return;
         }
         String leftName = leftNames.get(index);
-        String leftType = leftTypes.get(leftName);
+        BindingDescriptor leftBinding = leftBindings.get(leftName);
         boolean mapped = false;
-        for (Map.Entry<String, String> rightEntry : rightTypes.entrySet()) {
-            if (usedRightNames.contains(rightEntry.getKey()) || !sameType(leftType, rightEntry.getValue())) {
+        for (Map.Entry<String, BindingDescriptor> rightEntry : rightBindings.entrySet()) {
+            if (usedRightNames.contains(rightEntry.getKey())
+                    || !leftBinding.compatibleWith(rightEntry.getValue())) {
                 continue;
             }
             mapped = true;
             mapping.put(leftName, rightEntry.getKey());
             usedRightNames.add(rightEntry.getKey());
-            searchBestMapping(left, right, leftNames, leftTypes, rightTypes, mapping, usedRightNames, index + 1, best);
+            searchBestMapping(left, right, leftNames, leftBindings, rightBindings,
+                    mapping, usedRightNames, index + 1, best);
             usedRightNames.remove(rightEntry.getKey());
             mapping.remove(leftName);
             if (best.distance == 0) {
@@ -356,15 +358,19 @@ public class Canonical {
             }
         }
         if (!mapped) {
-            searchBestMapping(left, right, leftNames, leftTypes, rightTypes, mapping, usedRightNames, index + 1, best);
+            searchBestMapping(left, right, leftNames, leftBindings, rightBindings,
+                    mapping, usedRightNames, index + 1, best);
         }
     }
 
-    private static int candidateCount(String leftName, Map<String, String> leftTypes, Map<String, String> rightTypes) {
+    private static int candidateCount(
+            String leftName,
+            Map<String, BindingDescriptor> leftBindings,
+            Map<String, BindingDescriptor> rightBindings) {
         int count = 0;
-        String leftType = leftTypes.get(leftName);
-        for (String rightType : rightTypes.values()) {
-            if (sameType(leftType, rightType)) {
+        BindingDescriptor leftBinding = leftBindings.get(leftName);
+        for (BindingDescriptor rightBinding : rightBindings.values()) {
+            if (leftBinding.compatibleWith(rightBinding)) {
                 count++;
             }
         }
@@ -375,8 +381,8 @@ public class Canonical {
             EGraphNode left,
             EGraphNode right,
             List<String> leftNames,
-            Map<String, String> leftTypes,
-            Map<String, String> rightTypes,
+            Map<String, BindingDescriptor> leftBindings,
+            Map<String, BindingDescriptor> rightBindings,
             Map<String, String> mapping,
             Set<String> usedRightNames,
             int index,
@@ -387,10 +393,11 @@ public class Canonical {
             return Math.min(best, eGraphDistance(left, right, mapping, leftMetadata, rightMetadata));
         }
         String leftName = leftNames.get(index);
-        String leftType = leftTypes.get(leftName);
+        BindingDescriptor leftBinding = leftBindings.get(leftName);
         boolean mapped = false;
-        for (Map.Entry<String, String> rightEntry : rightTypes.entrySet()) {
-            if (usedRightNames.contains(rightEntry.getKey()) || !sameType(leftType, rightEntry.getValue())) {
+        for (Map.Entry<String, BindingDescriptor> rightEntry : rightBindings.entrySet()) {
+            if (usedRightNames.contains(rightEntry.getKey())
+                    || !leftBinding.compatibleWith(rightEntry.getValue())) {
                 continue;
             }
             mapped = true;
@@ -400,8 +407,8 @@ public class Canonical {
                     left,
                     right,
                     leftNames,
-                    leftTypes,
-                    rightTypes,
+                    leftBindings,
+                    rightBindings,
                     mapping,
                     usedRightNames,
                     index + 1,
@@ -419,8 +426,8 @@ public class Canonical {
                     left,
                     right,
                     leftNames,
-                    leftTypes,
-                    rightTypes,
+                    leftBindings,
+                    rightBindings,
                     mapping,
                     usedRightNames,
                     index + 1,
@@ -431,15 +438,22 @@ public class Canonical {
         return best;
     }
 
-    private static Map<String, String> variableTypes(NormalForm nf) {
-        Map<String, String> types = new HashMap<>();
-        for (QuantiVar qv : nf.getParams()) {
-            types.put(qv.getName(), typeKey(qv));
+    private static Map<String, BindingDescriptor> variableBindings(NormalForm nf) {
+        Map<String, BindingDescriptor> bindings = new HashMap<>();
+        addBindings(bindings, nf.getParams(), BindingRole.PARAMETER);
+        addBindings(bindings, nf.getMatrixQuantiVars(), BindingRole.MATRIX);
+        addBindings(bindings, nf.getInheritedQuantiVars(), BindingRole.INHERITED);
+        return bindings;
+    }
+
+    private static void addBindings(
+            Map<String, BindingDescriptor> bindings,
+            List<QuantiVar> variables,
+            BindingRole role) {
+        for (int i = 0; i < variables.size(); i++) {
+            QuantiVar variable = variables.get(i);
+            bindings.put(variable.getName(), new BindingDescriptor(variable, role, i));
         }
-        for (QuantiVar qv : nf.getMatrixQuantiVars()) {
-            types.put(qv.getName(), typeKey(qv));
-        }
-        return types;
     }
 
     private static Set<String> matrixVariableNames(EGraphNode node) {
@@ -482,10 +496,12 @@ public class Canonical {
             String mappedName = variableMapping.get(leftName);
             if (mappedName != null && !mappedName.equals(rightName)) {
                 edits.add(path + ": replace variable " + nodeVariableDisplay(left) + " -> " + nodeVariableDisplay(right));
-            } else if (mappedName == null && !sameType(left.getSourceType(), right.getSourceType())) {
-                edits.add(path + ": replace variable type " + display(left.getSourceType()) + " -> " + display(right.getSourceType()));
+            } else if (mappedName == null && !leftName.equals(rightName)) {
+                edits.add(path + ": replace variable " + nodeVariableDisplay(left) + " -> " + nodeVariableDisplay(right));
             }
-        } else if ((left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING || left.getOpcode() == EGraphNode.Opcode.CONSTANT)
+        } else if ((left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
+                || left.getOpcode() == EGraphNode.Opcode.CONSTANT
+                || left.getOpcode() == EGraphNode.Opcode.REF)
                 && !safeEquals(left.getSourceName(), right.getSourceName())) {
             edits.add(path + ": replace binding " + display(left.getSourceName()) + " -> " + display(right.getSourceName()));
         }
@@ -645,9 +661,11 @@ public class Canonical {
             if (mappedName != null) {
                 return mappedName.equals(rightName) ? 0 : 1;
             }
-            return sameType(left.getSourceType(), right.getSourceType()) ? 0 : 1;
+            return leftName.equals(rightName) ? 0 : 1;
         }
-        if (left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING || left.getOpcode() == EGraphNode.Opcode.CONSTANT) {
+        if (left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
+                || left.getOpcode() == EGraphNode.Opcode.CONSTANT
+                || left.getOpcode() == EGraphNode.Opcode.REF) {
             return safeEquals(left.getSourceName(), right.getSourceName()) ? 0 : 1;
         }
         return 0;
@@ -1342,6 +1360,43 @@ public class Canonical {
 
     private static boolean safeEquals(String left, String right) {
         return left == null ? right == null : left.equals(right);
+    }
+
+    private enum BindingRole {
+        PARAMETER,
+        MATRIX,
+        INHERITED
+    }
+
+    private static final class BindingDescriptor {
+        private final QuantiVar variable;
+        private final BindingRole role;
+        private final int ordinal;
+
+        private BindingDescriptor(QuantiVar variable, BindingRole role, int ordinal) {
+            this.variable = variable;
+            this.role = role;
+            this.ordinal = ordinal;
+        }
+
+        private boolean compatibleWith(BindingDescriptor other) {
+            if (other == null || role != other.role
+                    || variable.getQuantifier() != other.variable.getQuantifier()
+                    || variable.getCardinality() != other.variable.getCardinality()
+                    || variable.getDisjointnessClass() != other.variable.getDisjointnessClass()
+                    || !sameType(typeKey(variable), typeKey(other.variable))
+                    || !safeEquals(variable.getBindingPath(), other.variable.getBindingPath())) {
+                return false;
+            }
+            if (role == BindingRole.PARAMETER) {
+                return ordinal == other.ordinal;
+            }
+            if (variable.getQuantifier() == QuantiVar.Quantifier.COMPREHENSION
+                    || variable.getQuantifier() == QuantiVar.Quantifier.SUM) {
+                return safeEquals(variable.getDeBruijnKey(), other.variable.getDeBruijnKey());
+            }
+            return true;
+        }
     }
 
     private static class BestMapping {

@@ -32,6 +32,7 @@ public final class EGraphSaturationTest {
         testEmptyDomainQuantifierRewrite();
         testIteEliminatedFromNormalForm();
         testEndEliminatedFromNormalForm();
+        testLetReferenceSurvivesEndCleanupUntilBetaReduction();
         testNegatedRelationDoesNotNegateSetOperands();
         testPrimitiveDomainConstraintNotDuplicatedInMatrix();
         testComplementEliminatesRedundantSlot();
@@ -300,6 +301,32 @@ public final class EGraphSaturationTest {
                 "normal-form matrix must not retain flexible-arity END sentinels");
         assertEquals(Opcode.VARIABLE, normalForm.getMatrixEGraph().getOpcode(),
                 "AND with only a real operand after END pruning must collapse to that operand");
+    }
+
+    private static void testLetReferenceSurvivesEndCleanupUntilBetaReduction() {
+        EGraphNode comprehension = node(
+                Opcode.COMPREHENSION,
+                false,
+                true,
+                relDeclOfType("State", "x", "y"),
+                predicate("edge", variable("x"), variable("y")));
+        EGraphNode letReference = node(Opcode.LET, false, false);
+        letReference.setSourceName("t");
+        EGraphNode closure = node(Opcode.CLOSURE, false, false, letReference);
+        EGraphNode join = node(Opcode.JOIN, false, true, variable("i"), closure);
+        EGraphNode let = node(Opcode.LET, false, false, comprehension, join);
+        let.setSourceName("t");
+
+        NormalForm normalForm = new NormalForm();
+        normalForm.addEClass(let);
+        normalForm.normalize();
+
+        assertTrue(containsOpcode(normalForm.getMatrixEGraph(), Opcode.COMPREHENSION),
+                "END cleanup must not erase a bound LET reference before beta reduction");
+        assertTrue(containsOpcode(normalForm.getMatrixEGraph(), Opcode.CLOSURE),
+                "beta reduction must retain operators surrounding the LET reference");
+        assertTrue(!containsOpcode(normalForm.getMatrixEGraph(), Opcode.LET),
+                "normalization must eliminate the LET binder and all bound references");
     }
 
     private static void testNegatedRelationDoesNotNegateSetOperands() {

@@ -13,6 +13,7 @@ import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.macros.EGraphNode;
 import is.fivefivefive.CanDis.macros.NormalForm;
+import is.fivefivefive.CanDis.macros.QuantiVar;
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
@@ -45,9 +46,7 @@ public class IRAgent {
             Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
             int[] nextId = new int[] { 0 };
             rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId, new HashSet<>()));
-            for (NormalForm nf : nfs) {
-                nf.normalize();
-            }
+            normalizeTemporalTree(rootNf, new HashMap<>(), new int[] { 0 });
         } finally {
             EGraphNode.endGraph();
         }
@@ -76,6 +75,7 @@ public class IRAgent {
 
         TemporalOp[] temporalOps = temporalOpsOf(node);
         if (temporalOps != null && downlinks.size() >= 2) {
+            int temporalIndex = nf.getTemporalChildren().size();
             NormalForm leftNf = new NormalForm(nf, temporalOps[0], nextId[0]++);
             NormalForm rightNf = new NormalForm(nf, temporalOps[1], nextId[0]++);
             nf.addTemporalChild(leftNf);
@@ -84,15 +84,16 @@ public class IRAgent {
             nfs.add(rightNf);
             addTemporalChild(leftNf, downlinks.get(0).getTarget(), tovTracker, nextId, activePath);
             addTemporalChild(rightNf, downlinks.get(1).getTarget(), tovTracker, nextId, activePath);
-            return current;
+            return temporalReference(current, temporalIndex, 2);
         }
         TemporalOp unaryTemporalOp = unaryTemporalOpOf(opcode);
         if (unaryTemporalOp != null && !downlinks.isEmpty()) {
+            int temporalIndex = nf.getTemporalChildren().size();
             NormalForm temporalNf = new NormalForm(nf, unaryTemporalOp, nextId[0]++);
             nf.addTemporalChild(temporalNf);
             nfs.add(temporalNf);
             addTemporalChild(temporalNf, downlinks.get(0).getTarget(), tovTracker, nextId, activePath);
-            return current;
+            return temporalReference(current, temporalIndex, 1);
         }
 
         for (MASGEdge downlink : downlinks) {
@@ -103,6 +104,35 @@ public class IRAgent {
         } finally {
             activePath.remove(activeKey);
         }
+    }
+
+    private void normalizeTemporalTree(
+            NormalForm normalForm,
+            Map<String, QuantiVar> inherited,
+            int[] nextVarId) {
+        normalForm.normalize(inherited, nextVarId);
+        Map<String, QuantiVar> descendants = new HashMap<>(inherited);
+        for (QuantiVar variable : normalForm.getParams()) {
+            if (variable.getOriginalName() != null) {
+                descendants.put(variable.getOriginalName(), variable);
+            }
+        }
+        for (QuantiVar variable : normalForm.getMatrixQuantiVars()) {
+            if (variable.getOriginalName() != null) {
+                descendants.put(variable.getOriginalName(), variable);
+            }
+        }
+        for (NormalForm child : normalForm.getTemporalChildren()) {
+            normalizeTemporalTree(child, descendants, nextVarId);
+        }
+    }
+
+    private static EGraphNode temporalReference(EGraphNode source, int childIndex, int arity) {
+        EGraphNode reference = new EGraphNode(
+                source.getId(), Opcode.REF, new ArrayList<>(), false, 0, false, Metatype.BOOLEAN);
+        reference.setSourceName("temporal[" + childIndex + ":" + arity + "]");
+        reference.setSourceType("Bool");
+        return reference;
     }
 
     private List<MASGEdge> downlinksFor(AugmentedNode node, int tov, Opcode opcode) {
