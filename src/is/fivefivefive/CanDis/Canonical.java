@@ -115,6 +115,8 @@ public class Canonical {
     }
 
     private static int bindingListDistance(List<QuantiVar> left, List<QuantiVar> right) {
+        left = canonicalQuantifierOrder(left);
+        right = canonicalQuantifierOrder(right);
         int[][] dp = new int[left.size() + 1][right.size() + 1];
         for (int i = 1; i <= left.size(); i++) {
             dp[i][0] = dp[i - 1][0] + 1;
@@ -135,13 +137,40 @@ public class Canonical {
 
     private static int quantifierUpdateCost(QuantiVar left, QuantiVar right) {
         if (left.getQuantifier() == right.getQuantifier()
-                && sameType(left.getTypeName(), right.getTypeName())
+                && sameType(typeKey(left), typeKey(right))
                 && left.getCardinality() == right.getCardinality()
-                && left.getDisjointnessClass() == right.getDisjointnessClass()
-                && safeEquals(left.getBindingPath(), right.getBindingPath())) {
+                && left.getDisjointnessClass() == right.getDisjointnessClass()) {
             return 0;
         }
         return 1;
+    }
+
+    private static List<QuantiVar> canonicalQuantifierOrder(List<QuantiVar> variables) {
+        List<QuantiVar> ordered = new ArrayList<>(variables);
+        for (int start = 0; start < ordered.size();) {
+            QuantiVar.Quantifier quantifier = ordered.get(start).getQuantifier();
+            int end = start + 1;
+            if (quantifier == QuantiVar.Quantifier.ALL || quantifier == QuantiVar.Quantifier.SOME) {
+                while (end < ordered.size() && ordered.get(end).getQuantifier() == quantifier) {
+                    end++;
+                }
+                ordered.subList(start, end).sort(Canonical::compareQuantifierTuple);
+            }
+            start = end;
+        }
+        return ordered;
+    }
+
+    private static int compareQuantifierTuple(QuantiVar left, QuantiVar right) {
+        int comparison = normalizeType(typeKey(left)).compareTo(normalizeType(typeKey(right)));
+        if (comparison != 0) {
+            return comparison;
+        }
+        comparison = left.getCardinality().compareTo(right.getCardinality());
+        if (comparison != 0) {
+            return comparison;
+        }
+        return Integer.compare(left.getDisjointnessClass(), right.getDisjointnessClass());
     }
 
     private static int quantificationSize(List<QuantiVar> vars) {
@@ -168,6 +197,8 @@ public class Canonical {
             List<QuantiVar> right,
             String path,
             List<String> edits) {
+        left = canonicalQuantifierOrder(left);
+        right = canonicalQuantifierOrder(right);
         int[][] dp = quantificationDp(left, right);
         int i = left.size();
         int j = right.size();
@@ -1344,7 +1375,8 @@ public class Canonical {
     }
 
     private static String typeKey(QuantiVar qv) {
-        return qv.getTypeName() == null ? "" : qv.getTypeName();
+        String carrier = qv.getCarrierTypeName();
+        return carrier == null ? "" : carrier;
     }
 
     private static boolean sameType(String left, String right) {
@@ -1384,8 +1416,7 @@ public class Canonical {
                     || variable.getQuantifier() != other.variable.getQuantifier()
                     || variable.getCardinality() != other.variable.getCardinality()
                     || variable.getDisjointnessClass() != other.variable.getDisjointnessClass()
-                    || !sameType(typeKey(variable), typeKey(other.variable))
-                    || !safeEquals(variable.getBindingPath(), other.variable.getBindingPath())) {
+                    || !sameType(typeKey(variable), typeKey(other.variable))) {
                 return false;
             }
             if (role == BindingRole.PARAMETER) {
@@ -1395,7 +1426,11 @@ public class Canonical {
                     || variable.getQuantifier() == QuantiVar.Quantifier.SUM) {
                 return safeEquals(variable.getDeBruijnKey(), other.variable.getDeBruijnKey());
             }
-            return true;
+            if (variable.getQuantifier() == QuantiVar.Quantifier.ALL
+                    || variable.getQuantifier() == QuantiVar.Quantifier.SOME) {
+                return true;
+            }
+            return safeEquals(variable.getBindingPath(), other.variable.getBindingPath());
         }
     }
 

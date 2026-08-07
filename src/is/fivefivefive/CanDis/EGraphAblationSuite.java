@@ -246,11 +246,17 @@ public final class EGraphAblationSuite {
                 .append(differenceSize(slotted.equivalentPaths, egglog.equivalentPaths))
                 .append(" pairs over the egglog arm, with ")
                 .append(differenceSize(egglog.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
-        markdown.append("- The current canonical method is not a strict superset on this corpus: it adds ")
-                .append(differenceSize(canonical.equivalentPaths, slotted.equivalentPaths))
-                .append(" zeroes and loses ")
-                .append(differenceSize(slotted.equivalentPaths, canonical.equivalentPaths))
-                .append(" relative to raw slots. Its zero set contains ")
+        int canonicalAdds = differenceSize(canonical.equivalentPaths, slotted.equivalentPaths);
+        int canonicalLosses = differenceSize(slotted.equivalentPaths, canonical.equivalentPaths);
+        String canonicalRelationship = canonicalLosses == 0
+                ? (canonicalAdds == 0
+                        ? "has the same zero set as the slotted arm on this corpus: it adds "
+                        : "is a strict superset of the slotted arm on this corpus: it adds ")
+                : "is not a strict superset of the slotted arm on this corpus: it adds ";
+        markdown.append("- The current canonical method ")
+                .append(canonicalRelationship)
+                .append(canonicalAdds).append(" zeroes and loses ").append(canonicalLosses)
+                .append(". Its zero set contains ")
                 .append(canonical.incorrectEquivalent).append(" predicates labeled incorrect; the slotted arm contains ")
                 .append(slotted.incorrectEquivalent).append(".\n");
         markdown.append("- Relative to the full method, the slotted arm uses ")

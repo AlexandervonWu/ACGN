@@ -724,7 +724,9 @@ public class NormalForm {
             QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
             qv.setQuantifier(quantifier);
             qv.setCardinality(domain.cardinality);
-            if (relativizeCarrier) {
+            boolean guardedDomain = domain.domain != null
+                    && (relativizeCarrier || needsDomainConstraint(domain, varType));
+            if (guardedDomain) {
                 qv.setCarrierTypeName("univ");
             }
             qv.setDisjointnessClass(disjointnessClass);
@@ -733,7 +735,7 @@ public class NormalForm {
                     + ":" + normalizeType(varType));
             candidate.setAlphaName(alphaName);
             quantiVars.add(qv);
-            if (domain.domain != null && (relativizeCarrier || needsDomainConstraint(domain, varType))) {
+            if (guardedDomain) {
                 constraints.add(domainConstraint(qv, candidate, domain.domain));
             }
             if (parameterDecl) {

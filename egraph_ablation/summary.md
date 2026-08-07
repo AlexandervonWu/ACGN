@@ -1,6 +1,6 @@
 # Alloy E-Graph Ablation
 
-- Generated at: `2026-08-07T14:30:03.122141985Z`
+- Generated at: `2026-08-07T15:31:50.056089612Z`
 - Input root: `classified-data`
 - Predicate-pair limit: full corpus
 - Threads per arm: 32
@@ -20,17 +20,17 @@ Each arm ran in a fresh JVM. Wall time and maximum RSS come from `/usr/bin/time 
 
 | Arm | Successful / files | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Engine CPU s | Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 66080 / 66080 | 4482 | 16.680 | 16.234 | 4070.425 | 1.719 | 0.026 | 0.013 | 0.029 | 846.066 | 1626.648 | 4.743 |
-| java-egglog | 66080 / 66080 | 5259 | 16.960 | 16.493 | 4006.618 | 4.390 | 0.066 | 0.039 | 0.115 | 825.450 | 1577.691 | 8.420 |
-| slotted-egraph | 66080 / 66080 | 6574 | 17.270 | 16.836 | 3925.037 | 14.015 | 0.212 | 0.094 | 0.590 | 915.770 | 1735.031 | 12.599 |
-| canonical | 66080 / 66080 | 6571 | 22.770 | 22.147 | 2983.758 | 82.096 | 1.242 | 0.676 | 2.828 | 8932.614 | 11023.578 | 1.738 |
+| raw-egraph | 66080 / 66080 | 4482 | 16.320 | 15.893 | 4157.731 | 1.609 | 0.024 | 0.013 | 0.029 | 909.708 | 1766.219 | 4.743 |
+| java-egglog | 66080 / 66080 | 5259 | 16.430 | 16.014 | 4126.303 | 4.566 | 0.069 | 0.040 | 0.122 | 873.881 | 1630.777 | 8.420 |
+| slotted-egraph | 66080 / 66080 | 6574 | 16.890 | 16.471 | 4011.836 | 13.622 | 0.206 | 0.093 | 0.582 | 821.730 | 1565.684 | 12.599 |
+| canonical | 66080 / 66080 | 6662 | 21.740 | 21.018 | 3144.000 | 87.676 | 1.327 | 0.696 | 2.760 | 9169.852 | 11011.152 | 1.738 |
 
 ## Observations
 
 - Egglog-style saturation adds 777 zero-distance pairs over raw hash-consing, with 0 losses.
 - Slot-aware shapes add 1315 pairs over the egglog arm, with 0 losses.
-- The current canonical method is not a strict superset on this corpus: it adds 17 zeroes and loses 20 relative to raw slots. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
-- Relative to the full method, the slotted arm uses 17.071% of engine CPU time and 15.739% of maximum RSS. End-to-end wall time is parser-dominated.
+- The current canonical method is a strict superset of the slotted arm on this corpus: it adds 88 zeroes and loses 0. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
+- Relative to the full method, the slotted arm uses 15.537% of engine CPU time and 14.219% of maximum RSS. End-to-end wall time is parser-dominated.
 
 ## Agreement With Dataset Labels
 
@@ -41,7 +41,7 @@ Each arm ran in a fresh JVM. Wall time and maximum RSS come from `/usr/bin/time 
 | raw-egraph | 4482 / 23694 | 18.916% | 0 / 42386 | 0.000% |
 | java-egglog | 5259 / 23694 | 22.195% | 0 / 42386 | 0.000% |
 | slotted-egraph | 6574 / 23694 | 27.745% | 0 / 42386 | 0.000% |
-| canonical | 6571 / 23694 | 27.733% | 0 / 42386 | 0.000% |
+| canonical | 6662 / 23694 | 28.117% | 0 / 42386 | 0.000% |
 
 ## Minimum Edit Distance
 
@@ -52,7 +52,7 @@ For the three e-graph baselines, this is the minimum unit-cost rooted-tree edit 
 | raw-egraph | 66080 | 21.288 | 14.517 | 25.073 | 19 | 50 |
 | java-egglog | 66080 | 17.419 | 11.760 | 20.583 | 15 | 42 |
 | slotted-egraph | 66080 | 17.178 | 11.565 | 20.315 | 15 | 42 |
-| canonical | 66080 | 13.002 | 7.886 | 15.862 | 11 | 33 |
+| canonical | 66080 | 12.880 | 7.773 | 15.734 | 11 | 33 |
 
 ## Relative To Full Method
 
@@ -60,9 +60,9 @@ Ratios below use engine CPU time and maximum RSS; values below 1 use less than t
 
 | Arm | Engine CPU ratio | Max RSS ratio | Representation-unit ratio |
 | --- | ---: | ---: | ---: |
-| raw-egraph | 0.021 | 0.148 | 1.051 |
-| java-egglog | 0.053 | 0.143 | 1.881 |
-| slotted-egraph | 0.171 | 0.157 | 1.714 |
+| raw-egraph | 0.018 | 0.160 | 1.051 |
+| java-egglog | 0.052 | 0.148 | 1.881 |
+| slotted-egraph | 0.155 | 0.142 | 1.714 |
 | canonical | 1.000 | 1.000 | 1.000 |
 
 ## Pair-Level Transitions
@@ -73,7 +73,7 @@ These counts make clear whether each successive arm is a strict extension on thi
 | --- | ---: | ---: | ---: |
 | raw-egraph -> java-egglog | 4482 | 777 | 0 |
 | java-egglog -> slotted-egraph | 5259 | 1315 | 0 |
-| slotted-egraph -> canonical | 6554 | 17 | 20 |
+| slotted-egraph -> canonical | 6574 | 88 | 0 |
 
 ## Representation
 

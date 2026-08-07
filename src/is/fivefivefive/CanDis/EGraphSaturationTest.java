@@ -35,6 +35,9 @@ public final class EGraphSaturationTest {
         testLetReferenceSurvivesEndCleanupUntilBetaReduction();
         testNegatedRelationDoesNotNegateSetOperands();
         testPrimitiveDomainConstraintNotDuplicatedInMatrix();
+        testCommutingPrenexBindingsIgnoreBranchOrder();
+        testNegatedSomeAndNoBindingPathsAreEquivalent();
+        testCommutativeComplexDomainsUseCanonicalCarrier();
         testComplementEliminatesRedundantSlot();
         testSlotPermutationGroups();
         testDisjModifierIsPreserved();
@@ -383,6 +386,8 @@ public final class EGraphSaturationTest {
 
         assertEquals(Cardinality.ONE, complexDomain.getMatrixQuantiVars().get(0).getCardinality(),
                 "complex-domain cardinality must stay encoded in QuantiVar");
+        assertEquals("univ", complexDomain.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "a matrix guard must replace the arbitrary inferred carrier with univ");
         assertTrue(containsOpcode(complexDomain.getMatrixEGraph(), Opcode.IN),
                 "non-primitive domain must still be pushed down into the matrix");
         assertTrue(!containsOpcode(complexDomain.getMatrixEGraph(), Opcode.ONE),
@@ -399,6 +404,82 @@ public final class EGraphSaturationTest {
 
         assertTrue(normalFormDistance(primitiveDomain, plainPrimitiveDomain) > 0,
                 "one Person vs Person binding cardinality must affect quantifier distance");
+    }
+
+    private static void testCommutingPrenexBindingsIgnoreBranchOrder() {
+        NormalForm left = new NormalForm();
+        left.addEClass(node(
+                Opcode.AND,
+                true,
+                true,
+                quantifiedOver("Material", "m", "NoParts"),
+                quantifiedOver("Component", "c", "SomeParts")));
+        left.normalize();
+
+        NormalForm right = new NormalForm();
+        right.addEClass(node(
+                Opcode.AND,
+                true,
+                true,
+                quantifiedOver("Component", "c", "SomeParts"),
+                quantifiedOver("Material", "m", "NoParts")));
+        right.normalize();
+
+        assertEquals(0, normalFormDistance(left, right),
+                "commutative branches must permit the corresponding ALL bindings to commute");
+    }
+
+    private static void testNegatedSomeAndNoBindingPathsAreEquivalent() {
+        NormalForm negatedSome = new NormalForm();
+        negatedSome.addEClass(node(
+                Opcode.NOT,
+                false,
+                false,
+                node(Opcode.EXISTS, false, false, relDecl("t"), predicate("Cycle", variable("t")))));
+        negatedSome.normalize();
+
+        NormalForm no = new NormalForm();
+        no.addEClass(node(Opcode.NO, false, false, relDecl("t"), predicate("Cycle", variable("t"))));
+        no.normalize();
+
+        assertEquals(0, normalFormDistance(negatedSome, no),
+                "not some and no must not differ only because one binding came through a negated path");
+    }
+
+    private static void testCommutativeComplexDomainsUseCanonicalCarrier() {
+        NormalForm left = quantifiedIntersectionDomain("Protected", "Trash", "Protected");
+        NormalForm right = quantifiedIntersectionDomain("Trash", "Protected", "Trash");
+
+        assertEquals("univ", left.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "a complex intersection domain must use the canonical univ carrier");
+        assertEquals("univ", right.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "commuting an intersection must not change its effective carrier");
+        assertEquals(0, normalFormDistance(left, right),
+                "A & B and B & A domains must produce the same guarded quantifier form");
+    }
+
+    private static EGraphNode quantifiedOver(String type, String variable, String predicate) {
+        return node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDeclWithDomain(global(type), type, variable),
+                predicate(predicate, variable(variable)));
+    }
+
+    private static NormalForm quantifiedIntersectionDomain(String left, String right, String inferredType) {
+        NormalForm normalForm = new NormalForm();
+        normalForm.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDeclWithDomain(
+                        node(Opcode.INTERSECT, true, true, global(left), global(right)),
+                        inferredType,
+                        "f"),
+                predicate("P", variable("f"))));
+        normalForm.normalize();
+        return normalForm;
     }
 
     private static void testComplementEliminatesRedundantSlot() {

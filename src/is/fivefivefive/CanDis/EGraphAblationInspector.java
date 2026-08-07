@@ -73,6 +73,7 @@ public final class EGraphAblationInspector {
         Canonical.Prepared left = Canonical.prepare(forest.get(predicateIds.get(names[0])));
         Canonical.Prepared right = Canonical.prepare(forest.get(predicateIds.get(names[1])));
         System.out.println("canonical distance: " + Canonical.distance(left, right));
+        System.out.println("canonical edits: " + Canonical.edits(left, right));
         System.out.println(names[0] + " canonical IR:\n" + Canonical.irTemporalFol(left));
         System.out.println(names[1] + " canonical IR:\n" + Canonical.irTemporalFol(right));
         for (Command command : module.getAllCommands()) {
