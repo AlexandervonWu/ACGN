@@ -20,7 +20,7 @@ import java.util.TreeSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import is.fivefivefive.CanDis.ablation.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 
 /** Launches each ablation arm in a fresh JVM and combines time/RSS measurements. */
 public final class EGraphAblationSuite {

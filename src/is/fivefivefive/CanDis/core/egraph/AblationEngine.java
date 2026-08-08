@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.ablation;
+package is.fivefivefive.CanDis.core.egraph;
 
 public interface AblationEngine {
     Result compare(AlloyTerm left, AlloyTerm right);

@@ -37,12 +37,13 @@ import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
-import is.fivefivefive.CanDis.ablation.AblationEngine;
-import is.fivefivefive.CanDis.ablation.AlloyTerm;
-import is.fivefivefive.CanDis.ablation.EGraphStats;
-import is.fivefivefive.CanDis.ablation.JavaEgglog;
-import is.fivefivefive.CanDis.ablation.RawEGraph;
-import is.fivefivefive.CanDis.ablation.SlottedEGraph;
+import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
+import is.fivefivefive.CanDis.core.egraph.AblationEngine;
+import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.EGraphStats;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.RawEGraph;
+import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
@@ -179,8 +180,8 @@ public final class EGraphAblationStudy {
             if (options.engine == Engine.CANONICAL) {
                 runCanonical(model, pair, result);
             } else {
-                AlloyTerm left = AlloyTerm.fromPredicate(pair.left);
-                AlloyTerm right = AlloyTerm.fromPredicate(pair.right);
+                AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left);
+                AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right);
                 AblationEngine.Result comparison = options.engine.newEngine().compare(left, right);
                 result.distance = comparison.distance;
                 result.equivalent = comparison.equivalent;

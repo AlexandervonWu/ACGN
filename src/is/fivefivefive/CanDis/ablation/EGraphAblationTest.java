@@ -2,6 +2,12 @@ package is.fivefivefive.CanDis.ablation;
 
 import java.util.List;
 
+import is.fivefivefive.CanDis.core.egraph.AblationEngine;
+import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.RawEGraph;
+import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
+
 /** Fast executable regression tests for the three ablation engines. */
 public final class EGraphAblationTest {
     private EGraphAblationTest() {

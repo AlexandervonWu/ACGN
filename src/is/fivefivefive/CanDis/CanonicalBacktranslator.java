@@ -9,13 +9,13 @@ import java.util.Map;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.ir.IRAgent;
-import is.fivefivefive.CanDis.macros.EGraphNode;
-import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.NormalForm;
-import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
-import is.fivefivefive.CanDis.macros.QuantiVar;
-import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
-import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
+import is.fivefivefive.CanDis.core.EGraphNode;
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.core.NormalForm;
+import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.core.QuantiVar;
+import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
+import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
 
 /**
  * Backtranslates normalized canonical forms into Alloy source that can be parsed

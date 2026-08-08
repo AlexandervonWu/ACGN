@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.ablation;
+package is.fivefivefive.CanDis.core.egraph;
 
 import java.util.Collection;
 import java.util.IdentityHashMap;

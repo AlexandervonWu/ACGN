@@ -13,11 +13,12 @@ import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
-import is.fivefivefive.CanDis.ablation.AblationEngine;
-import is.fivefivefive.CanDis.ablation.AlloyTerm;
-import is.fivefivefive.CanDis.ablation.JavaEgglog;
-import is.fivefivefive.CanDis.ablation.RawEGraph;
-import is.fivefivefive.CanDis.ablation.SlottedEGraph;
+import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
+import is.fivefivefive.CanDis.core.egraph.AblationEngine;
+import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.RawEGraph;
+import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Predicate;
@@ -57,7 +58,7 @@ public final class EGraphAblationInspector {
         AlloyTerm[] terms = new AlloyTerm[names.length];
         for (int i = 0; i < names.length; i++) {
             String name = names[i];
-            AlloyTerm raw = AlloyTerm.fromPredicate(predicates.get(name));
+            AlloyTerm raw = AlloyAstTermAdapter.fromPredicate(predicates.get(name));
             terms[i] = raw;
             System.out.println(name + " raw:\n" + raw);
             System.out.println(name + " alpha:\n" + SlottedEGraph.alphaRepresentative(raw));

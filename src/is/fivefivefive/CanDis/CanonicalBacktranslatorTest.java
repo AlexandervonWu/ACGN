@@ -6,11 +6,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import is.fivefivefive.CanDis.macros.EGraphNode;
-import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
-import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.NormalForm;
-import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.core.EGraphNode;
+import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.core.NormalForm;
+import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 import parser.util.AlloyUtil;
 
 public final class CanonicalBacktranslatorTest {

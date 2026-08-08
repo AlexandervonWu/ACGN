@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.ablation;
+package is.fivefivefive.CanDis.core.egraph;
 
 /** Per-predicate-pair structural counters emitted by an ablation engine. */
 public final class EGraphStats {

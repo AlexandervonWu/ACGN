@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.macros;
+package is.fivefivefive.CanDis.core;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
 
-import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
-import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
-import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
+import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
+import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
 
 import java.util.HashMap;
 

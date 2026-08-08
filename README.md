@@ -16,3 +16,15 @@ Meanwhile, the compiled output files will be generated in the `bin` folder by de
 ## Dependency Management
 
 The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
+
+## CanDis Core
+
+The parser-independent e-graphs and canonical-distance engine live under
+`is.fivefivefive.CanDis.core`. Build the standalone JDK-only artifact with:
+
+```bash
+./scripts/build_candis_core.sh
+```
+
+Alloy AST and MASG conversion remain in `is.fivefivefive.CanDis.adapter`,
+`is.fivefivefive.CanDis.ir`, and the compatibility `Canonical` facade.

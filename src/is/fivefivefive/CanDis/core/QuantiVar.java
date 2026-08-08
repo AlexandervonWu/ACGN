@@ -1,6 +1,4 @@
-package is.fivefivefive.CanDis.macros;
-
-import edu.mit.csail.sdg.ast.Type;
+package is.fivefivefive.CanDis.core;
 
 /**
  * This class encodes quantified variables. They are defined as "slots" in the quantification system
@@ -29,7 +27,6 @@ public class QuantiVar {
     private int id;
     private String name;
     private String originalName;
-    private Type type;
     private String typeName;
     private String carrierTypeName;
     private String deBruijnKey;
@@ -37,19 +34,6 @@ public class QuantiVar {
     private Cardinality cardinality;
     private int disjointnessClass;
     private String bindingPath;
-    public QuantiVar(int id, String name, Type type) {
-        this.id = id;
-        this.name = name;
-        this.originalName = name;
-        this.type = type;
-        this.typeName = type == null ? null : type.toString();
-        this.carrierTypeName = this.typeName;
-        this.deBruijnKey = name;
-        this.quantifier = Quantifier.SOME;
-        this.cardinality = Cardinality.SET;
-        this.disjointnessClass = 0;
-        this.bindingPath = "";
-    }
     public QuantiVar(int id, String name, String typeName) {
         this(id, name, name, typeName);
     }
@@ -57,7 +41,6 @@ public class QuantiVar {
         this.id = id;
         this.name = name;
         this.originalName = originalName;
-        this.type = null;
         this.typeName = typeName;
         this.carrierTypeName = typeName;
         this.deBruijnKey = name;
@@ -74,9 +57,6 @@ public class QuantiVar {
     }
     public String getOriginalName() {
         return originalName;
-    }
-    public Type getType() {
-        return type;
     }
     public String getTypeName() {
         return typeName;
@@ -133,10 +113,7 @@ public class QuantiVar {
         return id;
     }
     public boolean sameType(QuantiVar qv) {
-        if (this.typeName != null) {
-            return this.typeName.equals(qv.typeName);
-        }
-        return this.type != null && this.type.equals(qv.type);
+        return qv != null && java.util.Objects.equals(this.typeName, qv.typeName);
     }
     public String toString() {
         // in JSON form

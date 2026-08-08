@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.macros;
+package is.fivefivefive.CanDis.core;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import is.fivefivefive.CanDis.macros.RenamedIdUnionFind.RenamedId;
+import is.fivefivefive.CanDis.core.RenamedIdUnionFind.RenamedId;
 
 
 /**

@@ -34,10 +34,11 @@ import edu.mit.csail.sdg.translator.TranslateAlloyToKodkod;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
-import is.fivefivefive.CanDis.ablation.AlloyTerm;
-import is.fivefivefive.CanDis.ablation.JavaEgglog;
-import is.fivefivefive.CanDis.ablation.RawEGraph;
-import is.fivefivefive.CanDis.ablation.SlottedEGraph;
+import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
+import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.RawEGraph;
+import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Predicate;
@@ -173,8 +174,8 @@ public final class EGraphSemanticSoundnessCheck {
             if (names == null) {
                 throw new IllegalStateException("No predicate pair found");
             }
-            AlloyTerm leftTerm = AlloyTerm.fromPredicate(predicates.get(names[0]));
-            AlloyTerm rightTerm = AlloyTerm.fromPredicate(predicates.get(names[1]));
+            AlloyTerm leftTerm = AlloyAstTermAdapter.fromPredicate(predicates.get(names[0]));
+            AlloyTerm rightTerm = AlloyAstTermAdapter.fromPredicate(predicates.get(names[1]));
             result.merged.put("raw-egraph", new RawEGraph().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("java-egglog", new JavaEgglog().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("slotted-egraph", new SlottedEGraph().compare(leftTerm, rightTerm).equivalent);

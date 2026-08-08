@@ -11,12 +11,12 @@ import is.fivefivefive.ACGN.alloy.Symbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
-import is.fivefivefive.CanDis.macros.EGraphNode;
-import is.fivefivefive.CanDis.macros.NormalForm;
-import is.fivefivefive.CanDis.macros.QuantiVar;
-import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
-import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.core.EGraphNode;
+import is.fivefivefive.CanDis.core.NormalForm;
+import is.fivefivefive.CanDis.core.QuantiVar;
+import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 
 public class IRAgent {
     private Multigraph graph;

@@ -1,4 +1,4 @@
-package is.fivefivefive.CanDis.macros;
+package is.fivefivefive.CanDis.core;
 
 import java.util.Collections;
 import java.util.HashMap;

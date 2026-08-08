@@ -6,14 +6,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import is.fivefivefive.CanDis.macros.EGraphNode;
-import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
-import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
-import is.fivefivefive.CanDis.macros.NormalForm;
-import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
-import is.fivefivefive.CanDis.macros.QuantiVar;
-import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
-import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
+import is.fivefivefive.CanDis.core.EGraphNode;
+import is.fivefivefive.CanDis.core.CanonicalDistance;
+import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.core.NormalForm;
+import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.core.QuantiVar;
+import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
+import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
 
 public final class EGraphSaturationTest {
     private EGraphSaturationTest() {
@@ -882,11 +883,11 @@ public final class EGraphSaturationTest {
 
     private static int normalFormDistance(NormalForm left, NormalForm right) {
         try {
-            java.lang.reflect.Method quantification = Canonical.class.getDeclaredMethod(
+            java.lang.reflect.Method quantification = CanonicalDistance.class.getDeclaredMethod(
                     "quantificationDistance",
                     List.class,
                     List.class);
-            java.lang.reflect.Method matrix = Canonical.class.getDeclaredMethod(
+            java.lang.reflect.Method matrix = CanonicalDistance.class.getDeclaredMethod(
                     "matrixDistance",
                     List.class,
                     List.class);
