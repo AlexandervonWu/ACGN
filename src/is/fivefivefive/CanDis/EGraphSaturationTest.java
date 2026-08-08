@@ -10,6 +10,7 @@ import is.fivefivefive.CanDis.macros.EGraphNode;
 import is.fivefivefive.CanDis.macros.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.macros.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.macros.NormalForm;
+import is.fivefivefive.CanDis.macros.NormalForm.TemporalOp;
 import is.fivefivefive.CanDis.macros.QuantiVar;
 import is.fivefivefive.CanDis.macros.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.macros.QuantiVar.Quantifier;
@@ -50,6 +51,8 @@ public final class EGraphSaturationTest {
         testAlphaRenamingKeepsCanonicalDistanceZero();
         testOneAndLoneQuantifierNegation();
         testQuantifierPolarityRules();
+        testCommutativeDistanceUsesUnorderedMatching();
+        testTemporalNegationCrossesPhaseBoundary();
         System.out.println("EGraphSaturationTest passed");
     }
 
@@ -820,6 +823,52 @@ public final class EGraphSaturationTest {
             }
         }
         return false;
+    }
+
+    private static void testCommutativeDistanceUsesUnorderedMatching() {
+        NormalForm left = new NormalForm();
+        left.addEClass(node(Opcode.OR, true, true,
+                predicate("P", global("Human")), predicate("P", global("Robot"))));
+        left.normalize();
+
+        NormalForm right = new NormalForm();
+        right.addEClass(node(Opcode.OR, true, true,
+                predicate("P", global("Robot")), predicate("P", global("Human"))));
+        right.normalize();
+
+        assertEquals(0, normalFormDistance(left, right),
+                "commutative matrix distance must minimize over child permutations");
+    }
+
+    private static void testTemporalNegationCrossesPhaseBoundary() {
+        NormalForm parent = new NormalForm();
+        NormalForm left = new NormalForm(parent, TemporalOp.TRIGGEREDL, 101);
+        left.addEClass(node(Opcode.NOT_IN, false, false, variable("f"), global("Trash")));
+        NormalForm right = new NormalForm(parent, TemporalOp.TRIGGEREDR, 102);
+        right.addEClass(node(Opcode.IN, false, false, variable("f"), global("Protected")));
+        parent.addTemporalChild(left);
+        parent.addTemporalChild(right);
+
+        EGraphNode reference = node(Opcode.REF, false, false);
+        reference.setSourceName("temporal[0:2]");
+        parent.addEClass(node(Opcode.NOT, false, false, reference));
+        parent.normalize();
+        parent.pushTemporalNegations();
+        left.normalize();
+        right.normalize();
+
+        assertEquals(TemporalOp.SINCEL, left.getTemporalOp(),
+                "negated TRIGGERED left phase must become SINCE");
+        assertEquals(TemporalOp.SINCER, right.getTemporalOp(),
+                "negated TRIGGERED right phase must become SINCE");
+        assertTrue(containsOpcode(left.getMatrixEGraph(), Opcode.IN)
+                        && !containsOpcode(left.getMatrixEGraph(), Opcode.NOT_IN),
+                "temporal dualization must negate the left phase matrix");
+        assertTrue(containsOpcode(right.getMatrixEGraph(), Opcode.NOT_IN)
+                        && !containsOpcode(right.getMatrixEGraph(), Opcode.IN),
+                "temporal dualization must negate the right phase matrix");
+        assertTrue(!containsOpcode(parent.getMatrixEGraph(), Opcode.NOT),
+                "the parent phase must retain only the dualized temporal reference");
     }
 
     private static boolean hasQuantifier(List<QuantiVar> bindings, Quantifier quantifier) {

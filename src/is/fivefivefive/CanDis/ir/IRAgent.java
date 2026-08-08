@@ -48,6 +48,13 @@ public class IRAgent {
             rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId, new HashSet<>()));
             normalizeTemporalTree(rootNf, new HashMap<>(), new int[] { 0 });
         } finally {
+            List<EGraphNode> roots = new ArrayList<>();
+            for (NormalForm normalForm : nfs) {
+                if (normalForm.getMatrixEGraph() != null) {
+                    roots.add(normalForm.getMatrixEGraph());
+                }
+            }
+            EGraphNode.retainReachable(roots);
             EGraphNode.endGraph();
         }
     }
@@ -111,6 +118,7 @@ public class IRAgent {
             Map<String, QuantiVar> inherited,
             int[] nextVarId) {
         normalForm.normalize(inherited, nextVarId);
+        normalForm.pushTemporalNegations();
         Map<String, QuantiVar> descendants = new HashMap<>(inherited);
         for (QuantiVar variable : normalForm.getParams()) {
             if (variable.getOriginalName() != null) {

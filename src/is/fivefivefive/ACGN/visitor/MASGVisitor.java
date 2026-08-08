@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Collections;
 
 import edu.mit.csail.sdg.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.ast.Type;
@@ -103,6 +104,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
     public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
+    private final Map<String, Integer> forestIdsByCallable = new HashMap<>();
+    private Set<String> selectedCallables;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
     public static final boolean USE_SHADOW = false;
@@ -144,8 +147,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         this();
         globalVariables = gv;
     }
+    public MASGVisitor(GlobalVariables gv, Set<String> selectedCallables) {
+        this(gv);
+        this.selectedCallables = selectedCallables == null
+                ? null
+                : Collections.unmodifiableSet(new HashSet<>(selectedCallables));
+    }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
+    }
+    public Integer getForestId(String callableName) {
+        return forestIdsByCallable.get(callableName);
     }
     public AAME getAAME() {
         return aame;
@@ -237,6 +249,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         // the foci of learning
         
         for (Predicate p : n.getPredDeclList()) {
+            if (!shouldVisitCallable(p.getName())) {
+                continue;
+            }
             AugmentedNode pNode = p.accept(this, rootScope);
             demoGraph.addVertex(pNode);
             demoGraph.connect(mu, pNode, demoGraph, 3 + predId, 1);
@@ -245,44 +260,53 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
         // Function : a callable symbol, unchanged in operation
         for (Function f : n.getFunDeclList()) {
+            if (!shouldVisitCallable(f.getName())) {
+                continue;
+            }
             AugmentedNode fNode = f.accept(this, rootScope);
             demoGraph.addVertex(fNode);
             demoGraph.connect(mu, fNode, demoGraph, 3 + predId, 1);
             predId++;
         }
         // Facts can be directly stored in AAME. 
-        for (Fact f : n.getFactDeclList()) {
-            AugmentedNode fNode = f.accept(this, rootScope);
-            demoGraph.addVertex(fNode);
-            demoGraph.connect(mu, fNode, demoGraph, 3 + predId, 1);
-            predId++;
-        }
-        // Assertion: a non-modifiable node, syn == 0, sem == 21
-        for (Assertion a : n.getAssertDeclList()) {
-            AugmentedNode aNode = a.accept(this, rootScope);
-            demoGraph.addVertex(aNode);
-            demoGraph.connect(mu, aNode, demoGraph, 3 + predId, 1);
-            predId++;
-        }
-        // Check: a non-modifiable node, syn == 0, sem == 101
-        for (Check c : n.getCheckCmdList()) {
-            AugmentedNode cNode = c.accept(this, rootScope);
-            demoGraph.addVertex(cNode);
-            demoGraph.connect(mu, cNode, demoGraph, 3 + predId, 1);
-            predId++;
-        }
-        // Run: a non-modifiable node, syn == 0, sem == 102
-        for (Run r : n.getRunCmdList()) {
-            AugmentedNode rNode = r.accept(this, rootScope);
-            demoGraph.addVertex(rNode);
-            demoGraph.connect(mu, rNode, demoGraph, 3 + predId, 1);
-            predId++;
+        if (selectedCallables == null) {
+            for (Fact f : n.getFactDeclList()) {
+                AugmentedNode fNode = f.accept(this, rootScope);
+                demoGraph.addVertex(fNode);
+                demoGraph.connect(mu, fNode, demoGraph, 3 + predId, 1);
+                predId++;
+            }
+            // Assertion: a non-modifiable node, syn == 0, sem == 21
+            for (Assertion a : n.getAssertDeclList()) {
+                AugmentedNode aNode = a.accept(this, rootScope);
+                demoGraph.addVertex(aNode);
+                demoGraph.connect(mu, aNode, demoGraph, 3 + predId, 1);
+                predId++;
+            }
+            // Check: a non-modifiable node, syn == 0, sem == 101
+            for (Check c : n.getCheckCmdList()) {
+                AugmentedNode cNode = c.accept(this, rootScope);
+                demoGraph.addVertex(cNode);
+                demoGraph.connect(mu, cNode, demoGraph, 3 + predId, 1);
+                predId++;
+            }
+            // Run: a non-modifiable node, syn == 0, sem == 102
+            for (Run r : n.getRunCmdList()) {
+                AugmentedNode rNode = r.accept(this, rootScope);
+                demoGraph.addVertex(rNode);
+                demoGraph.connect(mu, rNode, demoGraph, 3 + predId, 1);
+                predId++;
+            }
         }
         if (!unfoundSigs.isEmpty()) {
             throw new RuntimeException("Unfound sigs: " + unfoundSigs);
         }
         globalVariables.addUniqueNodes(uniqueNode);
         return mu;
+    }
+
+    private boolean shouldVisitCallable(String name) {
+        return selectedCallables == null || selectedCallables.contains(name);
     }
 
     @Override
@@ -344,6 +368,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode predNode = new AugmentedNode(syn, numPredicates);
         
         String predName = n.getName();
+        forestIdsByCallable.put(predName, numPredicates);
         Symbol predSymbol = new PredRootSymbol(predNode, predName);
         predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);

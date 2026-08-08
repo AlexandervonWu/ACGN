@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-08-07T15:34:23.484309861Z",
+  "generatedAt": "2026-08-08T01:18:10.864389053Z",
   "inputRoot": "classified-data",
   "outputRoot": "alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.",
-  "pairCount": 8259,
+  "pairCount": 8277,
   "pairs": [
     {
       "questionSet": "classroom_fol",
@@ -22737,7 +22737,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
-      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
+      "right": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22746,7 +22746,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
-      "right": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+      "right": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22755,7 +22755,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
-      "right": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22764,7 +22764,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22773,7 +22773,16 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_0", "kind": "correct-student", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "all a,b: Node | a->b in adj implies b->a in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22791,7 +22800,16 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_10", "kind": "correct-student", "source": "graphs/correct/8Yt42KCdY2HkBJxuK_inv1.als", "body": "all disj n1, n2: Node | n2 in n1.adj <=> n1 in n2.adj"},
-      "right": {"name": "inv1_correct_26", "kind": "correct-student", "source": "graphs/correct/KjuzvzgFetAznDKye_inv1.als", "body": "all disj n, n1 : Node | n1 in n.adj <=> n in n1.adj"}
+      "right": {"name": "inv1_correct_28", "kind": "correct-student", "source": "graphs/correct/KjuzvzgFetAznDKye_inv1.als", "body": "all disj n, n1 : Node | n1 in n.adj <=> n in n1.adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_10", "kind": "correct-student", "source": "graphs/correct/8Yt42KCdY2HkBJxuK_inv1.als", "body": "all disj n1, n2: Node | n2 in n1.adj <=> n1 in n2.adj"},
+      "right": {"name": "inv1_correct_31", "kind": "correct-student", "source": "graphs/correct/NFShbaso4AmYYPwL9_inv1.als", "body": "all disj n1,n2: Node | n1 in n2.adj iff n2 in n1.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22800,7 +22818,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_11", "kind": "correct-student", "source": "graphs/correct/96d6qvXdCxXC2ymwx_inv1.als", "body": "all a,b : Node | b in a.adj implies a in b.adj"},
-      "right": {"name": "inv1_correct_17", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
+      "right": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22809,7 +22827,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_11", "kind": "correct-student", "source": "graphs/correct/96d6qvXdCxXC2ymwx_inv1.als", "body": "all a,b : Node | b in a.adj implies a in b.adj"},
-      "right": {"name": "inv1_correct_27", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
+      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22818,7 +22836,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_11", "kind": "correct-student", "source": "graphs/correct/96d6qvXdCxXC2ymwx_inv1.als", "body": "all a,b : Node | b in a.adj implies a in b.adj"},
-      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
+      "right": {"name": "inv1_correct_40", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22835,8 +22853,8 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_17", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"},
-      "right": {"name": "inv1_correct_27", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
+      "left": {"name": "inv1_correct_15", "kind": "correct-student", "source": "graphs/correct/BecrsMLhoaEzHYuGX_inv1.als", "body": "all disj n1,n2: Node |n1->n2 in adj implies n2->n1 in adj"},
+      "right": {"name": "inv1_correct_16", "kind": "correct-student", "source": "graphs/correct/CawnnXvb7SyY3PZJL_inv1.als", "body": "all disj n, n1 : Node | n->n1 in adj => n1->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22844,8 +22862,8 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_17", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"},
-      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
+      "left": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"},
+      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22853,17 +22871,8 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
-      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 4,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
-      "right": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+      "left": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"},
+      "right": {"name": "inv1_correct_40", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22872,7 +22881,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
-      "right": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+      "right": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22881,7 +22890,34 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+      "right": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
+      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22890,7 +22926,7 @@
       "rawAstDistance": 8,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_2", "kind": "correct-student", "source": "graphs/correct/3FnHLkAd2iMsa8Mua_inv1.als", "body": "all x,y:Node | x->y in adj implies y->x in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
     },
     {
       "questionSet": "graphs",
@@ -22907,8 +22943,8 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_27", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"},
-      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
+      "left": {"name": "inv1_correct_20", "kind": "correct-student", "source": "graphs/correct/E5Ts8WuitgmHdayMv_inv1.als", "body": "all n1,n2:Node | n1 in n2.adj <=> n2 in n1.adj"},
+      "right": {"name": "inv1_correct_42", "kind": "correct-student", "source": "graphs/correct/rNFTkwnCfAnDZLHaQ_inv1.als", "body": "all n1, n2: Node | n2 in n1.adj iff n1 in n2.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22916,8 +22952,17 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
-      "right": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+      "left": {"name": "inv1_correct_23", "kind": "correct-student", "source": "graphs/correct/Gfe7t4qqsT9ptRDTk_inv1.als", "body": "all disj n1, n2 :Node | n1 in n2.adj implies n2 in n1.adj"},
+      "right": {"name": "inv1_correct_45", "kind": "correct-student", "source": "graphs/correct/stxXamZdeBKPPgicw_inv1.als", "body": "all disj n1, n2: Node | n2 in n1.adj => n1 in n2.adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 2,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_28", "kind": "correct-student", "source": "graphs/correct/KjuzvzgFetAznDKye_inv1.als", "body": "all disj n, n1 : Node | n1 in n.adj <=> n in n1.adj"},
+      "right": {"name": "inv1_correct_31", "kind": "correct-student", "source": "graphs/correct/NFShbaso4AmYYPwL9_inv1.als", "body": "all disj n1,n2: Node | n1 in n2.adj iff n2 in n1.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22925,26 +22970,8 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
-      "right": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 4,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 8,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "left": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"},
+      "right": {"name": "inv1_correct_40", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22962,7 +22989,7 @@
       "rawAstDistance": 8,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_3", "kind": "correct-student", "source": "graphs/correct/49evQogcTgRJ8GgCR_inv1.als", "body": "all n:Node, n2:Node | n2 in n.adj => n in n2.adj"},
-      "right": {"name": "inv1_correct_17", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
+      "right": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22971,16 +22998,7 @@
       "rawAstDistance": 6,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_3", "kind": "correct-student", "source": "graphs/correct/49evQogcTgRJ8GgCR_inv1.als", "body": "all n:Node, n2:Node | n2 in n.adj => n in n2.adj"},
-      "right": {"name": "inv1_correct_27", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 8,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_3", "kind": "correct-student", "source": "graphs/correct/49evQogcTgRJ8GgCR_inv1.als", "body": "all n:Node, n2:Node | n2 in n.adj => n in n2.adj"},
-      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
+      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
     },
     {
       "questionSet": "graphs",
@@ -22995,28 +23013,10 @@
       "questionSet": "graphs",
       "invariantId": "inv1",
       "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 4,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
-      "right": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
-      "rawAstDistance": 4,
-      "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
-    },
-    {
-      "questionSet": "graphs",
-      "invariantId": "inv1",
-      "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 8,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "left": {"name": "inv1_correct_3", "kind": "correct-student", "source": "graphs/correct/49evQogcTgRJ8GgCR_inv1.als", "body": "all n:Node, n2:Node | n2 in n.adj => n in n2.adj"},
+      "right": {"name": "inv1_correct_40", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
     },
     {
       "questionSet": "graphs",
@@ -23024,8 +23024,35 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+      "left": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
+      "right": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
+      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23033,8 +23060,35 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 8,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "left": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 2,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
+      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23042,8 +23096,62 @@
       "augmentedFile": "correct/graphs/inv1.als",
       "rawAstDistance": 8,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "left": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"},
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 8,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 8,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 8,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"},
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23061,7 +23169,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_4", "kind": "correct-student", "source": "graphs/correct/4Xo8XB9CZzRFjpQwy_inv1.als", "body": "all n,m: Node | m in n.adj => n in m.adj"},
-      "right": {"name": "inv1_correct_17", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
+      "right": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/CgyEnyqa9TdQ6L5ff_inv1.als", "body": "all n1, n2:Node | n1 in n2.adj implies n2 in n1.adj"}
     },
     {
       "questionSet": "graphs",
@@ -23070,7 +23178,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_4", "kind": "correct-student", "source": "graphs/correct/4Xo8XB9CZzRFjpQwy_inv1.als", "body": "all n,m: Node | m in n.adj => n in m.adj"},
-      "right": {"name": "inv1_correct_27", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
+      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/KrYCZmzMR9XNYeixR_inv1.als", "body": "all n1,n2 : Node | n2 in n1.adj implies n1 in n2.adj"}
     },
     {
       "questionSet": "graphs",
@@ -23079,7 +23187,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_4", "kind": "correct-student", "source": "graphs/correct/4Xo8XB9CZzRFjpQwy_inv1.als", "body": "all n,m: Node | m in n.adj => n in m.adj"},
-      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
+      "right": {"name": "inv1_correct_40", "kind": "correct-student", "source": "graphs/correct/pkDgGfLZZ3ruuC3CG_inv1.als", "body": "all x, y: Node | y in x.adj implies x in y.adj"}
     },
     {
       "questionSet": "graphs",
@@ -23088,7 +23196,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
-      "right": {"name": "inv1_correct_29", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
+      "right": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/NkRS7GxjhTxvr3inA_inv1.als", "body": "all v1, v2 : Node | v1->v2 in adj implies v2->v1 in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23097,7 +23205,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
-      "right": {"name": "inv1_correct_30", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
+      "right": {"name": "inv1_correct_33", "kind": "correct-student", "source": "graphs/correct/QbEDEPZnrKrzAY7ks_inv1.als", "body": "all n,x:Node | n->x in adj implies x->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23106,7 +23214,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
-      "right": {"name": "inv1_correct_34", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/WQimqaMkMMkwN8vyy_inv1.als", "body": "all n, n1 : Node | n->n1 in adj => n1->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23115,7 +23223,16 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
-      "right": {"name": "inv1_correct_35", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
+      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/kGMGzxS9AGg3pwvpn_inv1.als", "body": "all e1, e2 : Node | e1 -> e2 in adj implies e2 -> e1 in adj"}
+    },
+    {
+      "questionSet": "graphs",
+      "invariantId": "inv1",
+      "augmentedFile": "correct/graphs/inv1.als",
+      "rawAstDistance": 4,
+      "canonicalDistance": 0,
+      "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
+      "right": {"name": "inv1_correct_39", "kind": "correct-student", "source": "graphs/correct/o47ouLtwZEW7bskG5_inv1.als", "body": "all a,b:Node | b->a in adj implies a->b in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23124,7 +23241,7 @@
       "rawAstDistance": 8,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_6", "kind": "correct-student", "source": "graphs/correct/5gHXhaTQxtWN6wd6d_inv1.als", "body": "all n1,n2:Node | n1->n2 in adj implies n2->n1 in adj"},
-      "right": {"name": "inv1_correct_38", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
+      "right": {"name": "inv1_correct_43", "kind": "correct-student", "source": "graphs/correct/sNab5R3TRADMgZCAC_inv1.als", "body": "all a:Node,b:Node | a->b in adj implies b->a in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23133,7 +23250,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_7", "kind": "correct-student", "source": "graphs/correct/5wLBWk8qWricQhyhM_inv1.als", "body": "all n1, n2 : Node | n1->n2 in adj <=> n2->n1 in adj"},
-      "right": {"name": "inv1_correct_18", "kind": "correct-student", "source": "graphs/correct/Dwhy3GMRP9ARAHPHB_inv1.als", "body": "all n, m : Node | n->m in adj iff m->n in adj"}
+      "right": {"name": "inv1_correct_19", "kind": "correct-student", "source": "graphs/correct/Dwhy3GMRP9ARAHPHB_inv1.als", "body": "all n, m : Node | n->m in adj iff m->n in adj"}
     },
     {
       "questionSet": "graphs",
@@ -23142,7 +23259,7 @@
       "rawAstDistance": 2,
       "canonicalDistance": 0,
       "left": {"name": "inv1_correct_8", "kind": "correct-student", "source": "graphs/correct/633WagKkvjHSeAMbS_inv1.als", "body": "all n1 : Node | n1.adj = adj.n1"},
-      "right": {"name": "inv1_correct_32", "kind": "correct-student", "source": "graphs/correct/ajdnwWQxbxa34GE9s_inv1.als", "body": "all n : Node | n.adj = adj.n"}
+      "right": {"name": "inv1_correct_36", "kind": "correct-student", "source": "graphs/correct/ajdnwWQxbxa34GE9s_inv1.als", "body": "all n : Node | n.adj = adj.n"}
     },
     {
       "questionSet": "graphs",
@@ -23151,7 +23268,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv1_oracle", "kind": "oracle", "source": "graphs/correct/25iztATChCq5oDfbi_inv1.als", "body": "adj = ~adj"},
-      "right": {"name": "inv1_correct_21", "kind": "correct-student", "source": "graphs/correct/FsdCeYSB6oWCNqhWJ_inv1.als", "body": "~adj = adj"}
+      "right": {"name": "inv1_correct_22", "kind": "correct-student", "source": "graphs/correct/FsdCeYSB6oWCNqhWJ_inv1.als", "body": "~adj = adj"}
     },
     {
       "questionSet": "graphs",
@@ -25545,7 +25662,7 @@
       "rawAstDistance": 1,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_0", "kind": "correct-student", "source": "lts/correct/3FANo9apJfBb9HYJb_inv5.als", "body": "all s, ss: State | s.trans.State = ss.trans.State"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25587,10 +25704,10 @@
       "questionSet": "lts",
       "invariantId": "inv5",
       "augmentedFile": "correct/lts/inv5.als",
-      "rawAstDistance": 12,
+      "rawAstDistance": 1,
       "canonicalDistance": 0,
-      "left": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/Tn5J944khh5yQmcud_inv5.als", "body": "all s : State | (State.trans).State = (s.trans).State"},
-      "right": {"name": "inv5_correct_12", "kind": "correct-student", "source": "lts/correct/bK6dBjRuS23djLYp4_inv5.als", "body": "all s : State | s.(trans.State) = State.(trans.State)"}
+      "left": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/Q9NLsdAgM3CTivtRq_inv5.als", "body": "all disj s, ss: State | s.trans.State = ss.trans.State"},
+      "right": {"name": "inv5_correct_16", "kind": "correct-student", "source": "lts/correct/jQkjiYKHKieP8RwCe_inv5.als", "body": "all disj s,t:State | s.trans.State = t.trans.State"}
     },
     {
       "questionSet": "lts",
@@ -25598,8 +25715,53 @@
       "augmentedFile": "correct/lts/inv5.als",
       "rawAstDistance": 31,
       "canonicalDistance": 0,
-      "left": {"name": "inv5_correct_15", "kind": "correct-student", "source": "lts/correct/jQkjiYKHKieP8RwCe_inv5.als", "body": "all disj s,t:State | s.trans.State = t.trans.State"},
-      "right": {"name": "inv5_correct_16", "kind": "correct-student", "source": "lts/correct/oA2GLY7qobdnKwjwn_inv5.als", "body": "not some disj s1, s2:State | (s1.trans).State != (s2.trans).State"}
+      "left": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/Q9NLsdAgM3CTivtRq_inv5.als", "body": "all disj s, ss: State | s.trans.State = ss.trans.State"},
+      "right": {"name": "inv5_correct_17", "kind": "correct-student", "source": "lts/correct/oA2GLY7qobdnKwjwn_inv5.als", "body": "not some disj s1, s2:State | (s1.trans).State != (s2.trans).State"}
+    },
+    {
+      "questionSet": "lts",
+      "invariantId": "inv5",
+      "augmentedFile": "correct/lts/inv5.als",
+      "rawAstDistance": 1,
+      "canonicalDistance": 0,
+      "left": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/Q9NLsdAgM3CTivtRq_inv5.als", "body": "all disj s, ss: State | s.trans.State = ss.trans.State"},
+      "right": {"name": "inv5_correct_18", "kind": "correct-student", "source": "lts/correct/oSc4BAAP3M9wRksmg_inv5.als", "body": "all disj s, s1 : State | (s.trans).State = (s1.trans).State"}
+    },
+    {
+      "questionSet": "lts",
+      "invariantId": "inv5",
+      "augmentedFile": "correct/lts/inv5.als",
+      "rawAstDistance": 12,
+      "canonicalDistance": 0,
+      "left": {"name": "inv5_correct_12", "kind": "correct-student", "source": "lts/correct/Tn5J944khh5yQmcud_inv5.als", "body": "all s : State | (State.trans).State = (s.trans).State"},
+      "right": {"name": "inv5_correct_13", "kind": "correct-student", "source": "lts/correct/bK6dBjRuS23djLYp4_inv5.als", "body": "all s : State | s.(trans.State) = State.(trans.State)"}
+    },
+    {
+      "questionSet": "lts",
+      "invariantId": "inv5",
+      "augmentedFile": "correct/lts/inv5.als",
+      "rawAstDistance": 31,
+      "canonicalDistance": 0,
+      "left": {"name": "inv5_correct_16", "kind": "correct-student", "source": "lts/correct/jQkjiYKHKieP8RwCe_inv5.als", "body": "all disj s,t:State | s.trans.State = t.trans.State"},
+      "right": {"name": "inv5_correct_17", "kind": "correct-student", "source": "lts/correct/oA2GLY7qobdnKwjwn_inv5.als", "body": "not some disj s1, s2:State | (s1.trans).State != (s2.trans).State"}
+    },
+    {
+      "questionSet": "lts",
+      "invariantId": "inv5",
+      "augmentedFile": "correct/lts/inv5.als",
+      "rawAstDistance": 1,
+      "canonicalDistance": 0,
+      "left": {"name": "inv5_correct_16", "kind": "correct-student", "source": "lts/correct/jQkjiYKHKieP8RwCe_inv5.als", "body": "all disj s,t:State | s.trans.State = t.trans.State"},
+      "right": {"name": "inv5_correct_18", "kind": "correct-student", "source": "lts/correct/oSc4BAAP3M9wRksmg_inv5.als", "body": "all disj s, s1 : State | (s.trans).State = (s1.trans).State"}
+    },
+    {
+      "questionSet": "lts",
+      "invariantId": "inv5",
+      "augmentedFile": "correct/lts/inv5.als",
+      "rawAstDistance": 31,
+      "canonicalDistance": 0,
+      "left": {"name": "inv5_correct_17", "kind": "correct-student", "source": "lts/correct/oA2GLY7qobdnKwjwn_inv5.als", "body": "not some disj s1, s2:State | (s1.trans).State != (s2.trans).State"},
+      "right": {"name": "inv5_correct_18", "kind": "correct-student", "source": "lts/correct/oSc4BAAP3M9wRksmg_inv5.als", "body": "all disj s, s1 : State | (s.trans).State = (s1.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25608,7 +25770,7 @@
       "rawAstDistance": 1,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_3", "kind": "correct-student", "source": "lts/correct/Cgnk6C76ndcvgypXu_inv5.als", "body": "all s, s1 : State | (s.trans).State = (s1.trans).State"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25644,7 +25806,7 @@
       "rawAstDistance": 2,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_4", "kind": "correct-student", "source": "lts/correct/GMydmv9ByM4uzR7Yy_inv5.als", "body": "all s1,s2:State,e:Event | some e.(s1.trans) implies some e.(s2.trans)"},
-      "right": {"name": "inv5_correct_14", "kind": "correct-student", "source": "lts/correct/hfW6yu6pc5fQNzMy5_inv5.als", "body": "all s, m: State, e: Event | some s.trans[e] => some m.trans[e]"}
+      "right": {"name": "inv5_correct_15", "kind": "correct-student", "source": "lts/correct/hfW6yu6pc5fQNzMy5_inv5.als", "body": "all s, m: State, e: Event | some s.trans[e] => some m.trans[e]"}
     },
     {
       "questionSet": "lts",
@@ -25653,7 +25815,7 @@
       "rawAstDistance": 12,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_5", "kind": "correct-student", "source": "lts/correct/GTGqqEHPniMaebYx2_inv5.als", "body": "all s1, s2: State | s1.(trans.State) = s2.(trans.State)"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25680,7 +25842,7 @@
       "rawAstDistance": 5,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_6", "kind": "correct-student", "source": "lts/correct/KZRpBcygnZmZNBu4c_inv5.als", "body": "all s:State, s1:State | s.trans.State = s1.trans.State"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25698,7 +25860,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_7", "kind": "correct-student", "source": "lts/correct/ME4M8NDNQqA5NhZFY_inv5.als", "body": "all s : State | s.trans.State = State.trans.State"},
-      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/Tn5J944khh5yQmcud_inv5.als", "body": "all s : State | (State.trans).State = (s.trans).State"}
+      "right": {"name": "inv5_correct_12", "kind": "correct-student", "source": "lts/correct/Tn5J944khh5yQmcud_inv5.als", "body": "all s : State | (State.trans).State = (s.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25707,7 +25869,7 @@
       "rawAstDistance": 12,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_7", "kind": "correct-student", "source": "lts/correct/ME4M8NDNQqA5NhZFY_inv5.als", "body": "all s : State | s.trans.State = State.trans.State"},
-      "right": {"name": "inv5_correct_12", "kind": "correct-student", "source": "lts/correct/bK6dBjRuS23djLYp4_inv5.als", "body": "all s : State | s.(trans.State) = State.(trans.State)"}
+      "right": {"name": "inv5_correct_13", "kind": "correct-student", "source": "lts/correct/bK6dBjRuS23djLYp4_inv5.als", "body": "all s : State | s.(trans.State) = State.(trans.State)"}
     },
     {
       "questionSet": "lts",
@@ -25716,7 +25878,7 @@
       "rawAstDistance": 2,
       "canonicalDistance": 0,
       "left": {"name": "inv5_correct_9", "kind": "correct-student", "source": "lts/correct/Q6mLuukLjXCHgAd9e_inv5.als", "body": "all s,r :State | (r.trans).State = (s.trans).State"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -25734,7 +25896,7 @@
       "rawAstDistance": 2,
       "canonicalDistance": 0,
       "left": {"name": "inv5_oracle", "kind": "oracle", "source": "lts/correct/3FANo9apJfBb9HYJb_inv5.als", "body": "all s1,s2:State | s1.trans.State = s2.trans.State"},
-      "right": {"name": "inv5_correct_10", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
+      "right": {"name": "inv5_correct_11", "kind": "correct-student", "source": "lts/correct/QQZ9eHWE8cLisFa7K_inv5.als", "body": "all s,r : State | (s.trans).State = (r.trans).State"}
     },
     {
       "questionSet": "lts",
@@ -73137,7 +73299,7 @@
       "rawAstDistance": 3,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_0", "kind": "correct-student", "source": "trash_rl/correct/2Gb3sQSu7HFPdhdKn_inv10.als", "body": "all f:Trash,g:File | f->g in link implies g in Trash"},
-      "right": {"name": "inv10_correct_23", "kind": "correct-student", "source": "trash_rl/correct/vCTqjAgdQRghKvrzG_inv10.als", "body": "all x : Trash, y : File | x->y in link implies y in Trash"}
+      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/vCTqjAgdQRghKvrzG_inv10.als", "body": "all x : Trash, y : File | x->y in link implies y in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73146,7 +73308,7 @@
       "rawAstDistance": 25,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_10", "kind": "correct-student", "source": "trash_rl/correct/CfAJoabi4WebafYiL_inv10.als", "body": "all f : File | all l : f.link | f in Trash implies l in Trash"},
-      "right": {"name": "inv10_correct_22", "kind": "correct-student", "source": "trash_rl/correct/qySAQBnh9mWkdHdi3_inv10.als", "body": "all f:File, f2:f.link | f in Trash => f2 in Trash"}
+      "right": {"name": "inv10_correct_23", "kind": "correct-student", "source": "trash_rl/correct/qySAQBnh9mWkdHdi3_inv10.als", "body": "all f:File, f2:f.link | f in Trash => f2 in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73182,7 +73344,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_14", "kind": "correct-student", "source": "trash_rl/correct/LPYGgWruKqCwQZkTt_inv10.als", "body": "all f1,f2: File | f1->f2 in link and f1 in Trash implies f2 in Trash"},
-      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
+      "right": {"name": "inv10_correct_25", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73200,7 +73362,7 @@
       "rawAstDistance": 2,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_17", "kind": "correct-student", "source": "trash_rl/correct/YCJn3C9CDDNG5Pcgu_inv10.als", "body": "all l, f : File | (l->f in link) and (l in Trash) => (f in Trash)"},
-      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
+      "right": {"name": "inv10_correct_25", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73209,7 +73371,7 @@
       "rawAstDistance": 4,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_19", "kind": "correct-student", "source": "trash_rl/correct/eqTsjbwDioj7Pba8d_inv10.als", "body": "all f,f1:File | f->f1 in link and f in Trash implies f1 in Trash"},
-      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
+      "right": {"name": "inv10_correct_25", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73227,7 +73389,7 @@
       "rawAstDistance": 3,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_21", "kind": "correct-student", "source": "trash_rl/correct/pAd5r4DnbhoNQAqLA_inv10.als", "body": "all t:Trash, f:File | t->f in link implies f in Trash"},
-      "right": {"name": "inv10_correct_23", "kind": "correct-student", "source": "trash_rl/correct/vCTqjAgdQRghKvrzG_inv10.als", "body": "all x : Trash, y : File | x->y in link implies y in Trash"}
+      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/vCTqjAgdQRghKvrzG_inv10.als", "body": "all x : Trash, y : File | x->y in link implies y in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73263,7 +73425,7 @@
       "rawAstDistance": 1,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_5", "kind": "correct-student", "source": "trash_rl/correct/4LYY5F92ibaCA237q_inv10.als", "body": "all f : File, l : f.link | f in Trash implies l in Trash"},
-      "right": {"name": "inv10_correct_22", "kind": "correct-student", "source": "trash_rl/correct/qySAQBnh9mWkdHdi3_inv10.als", "body": "all f:File, f2:f.link | f in Trash => f2 in Trash"}
+      "right": {"name": "inv10_correct_23", "kind": "correct-student", "source": "trash_rl/correct/qySAQBnh9mWkdHdi3_inv10.als", "body": "all f:File, f2:f.link | f in Trash => f2 in Trash"}
     },
     {
       "questionSet": "trash_rl",
@@ -73299,7 +73461,7 @@
       "rawAstDistance": 31,
       "canonicalDistance": 0,
       "left": {"name": "inv10_correct_8", "kind": "correct-student", "source": "trash_rl/correct/ASz73jKJMym8a3jDY_inv10.als", "body": "all f:File | all f1:File | f->f1 in link and f in Trash implies f1 in Trash"},
-      "right": {"name": "inv10_correct_24", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
+      "right": {"name": "inv10_correct_25", "kind": "correct-student", "source": "trash_rl/correct/xPwRnxMi9HJ9JuTwh_inv10.als", "body": "all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash"}
     },
     {
       "questionSet": "trash_rl",

@@ -14,13 +14,16 @@ public final class EGraphAblationTest {
         AlloyTerm andBA = AlloyTerm.node("BF/AND", b, a);
 
         AblationEngine.Result rawOrder = new RawEGraph().compare(andAB, andBA);
-        check(!rawOrder.equivalent,
-                "raw e-graph must preserve operand order");
-        check(rawOrder.distance == 2,
-                "raw distance must count both ordered operand replacements");
+        check(rawOrder.equivalent,
+                "fixed-arity e-graph must saturate commutativity");
         AblationEngine.Result eggOrder = new JavaEgglog().compare(andAB, andBA);
         check(eggOrder.equivalent && eggOrder.distance == 0,
                 "egglog core must saturate commutativity");
+
+        AlloyTerm joinAB = AlloyTerm.node("BE/JOIN", a, b);
+        AlloyTerm joinBA = AlloyTerm.node("BE/JOIN", b, a);
+        check(!new RawEGraph().compare(joinAB, joinBA).equivalent,
+                "associative sequence operators must retain operand order");
 
         AlloyTerm pA = AlloyTerm.node("P", a);
         AlloyTerm pB = AlloyTerm.node("P", b);
@@ -30,11 +33,11 @@ public final class EGraphAblationTest {
         AlloyTerm notAnd = AlloyTerm.node("UF/NOT", andAB);
         AlloyTerm deMorgan = AlloyTerm.node("BF/OR",
                 AlloyTerm.node("UF/NOT", a), AlloyTerm.node("UF/NOT", b));
-        check(new JavaEgglog().compare(notAnd, deMorgan).equivalent,
-                "egglog core must saturate De Morgan");
+        checkAllEquivalent("De Morgan", notAnd, deMorgan);
 
         AlloyTerm implication = AlloyTerm.node("BF/IMPLIES", a, b);
         AlloyTerm disjunction = AlloyTerm.node("BF/OR", AlloyTerm.node("UF/NOT", a), b);
+        checkAllEquivalent("implication elimination", implication, disjunction);
         AblationEngine.Result implicationResult = new JavaEgglog().compare(implication, disjunction);
         check(implicationResult.equivalent && implicationResult.distance == 0,
                 "egglog core must eliminate implication");
@@ -45,10 +48,95 @@ public final class EGraphAblationTest {
 
         AlloyTerm duplicateAnd = AlloyTerm.node("BF/AND", a, a);
         AlloyTerm duplicateUnion = AlloyTerm.node("BE/PLUS", a, a);
-        check(new JavaEgglog().compare(duplicateAnd, a).equivalent,
-                "boolean conjunction must be idempotent");
-        check(new JavaEgglog().compare(duplicateUnion, a).equivalent,
-                "relational union must be idempotent");
+        AlloyTerm duplicateIntersection = AlloyTerm.node("BE/INTERSECT", a, a);
+        checkAllEquivalent("boolean conjunction idempotence", duplicateAnd, a);
+        checkAllEquivalent("relational union idempotence", duplicateUnion, a);
+        checkAllEquivalent("relational intersection idempotence", duplicateIntersection, a);
+        checkAllEquivalent("nested ACI flattening",
+                AlloyTerm.node("BF/AND", AlloyTerm.node("BF/AND", a, b), a),
+                AlloyTerm.node("BF/AND", b, a));
+        checkAllEquivalent("ordered associativity",
+                AlloyTerm.node("BE/JOIN", AlloyTerm.node("BE/JOIN", a, b),
+                        AlloyTerm.atom("VAR", "c")),
+                AlloyTerm.node("BE/JOIN", a,
+                        AlloyTerm.node("BE/JOIN", b, AlloyTerm.atom("VAR", "c"))));
+        check(!new JavaEgglog().compare(AlloyTerm.node("BE/IPLUS", a, a), a).equivalent,
+                "AC bag operators must retain duplicate operands");
+
+        AlloyTerm trueTerm = AlloyTerm.atom("CONST", "true");
+        AlloyTerm falseTerm = AlloyTerm.atom("CONST", "false");
+        AlloyTerm noneTerm = AlloyTerm.atom("CONST", "none");
+        AlloyTerm univTerm = AlloyTerm.atom("CONST", "univ");
+        checkAllEquivalent("and true identity", AlloyTerm.node("BF/AND", a, trueTerm), a);
+        checkAllEquivalent("or false identity", AlloyTerm.node("BF/OR", a, falseTerm), a);
+        checkAllEquivalent("and false annihilator", AlloyTerm.node("BF/AND", a, falseTerm), falseTerm);
+        checkAllEquivalent("or true annihilator", AlloyTerm.node("BF/OR", a, trueTerm), trueTerm);
+        checkAllEquivalent("boolean excluded middle",
+                AlloyTerm.node("BF/OR", a, AlloyTerm.node("UF/NOT", a)), trueTerm);
+        checkAllEquivalent("membership in none",
+                AlloyTerm.node("BF/IN", a, noneTerm), falseTerm);
+        checkAllEquivalent("membership in univ",
+                AlloyTerm.node("BF/IN", a, univTerm), trueTerm);
+        checkAllEquivalent("intersection with none",
+                AlloyTerm.node("BE/INTERSECT", a, noneTerm), noneTerm);
+        checkAllEquivalent("union with none",
+                AlloyTerm.node("BE/PLUS", a, noneTerm), a);
+
+        AlloyTerm iff = AlloyTerm.node("BF/IFF", a, b);
+        AlloyTerm iffExpansion = AlloyTerm.node("BF/AND",
+                AlloyTerm.node("BF/OR", AlloyTerm.node("UF/NOT", a), b),
+                AlloyTerm.node("BF/OR", AlloyTerm.node("UF/NOT", b), a));
+        checkAllEquivalent("iff elimination", iff, iffExpansion);
+        AlloyTerm ite = AlloyTerm.node("ITE/FORMULA", a, b, falseTerm);
+        AlloyTerm iteExpansion = AlloyTerm.node("BF/OR",
+                AlloyTerm.node("BF/AND", a, b),
+                AlloyTerm.node("BF/AND", AlloyTerm.node("UF/NOT", a), falseTerm));
+        checkAllEquivalent("formula ITE elimination", ite, iteExpansion);
+
+        AlloyTerm allX = quantified("QF/ALL", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        AlloyTerm someNotX = quantified("QF/SOME", "x", "S",
+                AlloyTerm.node("UF/NOT", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))));
+        checkAllEquivalent("negated universal quantifier", AlloyTerm.node("UF/NOT", allX), someNotX);
+        AlloyTerm noX = quantified("QF/NO", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        checkAllEquivalent("no quantifier expansion", noX, quantified("QF/ALL", "x", "S",
+                AlloyTerm.node("UF/NOT", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")))));
+        AlloyTerm oneX = quantified("QF/ONE", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        AlloyTerm notOneX = quantified("QF/NOTONE", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        checkAllEquivalent("negated one quantifier", AlloyTerm.node("UF/NOT", oneX), notOneX);
+        AlloyTerm loneX = quantified("QF/LONE", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        AlloyTerm notLoneX = quantified("QF/NOTLONE", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        checkAllEquivalent("negated lone quantifier", AlloyTerm.node("UF/NOT", loneX), notLoneX);
+        checkAllEquivalent("empty existential domain",
+                quantifiedWithDomain("QF/SOME", "x", noneTerm,
+                        AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))),
+                falseTerm);
+        checkAllEquivalent("empty universal domain",
+                quantifiedWithDomain("QF/ALL", "x", noneTerm,
+                        AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))),
+                trueTerm);
+
+        AlloyTerm someP = quantified("QF/SOME", "x", "S",
+                AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
+        AlloyTerm prenexSome = quantified("QF/SOME", "x", "S",
+                AlloyTerm.node("BF/AND", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")), b));
+        checkAllEquivalent("safe existential prenex", AlloyTerm.node("BF/AND", someP, b), prenexSome);
+        AlloyTerm prenexAll = quantified("QF/ALL", "x", "S",
+                AlloyTerm.node("BF/OR", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")), b));
+        checkAllEquivalent("safe universal prenex", AlloyTerm.node("BF/OR", allX, b), prenexAll);
+
+        checkAllEquivalent("future temporal dual",
+                AlloyTerm.node("UF/NOT", AlloyTerm.node("UF/ALWAYS", a)),
+                AlloyTerm.node("UF/EVENTUALLY", AlloyTerm.node("UF/NOT", a)));
+        checkAllEquivalent("binary temporal dual",
+                AlloyTerm.node("UF/NOT", AlloyTerm.node("BF/UNTIL", a, b)),
+                AlloyTerm.node("BF/RELEASES",
+                        AlloyTerm.node("UF/NOT", a), AlloyTerm.node("UF/NOT", b)));
 
         AlloyTerm alphaLeft = predicate("x", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));
         AlloyTerm alphaRight = predicate("renamed", AlloyTerm.node("P", AlloyTerm.atom("VAR", "renamed")));
@@ -117,7 +205,6 @@ public final class EGraphAblationTest {
         check(!new SlottedEGraph().compare(comprehensionLeft, comprehensionRight).equivalent,
                 "comprehension columns are ordered and must not form a permutation group");
 
-        AlloyTerm falseTerm = AlloyTerm.atom("CONST", "false");
         AblationEngine.Result redundant = new SlottedEGraph().compare(
                 AlloyTerm.node("BF/AND", a, falseTerm), falseTerm);
         check(redundant.equivalent, "slotted saturation must eliminate false conjunctions");
@@ -125,6 +212,15 @@ public final class EGraphAblationTest {
                 "slot-redundancy elimination must be observable in the statistics");
 
         System.out.println("EGraph ablation tests passed.");
+    }
+
+    private static void checkAllEquivalent(String rule, AlloyTerm left, AlloyTerm right) {
+        check(new RawEGraph().compare(left, right).equivalent,
+                "fixed-arity e-graph must apply " + rule);
+        check(new JavaEgglog().compare(left, right).equivalent,
+                "egglog core must apply " + rule);
+        check(new SlottedEGraph().compare(left, right).equivalent,
+                "slotted e-graph must apply " + rule);
     }
 
     private static AlloyTerm predicate(String variable, AlloyTerm body) {
@@ -144,6 +240,14 @@ public final class EGraphAblationTest {
 
     private static AlloyTerm quantified(String head, String variable, String domain, AlloyTerm body) {
         return quantified(head, List.of(variable), domain, body);
+    }
+
+    private static AlloyTerm quantifiedWithDomain(
+            String head, String variable, AlloyTerm domain, AlloyTerm body) {
+        AlloyTerm declaration = AlloyTerm.node(
+                "DECL/VarDecl/disj=false/var=false",
+                AlloyTerm.atom("VAR", variable), domain);
+        return AlloyTerm.node(head, declaration, AlloyTerm.node("Body", body));
     }
 
     private static AlloyTerm quantified(String head, List<String> variables, String domain, AlloyTerm body) {

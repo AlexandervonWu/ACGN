@@ -11,38 +11,75 @@ import java.util.Set;
 /** Shared, terminating orientation of the Alloy equivalences used by the baselines. */
 final class AlloyRewriteSystem {
     static final int MAX_ITERATIONS = 32;
+    static final String RULE_SET_VERSION = "canonical-equivalences-v1";
+    private static final List<String> RULE_NAMES = List.of(
+            "operator aliases",
+            "NOOP elimination",
+            "capture-avoiding let beta reduction",
+            "implication elimination",
+            "iff elimination",
+            "formula ITE elimination",
+            "boolean constant negation and double negation",
+            "De Morgan",
+            "atomic negation duals",
+            "temporal negation duals",
+            "quantifier negation duals",
+            "no-to-all-not quantifier expansion",
+            "empty quantifier domains",
+            "safe existential-conjunction prenex",
+            "safe universal-disjunction prenex",
+            "associativity",
+            "commutativity",
+            "idempotence",
+            "boolean identities and annihilators",
+            "boolean complements",
+            "membership in none/univ",
+            "relational union with none",
+            "relational intersection with none");
+
+    enum ArityMode {
+        FIXED,
+        VARIADIC
+    }
 
     private static final Set<String> ACI = Set.of(
             "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT");
-    private static final Set<String> AC = Set.of(
-            "ARITH/MUL", "ARITH/PLUS", "LIST/DISJOINT");
     private static final Set<String> ASSOCIATIVE = Set.of(
             "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT",
             "ARITH/MUL", "ARITH/PLUS", "REL/JOIN", "REL/ARROW");
     private static final Set<String> COMMUTATIVE = Set.of(
             "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT",
-            "ARITH/MUL", "ARITH/PLUS", "LIST/DISJOINT", "BF/EQUALS");
+            "ARITH/MUL", "ARITH/PLUS", "LIST/DISJOINT",
+            "BF/EQUALS", "BF/NOT_EQUALS");
 
     private AlloyRewriteSystem() {
     }
 
+    static List<String> ruleNames() {
+        return RULE_NAMES;
+    }
+
     static Pass rewriteOnce(AlloyTerm input) {
+        return rewriteOnce(input, ArityMode.VARIADIC);
+    }
+
+    static Pass rewriteOnce(AlloyTerm input, ArityMode arityMode) {
         Counter counter = new Counter();
-        AlloyTerm output = rewriteTree(input, counter);
+        AlloyTerm output = rewriteTree(input, counter, arityMode);
         return new Pass(output, counter.changes);
     }
 
-    private static AlloyTerm rewriteTree(AlloyTerm input, Counter counter) {
+    private static AlloyTerm rewriteTree(AlloyTerm input, Counter counter, ArityMode arityMode) {
         List<AlloyTerm> children = input.children();
         List<AlloyTerm> rewrittenChildren = new ArrayList<>(children.size());
         boolean childChanged = false;
         for (AlloyTerm child : children) {
-            AlloyTerm rewritten = rewriteTree(child, counter);
+            AlloyTerm rewritten = rewriteTree(child, counter, arityMode);
             rewrittenChildren.add(rewritten);
             childChanged |= rewritten != child;
         }
         AlloyTerm current = childChanged ? input.withChildren(rewrittenChildren) : input;
-        AlloyTerm rewritten = rewriteNode(current);
+        AlloyTerm rewritten = rewriteNode(current, arityMode);
         if (!rewritten.equals(current)) {
             counter.changes++;
             return rewritten;
@@ -50,7 +87,7 @@ final class AlloyRewriteSystem {
         return current;
     }
 
-    private static AlloyTerm rewriteNode(AlloyTerm input) {
+    private static AlloyTerm rewriteNode(AlloyTerm input, ArityMode arityMode) {
         String canonicalHead = canonicalHead(input.head());
         AlloyTerm current = canonicalHead.equals(input.head())
                 ? input
@@ -69,12 +106,6 @@ final class AlloyRewriteSystem {
                 AlloyTerm body = unwrapBody(current.children().get(current.children().size() - 1));
                 return substitute(body, variable.atom(), bound);
             }
-        }
-        if ("BF/NOT_EQUALS".equals(current.head()) && current.children().size() == 2) {
-            return not(AlloyTerm.node("BF/EQUALS", current.children()));
-        }
-        if ("BF/NOT_IN".equals(current.head()) && current.children().size() == 2) {
-            return not(AlloyTerm.node("BF/IN", current.children()));
         }
         if ("BOOL/IMPLIES".equals(current.head()) && current.children().size() == 2) {
             return AlloyTerm.node("BOOL/OR", not(current.children().get(0)), current.children().get(1));
@@ -115,21 +146,6 @@ final class AlloyRewriteSystem {
                 return bool(true);
             }
         }
-        if ("REL/PLUS".equals(current.head())) {
-            List<AlloyTerm> kept = withoutConstant(current.children(), "none");
-            if (kept.isEmpty()) {
-                return constant("none");
-            }
-            if (kept.size() == 1) {
-                return kept.get(0);
-            }
-            if (kept.size() != current.children().size()) {
-                current = AlloyTerm.node(current.head(), kept);
-            }
-        }
-        if ("REL/INTERSECT".equals(current.head()) && containsConstant(current.children(), "none")) {
-            return constant("none");
-        }
         if (ASSOCIATIVE.contains(current.head())) {
             List<AlloyTerm> flattened = new ArrayList<>();
             flatten(current.head(), current, flattened);
@@ -144,21 +160,49 @@ final class AlloyRewriteSystem {
             List<AlloyTerm> unique = deduplicate(current.children());
             current = current.withChildren(unique);
         }
+        if ("REL/PLUS".equals(current.head())) {
+            List<AlloyTerm> kept = withoutConstant(current.children(), "none");
+            if (kept.isEmpty()) {
+                return constant("none");
+            }
+            if (kept.size() == 1) {
+                return kept.get(0);
+            }
+            current = current.withChildren(kept);
+        }
+        if ("REL/INTERSECT".equals(current.head()) && containsConstant(current.children(), "none")) {
+            return constant("none");
+        }
         if ("BOOL/AND".equals(current.head())) {
             if (containsConstant(current.children(), "false") || containsComplement(current.children())) {
                 return bool(false);
             }
             List<AlloyTerm> kept = withoutConstant(current.children(), "true");
-            return finishVariadic(current.head(), kept, true);
+            AlloyTerm simplified = finishVariadic(current.head(), kept, true);
+            if (!"BOOL/AND".equals(simplified.head())) {
+                return simplified;
+            }
+            current = simplified;
         }
         if ("BOOL/OR".equals(current.head())) {
             if (containsConstant(current.children(), "true") || containsComplement(current.children())) {
                 return bool(true);
             }
             List<AlloyTerm> kept = withoutConstant(current.children(), "false");
-            return finishVariadic(current.head(), kept, false);
+            AlloyTerm simplified = finishVariadic(current.head(), kept, false);
+            if (!"BOOL/OR".equals(simplified.head())) {
+                return simplified;
+            }
+            current = simplified;
         }
-        return current;
+        if (ASSOCIATIVE.contains(current.head()) && current.children().size() == 1) {
+            return current.children().get(0);
+        }
+        AlloyTerm prenexed = safePrenex(current);
+        if (!prenexed.equals(current)) {
+            return prenexed;
+        }
+        return encodeArity(current, arityMode);
     }
 
     private static AlloyTerm rewriteNot(AlloyTerm child) {
@@ -178,6 +222,18 @@ final class AlloyRewriteSystem {
                 negated.add(not(item));
             }
             return AlloyTerm.node(opposite, negated);
+        }
+        String atomicDual = atomicNegationDual(child.head());
+        if (atomicDual != null) {
+            return AlloyTerm.node(atomicDual, child.children());
+        }
+        String temporalDual = temporalNegationDual(child.head());
+        if (temporalDual != null) {
+            List<AlloyTerm> negated = new ArrayList<>(child.children().size());
+            for (AlloyTerm item : child.children()) {
+                negated.add(not(item));
+            }
+            return AlloyTerm.node(temporalDual, negated);
         }
         if (child.head().startsWith("QF/")) {
             switch (child.head()) {
@@ -202,6 +258,64 @@ final class AlloyRewriteSystem {
         return not(child);
     }
 
+    private static String atomicNegationDual(String head) {
+        switch (head) {
+            case "BF/EQUALS":
+                return "BF/NOT_EQUALS";
+            case "BF/NOT_EQUALS":
+                return "BF/EQUALS";
+            case "BF/GT":
+                return "BF/LTE";
+            case "BF/GTE":
+                return "BF/LT";
+            case "BF/IN":
+                return "BF/NOT_IN";
+            case "BF/LT":
+                return "BF/GTE";
+            case "BF/LTE":
+                return "BF/GT";
+            case "BF/NOT_GT":
+                return "BF/GT";
+            case "BF/NOT_GTE":
+                return "BF/GTE";
+            case "BF/NOT_IN":
+                return "BF/IN";
+            case "BF/NOT_LT":
+                return "BF/LT";
+            case "BF/NOT_LTE":
+                return "BF/LTE";
+            case "UF/SOME":
+                return "UF/NO";
+            case "UF/NO":
+                return "UF/SOME";
+            default:
+                return null;
+        }
+    }
+
+    private static String temporalNegationDual(String head) {
+        switch (head) {
+            case "UF/ALWAYS":
+                return "UF/EVENTUALLY";
+            case "UF/EVENTUALLY":
+                return "UF/ALWAYS";
+            case "UF/HISTORICALLY":
+                return "UF/ONCE";
+            case "UF/ONCE":
+                return "UF/HISTORICALLY";
+            case "BF/UNTIL":
+                return "BF/RELEASES";
+            case "BF/RELEASES":
+                return "BF/UNTIL";
+            case "BF/SINCE":
+                return "BF/TRIGGERED";
+            case "BF/TRIGGERED":
+                return "BF/SINCE";
+            default:
+                return null;
+        }
+    }
+
     private static AlloyTerm rewriteQuantifier(AlloyTerm quantifier, String head, boolean negateBody) {
         List<AlloyTerm> children = new ArrayList<>(quantifier.children());
         if (!children.isEmpty() && negateBody) {
@@ -220,7 +334,7 @@ final class AlloyRewriteSystem {
         boolean empty = false;
         for (AlloyTerm child : quantifier.children()) {
             if (child.head().startsWith("DECL/") && !child.children().isEmpty()
-                    && isConstant(child.children().get(child.children().size() - 1), "none")) {
+                    && isEmptyDomain(child.children().get(child.children().size() - 1))) {
                 empty = true;
                 break;
             }
@@ -241,6 +355,20 @@ final class AlloyRewriteSystem {
             default:
                 return null;
         }
+    }
+
+    private static boolean isEmptyDomain(AlloyTerm term) {
+        if (isConstant(term, "none")) {
+            return true;
+        }
+        return term.children().size() == 1
+                && ("UE/NOOP".equals(term.head())
+                        || "UE/SETOF".equals(term.head())
+                        || "UE/SOME".equals(term.head())
+                        || "UE/ONE".equals(term.head())
+                        || "UE/LONE".equals(term.head())
+                        || "UE/EXACTLY".equals(term.head()))
+                && isEmptyDomain(term.children().get(0));
     }
 
     private static AlloyTerm substitute(AlloyTerm term, String variable, AlloyTerm replacement) {
@@ -375,6 +503,70 @@ final class AlloyRewriteSystem {
                 : term;
     }
 
+    private static AlloyTerm safePrenex(AlloyTerm term) {
+        boolean conjunction = "BOOL/AND".equals(term.head());
+        boolean disjunction = "BOOL/OR".equals(term.head());
+        if ((!conjunction && !disjunction) || term.children().size() < 2) {
+            return term;
+        }
+        String movableHead = conjunction ? "QF/SOME" : "QF/ALL";
+        for (int index = 0; index < term.children().size(); index++) {
+            AlloyTerm quantifier = term.children().get(index);
+            if (!movableHead.equals(quantifier.head()) || !hasFormulaQuantifierShape(quantifier)) {
+                continue;
+            }
+            Set<String> bound = declaredVariables(quantifier);
+            Set<String> outside = new HashSet<>();
+            for (int i = 0; i < term.children().size(); i++) {
+                if (i != index) {
+                    collectVariableNames(term.children().get(i), outside);
+                }
+            }
+            if (!Collections.disjoint(bound, outside)) {
+                continue;
+            }
+
+            int bodyIndex = quantifier.children().size() - 1;
+            AlloyTerm oldBody = quantifier.children().get(bodyIndex);
+            List<AlloyTerm> matrixChildren = new ArrayList<>(term.children());
+            matrixChildren.set(index, unwrapBody(oldBody));
+            AlloyTerm matrix = AlloyTerm.node(term.head(), matrixChildren);
+            AlloyTerm wrappedMatrix = "Body".equals(oldBody.head())
+                    ? AlloyTerm.node("Body", matrix)
+                    : matrix;
+            List<AlloyTerm> quantifierChildren = new ArrayList<>(quantifier.children());
+            quantifierChildren.set(bodyIndex, wrappedMatrix);
+            return AlloyTerm.node(quantifier.head(), quantifierChildren);
+        }
+        return term;
+    }
+
+    private static boolean hasFormulaQuantifierShape(AlloyTerm quantifier) {
+        if (quantifier.children().size() < 2) {
+            return false;
+        }
+        int bodyIndex = quantifier.children().size() - 1;
+        for (int i = 0; i < bodyIndex; i++) {
+            if (!quantifier.children().get(i).head().startsWith("DECL/")) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static Set<String> declaredVariables(AlloyTerm quantifier) {
+        Set<String> names = new HashSet<>();
+        int bodyIndex = quantifier.children().size() - 1;
+        for (int i = 0; i < bodyIndex; i++) {
+            for (AlloyTerm child : quantifier.children().get(i).children()) {
+                if (child.isVariable()) {
+                    names.add(child.atom());
+                }
+            }
+        }
+        return names;
+    }
+
     private static void flatten(String head, AlloyTerm term, List<AlloyTerm> output) {
         if (head.equals(term.head())) {
             for (AlloyTerm child : term.children()) {
@@ -383,6 +575,19 @@ final class AlloyRewriteSystem {
         } else {
             output.add(term);
         }
+    }
+
+    private static AlloyTerm encodeArity(AlloyTerm term, ArityMode arityMode) {
+        if (arityMode != ArityMode.FIXED || !ASSOCIATIVE.contains(term.head())
+                || term.children().size() <= 2) {
+            return term;
+        }
+        List<AlloyTerm> children = term.children();
+        AlloyTerm suffix = children.get(children.size() - 1);
+        for (int i = children.size() - 2; i >= 0; i--) {
+            suffix = AlloyTerm.node(term.head(), children.get(i), suffix);
+        }
+        return suffix;
     }
 
     private static List<AlloyTerm> deduplicate(List<AlloyTerm> children) {

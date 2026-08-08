@@ -55,10 +55,13 @@ public class CanonicalBatchTest {
         List<FileResult> results = processFiles(files, options);
         try (Writer json = Files.newBufferedWriter(jsonPath, StandardCharsets.UTF_8)) {
             writeJsonHeader(json, options, files.size());
-            for (int i = 0; i < results.size(); i++) {
-                FileResult result = results.get(i);
+            int written = 0;
+            for (FileResult result : results) {
                 summary.add(result);
-                if (i > 0) {
+                if (result.skipped) {
+                    continue;
+                }
+                if (written++ > 0) {
                     json.write(",\n");
                 }
                 writeJsonResult(json, result);
@@ -144,14 +147,21 @@ public class CanonicalBatchTest {
                 result.error = "No predicate pair of the form X and X[Cc] found.";
                 return result;
             }
-            String leftBody = predicateBody(file, pair.leftName, pair.left);
-            String rightBody = predicateBody(file, pair.rightName, pair.right);
             result.leftPredicate = pair.leftName;
             result.rightPredicate = pair.rightName;
-            result.predicateBodySize = Math.max(leftBody.length(), rightBody.length());
             result.leftRawAstSize = rawAstSize(pair.left.getBody());
             result.rightRawAstSize = rawAstSize(pair.right.getBody());
             result.rawAstSize = Math.max(result.leftRawAstSize, result.rightRawAstSize);
+            if (DatasetConventions.sameRawAst(pair.left.getBody(), pair.right.getBody())) {
+                result.rawAstTreeDistance = 0;
+                result.skipped = true;
+                result.skipReason = "Identical raw AST predicate body.";
+                return result;
+            }
+
+            String leftBody = predicateBody(file, pair.leftName, pair.left);
+            String rightBody = predicateBody(file, pair.rightName, pair.right);
+            result.predicateBodySize = Math.max(leftBody.length(), rightBody.length());
             result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
 
@@ -179,11 +189,6 @@ public class CanonicalBatchTest {
             result.rightCanonicalFormSize = Canonical.canonicalFormSize(rightCanonical);
             result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
             result.representationSizesAvailable = true;
-            if (result.rawAstTreeDistance == 0) {
-                result.skipped = true;
-                result.skipReason = "Identical raw AST predicate body.";
-                return result;
-            }
             result.distance = Canonical.distance(leftCanonical, rightCanonical);
             result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
             result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
@@ -326,7 +331,9 @@ public class CanonicalBatchTest {
             return rawAstSize(left);
         }
         int distance = rawAstLabel(left).equals(rawAstLabel(right)) ? 0 : 1;
-        distance += rawAstForestDistance(left.getChildren(), right.getChildren());
+        distance += rawAstForestDistance(
+                DatasetConventions.rawAstChildren(left),
+                DatasetConventions.rawAstChildren(right));
         return distance;
     }
 
@@ -354,7 +361,7 @@ public class CanonicalBatchTest {
             return 0;
         }
         int size = 1;
-        for (Node child : node.getChildren()) {
+        for (Node child : DatasetConventions.rawAstChildren(node)) {
             size += rawAstSize(child);
         }
         return size;
@@ -365,21 +372,7 @@ public class CanonicalBatchTest {
     }
 
     private static String rawAstLabel(Node node) {
-        StringBuilder label = new StringBuilder(node.getClass().getSimpleName());
-        appendAstAttribute(label, node, "getOp");
-        appendAstAttribute(label, node, "getName");
-        appendAstAttribute(label, node, "getValue");
-        return label.toString();
-    }
-
-    private static void appendAstAttribute(StringBuilder label, Node node, String methodName) {
-        try {
-            Object value = node.getClass().getMethod(methodName).invoke(node);
-            if (value != null) {
-                label.append(':').append(value);
-            }
-        } catch (ReflectiveOperationException ignored) {
-        }
+        return DatasetConventions.rawAstLabel(node);
     }
 
     private static String preferredPredicateBase(Path file) {
@@ -584,7 +577,7 @@ public class CanonicalBatchTest {
             writer.write("## Canonical Representation Compression\n\n");
             writer.write("Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`. "
                     + "Negative values indicate expansion. Sizes are for the student predicate associated with "
-                    + "the directory label; identical-AST pairs are included.\n\n");
+                    + "the directory label; identical-AST pairs are excluded.\n\n");
             writer.write("| Problem class | Correctness division | Models | Avg raw AST size | Avg canonical size | Compression rate |\n");
             writer.write("| --- | --- | ---: | ---: | ---: | ---: |\n");
             for (Stats stats : summary.groupStats.values()) {

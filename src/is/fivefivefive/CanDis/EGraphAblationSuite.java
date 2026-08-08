@@ -20,6 +20,8 @@ import java.util.TreeSet;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import is.fivefivefive.CanDis.ablation.JavaEgglog;
+
 /** Launches each ablation arm in a fresh JVM and combines time/RSS measurements. */
 public final class EGraphAblationSuite {
     private static final List<String> ENGINES = List.of(
@@ -44,6 +46,7 @@ public final class EGraphAblationSuite {
                 runs.add(runEngine(engine, options));
             }
         }
+        validateParallelism(options, runs);
         writeComparisonJson(options.output.resolve("comparison.json"), options, runs);
         writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
         writeDisagreements(options.output.resolve("equivalence_disagreements.csv"), runs);
@@ -108,9 +111,13 @@ public final class EGraphAblationSuite {
         root.put("generatedAt", Instant.now().toString());
         root.put("inputRoot", options.input.toString());
         root.put("threadCount", options.threads);
+        root.put("logicalProcessors", AblationParallelism.logicalProcessors());
+        root.put("threadPolicy", AblationParallelism.POLICY);
         root.put("maxHeap", options.maxHeap);
         root.put("limit", options.limit);
         root.put("javaVersion", System.getProperty("java.version"));
+        root.put("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
+        root.put("sharedBaselineRewriteRules", new JSONArray(JavaEgglog.ruleNames()));
         JSONArray runArray = new JSONArray();
         for (RunMetrics run : runs) {
             runArray.put(run.toJson());
@@ -197,13 +204,16 @@ public final class EGraphAblationSuite {
         markdown.append("- Input root: `").append(options.input).append("`\n");
         markdown.append("- Predicate-pair limit: ")
                 .append(options.limit == 0 ? "full corpus" : Integer.toString(options.limit)).append("\n");
-        markdown.append("- Threads per arm: ").append(options.threads).append("\n");
+        markdown.append("- Worker threads per arm: ").append(options.threads).append("\n");
+        markdown.append("- Logical processors: ").append(AblationParallelism.logicalProcessors()).append("\n");
+        markdown.append("- Thread policy: `").append(AblationParallelism.POLICY).append("`\n");
         markdown.append("- JVM heap cap per arm: `").append(options.maxHeap).append("`\n");
         markdown.append("- Java: `").append(System.getProperty("java.version")).append("`\n\n");
 
         markdown.append("## Arms\n\n");
-        markdown.append("1. **Raw e-graph:** exact Alloy AST constructors, union-find, and hash-consing only.\n");
-        markdown.append("2. **Java egglog core:** the raw terms plus union facts, semi-naive rule rounds, "
+        markdown.append("1. **Conventional e-graph:** fixed-arity Alloy constructors, the shared rule program, "
+                + "union-find, hash-consing, and congruence rebuilding.\n");
+        markdown.append("2. **Java egglog core:** variadic Alloy constructors plus union facts, semi-naive rule rounds, "
                 + "and congruence rebuilding. This is a Java replica of the egglog execution core used here, "
                 + "not a textual-language-compatible port of every egglog feature.\n");
         markdown.append("3. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
@@ -211,21 +221,30 @@ public final class EGraphAblationSuite {
         markdown.append("4. **Canonical:** the current method, adding temporal-phase partitioning, connective "
                 + "elimination, strict per-phase prenexing, primitive binding tuples, and canonical variadic matrices.\n\n");
 
+        markdown.append("## Shared Rule Program\n\n");
+        markdown.append("The first three arms use the same `").append(JavaEgglog.ruleSetVersion())
+                .append("` rule set; only their term/eclass representation differs. The rules are: ")
+                .append(String.join(", ", JavaEgglog.ruleNames())).append(".\n\n");
+
         markdown.append("## Runtime And Memory\n\n");
-        markdown.append("Each arm ran in a fresh JVM. Wall time and maximum RSS come from `/usr/bin/time -v`; "
-                + "peak used heap is sampled every 10 ms inside that JVM. Engine CPU time is the sum of timed "
-                + "representation construction, saturation, and comparison across worker tasks, excluding parsing.\n\n");
-        markdown.append("| Arm | Successful / files | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Engine CPU s | "
-                + "Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |\n");
-        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        markdown.append("Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from "
+                + "`/usr/bin/time -v`; peak used heap is sampled every 10 ms. Engine CPU uses worker-thread CPU "
+                + "counters around representation construction, saturation, and comparison, excluding parsing. "
+                + "Aggregate task time is summed worker latency and may exceed wall time under parallelism.\n\n");
+        markdown.append("| Arm | Successful / eligible | AST-same skipped | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Process CPU s | Engine CPU s | "
+                + "Aggregate task s | Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (RunMetrics run : runs) {
             markdown.append("| ").append(run.engine).append(" | ")
-                    .append(run.successes).append(" / ").append(run.files).append(" | ")
+                    .append(run.successes).append(" / ").append(run.files - run.skipped).append(" | ")
+                    .append(run.skipped).append(" | ")
                     .append(run.equivalentPairs).append(" | ")
                     .append(number(run.processElapsedSeconds)).append(" | ")
                     .append(number(run.wallNanos / 1_000_000_000.0)).append(" | ")
                     .append(number(run.throughput())).append(" | ")
+                    .append(number(run.userSeconds + run.systemSeconds)).append(" | ")
                     .append(number(run.engineCpuNanos / 1_000_000_000.0)).append(" | ")
+                    .append(number(run.engineTaskNanos / 1_000_000_000.0)).append(" | ")
                     .append(number(run.averageEngineNanos / 1_000_000.0)).append(" | ")
                     .append(number(run.p50EngineNanos / 1_000_000.0)).append(" | ")
                     .append(number(run.p95EngineNanos / 1_000_000.0)).append(" | ")
@@ -238,9 +257,9 @@ public final class EGraphAblationSuite {
         RunMetrics egglog = findRun(runs, "java-egglog");
         RunMetrics slotted = findRun(runs, "slotted-egraph");
         markdown.append("\n## Observations\n\n");
-        markdown.append("- Egglog-style saturation adds ")
+        markdown.append("- Variadic egglog encoding adds ")
                 .append(differenceSize(egglog.equivalentPaths, raw.equivalentPaths))
-                .append(" zero-distance pairs over raw hash-consing, with ")
+                .append(" zero-distance pairs over the fixed-arity e-graph, with ")
                 .append(differenceSize(raw.equivalentPaths, egglog.equivalentPaths)).append(" losses.\n");
         markdown.append("- Slot-aware shapes add ")
                 .append(differenceSize(slotted.equivalentPaths, egglog.equivalentPaths))
@@ -371,9 +390,9 @@ public final class EGraphAblationSuite {
     private static final class Options {
         private Path input = Paths.get("classified-data");
         private Path output = Paths.get("egraph_ablation");
-        private int threads = 32;
+        private int threads = AblationParallelism.defaultWorkers();
         private int limit;
-        private String maxHeap = "12g";
+        private String maxHeap = "3g";
         private boolean verbose;
         private boolean reportOnly;
 
@@ -388,7 +407,7 @@ public final class EGraphAblationSuite {
                         options.output = Paths.get(value(args, ++i, "--output"));
                         break;
                     case "--threads":
-                        options.threads = Math.max(1, Integer.parseInt(value(args, ++i, "--threads")));
+                        options.threads = Integer.parseInt(value(args, ++i, "--threads"));
                         break;
                     case "--limit":
                         options.limit = Math.max(0, Integer.parseInt(value(args, ++i, "--limit")));
@@ -406,6 +425,7 @@ public final class EGraphAblationSuite {
                         throw new IllegalArgumentException("Unknown option: " + args[i]);
                 }
             }
+            options.threads = AblationParallelism.effectiveWorkers(options.threads);
             return options;
         }
 
@@ -420,13 +440,16 @@ public final class EGraphAblationSuite {
     private static final class RunMetrics {
         private String engine;
         private String description;
+        private int threadCount;
         private long files;
         private long successes;
+        private long skipped;
         private long failures;
         private long equivalentPairs;
         private long wallNanos;
         private long peakUsedHeapBytes;
         private long engineCpuNanos;
+        private long engineTaskNanos;
         private double averageEngineNanos;
         private long p50EngineNanos;
         private long p95EngineNanos;
@@ -462,13 +485,17 @@ public final class EGraphAblationSuite {
             RunMetrics run = new RunMetrics();
             run.engine = properties.getProperty("engine");
             run.description = properties.getProperty("description", "");
+            run.threadCount = Integer.parseInt(properties.getProperty("threads", "0"));
             run.files = longValue(properties, "files");
             run.successes = longValue(properties, "successes");
+            run.skipped = Long.parseLong(properties.getProperty("skippedIdenticalRawAstPairs", "0"));
             run.failures = longValue(properties, "failures");
             run.equivalentPairs = longValue(properties, "equivalentPairs");
             run.wallNanos = longValue(properties, "wallNanos");
             run.peakUsedHeapBytes = longValue(properties, "peakUsedHeapBytes");
             run.engineCpuNanos = longValue(properties, "engineCpuNanos");
+            run.engineTaskNanos = Long.parseLong(properties.getProperty(
+                    "engineTaskNanos", properties.getProperty("engineCpuNanos", "0")));
             run.averageEngineNanos = doubleValue(properties, "averageEngineNanos");
             run.p50EngineNanos = longValue(properties, "p50EngineNanos");
             run.p95EngineNanos = longValue(properties, "p95EngineNanos");
@@ -562,13 +589,17 @@ public final class EGraphAblationSuite {
             return new JSONObject()
                     .put("engine", engine)
                     .put("description", description)
+                    .put("threadCount", threadCount)
                     .put("files", files)
                     .put("successes", successes)
+                    .put("eligiblePairs", files - skipped)
+                    .put("skippedIdenticalRawAstPairs", skipped)
                     .put("failures", failures)
                     .put("equivalentPairs", equivalentPairs)
                     .put("wallNanos", wallNanos)
                     .put("throughputPairsPerSecond", throughput())
                     .put("engineCpuNanos", engineCpuNanos)
+                    .put("engineTaskNanos", engineTaskNanos)
                     .put("averageEngineNanos", averageEngineNanos)
                     .put("p50EngineNanos", p50EngineNanos)
                     .put("p95EngineNanos", p95EngineNanos)
@@ -640,6 +671,15 @@ public final class EGraphAblationSuite {
             }
             fields.add(field.toString());
             return fields;
+        }
+    }
+
+    private static void validateParallelism(Options options, List<RunMetrics> runs) {
+        for (RunMetrics run : runs) {
+            if (run.threadCount != options.threads) {
+                throw new IllegalStateException(run.engine + " reported " + run.threadCount
+                        + " worker threads; every arm must report " + options.threads);
+            }
         }
     }
 

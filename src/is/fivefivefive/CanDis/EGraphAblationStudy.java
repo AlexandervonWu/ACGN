@@ -4,19 +4,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -42,13 +47,17 @@ import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
+import parser.ast.nodes.Function;
+import parser.ast.nodes.Call;
+import parser.ast.nodes.PredOrFun;
 import parser.util.AlloyUtil;
 
 /** Runs one process-isolated arm of the Alloy e-graph ablation. */
 public final class EGraphAblationStudy {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "egraph_ablation/raw-egraph";
-    private static final int DEFAULT_THREADS = 32;
+    private static final int DEFAULT_THREADS = AblationParallelism.defaultWorkers();
+    private static final ThreadMXBean THREAD_CPU = ManagementFactory.getThreadMXBean();
 
     private EGraphAblationStudy() {
     }
@@ -77,7 +86,8 @@ public final class EGraphAblationStudy {
         writeJson(options.output.resolve("summary.json"), options, summary);
         writeProperties(options.output.resolve("metrics.properties"), options, summary);
         System.out.println("Completed " + options.engine.id + " on " + summary.successes + "/"
-                + summary.files + " predicate pairs in " + formatSeconds(wallNanos) + " s.");
+                + summary.files + " predicate pairs (skipped " + summary.skipped
+                + " AST-identical pairs) in " + formatSeconds(wallNanos) + " s.");
     }
 
     private static List<FileResult> processFiles(List<Path> files, Options options) {
@@ -141,8 +151,10 @@ public final class EGraphAblationStudy {
     private static FileResult processFile(Options options, Path file) {
         FileResult result = new FileResult(options.input, file);
         long totalStarted = System.nanoTime();
+        long totalCpuStarted = currentThreadCpuNanos();
         try {
             long parseStarted = System.nanoTime();
+            long parseCpuStarted = currentThreadCpuNanos();
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
             if (module == null) {
                 throw new IllegalStateException("Alloy parser returned no module");
@@ -156,8 +168,14 @@ public final class EGraphAblationStudy {
             result.rightPredicate = pair.rightName;
             result.rawAstNodes = predicateAstSize(pair.left) + predicateAstSize(pair.right);
             result.parseNanos = System.nanoTime() - parseStarted;
+            result.parseCpuNanos = elapsedThreadCpuNanos(parseCpuStarted);
+            if (DatasetConventions.sameRawAst(pair.left.getBody(), pair.right.getBody())) {
+                result.skipped = true;
+                return result;
+            }
 
             long engineStarted = System.nanoTime();
+            long engineCpuStarted = currentThreadCpuNanos();
             if (options.engine == Engine.CANONICAL) {
                 runCanonical(model, pair, result);
             } else {
@@ -170,6 +188,7 @@ public final class EGraphAblationStudy {
                 result.representationUnits = comparison.stats.enodes;
             }
             result.engineNanos = System.nanoTime() - engineStarted;
+            result.engineCpuNanos = elapsedThreadCpuNanos(engineCpuStarted);
         } catch (Throwable throwable) {
             result.error = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             if (options.verbose) {
@@ -177,16 +196,37 @@ public final class EGraphAblationStudy {
             }
         } finally {
             result.totalNanos = System.nanoTime() - totalStarted;
+            result.totalCpuNanos = elapsedThreadCpuNanos(totalCpuStarted);
         }
         return result;
     }
 
+    private static long currentThreadCpuNanos() {
+        if (!THREAD_CPU.isCurrentThreadCpuTimeSupported()) {
+            return -1L;
+        }
+        if (!THREAD_CPU.isThreadCpuTimeEnabled()) {
+            try {
+                THREAD_CPU.setThreadCpuTimeEnabled(true);
+            } catch (UnsupportedOperationException | SecurityException ignored) {
+                return -1L;
+            }
+        }
+        return THREAD_CPU.getCurrentThreadCpuTime();
+    }
+
+    private static long elapsedThreadCpuNanos(long started) {
+        long finished = currentThreadCpuNanos();
+        return started < 0 || finished < 0 ? 0L : Math.max(0L, finished - started);
+    }
+
     private static void runCanonical(ModelUnit model, PredicatePair pair, FileResult result) {
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
-        visitor.visit(model, null);
+        MASGVisitor visitor = focusedVisitor(model, pair);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-        Multigraph left = forest.get(pair.leftId);
-        Multigraph right = forest.get(pair.rightId);
+        Integer leftId = visitor.getForestId(pair.leftName);
+        Integer rightId = visitor.getForestId(pair.rightName);
+        Multigraph left = leftId == null ? null : forest.get(leftId);
+        Multigraph right = rightId == null ? null : forest.get(rightId);
         if (left == null || right == null) {
             throw new IllegalStateException("Could not find both predicate graphs in MASG forest");
         }
@@ -199,6 +239,60 @@ public final class EGraphAblationStudy {
         result.equivalent = result.distance == 0;
         result.stats = new EGraphStats(0, 0, 0, 0,
                 0, 0, 0, 0, 0, result.representationUnits * 64L);
+    }
+
+    private static MASGVisitor focusedVisitor(ModelUnit model, PredicatePair pair) {
+        Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
+        try {
+            visitor.visit(model, null);
+            return visitor;
+        } catch (RuntimeException focusedFailure) {
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables());
+            fallback.visit(model, null);
+            return fallback;
+        }
+    }
+
+    private static Set<String> callableClosure(ModelUnit model, String leftName, String rightName) {
+        Map<String, PredOrFun> declarations = new HashMap<>();
+        for (Predicate predicate : model.getPredDeclList()) {
+            declarations.put(predicate.getName(), predicate);
+        }
+        for (Function function : model.getFunDeclList()) {
+            declarations.put(function.getName(), function);
+        }
+        Set<String> selected = new HashSet<>();
+        ArrayDeque<String> pending = new ArrayDeque<>();
+        pending.add(leftName);
+        pending.add(rightName);
+        while (!pending.isEmpty()) {
+            String name = pending.removeFirst();
+            if (!selected.add(name)) {
+                continue;
+            }
+            PredOrFun declaration = declarations.get(name);
+            if (declaration != null) {
+                collectCalledDeclarations(declaration, declarations, selected, pending);
+            }
+        }
+        return selected;
+    }
+
+    private static void collectCalledDeclarations(
+            Node node,
+            Map<String, PredOrFun> declarations,
+            Set<String> selected,
+            ArrayDeque<String> pending) {
+        if (node instanceof Call) {
+            String name = ((Call) node).getName();
+            if (declarations.containsKey(name) && !selected.contains(name)) {
+                pending.addLast(name);
+            }
+        }
+        for (Node child : DatasetConventions.rawAstChildren(node)) {
+            collectCalledDeclarations(child, declarations, selected, pending);
+        }
     }
 
     private static PredicatePair findPredicatePair(Path file, ModelUnit model) {
@@ -267,10 +361,14 @@ public final class EGraphAblationStudy {
     private static void writeCsv(Path path, List<FileResult> results) throws IOException {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("relativePath,problemClass,status,leftPredicate,rightPredicate,success,equivalent,"
-                    + "distance,parseNanos,engineNanos,totalNanos,rawAstNodes,representationUnits,eclasses,enodes,"
+                    + "distance,parseNanos,engineNanos,totalNanos,parseCpuNanos,engineCpuNanos,totalCpuNanos,"
+                    + "rawAstNodes,representationUnits,eclasses,enodes,"
                     + "unions,rebuilds,rewriteApplications,iterations,slots,slotMappings,redundantSlots,"
                     + "estimatedBytes,error\n");
             for (FileResult result : results) {
+                if (result.skipped) {
+                    continue;
+                }
                 EGraphStats stats = result.stats == null ? EGraphStats.empty() : result.stats;
                 csv(writer, result.relativePath);
                 csv(writer, result.problemClass);
@@ -288,6 +386,12 @@ public final class EGraphAblationStudy {
                 writer.write(Long.toString(result.engineNanos));
                 writer.write(',');
                 writer.write(Long.toString(result.totalNanos));
+                writer.write(',');
+                writer.write(Long.toString(result.parseCpuNanos));
+                writer.write(',');
+                writer.write(Long.toString(result.engineCpuNanos));
+                writer.write(',');
+                writer.write(Long.toString(result.totalCpuNanos));
                 writer.write(',');
                 writer.write(Integer.toString(result.rawAstNodes));
                 writer.write(',');
@@ -337,7 +441,11 @@ public final class EGraphAblationStudy {
         root.put("inputRoot", options.input.toString());
         root.put("engine", options.engine.id);
         root.put("engineDescription", options.engine.description);
+        root.put("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
+        root.put("sharedBaselineRewriteRules", new JSONArray(JavaEgglog.ruleNames()));
         root.put("threadCount", options.threads);
+        root.put("logicalProcessors", AblationParallelism.logicalProcessors());
+        root.put("threadPolicy", AblationParallelism.POLICY);
         root.put("limit", options.limit);
         root.put("overall", summary.overall.toJson(summary));
         JSONArray groups = new JSONArray();
@@ -362,10 +470,16 @@ public final class EGraphAblationStudy {
         Properties properties = new Properties();
         properties.setProperty("engine", options.engine.id);
         properties.setProperty("description", options.engine.description);
+        properties.setProperty("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
+        properties.setProperty("sharedBaselineRuleCount", Integer.toString(JavaEgglog.ruleNames().size()));
+        properties.setProperty("cpuAccounting", "thread-cpu-v1");
         properties.setProperty("inputRoot", options.input.toString());
         properties.setProperty("threads", Integer.toString(options.threads));
+        properties.setProperty("logicalProcessors", Integer.toString(AblationParallelism.logicalProcessors()));
+        properties.setProperty("threadPolicy", AblationParallelism.POLICY);
         properties.setProperty("files", Long.toString(summary.files));
         properties.setProperty("successes", Long.toString(summary.successes));
+        properties.setProperty("skippedIdenticalRawAstPairs", Long.toString(summary.skipped));
         properties.setProperty("failures", Long.toString(summary.failures));
         properties.setProperty("equivalentPairs", Long.toString(summary.overall.equivalent));
         properties.setProperty("totalDistance", Long.toString(summary.overall.distance));
@@ -374,8 +488,11 @@ public final class EGraphAblationStudy {
         properties.setProperty("p95Distance", Integer.toString(summary.overall.distancePercentile(0.95)));
         properties.setProperty("wallNanos", Long.toString(summary.wallNanos));
         properties.setProperty("peakUsedHeapBytes", Long.toString(summary.peakHeapBytes));
-        properties.setProperty("parseCpuNanos", Long.toString(summary.overall.parseNanos));
-        properties.setProperty("engineCpuNanos", Long.toString(summary.overall.engineNanos));
+        properties.setProperty("parseTaskNanos", Long.toString(summary.overall.parseNanos));
+        properties.setProperty("engineTaskNanos", Long.toString(summary.overall.engineNanos));
+        properties.setProperty("parseCpuNanos", Long.toString(summary.overall.parseCpuNanos));
+        properties.setProperty("engineCpuNanos", Long.toString(summary.overall.engineCpuNanos));
+        properties.setProperty("totalCpuNanos", Long.toString(summary.overall.totalCpuNanos));
         properties.setProperty("averageEngineNanos", Double.toString(summary.overall.averageEngineNanos()));
         properties.setProperty("p50EngineNanos", Long.toString(summary.overall.percentile(0.50)));
         properties.setProperty("p95EngineNanos", Long.toString(summary.overall.percentile(0.95)));
@@ -394,9 +511,9 @@ public final class EGraphAblationStudy {
     }
 
     private enum Engine {
-        RAW("raw-egraph", "Raw syntactic hash-consed e-graph; no rewrites or rebuilding"),
-        EGGLOG("java-egglog", "Java egglog core replica with semi-naive rewrite rounds and rebuilding"),
-        SLOTTED("slotted-egraph", "Raw slotted e-graph with renamed IDs, shape hash-consing, and permutation groups"),
+        RAW("raw-egraph", "Conventional fixed-arity e-graph with the shared Alloy rewrite program"),
+        EGGLOG("java-egglog", "Java egglog core replica with shared variadic rules and rebuilding"),
+        SLOTTED("slotted-egraph", "Slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
         CANONICAL("canonical", "Current temporal/prenex/slotted canonical-form method");
 
         private final String id;
@@ -462,7 +579,7 @@ public final class EGraphAblationStudy {
                         options.engine = Engine.parse(requireValue(args, ++i, "--engine"));
                         break;
                     case "--threads":
-                        options.threads = Math.max(1, Integer.parseInt(requireValue(args, ++i, "--threads")));
+                        options.threads = Integer.parseInt(requireValue(args, ++i, "--threads"));
                         break;
                     case "--limit":
                         options.limit = Math.max(0, Integer.parseInt(requireValue(args, ++i, "--limit")));
@@ -474,6 +591,7 @@ public final class EGraphAblationStudy {
                         throw new IllegalArgumentException("Unknown option: " + args[i]);
                 }
             }
+            options.threads = AblationParallelism.effectiveWorkers(options.threads);
             return options;
         }
 
@@ -518,10 +636,14 @@ public final class EGraphAblationStudy {
         private long parseNanos;
         private long engineNanos;
         private long totalNanos;
+        private long parseCpuNanos;
+        private long engineCpuNanos;
+        private long totalCpuNanos;
         private int rawAstNodes;
         private long representationUnits;
         private int distance = -1;
         private boolean equivalent;
+        private boolean skipped;
         private EGraphStats stats = EGraphStats.empty();
         private String error;
 
@@ -549,6 +671,7 @@ public final class EGraphAblationStudy {
         private final Map<GroupKey, Accumulator> groups = new LinkedHashMap<>();
         private final List<FileResult> failureExamples = new ArrayList<>();
         private long successes;
+        private long skipped;
         private long failures;
 
         private Summary(Engine engine, long files, long wallNanos, long peakHeapBytes) {
@@ -559,6 +682,10 @@ public final class EGraphAblationStudy {
         }
 
         private void add(FileResult result) {
+            if (result.skipped) {
+                skipped++;
+                return;
+            }
             if (result.error != null) {
                 failures++;
                 if (failureExamples.size() < 100) {
@@ -610,6 +737,9 @@ public final class EGraphAblationStudy {
         private long parseNanos;
         private long engineNanos;
         private long totalNanos;
+        private long parseCpuNanos;
+        private long engineCpuNanos;
+        private long totalCpuNanos;
         private long rawAstNodes;
         private long representationUnits;
         private long eclasses;
@@ -634,6 +764,9 @@ public final class EGraphAblationStudy {
             parseNanos += result.parseNanos;
             engineNanos += result.engineNanos;
             totalNanos += result.totalNanos;
+            parseCpuNanos += result.parseCpuNanos;
+            engineCpuNanos += result.engineCpuNanos;
+            totalCpuNanos += result.totalCpuNanos;
             rawAstNodes += result.rawAstNodes;
             representationUnits += result.representationUnits;
             eclasses += stats.eclasses;
@@ -660,9 +793,12 @@ public final class EGraphAblationStudy {
             json.put("averageDistance", averageDistance());
             json.put("p50Distance", distancePercentile(0.50));
             json.put("p95Distance", distancePercentile(0.95));
-            json.put("parseCpuNanos", parseNanos);
-            json.put("engineCpuNanos", engineNanos);
-            json.put("totalCpuNanos", totalNanos);
+            json.put("parseTaskNanos", parseNanos);
+            json.put("engineTaskNanos", engineNanos);
+            json.put("totalTaskNanos", totalNanos);
+            json.put("parseCpuNanos", parseCpuNanos);
+            json.put("engineCpuNanos", engineCpuNanos);
+            json.put("totalCpuNanos", totalCpuNanos);
             json.put("averageEngineNanos", averageEngineNanos());
             json.put("p50EngineNanos", percentile(0.50));
             json.put("p95EngineNanos", percentile(0.95));
@@ -682,6 +818,7 @@ public final class EGraphAblationStudy {
             if (summary != null) {
                 json.put("files", summary.files);
                 json.put("successes", summary.successes);
+                json.put("skippedIdenticalRawAstPairs", summary.skipped);
                 json.put("failures", summary.failures);
                 json.put("wallNanos", summary.wallNanos);
                 json.put("throughputPairsPerSecond",

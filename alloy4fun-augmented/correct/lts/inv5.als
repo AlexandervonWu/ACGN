@@ -49,30 +49,42 @@ all s,r :State | (r.trans).State = (s.trans).State
 }
 
 pred inv5_correct_10[] {
-all s,r : State | (s.trans).State = (r.trans).State
+all disj s, ss: State | s.trans.State = ss.trans.State
 }
 
 pred inv5_correct_11[] {
-all s : State | (State.trans).State = (s.trans).State
+all s,r : State | (s.trans).State = (r.trans).State
 }
 
 pred inv5_correct_12[] {
-all s : State | s.(trans.State) = State.(trans.State)
+all s : State | (State.trans).State = (s.trans).State
 }
 
 pred inv5_correct_13[] {
-all s,s1:State|  no( (s.trans).State  -  (s1.trans).State   )
+all s : State | s.(trans.State) = State.(trans.State)
 }
 
 pred inv5_correct_14[] {
-all s, m: State, e: Event | some s.trans[e] => some m.trans[e]
+all s,s1:State|  no( (s.trans).State  -  (s1.trans).State   )
 }
 
 pred inv5_correct_15[] {
-all disj s,t:State | s.trans.State = t.trans.State
+all s, m: State, e: Event | some s.trans[e] => some m.trans[e]
 }
 
 pred inv5_correct_16[] {
+all disj s,t:State | s.trans.State = t.trans.State
+}
+
+pred inv5_correct_17[] {
 not some disj s1, s2:State | (s1.trans).State != (s2.trans).State
+}
+
+pred inv5_correct_18[] {
+all disj s, s1 : State | (s.trans).State = (s1.trans).State
+}
+
+pred inv5_correct_19[] {
+all disj s1, s2 : State | State.~(s1.trans) = State.~(s2.trans)
 }
 

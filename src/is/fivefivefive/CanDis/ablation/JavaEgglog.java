@@ -1,6 +1,7 @@
 package is.fivefivefive.CanDis.ablation;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,11 +13,20 @@ import java.util.Set;
 public final class JavaEgglog implements AblationEngine {
     private static final int MAX_TERM_SIZE = 50_000;
 
+    public static String ruleSetVersion() {
+        return AlloyRewriteSystem.RULE_SET_VERSION;
+    }
+
+    public static List<String> ruleNames() {
+        return AlloyRewriteSystem.ruleNames();
+    }
+
     /** Returns the fixed-point representative used by the Alloy rewrite program. */
     public static AlloyTerm normalForm(AlloyTerm term) {
         AlloyTerm current = term;
         for (int iteration = 0; iteration < AlloyRewriteSystem.MAX_ITERATIONS; iteration++) {
-            AlloyRewriteSystem.Pass pass = AlloyRewriteSystem.rewriteOnce(current);
+            AlloyRewriteSystem.Pass pass = AlloyRewriteSystem.rewriteOnce(
+                    current, AlloyRewriteSystem.ArityMode.VARIADIC);
             if (pass.applications == 0 || pass.term.size() > MAX_TERM_SIZE) {
                 return current;
             }
@@ -40,8 +50,10 @@ public final class JavaEgglog implements AblationEngine {
         long iterations = 0;
 
         for (int iteration = 0; iteration < AlloyRewriteSystem.MAX_ITERATIONS; iteration++) {
-            AlloyRewriteSystem.Pass leftPass = AlloyRewriteSystem.rewriteOnce(leftFrontier);
-            AlloyRewriteSystem.Pass rightPass = AlloyRewriteSystem.rewriteOnce(rightFrontier);
+            AlloyRewriteSystem.Pass leftPass = AlloyRewriteSystem.rewriteOnce(
+                    leftFrontier, AlloyRewriteSystem.ArityMode.VARIADIC);
+            AlloyRewriteSystem.Pass rightPass = AlloyRewriteSystem.rewriteOnce(
+                    rightFrontier, AlloyRewriteSystem.ArityMode.VARIADIC);
             int roundApplications = leftPass.applications + rightPass.applications;
             if (roundApplications == 0) {
                 break;

@@ -107,14 +107,18 @@ all t:Trash, f:File | t->f in link implies f in Trash
 }
 
 pred inv10_correct_22[] {
-all f:File, f2:f.link | f in Trash => f2 in Trash
+all disj f1, f2:File | f1->f2 in link and f1 in Trash => f2 in Trash
 }
 
 pred inv10_correct_23[] {
-all x : Trash, y : File | x->y in link implies y in Trash
+all f:File, f2:f.link | f in Trash => f2 in Trash
 }
 
 pred inv10_correct_24[] {
+all x : Trash, y : File | x->y in link implies y in Trash
+}
+
+pred inv10_correct_25[] {
 all w, f : File | (((w->f) in link) and (w in Trash)) implies f in Trash
 }
 

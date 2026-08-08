@@ -14,7 +14,7 @@ import java.util.Set;
 public final class SlotPermutationGroup {
     private List<String> slots = new ArrayList<>();
     private final List<Map<String, String>> generators = new ArrayList<>();
-    private Set<List<String>> elements = new LinkedHashSet<>();
+    private Set<List<String>> elements = identityElements(Collections.emptyList());
 
     public SlotPermutationGroup(Set<String> slots) {
         setSlots(slots);
@@ -23,6 +23,9 @@ public final class SlotPermutationGroup {
     public synchronized void setSlots(Set<String> exposedSlots) {
         List<String> newSlots = new ArrayList<>(exposedSlots);
         Collections.sort(newSlots);
+        if (slots.equals(newSlots)) {
+            return;
+        }
         List<Map<String, String>> retained = new ArrayList<>();
         for (Map<String, String> generator : generators) {
             Map<String, String> restricted = restrict(generator, newSlots);
@@ -40,6 +43,9 @@ public final class SlotPermutationGroup {
         Map<String, String> normalized = normalize(permutation);
         if (!isBijection(normalized)) {
             throw new IllegalArgumentException("Slot symmetry must be a permutation of the exposed slots");
+        }
+        if (elements.contains(encode(normalized))) {
+            return;
         }
         generators.add(normalized);
         rebuildClosure();
@@ -100,6 +106,10 @@ public final class SlotPermutationGroup {
     }
 
     private void rebuildClosure() {
+        if (generators.isEmpty()) {
+            elements = identityElements(slots);
+            return;
+        }
         elements = new LinkedHashSet<>();
         Map<String, String> identity = identity();
         Queue<Map<String, String>> pending = new ArrayDeque<>();
@@ -114,6 +124,12 @@ public final class SlotPermutationGroup {
                 }
             }
         }
+    }
+
+    private static Set<List<String>> identityElements(List<String> slots) {
+        Set<List<String>> identity = new LinkedHashSet<>();
+        identity.add(Collections.unmodifiableList(new ArrayList<>(slots)));
+        return identity;
     }
 
     private Map<String, String> normalize(Map<String, String> permutation) {

@@ -99,6 +99,135 @@ public class NormalForm {
     public void addTemporalChild(NormalForm child) {
         this.temporalChildren.add(child);
     }
+
+    public void pushTemporalNegations() {
+        if (matrixEGraphRoot == null || temporalChildren.isEmpty()) {
+            return;
+        }
+        boolean[] changed = new boolean[1];
+        matrixEGraphRoot = pushTemporalNegations(matrixEGraphRoot, changed);
+        if (changed[0] && matrixEGraphRoot != null) {
+            matrixEGraphRoot.saturate();
+        }
+    }
+
+    private EGraphNode pushTemporalNegations(EGraphNode node, boolean[] changed) {
+        if (node == null) {
+            return null;
+        }
+        if (node.getOpcode() == Opcode.NOT && node.getChildren().size() == 1) {
+            EGraphNode reference = node.getChildren().get(0);
+            int[] target = temporalReferenceTarget(reference);
+            if (target != null && dualizeTemporalChildren(target[0], target[1])) {
+                changed[0] = true;
+                return cloneEGraph(reference);
+            }
+        }
+        EGraphNode rewritten = copyShallow(node, node.getOpcode());
+        for (EGraphNode child : node.getChildren()) {
+            EGraphNode rewrittenChild = pushTemporalNegations(child, changed);
+            if (rewrittenChild != null) {
+                rewritten.addChild(rewrittenChild);
+            }
+        }
+        return rewritten;
+    }
+
+    private boolean dualizeTemporalChildren(int index, int arity) {
+        if (index < 0 || arity < 1 || index + arity > temporalChildren.size()) {
+            return false;
+        }
+        List<TemporalOp> duals = new ArrayList<>(arity);
+        for (int i = 0; i < arity; i++) {
+            TemporalOp dual = temporalNegationDual(temporalChildren.get(index + i).temporalOp);
+            if (dual == null) {
+                return false;
+            }
+            duals.add(dual);
+        }
+        for (int i = 0; i < arity; i++) {
+            NormalForm child = temporalChildren.get(index + i);
+            child.temporalOp = duals.get(i);
+            child.negateMatrixBeforeNormalization();
+        }
+        return true;
+    }
+
+    private void negateMatrixBeforeNormalization() {
+        if (matrixEGraphRoot == null) {
+            return;
+        }
+        if (matrixEGraphRoot.getOpcode() != Opcode.TEMPORALROOT) {
+            matrixEGraphRoot = syntheticUnary(matrixEGraphRoot, Opcode.NOT, matrixEGraphRoot, -11);
+            return;
+        }
+        EGraphNode root = copyShallow(matrixEGraphRoot, Opcode.TEMPORALROOT);
+        List<EGraphNode> body = new ArrayList<>();
+        for (EGraphNode child : matrixEGraphRoot.getChildren()) {
+            if (isRelDecl(child.getOpcode())) {
+                root.addChild(child);
+            } else {
+                body.add(child);
+            }
+        }
+        if (!body.isEmpty()) {
+            EGraphNode matrix = body.size() == 1 ? body.get(0) : conjoin(null, body);
+            root.addChild(syntheticUnary(matrix, Opcode.NOT, matrix, -12));
+        }
+        matrixEGraphRoot = root;
+    }
+
+    private static int[] temporalReferenceTarget(EGraphNode node) {
+        if (node.getOpcode() != Opcode.REF || node.getSourceName() == null) {
+            return null;
+        }
+        String source = node.getSourceName();
+        if (!source.startsWith("temporal[") || !source.endsWith("]")) {
+            return null;
+        }
+        int colon = source.indexOf(':', 9);
+        if (colon < 0) {
+            return null;
+        }
+        try {
+            int index = Integer.parseInt(source.substring(9, colon));
+            int arity = Integer.parseInt(source.substring(colon + 1, source.length() - 1));
+            return new int[] { index, arity };
+        } catch (NumberFormatException ignored) {
+            return null;
+        }
+    }
+
+    private static TemporalOp temporalNegationDual(TemporalOp op) {
+        switch (op) {
+            case ALWAYS:
+                return TemporalOp.EVENTUALLY;
+            case EVENTUALLY:
+                return TemporalOp.ALWAYS;
+            case HISTORICALLY:
+                return TemporalOp.ONCE;
+            case ONCE:
+                return TemporalOp.HISTORICALLY;
+            case UNTILL:
+                return TemporalOp.RELEASESL;
+            case UNTILR:
+                return TemporalOp.RELEASESR;
+            case RELEASESL:
+                return TemporalOp.UNTILL;
+            case RELEASESR:
+                return TemporalOp.UNTILR;
+            case SINCEL:
+                return TemporalOp.TRIGGEREDL;
+            case SINCER:
+                return TemporalOp.TRIGGEREDR;
+            case TRIGGEREDL:
+                return TemporalOp.SINCEL;
+            case TRIGGEREDR:
+                return TemporalOp.SINCER;
+            default:
+                return null;
+        }
+    }
     public void prenex() {
         normalize();
     }
@@ -959,26 +1088,27 @@ public class NormalForm {
         if (node == null || node.getOpcode() == Opcode.END) {
             return null;
         }
-        EGraphNode rewritten = copyShallow(node, node.getOpcode());
+        List<EGraphNode> rewrittenChildren = new ArrayList<>();
         for (EGraphNode child : node.getChildren()) {
             EGraphNode rewrittenChild = removeEndNodes(child);
             if (rewrittenChild != null) {
-                rewritten.addChild(rewrittenChild);
+                rewrittenChildren.add(rewrittenChild);
             }
         }
-        if (isAssociative(rewritten.getOpcode()) && rewritten.getChildren().size() == 1) {
-            return rewritten.getChildren().get(0);
+        node.setChildren(rewrittenChildren);
+        if (isAssociative(node.getOpcode()) && node.getChildren().size() == 1) {
+            return node.getChildren().get(0);
         }
-        if (isUnaryOperator(rewritten.getOpcode()) && rewritten.getChildren().isEmpty()) {
+        if (isUnaryOperator(node.getOpcode()) && node.getChildren().isEmpty()) {
             return null;
         }
-        if (isBinaryOperator(rewritten.getOpcode()) && rewritten.getChildren().size() < 2) {
+        if (isBinaryOperator(node.getOpcode()) && node.getChildren().size() < 2) {
             return null;
         }
-        if (isDanglingStructuralMarker(rewritten)) {
+        if (isDanglingStructuralMarker(node)) {
             return null;
         }
-        return rewritten;
+        return node;
     }
 
     private static boolean isDanglingStructuralMarker(EGraphNode node) {
@@ -1068,26 +1198,23 @@ public class NormalForm {
         if (node == null) {
             return null;
         }
-        EGraphNode rewritten = copyShallow(node, node.getOpcode());
+        List<EGraphNode> rewrittenChildren = new ArrayList<>();
         for (EGraphNode child : node.getChildren()) {
             EGraphNode normalizedChild = normalizeAssociativeCommutative(child);
             if (normalizedChild == null) {
                 continue;
             }
             if (isAssociative(node.getOpcode()) && normalizedChild.getOpcode() == node.getOpcode()) {
-                for (EGraphNode grandchild : normalizedChild.getChildren()) {
-                    rewritten.addChild(grandchild);
-                }
+                rewrittenChildren.addAll(normalizedChild.getChildren());
             } else {
-                rewritten.addChild(normalizedChild);
+                rewrittenChildren.add(normalizedChild);
             }
         }
-        if (rewritten.isOrderInsensitive()) {
-            List<EGraphNode> sortedChildren = new ArrayList<>(rewritten.getChildren());
-            Collections.sort(sortedChildren, Comparator.comparing(NormalForm::sortKey));
-            rewritten.setChildren(sortedChildren);
+        if (node.isOrderInsensitive()) {
+            Collections.sort(rewrittenChildren, Comparator.comparing(NormalForm::sortKey));
         }
-        return rewritten;
+        node.setChildren(rewrittenChildren);
+        return node;
     }
 
     private static EGraphNode expandIff(EGraphNode node, boolean negated) {
@@ -1206,8 +1333,8 @@ public class NormalForm {
             sb.append(node.getAlphaName());
         } else if (node.getSourceName() != null) {
             sb.append(node.getSourceName());
-        } else {
-            sb.append(node.getId());
+        } else if (node.getChildren().isEmpty()) {
+            sb.append(node.getSourceType() == null ? "" : node.getSourceType());
         }
         sb.append('[');
         for (EGraphNode child : node.getChildren()) {

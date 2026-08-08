@@ -74,6 +74,14 @@ public class Alloy4FunAugmenter {
         }
         endStage("Building correct-reference pools", stageStarted);
 
+        List<AstIdenticalComparison> astIdenticalComparisons = astIdenticalComparisons(groups);
+        Path astIdentityAudit = options.outputDir.resolve("ast_identical_cross_file_comparisons.csv");
+        writeAstIdenticalComparisons(astIdentityAudit, astIdenticalComparisons);
+        if (options.auditOnly) {
+            System.out.println("Wrote " + astIdentityAudit);
+            return;
+        }
+
         stageStarted = beginStage("Writing augmented correct pools");
         writeAugmentedFiles(groups, options.outputDir);
         endStage("Writing augmented correct pools", stageStarted);
@@ -88,6 +96,8 @@ public class Alloy4FunAugmenter {
         endStage("Comparing canonically equivalent correct pairs", stageStarted);
         logRankingWork(groups);
 
+        List<ModelRecord> unmatched = incorrectWithoutReference(groups);
+        List<ModelRecord> withoutAstDistinctReference = incorrectWithoutAstDistinctReference(groups);
         stageStarted = beginStage("Ranking incorrect predicates");
         List<IncorrectMatch> matches = nearestIncorrectMatches(groups, options);
         endStage("Ranking incorrect predicates", stageStarted);
@@ -98,8 +108,8 @@ public class Alloy4FunAugmenter {
         }
 
         stageStarted = beginStage("Writing reports and plots");
-        List<ModelRecord> unmatched = incorrectWithoutReference(groups);
-        writeJson(options.outputDir.resolve("index.json"), options, files.size(), groups, records, matches, unmatched);
+        writeJson(options.outputDir.resolve("index.json"), options, files.size(), groups, records, matches,
+                unmatched, withoutAstDistinctReference);
         writeMarkdown(
                 options.outputDir.resolve("summary.md"),
                 options,
@@ -108,6 +118,7 @@ public class Alloy4FunAugmenter {
                 records,
                 matches,
                 unmatched,
+                withoutAstDistinctReference,
                 correctPoolPairs);
         writeRewardCsv(options.outputDir.resolve("canonical_reward_points.csv"), matches);
         writeRewardPlots(options.outputDir, matches);
@@ -245,6 +256,8 @@ public class Alloy4FunAugmenter {
             record.prelude = preludeBeforePredicate(Files.readString(file, StandardCharsets.UTF_8), pair.leftName);
             record.studentAst = internAst(RawAstTree.from(pair.left.getBody()), astCache);
             record.oracleAst = internAst(RawAstTree.from(pair.right.getBody()), astCache);
+            record.oracleAstFingerprint = record.oracleAst.fingerprint;
+            record.contextFingerprint = modelContextFingerprint(model, pair);
             record.rawAstSize = record.studentAst.size;
 
             if (!"CORRECT".equals(record.statusFolder)) {
@@ -327,6 +340,31 @@ public class Alloy4FunAugmenter {
         return existing == null ? ast : existing;
     }
 
+    private static String modelContextFingerprint(ModelUnit model, PredicatePair pair) {
+        StringBuilder fingerprint = new StringBuilder();
+        appendContextNodes(fingerprint, model.getOpenDeclList());
+        appendContextNodes(fingerprint, model.getSigDeclList());
+        for (Predicate predicate : model.getPredDeclList()) {
+            if (!predicate.getName().equals(pair.leftName) && !predicate.getName().equals(pair.rightName)) {
+                appendContextNode(fingerprint, predicate);
+            }
+        }
+        appendContextNodes(fingerprint, model.getFunDeclList());
+        appendContextNodes(fingerprint, model.getFactDeclList());
+        return fingerprint.toString();
+    }
+
+    private static void appendContextNodes(StringBuilder target, List<? extends Node> nodes) {
+        for (Node node : nodes) {
+            appendContextNode(target, node);
+        }
+    }
+
+    private static void appendContextNode(StringBuilder target, Node node) {
+        RawAstTree tree = RawAstTree.from(node);
+        RawAstTree.appendFingerprintPart(target, tree.fingerprint);
+    }
+
     private static Map<String, QuestionGroup> groups(List<ModelRecord> records) {
         Map<String, QuestionGroup> groups = new java.util.TreeMap<>();
         for (ModelRecord record : records) {
@@ -381,6 +419,12 @@ public class Alloy4FunAugmenter {
                 try {
                     RankingBatch batch = completion.take().get();
                     IncorrectMatch template = batch.template;
+                    if (template == null) {
+                        for (ModelRecord record : batch.records) {
+                            releaseRankingRepresentation(record);
+                        }
+                        continue;
+                    }
                     for (ModelRecord record : batch.records) {
                         record.canonicalSize = template.record.canonicalSize;
                         matches.add(record == template.record
@@ -415,6 +459,7 @@ public class Alloy4FunAugmenter {
     private static void logRankingWork(Map<String, QuestionGroup> groups) {
         long comparisons = 0;
         long deduplicatedComparisons = 0;
+        long skippedAstIdenticalComparisons = 0;
         int incorrect = 0;
         int uniqueIncorrectRepresentations = 0;
         for (QuestionGroup group : groups.values()) {
@@ -424,6 +469,7 @@ public class Alloy4FunAugmenter {
             Set<RepresentationKey> representations = new HashSet<>();
             for (ModelRecord record : group.incorrect) {
                 representations.add(RepresentationKey.student(record));
+                skippedAstIdenticalComparisons += astIdenticalReferenceCount(group, record);
             }
             uniqueIncorrectRepresentations += representations.size();
             deduplicatedComparisons += (long) representations.size() * referenceCount;
@@ -431,7 +477,8 @@ public class Alloy4FunAugmenter {
         System.err.println("[Alloy4FunAugmenter] Ranking workload: " + incorrect
                 + " incorrect predicates, " + uniqueIncorrectRepresentations
                 + " unique representations, " + comparisons + " logical comparisons, "
-                + deduplicatedComparisons + " computed comparisons.");
+                + deduplicatedComparisons + " potential deduplicated comparisons, "
+                + skippedAstIdenticalComparisons + " AST-identical comparisons skipped.");
     }
 
     private static List<ModelRecord> incorrectWithoutReference(Map<String, QuestionGroup> groups) {
@@ -445,13 +492,108 @@ public class Alloy4FunAugmenter {
         return unmatched;
     }
 
+    private static List<AstIdenticalComparison> astIdenticalComparisons(
+            Map<String, QuestionGroup> groups) {
+        List<AstIdenticalComparison> comparisons = new ArrayList<>();
+        for (QuestionGroup group : groups.values()) {
+            for (ModelRecord incorrect : group.incorrect) {
+                for (Reference reference : group.rankingReferences()) {
+                    if (incorrect.studentAst.fingerprint.equals(reference.ast.fingerprint)) {
+                        comparisons.add(new AstIdenticalComparison(group, incorrect, reference));
+                    }
+                }
+            }
+        }
+        comparisons.sort(Comparator
+                .comparing((AstIdenticalComparison comparison) -> comparison.incorrect.relativePath)
+                .thenComparing(comparison -> comparison.reference.augmentedName));
+        return comparisons;
+    }
+
+    private static void writeAstIdenticalComparisons(
+            Path path,
+            List<AstIdenticalComparison> comparisons) throws IOException {
+        try (Writer writer = outputWriter(path)) {
+            writer.write("incorrectPath,questionSet,statusFolder,invariantId,referenceName,referenceKind,"
+                    + "referenceSource,sameSupportContext,sameOracleAst,samePreludeText,calledSymbols,"
+                    + "incorrectBody,referenceBody,rawAstFingerprint\n");
+            for (AstIdenticalComparison comparison : comparisons) {
+                ModelRecord incorrect = comparison.incorrect;
+                Reference reference = comparison.reference;
+                writer.write(csv(incorrect.relativePath) + ",");
+                writer.write(csv(incorrect.questionSet) + ",");
+                writer.write(csv(incorrect.statusFolder) + ",");
+                writer.write(csv(incorrect.invariantId) + ",");
+                writer.write(csv(reference.augmentedName) + ",");
+                writer.write(csv(reference.kind) + ",");
+                writer.write(csv(reference.source.relativePath) + ",");
+                writer.write(comparison.sameSupportContext + ",");
+                writer.write(comparison.sameOracleAst + ",");
+                writer.write(comparison.samePreludeText + ",");
+                writer.write(csv(calledSymbols(incorrect.studentAst)) + ",");
+                writer.write(csv(incorrect.studentBody) + ",");
+                writer.write(csv(reference.body) + ",");
+                writer.write(csv(incorrect.studentAst.fingerprint));
+                writer.write("\n");
+            }
+        }
+    }
+
+    private static String calledSymbols(RawAstTree tree) {
+        Set<String> names = new java.util.TreeSet<>();
+        collectCalledSymbols(tree, names);
+        return String.join(";", names);
+    }
+
+    private static void collectCalledSymbols(RawAstTree tree, Set<String> names) {
+        int marker = tree.label.indexOf(":name=");
+        if (tree.label.startsWith("Call") && marker >= 0) {
+            names.add(tree.label.substring(marker + ":name=".length()));
+        }
+        for (RawAstTree child : tree.children) {
+            collectCalledSymbols(child, names);
+        }
+    }
+
+    private static List<ModelRecord> incorrectWithoutAstDistinctReference(Map<String, QuestionGroup> groups) {
+        List<ModelRecord> skipped = new ArrayList<>();
+        for (QuestionGroup group : groups.values()) {
+            if (group.rankingReferences().isEmpty()) {
+                continue;
+            }
+            for (ModelRecord record : group.incorrect) {
+                if (astIdenticalReferenceCount(group, record) == group.rankingReferences().size()) {
+                    skipped.add(record);
+                }
+            }
+        }
+        skipped.sort(Comparator.comparing(record -> record.relativePath));
+        return skipped;
+    }
+
+    private static int astIdenticalReferenceCount(QuestionGroup group, ModelRecord record) {
+        int count = 0;
+        for (Reference reference : group.rankingReferences()) {
+            if (record.studentAst.fingerprint.equals(reference.ast.fingerprint)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     private static IncorrectMatch nearestIncorrectMatch(QuestionGroup group, ModelRecord incorrect) {
+        if (astIdenticalReferenceCount(group, incorrect) == group.rankingReferences().size()) {
+            return null;
+        }
         if (incorrect.studentCanonical == null) {
             incorrect.studentCanonical = loadCanonical(incorrect, false);
             incorrect.canonicalSize = Canonical.canonicalFormSize(incorrect.studentCanonical);
         }
         IncorrectMatch match = new IncorrectMatch(incorrect);
         for (Reference reference : group.rankingReferences()) {
+            if (incorrect.studentAst.fingerprint.equals(reference.ast.fingerprint)) {
+                continue;
+            }
             int levenshtein = levenshteinDistance(incorrect.studentBody, reference.body);
             int rawAst = rawAstTreeDistance(incorrect.studentAst, reference.ast);
             int canonical = Canonical.distance(incorrect.studentCanonical, reference.canonical);
@@ -654,8 +796,9 @@ public class Alloy4FunAugmenter {
             Map<String, QuestionGroup> groups,
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
-            List<ModelRecord> unmatched) throws IOException {
-        Summary summary = new Summary(groups, records, matches, unmatched);
+            List<ModelRecord> unmatched,
+            List<ModelRecord> withoutAstDistinctReference) throws IOException {
+        Summary summary = new Summary(groups, records, matches, unmatched, withoutAstDistinctReference);
         try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
@@ -677,6 +820,8 @@ public class Alloy4FunAugmenter {
             writer.write("    \"rewardFailures\": " + summary.rewardFailures + ",\n");
             writer.write("    \"averageCandidateReward\": " + number(summary.averageCandidateReward()) + ",\n");
             writer.write("    \"averageRewardError\": " + number(summary.averageRewardError()) + ",\n");
+            writer.write("    \"incorrectModelsWithoutAstDistinctReference\": "
+                    + summary.incorrectModelsWithoutAstDistinctReference + ",\n");
             writer.write("    \"incorrectModelsWithoutCorrectReference\": " + unmatched.size() + "\n");
             writer.write("  },\n");
             writer.write("  \"questions\": [\n");
@@ -694,6 +839,14 @@ public class Alloy4FunAugmenter {
                     writer.write(",\n");
                 }
                 writeMatchJson(writer, matches.get(i));
+            }
+            writer.write("\n  ],\n");
+            writer.write("  \"incorrectWithoutAstDistinctReference\": [\n");
+            for (int i = 0; i < withoutAstDistinctReference.size(); i++) {
+                if (i > 0) {
+                    writer.write(",\n");
+                }
+                writeUnmatchedJson(writer, withoutAstDistinctReference.get(i));
             }
             writer.write("\n  ],\n");
             writer.write("  \"incorrectWithoutReference\": [\n");
@@ -716,8 +869,9 @@ public class Alloy4FunAugmenter {
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
             List<ModelRecord> unmatched,
+            List<ModelRecord> withoutAstDistinctReference,
             List<CorrectPoolPair> correctPoolPairs) throws IOException {
-        Summary summary = new Summary(groups, records, matches, unmatched);
+        Summary summary = new Summary(groups, records, matches, unmatched, withoutAstDistinctReference);
         Map<String, QuestionSetStats> questionStats = questionSetStats(groups, matches);
         Map<String, CorrectTruthStats> correctTruthStats = correctTruthStats(groups, correctPoolPairs);
         Map<String, RankingModeStats> modeStats = rankingModeStats(groups);
@@ -745,6 +899,8 @@ public class Alloy4FunAugmenter {
             writer.write("- Oracle references: " + summary.oracleReferences + "\n");
             writer.write("- AST-unique CORRECT student references: " + summary.uniqueCorrectStudentReferences + "\n");
             writer.write("- Incorrect models with rankings: " + matches.size() + "\n");
+            writer.write("- Incorrect models skipped because every truth was AST-identical: "
+                    + withoutAstDistinctReference.size() + "\n");
             writer.write("- Incorrect models without references: " + unmatched.size() + "\n\n");
             writer.write("- Reward successes: " + summary.rewardSuccesses + "\n");
             writer.write("- Reward failures: " + summary.rewardFailures + "\n");
@@ -2183,21 +2339,7 @@ public class Alloy4FunAugmenter {
     }
 
     private static String rawAstLabel(Node node) {
-        StringBuilder label = new StringBuilder(node.getClass().getSimpleName());
-        appendAstAttribute(label, node, "getOp");
-        appendAstAttribute(label, node, "getName");
-        appendAstAttribute(label, node, "getValue");
-        return label.toString();
-    }
-
-    private static void appendAstAttribute(StringBuilder label, Node node, String methodName) {
-        try {
-            Object value = node.getClass().getMethod(methodName).invoke(node);
-            if (value != null) {
-                label.append(':').append(value);
-            }
-        } catch (ReflectiveOperationException ignored) {
-        }
+        return DatasetConventions.rawAstLabel(node);
     }
 
     private static String preferredPredicateBase(Path file) {
@@ -2279,6 +2421,7 @@ public class Alloy4FunAugmenter {
         private int limit = -1;
         private boolean verbose;
         private boolean skipRewards;
+        private boolean auditOnly;
 
         private static Options parse(String[] args) {
             Options options = new Options();
@@ -2292,6 +2435,8 @@ public class Alloy4FunAugmenter {
                     options.limit = Integer.parseInt(args[++i]);
                 } else if ("--skip-rewards".equals(args[i])) {
                     options.skipRewards = true;
+                } else if ("--audit-only".equals(args[i])) {
+                    options.auditOnly = true;
                 } else if ("--verbose".equals(args[i])) {
                     options.verbose = true;
                 } else if (positional == 0) {
@@ -2342,12 +2487,13 @@ public class Alloy4FunAugmenter {
                 return null;
             }
             String label = rawAstLabel(node);
-            List<RawAstTree> children = new ArrayList<>(node.getChildren().size());
+            List<Node> astChildren = DatasetConventions.rawAstChildren(node);
+            List<RawAstTree> children = new ArrayList<>(astChildren.size());
             int size = 1;
             StringBuilder fingerprint = new StringBuilder();
             appendFingerprintPart(fingerprint, label);
             fingerprint.append('[');
-            for (Node childNode : node.getChildren()) {
+            for (Node childNode : astChildren) {
                 RawAstTree child = from(childNode);
                 children.add(child);
                 size += child.size;
@@ -2381,6 +2527,8 @@ public class Alloy4FunAugmenter {
         private int levenshteinSize;
         private int rawAstSize;
         private int canonicalSize;
+        private String contextFingerprint;
+        private String oracleAstFingerprint;
         private String error;
 
         private ModelRecord(Path root, Path file) {
@@ -2559,6 +2707,25 @@ public class Alloy4FunAugmenter {
             this.right = right;
             this.rawAstDistance = rawAstDistance;
             this.canonicalDistance = canonicalDistance;
+        }
+    }
+
+    private static final class AstIdenticalComparison {
+        private final ModelRecord incorrect;
+        private final Reference reference;
+        private final boolean sameSupportContext;
+        private final boolean sameOracleAst;
+        private final boolean samePreludeText;
+
+        private AstIdenticalComparison(
+                QuestionGroup group,
+                ModelRecord incorrect,
+                Reference reference) {
+            this.incorrect = incorrect;
+            this.reference = reference;
+            this.sameSupportContext = incorrect.contextFingerprint.equals(reference.source.contextFingerprint);
+            this.sameOracleAst = incorrect.oracleAstFingerprint.equals(reference.source.oracleAstFingerprint);
+            this.samePreludeText = incorrect.prelude.equals(reference.source.prelude);
         }
     }
 
@@ -2961,6 +3128,7 @@ public class Alloy4FunAugmenter {
         private int uniqueCorrectStudentReferences;
 
         private int incorrectModelsWithoutCorrectReference;
+        private int incorrectModelsWithoutAstDistinctReference;
         private int rewardSuccesses;
         private int rewardFailures;
         private double candidateRewardSum;
@@ -2970,9 +3138,11 @@ public class Alloy4FunAugmenter {
                 Map<String, QuestionGroup> groups,
                 List<ModelRecord> records,
                 List<IncorrectMatch> matches,
-                List<ModelRecord> unmatched) {
+                List<ModelRecord> unmatched,
+                List<ModelRecord> withoutAstDistinctReference) {
             this.groups = groups.size();
             this.incorrectModelsWithoutCorrectReference = unmatched.size();
+            this.incorrectModelsWithoutAstDistinctReference = withoutAstDistinctReference.size();
             for (IncorrectMatch match : matches) {
                 if (!match.rewardComputed) {
                     continue;

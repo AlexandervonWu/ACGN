@@ -1,7 +1,7 @@
 # E-Graph Semantic Soundness Check
 
-- Generated at: `2026-08-07T15:32:08.969817522Z`
-- Checked unique predicate pairs: 6662
+- Generated at: `2026-08-08T03:36:29.469529943Z`
+- Checked unique predicate pairs: 2235
 - Mode: union of all equivalence claims
 - Threads: 32
 
@@ -11,10 +11,10 @@ This is a bounded semantic check using each model's own `check correct` command.
 
 | Arm | Claims checked | No counterexample | Counterexamples | Errors | Bounded precision |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 4482 | 4482 | 0 | 0 | 100.000% |
-| java-egglog | 5259 | 5259 | 0 | 0 | 100.000% |
-| slotted-egraph | 6574 | 6574 | 0 | 0 | 100.000% |
-| canonical | 6662 | 6662 | 0 | 0 | 100.000% |
+| raw-egraph | 823 | 823 | 0 | 0 | 100.000% |
+| java-egglog | 823 | 823 | 0 | 0 | 100.000% |
+| slotted-egraph | 2162 | 2162 | 0 | 0 | 100.000% |
+| canonical | 2235 | 2235 | 0 | 0 | 100.000% |
 
 ## Counterexamples
 

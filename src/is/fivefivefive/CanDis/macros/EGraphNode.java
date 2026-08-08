@@ -4,6 +4,7 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ArrayDeque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -177,6 +178,11 @@ public class EGraphNode {
     }
     private Metatype metatype; // the metatype of this node, which can be used to capture the type of the formula, e.g., atomic formula, set formula, boolean formula, etc.
     public EGraphNode(int id, Opcode opcode, List<EGraphNode> children, boolean isCommutative, int maxArity, boolean flexibleArity, Metatype metatype) {
+        this(id, opcode, children, isCommutative, maxArity, flexibleArity, metatype, true);
+    }
+
+    private EGraphNode(int id, Opcode opcode, List<EGraphNode> children, boolean isCommutative,
+            int maxArity, boolean flexibleArity, Metatype metatype, boolean createEClass) {
         this.id = id;
         this.opcode = opcode;
         this.arena = CURRENT_ARENA.get();
@@ -198,10 +204,12 @@ public class EGraphNode {
         this.metatype = metatype;
         if (children != null) {
             for (EGraphNode child : children) {
-                addChild(child);
+                appendChild(child);
             }
         }
-        this.eClass = new EClass(NEXT_ECLASS_ID.getAndIncrement(), this);
+        if (createEClass) {
+            this.eClass = new EClass(NEXT_ECLASS_ID.getAndIncrement(), this);
+        }
     }
     public int getId() {
         return id;
@@ -216,7 +224,7 @@ public class EGraphNode {
         childClasses.clear();
         if (children != null) {
             for (EGraphNode child : children) {
-                addChild(child);
+                appendChild(child);
             }
         }
         refreshEClassSlots();
@@ -255,8 +263,14 @@ public class EGraphNode {
         if (child == null) {
             return;
         }
-        childClasses.add(new EClassRef(child.getEClass(), identitySlotMap(child.getEClass())));
+        appendChild(child);
         refreshEClassSlots();
+    }
+
+    private void appendChild(EGraphNode child) {
+        if (child != null) {
+            childClasses.add(new EClassRef(child.getEClass(), identitySlotMap(child.getEClass())));
+        }
     }
     public List<EClassRef> getChildClasses() {
         return Collections.unmodifiableList(childClasses);
@@ -283,11 +297,13 @@ public class EGraphNode {
         EClassRef canonicalLeft = left.canonical();
         EClassRef canonicalRight = right.canonical();
         if (canonicalLeft.eClass.id == canonicalRight.eClass.id) {
-            canonicalLeft.eClass.symmetries.addInvocationEquivalence(
+            canonicalLeft.eClass.addInvocationEquivalence(
                     canonicalLeft.slotMap,
                     canonicalRight.slotMap);
             return canonicalLeft;
         }
+        canonicalLeft.eClass.ensureRegistered();
+        canonicalRight.eClass.ensureRegistered();
         RenamedId leader = arena.unionFind.union(left.asRenamedId(), right.asRenamedId());
         EClass leaderClass = arena.classes.get(leader.getId());
         return new EClassRef(leaderClass, leader.getRenaming());
@@ -298,6 +314,43 @@ public class EGraphNode {
     public static void endGraph() {
         CURRENT_ARENA.remove();
     }
+    public static void retainReachable(List<EGraphNode> roots) {
+        if (roots == null || roots.isEmpty()) {
+            return;
+        }
+        Map<EGraphArena, Set<Integer>> reachableByArena = new LinkedHashMap<>();
+        Map<EGraphArena, ArrayDeque<EClass>> pendingByArena = new LinkedHashMap<>();
+        for (EGraphNode root : roots) {
+            if (root == null || root.eClass == null) {
+                continue;
+            }
+            pendingByArena.computeIfAbsent(root.arena, ignored -> new ArrayDeque<>()).add(root.eClass);
+            reachableByArena.computeIfAbsent(root.arena, ignored -> new HashSet<>());
+        }
+        for (Map.Entry<EGraphArena, ArrayDeque<EClass>> entry : pendingByArena.entrySet()) {
+            EGraphArena arena = entry.getKey();
+            Set<Integer> reachable = reachableByArena.get(arena);
+            ArrayDeque<EClass> pending = entry.getValue();
+            while (!pending.isEmpty()) {
+                EClass current = pending.removeFirst();
+                if (!reachable.add(current.id)) {
+                    continue;
+                }
+                for (EGraphNode node : current.nodes) {
+                    for (EClassRef child : node.childClasses) {
+                        pending.addLast(child.eClass);
+                    }
+                }
+            }
+            // Registered classes may participate in a union-find path not visible as a child edge.
+            for (EClass eClass : arena.classes.values()) {
+                if (eClass.registered) {
+                    reachable.add(eClass.id);
+                }
+            }
+            arena.classes.keySet().retainAll(reachable);
+        }
+    }
     public Metatype getMetatype() {
         return metatype;
     }
@@ -306,7 +359,9 @@ public class EGraphNode {
     }
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
-        refreshEClassSlots();
+        if (opcode == Opcode.VARIABLE) {
+            refreshEClassSlots();
+        }
     }
     public String getSourceType() {
         return sourceType;
@@ -347,11 +402,18 @@ public class EGraphNode {
     }
 
     private boolean saturateOnce() {
-        List<EClassRef> canonicalChildren = new ArrayList<>(childClasses.size());
-        for (EClassRef child : childClasses) {
-            canonicalChildren.add(child.canonical());
+        List<EClassRef> canonicalChildren = null;
+        for (int i = 0; i < childClasses.size(); i++) {
+            EClassRef child = childClasses.get(i);
+            EClassRef canonical = child.canonical();
+            if (!child.equals(canonical)) {
+                if (canonicalChildren == null) {
+                    canonicalChildren = new ArrayList<>(childClasses);
+                }
+                canonicalChildren.set(i, canonical);
+            }
         }
-        if (!sameChildren(childClasses, canonicalChildren)) {
+        if (canonicalChildren != null) {
             childClasses = canonicalChildren;
             refreshEClassSlots();
         }
@@ -771,8 +833,8 @@ public class EGraphNode {
             sb.append(node.alphaName);
         } else if (node.sourceName != null) {
             sb.append(node.sourceName);
-        } else {
-            sb.append(node.id);
+        } else if (node.childClasses == null || node.childClasses.isEmpty()) {
+            sb.append(node.sourceType == null ? "" : node.sourceType);
         }
         sb.append('[');
         if (node.childClasses != null) {
@@ -814,22 +876,26 @@ public class EGraphNode {
     }
 
     private EGraphNode snapshot() {
-        EGraphNode copy = new EGraphNode(id, opcode, new ArrayList<>(), isCommutative, maxArity, flexibleArity, metatype);
+        EGraphNode copy = new EGraphNode(
+                id, opcode, Collections.emptyList(), isCommutative, maxArity, flexibleArity, metatype, false);
         copy.sourceName = sourceName;
         copy.sourceType = sourceType;
         copy.alphaName = alphaName;
         copy.childClasses = new ArrayList<>(childClasses);
-        copy.refreshEClassSlots();
+        copy.eClass = eClass;
         return copy;
     }
 
     private void refreshEClassSlots() {
         if (eClass != null) {
-            eClass.recomputeSlots();
+            eClass.markSlotsDirty();
         }
     }
 
     private static Map<String, String> identitySlotMap(EClass eClass) {
+        if (eClass.getSlots().isEmpty()) {
+            return Collections.emptyMap();
+        }
         Map<String, String> mapping = new LinkedHashMap<>();
         for (String slot : eClass.getSlots()) {
             mapping.put(slot, slot);
@@ -850,23 +916,23 @@ public class EGraphNode {
     }
 
     private Set<String> slots() {
-        Set<String> slots = new LinkedHashSet<>();
-        collectSlots(this, slots, new HashSet<>());
-        return slots;
-    }
-
-    private static void collectSlots(EGraphNode node, Set<String> slots, Set<Integer> visitedClasses) {
-        if (node.opcode == Opcode.VARIABLE) {
-            String slot = node.alphaName != null ? node.alphaName : node.sourceName;
+        Set<String> exposed = null;
+        if (opcode == Opcode.VARIABLE) {
+            String slot = alphaName != null ? alphaName : sourceName;
             if (slot != null) {
-                slots.add(slot);
+                exposed = new LinkedHashSet<>();
+                exposed.add(slot);
             }
         }
-        for (EClassRef child : node.childClasses) {
-            if (visitedClasses.add(child.getEClass().getId())) {
-                slots.addAll(child.getSlotMap().values());
+        for (EClassRef child : childClasses) {
+            if (!child.getSlotMap().isEmpty()) {
+                if (exposed == null) {
+                    exposed = new LinkedHashSet<>();
+                }
+                exposed.addAll(child.getSlotMap().values());
             }
         }
+        return exposed == null ? Collections.emptySet() : exposed;
     }
 
     public static final class EClassRef {
@@ -875,7 +941,9 @@ public class EGraphNode {
 
         private EClassRef(EClass eClass, Map<String, String> slotMap) {
             this.eClass = eClass;
-            this.slotMap = Collections.unmodifiableMap(new LinkedHashMap<>(slotMap));
+            this.slotMap = slotMap.isEmpty()
+                    ? Collections.emptyMap()
+                    : Collections.unmodifiableMap(new LinkedHashMap<>(slotMap));
         }
 
         public EClass getEClass() {
@@ -887,6 +955,20 @@ public class EGraphNode {
         }
 
         public EClassRef canonical() {
+            if (!eClass.registered) {
+                Set<String> exposedSlots = eClass.getSlots();
+                if (slotMap.keySet().equals(exposedSlots)) {
+                    return this;
+                }
+                Map<String, String> restricted = new LinkedHashMap<>();
+                for (String slot : exposedSlots) {
+                    String callerSlot = slotMap.get(slot);
+                    if (callerSlot != null) {
+                        restricted.put(slot, callerSlot);
+                    }
+                }
+                return new EClassRef(eClass, restricted);
+            }
             RenamedId leader = eClass.arena.unionFind.find(asRenamedId());
             return new EClassRef(eClass.arena.classes.get(leader.getId()), leader.getRenaming());
         }
@@ -898,7 +980,7 @@ public class EGraphNode {
             EClassRef left = canonical();
             EClassRef right = other.canonical();
             return left.eClass.id == right.eClass.id
-                    && left.eClass.symmetries.equivalentInvocations(left.slotMap, right.slotMap);
+                    && left.eClass.equivalentInvocations(left.slotMap, right.slotMap);
         }
 
         private RenamedId asRenamedId() {
@@ -924,18 +1006,16 @@ public class EGraphNode {
         private final int id;
         private final EGraphArena arena;
         private final List<EGraphNode> nodes = new ArrayList<>();
-        private Set<String> slots = new LinkedHashSet<>();
-        private final Set<String> shapes = new HashSet<>();
-        private final SlotPermutationGroup symmetries = new SlotPermutationGroup(Collections.emptySet());
+        private Set<String> slots = Collections.emptySet();
+        private Set<String> shapes;
+        private SlotPermutationGroup symmetries;
+        private boolean registered;
+        private boolean slotsDirty = true;
 
         private EClass(int id, EGraphNode head) {
             this.id = id;
             this.arena = head.arena;
             nodes.add(head);
-            shapes.add(head.sortKey());
-            recomputeSlots();
-            arena.classes.put(id, this);
-            arena.unionFind.register(id, slots);
         }
 
         public int getId() {
@@ -951,10 +1031,12 @@ public class EGraphNode {
         }
 
         public Set<String> getSlots() {
+            ensureSlots();
             return Collections.unmodifiableSet(slots);
         }
 
         public EClassRef invoke(Map<String, String> slotMap) {
+            ensureSlots();
             if (!slotMap.keySet().equals(slots)) {
                 throw new IllegalArgumentException("Invocation must map every exposed e-class slot");
             }
@@ -962,15 +1044,23 @@ public class EGraphNode {
         }
 
         public void addSlotSwap(String left, String right) {
-            symmetries.addSwap(left, right);
+            ensureSlots();
+            symmetryGroup().addSwap(left, right);
         }
 
         public int symmetryCount() {
-            return symmetries.size();
+            ensureSlots();
+            return symmetries == null ? 1 : symmetries.size();
         }
 
         private void addEquivalentNode(EGraphNode node) {
             String shape = node.sortKey();
+            if (shapes == null) {
+                shapes = new HashSet<>();
+                for (EGraphNode existing : nodes) {
+                    shapes.add(existing.sortKey());
+                }
+            }
             if (!shapes.add(shape)) {
                 return;
             }
@@ -982,26 +1072,85 @@ public class EGraphNode {
         private void preserveSnapshot(EGraphNode node) {
             node.eClass = this;
             nodes.add(node);
-            recomputeSlots();
         }
 
         private void recordShape(EGraphNode node) {
-            shapes.add(node.sortKey());
+            if (shapes != null) {
+                shapes.add(node.sortKey());
+            }
         }
 
         private void recomputeSlots() {
             if (nodes.isEmpty()) {
-                slots = new LinkedHashSet<>();
+                slots = Collections.emptySet();
+                slotsDirty = false;
                 return;
             }
-            Set<String> common = new LinkedHashSet<>(nodes.get(0).slots());
-            for (int i = 1; i < nodes.size(); i++) {
-                common.retainAll(nodes.get(i).slots());
+            Set<String> common;
+            if (nodes.size() == 1) {
+                common = nodes.get(0).slots();
+            } else if (slots.isEmpty()) {
+                slotsDirty = false;
+                return;
+            } else {
+                Set<String> representativeSlots = nodes.get(0).slots();
+                if (representativeSlots.containsAll(slots)) {
+                    slotsDirty = false;
+                    return;
+                }
+                common = new LinkedHashSet<>(slots);
+                common.retainAll(representativeSlots);
+            }
+            if (slots.equals(common)) {
+                slotsDirty = false;
+                return;
             }
             slots = common;
-            symmetries.setSlots(slots);
-            if (arena.classes.containsKey(id)) {
+            slotsDirty = false;
+            if (symmetries != null) {
+                symmetries.setSlots(slots);
+            }
+            if (registered) {
                 arena.unionFind.updateSlots(id, slots);
+            }
+        }
+
+        private SlotPermutationGroup symmetryGroup() {
+            ensureSlots();
+            if (symmetries == null) {
+                symmetries = new SlotPermutationGroup(slots);
+            }
+            return symmetries;
+        }
+
+        private void addInvocationEquivalence(Map<String, String> left, Map<String, String> right) {
+            if (left.equals(right)) {
+                return;
+            }
+            symmetryGroup().addInvocationEquivalence(left, right);
+        }
+
+        private boolean equivalentInvocations(Map<String, String> left, Map<String, String> right) {
+            ensureSlots();
+            return symmetries == null ? left.equals(right) : symmetries.equivalentInvocations(left, right);
+        }
+
+        private void ensureRegistered() {
+            if (!registered) {
+                ensureSlots();
+                arena.classes.put(id, this);
+                arena.unionFind.register(id, slots);
+                registered = true;
+            }
+        }
+
+        private void markSlotsDirty() {
+            slotsDirty = true;
+        }
+
+        private void ensureSlots() {
+            if (slotsDirty) {
+                recomputeSlots();
             }
         }
     }
