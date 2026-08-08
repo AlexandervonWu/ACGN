@@ -137,54 +137,58 @@ all f1,f2,f3:File | f1->f2 in link implies f3->f1 not in link
 }
 
 pred inv9_correct_31[] {
-all f1, f2, f3 : File | f1->f2 in link implies f1 != f2 and f2->f3 not in link
+all f1, f2, f3 : File | f1->f2 in link => not some f3:File | f2->f3 in link
 }
 
 pred inv9_correct_32[] {
-no f,f2:File | f in File.link and f2 in f.link
+all f1, f2, f3 : File | f1->f2 in link implies f1 != f2 and f2->f3 not in link
 }
 
 pred inv9_correct_33[] {
-all f, f1, f2 : File | (f->f1).(f1->f2) not in link.link
+no f,f2:File | f in File.link and f2 in f.link
 }
 
 pred inv9_correct_34[] {
-all f1,f2,f3:File | f1 -> f2 in link implies not f2 -> f3 in link
+all f, f1, f2 : File | (f->f1).(f1->f2) not in link.link
 }
 
 pred inv9_correct_35[] {
-not some l1, l2, l3 : File | l1->l2 in link && l2->l3 in link
+all f1,f2,f3:File | f1 -> f2 in link implies not f2 -> f3 in link
 }
 
 pred inv9_correct_36[] {
-all f : File | all l : f.link | (#l.link)=0
+not some l1, l2, l3 : File | l1->l2 in link && l2->l3 in link
 }
 
 pred inv9_correct_37[] {
-all f1,f2:File | f1->f2 in link implies f2.link=none
+all f : File | all l : f.link | (#l.link)=0
 }
 
 pred inv9_correct_38[] {
-no File.link.link
+all f1,f2:File | f1->f2 in link implies f2.link=none
 }
 
 pred inv9_correct_39[] {
-all x,y : File | x->y in link implies all z : File | y->z not in link
+no File.link.link
 }
 
 pred inv9_correct_40[] {
-all f1,f2:File | isLinked[f1] implies f1->f2 not in link
+all x,y : File | x->y in link implies all z : File | y->z not in link
 }
 
 pred inv9_correct_41[] {
-all f1,f2:File | f1->f2 in link implies no f3:File | f2->f3 in link
+all f1,f2:File | isLinked[f1] implies f1->f2 not in link
 }
 
 pred inv9_correct_42[] {
-not some l1, l2, f : File | (l1->l2 in link) and (l2->f in link)
+all f1,f2:File | f1->f2 in link implies no f3:File | f2->f3 in link
 }
 
 pred inv9_correct_43[] {
+not some l1, l2, f : File | (l1->l2 in link) and (l2->f in link)
+}
+
+pred inv9_correct_44[] {
 all x : File | all y,z : File | x->y in link implies y->z not in link
 }
 

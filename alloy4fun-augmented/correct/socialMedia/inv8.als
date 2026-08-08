@@ -289,216 +289,220 @@ all u1 : User | u1.sees&Ad in (u1.follows.posts+u1.suggested.posts)&Ad
 }
 
 pred inv8_correct_65[] {
-all u : User | all a : Ad | a in u.sees implies (a in u.follows.posts or a in u.suggested.posts)
+all ad : Ad | all u1 : User | ad in u1.sees implies (ad in u1.follows.posts or ad in u1.suggested.posts)
 }
 
 pred inv8_correct_66[] {
-all x:Ad,y:User| x in y.sees implies x in y.follows.posts or x in y.suggested.posts
+all u : User | all a : Ad | a in u.sees implies (a in u.follows.posts or a in u.suggested.posts)
 }
 
 pred inv8_correct_67[] {
-all u:User, p:u.sees|p in Ad implies p in u.follows.posts or p in u.suggested.posts
+all x:Ad,y:User| x in y.sees implies x in y.follows.posts or x in y.suggested.posts
 }
 
 pred inv8_correct_68[] {
-all user : User | all ad : user.sees | ad in Ad implies ((some following : user.follows | following->ad in posts) or some suggested : user.suggested | suggested->ad in posts)
+all u:User, p:u.sees|p in Ad implies p in u.follows.posts or p in u.suggested.posts
 }
 
 pred inv8_correct_69[] {
-all x : User, a : Ad | a in x.sees implies a in x.follows.posts or a in x.suggested.posts
+all user : User | all ad : user.sees | ad in Ad implies ((some following : user.follows | following->ad in posts) or some suggested : user.suggested | suggested->ad in posts)
 }
 
 pred inv8_correct_70[] {
-all u: User , a: Ad | u.sees & Ad  in  (u.follows + u.suggested).posts
+all x : User, a : Ad | a in x.sees implies a in x.follows.posts or a in x.suggested.posts
 }
 
 pred inv8_correct_71[] {
-all u : User| all ad : Ad| ad in u.sees implies (ad in u.follows.posts or ad in u.suggested.posts)
+all u: User , a: Ad | u.sees & Ad  in  (u.follows + u.suggested).posts
 }
 
 pred inv8_correct_72[] {
-all u2 : User, ad : Ad | (ad in u2.sees) implies (ad in u2.follows.posts or ad in u2.suggested.posts)
+all u : User| all ad : Ad| ad in u.sees implies (ad in u.follows.posts or ad in u.suggested.posts)
 }
 
 pred inv8_correct_73[] {
-all x: User | all y: Ad | y in x.sees implies some p: User | p in (x.follows + x.suggested) and y in p.posts
+all u2 : User, ad : Ad | (ad in u2.sees) implies (ad in u2.follows.posts or ad in u2.suggested.posts)
 }
 
 pred inv8_correct_74[] {
-all x : User, a : Ad | a in x.sees implies (some y: User | a in y.posts and (y in x.follows + x.suggested))
+all x: User | all y: Ad | y in x.sees implies some p: User | p in (x.follows + x.suggested) and y in p.posts
 }
 
 pred inv8_correct_75[] {
-all x:Ad,y:User| x in y.sees implies x in (y.follows.posts + y.suggested.posts)
+all x : User, a : Ad | a in x.sees implies (some y: User | a in y.posts and (y in x.follows + x.suggested))
 }
 
 pred inv8_correct_76[] {
-all u:User | no (u.sees & Ad) - ((u.follows+u.suggested).posts & Ad)
+all x:Ad,y:User| x in y.sees implies x in (y.follows.posts + y.suggested.posts)
 }
 
 pred inv8_correct_77[] {
-all u :User, p : Ad | p in u.sees => p in u.follows.posts or p in u.suggested.posts
+all u:User | no (u.sees & Ad) - ((u.follows+u.suggested).posts & Ad)
 }
 
 pred inv8_correct_78[] {
-all u : User, a : u.sees&Ad | a in u.(follows+suggested).posts
+all u :User, p : Ad | p in u.sees => p in u.follows.posts or p in u.suggested.posts
 }
 
 pred inv8_correct_79[] {
-all u:User | all a:Ad | a in u.sees implies some p:User | p in (u.follows + u.suggested) and  a in p.posts
+all u : User, a : u.sees&Ad | a in u.(follows+suggested).posts
 }
 
 pred inv8_correct_80[] {
-all u:User,p:Ad | p in u.sees implies (p in u.follows.posts or p in u.suggested.posts)
+all u:User | all a:Ad | a in u.sees implies some p:User | p in (u.follows + u.suggested) and  a in p.posts
 }
 
 pred inv8_correct_81[] {
-all a : Ad, u : User | a in u.sees => a in u.(suggested + follows).posts
+all u:User,p:Ad | p in u.sees implies (p in u.follows.posts or p in u.suggested.posts)
 }
 
 pred inv8_correct_82[] {
-all u1 : User, a : Ad | u1->a in sees implies some u2 : User | u2->a in posts and (u1->u2 in follows or u1->u2 in suggested)
+all a : Ad, u : User | a in u.sees => a in u.(suggested + follows).posts
 }
 
 pred inv8_correct_83[] {
-all a:Ad,u:User | u -> a in sees implies (some p:User | p -> a in posts and (u -> p in follows or u -> p in suggested))
+all u1 : User, a : Ad | u1->a in sees implies some u2 : User | u2->a in posts and (u1->u2 in follows or u1->u2 in suggested)
 }
 
 pred inv8_correct_84[] {
-all u:User,a:Ad | u->a in sees implies (some u1:User | u1->a in posts and u->u1 in follows+suggested )
+all a:Ad,u:User | u -> a in sees implies (some p:User | p -> a in posts and (u -> p in follows or u -> p in suggested))
 }
 
 pred inv8_correct_85[] {
-all u: User, p: u.sees&Ad | p in u.suggested.posts or p in u.follows.posts
+all u:User,a:Ad | u->a in sees implies (some u1:User | u1->a in posts and u->u1 in follows+suggested )
 }
 
 pred inv8_correct_86[] {
-all u : User | all f : Photo | f in u.sees&Ad => f in u.follows.posts+u.suggested.posts
+all u: User, p: u.sees&Ad | p in u.suggested.posts or p in u.follows.posts
 }
 
 pred inv8_correct_87[] {
+all u : User | all f : Photo | f in u.sees&Ad => f in u.follows.posts+u.suggested.posts
+}
+
+pred inv8_correct_88[] {
 all u1 : User, a : Ad | u1->a in sees implies some u2 : User | u2->a in posts and (u1->u2 in follows or u1->u2 in suggested)
 
 all u : User, a : Ad | a in u.sees implies u in (follows+suggested).posts.a
 }
 
-pred inv8_correct_88[] {
+pred inv8_correct_89[] {
 all u1 : User, a : Ad | u1 in sees.a implies some u2 : User | u2 in posts.a and u1 in (follows.u2 + suggested.u2)
 }
 
-pred inv8_correct_89[] {
+pred inv8_correct_90[] {
 all u : User | all a : Ad | a in u.sees implies a in (u.follows.posts + u.suggested.posts)
 }
 
-pred inv8_correct_90[] {
+pred inv8_correct_91[] {
 all u:User | all a : u.sees & Ad | a in (u.follows.posts + u.suggested.posts & Ad)
 }
 
-pred inv8_correct_91[] {
+pred inv8_correct_92[] {
 all a : Ad | all u : User | u in sees.a implies (some y : User | (a in y.posts) and ((y in u.follows) or (y in u.suggested)))
 }
 
-pred inv8_correct_92[] {
+pred inv8_correct_93[] {
 all x : User, a : Ad | a in x.sees implies (some y: User | a in y.posts and (y in x.follows or y in x.suggested))
 }
 
-pred inv8_correct_93[] {
+pred inv8_correct_94[] {
 all u : User | all a : Ad | a in u.sees implies some followed, suggest : univ | (followed->a in posts and followed in u.follows) or (suggest->a in posts and u->suggest in suggested)
 }
 
-pred inv8_correct_94[] {
+pred inv8_correct_95[] {
 all u : User, a : Ad | a in u.sees implies (some z : User | a in z.posts and (z in u.follows or z in u.suggested))
 }
 
-pred inv8_correct_95[] {
+pred inv8_correct_96[] {
 all u : User, ad : Ad | ad in u.sees implies (some u2 : User | ad in u2.posts && (u2 in u.follows or u2 in u.suggested))
 }
 
-pred inv8_correct_96[] {
+pred inv8_correct_97[] {
 all u: User |  u.sees&Ad in (u.follows.posts + u.suggested.posts)&Ad
 }
 
-pred inv8_correct_97[] {
+pred inv8_correct_98[] {
 all u:User | all a:Ad| u->a in sees implies (some u2:User | u2->a in posts and (u->u2 in follows or u->u2 in suggested))
 }
 
-pred inv8_correct_98[] {
+pred inv8_correct_99[] {
 all u:User,a:Ad | a in u.sees implies (some u1:User | a in u1.posts and u1 in u.follows + u.suggested)
 }
 
-pred inv8_correct_99[] {
+pred inv8_correct_100[] {
 all u1: User, a: Ad | a in u1.sees implies a in (u1.follows.posts + u1.suggested.posts)
 }
 
-pred inv8_correct_100[] {
+pred inv8_correct_101[] {
 all u: User, a: Ad | a in u.sees =>
 some u2: User | a in u2.posts and (u2 in u.follows or u2 in u.suggested)
 }
 
-pred inv8_correct_101[] {
+pred inv8_correct_102[] {
 all u: User |all ad: Ad | u -> ad in sees implies ad in u.follows.posts or ad in u.suggested.posts
 
 
 all u:User | all a: Ad | a in u.sees implies a in u.suggested.posts or a in u.follows.posts
 }
 
-pred inv8_correct_102[] {
+pred inv8_correct_103[] {
 all x : User | all y : Ad | (y in x.sees => y in (x.follows.posts + x.suggested.posts))
 }
 
-pred inv8_correct_103[] {
+pred inv8_correct_104[] {
 sees.(Ad->Ad & iden) in (suggested + follows).posts
 }
 
-pred inv8_correct_104[] {
+pred inv8_correct_105[] {
 all a : Ad | all u : User | a in u.sees implies a in u.suggested.posts or a in u.follows.posts
 }
 
-pred inv8_correct_105[] {
+pred inv8_correct_106[] {
 all p : Ad | all u : User | p in u.sees implies (p in u.follows.posts) or (p in u.suggested.posts)
 }
 
-pred inv8_correct_106[] {
+pred inv8_correct_107[] {
 all u:User, a: u.sees&Ad | (a in u.follows.posts) or (a in u.suggested.posts)
 }
 
-pred inv8_correct_107[] {
+pred inv8_correct_108[] {
 all u1 : User, a : Ad | u1 in sees.a implies some u2 : User | u2 in posts.a and (u1 in follows.u2 or u1 in suggested.u2)
 }
 
-pred inv8_correct_108[] {
+pred inv8_correct_109[] {
 all u : User, p:u.sees | p in Ad implies (p in u.follows.posts or p in u.suggested.posts)
 }
 
-pred inv8_correct_109[] {
+pred inv8_correct_110[] {
 all a: Ad | all u: User | a in u.sees implies a in (u.follows.posts + u.suggested.posts)
 }
 
-pred inv8_correct_110[] {
+pred inv8_correct_111[] {
 all u:User | Ad & u.sees in (u.follows.posts + u.suggested.posts)
 }
 
-pred inv8_correct_111[] {
+pred inv8_correct_112[] {
 all u:User | (u.sees & Ad) in ((u.follows.posts & Ad) + (u.suggested.posts & Ad))
 }
 
-pred inv8_correct_112[] {
+pred inv8_correct_113[] {
 sees & (univ -> Ad) in (suggested + follows).posts
 }
 
-pred inv8_correct_113[] {
+pred inv8_correct_114[] {
 all u : User | all a : Ad | a in u.sees implies some followed, suggest : univ | (followed->a in posts and u->followed in follows) or (suggest->a in posts and u->suggest in suggested)
 }
 
-pred inv8_correct_114[] {
+pred inv8_correct_115[] {
 all u : User, ad : Ad | ad in u.sees implies ad in u.follows.posts + u.suggested.posts
 }
 
-pred inv8_correct_115[] {
+pred inv8_correct_116[] {
 all u:User, a:Ad|u->a in sees => (some u2:u.follows+u.suggested | u2->a in posts )
 }
 
-pred inv8_correct_116[] {
+pred inv8_correct_117[] {
 all ad: Ad | all user: User |  ad in user.sees implies (ad in user.follows.posts or ad in user.suggested.posts)
 }
 

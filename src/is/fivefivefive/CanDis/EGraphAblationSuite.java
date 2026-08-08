@@ -297,6 +297,25 @@ public final class EGraphAblationSuite {
                     .append(number(ratio(run.incorrectEquivalent, run.incorrectPairs) * 100.0)).append("% |\n");
         }
 
+        markdown.append("\n## Equivalent Discovery Efficiency\n\n");
+        markdown.append("A found semantic equivalent is a zero-distance pair carrying the dataset's SAT-validated "
+                + "`CORRECT` label. Rates therefore exclude zero-distance pairs from incorrect classes.\n\n");
+        markdown.append("| Arm | Found equivalents | CORRECT coverage | Found / wall s | Found / process CPU s | "
+                + "Found / engine CPU s | Found / GiB max RSS |\n");
+        markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            double processCpuSeconds = run.userSeconds + run.systemSeconds;
+            double engineCpuSeconds = run.engineCpuNanos / 1_000_000_000.0;
+            double maxRssGiB = run.maxRssKb / (1024.0 * 1024.0);
+            markdown.append("| ").append(run.engine).append(" | ")
+                    .append(run.correctEquivalent).append(" | ")
+                    .append(number(ratio(run.correctEquivalent, run.correctPairs) * 100.0)).append("% | ")
+                    .append(number(ratio(run.correctEquivalent, run.processElapsedSeconds))).append(" | ")
+                    .append(number(ratio(run.correctEquivalent, processCpuSeconds))).append(" | ")
+                    .append(number(ratio(run.correctEquivalent, engineCpuSeconds))).append(" | ")
+                    .append(number(ratio(run.correctEquivalent, maxRssGiB))).append(" |\n");
+        }
+
         markdown.append("\n## Minimum Edit Distance\n\n");
         markdown.append("For the three e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
                 .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
@@ -611,6 +630,14 @@ public final class EGraphAblationSuite {
                     .put("correctPairs", correctPairs)
                     .put("correctEquivalentPairs", correctEquivalent)
                     .put("correctCoverage", ratio(correctEquivalent, correctPairs))
+                    .put("verifiedEquivalentPairsPerWallSecond",
+                            ratio(correctEquivalent, processElapsedSeconds))
+                    .put("verifiedEquivalentPairsPerProcessCpuSecond",
+                            ratio(correctEquivalent, userSeconds + systemSeconds))
+                    .put("verifiedEquivalentPairsPerEngineCpuSecond",
+                            ratio(correctEquivalent, engineCpuNanos / 1_000_000_000.0))
+                    .put("verifiedEquivalentPairsPerGiBMaximumRss",
+                            ratio(correctEquivalent, maxRssKb / (1024.0 * 1024.0)))
                     .put("incorrectPairs", incorrectPairs)
                     .put("incorrectEquivalentPairs", incorrectEquivalent)
                     .put("incorrectZeroRate", ratio(incorrectEquivalent, incorrectPairs))

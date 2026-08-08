@@ -1,6 +1,6 @@
 # Alloy E-Graph Ablation
 
-- Generated at: `2026-08-08T03:47:20.396670318Z`
+- Generated at: `2026-08-08T03:56:41.752483841Z`
 - Input root: `classified-data`
 - Predicate-pair limit: full corpus
 - Worker threads per arm: 32
@@ -48,6 +48,17 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 | java-egglog | 823 / 19212 | 4.284% | 0 / 42386 | 0.000% |
 | slotted-egraph | 2162 / 19212 | 11.253% | 0 / 42386 | 0.000% |
 | canonical | 2235 / 19212 | 11.633% | 0 / 42386 | 0.000% |
+
+## Equivalent Discovery Efficiency
+
+A found semantic equivalent is a zero-distance pair carrying the dataset's SAT-validated `CORRECT` label. Rates therefore exclude zero-distance pairs from incorrect classes.
+
+| Arm | Found equivalents | CORRECT coverage | Found / wall s | Found / process CPU s | Found / engine CPU s | Found / GiB max RSS |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| raw-egraph | 823 | 4.284% | 50.030 | 4.598 | 194.748 | 808.559 |
+| java-egglog | 823 | 4.284% | 45.722 | 4.550 | 210.304 | 947.428 |
+| slotted-egraph | 2162 | 11.253% | 116.174 | 10.742 | 149.881 | 2345.948 |
+| canonical | 2235 | 11.633% | 119.583 | 9.258 | 176.183 | 643.989 |
 
 ## Minimum Edit Distance
 

@@ -51,18 +51,22 @@ all n : Node | n->n.adj.adj in adj
 }
 
 pred inv8_correct_11[] {
-all x, y, z : Node | x->y in adj and y->z in adj implies x->z in adj
+all n,nn : Node | nn in n.adj.adj implies nn in n.adj
 }
 
 pred inv8_correct_12[] {
-all n:Node, x:Node | n in x.^adj => n in x.adj
+all x, y, z : Node | x->y in adj and y->z in adj implies x->z in adj
 }
 
 pred inv8_correct_13[] {
-all a,b,c : Node | c in b.adj and b in a.adj implies c in a.adj
+all n:Node, x:Node | n in x.^adj => n in x.adj
 }
 
 pred inv8_correct_14[] {
+all a,b,c : Node | c in b.adj and b in a.adj implies c in a.adj
+}
+
+pred inv8_correct_15[] {
 all  a,b,c : Node | (a in adj.b and c in b.adj) => c in a.adj
 
 all n1,n2 : Node | n2 in n1.adj.adj => n2 in n1.adj
@@ -70,35 +74,35 @@ all n1,n2 : Node | n2 in n1.adj.adj => n2 in n1.adj
 all disj n1,n2 : Node | n2 in n1.adj.adj => n2 in n1.adj
 }
 
-pred inv8_correct_15[] {
+pred inv8_correct_16[] {
 all a,b,c:Node | a->b in adj and b->c in adj implies a->c in adj
 }
 
-pred inv8_correct_16[] {
+pred inv8_correct_17[] {
 all  a,b,c : Node | (a in adj.b and c in b.adj) => c in a.adj
 }
 
-pred inv8_correct_17[] {
+pred inv8_correct_18[] {
 all n1,n2:Node | n2 in (n1.adj).adj implies n2 in n1.adj
 }
 
-pred inv8_correct_18[] {
+pred inv8_correct_19[] {
 all a:Node , b:Node, c:Node | (a->b in adj && b->c in adj) implies a->c in adj
 }
 
-pred inv8_correct_19[] {
+pred inv8_correct_20[] {
 all n1, n2: Node | n1 in n2.^adj iff n1 in n2.adj
 }
 
-pred inv8_correct_20[] {
+pred inv8_correct_21[] {
 all x, y, z: Node | x in y.adj and y in z.adj implies x in z.adj
 }
 
-pred inv8_correct_21[] {
+pred inv8_correct_22[] {
 all n,o,p:Node | n->o in adj and o->p in adj implies n->p in adj
 }
 
-pred inv8_correct_22[] {
+pred inv8_correct_23[] {
 ^adj in adj
 }
 

@@ -623,202 +623,206 @@ all x : User | all a : Ad | a in x.posts implies no x.posts-Ad
 }
 
 pred inv4_correct_150[] {
-all x : Ad | (posts.x).posts in Ad
+all u1:User | all a:Ad | u1->a in posts implies ( all p:Photo | u1->p in posts implies p in Ad)
 }
 
 pred inv4_correct_151[] {
+all x : Ad | (posts.x).posts in Ad
+}
+
+pred inv4_correct_152[] {
 all u : User, ad : Ad | u in posts.ad implies all p : Photo | u -> p in
 posts implies p in Ad
 }
 
-pred inv4_correct_152[] {
+pred inv4_correct_153[] {
 all x : User | ( all p : x.posts | p in Ad) or (all p : x.posts | p not in Ad)
 }
 
-pred inv4_correct_153[] {
+pred inv4_correct_154[] {
 all u : User, ad : Ad | u ->ad in posts
 => all p : Photo | u->p in posts => p in Ad
 
 all u: User | some (u.posts&Ad) => no (u.posts-Ad)
 }
 
-pred inv4_correct_154[] {
+pred inv4_correct_155[] {
 all u:User | (some p:Ad | p in u.posts) implies (all p:Photo | p in u.posts implies p in Ad)
 }
 
-pred inv4_correct_155[] {
+pred inv4_correct_156[] {
 all u:User | (some p:Photo | u->p in posts and p in Ad) implies (all p:Photo | u->p in posts implies p in Ad)
 }
 
-pred inv4_correct_156[] {
+pred inv4_correct_157[] {
 all u : User | #(u.posts & Ad) != 0 implies u.posts in Ad
 }
 
-pred inv4_correct_157[] {
+pred inv4_correct_158[] {
 all u : User | all p1,p2 : Photo | (p1+p2) in u.posts and p1 in Ad implies p2 in Ad
 }
 
-pred inv4_correct_158[] {
+pred inv4_correct_159[] {
 all u: User | all p : Photo | ((u->p in posts and p in Ad) implies (all z: Photo | u-> z in posts implies z in Ad))
 }
 
-pred inv4_correct_159[] {
+pred inv4_correct_160[] {
 all u : User, p : Photo | p in u.posts and p in Ad implies (all p2: Photo | u.posts in Ad)
 }
 
-pred inv4_correct_160[] {
+pred inv4_correct_161[] {
 all u:User,p:Ad | all r:Photo | u in posts.p implies u in posts.r implies r in Ad
 }
 
-pred inv4_correct_161[] {
+pred inv4_correct_162[] {
 all p : Ad, u : User |  p in u.posts => u.posts in Ad
 }
 
-pred inv4_correct_162[] {
+pred inv4_correct_163[] {
 all u: User, a: Ad, p: Photo - Ad | u->a in posts => u->p not in posts
 }
 
-pred inv4_correct_163[] {
+pred inv4_correct_164[] {
 all p:Photo,p2:Photo | all u:User | p in u.posts and p in Ad and p2 in u.posts implies p2 in Ad
 }
 
-pred inv4_correct_164[] {
+pred inv4_correct_165[] {
 all u : User, p : Ad | p in u.posts => all po : u.posts | po in Ad
 }
 
-pred inv4_correct_165[] {
+pred inv4_correct_166[] {
 no((posts :> Ad).Ad & (posts :> (Photo - Ad)).Photo)
 }
 
-pred inv4_correct_166[] {
+pred inv4_correct_167[] {
 all x : User, a : Ad | a in x.posts implies all z : Photo | z in x.posts implies z in Ad
 }
 
-pred inv4_correct_167[] {
+pred inv4_correct_168[] {
 all user : User | all p: Photo | p in user.posts and p in Ad implies user.posts in Ad
 }
 
-pred inv4_correct_168[] {
+pred inv4_correct_169[] {
 all u : User | all p : u.posts | p in Ad => all po : u.posts | po in Ad
 }
 
-pred inv4_correct_169[] {
+pred inv4_correct_170[] {
 all u : User, p : Photo | u in posts.p && p in Ad => u.posts in Ad
 }
 
-pred inv4_correct_170[] {
+pred inv4_correct_171[] {
 all x : User, a : Ad | x -> a in posts implies all z : Photo | x -> z in posts implies z in Ad
 }
 
-pred inv4_correct_171[] {
+pred inv4_correct_172[] {
 all u : User | (some p : Ad | p in u.posts) => (u.posts - Ad) = none
 }
 
-pred inv4_correct_172[] {
+pred inv4_correct_173[] {
 all a : Ad | all u : posts.a | all p : u.posts | p in Ad
 }
 
-pred inv4_correct_173[] {
+pred inv4_correct_174[] {
 all u : User | all a : Ad | a in u.posts implies (all p : Photo | p in u.posts implies p in Ad)
 }
 
-pred inv4_correct_174[] {
+pred inv4_correct_175[] {
 no(posts.(Photo - Ad) <: (posts :> Ad).Ad)
 }
 
-pred inv4_correct_175[] {
+pred inv4_correct_176[] {
 all u:User | all a:Ad | a in u.posts implies not (u.posts not in Ad)
 }
 
-pred inv4_correct_176[] {
+pred inv4_correct_177[] {
 all x:User | (some y:x.posts | y in Ad) implies (all z:x.posts | z in Ad)
 }
 
-pred inv4_correct_177[] {
+pred inv4_correct_178[] {
 all u: User | all p1, p2: Photo | (p1 != p2 and p1 in Ad and (p1+p2) in u.posts) implies p2 in Ad
 }
 
-pred inv4_correct_178[] {
+pred inv4_correct_179[] {
 all x : User | all a : Ad | a in x.posts implies x.posts in Ad
 }
 
-pred inv4_correct_179[] {
+pred inv4_correct_180[] {
 all p : Photo| all u:User | (p in Ad and p in u.posts) implies ( #(u.posts - Ad)=0)
 }
 
-pred inv4_correct_180[] {
+pred inv4_correct_181[] {
 all ad : Ad | all u : posts.ad | u.posts in Ad
 }
 
-pred inv4_correct_181[] {
+pred inv4_correct_182[] {
 all u : User, p : Photo | u->p in posts and p in Ad implies u.posts in Ad
 }
 
-pred inv4_correct_182[] {
+pred inv4_correct_183[] {
 all a : Ad, u : User | a in u.posts implies u.posts in Ad
 }
 
-pred inv4_correct_183[] {
+pred inv4_correct_184[] {
 all u:User,p:Ad | u in posts.p implies all r:Photo | u in posts.r implies r in Ad
 }
 
-pred inv4_correct_184[] {
+pred inv4_correct_185[] {
 all u : User | some Ad & u.posts implies u.posts in Ad
 }
 
-pred inv4_correct_185[] {
+pred inv4_correct_186[] {
 all u : User | all p : Ad | u->p in posts implies u.posts in Ad
 }
 
-pred inv4_correct_186[] {
+pred inv4_correct_187[] {
 all u : User| all p : Photo-Ad | all a : Ad | a in u.posts implies no p & u.posts
 }
 
-pred inv4_correct_187[] {
+pred inv4_correct_188[] {
 all u : User | all n : Photo | all a : Ad | a in u.posts and n in u.posts implies n in Ad
 }
 
-pred inv4_correct_188[] {
+pred inv4_correct_189[] {
 all u:User | (some a:Ad | u->a in posts) implies u.posts in Ad
 }
 
-pred inv4_correct_189[] {
+pred inv4_correct_190[] {
 all u : User, p : u.posts | p in Ad implies all p1 : u.posts | p1 in Ad
 }
 
-pred inv4_correct_190[] {
+pred inv4_correct_191[] {
 all u : User | all p : Photo | p in Ad and u->p in posts implies all v : Photo | u->v in posts implies v in Ad
 }
 
-pred inv4_correct_191[] {
+pred inv4_correct_192[] {
 all u : User| all p : Photo-Ad | all a : Ad | a in u.posts implies not p in u.posts
 }
 
-pred inv4_correct_192[] {
+pred inv4_correct_193[] {
 all u : User, p : u.posts | p in Ad => all po : u.posts | po in Ad
 }
 
-pred inv4_correct_193[] {
+pred inv4_correct_194[] {
 all ad : Ad | all posts : posts.ad.posts | posts in Ad
 }
 
-pred inv4_correct_194[] {
+pred inv4_correct_195[] {
 all u:User | (some p:Ad | p in u.posts ) implies u.posts in Ad
 }
 
-pred inv4_correct_195[] {
+pred inv4_correct_196[] {
 all u:User | all a:Ad | a in u.posts implies all p:Photo-a | p in u.posts implies p in Ad
 }
 
-pred inv4_correct_196[] {
+pred inv4_correct_197[] {
 all p : Photo, u : User | p in u.posts and p in Ad implies (all p : u.posts | p in Ad)
 }
 
-pred inv4_correct_197[] {
+pred inv4_correct_198[] {
 all u:User, p : Photo | p in Ad and u->p in posts implies (all ph : Photo | u->ph in posts implies ph in Ad)
 }
 
-pred inv4_correct_198[] {
+pred inv4_correct_199[] {
 all ad : Ad , user : User | ad in user.posts => user.posts in Ad
 }
 
