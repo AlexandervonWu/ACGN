@@ -1,5 +1,8 @@
 ## Getting Started
 
+CanDis technical documentation is available in
+[`documentation/README.md`](documentation/README.md).
+
 Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
 
 ## Folder Structure
