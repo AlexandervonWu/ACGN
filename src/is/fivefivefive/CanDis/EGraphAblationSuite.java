@@ -25,7 +25,16 @@ import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 /** Launches each ablation arm in a fresh JVM and combines time/RSS measurements. */
 public final class EGraphAblationSuite {
     private static final List<String> ENGINES = List.of(
-            "raw-egraph", "java-egglog", "slotted-egraph", "canonical");
+            "raw-egraph", "raw-egraph-debruijn",
+            "java-egglog", "java-egglog-debruijn",
+            "slotted-egraph", "canonical");
+    private static final List<String[]> TRANSITIONS = List.of(
+            new String[] {"raw-egraph", "raw-egraph-debruijn"},
+            new String[] {"raw-egraph", "java-egglog"},
+            new String[] {"raw-egraph-debruijn", "java-egglog-debruijn"},
+            new String[] {"java-egglog", "java-egglog-debruijn"},
+            new String[] {"java-egglog-debruijn", "slotted-egraph"},
+            new String[] {"slotted-egraph", "canonical"});
 
     private EGraphAblationSuite() {
     }
@@ -154,8 +163,9 @@ public final class EGraphAblationSuite {
         }
         root.put("runs", runArray);
         JSONArray transitions = new JSONArray();
-        for (int i = 1; i < runs.size(); i++) {
-            transitions.put(transitionJson(runs.get(i - 1), runs.get(i)));
+        for (String[] transition : TRANSITIONS) {
+            transitions.put(transitionJson(
+                    findRun(runs, transition[0]), findRun(runs, transition[1])));
         }
         root.put("equivalenceTransitions", transitions);
         root.put("equivalenceDisagreementPairs", disagreementCount(runs));
@@ -196,7 +206,9 @@ public final class EGraphAblationSuite {
             AblationRunManifest.Context context,
             List<RunMetrics> runs) throws IOException {
         RunMetrics raw = findRun(runs, "raw-egraph");
+        RunMetrics rawDeBruijn = findRun(runs, "raw-egraph-debruijn");
         RunMetrics egglog = findRun(runs, "java-egglog");
+        RunMetrics egglogDeBruijn = findRun(runs, "java-egglog-debruijn");
         RunMetrics slotted = findRun(runs, "slotted-egraph");
         RunMetrics canonical = findRun(runs, "canonical");
         Set<String> canonicalOnly = new TreeSet<>(canonical.equivalentPaths);
@@ -236,13 +248,15 @@ public final class EGraphAblationSuite {
                     .append(entry.getValue()).append(" |\n");
         }
         markdown.append("\n## Pairs\n\n");
-        markdown.append("| Source | Status | Raw zero | Egglog zero | Slotted zero | Canonical zero |\n");
-        markdown.append("| --- | --- | ---: | ---: | ---: | ---: |\n");
+        markdown.append("| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Canonical zero |\n");
+        markdown.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (String predicatePath : canonicalOnly) {
             markdown.append("| `").append(predicatePath).append("` | ")
                     .append(canonical.statusByPath.getOrDefault(predicatePath, "")).append(" | ")
                     .append(raw.equivalentPaths.contains(predicatePath)).append(" | ")
+                    .append(rawDeBruijn.equivalentPaths.contains(predicatePath)).append(" | ")
                     .append(egglog.equivalentPaths.contains(predicatePath)).append(" | ")
+                    .append(egglogDeBruijn.equivalentPaths.contains(predicatePath)).append(" | ")
                     .append(slotted.equivalentPaths.contains(predicatePath)).append(" | true |\n");
         }
         Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
@@ -308,16 +322,20 @@ public final class EGraphAblationSuite {
         markdown.append("## Arms\n\n");
         markdown.append("1. **Conventional e-graph:** fixed-arity Alloy constructors, the shared rule program, "
                 + "union-find, hash-consing, and congruence rebuilding.\n");
-        markdown.append("2. **Java egglog core:** variadic Alloy constructors plus union facts, semi-naive rule rounds, "
+        markdown.append("2. **Conventional e-graph + De Bruijn:** the same fixed-arity engine, with bound variables "
+                + "stored as nameless nearest-binder indices.\n");
+        markdown.append("3. **Java egglog core:** variadic Alloy constructors plus union facts, semi-naive rule rounds, "
                 + "and congruence rebuilding. This is a Java replica of the egglog execution core used here, "
                 + "not a textual-language-compatible port of every egglog feature.\n");
-        markdown.append("3. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
+        markdown.append("4. **Java egglog + De Bruijn:** the same variadic engine and rules, with nameless "
+                + "bound-variable storage.\n");
+        markdown.append("5. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
                 + "renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.\n");
-        markdown.append("4. **Canonical:** the current method, adding temporal-phase partitioning, connective "
+        markdown.append("6. **Canonical:** the current method, adding temporal-phase partitioning, connective "
                 + "elimination, strict per-phase prenexing, primitive binding tuples, and canonical variadic matrices.\n\n");
 
         markdown.append("## Shared Rule Program\n\n");
-        markdown.append("The first three arms use the same `").append(JavaEgglog.ruleSetVersion())
+        markdown.append("The first five arms use the same `").append(JavaEgglog.ruleSetVersion())
                 .append("` rule set; only their term/eclass representation differs. The rules are: ")
                 .append(String.join(", ", JavaEgglog.ruleNames())).append(".\n\n");
 
@@ -349,17 +367,32 @@ public final class EGraphAblationSuite {
         }
 
         RunMetrics raw = findRun(runs, "raw-egraph");
+        RunMetrics rawDeBruijn = findRun(runs, "raw-egraph-debruijn");
         RunMetrics egglog = findRun(runs, "java-egglog");
+        RunMetrics egglogDeBruijn = findRun(runs, "java-egglog-debruijn");
         RunMetrics slotted = findRun(runs, "slotted-egraph");
         markdown.append("\n## Observations\n\n");
+        markdown.append("- De Bruijn storage adds ")
+                .append(differenceSize(rawDeBruijn.equivalentPaths, raw.equivalentPaths))
+                .append(" zero-distance pairs to the fixed-arity arm, with ")
+                .append(differenceSize(raw.equivalentPaths, rawDeBruijn.equivalentPaths)).append(" losses.\n");
         markdown.append("- Variadic egglog encoding adds ")
                 .append(differenceSize(egglog.equivalentPaths, raw.equivalentPaths))
                 .append(" zero-distance pairs over the fixed-arity e-graph, with ")
                 .append(differenceSize(raw.equivalentPaths, egglog.equivalentPaths)).append(" losses.\n");
+        markdown.append("- De Bruijn storage adds ")
+                .append(differenceSize(egglogDeBruijn.equivalentPaths, egglog.equivalentPaths))
+                .append(" zero-distance pairs to the variadic egglog arm, with ")
+                .append(differenceSize(egglog.equivalentPaths, egglogDeBruijn.equivalentPaths)).append(" losses.\n");
+        markdown.append("- Under De Bruijn storage, variadic egglog encoding adds ")
+                .append(differenceSize(egglogDeBruijn.equivalentPaths, rawDeBruijn.equivalentPaths))
+                .append(" pairs over the fixed-arity arm, with ")
+                .append(differenceSize(rawDeBruijn.equivalentPaths, egglogDeBruijn.equivalentPaths))
+                .append(" losses.\n");
         markdown.append("- Slot-aware shapes add ")
-                .append(differenceSize(slotted.equivalentPaths, egglog.equivalentPaths))
-                .append(" pairs over the egglog arm, with ")
-                .append(differenceSize(egglog.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
+                .append(differenceSize(slotted.equivalentPaths, egglogDeBruijn.equivalentPaths))
+                .append(" pairs over the De Bruijn egglog arm, with ")
+                .append(differenceSize(egglogDeBruijn.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
         int canonicalAdds = differenceSize(canonical.equivalentPaths, slotted.equivalentPaths);
         int canonicalLosses = differenceSize(slotted.equivalentPaths, canonical.equivalentPaths);
         String canonicalRelationship = canonicalLosses == 0
@@ -412,9 +445,10 @@ public final class EGraphAblationSuite {
         }
 
         markdown.append("\n## Minimum Edit Distance\n\n");
-        markdown.append("For the three e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
+        markdown.append("For the five e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
                 .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
-                .append("under alpha-renaming and declaration permutation groups. Eclass equality has distance zero. ")
+                .append("under alpha-renaming and declaration permutation groups, while the two De Bruijn arms ")
+                .append("index bound variables before e-graph storage and distance. Eclass equality has distance zero. ")
                 .append("The canonical arm uses the production canonical edit distance.\n\n");
         markdown.append("| Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |\n");
         markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
@@ -442,12 +476,12 @@ public final class EGraphAblationSuite {
         }
 
         markdown.append("\n## Pair-Level Transitions\n\n");
-        markdown.append("These counts make clear whether each successive arm is a strict extension on this corpus.\n\n");
+        markdown.append("These edges isolate variable encoding, variadic representation, slots, and the full method.\n\n");
         markdown.append("| Transition | Retained zeroes | Newly zero | No longer zero |\n");
         markdown.append("| --- | ---: | ---: | ---: |\n");
-        for (int i = 1; i < runs.size(); i++) {
-            RunMetrics before = runs.get(i - 1);
-            RunMetrics after = runs.get(i);
+        for (String[] transition : TRANSITIONS) {
+            RunMetrics before = findRun(runs, transition[0]);
+            RunMetrics after = findRun(runs, transition[1]);
             markdown.append("| ").append(before.engine).append(" -> ").append(after.engine).append(" | ")
                     .append(intersectionSize(before.equivalentPaths, after.equivalentPaths)).append(" | ")
                     .append(differenceSize(after.equivalentPaths, before.equivalentPaths)).append(" | ")
@@ -467,7 +501,7 @@ public final class EGraphAblationSuite {
         }
         markdown.append("\nThe structural byte count is an implementation-level estimate for graph objects; "
                 + "Max RSS is the primary measured memory result. Canonical representation units are the existing "
-                + "canonical-form size, while the three baseline units are retained e-nodes. E-class and e-node "
+                + "canonical-form size, while the five baseline units are retained e-nodes. E-class and e-node "
                 + "columns are reachable saturated-graph counts for every arm; canonical e-nodes include retained "
                 + "alternatives across all temporal matrices.\n");
         markdown.append("\n## Reproduce\n\n");

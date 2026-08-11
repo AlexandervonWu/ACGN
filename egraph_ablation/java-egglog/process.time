@@ -1,18 +1,18 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx3g -cp /tmp/acgn-egraph-ablation.o9mEUu:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input classified-data --output egraph_ablation/java-egglog --engine java-egglog --threads 32"
-	User time (seconds): 179.23
-	System time (seconds): 5.65
-	Percent of CPU this job got: 1085%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.02
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx3g -cp /tmp/acgn-egraph-ablation.dDOwhf:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input classified-data --output egraph_ablation/java-egglog --engine java-egglog --threads 32"
+	User time (seconds): 179.88
+	System time (seconds): 5.86
+	Percent of CPU this job got: 1003%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.50
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 961804
+	Maximum resident set size (kbytes): 896532
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 286214
-	Voluntary context switches: 2716930
-	Involuntary context switches: 24117
+	Minor (reclaiming a frame) page faults: 302311
+	Voluntary context switches: 3027980
+	Involuntary context switches: 22428
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 22248

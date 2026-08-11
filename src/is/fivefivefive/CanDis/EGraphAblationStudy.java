@@ -42,6 +42,8 @@ import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.EGraphStats;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
+import is.fivefivefive.CanDis.core.egraph.RawDeBruijnEGraph;
 import is.fivefivefive.CanDis.core.egraph.RawEGraph;
 import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
@@ -515,7 +517,11 @@ public final class EGraphAblationStudy {
 
     private enum Engine {
         RAW("raw-egraph", "Conventional fixed-arity e-graph with the shared Alloy rewrite program"),
+        RAW_DEBRUIJN("raw-egraph-debruijn",
+                "Fixed-arity e-graph storing bound variables as De Bruijn indices"),
         EGGLOG("java-egglog", "Java egglog core replica with shared variadic rules and rebuilding"),
+        EGGLOG_DEBRUIJN("java-egglog-debruijn",
+                "Java egglog core storing bound variables as De Bruijn indices"),
         SLOTTED("slotted-egraph", "Slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
         CANONICAL("canonical", "Current temporal/prenex/slotted canonical-form method");
 
@@ -531,8 +537,12 @@ public final class EGraphAblationStudy {
             switch (this) {
                 case RAW:
                     return new RawEGraph();
+                case RAW_DEBRUIJN:
+                    return new RawDeBruijnEGraph();
                 case EGGLOG:
                     return new JavaEgglog();
+                case EGGLOG_DEBRUIJN:
+                    return new JavaEgglogDeBruijn();
                 case SLOTTED:
                     return new SlottedEGraph();
                 default:
@@ -550,8 +560,14 @@ public final class EGraphAblationStudy {
             if ("raw".equals(normalized)) {
                 return RAW;
             }
+            if ("raw-debruijn".equals(normalized) || "raw-db".equals(normalized)) {
+                return RAW_DEBRUIJN;
+            }
             if ("egglog".equals(normalized)) {
                 return EGGLOG;
+            }
+            if ("egglog-debruijn".equals(normalized) || "egglog-db".equals(normalized)) {
+                return EGGLOG_DEBRUIJN;
             }
             if ("slotted".equals(normalized)) {
                 return SLOTTED;

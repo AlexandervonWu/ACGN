@@ -58,8 +58,11 @@ is.fivefivefive.CanDis.core
 is.fivefivefive.CanDis.core.egraph
   AlloyTerm                  immutable parser-independent term
   RawEGraph                  fixed-arity baseline
+  RawDeBruijnEGraph          fixed-arity baseline with nameless binders
   JavaEgglog                 variadic egglog-like baseline
+  JavaEgglogDeBruijn         variadic baseline with nameless binders
   SlottedEGraph              renamed-slot baseline
+  DeBruijnVariables          scoped nearest-binder encoding
   AlloyRewriteSystem         shared ablation rewrite program
 ```
 
@@ -467,13 +470,21 @@ case-normalization handled by dataset conventions.
 
 ## Ablation Study
 
-The ablation suite compares four process-isolated arms:
+The ablation suite compares six process-isolated arms:
 
 1. `raw-egraph`: fixed-arity e-graph plus the shared rewrite program.
-2. `java-egglog`: variadic egglog-like saturation and rebuilding.
-3. `slotted-egraph`: renamed slots, slot redundancy, and permutation groups.
-4. `canonical`: temporal partitioning, per-phase prenexing, binding tuples, and
+2. `raw-egraph-debruijn`: the fixed-arity arm with bound variables stored as
+   nearest-binder De Bruijn indices.
+3. `java-egglog`: variadic egglog-like saturation and rebuilding.
+4. `java-egglog-debruijn`: the variadic arm with De Bruijn variable storage.
+5. `slotted-egraph`: renamed slots, slot redundancy, and permutation groups.
+6. `canonical`: temporal partitioning, per-phase prenexing, binding tuples, and
    the production matrix representation.
+
+The two De Bruijn arms retain named terms as capture-safe rewrite witnesses and
+freshly encode each retained witness before hash-consing, e-class comparison,
+and edit-distance measurement. This keeps the rewrite rules identical while
+ensuring that prenex movement cannot capture a stale relative index.
 
 Run the full corpus with:
 
@@ -493,7 +504,7 @@ min(requested threads, logical processors, 32)
 Every arm writes a manifest containing the run ID, Git/source state, dataset
 fingerprint, rule/schema versions, JVM and heap, worker count, host/CPU details,
 start time, and output hashes. The suite rejects a combined report unless all
-four manifests describe the same run context and every retained arm output
+six manifests describe the same run context and every retained arm output
 still matches its recorded hash. Useful options are `--limit N`, `--threads N`,
 `--verbose`, and `--report-only`. `--report-only` verifies those manifests and
 regenerates all combined reports, including the canonical-only/slotted report,
@@ -505,8 +516,9 @@ The report includes:
 
 - process wall time, process CPU, worker engine CPU, peak heap, and maximum RSS
 - equivalent-pair coverage by dataset label
-- minimum edit distances for all four representations
-- pair-level transitions between adjacent arms
+- minimum edit distances for all six representations
+- pair-level transitions isolating De Bruijn encoding, variadic representation,
+  slots, and full canonicalization
 - semantically labeled equivalent discoveries per wall second, CPU second, and
   GiB of maximum RSS
 

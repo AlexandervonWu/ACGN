@@ -16,7 +16,10 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
 import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.DeBruijnVariables;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
+import is.fivefivefive.CanDis.core.egraph.RawDeBruijnEGraph;
 import is.fivefivefive.CanDis.core.egraph.RawEGraph;
 import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
@@ -61,12 +64,15 @@ public final class EGraphAblationInspector {
             AlloyTerm raw = AlloyAstTermAdapter.fromPredicate(predicates.get(name));
             terms[i] = raw;
             System.out.println(name + " raw:\n" + raw);
+            System.out.println(name + " De Bruijn:\n" + DeBruijnVariables.encode(raw));
             System.out.println(name + " alpha:\n" + SlottedEGraph.alphaRepresentative(raw));
             System.out.println(name + " egglog normal:\n" + JavaEgglog.normalForm(raw));
             System.out.println(name + " slotted normal:\n" + SlottedEGraph.normalForm(raw));
         }
         printDistance("raw e-graph", new RawEGraph().compare(terms[0], terms[1]));
+        printDistance("raw e-graph + De Bruijn", new RawDeBruijnEGraph().compare(terms[0], terms[1]));
         printDistance("Java egglog", new JavaEgglog().compare(terms[0], terms[1]));
+        printDistance("Java egglog + De Bruijn", new JavaEgglogDeBruijn().compare(terms[0], terms[1]));
         printDistance("slotted e-graph", new SlottedEGraph().compare(terms[0], terms[1]));
         MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
         visitor.visit(model, null);

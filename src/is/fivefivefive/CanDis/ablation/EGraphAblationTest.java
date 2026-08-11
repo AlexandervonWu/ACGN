@@ -4,11 +4,14 @@ import java.util.List;
 
 import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
+import is.fivefivefive.CanDis.core.egraph.DeBruijnVariables;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
+import is.fivefivefive.CanDis.core.egraph.RawDeBruijnEGraph;
 import is.fivefivefive.CanDis.core.egraph.RawEGraph;
 import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 
-/** Fast executable regression tests for the three ablation engines. */
+/** Fast executable regression tests for the e-graph ablation engines. */
 public final class EGraphAblationTest {
     private EGraphAblationTest() {
     }
@@ -148,6 +151,12 @@ public final class EGraphAblationTest {
         AlloyTerm alphaRight = predicate("renamed", AlloyTerm.node("P", AlloyTerm.atom("VAR", "renamed")));
         check(!new JavaEgglog().compare(alphaLeft, alphaRight).equivalent,
                 "ordinary e-graph must retain literal identifiers");
+        check(DeBruijnVariables.encode(alphaLeft).equals(DeBruijnVariables.encode(alphaRight)),
+                "De Bruijn terms must erase bound identifier spelling");
+        check(new RawDeBruijnEGraph().compare(alphaLeft, alphaRight).equivalent,
+                "fixed-arity De Bruijn e-graph must preserve alpha-equivalence");
+        check(new JavaEgglogDeBruijn().compare(alphaLeft, alphaRight).equivalent,
+                "egglog De Bruijn e-graph must preserve alpha-equivalence");
         AblationEngine.Result alphaResult = new SlottedEGraph().compare(alphaLeft, alphaRight);
         check(alphaResult.equivalent && alphaResult.distance == 0,
                 "slotted e-graph must preserve alpha-equivalence");
@@ -181,6 +190,27 @@ public final class EGraphAblationTest {
                 "lexically shadowed slots must remain alpha-equivalent");
         check(!new SlottedEGraph().compare(shadowed, capturesOuter).equivalent,
                 "inner and outer slots must remain distinct under shadowing");
+        check(new RawDeBruijnEGraph().compare(shadowed, shadowRenamed).equivalent,
+                "De Bruijn indices must preserve alpha-equivalence under shadowing");
+        check(!new RawDeBruijnEGraph().compare(shadowed, capturesOuter).equivalent,
+                "De Bruijn index zero and index one must remain distinct");
+
+        AlloyTerm freeLeft = predicate("x", AlloyTerm.node("F",
+                AlloyTerm.atom("VAR", "x"), AlloyTerm.atom("VAR", "freeA")));
+        AlloyTerm freeRight = predicate("renamed", AlloyTerm.node("F",
+                AlloyTerm.atom("VAR", "renamed"), AlloyTerm.atom("VAR", "freeB")));
+        check(!new JavaEgglogDeBruijn().compare(freeLeft, freeRight).equivalent,
+                "De Bruijn encoding must retain free-variable names");
+        check(!new JavaEgglogDeBruijn().compare(permutationLeft, permutationRight).equivalent,
+                "plain De Bruijn encoding must not add declaration permutation groups");
+
+        AlloyTerm dependentLeft = dependentQuantifier("x", "y");
+        AlloyTerm dependentRight = dependentQuantifier("outer", "inner");
+        AlloyTerm dependentEncoded = DeBruijnVariables.encode(dependentLeft);
+        check(dependentEncoded.equals(DeBruijnVariables.encode(dependentRight)),
+                "dependent declaration domains must be alpha-equivalent");
+        check(dependentEncoded.toString().contains("F(VAR(@db:1),VAR(@db:0))"),
+                "nested binders must use nearest-binder De Bruijn indices");
 
         AlloyTerm captureUnsafeLet = quantified("QF/ALL", "y", "S",
                 AlloyTerm.node("LetExpr",
@@ -195,12 +225,16 @@ public final class EGraphAblationTest {
                                 AlloyTerm.atom("VAR", "y"), AlloyTerm.atom("VAR", "y"))));
         check(!new JavaEgglog().compare(captureUnsafeLet, capturedResult).equivalent,
                 "egglog beta reduction must avoid capture by shadowing quantifiers");
+        check(!new JavaEgglogDeBruijn().compare(captureUnsafeLet, capturedResult).equivalent,
+                "De Bruijn egglog beta reduction must avoid capture by shadowing quantifiers");
 
         AlloyTerm simpleLet = AlloyTerm.node("LetExpr",
                 AlloyTerm.atom("VAR", "x"), a,
                 AlloyTerm.node("Body", AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))));
         check(new JavaEgglog().compare(simpleLet, AlloyTerm.node("P", a)).equivalent,
                 "capture-safe beta reduction must still eliminate ordinary lets");
+        check(new JavaEgglogDeBruijn().compare(simpleLet, AlloyTerm.node("P", a)).equivalent,
+                "De Bruijn egglog must retain ordinary beta equivalence");
 
         AlloyTerm comprehensionLeft = comprehension(
                 AlloyTerm.node("BF/IN", AlloyTerm.atom("VAR", "y"),
@@ -223,8 +257,12 @@ public final class EGraphAblationTest {
     private static void checkAllEquivalent(String rule, AlloyTerm left, AlloyTerm right) {
         check(new RawEGraph().compare(left, right).equivalent,
                 "fixed-arity e-graph must apply " + rule);
+        check(new RawDeBruijnEGraph().compare(left, right).equivalent,
+                "fixed-arity De Bruijn e-graph must apply " + rule);
         check(new JavaEgglog().compare(left, right).equivalent,
                 "egglog core must apply " + rule);
+        check(new JavaEgglogDeBruijn().compare(left, right).equivalent,
+                "egglog De Bruijn core must apply " + rule);
         check(new SlottedEGraph().compare(left, right).equivalent,
                 "slotted e-graph must apply " + rule);
     }
@@ -273,6 +311,20 @@ public final class EGraphAblationTest {
                 "DECL/VarDecl/disj=false/var=false",
                 AlloyTerm.atom("VAR", "x"), AlloyTerm.atom("VAR", "y"), AlloyTerm.atom("SIG", "S"));
         return AlloyTerm.node("QE/COMPREHENSION", declaration, AlloyTerm.node("Body", body));
+    }
+
+    private static AlloyTerm dependentQuantifier(String outer, String inner) {
+        AlloyTerm outerDeclaration = AlloyTerm.node(
+                "DECL/VarDecl/disj=false/var=false",
+                AlloyTerm.atom("VAR", outer), AlloyTerm.atom("SIG", "S"));
+        AlloyTerm innerDeclaration = AlloyTerm.node(
+                "DECL/VarDecl/disj=false/var=false",
+                AlloyTerm.atom("VAR", inner),
+                AlloyTerm.node("BE/JOIN",
+                        AlloyTerm.atom("VAR", outer), AlloyTerm.atom("FIELD", "r")));
+        return AlloyTerm.node("QF/ALL", outerDeclaration, innerDeclaration,
+                AlloyTerm.node("Body", AlloyTerm.node("F",
+                        AlloyTerm.atom("VAR", outer), AlloyTerm.atom("VAR", inner))));
     }
 
     private static void check(boolean condition, String message) {

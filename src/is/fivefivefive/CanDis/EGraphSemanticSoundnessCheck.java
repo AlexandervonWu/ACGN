@@ -37,6 +37,8 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
+import is.fivefivefive.CanDis.core.egraph.RawDeBruijnEGraph;
 import is.fivefivefive.CanDis.core.egraph.RawEGraph;
 import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
@@ -46,7 +48,9 @@ import parser.ast.nodes.Predicate;
 /** Bounded Alloy validation of the equivalence claims produced by the ablation arms. */
 public final class EGraphSemanticSoundnessCheck {
     private static final List<String> ENGINES = List.of(
-            "raw-egraph", "java-egglog", "slotted-egraph", "canonical");
+            "raw-egraph", "raw-egraph-debruijn",
+            "java-egglog", "java-egglog-debruijn",
+            "slotted-egraph", "canonical");
     private static final Path PROBE_ROOT = Paths.get(
             "src/is/fivefivefive/CanDis/ablation/soundness");
 
@@ -177,7 +181,11 @@ public final class EGraphSemanticSoundnessCheck {
             AlloyTerm leftTerm = AlloyAstTermAdapter.fromPredicate(predicates.get(names[0]));
             AlloyTerm rightTerm = AlloyAstTermAdapter.fromPredicate(predicates.get(names[1]));
             result.merged.put("raw-egraph", new RawEGraph().compare(leftTerm, rightTerm).equivalent);
+            result.merged.put("raw-egraph-debruijn",
+                    new RawDeBruijnEGraph().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("java-egglog", new JavaEgglog().compare(leftTerm, rightTerm).equivalent);
+            result.merged.put("java-egglog-debruijn",
+                    new JavaEgglogDeBruijn().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("slotted-egraph", new SlottedEGraph().compare(leftTerm, rightTerm).equivalent);
 
             MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
@@ -307,13 +315,15 @@ public final class EGraphSemanticSoundnessCheck {
         markdown.append("\n## Targeted Rule-Level Probes\n\n");
         markdown.append("These deliberately exercise binder cases absent from the observed zero-distance corpus. ")
                 .append("A merge in a row with an Alloy counterexample is a semantic-soundness violation.\n\n");
-        markdown.append("| Probe | Alloy counterexample | Raw | Java egglog | Slotted | Canonical |\n");
-        markdown.append("| --- | --- | --- | --- | --- | --- |\n");
+        markdown.append("| Probe | Alloy counterexample | Raw | Raw DB | Java egglog | Egglog DB | Slotted | Canonical |\n");
+        markdown.append("| --- | --- | --- | --- | --- | --- | --- | --- |\n");
         for (ProbeResult probe : probes) {
             markdown.append("| `").append(probe.name).append("` | ")
                     .append(probe.error.isEmpty() ? probe.counterexample : "error")
                     .append(" | ").append(probe.merged.getOrDefault("raw-egraph", false))
+                    .append(" | ").append(probe.merged.getOrDefault("raw-egraph-debruijn", false))
                     .append(" | ").append(probe.merged.getOrDefault("java-egglog", false))
+                    .append(" | ").append(probe.merged.getOrDefault("java-egglog-debruijn", false))
                     .append(" | ").append(probe.merged.getOrDefault("slotted-egraph", false))
                     .append(" | ").append(probe.merged.getOrDefault("canonical", false))
                     .append(" |\n");

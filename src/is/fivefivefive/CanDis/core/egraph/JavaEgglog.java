@@ -12,6 +12,15 @@ import java.util.Set;
  */
 public final class JavaEgglog implements AblationEngine {
     private static final int MAX_TERM_SIZE = 50_000;
+    private final boolean deBruijnVariables;
+
+    public JavaEgglog() {
+        this(false);
+    }
+
+    JavaEgglog(boolean deBruijnVariables) {
+        this.deBruijnVariables = deBruijnVariables;
+    }
 
     public static String ruleSetVersion() {
         return AlloyRewriteSystem.RULE_SET_VERSION;
@@ -38,14 +47,16 @@ public final class JavaEgglog implements AblationEngine {
     @Override
     public Result compare(AlloyTerm left, AlloyTerm right) {
         IntEGraph graph = new IntEGraph();
-        int leftRoot = graph.add(left);
-        int rightRoot = graph.add(right);
+        AlloyTerm storedLeft = store(left);
+        AlloyTerm storedRight = store(right);
+        int leftRoot = graph.add(storedLeft);
+        int rightRoot = graph.add(storedRight);
         AlloyTerm leftFrontier = left;
         AlloyTerm rightFrontier = right;
         Set<AlloyTerm> leftRoots = new LinkedHashSet<>();
         Set<AlloyTerm> rightRoots = new LinkedHashSet<>();
-        leftRoots.add(left);
-        rightRoots.add(right);
+        leftRoots.add(storedLeft);
+        rightRoots.add(storedRight);
         long applications = 0;
         long iterations = 0;
 
@@ -61,14 +72,16 @@ public final class JavaEgglog implements AblationEngine {
             iterations++;
             applications += roundApplications;
             if (leftPass.term.size() <= MAX_TERM_SIZE && leftPass.applications > 0) {
-                graph.union(leftRoot, graph.add(leftPass.term));
                 leftFrontier = leftPass.term;
-                leftRoots.add(leftFrontier);
+                AlloyTerm stored = store(leftFrontier);
+                graph.union(leftRoot, graph.add(stored));
+                leftRoots.add(stored);
             }
             if (rightPass.term.size() <= MAX_TERM_SIZE && rightPass.applications > 0) {
-                graph.union(rightRoot, graph.add(rightPass.term));
                 rightFrontier = rightPass.term;
-                rightRoots.add(rightFrontier);
+                AlloyTerm stored = store(rightFrontier);
+                graph.union(rightRoot, graph.add(stored));
+                rightRoots.add(stored);
             }
             graph.rebuild();
         }
@@ -76,5 +89,9 @@ public final class JavaEgglog implements AblationEngine {
         boolean sameClass = graph.find(leftRoot) == graph.find(rightRoot);
         int distance = sameClass ? 0 : EGraphEditDistance.minimum(leftRoots, rightRoots);
         return new Result(distance, graph.stats(applications, iterations));
+    }
+
+    private AlloyTerm store(AlloyTerm term) {
+        return deBruijnVariables ? DeBruijnVariables.encode(term) : term;
     }
 }
