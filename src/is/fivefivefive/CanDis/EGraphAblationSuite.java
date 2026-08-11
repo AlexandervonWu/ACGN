@@ -33,6 +33,21 @@ public final class EGraphAblationSuite {
     public static void main(String[] args) throws Exception {
         Options options = Options.parse(args);
         Files.createDirectories(options.output);
+        AblationRunManifest.Context context;
+        if (options.reportOnly) {
+            context = AblationRunManifest.loadCompatibleArms(options.output, ENGINES);
+            Path requestedInput = options.input.toAbsolutePath().normalize();
+            if (!requestedInput.equals(Paths.get(context.datasetRoot))) {
+                throw new IllegalStateException("Report input " + requestedInput
+                        + " does not match manifest dataset " + context.datasetRoot);
+            }
+            options.threads = context.workers;
+            options.maxHeap = context.heap;
+            options.limit = context.limit;
+        } else {
+            context = AblationRunManifest.capture(
+                    options.input, options.maxHeap, options.threads, options.limit);
+        }
         List<RunMetrics> runs = new ArrayList<>();
         for (String engine : ENGINES) {
             if (options.reportOnly) {
@@ -43,21 +58,29 @@ public final class EGraphAblationSuite {
                         engineDir.resolve("pairs.csv")));
             } else {
                 System.out.println("Running " + engine + "...");
-                runs.add(runEngine(engine, options));
+                runs.add(runEngine(engine, options, context));
             }
         }
         validateParallelism(options, runs);
-        writeComparisonJson(options.output.resolve("comparison.json"), options, runs);
+        writeComparisonJson(options.output.resolve("comparison.json"), options, context, runs);
         writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
         writeDisagreements(options.output.resolve("equivalence_disagreements.csv"), runs);
-        writeMarkdown(options.output.resolve("summary.md"), options, runs);
+        writeCanonicalOnly(options.output.resolve("canonical_only_vs_slotted.md"), context, runs);
+        writeMarkdown(options.output.resolve("summary.md"), options, context, runs);
+        AblationRunManifest.writeRoot(
+                options.output, context, AblationRunManifest.allGeneratedOutputs(ENGINES));
         System.out.println("Wrote " + options.output.resolve("comparison.json"));
         System.out.println("Wrote " + options.output.resolve("minimum_distances.csv"));
         System.out.println("Wrote " + options.output.resolve("equivalence_disagreements.csv"));
+        System.out.println("Wrote " + options.output.resolve("canonical_only_vs_slotted.md"));
         System.out.println("Wrote " + options.output.resolve("summary.md"));
+        System.out.println("Wrote " + options.output.resolve(AblationRunManifest.ROOT_MANIFEST));
     }
 
-    private static RunMetrics runEngine(String engine, Options options) throws Exception {
+    private static RunMetrics runEngine(
+            String engine,
+            Options options,
+            AblationRunManifest.Context context) throws Exception {
         Path engineDir = options.output.resolve(engine);
         Files.createDirectories(engineDir);
         Path timeFile = engineDir.resolve("process.time");
@@ -103,12 +126,19 @@ public final class EGraphAblationSuite {
         if (!Files.isRegularFile(propertiesPath)) {
             throw new IllegalStateException(engine + " did not produce " + propertiesPath);
         }
-        return RunMetrics.read(propertiesPath, timeFile, engineDir.resolve("pairs.csv"));
+        RunMetrics metrics = RunMetrics.read(propertiesPath, timeFile, engineDir.resolve("pairs.csv"));
+        AblationRunManifest.writeArm(engineDir, engine, context);
+        return metrics;
     }
 
-    private static void writeComparisonJson(Path path, Options options, List<RunMetrics> runs) throws IOException {
+    private static void writeComparisonJson(
+            Path path,
+            Options options,
+            AblationRunManifest.Context context,
+            List<RunMetrics> runs) throws IOException {
         JSONObject root = new JSONObject();
         root.put("generatedAt", Instant.now().toString());
+        root.put("runManifest", context.toJson());
         root.put("inputRoot", options.input.toString());
         root.put("threadCount", options.threads);
         root.put("logicalProcessors", AblationParallelism.logicalProcessors());
@@ -161,6 +191,63 @@ public final class EGraphAblationSuite {
         Files.writeString(path, csv.toString(), StandardCharsets.UTF_8);
     }
 
+    private static void writeCanonicalOnly(
+            Path path,
+            AblationRunManifest.Context context,
+            List<RunMetrics> runs) throws IOException {
+        RunMetrics raw = findRun(runs, "raw-egraph");
+        RunMetrics egglog = findRun(runs, "java-egglog");
+        RunMetrics slotted = findRun(runs, "slotted-egraph");
+        RunMetrics canonical = findRun(runs, "canonical");
+        Set<String> canonicalOnly = new TreeSet<>(canonical.equivalentPaths);
+        canonicalOnly.removeAll(slotted.equivalentPaths);
+        int correct = 0;
+        int incorrect = 0;
+        Map<String, Integer> grouped = new java.util.TreeMap<>();
+        for (String predicatePath : canonicalOnly) {
+            String status = canonical.statusByPath.getOrDefault(predicatePath, "");
+            if ("CORRECT".equals(status)) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+            int slash = predicatePath.indexOf('/');
+            String problem = slash < 0 ? predicatePath : predicatePath.substring(0, slash);
+            String key = problem + "\u0000" + status;
+            grouped.put(key, grouped.getOrDefault(key, 0) + 1);
+        }
+        StringBuilder markdown = new StringBuilder("# Canonical-Only Equivalences\n\n");
+        markdown.append("This file is generated from the same manifests and pair CSVs as the combined ablation report.\n\n");
+        markdown.append("- Run ID: `").append(context.runId).append("`\n");
+        markdown.append("- Git SHA: `").append(context.gitSha).append("`\n");
+        markdown.append("- Dataset SHA-256: `").append(context.datasetSha256).append("`\n");
+        markdown.append("- Canonical-only pairs: ").append(canonicalOnly.size()).append("\n");
+        markdown.append("- CORRECT: ").append(correct).append("\n");
+        markdown.append("- Incorrect: ").append(incorrect).append("\n\n");
+        markdown.append("## By Problem And Status\n\n");
+        markdown.append("| Problem class | Status | Pairs |\n");
+        markdown.append("| --- | --- | ---: |\n");
+        for (Map.Entry<String, Integer> entry : grouped.entrySet()) {
+            String key = entry.getKey();
+            int separator = key.indexOf('\0');
+            String problem = key.substring(0, separator);
+            String status = key.substring(separator + 1);
+            markdown.append("| ").append(problem).append(" | ").append(status).append(" | ")
+                    .append(entry.getValue()).append(" |\n");
+        }
+        markdown.append("\n## Pairs\n\n");
+        markdown.append("| Source | Status | Raw zero | Egglog zero | Slotted zero | Canonical zero |\n");
+        markdown.append("| --- | --- | ---: | ---: | ---: | ---: |\n");
+        for (String predicatePath : canonicalOnly) {
+            markdown.append("| `").append(predicatePath).append("` | ")
+                    .append(canonical.statusByPath.getOrDefault(predicatePath, "")).append(" | ")
+                    .append(raw.equivalentPaths.contains(predicatePath)).append(" | ")
+                    .append(egglog.equivalentPaths.contains(predicatePath)).append(" | ")
+                    .append(slotted.equivalentPaths.contains(predicatePath)).append(" | true |\n");
+        }
+        Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
+    }
+
     private static void writeMinimumDistances(Path path, List<RunMetrics> runs) throws IOException {
         Set<String> paths = new TreeSet<>();
         for (RunMetrics run : runs) {
@@ -196,11 +283,19 @@ public final class EGraphAblationSuite {
         return "";
     }
 
-    private static void writeMarkdown(Path path, Options options, List<RunMetrics> runs) throws IOException {
+    private static void writeMarkdown(
+            Path path,
+            Options options,
+            AblationRunManifest.Context context,
+            List<RunMetrics> runs) throws IOException {
         RunMetrics canonical = findRun(runs, "canonical");
         StringBuilder markdown = new StringBuilder();
         markdown.append("# Alloy E-Graph Ablation\n\n");
         markdown.append("- Generated at: `").append(Instant.now()).append("`\n");
+        markdown.append("- Run ID: `").append(context.runId).append("`\n");
+        markdown.append("- Git SHA: `").append(context.gitSha).append("` (dirty: ")
+                .append(context.dirtyTree).append(")\n");
+        markdown.append("- Dataset SHA-256: `").append(context.datasetSha256).append("`\n");
         markdown.append("- Input root: `").append(options.input).append("`\n");
         markdown.append("- Predicate-pair limit: ")
                 .append(options.limit == 0 ? "full corpus" : Integer.toString(options.limit)).append("\n");

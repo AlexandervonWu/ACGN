@@ -490,9 +490,13 @@ All arms receive the same worker count. The effective policy is:
 min(requested threads, logical processors, 32)
 ```
 
-The suite rejects a combined report if an arm records a different worker count.
-Useful options are `--limit N`, `--threads N`, `--verbose`, and `--report-only`.
-`--report-only` regenerates combined reports from retained per-arm metrics
+Every arm writes a manifest containing the run ID, Git/source state, dataset
+fingerprint, rule/schema versions, JVM and heap, worker count, host/CPU details,
+start time, and output hashes. The suite rejects a combined report unless all
+four manifests describe the same run context and every retained arm output
+still matches its recorded hash. Useful options are `--limit N`, `--threads N`,
+`--verbose`, and `--report-only`. `--report-only` verifies those manifests and
+regenerates all combined reports, including the canonical-only/slotted report,
 without rerunning the engines.
 
 ### Ablation interpretation
@@ -518,6 +522,14 @@ label and does not rerun the SAT solver during the ablation.
 - `summary.md`: aggregate raw/relative distances, compression, repair radii, and
   correlations
 - CSV/SVG artifacts: plotting inputs and generated visualizations
+- `paper_tables.md` and `paper_metrics.json`: reproducible paper-table extracts
+  pinned to the source summary hash
+
+Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
+
+```bash
+./scripts/regenerate_distance_artifacts.sh distance_results
+```
 
 ### `alloy4fun-augmented/`
 
@@ -537,9 +549,13 @@ label and does not rerun the SAT solver during the ablation.
 - `comparison.json`: machine-readable run and transition metrics
 - `minimum_distances.csv`: per-pair distance under every arm
 - `equivalence_disagreements.csv`: zero-equivalence differences among arms
+- `canonical_only_vs_slotted.md`: canonical-only equivalences generated from
+  the same verified arm outputs
+- `run-manifest.json`: combined context and hashes of every generated output
 - `<arm>/pairs.csv`: pair-level results for one arm
 - `<arm>/metrics.properties`: compact run metrics and worker count
 - `<arm>/summary.json`: grouped run details
+- `<arm>/manifest.json`: arm context plus output hashes
 
 ## Interpretation And Limits
 

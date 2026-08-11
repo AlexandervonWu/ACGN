@@ -1,53 +1,100 @@
 # Canonical-Only Equivalences
 
-This report filters the current ablation run to pairs for which the canonical
-distance is zero while the slotted e-graph does not put the predicates in the
-same e-class. There are 26 such pairs: 16 labeled `CORRECT` and 10 labeled
-incorrect.
+This file is generated from the same manifests and pair CSVs as the combined ablation report.
 
-## Label-Confirmed Equivalences
+- Run ID: `f03b263e-742c-4d8e-a9b6-8cdd400d0e25`
+- Git SHA: `0302499d943bef2a30a2acd9bf3dd6c94ec940e5`
+- Dataset SHA-256: `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`
+- Canonical-only pairs: 73
+- CORRECT: 73
+- Incorrect: 0
 
-| Source | Main additional canonical normalization |
-| --- | --- |
-| `classroom_rl/correct/GRP85rwsHuKm8zhkx_inv11.als` | `not some R` to `no R` after implication elimination |
-| `classroom_rl/correct/TJXPvBgM5AHwvorzS_inv11.als` | `not some R` to `no R` after implication elimination |
-| `classroom_rl/correct/qMkSypneHnbzhKpuR_inv6.als` | `not no R` to `some R` |
-| `lts/correct/8uTw54mmMHWM6qj3L_inv1.als` | quantified negation plus `not no R` to `some R` |
-| `lts/correct/rJPtqFiHsbCzBgCAu_inv1.als` | quantified negation plus `not no R` to `some R` |
-| `lts/correct/viZeRLo7kTSfXQ6zE_inv4.als` | beta reduction and flattening equivalent same-domain declaration groups |
-| `productionLineNew/correct/AGohzw2pbtqJDxFEc_inv5.als` | implication elimination plus `not some R` to `no R` |
-| `productionLine_v2/correct/2BNBMcc7uBfj3zgNC_inv4.als` | `not no R` to `some R` |
-| `productionLine_v2/correct/CHSzeMXJNwcpXtNz6_inv5.als` | implication elimination plus `not some R` to `no R` |
-| `productionLine_v2/correct/HaN259F3Ti2vFScWr_inv4.als` | `not some R` to `no R` |
-| `productionLine_v2/correct/RvbXi4j6gYaS8ZAh9_inv7.als` | implication elimination plus `not some R` to `no R` |
-| `trainStationNew/correct/ATSGF4ogkW7WCRRSR_inv9.als` | implication elimination and cardinality polarity normalization |
-| `trainStationNew/correct/JurcKCg9wB2X48g6k_inv1.als` | `not no R` to `some R` |
-| `trainStationNew/correct/Q2YYR7QmX2DLN5iDw_inv1.als` | `not no R` to `some R` |
-| `trainStationNew/correct/u6Jn8CAM4z9rkjMxA_inv3.als` | complementary operands of `iff` plus cardinality polarity normalization |
-| `trash_ltl/correct/WCmW6XqHcDpTMcHzX_inv16.als` | redundant typed-domain antecedent across a temporal phase |
+## By Problem And Status
 
-The `lts/inv4` pair is semantically equivalent, but its printed canonical IR is
-also lossy: both matrices become `s in i`, omitting the closure and relation
-comprehension. It therefore should not be treated as positive evidence for the
-soundness of that particular merge.
+| Problem class | Status | Pairs |
+| --- | --- | ---: |
+| classroom_rl | CORRECT | 20 |
+| coursesNew | CORRECT | 5 |
+| coursesOld | CORRECT | 2 |
+| cv_v1 | CORRECT | 4 |
+| lts | CORRECT | 21 |
+| socialMedia | CORRECT | 3 |
+| trainStationNew | CORRECT | 18 |
 
-## Incorrect Equivalences
+## Pairs
 
-| Source | Status | Failure mode |
-| --- | --- | --- |
-| `trash_fol/both/zqAktmMuWYgwS4Mzu_inv2.als` | `BOTH` | local binder `Trash` is confused with global signature `Trash`; the quantifier is discarded |
-| `trash_ltl/under/4k53NfRpJjdZxHJrZ_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/7rD4MERBSEKTL4gBd_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/Bk6zyS4GmGBxziabr_inv12.als` | `UNDERCONSTRAINED` | negated implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/LAdeCajAbFbS9rtjn_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/PjtzPSLM57jJJZExo_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/WakmHvGhLY7dz5mP7_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/d95FTPaYmvChpJYGW_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/muiF9M33YEp7vfvu9_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-| `trash_ltl/under/vbKNCFFWy9EtCXRNh_inv12.als` | `UNDERCONSTRAINED` | implication antecedent is lost when `always` is extracted into another phase |
-
-For the shadowing pair, both current canonical IRs print as `File in Trash`.
-For the temporal pairs, both current canonical IRs contain an `EVENTUALLY`
-normal form equivalent to `SOME f : one File . true` and a separate `ALWAYS`
-normal form containing `f in Trash`. The original implication dependency is no
-longer represented.
+| Source | Status | Raw zero | Egglog zero | Slotted zero | Canonical zero |
+| --- | --- | ---: | ---: | ---: | ---: |
+| `classroom_rl/correct/2Dhd7qqqRcJ9rXox4_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/4N2TFZx89P2uPqBbZ_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/5MtmBXpjvP8nsTBsN_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/6kqWHbak5nQjsnJvg_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/CRpeJmDtoGzzW6pw3_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/Pkajjb7EvjnWR5mb8_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/QeSmeK5wsjbsGE3zc_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/RuWxxzdvJLB32BneK_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/Wv99SvsygZPD4q2Kt_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/aex5G5dZgWhn2mKgA_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/auq9pxCaSvZrNeFci_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/dwaotpWH2wN9N25kR_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/gdJRhqbkqSpzmmaCz_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/hdkjJTWitPrPj47ci_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/pzr9FighazSyioGM2_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/rJKkqbANExDZ253Wp_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/srvstTLoTAYi8cS6W_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/vTbdkeQWqkmFun4HM_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/withbSMoLmv4Wb9MY_inv10.als` | CORRECT | false | false | false | true |
+| `classroom_rl/correct/zKr8rWFM2hd2tffTr_inv10.als` | CORRECT | false | false | false | true |
+| `coursesNew/correct/AvkQam7cXX99qN6No_inv12.als` | CORRECT | false | false | false | true |
+| `coursesNew/correct/YP8WRqF8qhPDbhtQ6_inv12.als` | CORRECT | false | false | false | true |
+| `coursesNew/correct/YtfW2SwWcXpQJ7wTq_inv12.als` | CORRECT | false | false | false | true |
+| `coursesNew/correct/av2ik6nMzNQH74tK3_inv12.als` | CORRECT | false | false | false | true |
+| `coursesNew/correct/w7EATBdmaYSmRrfPW_inv7.als` | CORRECT | false | false | false | true |
+| `coursesOld/correct/E8s85biiWGb8vynJa_inv12.als` | CORRECT | false | false | false | true |
+| `coursesOld/correct/bMMSsGsStryKTPvki_inv7.als` | CORRECT | false | false | false | true |
+| `cv_v1/correct/fa7tBwaBzBuLPXF3E_inv4.als` | CORRECT | false | false | false | true |
+| `cv_v1/correct/hYAsNCFKzA86F4rBF_inv3.als` | CORRECT | false | false | false | true |
+| `cv_v1/correct/tij5htbGNcoxDRQKJ_inv3.als` | CORRECT | false | false | false | true |
+| `cv_v1/correct/twqEBwuPtGujZA8RB_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/24koD4ukJs8N4CeoY_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/393AxgCnhDqJ9858F_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/3h8iNjqADajovierX_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/4QraZN2BXi2K2vF48_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/4aQoKuThn3JDdgsJF_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/KZRpBcygnZmZNBu4c_inv5.als` | CORRECT | false | false | false | true |
+| `lts/correct/KmkAEvXeyd3cfokQp_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/LjS53b9SSaf2aCa35_inv5.als` | CORRECT | false | false | false | true |
+| `lts/correct/SiKLvSpDghaXhAafk_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/SjPsRa6DaR3CJnMHE_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/Ws4kqz9BHqKbXgDuM_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/YSNi29vegS9bQ44ND_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/ZJyY2s5yryBm8o73g_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/eie4cNZtcH6CWytco_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/guxeoTz3wKsTLTLC7_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/p2GL65ZbgJ3u5JxEr_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/tHFYsHKCxHBrkHpHf_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/vP8DBJB6eDTEoTyis_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/w3CKBNyLSTA7FZzkR_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/y5fiMo4aB9Q4iPY6G_inv3.als` | CORRECT | false | false | false | true |
+| `lts/correct/zLjhS3e5wYJEDLaFZ_inv5.als` | CORRECT | false | false | false | true |
+| `socialMedia/correct/BwarjBL7etT5JzM2q_inv6.als` | CORRECT | false | false | false | true |
+| `socialMedia/correct/SeHiDeRvmYR2if6dv_inv6.als` | CORRECT | false | false | false | true |
+| `socialMedia/correct/SiqtGQ9YWCaxaZQKK_inv6.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/22RPNQY9iXbiMaZA2_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/28e92bPfTz3FW6d9a_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/4mNN3z28SdwhfHtn2_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/7yf6otwpXhRdBn4Da_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/8YFbrPvDWYWciWG29_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/AEnqk4jM6mRwkWYQd_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/JfuyLyzR2QpPBuv7j_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/KBFj8uPSbz3cpPhE7_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/L57StopGah5igzZ6p_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/N5CcyG3CeE9gBSvuC_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/ZJR9GqfpqjJoThccT_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/aM4CAZYi4mPtGQmbW_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/bdAJYKaRKsbZJ8dtM_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/cmrqZLreJnpWbwS8e_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/vE6z9RXND8gZzbdgS_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/wFJJkTwS2M6tLmHGF_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/ww4dvWMJoahPSzJwY_inv8.als` | CORRECT | false | false | false | true |
+| `trainStationNew/correct/yS9bdPRSYkRtLGBSS_inv8.als` | CORRECT | false | false | false | true |
