@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.ArrayDeque;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -350,6 +351,32 @@ public class EGraphNode {
             }
             arena.classes.keySet().retainAll(reachable);
         }
+    }
+    public static ReachabilityStats countReachable(List<EGraphNode> roots) {
+        if (roots == null || roots.isEmpty()) {
+            return new ReachabilityStats(0, 0);
+        }
+        Set<EClass> classes = Collections.newSetFromMap(new IdentityHashMap<>());
+        Set<EGraphNode> nodes = Collections.newSetFromMap(new IdentityHashMap<>());
+        ArrayDeque<EClass> pending = new ArrayDeque<>();
+        for (EGraphNode root : roots) {
+            if (root != null && root.eClass != null) {
+                pending.addLast(root.eClass);
+            }
+        }
+        while (!pending.isEmpty()) {
+            EClass eClass = pending.removeFirst();
+            if (!classes.add(eClass)) {
+                continue;
+            }
+            for (EGraphNode node : eClass.nodes) {
+                nodes.add(node);
+                for (EClassRef child : node.childClasses) {
+                    pending.addLast(child.eClass);
+                }
+            }
+        }
+        return new ReachabilityStats(classes.size(), nodes.size());
     }
     public Metatype getMetatype() {
         return metatype;
@@ -933,6 +960,16 @@ public class EGraphNode {
             }
         }
         return exposed == null ? Collections.emptySet() : exposed;
+    }
+
+    public static final class ReachabilityStats {
+        public final long eclasses;
+        public final long enodes;
+
+        private ReachabilityStats(long eclasses, long enodes) {
+            this.eclasses = eclasses;
+            this.enodes = enodes;
+        }
     }
 
     public static final class EClassRef {

@@ -46,6 +46,11 @@ public final class MASGVisitorTypeRegressionTest {
                 || !Canonical.edits(candidate, oracle).equals(Canonical.edits(preparedCandidate, preparedOracle))) {
             throw new AssertionError("Prepared canonical form changed graph-based results");
         }
+        long eclasses = Canonical.eclassCount(preparedCandidate);
+        long enodes = Canonical.enodeCount(preparedCandidate);
+        if (eclasses <= 0 || enodes < eclasses) {
+            throw new AssertionError("Prepared canonical form did not retain valid e-graph counts");
+        }
         System.out.println("MASGVisitorTypeRegressionTest passed");
     }
 }

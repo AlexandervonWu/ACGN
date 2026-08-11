@@ -238,7 +238,9 @@ public final class EGraphAblationStudy {
         result.representationUnits = leftSize + rightSize;
         result.distance = Canonical.distance(leftPrepared, rightPrepared);
         result.equivalent = result.distance == 0;
-        result.stats = new EGraphStats(0, 0, 0, 0,
+        long eclasses = Canonical.eclassCount(leftPrepared) + Canonical.eclassCount(rightPrepared);
+        long enodes = Canonical.enodeCount(leftPrepared) + Canonical.enodeCount(rightPrepared);
+        result.stats = new EGraphStats(eclasses, enodes, 0, 0,
                 0, 0, 0, 0, 0, result.representationUnits * 64L);
     }
 

@@ -72,12 +72,28 @@ public final class CanonicalDistance {
         private final TemporalTree temporalTree;
         private final int size;
         private final EGraphMetadata metadata;
+        private final EGraphNode.ReachabilityStats eGraphStats;
 
         private Prepared(List<NormalForm> normalForms, TemporalTree temporalTree, int size) {
             this.normalForms = normalForms;
             this.temporalTree = temporalTree;
             this.size = size;
             this.metadata = new EGraphMetadata(normalForms);
+            List<EGraphNode> roots = new ArrayList<>(normalForms.size());
+            for (NormalForm normalForm : normalForms) {
+                if (normalForm.getMatrixEGraph() != null) {
+                    roots.add(normalForm.getMatrixEGraph());
+                }
+            }
+            this.eGraphStats = EGraphNode.countReachable(roots);
+        }
+
+        public long eclassCount() {
+            return eGraphStats.eclasses;
+        }
+
+        public long enodeCount() {
+            return eGraphStats.enodes;
         }
     }
 

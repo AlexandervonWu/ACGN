@@ -43,6 +43,14 @@ public final class Canonical {
         return CanonicalDistance.canonicalFormSize(prepared.delegate);
     }
 
+    public static long eclassCount(Prepared prepared) {
+        return prepared.delegate.eclassCount();
+    }
+
+    public static long enodeCount(Prepared prepared) {
+        return prepared.delegate.enodeCount();
+    }
+
     public static Prepared prepare(Multigraph graph) {
         if (graph == null) {
             throw new IllegalArgumentException("Multigraph cannot be null");

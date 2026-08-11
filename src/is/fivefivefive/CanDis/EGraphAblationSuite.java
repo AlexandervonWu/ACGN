@@ -365,14 +365,16 @@ public final class EGraphAblationSuite {
         for (RunMetrics run : runs) {
             markdown.append("| ").append(run.engine).append(" | ")
                     .append(number(run.averageRepresentationUnits)).append(" | ")
-                    .append("canonical".equals(run.engine) ? "n/a" : number(run.averageEclasses)).append(" | ")
-                    .append("canonical".equals(run.engine) ? "n/a" : number(run.averageEnodes)).append(" | ")
+                    .append(number(run.averageEclasses)).append(" | ")
+                    .append(number(run.averageEnodes)).append(" | ")
                     .append(number(run.averageEstimatedBytes)).append(" | ")
                     .append(run.peakEstimatedBytes).append(" |\n");
         }
         markdown.append("\nThe structural byte count is an implementation-level estimate for graph objects; "
                 + "Max RSS is the primary measured memory result. Canonical representation units are the existing "
-                + "canonical-form size, while the three baseline units are retained e-nodes.\n");
+                + "canonical-form size, while the three baseline units are retained e-nodes. E-class and e-node "
+                + "columns are reachable saturated-graph counts for every arm; canonical e-nodes include retained "
+                + "alternatives across all temporal matrices.\n");
         markdown.append("\n## Reproduce\n\n");
         markdown.append("```bash\n");
         markdown.append("./scripts/run_egraph_ablation.sh --input ").append(options.input)
