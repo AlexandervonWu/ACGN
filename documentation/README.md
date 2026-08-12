@@ -208,7 +208,7 @@ Dataset summaries compare this size with raw AST size and lexical body length.
 ## Rewrite Theory
 
 The ablation baselines share the terminating rule set
-`canonical-equivalences-v1`. The production canonicalizer applies the same main
+`canonical-equivalences-v2`. The production canonicalizer applies the same main
 equivalences while additionally performing temporal partitioning, strict
 per-phase normalization, primitive binding extraction, and slot symmetries.
 
@@ -254,6 +254,11 @@ no x:S | P              -> all x:S | not P
 The inverse negations of `NOTONE` and `NOTLONE` produce `ONE` and `LONE`.
 Over `none`, `ALL`, `NO`, `LONE`, and `NOTONE` are true; `SOME`, `ONE`, and
 `NOTLONE` are false.
+
+The shared ablation rules also fold domain-independent constant bodies:
+`all x:S | true`, `no/lone/notone x:S | false` become true, while
+`some/one/notlone x:S | false` become false. Results that depend on whether `S`
+is empty remain quantified.
 
 Safe prenex rules require that the moved binding is not free in the other
 operand:

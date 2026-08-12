@@ -103,18 +103,18 @@ size, the coverage is:
 ### Six-arm e-graph ablation
 
 All six arms processed the same 61,598 eligible pairs with 32 workers in fresh
-JVMs. The first five use the same `canonical-equivalences-v1` rule program.
+JVMs. The first five use the same `canonical-equivalences-v2` rule program.
 `java-egglog` is a Java replica of the execution model used in this study, not
 a full textual-language-compatible port of external egglog.
 
 | Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Raw fixed-arity e-graph | 823 | 4.284% | 18.416 | 16.730 | 4.375 | 919.203 | 58.208 |
-| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.948 | 18.490 | 5.127 | 933.465 | 57.888 |
-| Java egglog-like variadic | 823 | 4.284% | 18.020 | 18.500 | 3.988 | 875.520 | 56.760 |
-| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.553 | 18.300 | 5.018 | 876.754 | 56.429 |
-| Slotted e-graph | 2,162 | 11.253% | 17.717 | 19.340 | 18.185 | 946.063 | 52.971 |
-| Full canonical method | 2,235 | 11.633% | 13.540 | 20.160 | 12.762 | 3,629.090 | 28.700 |
+| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 17.470 | 4.466 | 997.504 | 58.184 |
+| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 17.360 | 5.738 | 905.094 | 57.865 |
+| Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.120 | 4.628 | 980.988 | 56.740 |
+| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 17.450 | 5.274 | 948.785 | 56.410 |
+| Slotted e-graph | 2,162 | 11.253% | 17.694 | 18.000 | 15.312 | 1,075.449 | 52.952 |
+| Full canonical method | 2,235 | 11.633% | 13.540 | 19.050 | 13.607 | 3,566.262 | 28.700 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -138,17 +138,31 @@ in each of 11 transformation families.
 
 | Arm | All 5,500 | Eight composed families |
 | --- | ---: | ---: |
-| Raw fixed-arity e-graph | 2,479 (45.07%) | 1,979 / 4,000 (49.48%) |
-| Raw e-graph + De Bruijn | 3,505 (63.73%) | 2,479 / 4,000 (61.98%) |
-| Java egglog-like variadic | 2,500 (45.45%) | 2,000 / 4,000 (50.00%) |
-| Java egglog-like + De Bruijn | 3,500 (63.64%) | 2,500 / 4,000 (62.50%) |
+| Raw fixed-arity e-graph | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
+| Raw e-graph + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
+| Java egglog-like variadic | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
+| Java egglog-like + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
 | Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
 | Full canonical method | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
 
-De Bruijn arms recover alpha-equivalence but not declaration-block
-permutations. Slotted and canonical arms recover all 500 alpha-equivalence and
-all 500 binder-permutation cases. The complete family matrix is in
+De Bruijn encoding gives complete alpha-equivalence recovery, but the raw and
+egglog-like representations do not implement general declaration-block
+permutations. The raw and egglog-like arms recover 1 of 500 binder-permutation
+cases incidentally, and their De Bruijn variants recover 22 of 500. Slotted and
+canonical representations recover all 500 alpha-equivalence and all 500
+binder-permutation cases. The complete family matrix is in
 [`capability_benchmark/REPORT.md`](capability_benchmark/REPORT.md).
+
+**AC/logical v2 correction.** Fixed-arity re-binarization could expose a
+complement as normalized atomic duals such as `some S` and `no S`, while the v1
+matcher recognized only an explicit `A` / `not A` pair. Rule set
+`canonical-equivalences-v2` recognizes those duals and folds only
+domain-independent constant quantified bodies. Raw and raw-plus-De-Bruijn
+coverage for the composed AC-plus-logical-normalization family increased from
+479/500 to 500/500; all six arms now recover all 500 cases. The natural-corpus
+zero sets did not change, no incorrect zeroes were introduced, and
+[`unexpected_failures.csv`](capability_benchmark/unexpected_failures.csv) is
+empty.
 
 ### Bounded semantic evidence
 
@@ -190,10 +204,10 @@ nearest-correct run, their correlations with raw reward error were 0.141856,
 
 ### Runtime and memory interpretation
 
-The full canonical arm completed the 61,598-pair corpus in 20.160 seconds on a
+The full canonical arm completed the 61,598-pair corpus in 19.050 seconds on a
 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
 compact structural representation averaged 28.700 units, 23.803 reachable
-e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,629.090
+e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,566.262
 MiB RSS.
 
 A deterministic 2,000-file attribution run explains the apparent mismatch:
@@ -467,14 +481,20 @@ from every current distance and ablation run.
 
 ## Reproducibility
 
-The checked-in six-arm snapshot records:
+The checked-in six-arm natural-corpus snapshot records:
 
-- run ID `7a38c97e-1c10-4a84-9648-19e679129d5d`;
-- source SHA `556940083db6c54893a436e9aa880ec0e5850cea` with a dirty worktree;
+- run ID `2610bc86-0acc-4b20-a001-6055ee36a081`;
+- source SHA `01d1e3134671d9f1ef9278021aa18a3d12afa408` with a dirty worktree;
 - dataset SHA-256
   `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
-- Java 17.0.19, 32 workers, a 3 GiB heap cap, host/CPU metadata, schema and rule
-  versions, timestamps, and hashes of every generated arm and combined output.
+- Java 17.0.19, 32 workers, a 3 GiB heap cap, rule set
+  `canonical-equivalences-v2`, host/CPU metadata, schema versions, timestamps,
+  and hashes of every generated arm and combined output.
+
+The checked-in capability snapshot uses run ID
+`9a74e29d-d38c-46e7-b855-fd327cdda3c0` and the same v2 rule set. Its arm
+manifests and generated-report hashes are anchored by the capability
+[`run-manifest.json`](capability_benchmark/arms/run-manifest.json).
 
 See [`run-manifest.json`](egraph_ablation/run-manifest.json). Because that
 snapshot records a dirty worktree, the manifest's source and output hashes are

@@ -2,34 +2,34 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "beb13933b259f6572ba5255d27721312b422a581ae5e7fef3ee896f0007ce212",
-      "sizeBytes": 1073494
+      "sha256": "7cd35eb373d3d329870413429f440a1aa51e47a358b350fcb62d26bcc930edd9",
+      "sizeBytes": 1074436
     },
     {
       "path": "summary.json",
-      "sha256": "f1715b6137186a1a3660cda4f93222f877cdf78a9b94617504b39fb423086ac6",
-      "sizeBytes": 13711
+      "sha256": "e95ba539f3a23f930e14c9acd0e334dee2263d9500e0245c74b4ad421fdf8729",
+      "sizeBytes": 13772
     },
     {
       "path": "metrics.properties",
-      "sha256": "8ab8e8395c54b605656d96a4621ae2f9c731312b7fcd5eaf399061d31c356dc0",
-      "sizeBytes": 993
+      "sha256": "b504ec9ad8c13bee7dd7e35d0eb9c27d4be26f382941698877be46f6ef07d54f",
+      "sizeBytes": 989
     },
     {
       "path": "run.log",
-      "sha256": "46d0e65ddc9218f59c8332f2d23527498102601a76781232616820a68d015999",
+      "sha256": "855ac9ce021004a1220d857bdc4ea573b35007eb2d561ce6dad9a1b054393570",
       "sizeBytes": 103
     },
     {
       "path": "process.time",
-      "sha256": "1d94340b98a20fc9ae049744d7ddf101d96ed00f1510ec8d568e2798b7763454",
+      "sha256": "0ae5f3cf0c1e6c6d429f50bd57118b6df31f819172362624992788a0381acc7b",
       "sizeBytes": 1294
     }
   ],
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-11T23:58:08.139313575Z",
-  "javaSourceSha256": "7721fbe868910abc54fe58724ebadce097cc6f3927cdaafb2ea79517afe999a1",
+  "startedAt": "2026-08-12T14:09:47.612305736Z",
+  "javaSourceSha256": "85d8f3bcf874772f488fab441c85ef64399477d846d28c47d0b8f2e56e7ba59e",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -45,7 +45,7 @@
   "heap": "3g",
   "workers": 32,
   "arm": "raw-egraph-debruijn",
-  "ruleSetVersion": "canonical-equivalences-v1",
+  "ruleSetVersion": "canonical-equivalences-v2",
   "outputSchemaVersion": "candis-ablation-output-v3",
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
@@ -53,7 +53,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v1",
   "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
-  "gitSha": "9953c5d2161d23d557d2a00cb02ef1b4bef95809",
+  "gitSha": "01d1e3134671d9f1ef9278021aa18a3d12afa408",
   "datasetByteCount": 5312721,
   "ruleNames": [
     "operator aliases",
@@ -69,6 +69,7 @@
     "quantifier negation duals",
     "no-to-all-not quantifier expansion",
     "empty quantifier domains",
+    "constant quantifier bodies",
     "safe existential-conjunction prenex",
     "safe universal-disjunction prenex",
     "associativity",
@@ -80,5 +81,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "ae363ef2-b0f2-40e9-b86c-348488d2630f"
+  "runId": "9a74e29d-d38c-46e7-b855-fd327cdda3c0"
 }

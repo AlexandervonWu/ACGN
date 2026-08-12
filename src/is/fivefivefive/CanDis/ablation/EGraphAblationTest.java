@@ -44,6 +44,35 @@ public final class EGraphAblationTest {
                 AlloyTerm.node("UF/NOT", a), AlloyTerm.node("UF/NOT", b));
         checkAllEquivalent("De Morgan", notAnd, deMorgan);
 
+        AlloyTerm carrier = AlloyTerm.atom("SIG", "S");
+        AlloyTerm noCarrier = AlloyTerm.node("UF/NO", carrier);
+        AlloyTerm someCarrier = AlloyTerm.node("UF/SOME", carrier);
+        AlloyTerm contradictoryBranch = AlloyTerm.node("BF/AND", a,
+                AlloyTerm.node("BF/AND", noCarrier, someCarrier));
+        AlloyTerm otherBranch = AlloyTerm.node("BF/AND", b, a);
+        checkAllEquivalent("De Morgan after AC and atomic-dual normalization",
+                AlloyTerm.node("UF/NOT",
+                        AlloyTerm.node("BF/AND", contradictoryBranch, otherBranch)),
+                AlloyTerm.node("BF/OR",
+                        AlloyTerm.node("UF/NOT", otherBranch),
+                        AlloyTerm.node("UF/NOT", contradictoryBranch)));
+        AlloyTerm call = AlloyTerm.atom("CALL/CallFormula", "p");
+        AlloyTerm otherCarrier = AlloyTerm.atom("SIG", "T");
+        AlloyTerm relationChoice = AlloyTerm.node("BF/OR",
+                AlloyTerm.node("BF/IN", carrier,
+                        AlloyTerm.node("BE/PLUS", carrier, otherCarrier)),
+                AlloyTerm.node("UF/SOME", AlloyTerm.atom("FIELD", "r")));
+        AlloyTerm leftFlattened = AlloyTerm.node("BF/AND", List.of(
+                call, noCarrier, someCarrier, someCarrier, relationChoice, noCarrier));
+        AlloyTerm rightFirstGroup = AlloyTerm.node("BF/AND", relationChoice, noCarrier);
+        AlloyTerm rightSecondGroup = AlloyTerm.node("BF/AND", List.of(
+                call, noCarrier, someCarrier, someCarrier));
+        checkAllEquivalent("De Morgan over parser-flattened AC groups",
+                AlloyTerm.node("UF/NOT", leftFlattened),
+                AlloyTerm.node("BF/OR",
+                        AlloyTerm.node("UF/NOT", rightFirstGroup),
+                        AlloyTerm.node("UF/NOT", rightSecondGroup)));
+
         AlloyTerm implication = AlloyTerm.node("BF/IMPLIES", a, b);
         AlloyTerm disjunction = AlloyTerm.node("BF/OR", AlloyTerm.node("UF/NOT", a), b);
         checkAllEquivalent("implication elimination", implication, disjunction);
@@ -129,6 +158,16 @@ public final class EGraphAblationTest {
                 quantifiedWithDomain("QF/ALL", "x", noneTerm,
                         AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))),
                 trueTerm);
+        checkAllEquivalent("false existential body",
+                quantified("QF/SOME", "x", "S", falseTerm), falseTerm);
+        checkAllEquivalent("true universal body",
+                quantified("QF/ALL", "x", "S", trueTerm), trueTerm);
+        checkAllEquivalent("false no body",
+                quantified("QF/NO", "x", "S", falseTerm), trueTerm);
+        checkAllEquivalent("false one body",
+                quantified("QF/ONE", "x", "S", falseTerm), falseTerm);
+        checkAllEquivalent("false lone body",
+                quantified("QF/LONE", "x", "S", falseTerm), trueTerm);
 
         AlloyTerm someP = quantified("QF/SOME", "x", "S",
                 AlloyTerm.node("P", AlloyTerm.atom("VAR", "x")));

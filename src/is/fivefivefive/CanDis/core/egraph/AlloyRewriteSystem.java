@@ -11,7 +11,7 @@ import java.util.Set;
 /** Shared, terminating orientation of the Alloy equivalences used by the baselines. */
 final class AlloyRewriteSystem {
     static final int MAX_ITERATIONS = 32;
-    static final String RULE_SET_VERSION = "canonical-equivalences-v1";
+    static final String RULE_SET_VERSION = "canonical-equivalences-v2";
     private static final List<String> RULE_NAMES = List.of(
             "operator aliases",
             "NOOP elimination",
@@ -26,6 +26,7 @@ final class AlloyRewriteSystem {
             "quantifier negation duals",
             "no-to-all-not quantifier expansion",
             "empty quantifier domains",
+            "constant quantifier bodies",
             "safe existential-conjunction prenex",
             "safe universal-disjunction prenex",
             "associativity",
@@ -132,6 +133,10 @@ final class AlloyRewriteSystem {
             AlloyTerm empty = emptyDomainResult(current);
             if (empty != null) {
                 return empty;
+            }
+            AlloyTerm constantBody = constantBodyResult(current);
+            if (constantBody != null) {
+                return constantBody;
             }
             if ("QF/NO".equals(current.head())) {
                 return rewriteQuantifier(current, "QF/ALL", true);
@@ -352,6 +357,34 @@ final class AlloyRewriteSystem {
             case "QF/ONE":
             case "QF/NOTLONE":
                 return bool(false);
+            default:
+                return null;
+        }
+    }
+
+    private static AlloyTerm constantBodyResult(AlloyTerm quantifier) {
+        if (quantifier.children().isEmpty()) {
+            return null;
+        }
+        AlloyTerm body = quantifier.children().get(quantifier.children().size() - 1);
+        if ("Body".equals(body.head()) && body.children().size() == 1) {
+            body = body.children().get(0);
+        }
+        if (isConstant(body, "true") && "QF/ALL".equals(quantifier.head())) {
+            return bool(true);
+        }
+        if (!isConstant(body, "false")) {
+            return null;
+        }
+        switch (quantifier.head()) {
+            case "QF/SOME":
+            case "QF/ONE":
+            case "QF/NOTLONE":
+                return bool(false);
+            case "QF/NO":
+            case "QF/LONE":
+            case "QF/NOTONE":
+                return bool(true);
             default:
                 return null;
         }
@@ -605,6 +638,7 @@ final class AlloyRewriteSystem {
     private static boolean containsComplement(List<AlloyTerm> children) {
         Set<AlloyTerm> positive = new HashSet<>();
         Set<AlloyTerm> negative = new HashSet<>();
+        Set<AlloyTerm> terms = new HashSet<>(children);
         for (AlloyTerm child : children) {
             if ("BOOL/NOT".equals(child.head()) && child.children().size() == 1) {
                 AlloyTerm item = child.children().get(0);
@@ -617,6 +651,11 @@ final class AlloyRewriteSystem {
                     return true;
                 }
                 positive.add(child);
+            }
+            String dualHead = atomicNegationDual(child.head());
+            if (dualHead != null
+                    && terms.contains(AlloyTerm.of(dualHead, child.atom(), child.children()))) {
+                return true;
             }
         }
         return false;

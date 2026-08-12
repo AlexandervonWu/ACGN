@@ -218,6 +218,22 @@ some x: none | P  -> false
 one x: none | P   -> false
 ```
 
+The shared ablation normalizer also folds quantified matrices whose truth value
+is independent of the carrier:
+
+```text
+all x: S | true       -> true
+some x: S | false     -> false
+no x: S | false       -> true
+one x: S | false      -> false
+lone x: S | false     -> true
+notone x: S | false   -> true
+notlone x: S | false  -> false
+```
+
+Cases such as `some x: S | true` and `all x: S | false` are retained because
+their result depends on whether `S` is empty.
+
 Each `disj` declaration receives its own positive disjointness-class identifier.
 Thus two separate declarations remain distinct even when their carrier types
 match.
@@ -372,7 +388,7 @@ primitive type, cardinality, or disjointness class at unit cost.
 - Shared ablation rules: [`AlloyRewriteSystem.java`](../src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java)
 - Distance extraction: [`CanonicalDistance.java`](../src/is/fivefivefive/CanDis/core/CanonicalDistance.java)
 
-The shared ablation rule set is versioned as `canonical-equivalences-v1`. The
+The shared ablation rule set is versioned as `canonical-equivalences-v2`. The
 production canonicalizer adds temporal partitioning, strict phase-local
 prenexing, binding tuples, renamed slots, and permutation groups around that
 core equivalence vocabulary.
@@ -387,8 +403,9 @@ java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.ablation.EGraphAblationT
 java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.CanonicalBacktranslatorTest
 ```
 
-`EGraphSaturationTest` covers branch negation, quantifier duals, strict
-prenexing, empty domains, alpha-equivalence, binding permutations,
+`EGraphSaturationTest` and `EGraphAblationTest` cover branch negation,
+quantifier duals, strict prenexing, empty domains, constant quantified bodies,
+alpha-equivalence, binding permutations,
 disjointness classes, A/AC/ACI behavior, BAG multiplicity, tautologies, and
 temporal dualization.
 
