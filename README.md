@@ -1,66 +1,325 @@
-# ACGN / CanDis setup and usage
+# ACGN / CanDis
 
-This note matches the final Aug. 7–8, 2026 commit chain on the default `aislop`
-branch, through commit [`f067106`](https://github.com/AlexandervonWu/ACGN/commit/f0671061e619af8c397be964d2a5a872d4ecbd77).
-It describes the final tree, not the transient states between those commits.
+ACGN is a research codebase for Alloy program representation, generation, and
+repair analysis. Its current evaluation stack, **CanDis**, converts Alloy
+predicates into temporal prenex normal forms backed by slotted, variadic
+e-graphs and computes a canonical edit distance that discounts a defined set of
+semantic-preserving rewrites.
 
-## What changed in this commit series
+The repository contains:
 
-| Commit | Final documentation consequence |
-| --- | --- |
-| [`20b93dd` — `ablation`](https://github.com/AlexandervonWu/ACGN/commit/20b93dd2411c2987115342337828cf68dcf18a56) | Added the four-arm e-graph ablation, pair-level metrics, combined reports, inspection, and bounded soundness checks. |
-| [`afd215f` — `ablation sh`](https://github.com/AlexandervonWu/ACGN/commit/afd215fb9f73652f084ee1488b7c95b785548f12) | Added `scripts/run_egraph_ablation.sh`, which compiles the full source tree and launches the suite. |
-| [`1c3097b` — `update`](https://github.com/AlexandervonWu/ACGN/commit/1c3097b6fc49ab130f0c9b29f8f179d9743641ac) | Corrected binding comparison and carrier handling and refreshed the ablation interpretation. |
-| [`78ff144` — `rerun`](https://github.com/AlexandervonWu/ACGN/commit/78ff144f7a651e9ce8a490ece61aaf8de9ad8285) | Refreshed generated distance and augmentation artifacts; it did not add a new command. These results were subsequently superseded by later reruns. |
-| [`9cc49c7` — `optimized bookkeeping`](https://github.com/AlexandervonWu/ACGN/commit/9cc49c79f45d07305d3fb8812554dbeab056f6d2) | Moved raw-AST-identical pairs out of eligible comparisons, added focused MASG construction and prepared-form reuse, deduplicated augmentation work, added AST-identity auditing, and expanded CPU/run metadata. The ablation heap default became `3g`. |
-| [`88822e2` — `parallelized Ablation`](https://github.com/AlexandervonWu/ACGN/commit/88822e2b8208db456c5197719117ab12834782fe) | Completed the shared ablation worker policy: `min(requested, logical processors, 32)`. |
-| [`a104152` — `wrapping up`](https://github.com/AlexandervonWu/ACGN/commit/a1041525c88fb1596c68bf2e5958ac7afcef183d) | Added equivalent-discovery efficiency fields and tables. |
-| [`fa08cff` — `clearup of package`](https://github.com/AlexandervonWu/ACGN/commit/fa08cfffc66bfc277f7e855c46f287848aac5197) | Moved the reusable implementation to `is.fivefivefive.CanDis.core` and `.core.egraph`; parser conversion now lives in `.adapter`, while `Canonical` is the MASG compatibility facade. |
-| [`f067106` — `documentation`](https://github.com/AlexandervonWu/ACGN/commit/f0671061e619af8c397be964d2a5a872d4ecbd77) | Added `documentation/README.md`. Its nonexistent core-build script reference still needs correction; see the alignment checklist below. |
+- the original **Alloy Code Generation Network (ACGN)** graph, code-generation,
+  learning, reward, and instance-pool implementation;
+- **CanDis**, including the canonicalization pipeline, distance metric,
+  backtranslation, and reusable JDK-only core;
+- raw, De Bruijn, egglog-like, slotted, and canonical e-graph ablations;
+- the 66,080-file classified Alloy corpus and an augmented nearest-repair
+  dataset;
+- generated tables, plots, manifests, bounded semantic checks, and memory
+  attribution reports.
 
-## Requirements and repository assumptions
+CanDis is a structural equivalence and repair-distance system, not a complete
+Alloy theorem prover. A canonical distance of zero means equality under the
+implemented rewrite theory. Bounded Alloy checks and dataset labels provide
+separate semantic evidence.
 
-- Use a full JDK 17 installation: `java`, `javac`, `jar`, and `jdeps` are needed.
-- The full project expects all dependency JARs under repository-root `lib/` and
-  uses the classpath wildcard `lib/*`.
-- The supplied ablation launcher is POSIX/Linux-oriented. It requires Bash,
-  `find`, `mktemp`, and GNU `/usr/bin/time` at that exact path.
-- Run the commands below from the repository root unless using
-  `scripts/run_egraph_ablation.sh`; that script resolves and changes to its own
-  repository root.
-- The commands use the Unix classpath separator `:`. Windows needs `;` and does
-  not directly support the supplied shell script.
+## Headline Results
 
-The expected dataset shape is:
+The checked-in full-corpus results were generated on August 11-12, 2026. Exact
+per-problem and per-status tables are in
+[`distance_results/summary.md`](distance_results/summary.md),
+[`alloy4fun-augmented/summary.md`](alloy4fun-augmented/summary.md), and
+[`egraph_ablation/summary.md`](egraph_ablation/summary.md).
+
+### Corpus and paired-oracle distance
+
+Every model contains a student predicate and its oracle predicate. Exact
+student/oracle raw-AST matches are removed before distance evaluation and before
+truth-pool construction.
+
+| Measure | Result |
+| --- | ---: |
+| Source Alloy files | 66,080 |
+| Raw-AST-identical pairs excluded early | 4,482 |
+| Eligible and successfully evaluated pairs | 61,598 |
+| Evaluation failures | 0 |
+| Eligible `CORRECT` pairs | 19,212 |
+| Eligible incorrect pairs | 42,386 |
+| Mean predicate-body Levenshtein distance | 39.261064 |
+| Mean raw-AST Zhang-Shasha distance | 22.841358 |
+| Mean canonical distance | 13.540131 |
+| Mean normalized Levenshtein / AST / canonical distance | 0.547644 / 0.811451 / 0.720049 |
+| Mean raw-AST / canonical representation size | 26.787315 / 17.328598 |
+| Compression from the ratio of those means | 35.310433% |
+| AST-different `CORRECT` pairs at canonical distance zero | 2,235 |
+| Canonical distance range | 0 to 142 |
+
+Normalization uses each student predicate's own lexical, AST, or canonical
+size. The 2,235 zeroes are 11.633% of the eligible `CORRECT` pairs. No
+AST-different predicate labeled incorrect received distance zero in the current
+six-arm ablation.
+
+### Augmented correct pools and nearest repairs
+
+The augmented dataset groups predicates by problem class and invariant ID. Each
+truth pool includes the oracle on a co-equal basis with all `CORRECT` student
+solutions, then removes raw-AST duplicates. For every incorrect predicate, each
+metric is minimized independently over all truths in its group.
+
+| Measure | Result |
+| --- | ---: |
+| Invariant question groups | 181 |
+| Correct truth predicates, including 181 oracles | 19,393 |
+| AST-distinct truths | 4,496 |
+| Unique canonical truth forms | 2,436 |
+| AST-different, canonically equivalent truth pairs | 8,721 |
+| Incorrect predicates ranked | 42,386 |
+| Groups using oracle plus correct students / oracle only | 176 / 5 |
+| Mean nearest Levenshtein distance | 28.054924 |
+| Mean nearest raw-AST distance | 15.987944 |
+| Mean nearest canonical distance | 10.172109 |
+| Mean relative Levenshtein / AST / canonical distance | 0.415603 / 0.608420 / 0.595229 |
+
+Repair-radius coverage shows how many incorrect predicates have at least one
+correct reference within the given edit budget:
+
+| Radius | Raw AST | Canonical |
+| ---: | ---: | ---: |
+| 1 | 3,479 (8.2%) | 3,432 (8.1%) |
+| 2 | 4,962 (11.7%) | 7,580 (17.9%) |
+| 5 | 10,106 (23.8%) | 16,082 (37.9%) |
+| 10 | 18,242 (43.0%) | 27,797 (65.6%) |
+
+At radii expressed as a fraction of each incorrect predicate's representation
+size, the coverage is:
+
+| Relative radius | Levenshtein | Raw AST | Canonical |
+| ---: | ---: | ---: | ---: |
+| 5% | 1,085 (2.6%) | 2,049 (4.8%) | 313 (0.7%) |
+| 10% | 2,939 (6.9%) | 4,110 (9.7%) | 2,302 (5.4%) |
+| 20% | 8,169 (19.3%) | 7,476 (17.6%) | 6,928 (16.3%) |
+| 50% | 30,080 (71.0%) | 18,668 (44.0%) | 19,342 (45.6%) |
+
+### Six-arm e-graph ablation
+
+All six arms processed the same 61,598 eligible pairs with 32 workers in fresh
+JVMs. The first five use the same `canonical-equivalences-v1` rule program.
+`java-egglog` is a Java replica of the execution model used in this study, not
+a full textual-language-compatible port of external egglog.
+
+| Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Raw fixed-arity e-graph | 823 | 4.284% | 18.416 | 16.730 | 4.375 | 919.203 | 58.208 |
+| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.948 | 18.490 | 5.127 | 933.465 | 57.888 |
+| Java egglog-like variadic | 823 | 4.284% | 18.020 | 18.500 | 3.988 | 875.520 | 56.760 |
+| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.553 | 18.300 | 5.018 | 876.754 | 56.429 |
+| Slotted e-graph | 2,162 | 11.253% | 17.717 | 19.340 | 18.185 | 946.063 | 52.971 |
+| Full canonical method | 2,235 | 11.633% | 13.540 | 20.160 | 12.762 | 3,629.090 | 28.700 |
+
+Key transitions in the observed zero-distance sets are:
+
+- De Bruijn variables add 1,340 pairs to both the raw and variadic arms, with
+  no losses.
+- Variadic egglog-like storage alone adds no zeroes over fixed arity on this
+  natural corpus.
+- Slotted storage retains 2,160 egglog-plus-De-Bruijn zeroes, adds 2, and loses
+  3. Those three are documented false negatives, not semantic counterexamples.
+- Full canonicalization adds 73 zeroes over slotted storage and loses none of
+  the slotted zeroes.
+
+The full transition data and pair identities are in
+[`equivalence_disagreements.csv`](egraph_ablation/equivalence_disagreements.csv).
+
+### Targeted capability benchmark
+
+The generated benchmark contains 5,500 parser-AST-different pairs whose
+equivalence follows by construction from the implemented rules, with 500 pairs
+in each of 11 transformation families.
+
+| Arm | All 5,500 | Eight composed families |
+| --- | ---: | ---: |
+| Raw fixed-arity e-graph | 2,479 (45.07%) | 1,979 / 4,000 (49.48%) |
+| Raw e-graph + De Bruijn | 3,505 (63.73%) | 2,479 / 4,000 (61.98%) |
+| Java egglog-like variadic | 2,500 (45.45%) | 2,000 / 4,000 (50.00%) |
+| Java egglog-like + De Bruijn | 3,500 (63.64%) | 2,500 / 4,000 (62.50%) |
+| Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Full canonical method | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+
+De Bruijn arms recover alpha-equivalence but not declaration-block
+permutations. Slotted and canonical arms recover all 500 alpha-equivalence and
+all 500 binder-permutation cases. The complete family matrix is in
+[`capability_benchmark/REPORT.md`](capability_benchmark/REPORT.md).
+
+### Bounded semantic evidence
+
+The semantic checker reran the union of all 2,238 natural-corpus equivalence
+claims using each model's own Alloy `check correct` command:
+
+| Arm | Claims checked | Bounded counterexamples | Errors |
+| --- | ---: | ---: | ---: |
+| Raw / raw + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
+| Egglog-like / egglog-like + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
+| Slotted / canonical | 2,162 / 2,235 | 0 / 0 | 0 / 0 |
+
+Four targeted negative probes for capture, comprehension-column permutation,
+signature shadowing, and temporal implication all had Alloy counterexamples and
+were rejected by every arm. This is bounded evidence, not an unbounded proof.
+The targeted capability soundness sample had zero conclusive non-temporal
+failures across 29 subtype checks; six temporal checks were inconclusive because
+the installed solver lacked a temporal backend. One of those inconclusive raw
+solver runs reported a counterexample under Alloy's warned static temporal
+reduction, so it is recorded but not counted as conclusive evidence. See
+[`semantic_soundness.md`](egraph_ablation/semantic_soundness.md) and
+[`capability_benchmark/SOUNDNESS.md`](capability_benchmark/SOUNDNESS.md).
+
+### Reward observations
+
+Rewarder results depend on finite sampled instance pools and should not be read
+as semantic equivalence proofs.
+
+| Protocol | Pool | Predicates | Mean candidate reward | Headline Pearson result |
+| --- | ---: | ---: | ---: | ---: |
+| Paired student vs oracle | 10 | 61,598 | 0.567082 | canonical distance vs reward: -0.042870 |
+| Incorrect vs nearest-correct pool | 100 | 42,386 | 0.352766 | canonical distance vs `1 - reward`: 0.064245 |
+
+For the paired run, oracle self-reward averaged 1.000000. On the 42,386
+non-`CORRECT` pairs, Levenshtein, raw AST, and canonical correlations with
+candidate reward were -0.089408, -0.073326, and -0.042870. In the augmented
+nearest-correct run, their correlations with raw reward error were 0.141856,
+0.123954, and 0.064245. All are weak in these sampled configurations.
+
+### Runtime and memory interpretation
+
+The full canonical arm completed the 61,598-pair corpus in 20.160 seconds on a
+32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
+compact structural representation averaged 28.700 units, 23.803 reachable
+e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,629.090
+MiB RSS.
+
+A deterministic 2,000-file attribution run explains the apparent mismatch:
+
+| Workers | Successful | Wall s | Throughput pairs/s | Peak heap MiB | Post-GC MiB | Max RSS MiB |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 1 | 1,887 | 3.533 | 534.132 | 299.643 | 82.768 | 606.547 |
+| 8 | 1,887 | 1.040 | 1,813.632 | 553.391 | 82.742 | 1,122.309 |
+| 32 | 1,887 | 1.045 | 1,805.584 | 544.259 | 82.739 | 1,083.539 |
+
+Peak heap grew 1.816x from 1 to 32 workers, while post-GC heap remained about
+82.7 MiB and outputs were identical. The measured peak is dominated by
+overlapping parser, MASG, and normalization working sets. Raw-AST construction
+alone took 2.965 seconds in the one-worker phase trace; the largest tracked
+edit-distance scratch buffer was 1.305 KiB. See
+[`canonical_memory/REPORT.md`](canonical_memory/REPORT.md).
+
+## Canonicalization and Distance
+
+The production path is ordered because connective elimination and negation
+polarity determine which quantifiers can be moved safely:
+
+1. Parse Alloy and build the MASG intermediate representation.
+2. Split temporal operators into a temporal tree of phase-local normal forms.
+3. Remove internal `NOOP` and `<END>` scaffolding from matrices.
+4. Alpha-normalize bindings while retaining source names for readable edits.
+5. Beta-reduce `let` expressions with capture avoidance.
+6. Eliminate implication, IFF, and formula ITE before prenexing.
+7. Push explicit and implicit negations to NNF, including quantifier and
+   temporal duals.
+8. Prenex only within the current temporal phase; quantifiers never cross a
+   temporal boundary.
+9. Store each binding as a primitive carrier, quantifier/cardinality,
+   disjointness class, and canonical slot. Move only non-primitive domain
+   constraints into the matrix.
+10. Normalize introduced constraints, flatten variadic operators, and saturate
+    local equivalences to a fixed point.
+
+Variadic children use three laws: `SEQ` for associativity, `BAG` for
+associativity plus commutativity while retaining multiplicity, and `SET` for
+associativity, commutativity, and idempotence. Binder permutation groups apply
+only where declaration semantics allow them.
+
+Canonical distance is the sum of:
+
+1. Zhang-Shasha edit distance over the temporal tree;
+2. unit-cost additions, deletions, or modifications of phase-local binding
+   tuples, minimized over valid binding permutations;
+3. e-graph matrix edit distance under semantically equivalent slot bindings.
+
+The complete ordered rules, side conditions, opcode inventory, and fixed-point
+policy are in [`documentation/REWRITE_SYSTEM.md`](documentation/REWRITE_SYSTEM.md).
+The longer architecture and API guide is
+[`documentation/README.md`](documentation/README.md).
+
+## ACGN Subsystem
+
+CanDis builds on the original Alloy Code Generation Network infrastructure:
+
+- `ACGN.visitor.MASGVisitor` lowers Alloy parser nodes into the augmented
+  multigraph representation in `ACGN.asg`.
+- `ACGN.alloy` defines symbols for signatures, fields, declarations, variables,
+  references, constants, and graph scaffolding.
+- `ACGN.codegen.Generator`, `ACGN.learn.CodeGenAgent`, and `ACGN.learn.Trainer`
+  contain the experimental graph-guided generation and learning path.
+- `ACGN.learn.Rewarder` compares candidates over sampled Alloy instances;
+  `ACGN.util.InstancePool` manages the reusable LFU-backed instance pools used
+  by the reward evaluations above.
+- `AlloyDataProcessor` contains classification, filtering, graph-output, and
+  corpus-counting utilities.
+
+CanDis reuses the MASG front end and Rewarder while keeping canonical-distance
+logic in its own packages. Historical ACGN test mains remain useful experiment
+harnesses, but `RLAgentFrame` is explicitly marked deprecated and
+non-functional in source.
+
+## Repository Layout
 
 ```text
-classified-data/
-  <question-set>/
-    CORRECT|BOTH|OVERCONSTRAINED|UNDERCONSTRAINED/
-      <prefix>_<invariant>.als
+src/is/fivefivefive/ACGN/                 original ACGN graph, generator, learner, rewarder
+src/is/fivefivefive/CanDis/               runners, compatibility facade, checks, reports
+src/is/fivefivefive/CanDis/core/          parser-independent canonical-distance core
+src/is/fivefivefive/CanDis/core/egraph/   six e-graph/canonical representation engines
+src/is/fivefivefive/CanDis/adapter/       Alloy AST to core-term adapter
+src/is/fivefivefive/CanDis/ir/            MASG to canonical IR conversion
+src/is/fivefivefive/AlloyDataProcessor/   corpus preprocessing utilities
+classified-data/                          source student/oracle dataset
+distance_results/                         paired-oracle metrics, JSON, CSV, plots, tables
+alloy4fun-augmented/                       correct pools and nearest-repair rankings
+egraph_ablation/                           six-arm natural-corpus evaluation
+capability_benchmark/                      generated transformation benchmark
+canonical_memory/                          worker-scaling and phase attribution
+documentation/                             CanDis and rewrite-system references
+scripts/                                   build and evaluation launchers
+lib/                                       Alloy/parser and utility JARs
 ```
 
-`OVER` and `UNDER` are also normalized to their full status names. The first
-relative path component is treated as the problem/question class and the second
-as the status. Each Alloy file is expected to contain a student/oracle predicate
-pair named `X` and `XC` or `Xc`. The filename suffix after the last underscore
-is used as the preferred `X`; if that hint fails, the code searches for another
-`X`/`X[Cc]` pair.
+The reusable `CanDis.core` and `CanDis.core.egraph` packages depend only on
+`java.base`. Parser and MASG integration remains in the adapter and IR layers.
 
-## Compile once for direct Java runners
+## Requirements
+
+- A full JDK 17 installation with `java`, `javac`, `jar`, and `jdeps`.
+- Bash and standard Linux utilities for the supplied scripts.
+- GNU `/usr/bin/time` for process-level ablation timing.
+- Python 3 and Matplotlib only when regenerating plots.
+- Dependency JARs under repository-root `lib/`; there is no Maven or Gradle
+  build file.
+
+Commands below assume a Unix classpath separator and run from the repository
+root.
+
+## Build and Test
+
+Compile the complete project:
 
 ```bash
-ACGN_BUILD_DIR="$(mktemp -d /tmp/acgn-build.XXXXXX)"
-mkdir -p "$ACGN_BUILD_DIR/classes"
-find src -name '*.java' -print > "$ACGN_BUILD_DIR/sources.txt"
-javac -cp 'lib/*' -d "$ACGN_BUILD_DIR/classes" @"$ACGN_BUILD_DIR/sources.txt"
-ACGN_CLASSPATH="$ACGN_BUILD_DIR/classes:lib/*"
+BUILD_DIR=/tmp/acgn-build
+rm -rf "$BUILD_DIR"
+mkdir -p "$BUILD_DIR"
+find src -name '*.java' -print > /tmp/acgn-sources.txt
+javac -cp 'lib/*' -d "$BUILD_DIR" @/tmp/acgn-sources.txt
+export ACGN_CLASSPATH="$BUILD_DIR:lib/*"
 ```
 
-The ablation shell script performs its own full compilation, so this step is
-not required when that script is the only entry point.
-
-Fast regression checks after a full compile:
+Run the focused regression suite:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.ablation.EGraphAblationTest
@@ -69,40 +328,21 @@ java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBacktranslatorTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
 ```
 
-### Build the standalone JDK-only core
-
-The READMEs currently name `scripts/build_candis_core.sh`, but that file is not
-present at `f067106`. Until it is added, use:
+Build the standalone JDK-only core and inspect its dependency boundary:
 
 ```bash
-ACGN_CORE_DIR="$(mktemp -d /tmp/candis-core.XXXXXX)"
-mkdir -p "$ACGN_CORE_DIR/classes"
-find src/is/fivefivefive/CanDis/core -name '*.java' -print \
-  > "$ACGN_CORE_DIR/sources.txt"
-javac -d "$ACGN_CORE_DIR/classes" @"$ACGN_CORE_DIR/sources.txt"
-jar --create --file "$ACGN_CORE_DIR/candis-core.jar" \
-  -C "$ACGN_CORE_DIR/classes" .
-jdeps -summary "$ACGN_CORE_DIR/candis-core.jar"
+./scripts/build_candis_core.sh /tmp/candis-core
+jdeps -summary /tmp/candis-core/candis-core.jar
 ```
 
-The intended dependency summary is `candis-core.jar -> java.base`.
+The expected dependency summary is `candis-core.jar -> java.base`.
 
-## Main workflows
+## Main Workflows
 
-Use fresh output directories for smoke tests. The default output directories are
-tracked result snapshots in this repository and will be overwritten by a rerun.
+Use a fresh output directory for exploratory runs. The named result directories
+below are checked-in snapshots and a full rerun overwrites them.
 
-### 1. Canonical batch distance
-
-Smoke run:
-
-```bash
-java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
-  classified-data /tmp/acgn-distance-smoke \
-  --limit 100 --threads 4 --reward-pool 10
-```
-
-Full reference command:
+### Paired student-oracle distances
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
@@ -110,56 +350,35 @@ java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
   --threads 32 --reward-pool 10
 ```
 
-Options are `--limit N`, `--threads N`, `--reward-pool N`, and `--verbose`.
-`N <= 0` means no limit. Reward computation is attempted for every eligible
-pair; this runner has no `--skip-rewards` option.
+Use `--limit N` for a smoke run. The runner writes `distances.json` and
+`summary.md`; it always attempts Rewarder evaluation. Regenerate its plotting
+CSV, SVG/PNG figures, and paper tables with:
 
-This command directly writes only:
+```bash
+./scripts/regenerate_distance_artifacts.sh distance_results
+```
 
-- `distance_results/distances.json`
-- `distance_results/summary.md`
+### Augmented truth pools and nearest repairs
 
-Raw-AST-identical student/oracle bodies are counted as skipped and are omitted
-from the JSON `results` array.
-
-### 2. Alloy4Fun reference-pool augmentation
+Start without rewards for the faster structural run:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.Alloy4FunAugmenter \
   classified-data alloy4fun-augmented \
-  --threads 32 --reward-pool 100
+  --threads 32 --skip-rewards
 ```
 
-Additional options:
+Remove `--skip-rewards` and add `--reward-pool 100` for the rewarded run. The
+augmenter excludes student/oracle AST-identical files before parsing bodies into
+canonical work items, before constructing groups, and before building truth
+pools. On this corpus it fails fast unless the full selection invariant is
+`66,080 - 4,482 = 61,598`.
 
-- `--limit N`: first `N` sorted `.als` paths only; `N <= 0` means full input.
-- `--skip-rewards`: build distances and reports without computing rewards.
-- `--audit-only`: stop after writing
-  `ast_identical_cross_file_comparisons.csv`.
-- `--verbose`: retain parser/worker output.
+Principal outputs are `index.json`, `summary.md`, per-question correct pools,
+`correct_ast_diff_canonical_equiv.json`, nearest-repair rankings, AST-identity
+audit CSVs, reward CSVs, and coverage/correlation SVGs.
 
-The full run writes `index.json`, `summary.md`,
-`correct_ast_diff_canonical_equiv.json`, `canonical_reward_points.csv`, the
-`correct/<question-set>/<invariant>.als` pools, four SVG plots, the plotting
-script `plot_canonical_rewards.py`, and the AST-identity audit CSV.
-
-Ranking is over AST-distinct references. An incorrect/reference comparison is
-skipped when their raw-AST fingerprints match; an incorrect model is omitted
-from rankings only when every available truth is AST-identical. Duplicate
-incorrect representations within a question group reuse one computed ranking.
-
-### 3. Four-arm e-graph ablation
-
-Smoke run:
-
-```bash
-./scripts/run_egraph_ablation.sh \
-  --input classified-data \
-  --output /tmp/acgn-egraph-ablation-smoke \
-  --limit 100 --threads 4 --max-heap 3g
-```
-
-Full reference command:
+### Six-arm ablation
 
 ```bash
 ./scripts/run_egraph_ablation.sh \
@@ -168,61 +387,56 @@ Full reference command:
   --threads 32 --max-heap 3g
 ```
 
-The suite runs these arms sequentially in fresh JVMs:
+The suite runs all six arms sequentially in fresh JVMs. Each arm uses
+`min(requested workers, logical processors, 32)` threads. A smoke run can add
+`--limit 100` and use a `/tmp` output directory.
 
-1. `raw-egraph`
-2. `java-egglog`
-3. `slotted-egraph`
-4. `canonical`
-
-`java-egglog` is the repository's Java egglog-like execution-core replica, not
-the external egglog binary or a complete language-compatible port.
-
-The effective worker count is
-`max(1, min(requested, availableProcessors, 32))`. The `--max-heap` value is
-passed to each child JVM as `-Xmx`; `3g` is the default and applies per arm.
-
-Each arm writes `pairs.csv`, `summary.json`, `metrics.properties`, `process.time`,
-and `run.log`. The suite then writes `comparison.json`,
-`minimum_distances.csv`, `equivalence_disagreements.csv`, and `summary.md` at the
-output root.
-
-To rebuild only the combined reports:
+To regenerate combined reports without rerunning engines:
 
 ```bash
 ./scripts/run_egraph_ablation.sh \
+  --input classified-data \
   --output egraph_ablation \
-  --threads 32 --report-only
+  --report-only
 ```
 
-Report-only mode requires all four arms' `metrics.properties`, `process.time`,
-and `pairs.csv`. They must come from the same source revision, dataset snapshot,
-input path convention, limit, and skip policy. Stored worker counts must equal
-the current effective worker count; therefore a 32-thread cache cannot be
-regenerated on a host exposing fewer than 32 processors with the current code.
+Report-only mode verifies per-arm output hashes and rejects incompatible
+manifests. It also regenerates `canonical_only_vs_slotted.md`,
+`minimum_distances.csv`, and `equivalence_disagreements.csv`.
 
-### 4. Diagnostics and bounded validation
+### Capability and memory studies
 
-Inspect one Alloy pair and all four representations:
+```bash
+./scripts/run_capability_benchmark.sh \
+  --dataset classified-data \
+  --output capability_benchmark \
+  --natural egraph_ablation \
+  --target 500 --seed 55520260811 \
+  --threads 32 --max-heap 3g
+
+./scripts/run_canonical_memory_attribution.sh \
+  --input classified-data \
+  --output canonical_memory \
+  --limit 2000 --seed 55520260811
+```
+
+### Inspect and validate
+
+Inspect all representations for one model:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.EGraphAblationInspector \
-  classified-data/<question-set>/<status>/<model>.als
+  classified-data/<problem>/<status>/<model>.als
 ```
 
-Validate zero-distance claims already present in an ablation result tree:
+Rerun bounded checks over every zero-distance claim:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.EGraphSemanticSoundnessCheck \
-  --input classified-data --results egraph_ablation --threads 8
+  --input classified-data --results egraph_ablation --threads 32
 ```
 
-This writes `semantic_soundness.json`, `semantic_counterexamples.csv`, and
-`semantic_soundness.md`. `--canonical-only` means canonical claims not already
-found by `slotted-egraph`; it does not mean all canonical claims. Validation is
-bounded by the Alloy commands in each model and is not an unbounded proof.
-
-Backtranslation smoke check:
+Smoke-test canonical-form backtranslation against the source predicates:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" \
@@ -231,67 +445,70 @@ java -cp "$ACGN_CLASSPATH" \
   --output /tmp/acgn-backtranslation/mismatches.json
 ```
 
-Give `--output` a path with a parent directory; the current implementation
-creates `output.getParent()`.
+## Dataset Convention
 
-## Result-count and reproducibility semantics
+```text
+classified-data/
+  <problem-class>/
+    CORRECT|BOTH|OVERCONSTRAINED|UNDERCONSTRAINED/
+      <prefix>_<invariant-id>.als
+```
 
-After optimized bookkeeping, these fields are not interchangeable:
+The first path component identifies the question set, the second is the
+semantic status, and the filename suffix identifies the attempted invariant.
+Each file is expected to contain a student predicate `X` and oracle predicate
+`XC` or `Xc`. `OVER` and `UNDER` directory labels are normalized to their full
+names. Models are compared or pooled only within the same problem class and
+invariant ID.
 
-- `files`: all discovered `.als` files.
-- `skippedIdenticalRawAstPairs`: files whose selected student/oracle bodies have
-  identical raw ASTs.
-- `eligiblePairs`: `files - skippedIdenticalRawAstPairs`.
-- `successes`: successfully processed eligible pairs.
-- `failures`: failed eligible pairs.
+The current corpus spans 17 problem classes. Do not describe all 66,080 files
+as evaluated pairs: 4,482 trivial raw-AST matches are deliberately excluded
+from every current distance and ablation run.
 
-The committed full ablation at `f067106` is a useful stale-output check:
+## Reproducibility
 
-| Measure | Reference value |
-| --- | ---: |
-| Discovered files | 66,080 |
-| Raw-AST-identical skipped | 4,482 |
-| Eligible/successful per arm | 61,598 |
-| Zero-distance pairs: raw / Java egglog / slotted / canonical | 823 / 823 / 2,162 / 2,235 |
+The checked-in six-arm snapshot records:
 
-The generated files record timestamps, input paths, limits, worker counts, Java
-version, and rewrite-set metadata, but no run ID, Git commit SHA, or dataset
-content hash. Output directories are mutable snapshots, not self-identifying
-runs. For archival reruns, encode a run name in the output path and record the
-source SHA and dataset revision alongside it.
+- run ID `7a38c97e-1c10-4a84-9648-19e679129d5d`;
+- source SHA `556940083db6c54893a436e9aa880ec0e5850cea` with a dirty worktree;
+- dataset SHA-256
+  `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
+- Java 17.0.19, 32 workers, a 3 GiB heap cap, host/CPU metadata, schema and rule
+  versions, timestamps, and hashes of every generated arm and combined output.
 
-## Documentation alignment checklist
+See [`run-manifest.json`](egraph_ablation/run-manifest.json). Because that
+snapshot records a dirty worktree, the manifest's source and output hashes are
+the authoritative provenance for its numbers; do not silently attribute them
+to the repository's current `HEAD`.
 
-1. Add `scripts/build_candis_core.sh` or replace both README references with the
-   manual core build above.
-2. Replace the top-level VS Code starter boilerplate with the actual JDK 17,
-   `lib/*`, dataset, and runner requirements; mention that `aislop` is the
-   default branch.
-3. Keep imports aligned with the package cleanup:
-   `CanDis.core`, `CanDis.core.egraph`, and `CanDis.adapter`. Old production
-   imports from `CanDis.macros` or `CanDis.ablation` are stale; only the
-   executable test remains in the latter package.
-4. State that `CanonicalBatchTest` always attempts rewards and directly emits
-   only JSON plus Markdown. CSV/SVG files currently present under
-   `distance_results/` are not produced by this runner.
-5. List the AST-identity audit and plotting artifacts for `Alloy4FunAugmenter`.
-6. List `process.time` and `run.log` as per-arm ablation outputs. Treat
-   `semantic_soundness.*` as outputs of the separate soundness command.
-   `canonical_only_vs_slotted.md` has no producer in the current source tree and
-   should be labeled historical/manual or removed.
-7. Define counts using `files`, `skipped`, `eligible`, `successes`, and
-   `failures`; do not describe all 66,080 files as evaluated distance pairs.
-8. Distinguish thread behavior: the two dataset runners default to literal 32,
-   while the ablation suite caps requested workers by available processors and
-   32. Document positive thread values only; the dataset-runner metadata can be
-   misleading for nonpositive inputs.
-9. Warn that `--report-only` trusts retained per-arm files and validates only
-   their worker counts. It does not verify a shared commit, dataset hash, limit,
-   or run identity.
-10. Keep the semantic boundary explicit: distance zero means equality under the
-    implemented rewrite/canonicalization theory. "Found semantic equivalent"
-    in the ablation tables additionally trusts the existing `CORRECT` label;
-    the ablation itself does not rerun SAT.
-11. Note that default output paths overwrite the repository's committed result
-    snapshots and that the supplied launcher assumes Bash, `/tmp`, and GNU
-    `/usr/bin/time`.
+## Interpretation and Limits
+
+- Canonical zero is sound only relative to the implemented rewrite system; it
+  is not complete for Alloy equivalence.
+- Dataset `CORRECT` labels come from SAT-based classification and are not
+  produced by the distance engine.
+- Semantic validation is bounded by each model's command scope and temporal
+  bounds. Absence of a counterexample is evidence, not proof.
+- Zhang-Shasha, Levenshtein, canonical, and Rewarder values use different
+  representations and should not be compared as if their units were identical.
+- Rewarder uses finite instance pools. Pool size and cache state are part of the
+  experimental configuration.
+- Full-corpus runtime is parser-heavy. Structural byte estimates describe graph
+  objects and are not substitutes for measured process RSS.
+- The ACGN learning/generation code is research infrastructure; some historical
+  entry points, including the old RL frame, are retained for experiments rather
+  than presented as a production API.
+
+## Further Documentation
+
+- [CanDis architecture, APIs, runners, and generated outputs](documentation/README.md)
+- [Ordered rewrite system and side conditions](documentation/REWRITE_SYSTEM.md)
+- [Paired-distance paper tables](distance_results/paper_tables.md)
+- [Augmented dataset summary](alloy4fun-augmented/summary.md)
+- [Six-arm ablation report](egraph_ablation/summary.md)
+- [Targeted capability benchmark](capability_benchmark/REPORT.md)
+- [Canonical memory attribution](canonical_memory/REPORT.md)
+
+## License
+
+This repository is available under the [MIT License](LICENSE).
