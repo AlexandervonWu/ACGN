@@ -1,19 +1,23 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-08-08T04:09:26.648618986Z`
+- Generated at: `2026-08-12T08:59:50.224220898Z`
 - Input root: `classified-data`
 - Output root: `alloy4fun-augmented`
 - Source Alloy files: 66080
+- AST-identical student/oracle files excluded before pools: 4482
+- Alloy files considered and used: 61598
 - Thread count: 32
 
 - Reward pool size: 100
 
+- Rewards enabled: true
+
 ## Corpus
 
 - Question groups: 181
-- Parsed models: 66080
+- Parsed models: 61598
 - Parse failures: 0
-- CORRECT models: 23694
+- CORRECT models: 19212
 - Incorrect models: 42386
 - Oracle references: 181
 - AST-unique CORRECT student references: 4315
@@ -32,24 +36,24 @@ Truth predicates include one oracle predicate per invariant together with every 
 
 | Problem class | Correct truth predicates | AST-distinct truths | Unique canonical forms | AST-different, canonically equivalent pairs |
 | --- | ---: | ---: | ---: | ---: |
-| classroom_fol | 1899 | 279 | 109 | 1123 |
-| classroom_rl | 1779 | 266 | 187 | 147 |
-| coursesNew | 1386 | 408 | 217 | 581 |
-| coursesOld | 2299 | 527 | 313 | 712 |
-| cv_v1 | 159 | 42 | 27 | 19 |
-| cv_v2 | 68 | 32 | 27 | 7 |
-| graphs | 1066 | 224 | 121 | 290 |
-| lts | 584 | 105 | 68 | 77 |
-| productionLineNew | 828 | 249 | 134 | 285 |
-| productionLine_v1 | 243 | 58 | 46 | 14 |
-| productionLine_v2 | 1336 | 354 | 220 | 375 |
-| socialMedia | 4953 | 919 | 358 | 3179 |
-| trainStationNew | 1963 | 360 | 196 | 592 |
-| trainStationOld | 201 | 62 | 58 | 4 |
-| trash_fol | 1992 | 253 | 98 | 1125 |
-| trash_ltl | 1460 | 157 | 129 | 36 |
-| trash_rl | 1659 | 201 | 128 | 155 |
-| **Total** | **23875** | **4496** | **2436** | **8721** |
+| classroom_fol | 1628 | 279 | 109 | 1123 |
+| classroom_rl | 1133 | 266 | 187 | 147 |
+| coursesNew | 1353 | 408 | 217 | 581 |
+| coursesOld | 2163 | 527 | 313 | 712 |
+| cv_v1 | 110 | 42 | 27 | 19 |
+| cv_v2 | 61 | 32 | 27 | 7 |
+| graphs | 828 | 224 | 121 | 290 |
+| lts | 256 | 105 | 68 | 77 |
+| productionLineNew | 703 | 249 | 134 | 285 |
+| productionLine_v1 | 149 | 58 | 46 | 14 |
+| productionLine_v2 | 1134 | 354 | 220 | 375 |
+| socialMedia | 4558 | 919 | 358 | 3179 |
+| trainStationNew | 1611 | 360 | 196 | 592 |
+| trainStationOld | 127 | 62 | 58 | 4 |
+| trash_fol | 1677 | 253 | 98 | 1125 |
+| trash_ltl | 883 | 157 | 129 | 36 |
+| trash_rl | 1019 | 201 | 128 | 155 |
+| **Total** | **19393** | **4496** | **2436** | **8721** |
 
 ## Ranking Pools
 
@@ -351,20 +355,20 @@ Absolute radii use edit-distance units. Relative radii use distance divided by t
 
 | Question set | Groups | CORRECT | Incorrect | References | Ranked incorrect | Oracle-only groups |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| classroom_fol | 15 | 1884 | 2390 | 279 | 2390 | 0 |
-| classroom_rl | 15 | 1764 | 2265 | 266 | 2265 | 0 |
-| coursesNew | 15 | 1371 | 3583 | 408 | 3583 | 1 |
-| coursesOld | 15 | 2284 | 7340 | 527 | 7340 | 0 |
-| cv_v1 | 4 | 155 | 702 | 42 | 702 | 0 |
-| cv_v2 | 4 | 64 | 216 | 32 | 216 | 0 |
-| graphs | 8 | 1058 | 1332 | 224 | 1332 | 0 |
-| lts | 7 | 577 | 1267 | 105 | 1267 | 0 |
-| productionLineNew | 10 | 818 | 1533 | 249 | 1533 | 0 |
-| productionLine_v1 | 4 | 239 | 360 | 58 | 360 | 0 |
-| productionLine_v2 | 10 | 1326 | 2245 | 354 | 2245 | 0 |
-| socialMedia | 8 | 4945 | 9450 | 919 | 9450 | 0 |
-| trainStationNew | 10 | 1953 | 4316 | 360 | 4316 | 0 |
-| trainStationOld | 16 | 185 | 765 | 62 | 765 | 4 |
-| trash_fol | 10 | 1982 | 698 | 253 | 698 | 0 |
-| trash_ltl | 20 | 1440 | 2867 | 157 | 2867 | 0 |
-| trash_rl | 10 | 1649 | 1057 | 201 | 1057 | 0 |
+| classroom_fol | 15 | 1613 | 2390 | 279 | 2390 | 0 |
+| classroom_rl | 15 | 1118 | 2265 | 266 | 2265 | 0 |
+| coursesNew | 15 | 1338 | 3583 | 408 | 3583 | 1 |
+| coursesOld | 15 | 2148 | 7340 | 527 | 7340 | 0 |
+| cv_v1 | 4 | 106 | 702 | 42 | 702 | 0 |
+| cv_v2 | 4 | 57 | 216 | 32 | 216 | 0 |
+| graphs | 8 | 820 | 1332 | 224 | 1332 | 0 |
+| lts | 7 | 249 | 1267 | 105 | 1267 | 0 |
+| productionLineNew | 10 | 693 | 1533 | 249 | 1533 | 0 |
+| productionLine_v1 | 4 | 145 | 360 | 58 | 360 | 0 |
+| productionLine_v2 | 10 | 1124 | 2245 | 354 | 2245 | 0 |
+| socialMedia | 8 | 4550 | 9450 | 919 | 9450 | 0 |
+| trainStationNew | 10 | 1601 | 4316 | 360 | 4316 | 0 |
+| trainStationOld | 16 | 111 | 765 | 62 | 765 | 4 |
+| trash_fol | 10 | 1667 | 698 | 253 | 698 | 0 |
+| trash_ltl | 20 | 863 | 2867 | 157 | 2867 | 0 |
+| trash_rl | 10 | 1009 | 1057 | 201 | 1057 | 0 |

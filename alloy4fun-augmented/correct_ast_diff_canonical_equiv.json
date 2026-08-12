@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-08T04:03:48.721367049Z",
+  "generatedAt": "2026-08-12T08:54:11.301871501Z",
   "inputRoot": "classified-data",
   "outputRoot": "alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.",
@@ -5978,7 +5978,7 @@
       "augmentedFile": "correct/classroom_fol/inv4.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv4_oracle", "kind": "oracle", "source": "classroom_fol/correct/2JwPBTb4Z9fgAhYFW_inv4.als", "body": "Person in Student + Teacher"},
+      "left": {"name": "inv4_oracle", "kind": "oracle", "source": "classroom_fol/correct/2zn6t59zxGJP7xDDi_inv4.als", "body": "Person in Student + Teacher"},
       "right": {"name": "inv4_correct_2", "kind": "correct-student", "source": "classroom_fol/correct/3fdmPpjbRg4Tpm9an_inv4.als", "body": "Person in Teacher + Student"}
     },
     {
@@ -10649,7 +10649,7 @@
       "augmentedFile": "correct/classroom_rl/inv15.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2cKJ2fyfxscKi6ZZB_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
+      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
       "right": {"name": "inv15_correct_0", "kind": "correct-student", "source": "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als", "body": "all p:Person | some ^Tutors.p & Teacher"}
     },
     {
@@ -10658,7 +10658,7 @@
       "augmentedFile": "correct/classroom_rl/inv15.als",
       "rawAstDistance": 6,
       "canonicalDistance": 0,
-      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2cKJ2fyfxscKi6ZZB_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
+      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
       "right": {"name": "inv15_correct_3", "kind": "correct-student", "source": "classroom_rl/correct/9HgYvadiPc3LRLsNW_inv15.als", "body": "all s:Person |some  (^Tutors.s & Teacher)"}
     },
     {
@@ -10667,7 +10667,7 @@
       "augmentedFile": "correct/classroom_rl/inv15.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2cKJ2fyfxscKi6ZZB_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
+      "left": {"name": "inv15_oracle", "kind": "oracle", "source": "classroom_rl/correct/2i6dWF5h8NXKNe3eF_inv15.als", "body": "all p:Person | some Teacher&(^Tutors).p"},
       "right": {"name": "inv15_correct_4", "kind": "correct-student", "source": "classroom_rl/correct/CjmZFaAvq94MSB9jc_inv15.als", "body": "all s : Person | some Teacher & ^Tutors.s"}
     },
     {
@@ -10910,7 +10910,7 @@
       "augmentedFile": "correct/classroom_rl/inv3.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "classroom_rl/correct/2xLAC3fbo5wWQZNmM_inv3.als", "body": "no Student & Teacher"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "classroom_rl/correct/52p3P2qj42cSyidNb_inv3.als", "body": "no Student & Teacher"},
       "right": {"name": "inv3_correct_5", "kind": "correct-student", "source": "classroom_rl/correct/7tAkoh2ZfBWTpZ9Rs_inv3.als", "body": "no (Teacher&Student)"}
     },
     {
@@ -11225,7 +11225,7 @@
       "augmentedFile": "correct/classroom_rl/inv6.als",
       "rawAstDistance": 8,
       "canonicalDistance": 0,
-      "left": {"name": "inv6_oracle", "kind": "oracle", "source": "classroom_rl/correct/24fjosEq5wgnXtd3m_inv6.als", "body": "all t:Teacher | some t.Teaches"},
+      "left": {"name": "inv6_oracle", "kind": "oracle", "source": "classroom_rl/correct/2iLz9XfqM4v9knd8u_inv6.als", "body": "all t:Teacher | some t.Teaches"},
       "right": {"name": "inv6_correct_12", "kind": "correct-student", "source": "classroom_rl/correct/qMkSypneHnbzhKpuR_inv6.als", "body": "all t: Teacher | not no t.Teaches"}
     },
     {
@@ -24734,7 +24734,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 5,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_0", "kind": "correct-student", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "no n1: Node | n1 in n1.^adj"}
     },
     {
@@ -24743,7 +24743,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 3,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_10", "kind": "correct-student", "source": "graphs/correct/DqqXAzgp2jssqPJbz_inv3.als", "body": "all x: Node | x not in x.^adj"}
     },
     {
@@ -24752,7 +24752,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 3,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_13", "kind": "correct-student", "source": "graphs/correct/Nm8SABkoMLXb8MBSS_inv3.als", "body": "all e1 : Node | e1 not in e1.^adj"}
     },
     {
@@ -24761,7 +24761,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 5,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_15", "kind": "correct-student", "source": "graphs/correct/Ro4cPBxJ6pZpNshv3_inv3.als", "body": "no p: Node | p in p.^adj"}
     },
     {
@@ -24770,7 +24770,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 11,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_17", "kind": "correct-student", "source": "graphs/correct/e5bNSSvgouYpE3nLX_inv3.als", "body": "all n : Node | not (n in n.^adj)"}
     },
     {
@@ -24779,7 +24779,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 3,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_2", "kind": "correct-student", "source": "graphs/correct/2mpJRKeXJt4us4Bwt_inv3.als", "body": "all a:Node | a not in a.^adj"}
     },
     {
@@ -24788,7 +24788,7 @@
       "augmentedFile": "correct/graphs/inv3.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2GPbPCksWsgdK2yuf_inv3.als", "body": "all n : Node | n not in n.^adj"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "graphs/correct/2Ph8JQmkLHYy7ERus_inv3.als", "body": "all n : Node | n not in n.^adj"},
       "right": {"name": "inv3_correct_6", "kind": "correct-student", "source": "graphs/correct/5n6jaEbchxeGN2Yu4_inv3.als", "body": "no n:Node | n in n.^adj"}
     },
     {
@@ -25391,7 +25391,7 @@
       "augmentedFile": "correct/graphs/inv5.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv5_oracle", "kind": "oracle", "source": "graphs/correct/2eGnbYnw3Da3B2Nzf_inv5.als", "body": "no adj & iden"},
+      "left": {"name": "inv5_oracle", "kind": "oracle", "source": "graphs/correct/2f88wrQvrogKamQua_inv5.als", "body": "no adj & iden"},
       "right": {"name": "inv5_correct_5", "kind": "correct-student", "source": "graphs/correct/45v3J3N8Q4SpbPhzA_inv5.als", "body": "no iden & adj"}
     },
     {
@@ -25940,7 +25940,7 @@
       "augmentedFile": "correct/lts/inv1.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "lts/correct/2Ecg6c3ZbteAMPqoq_inv1.als", "body": "all s:State | some s.trans"},
+      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "lts/correct/389EGiLStYKfPxnxH_inv1.als", "body": "all s:State | some s.trans"},
       "right": {"name": "inv1_correct_1", "kind": "correct-student", "source": "lts/correct/8uTw54mmMHWM6qj3L_inv1.als", "body": "no s:State | no s.trans"}
     },
     {
@@ -25949,7 +25949,7 @@
       "augmentedFile": "correct/lts/inv1.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "lts/correct/2Ecg6c3ZbteAMPqoq_inv1.als", "body": "all s:State | some s.trans"},
+      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "lts/correct/389EGiLStYKfPxnxH_inv1.als", "body": "all s:State | some s.trans"},
       "right": {"name": "inv1_correct_5", "kind": "correct-student", "source": "lts/correct/WSQNzmg5gomBLuZnh_inv1.als", "body": "all x : State | some x.trans"}
     },
     {
@@ -29477,7 +29477,7 @@
       "augmentedFile": "correct/productionLine_v2/inv1.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "productionLine_v2/correct/29DK2rJLxkrDwkaHG_inv1.als", "body": "Worker = Human + Robot"},
+      "left": {"name": "inv1_oracle", "kind": "oracle", "source": "productionLine_v2/correct/2GqhkNoeEAdnoqqzj_inv1.als", "body": "Worker = Human + Robot"},
       "right": {"name": "inv1_correct_23", "kind": "correct-student", "source": "productionLine_v2/correct/iFx4nR4JknLhJ564E_inv1.als", "body": "Human + Robot = Worker"}
     },
     {
@@ -63416,7 +63416,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 8,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_1", "kind": "correct-student", "source": "trainStationNew/correct/3YcvH3gWvueCS2Ske_inv3.als", "body": "all t:Track | no t.succs iff t in Exit"}
     },
     {
@@ -63425,7 +63425,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 3,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_22", "kind": "correct-student", "source": "trainStationNew/correct/CTHRBr92Sshurf5Kz_inv3.als", "body": "all a:Track | a in Exit iff no a.succs"}
     },
     {
@@ -63434,7 +63434,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 19,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_25", "kind": "correct-student", "source": "trainStationNew/correct/JN2w4L76zakmn9ZQA_inv3.als", "body": "all t : Track | (no t.succs implies t in Exit) and (t in Exit implies no t.succs)"}
     },
     {
@@ -63443,7 +63443,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 19,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_26", "kind": "correct-student", "source": "trainStationNew/correct/MNsshs5hPeCPobpYR_inv3.als", "body": "all t : Track |(t in Exit implies no t.succs) and (no t.succs implies t in Exit)"}
     },
     {
@@ -63452,7 +63452,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 10,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_28", "kind": "correct-student", "source": "trainStationNew/correct/PhjEoeNyMQqBCLj6s_inv3.als", "body": "all e : Track | no e.succs iff e in Exit"}
     },
     {
@@ -63461,7 +63461,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 3,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_29", "kind": "correct-student", "source": "trainStationNew/correct/SoMCsQjWDN3zFjRDr_inv3.als", "body": "all x : Track | x in Exit iff no x.succs"}
     },
     {
@@ -63470,7 +63470,7 @@
       "augmentedFile": "correct/trainStationNew/inv3.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/2dP8MtGjzhGJbwhHT_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationNew/correct/3MxhuptE5DczuNrkC_inv3.als", "body": "all t : Track | t in Exit iff no t.succs"},
       "right": {"name": "inv3_correct_38", "kind": "correct-student", "source": "trainStationNew/correct/u6Jn8CAM4z9rkjMxA_inv3.als", "body": "all t:Track | t not in Exit <=> some t.(succs)"}
     },
     {
@@ -66638,7 +66638,7 @@
       "augmentedFile": "correct/trainStationOld/inv3.als",
       "rawAstDistance": 4,
       "canonicalDistance": 0,
-      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationOld/correct/42Z7XjoYfqswhjBtA_inv3.als", "body": "always pos' = pos"},
+      "left": {"name": "inv3_oracle", "kind": "oracle", "source": "trainStationOld/correct/5NbasrAwwMRo6aBfn_inv3.als", "body": "always pos' = pos"},
       "right": {"name": "inv3_correct_2", "kind": "correct-student", "source": "trainStationOld/correct/8sQ6E4C5gGhgkG2X8_inv3.als", "body": "always pos = pos'"}
     },
     {
@@ -76925,7 +76925,7 @@
       "augmentedFile": "correct/trash_ltl/inv16.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv16_oracle", "kind": "oracle", "source": "trash_ltl/correct/2fHaZnuosKLZjMWet_inv16.als", "body": "always (all f:Protected | historically f in Protected)"},
+      "left": {"name": "inv16_oracle", "kind": "oracle", "source": "trash_ltl/correct/2rE2JTdLbFKNpbFWY_inv16.als", "body": "always (all f:Protected | historically f in Protected)"},
       "right": {"name": "inv16_correct_0", "kind": "correct-student", "source": "trash_ltl/correct/2rE2JTdLbFKNpbFWY_inv16.als", "body": "always all p:Protected | historically p in Protected"}
     },
     {
@@ -77078,7 +77078,7 @@
       "augmentedFile": "correct/trash_ltl/inv8.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv8_oracle", "kind": "oracle", "source": "trash_ltl/correct/2JJarhN6BPByRievH_inv8.als", "body": "always (all f:link.File | eventually f in Trash)"},
+      "left": {"name": "inv8_oracle", "kind": "oracle", "source": "trash_ltl/correct/6T4J5EZFPWCn3gJrw_inv8.als", "body": "always (all f:link.File | eventually f in Trash)"},
       "right": {"name": "inv8_correct_4", "kind": "correct-student", "source": "trash_ltl/correct/jzGQPDfW2o2mY54QM_inv8.als", "body": "always all l : link.File | eventually l in Trash"}
     },
     {
@@ -77096,7 +77096,7 @@
       "augmentedFile": "correct/trash_ltl/inv9.als",
       "rawAstDistance": 2,
       "canonicalDistance": 0,
-      "left": {"name": "inv9_oracle", "kind": "oracle", "source": "trash_ltl/correct/4TMQx2sCzydmeYTTj_inv9.als", "body": "always no Protected & Trash"},
+      "left": {"name": "inv9_oracle", "kind": "oracle", "source": "trash_ltl/correct/4qRdrz9S7o8HTkukc_inv9.als", "body": "always no Protected & Trash"},
       "right": {"name": "inv9_correct_6", "kind": "correct-student", "source": "trash_ltl/correct/HtECphvZ8iWhezvRx_inv9.als", "body": "always no Trash & Protected"}
     },
     {

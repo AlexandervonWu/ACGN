@@ -53,6 +53,8 @@ public class Alloy4FunAugmenter {
     private static final int RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE = 50;
     private static final int RAW_EDIT_REPAIR_PLOT_TICK_COUNT = 5;
     private static final int REPORT_BUFFER_SIZE = 1024 * 1024;
+    private static final int EXPECTED_FULL_SOURCE_FILES = 66_080;
+    private static final int EXPECTED_FULL_CONSIDERED_FILES = 61_598;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -64,8 +66,24 @@ public class Alloy4FunAugmenter {
         }
 
         long stageStarted = beginStage("Parsing " + files.size() + " Alloy models");
-        List<ModelRecord> records = parseRecords(files, options);
+        List<ModelRecord> parsedRecords = parseRecords(files, options);
         endStage("Parsing Alloy models", stageStarted);
+
+        List<ModelRecord> astIdenticalPredicatePairs = new ArrayList<>();
+        List<ModelRecord> records = new ArrayList<>(parsedRecords.size());
+        for (ModelRecord record : parsedRecords) {
+            if (record.astIdenticalStudentOracle) {
+                astIdenticalPredicatePairs.add(record);
+            } else {
+                records.add(record);
+            }
+        }
+        validateCorpusSelection(options, files.size(), records.size(), astIdenticalPredicatePairs.size());
+        Path astIdenticalPairsPath = options.outputDir.resolve("ast_identical_predicate_pairs.csv");
+        writeAstIdenticalPredicatePairs(astIdenticalPairsPath, astIdenticalPredicatePairs);
+        System.err.println("[Alloy4FunAugmenter] Excluded " + astIdenticalPredicatePairs.size()
+                + " AST-identical student/oracle pairs before pool construction; considering "
+                + records.size() + " models.");
 
         stageStarted = beginStage("Building correct-reference pools");
         Map<String, QuestionGroup> groups = groups(records);
@@ -108,12 +126,14 @@ public class Alloy4FunAugmenter {
         }
 
         stageStarted = beginStage("Writing reports and plots");
-        writeJson(options.outputDir.resolve("index.json"), options, files.size(), groups, records, matches,
+        writeJson(options.outputDir.resolve("index.json"), options, files.size(),
+                astIdenticalPredicatePairs.size(), groups, records, matches,
                 unmatched, withoutAstDistinctReference);
         writeMarkdown(
                 options.outputDir.resolve("summary.md"),
                 options,
                 files.size(),
+                astIdenticalPredicatePairs.size(),
                 groups,
                 records,
                 matches,
@@ -127,6 +147,7 @@ public class Alloy4FunAugmenter {
         writePlotScript(options.outputDir.resolve("plot_canonical_rewards.py"));
         endStage("Writing reports and plots", stageStarted);
         System.out.println("Wrote " + options.outputDir);
+        System.out.println("Wrote " + astIdenticalPairsPath);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
         System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"));
         System.out.println("Wrote " + options.outputDir.resolve("summary.md"));
@@ -147,6 +168,24 @@ public class Alloy4FunAugmenter {
         double seconds = (System.nanoTime() - started) / 1_000_000_000.0;
         System.err.println("[Alloy4FunAugmenter] " + label + " completed in "
                 + String.format(java.util.Locale.ROOT, "%.3f", seconds) + " s");
+    }
+
+    private static void validateCorpusSelection(
+            Options options,
+            int sourceFiles,
+            int consideredFiles,
+            int astIdenticalFiles) {
+        if (sourceFiles != consideredFiles + astIdenticalFiles) {
+            throw new IllegalStateException("Corpus partition mismatch: source=" + sourceFiles
+                    + ", considered=" + consideredFiles + ", AST-identical=" + astIdenticalFiles);
+        }
+        if (sourceFiles == EXPECTED_FULL_SOURCE_FILES
+                && consideredFiles != EXPECTED_FULL_CONSIDERED_FILES) {
+            throw new IllegalStateException("Full-corpus AST filter invariant violated: expected "
+                    + EXPECTED_FULL_CONSIDERED_FILES + " considered files after excluding student/oracle "
+                    + "AST-identical predicates from " + EXPECTED_FULL_SOURCE_FILES + ", but found "
+                    + consideredFiles + " (excluded " + astIdenticalFiles + "). Input=" + options.inputDir);
+        }
     }
 
     private static List<ModelRecord> parseRecords(List<Path> files, Options options) {
@@ -250,6 +289,10 @@ public class Alloy4FunAugmenter {
             }
             record.leftPredicate = pair.leftName;
             record.rightPredicate = pair.rightName;
+            if (DatasetConventions.sameRawAst(pair.left.getBody(), pair.right.getBody())) {
+                record.astIdenticalStudentOracle = true;
+                return record;
+            }
             record.studentBody = predicateBody(file, pair.leftName, pair.left);
             record.oracleBody = predicateBody(file, pair.rightName, pair.right);
             record.levenshteinSize = record.studentBody.length();
@@ -508,6 +551,24 @@ public class Alloy4FunAugmenter {
                 .comparing((AstIdenticalComparison comparison) -> comparison.incorrect.relativePath)
                 .thenComparing(comparison -> comparison.reference.augmentedName));
         return comparisons;
+    }
+
+    private static void writeAstIdenticalPredicatePairs(
+            Path path,
+            List<ModelRecord> excluded) throws IOException {
+        try (Writer writer = outputWriter(path)) {
+            writer.write("relativePath,questionSet,statusFolder,invariantId,studentPredicate,oraclePredicate,reason\n");
+            for (ModelRecord record : excluded) {
+                writer.write(csv(record.relativePath) + ",");
+                writer.write(csv(record.questionSet) + ",");
+                writer.write(csv(record.statusFolder) + ",");
+                writer.write(csv(record.invariantId) + ",");
+                writer.write(csv(record.leftPredicate) + ",");
+                writer.write(csv(record.rightPredicate) + ",");
+                writer.write(csv("student-oracle-raw-ast-identical"));
+                writer.write("\n");
+            }
+        }
     }
 
     private static void writeAstIdenticalComparisons(
@@ -793,6 +854,7 @@ public class Alloy4FunAugmenter {
             Path path,
             Options options,
             int fileCount,
+            int astIdenticalPredicatePairCount,
             Map<String, QuestionGroup> groups,
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
@@ -805,8 +867,12 @@ public class Alloy4FunAugmenter {
             writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
             writer.write("  \"outputRoot\": \"" + escape(options.outputDir.toString()) + "\",\n");
             writer.write("  \"sourceFileCount\": " + fileCount + ",\n");
+            writer.write("  \"astIdenticalPredicatePairsExcluded\": "
+                    + astIdenticalPredicatePairCount + ",\n");
+            writer.write("  \"consideredFileCount\": " + records.size() + ",\n");
             writer.write("  \"threadCount\": " + options.threadCount + ",\n");
             writer.write("  \"rewardPoolSize\": " + options.rewardPoolSize + ",\n");
+            writer.write("  \"rewardsEnabled\": " + !options.skipRewards + ",\n");
             writer.write("  \"summary\": {\n");
             writer.write("    \"groups\": " + summary.groups + ",\n");
             writer.write("    \"parsedModels\": " + summary.parsedModels + ",\n");
@@ -865,6 +931,7 @@ public class Alloy4FunAugmenter {
             Path path,
             Options options,
             int fileCount,
+            int astIdenticalPredicatePairCount,
             Map<String, QuestionGroup> groups,
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
@@ -887,8 +954,12 @@ public class Alloy4FunAugmenter {
             writer.write("- Input root: `" + options.inputDir + "`\n");
             writer.write("- Output root: `" + options.outputDir + "`\n");
             writer.write("- Source Alloy files: " + fileCount + "\n");
+            writer.write("- AST-identical student/oracle files excluded before pools: "
+                    + astIdenticalPredicatePairCount + "\n");
+            writer.write("- Alloy files considered and used: " + records.size() + "\n");
             writer.write("- Thread count: " + options.threadCount + "\n\n");
             writer.write("- Reward pool size: " + options.rewardPoolSize + "\n\n");
+            writer.write("- Rewards enabled: " + !options.skipRewards + "\n\n");
 
             writer.write("## Corpus\n\n");
             writer.write("- Question groups: " + summary.groups + "\n");
@@ -2527,6 +2598,7 @@ public class Alloy4FunAugmenter {
         private int levenshteinSize;
         private int rawAstSize;
         private int canonicalSize;
+        private boolean astIdenticalStudentOracle;
         private String contextFingerprint;
         private String oracleAstFingerprint;
         private String error;

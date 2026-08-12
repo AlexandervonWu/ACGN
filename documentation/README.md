@@ -90,6 +90,9 @@ The main source locations are:
 - [`Canonical` facade](../src/is/fivefivefive/CanDis/Canonical.java)
 - [`CanonicalBacktranslator`](../src/is/fivefivefive/CanDis/CanonicalBacktranslator.java)
 
+The complete ordered rule inventory and its side conditions are collected in
+[`REWRITE_SYSTEM.md`](REWRITE_SYSTEM.md).
+
 ## Canonicalization Pipeline
 
 CanDis applies the following sequence independently within each temporal phase:
@@ -455,6 +458,13 @@ Options:
 places the oracle and AST-distinct correct student answers into one co-equal
 reference pool, ranks every incorrect answer against every correct reference,
 and writes an augmented research dataset.
+
+Before constructing any question group or truth pool, it removes files whose
+student predicate and paired oracle predicate have identical raw ASTs. On the
+current full corpus this partitions 66,080 source files into 4,482 excluded
+trivial pairs and 61,598 files considered by every downstream pool, ranking,
+and statistic. Excluded paths are retained in
+`ast_identical_predicate_pairs.csv` for auditing.
 
 ```bash
 java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.Alloy4FunAugmenter \
