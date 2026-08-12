@@ -54,6 +54,7 @@ public final class EGraphSaturationTest {
         testQuantifierPolarityRules();
         testCommutativeDistanceUsesUnorderedMatching();
         testTemporalNegationCrossesPhaseBoundary();
+        testDistanceAllocationInstrumentation();
         System.out.println("EGraphSaturationTest passed");
     }
 
@@ -80,6 +81,23 @@ public final class EGraphSaturationTest {
         assertTrue(disjunction.isSetFlexibleArity(), "OR must use set flexible arity");
         assertEquals(Arrays.asList("x", "y", "z"), variableNames(disjunction.getChildren()),
                 "OR set operands must be canonicalized without preserving source order");
+    }
+
+    private static void testDistanceAllocationInstrumentation() {
+        NormalForm left = new NormalForm();
+        left.addEClass(node(Opcode.AND, true, true, variable("a"), variable("b")));
+        NormalForm right = new NormalForm();
+        right.addEClass(node(Opcode.AND, true, true, variable("b"), variable("a")));
+        CanonicalDistance.Prepared leftPrepared = CanonicalDistance.prepare(List.of(left));
+        CanonicalDistance.Prepared rightPrepared = CanonicalDistance.prepare(List.of(right));
+
+        CanonicalDistance.beginAllocationTracking();
+        int distance = CanonicalDistance.distance(leftPrepared, rightPrepared);
+        CanonicalDistance.AllocationStats allocations = CanonicalDistance.endAllocationTracking();
+
+        assertEquals(0, distance, "allocation diagnostics must not change canonical distance");
+        assertTrue(allocations.estimatedBytes() > 0, "distance diagnostics must count scratch arrays");
+        assertTrue(allocations.matrixCount() > 0, "distance diagnostics must count DP matrices");
     }
 
     private static void testDeMorganSaturation() {

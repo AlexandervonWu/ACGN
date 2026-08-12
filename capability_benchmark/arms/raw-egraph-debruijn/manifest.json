@@ -1,0 +1,84 @@
+{
+  "outputs": [
+    {
+      "path": "pairs.csv",
+      "sha256": "beb13933b259f6572ba5255d27721312b422a581ae5e7fef3ee896f0007ce212",
+      "sizeBytes": 1073494
+    },
+    {
+      "path": "summary.json",
+      "sha256": "f1715b6137186a1a3660cda4f93222f877cdf78a9b94617504b39fb423086ac6",
+      "sizeBytes": 13711
+    },
+    {
+      "path": "metrics.properties",
+      "sha256": "8ab8e8395c54b605656d96a4621ae2f9c731312b7fcd5eaf399061d31c356dc0",
+      "sizeBytes": 993
+    },
+    {
+      "path": "run.log",
+      "sha256": "46d0e65ddc9218f59c8332f2d23527498102601a76781232616820a68d015999",
+      "sizeBytes": 103
+    },
+    {
+      "path": "process.time",
+      "sha256": "1d94340b98a20fc9ae049744d7ddf101d96ed00f1510ec8d568e2798b7763454",
+      "sizeBytes": 1294
+    }
+  ],
+  "javaVersion": "17.0.19",
+  "osArch": "amd64",
+  "startedAt": "2026-08-11T23:58:08.139313575Z",
+  "javaSourceSha256": "7721fbe868910abc54fe58724ebadce097cc6f3927cdaafb2ea79517afe999a1",
+  "result": {
+    "failures": 0,
+    "successes": 5500,
+    "skippedIdenticalRawAstPairs": 0,
+    "files": 5500
+  },
+  "logicalProcessors": 32,
+  "osVersion": "7.0.0-28-generic",
+  "host": "augustus-x870e",
+  "limit": 0,
+  "datasetFileCount": 5500,
+  "datasetSha256": "e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0",
+  "heap": "3g",
+  "workers": 32,
+  "arm": "raw-egraph-debruijn",
+  "ruleSetVersion": "canonical-equivalences-v1",
+  "outputSchemaVersion": "candis-ablation-output-v3",
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
+  "javaVendor": "Ubuntu",
+  "osName": "Linux",
+  "dirtyTree": true,
+  "manifestSchemaVersion": "candis-ablation-manifest-v1",
+  "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
+  "gitSha": "9953c5d2161d23d557d2a00cb02ef1b4bef95809",
+  "datasetByteCount": 5312721,
+  "ruleNames": [
+    "operator aliases",
+    "NOOP elimination",
+    "capture-avoiding let beta reduction",
+    "implication elimination",
+    "iff elimination",
+    "formula ITE elimination",
+    "boolean constant negation and double negation",
+    "De Morgan",
+    "atomic negation duals",
+    "temporal negation duals",
+    "quantifier negation duals",
+    "no-to-all-not quantifier expansion",
+    "empty quantifier domains",
+    "safe existential-conjunction prenex",
+    "safe universal-disjunction prenex",
+    "associativity",
+    "commutativity",
+    "idempotence",
+    "boolean identities and annihilators",
+    "boolean complements",
+    "membership in none/univ",
+    "relational union with none",
+    "relational intersection with none"
+  ],
+  "runId": "ae363ef2-b0f2-40e9-b86c-348488d2630f"
+}

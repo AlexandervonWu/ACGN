@@ -11,8 +11,20 @@ import java.util.Set;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 
 public final class CanonicalDistance {
+    private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
 
     private CanonicalDistance() {
+    }
+
+    public static void beginAllocationTracking() {
+        ALLOCATION_TRACKER.set(new MutableAllocationStats());
+    }
+
+    public static AllocationStats endAllocationTracking() {
+        MutableAllocationStats mutable = ALLOCATION_TRACKER.get();
+        ALLOCATION_TRACKER.remove();
+        return mutable == null ? new AllocationStats(0, 0, 0, 0)
+                : new AllocationStats(mutable.bytes, mutable.peakBytes, mutable.arrays, mutable.matrices);
     }
 
     public static int distance(Prepared left, Prepared right) {
@@ -95,6 +107,32 @@ public final class CanonicalDistance {
         public long enodeCount() {
             return eGraphStats.enodes;
         }
+
+        public int canonicalSize() {
+            return size;
+        }
+
+        public int normalFormCount() {
+            return normalForms.size();
+        }
+
+        public int quantifierCount() {
+            int count = 0;
+            for (NormalForm normalForm : normalForms) {
+                count += normalForm.getParams().size();
+                count += normalForm.getMatrixQuantiVars().size();
+                count += normalForm.getInheritedQuantiVars().size();
+            }
+            return count;
+        }
+
+        public int temporalNodeCount() {
+            return temporalSize(temporalTree);
+        }
+
+        public int metadataEntryCount() {
+            return metadata.sizes.size();
+        }
     }
 
     private static int quantificationDistance(List<NormalForm> left, List<NormalForm> right) {
@@ -115,7 +153,7 @@ public final class CanonicalDistance {
     private static int bindingListDistance(List<QuantiVar> left, List<QuantiVar> right) {
         left = canonicalQuantifierOrder(left);
         right = canonicalQuantifierOrder(right);
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
+        int[][] dp = intMatrix(left.size() + 1, right.size() + 1);
         for (int i = 1; i <= left.size(); i++) {
             dp[i][0] = dp[i - 1][0] + 1;
         }
@@ -221,7 +259,7 @@ public final class CanonicalDistance {
     }
 
     private static int[][] quantificationDp(List<QuantiVar> left, List<QuantiVar> right) {
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
+        int[][] dp = intMatrix(left.size() + 1, right.size() + 1);
         for (int i = 1; i <= left.size(); i++) {
             dp[i][0] = dp[i - 1][0] + 1;
         }
@@ -579,7 +617,7 @@ public final class CanonicalDistance {
             List<EGraphNode> left,
             List<EGraphNode> right,
             Map<String, String> variableMapping) {
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
+        int[][] dp = intMatrix(left.size() + 1, right.size() + 1);
         for (int i = 1; i <= left.size(); i++) {
             dp[i][0] = dp[i - 1][0] + eGraphSize(left.get(i - 1));
         }
@@ -782,7 +820,7 @@ public final class CanonicalDistance {
             int leftSize = left.size();
             int rightSize = right.size();
             int dimension = leftSize + rightSize;
-            int[][] costs = new int[dimension][dimension];
+            int[][] costs = intMatrix(dimension, dimension);
             for (int i = 0; i < dimension; i++) {
                 for (int j = 0; j < dimension; j++) {
                     if (i < leftSize && j < rightSize) {
@@ -799,16 +837,16 @@ public final class CanonicalDistance {
 
         private static int minimumAssignmentCost(int[][] costs) {
             int size = costs.length;
-            int[] rowPotential = new int[size + 1];
-            int[] columnPotential = new int[size + 1];
-            int[] columnMatch = new int[size + 1];
-            int[] predecessor = new int[size + 1];
+            int[] rowPotential = intArray(size + 1);
+            int[] columnPotential = intArray(size + 1);
+            int[] columnMatch = intArray(size + 1);
+            int[] predecessor = intArray(size + 1);
             for (int row = 1; row <= size; row++) {
                 columnMatch[0] = row;
                 int column = 0;
-                int[] minimum = new int[size + 1];
+                int[] minimum = intArray(size + 1);
                 java.util.Arrays.fill(minimum, Integer.MAX_VALUE);
-                boolean[] used = new boolean[size + 1];
+                boolean[] used = booleanArray(size + 1);
                 do {
                     used[column] = true;
                     int matchedRow = columnMatch[column];
@@ -867,8 +905,8 @@ public final class CanonicalDistance {
                 return distance(left.get(0), right.get(0));
             }
 
-            int[] previous = new int[right.size() + 1];
-            int[] current = new int[right.size() + 1];
+            int[] previous = intArray(right.size() + 1);
+            int[] current = intArray(right.size() + 1);
             for (int j = 1; j <= right.size(); j++) {
                 previous[j] = previous[j - 1] + nodeSize(right.get(j - 1), false);
             }
@@ -983,7 +1021,7 @@ public final class CanonicalDistance {
 
     private static int treeDistance(TemporalTree left, TemporalTree right) {
         int cost = safeEquals(left.label, right.label) ? 0 : 1;
-        int[][] dp = new int[left.children.size() + 1][right.children.size() + 1];
+        int[][] dp = intMatrix(left.children.size() + 1, right.children.size() + 1);
         for (int i = 1; i <= left.children.size(); i++) {
             dp[i][0] = dp[i - 1][0] + temporalSize(left.children.get(i - 1));
         }
@@ -1034,7 +1072,7 @@ public final class CanonicalDistance {
     }
 
     private static int[][] temporalForestDp(List<TemporalTree> left, List<TemporalTree> right) {
-        int[][] dp = new int[left.size() + 1][right.size() + 1];
+        int[][] dp = intMatrix(left.size() + 1, right.size() + 1);
         for (int i = 1; i <= left.size(); i++) {
             dp[i][0] = dp[i - 1][0] + temporalSize(left.get(i - 1));
         }
@@ -1320,6 +1358,77 @@ public final class CanonicalDistance {
 
     private static boolean safeEquals(String left, String right) {
         return left == null ? right == null : left.equals(right);
+    }
+
+    private static int[][] intMatrix(int rows, int columns) {
+        long bytes = alignedArrayBytes(rows, 8) + (long) rows * alignedArrayBytes(columns, 4);
+        recordAllocation(bytes, rows + 1L, true);
+        return new int[rows][columns];
+    }
+
+    private static int[] intArray(int length) {
+        recordAllocation(alignedArrayBytes(length, 4), 1, false);
+        return new int[length];
+    }
+
+    private static boolean[] booleanArray(int length) {
+        recordAllocation(alignedArrayBytes(length, 1), 1, false);
+        return new boolean[length];
+    }
+
+    private static long alignedArrayBytes(int length, int elementBytes) {
+        long bytes = 16L + (long) Math.max(0, length) * elementBytes;
+        return (bytes + 7L) & ~7L;
+    }
+
+    private static void recordAllocation(long bytes, long arrays, boolean matrix) {
+        MutableAllocationStats tracker = ALLOCATION_TRACKER.get();
+        if (tracker == null) {
+            return;
+        }
+        tracker.bytes += bytes;
+        tracker.peakBytes = Math.max(tracker.peakBytes, bytes);
+        tracker.arrays += arrays;
+        if (matrix) {
+            tracker.matrices++;
+        }
+    }
+
+    public static final class AllocationStats {
+        private final long estimatedBytes;
+        private final long largestBufferBytes;
+        private final long arrayCount;
+        private final long matrixCount;
+
+        private AllocationStats(long estimatedBytes, long largestBufferBytes, long arrayCount, long matrixCount) {
+            this.estimatedBytes = estimatedBytes;
+            this.largestBufferBytes = largestBufferBytes;
+            this.arrayCount = arrayCount;
+            this.matrixCount = matrixCount;
+        }
+
+        public long estimatedBytes() {
+            return estimatedBytes;
+        }
+
+        public long largestBufferBytes() {
+            return largestBufferBytes;
+        }
+
+        public long arrayCount() {
+            return arrayCount;
+        }
+
+        public long matrixCount() {
+            return matrixCount;
+        }
+    }
+
+    private static final class MutableAllocationStats {
+        private long bytes;
+        private long peakBytes;
+        private long arrays;
+        private long matrices;
     }
 
     private enum BindingRole {

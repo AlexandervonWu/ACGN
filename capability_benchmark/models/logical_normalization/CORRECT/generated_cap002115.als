@@ -1,0 +1,42 @@
+open util/ordering[Grade]
+
+sig Person {
+	teaches : set Course,
+	enrolled : set Course,
+	projects : set Project
+}
+
+sig Professor,Student in Person {}
+
+sig Course {
+	projects : set Project,
+	grades : Person -> Grade
+}
+
+sig Project {}
+
+sig Grade {}
+
+pred inv1 {
+enrolled in (Student -> Course)
+}
+
+pred inv1c {
+	enrolled in Student -> Course
+}
+
+check correct { inv1 <=> inv1c}
+pred under { inv1 and !inv1c}
+pred over { !inv1 and inv1c}
+run over 
+run under 
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap002115 { not ((inv1 and ((no CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB)) and ((some CapBenchA and some capBenchR) or some capBenchR)) }
+pred cap002115c { ((not (inv1 and ((no CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB))) or (not ((some CapBenchA and some capBenchR) or some capBenchR))) }
+assert CapBenchEquivalent_cap002115 { cap002115 iff cap002115c }
+check CapBenchEquivalent_cap002115 for 4

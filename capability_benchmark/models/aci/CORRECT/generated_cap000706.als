@@ -1,0 +1,43 @@
+sig Workstation {
+	workers : set Worker,
+	succ : set Workstation
+}
+one sig begin, end in Workstation {}
+
+sig Worker {}
+sig Human, Robot extends Worker {}
+
+abstract sig Product {
+	parts : set Product	
+}
+
+sig Material extends Product {}
+
+sig Component extends Product {
+	workstation : set Workstation
+}
+
+sig Dangerous in Product {}
+pred inv2 {
+(all w: Workstation | some r: Worker | r in w.workers) && (all w: Worker | one workers.w)
+}
+
+pred inv2c {
+	workers in Workstation one -> some Worker
+}
+
+check correct { inv2 <=> inv2c}
+pred under { inv2 and !inv2c}
+pred over { !inv2 and inv2c}
+run over 
+run under 
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap000706 { (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchB)) }
+pred cap000706c { ((inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchB)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchB))) }
+assert CapBenchEquivalent_cap000706 { cap000706 iff cap000706c }
+check CapBenchEquivalent_cap000706 for 4

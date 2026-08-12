@@ -19,6 +19,13 @@ import java.util.HashMap;
  * It is the locus of control for the visitor that generates the normal form from the original formula. 
  */
 public class NormalForm {
+    @FunctionalInterface
+    public interface NormalizationObserver {
+        void onStage(String stage, NormalForm normalForm);
+    }
+
+    private static final NormalizationObserver NO_OBSERVER = (stage, normalForm) -> { };
+
     // matrix e-graph representation of the formula, where each node is a subformula, and edges represent the structure of the formula.
     private EGraphNode matrixEGraphRoot;
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
@@ -235,9 +242,16 @@ public class NormalForm {
         normalize(new HashMap<>(), new int[] { 0 });
     }
     public void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
+        normalize(inheritedBindings, nextVarId, NO_OBSERVER);
+    }
+    public void normalize(
+            Map<String, QuantiVar> inheritedBindings,
+            int[] nextVarId,
+            NormalizationObserver observer) {
         if (matrixEGraphRoot == null) {
             return;
         }
+        NormalizationObserver stages = observer == null ? NO_OBSERVER : observer;
         matrixQuantiVars.clear();
         inheritedQuantiVars = new ArrayList<>(new java.util.LinkedHashSet<>(inheritedBindings.values()));
         inheritedQuantiVars.sort(java.util.Comparator.comparingInt(QuantiVar::getId));
@@ -247,12 +261,17 @@ public class NormalForm {
         for (Map.Entry<String, QuantiVar> entry : inheritedBindings.entrySet()) {
             inheritedAlphaNames.put(entry.getKey(), entry.getValue().getName());
         }
+        stages.onStage("begin-alpha-beta-branch", this);
         matrixEGraphRoot = alphaRenameBoundVariables(
                 matrixEGraphRoot, inheritedAlphaNames, new int[] { 0 });
         matrixEGraphRoot = betaRewriteLet(matrixEGraphRoot, new HashMap<>());
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
+        stages.onStage("alpha-beta-branch", this);
+        stages.onStage("begin-nnf", this);
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
+        stages.onStage("nnf", this);
+        stages.onStage("begin-prenex", this);
         List<EGraphNode> constraints = new ArrayList<>();
         Map<String, QuantiVar> prenexBindings = new HashMap<>(inheritedBindings);
         for (QuantiVar inherited : inheritedBindings.values()) {
@@ -261,15 +280,22 @@ public class NormalForm {
         matrixEGraphRoot = prenex(matrixEGraphRoot, prenexBindings, nextVarId, false, constraints, "root",
                 true, true, true);
         matrixEGraphRoot = removeEndNodes(conjoin(matrixEGraphRoot, constraints));
+        stages.onStage("prenex", this);
+        stages.onStage("begin-post-prenex-nnf", this);
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
+        stages.onStage("post-prenex-nnf", this);
+        stages.onStage("begin-aci", this);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
+        stages.onStage("aci", this);
         if (matrixEGraphRoot == null) {
             return;
         }
+        stages.onStage("begin-saturation", this);
         matrixEGraphRoot.saturate();
         registerQuantifierSymmetries();
+        stages.onStage("saturation", this);
     }
 
     private static EGraphNode alphaRenameBoundVariables(

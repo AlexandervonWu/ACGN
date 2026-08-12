@@ -1,0 +1,37 @@
+sig Person  {
+	Tutors : set Person,
+	Teaches : set Class
+}
+sig Group {}
+
+sig Class  {
+	Groups : Person -> Group
+}
+
+sig Teacher in Person  {}
+
+sig Student in Person  {}
+
+pred inv8 {
+all disj t: Teacher | lone t.Teaches
+}
+
+pred inv8c {
+  all t:Teacher | lone t.Teaches
+}
+
+check correct { inv8 <=> inv8c}
+pred under { inv8 and !inv8c}
+pred over { !inv8 and inv8c}
+run over 
+run under 
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap000634 { (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and no CapBenchA)) }
+pred cap000634c { ((inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and no CapBenchA)) and (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and no CapBenchA))) }
+assert CapBenchEquivalent_cap000634 { cap000634 iff cap000634c }
+check CapBenchEquivalent_cap000634 for 4

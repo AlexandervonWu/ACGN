@@ -1,0 +1,40 @@
+sig User {
+	follows : set User,
+	sees : set Photo,
+	posts : set Photo,
+	suggested : set User
+}
+
+sig Influencer extends User {}
+
+sig Photo {
+	date : one Day
+}
+sig Ad extends Photo {}
+
+sig Day {}
+
+pred inv1 {
+all y : univ | y in Photo implies some x : User | x->y in posts
+all p : Photo | all x, y : User | x->p in posts and y->p in posts implies x = y
+}
+
+pred inv1c {
+	all p : Photo | one posts.p
+}
+
+check correct { inv1 <=> inv1c}
+pred under { inv1 and !inv1c}
+pred over { !inv1 and inv1c}
+run over 
+run under 
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap002619 { not (((inv1 and ((CapBenchA in CapBenchA + CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB))) since (((some capBenchR and some capBenchR) or some capBenchR))) }
+pred cap002619c { ((not (inv1 and ((CapBenchA in CapBenchA + CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB))) triggered (not ((some capBenchR and some capBenchR) or some capBenchR))) }
+assert CapBenchEquivalent_cap002619 { cap002619 iff cap002619c }
+check CapBenchEquivalent_cap002619 for 4

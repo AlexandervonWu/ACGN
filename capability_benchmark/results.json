@@ -1,0 +1,1971 @@
+{
+  "groundTruth": "equivalence-by-construction",
+  "naturalCorpus": {
+    "java-egglog-debruijn": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 2163,
+      "averageDistance": 17.552696516120655,
+      "correctCoverage": 0.11258588382261087,
+      "successful": 61598
+    },
+    "java-egglog": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 823,
+      "averageDistance": 18.019903243611804,
+      "correctCoverage": 0.042837809702269414,
+      "successful": 61598
+    },
+    "canonical": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 2235,
+      "averageDistance": 13.540131173090035,
+      "correctCoverage": 0.11633354153653966,
+      "successful": 61598
+    },
+    "raw-egraph-debruijn": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 2163,
+      "averageDistance": 17.94761193545245,
+      "correctCoverage": 0.11258588382261087,
+      "successful": 61598
+    },
+    "raw-egraph": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 823,
+      "averageDistance": 18.415549206143055,
+      "correctCoverage": 0.042837809702269414,
+      "successful": 61598
+    },
+    "slotted-egraph": {
+      "incorrectZero": 0,
+      "correct": 19212,
+      "incorrect": 42386,
+      "correctZero": 2162,
+      "averageDistance": 17.71666287866489,
+      "correctCoverage": 0.11253383302102853,
+      "successful": 61598
+    }
+  },
+  "boundedSoundness": {
+    "perSubtype": 1,
+    "schemaVersion": "candis-capability-soundness-v1",
+    "checks": [
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "de-morgan-reorder",
+        "relativePath": "ac_logical/CORRECT/generated_cap004500.als",
+        "solverReportedCounterexample": false,
+        "family": "ac_logical",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "reorder-and",
+        "relativePath": "aci/CORRECT/generated_cap000500.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "reorder-or",
+        "relativePath": "aci/CORRECT/generated_cap000501.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "duplicate-and",
+        "relativePath": "aci/CORRECT/generated_cap000502.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "duplicate-or",
+        "relativePath": "aci/CORRECT/generated_cap000503.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "reassociate-join",
+        "relativePath": "aci/CORRECT/generated_cap000504.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "flatten-unflatten-union",
+        "relativePath": "aci/CORRECT/generated_cap000505.als",
+        "solverReportedCounterexample": false,
+        "family": "aci",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "nested-rename",
+        "relativePath": "alpha/CORRECT/generated_cap000000.als",
+        "solverReportedCounterexample": false,
+        "family": "alpha",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "capture-avoiding-nested-swap",
+        "relativePath": "alpha/CORRECT/generated_cap000001.als",
+        "solverReportedCounterexample": false,
+        "family": "alpha",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "alpha-and-reorder",
+        "relativePath": "alpha_ac/CORRECT/generated_cap003000.als",
+        "solverReportedCounterexample": false,
+        "family": "alpha_ac",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "alpha-block-permutation",
+        "relativePath": "alpha_binder_permutation/CORRECT/generated_cap003500.als",
+        "solverReportedCounterexample": false,
+        "family": "alpha_binder_permutation",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "two-binder-universal",
+        "relativePath": "binder_permutation/CORRECT/generated_cap001000.als",
+        "solverReportedCounterexample": false,
+        "family": "binder_permutation",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "three-binder-existential",
+        "relativePath": "binder_permutation/CORRECT/generated_cap001001.als",
+        "solverReportedCounterexample": false,
+        "family": "binder_permutation",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "permuted-existential-prenex",
+        "relativePath": "binder_permutation_prenex/CORRECT/generated_cap004000.als",
+        "solverReportedCounterexample": false,
+        "family": "binder_permutation_prenex",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "double-negation",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002000.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "de-morgan",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002001.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "implication",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002002.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "iff",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002003.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "quantifier-negation",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002004.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "no-to-all-not",
+        "relativePath": "logical_normalization/CORRECT/generated_cap002005.als",
+        "solverReportedCounterexample": false,
+        "family": "logical_normalization",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "negation-quantifier-prenex-permutation",
+        "relativePath": "mixed/CORRECT/generated_cap005000.als",
+        "solverReportedCounterexample": false,
+        "family": "mixed",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "existential-conjunction",
+        "relativePath": "safe_prenex/CORRECT/generated_cap001500.als",
+        "solverReportedCounterexample": false,
+        "family": "safe_prenex",
+        "error": ""
+      },
+      {
+        "note": "",
+        "inconclusive": false,
+        "subtype": "universal-disjunction",
+        "relativePath": "safe_prenex/CORRECT/generated_cap001501.als",
+        "solverReportedCounterexample": false,
+        "family": "safe_prenex",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "always-eventually-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002500.als",
+        "solverReportedCounterexample": false,
+        "family": "temporal_normalization",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "eventually-always-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002501.als",
+        "solverReportedCounterexample": false,
+        "family": "temporal_normalization",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "historically-once-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002502.als",
+        "solverReportedCounterexample": false,
+        "family": "temporal_normalization",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "once-historically-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002503.als",
+        "solverReportedCounterexample": false,
+        "family": "temporal_normalization",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "until-releases-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002504.als",
+        "solverReportedCounterexample": true,
+        "family": "temporal_normalization",
+        "error": ""
+      },
+      {
+        "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+        "inconclusive": true,
+        "subtype": "since-triggered-dual",
+        "relativePath": "temporal_normalization/CORRECT/generated_cap002505.als",
+        "solverReportedCounterexample": false,
+        "family": "temporal_normalization",
+        "error": ""
+      }
+    ],
+    "boundedScope": 4,
+    "interpretation": "finite-scope SAT sanity check, not proof",
+    "generatedAt": "2026-08-11T23:58:07.971290512Z"
+  },
+  "rngSeed": 55520260811,
+  "schemaVersion": "candis-capability-results-v1",
+  "generatedAt": "2026-08-11T23:58:23.732051731Z",
+  "pairCount": 5500,
+  "arms": [
+    "raw-egraph",
+    "raw-egraph-debruijn",
+    "java-egglog",
+    "java-egglog-debruijn",
+    "slotted-egraph",
+    "canonical"
+  ],
+  "families": [
+    {
+      "displayName": "Alpha-equivalence",
+      "observedFirstCapable": "raw-egraph-debruijn",
+      "expectedFirstCapable": "raw-egraph-debruijn",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 89820046,
+          "aggregateEngineWallNanos": 108368443,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 6945.316,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 42.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 72197801,
+          "aggregateEngineWallNanos": 84549468,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10850.964,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 65.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 1137186581,
+          "aggregateEngineWallNanos": 1351015777,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2615.296,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 40.864,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 73296348,
+          "aggregateEngineWallNanos": 85041137,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 7244.776,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 43.846,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 67462016,
+          "aggregateEngineWallNanos": 74140955,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 11175.024,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 67.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 307796785,
+          "aggregateEngineWallNanos": 359860174,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10843.676,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 40.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "alpha",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Associativity / commutativity / idempotence",
+      "observedFirstCapable": "raw-egraph",
+      "expectedFirstCapable": "raw-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 32060820,
+          "aggregateEngineWallNanos": 34290366,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 5214.144,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 32.184,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 30423888,
+          "aggregateEngineWallNanos": 31426656,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 5214.144,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 32.184,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 265239680,
+          "aggregateEngineWallNanos": 281252542,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2654.208,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 41.472,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 32343164,
+          "aggregateEngineWallNanos": 32348583,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 5601.568,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 34.554,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 36996853,
+          "aggregateEngineWallNanos": 42639901,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 5601.568,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 34.554,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 70375336,
+          "aggregateEngineWallNanos": 78862371,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 7860.44,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 30.18,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "aci",
+      "transitions": [
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Binder-block permutations",
+      "observedFirstCapable": "slotted-egraph",
+      "expectedFirstCapable": "slotted-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 37267505,
+          "aggregateEngineWallNanos": 39279997,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9634.996,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 58.518,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 32235390,
+          "aggregateEngineWallNanos": 33311845,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10272.996,
+          "averageDistance": 5.5,
+          "averageRepresentationUnits": 62.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 7
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 200105120,
+          "aggregateEngineWallNanos": 216627733,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2999.296,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 46.864,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 38570960,
+          "aggregateEngineWallNanos": 38595127,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10123.056,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 61.532,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 35033168,
+          "aggregateEngineWallNanos": 35043219,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10761.056,
+          "averageDistance": 5.5,
+          "averageRepresentationUnits": 65.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 7
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 100435391,
+          "aggregateEngineWallNanos": 100582424,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 9945.708,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 36.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "binder_permutation",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Safe prenex transformations",
+      "observedFirstCapable": "raw-egraph",
+      "expectedFirstCapable": "raw-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 38053888,
+          "aggregateEngineWallNanos": 38063306,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 7830.972,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 48.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 24037609,
+          "aggregateEngineWallNanos": 26149573,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 7652.972,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 47.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 104097361,
+          "aggregateEngineWallNanos": 118978258,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2551.296,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 39.864,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 38403638,
+          "aggregateEngineWallNanos": 38410667,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 8048.432,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 49.346,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 40570679,
+          "aggregateEngineWallNanos": 40630182,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 7870.432,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 48.346,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 55012198,
+          "aggregateEngineWallNanos": 56141195,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 11143.676,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 42.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "safe_prenex",
+      "transitions": [
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Negation / logical normalization",
+      "observedFirstCapable": "raw-egraph",
+      "expectedFirstCapable": "raw-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 81984446,
+          "aggregateEngineWallNanos": 91803564,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10217.064,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 63.394,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 83760800,
+          "aggregateEngineWallNanos": 86574635,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10157.968,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 63.062,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 185731959,
+          "aggregateEngineWallNanos": 211114604,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 3084.288,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 48.192,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 161389847,
+          "aggregateEngineWallNanos": 171010679,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 12398.984,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 77.176,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 117224106,
+          "aggregateEngineWallNanos": 119725496,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 12339.888,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 76.844,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 149430755,
+          "aggregateEngineWallNanos": 153020453,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 16390.024,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 63.062,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "logical_normalization",
+      "transitions": [
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Temporal normalization",
+      "observedFirstCapable": "raw-egraph",
+      "expectedFirstCapable": "raw-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 36168447,
+          "aggregateEngineWallNanos": 36207456,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 9377.032,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 58.37,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 32242766,
+          "aggregateEngineWallNanos": 33246833,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 9377.032,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 58.37,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 101568219,
+          "aggregateEngineWallNanos": 101785566,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2703.616,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 42.244,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 43105995,
+          "aggregateEngineWallNanos": 45269706,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10364.42,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 64.56,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 39496641,
+          "aggregateEngineWallNanos": 41599846,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10364.42,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 64.56,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 69182124,
+          "aggregateEngineWallNanos": 70273126,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 14803.496,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 58.37,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "temporal_normalization",
+      "transitions": [
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Composed: alpha + AC",
+      "observedFirstCapable": "raw-egraph-debruijn",
+      "expectedFirstCapable": "raw-egraph-debruijn",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 61885685,
+          "aggregateEngineWallNanos": 62753447,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 8245.624,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 50.084,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 3,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 61770352,
+          "aggregateEngineWallNanos": 63535045,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10314.656,
+          "averageDistance": 3,
+          "averageRepresentationUnits": 62.084,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 3
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 221948915,
+          "aggregateEngineWallNanos": 253461342,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 3554.048,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 55.532,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 63908202,
+          "aggregateEngineWallNanos": 64674854,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 8832.74,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 53.668,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 3,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 62274079,
+          "aggregateEngineWallNanos": 62415048,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10948.548,
+          "averageDistance": 3,
+          "averageRepresentationUnits": 66.024,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 3
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 148424502,
+          "aggregateEngineWallNanos": 154630050,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 11872.792,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 44.084,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "alpha_ac",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Composed: alpha + binder permutation",
+      "observedFirstCapable": "slotted-egraph",
+      "expectedFirstCapable": "slotted-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 52096932,
+          "aggregateEngineWallNanos": 59809077,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 8714.948,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 53.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 30379236,
+          "aggregateEngineWallNanos": 33344030,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9296.948,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 56.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 190671413,
+          "aggregateEngineWallNanos": 198761637,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2615.296,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 40.864,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 38109735,
+          "aggregateEngineWallNanos": 40112734,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9039.008,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 55.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 31902927,
+          "aggregateEngineWallNanos": 33381752,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9621.008,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 58.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 133242294,
+          "aggregateEngineWallNanos": 140272206,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 9831.66,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 36.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "alpha_binder_permutation",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Composed: binder permutation + prenex",
+      "observedFirstCapable": "slotted-egraph",
+      "expectedFirstCapable": "slotted-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 62420177,
+          "aggregateEngineWallNanos": 64705539,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9493.588,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 58.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 62120767,
+          "aggregateEngineWallNanos": 62165076,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10055.588,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 61.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 147592994,
+          "aggregateEngineWallNanos": 156786213,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2615.296,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 40.864,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 63772999,
+          "aggregateEngineWallNanos": 65014719,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 9817.648,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 60.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 64541165,
+          "aggregateEngineWallNanos": 64623817,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 10379.648,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 63.032,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 77439839,
+          "aggregateEngineWallNanos": 79513541,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 11147.652,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 41.018,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "binder_permutation_prenex",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Composed: AC + logical normalization",
+      "observedFirstCapable": "java-egglog",
+      "expectedFirstCapable": "raw-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 404981053,
+          "aggregateEngineWallNanos": 703968906,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10496.396,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 65.386,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "java-egglog": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 336276071,
+          "aggregateEngineWallNanos": 643376633,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 10496.396,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 65.386,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 1111993939,
+          "aggregateEngineWallNanos": 2226040476,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 2914.048,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 45.532,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 21,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 479,
+          "engineCpuNanos": 422898365,
+          "aggregateEngineWallNanos": 841810190,
+          "recoveryRate": 0.958,
+          "generated": 500,
+          "averageEstimatedBytes": 14037.396,
+          "averageDistance": 0.532,
+          "averageRepresentationUnits": 87.744,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph": {
+          "falseNegatives": 21,
+          "p50Distance": 0,
+          "unexpectedFailures": 21,
+          "zero": 479,
+          "engineCpuNanos": 541800852,
+          "aggregateEngineWallNanos": 845568076,
+          "recoveryRate": 0.958,
+          "generated": 500,
+          "averageEstimatedBytes": 14037.396,
+          "averageDistance": 0.532,
+          "averageRepresentationUnits": 87.744,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 714393078,
+          "aggregateEngineWallNanos": 1330753437,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 16903.196,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 65.386,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "ac_logical",
+      "transitions": [
+        {
+          "retainedZero": 479,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 479,
+          "newlyZero": 21,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 479,
+          "newlyZero": 21,
+          "noLongerZero": 0,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    },
+    {
+      "displayName": "Composed: mixed 2-4 transformations",
+      "observedFirstCapable": "slotted-egraph",
+      "expectedFirstCapable": "slotted-egraph",
+      "arms": {
+        "java-egglog-debruijn": {
+          "falseNegatives": 500,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 326262315,
+          "aggregateEngineWallNanos": 333235279,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 18878.452,
+          "averageDistance": 2,
+          "averageRepresentationUnits": 116.494,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "java-egglog": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 295484812,
+          "aggregateEngineWallNanos": 300543217,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 19440.452,
+          "averageDistance": 4,
+          "averageRepresentationUnits": 119.494,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "canonical": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 179425362,
+          "aggregateEngineWallNanos": 184233702,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 3810.048,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 59.532,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        },
+        "raw-egraph-debruijn": {
+          "falseNegatives": 474,
+          "p50Distance": 2,
+          "unexpectedFailures": 0,
+          "zero": 26,
+          "engineCpuNanos": 2889506264,
+          "aggregateEngineWallNanos": 3111219309,
+          "recoveryRate": 0.052,
+          "generated": 500,
+          "averageEstimatedBytes": 24860.92,
+          "averageDistance": 2.438,
+          "averageRepresentationUnits": 154.184,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 2
+        },
+        "raw-egraph": {
+          "falseNegatives": 500,
+          "p50Distance": 4,
+          "unexpectedFailures": 0,
+          "zero": 0,
+          "engineCpuNanos": 3100731489,
+          "aggregateEngineWallNanos": 3263274114,
+          "recoveryRate": 0,
+          "generated": 500,
+          "averageEstimatedBytes": 25448.192,
+          "averageDistance": 4.438,
+          "averageRepresentationUnits": 157.34,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 4
+        },
+        "slotted-egraph": {
+          "falseNegatives": 0,
+          "p50Distance": 0,
+          "unexpectedFailures": 0,
+          "zero": 500,
+          "engineCpuNanos": 230811529,
+          "aggregateEngineWallNanos": 240166362,
+          "recoveryRate": 1,
+          "generated": 500,
+          "averageEstimatedBytes": 27384.1,
+          "averageDistance": 0,
+          "averageRepresentationUnits": 100.894,
+          "evaluated": 500,
+          "errors": 0,
+          "p95Distance": 0
+        }
+      },
+      "family": "mixed",
+      "transitions": [
+        {
+          "retainedZero": 0,
+          "newlyZero": 26,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "raw-egraph-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "raw-egraph",
+          "to": "java-egglog"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 26,
+          "from": "raw-egraph-debruijn",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "java-egglog",
+          "to": "java-egglog-debruijn"
+        },
+        {
+          "retainedZero": 0,
+          "newlyZero": 500,
+          "noLongerZero": 0,
+          "from": "java-egglog-debruijn",
+          "to": "slotted-egraph"
+        },
+        {
+          "retainedZero": 500,
+          "newlyZero": 0,
+          "noLongerZero": 0,
+          "from": "slotted-egraph",
+          "to": "canonical"
+        }
+      ]
+    }
+  ]
+}

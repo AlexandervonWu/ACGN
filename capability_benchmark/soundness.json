@@ -1,0 +1,270 @@
+{
+  "perSubtype": 1,
+  "schemaVersion": "candis-capability-soundness-v1",
+  "checks": [
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "de-morgan-reorder",
+      "relativePath": "ac_logical/CORRECT/generated_cap004500.als",
+      "solverReportedCounterexample": false,
+      "family": "ac_logical",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "reorder-and",
+      "relativePath": "aci/CORRECT/generated_cap000500.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "reorder-or",
+      "relativePath": "aci/CORRECT/generated_cap000501.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "duplicate-and",
+      "relativePath": "aci/CORRECT/generated_cap000502.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "duplicate-or",
+      "relativePath": "aci/CORRECT/generated_cap000503.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "reassociate-join",
+      "relativePath": "aci/CORRECT/generated_cap000504.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "flatten-unflatten-union",
+      "relativePath": "aci/CORRECT/generated_cap000505.als",
+      "solverReportedCounterexample": false,
+      "family": "aci",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "nested-rename",
+      "relativePath": "alpha/CORRECT/generated_cap000000.als",
+      "solverReportedCounterexample": false,
+      "family": "alpha",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "capture-avoiding-nested-swap",
+      "relativePath": "alpha/CORRECT/generated_cap000001.als",
+      "solverReportedCounterexample": false,
+      "family": "alpha",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "alpha-and-reorder",
+      "relativePath": "alpha_ac/CORRECT/generated_cap003000.als",
+      "solverReportedCounterexample": false,
+      "family": "alpha_ac",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "alpha-block-permutation",
+      "relativePath": "alpha_binder_permutation/CORRECT/generated_cap003500.als",
+      "solverReportedCounterexample": false,
+      "family": "alpha_binder_permutation",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "two-binder-universal",
+      "relativePath": "binder_permutation/CORRECT/generated_cap001000.als",
+      "solverReportedCounterexample": false,
+      "family": "binder_permutation",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "three-binder-existential",
+      "relativePath": "binder_permutation/CORRECT/generated_cap001001.als",
+      "solverReportedCounterexample": false,
+      "family": "binder_permutation",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "permuted-existential-prenex",
+      "relativePath": "binder_permutation_prenex/CORRECT/generated_cap004000.als",
+      "solverReportedCounterexample": false,
+      "family": "binder_permutation_prenex",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "double-negation",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002000.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "de-morgan",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002001.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "implication",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002002.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "iff",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002003.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "quantifier-negation",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002004.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "no-to-all-not",
+      "relativePath": "logical_normalization/CORRECT/generated_cap002005.als",
+      "solverReportedCounterexample": false,
+      "family": "logical_normalization",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "negation-quantifier-prenex-permutation",
+      "relativePath": "mixed/CORRECT/generated_cap005000.als",
+      "solverReportedCounterexample": false,
+      "family": "mixed",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "existential-conjunction",
+      "relativePath": "safe_prenex/CORRECT/generated_cap001500.als",
+      "solverReportedCounterexample": false,
+      "family": "safe_prenex",
+      "error": ""
+    },
+    {
+      "note": "",
+      "inconclusive": false,
+      "subtype": "universal-disjunction",
+      "relativePath": "safe_prenex/CORRECT/generated_cap001501.als",
+      "solverReportedCounterexample": false,
+      "family": "safe_prenex",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "always-eventually-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002500.als",
+      "solverReportedCounterexample": false,
+      "family": "temporal_normalization",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "eventually-always-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002501.als",
+      "solverReportedCounterexample": false,
+      "family": "temporal_normalization",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "historically-once-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002502.als",
+      "solverReportedCounterexample": false,
+      "family": "temporal_normalization",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "once-historically-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002503.als",
+      "solverReportedCounterexample": false,
+      "family": "temporal_normalization",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "until-releases-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002504.als",
+      "solverReportedCounterexample": true,
+      "family": "temporal_normalization",
+      "error": ""
+    },
+    {
+      "note": "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed",
+      "inconclusive": true,
+      "subtype": "since-triggered-dual",
+      "relativePath": "temporal_normalization/CORRECT/generated_cap002505.als",
+      "solverReportedCounterexample": false,
+      "family": "temporal_normalization",
+      "error": ""
+    }
+  ],
+  "boundedScope": 4,
+  "interpretation": "finite-scope SAT sanity check, not proof",
+  "generatedAt": "2026-08-11T23:58:07.971290512Z"
+}

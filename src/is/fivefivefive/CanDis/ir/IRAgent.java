@@ -19,6 +19,13 @@ import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 
 public class IRAgent {
+    @FunctionalInterface
+    public interface DiagnosticsObserver {
+        void onStage(String stage, NormalForm activeNormalForm, List<NormalForm> normalForms);
+    }
+
+    private static final DiagnosticsObserver NO_OBSERVER = (stage, active, normalForms) -> { };
+
     private Multigraph graph;
     
     private List<NormalForm> nfs; // the normal forms from the graph in temporal logical operators order; 
@@ -34,6 +41,11 @@ public class IRAgent {
     }
 
     public void computeNormalForm() {
+        computeNormalForm(NO_OBSERVER);
+    }
+
+    public void computeNormalForm(DiagnosticsObserver observer) {
+        DiagnosticsObserver stages = observer == null ? NO_OBSERVER : observer;
         nfs.clear();
         AugmentedNode root = graph.getRoot();
         if (root == null) {
@@ -45,9 +57,12 @@ public class IRAgent {
             nfs.add(rootNf);
             Map<AugmentedNode, Integer> tovTracker = new HashMap<>();
             int[] nextId = new int[] { 0 };
+            stages.onStage("begin-temporal-skeleton", rootNf, nfs);
             rootNf.addEClass(buildEGraph(root, nextTov(tovTracker, root), rootNf, tovTracker, nextId, new HashSet<>()));
-            normalizeTemporalTree(rootNf, new HashMap<>(), new int[] { 0 });
+            stages.onStage("temporal-skeleton", rootNf, nfs);
+            normalizeTemporalTree(rootNf, new HashMap<>(), new int[] { 0 }, stages);
         } finally {
+            stages.onStage("begin-reachable-egraph", null, nfs);
             List<EGraphNode> roots = new ArrayList<>();
             for (NormalForm normalForm : nfs) {
                 if (normalForm.getMatrixEGraph() != null) {
@@ -55,6 +70,7 @@ public class IRAgent {
                 }
             }
             EGraphNode.retainReachable(roots);
+            stages.onStage("reachable-egraph", null, nfs);
             EGraphNode.endGraph();
         }
     }
@@ -116,9 +132,13 @@ public class IRAgent {
     private void normalizeTemporalTree(
             NormalForm normalForm,
             Map<String, QuantiVar> inherited,
-            int[] nextVarId) {
-        normalForm.normalize(inherited, nextVarId);
+            int[] nextVarId,
+            DiagnosticsObserver observer) {
+        normalForm.normalize(inherited, nextVarId,
+                (stage, active) -> observer.onStage(stage, active, nfs));
+        observer.onStage("begin-temporal-negation", normalForm, nfs);
         normalForm.pushTemporalNegations();
+        observer.onStage("temporal-negation", normalForm, nfs);
         Map<String, QuantiVar> descendants = new HashMap<>(inherited);
         for (QuantiVar variable : normalForm.getParams()) {
             if (variable.getOriginalName() != null) {
@@ -131,7 +151,7 @@ public class IRAgent {
             }
         }
         for (NormalForm child : normalForm.getTemporalChildren()) {
-            normalizeTemporalTree(child, descendants, nextVarId);
+            normalizeTemporalTree(child, descendants, nextVarId, observer);
         }
     }
 

@@ -1,0 +1,40 @@
+open util/ordering[Position]
+
+sig Position {}
+
+sig Product {}
+
+sig Component extends Product {
+    parts : set Product,
+    position : one Position
+}
+sig Resource extends Product {}
+
+sig Robot {
+        position : one Position
+}
+pred inv3 {
+  all c:Component, p:c.position | some r:Robot | r.position = p
+}
+
+pred inv3c { 
+	all c : Component | some position.(c.position) & Robot
+}
+
+
+check correct { inv3 <=> inv3c}
+pred under { inv3 and !inv3c}
+pred over { !inv3 and inv3c}
+run over 
+run under 
+
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap001805 { ((all x: CapBenchA | x->x in capBenchR) or (inv3 and ((some CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR))) }
+pred cap001805c { (all x: CapBenchA | (x->x in capBenchR or (inv3 and ((some CapBenchB or capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR)))) }
+assert CapBenchEquivalent_cap001805 { cap001805 iff cap001805c }
+check CapBenchEquivalent_cap001805 for 4

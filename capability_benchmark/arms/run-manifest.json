@@ -1,0 +1,258 @@
+{
+  "outputs": [
+    {
+      "path": "raw-egraph/pairs.csv",
+      "sha256": "7a452c8bb728a2449a2c28dd0cd62b2f60866da7530412325f8c8dd2461d454d",
+      "sizeBytes": 1076612
+    },
+    {
+      "path": "raw-egraph/summary.json",
+      "sha256": "a39f884b6342532b94101984104a011ead482c43651b1eeaec7338fe0ded3f01",
+      "sizeBytes": 13713
+    },
+    {
+      "path": "raw-egraph/metrics.properties",
+      "sha256": "1c67b7098dfdd5042627077bfc4c62ef6cf722d2c61713079cb7e0f2394dc087",
+      "sizeBytes": 991
+    },
+    {
+      "path": "raw-egraph/run.log",
+      "sha256": "2d116c45ca237f0bdbd27f5bbd1d395c5717d8af8be623473ed1d2591f9d38a6",
+      "sizeBytes": 94
+    },
+    {
+      "path": "raw-egraph/process.time",
+      "sha256": "798b2ca5d14295257563cc0543da98a6d46de475082947fc2e5a9d58876edf26",
+      "sizeBytes": 1276
+    },
+    {
+      "path": "raw-egraph/manifest.json",
+      "sha256": "0806244584edfbcb538ef23ff21bac58fb9c70a1c0fd8885ff5dfa7b7a1bdb73",
+      "sizeBytes": 2596
+    },
+    {
+      "path": "raw-egraph-debruijn/pairs.csv",
+      "sha256": "beb13933b259f6572ba5255d27721312b422a581ae5e7fef3ee896f0007ce212",
+      "sizeBytes": 1073494
+    },
+    {
+      "path": "raw-egraph-debruijn/summary.json",
+      "sha256": "f1715b6137186a1a3660cda4f93222f877cdf78a9b94617504b39fb423086ac6",
+      "sizeBytes": 13711
+    },
+    {
+      "path": "raw-egraph-debruijn/metrics.properties",
+      "sha256": "8ab8e8395c54b605656d96a4621ae2f9c731312b7fcd5eaf399061d31c356dc0",
+      "sizeBytes": 993
+    },
+    {
+      "path": "raw-egraph-debruijn/run.log",
+      "sha256": "46d0e65ddc9218f59c8332f2d23527498102601a76781232616820a68d015999",
+      "sizeBytes": 103
+    },
+    {
+      "path": "raw-egraph-debruijn/process.time",
+      "sha256": "1d94340b98a20fc9ae049744d7ddf101d96ed00f1510ec8d568e2798b7763454",
+      "sizeBytes": 1294
+    },
+    {
+      "path": "raw-egraph-debruijn/manifest.json",
+      "sha256": "1acb42135b716655ad08676967143ed8f263a5f5139f554996459d12c482b6e3",
+      "sizeBytes": 2606
+    },
+    {
+      "path": "java-egglog/pairs.csv",
+      "sha256": "9c6fd05f9ff27328a8236043710555b9b9f3cb16f828356f74f82e0f61d4c8e9",
+      "sizeBytes": 1073512
+    },
+    {
+      "path": "java-egglog/summary.json",
+      "sha256": "73ae92be819a91efff1160f465f81509d29ddce286cdfc4d556ebf47aa410180",
+      "sizeBytes": 13676
+    },
+    {
+      "path": "java-egglog/metrics.properties",
+      "sha256": "9c067d7067f93210bbbbeb3c2e96e1e5639b506dc7d6c7798b83858499cf21a8",
+      "sizeBytes": 980
+    },
+    {
+      "path": "java-egglog/run.log",
+      "sha256": "2c12357c9c5b3aef968e78395edeaa0cad1f26fda4c27632c1dafee19d9df158",
+      "sizeBytes": 95
+    },
+    {
+      "path": "java-egglog/process.time",
+      "sha256": "0d574e2dd3d151183d4739404ff2ca24c0557db4c2c016e6b2ba6eac3178d4cb",
+      "sizeBytes": 1278
+    },
+    {
+      "path": "java-egglog/manifest.json",
+      "sha256": "0aaf231b5bbb15ef745621cc1955e9550ad884dfa31c0475aba34110d4950561",
+      "sizeBytes": 2597
+    },
+    {
+      "path": "java-egglog-debruijn/pairs.csv",
+      "sha256": "0b9feac09aa5fe24250fe0fe68410c3a147c05d79f95f7b0416aba1c5bfd4d4f",
+      "sizeBytes": 1071067
+    },
+    {
+      "path": "java-egglog-debruijn/summary.json",
+      "sha256": "742502337cbd6d9c4d9c5bc81dab7c0e68a8c2690bd20ab3ddde5fdbadd574a4",
+      "sizeBytes": 13663
+    },
+    {
+      "path": "java-egglog-debruijn/metrics.properties",
+      "sha256": "da9a118ff187164928294851c5a20f5f178641afe74243f77a9cceaf4df454fb",
+      "sizeBytes": 969
+    },
+    {
+      "path": "java-egglog-debruijn/run.log",
+      "sha256": "d844e09eed643aefc46ec341c6735fb8a7149d039373879e223fff21a21079aa",
+      "sizeBytes": 104
+    },
+    {
+      "path": "java-egglog-debruijn/process.time",
+      "sha256": "c388d20549b830b63bd7df64e2aa14c1a338755dcaee428bd707073b2c2b58e9",
+      "sizeBytes": 1296
+    },
+    {
+      "path": "java-egglog-debruijn/manifest.json",
+      "sha256": "886ea3d657db75fe215f66415596f432243aeace0c2773b4149825a4b9168990",
+      "sizeBytes": 2607
+    },
+    {
+      "path": "slotted-egraph/pairs.csv",
+      "sha256": "ec0c7fe3b2a080d6a4208756a180e11cfdb10b3705286ac30df2f1ab2cf34aed",
+      "sizeBytes": 1084869
+    },
+    {
+      "path": "slotted-egraph/summary.json",
+      "sha256": "38949e6e79ad2fcd0fb9d9dde0f17f802d810a5dc71465ab40f4c0c0a39546b8",
+      "sizeBytes": 13733
+    },
+    {
+      "path": "slotted-egraph/metrics.properties",
+      "sha256": "4b242b237eb7bea91ecf1f020dd320c883feba7074365a08132b6ede8fcc8238",
+      "sizeBytes": 987
+    },
+    {
+      "path": "slotted-egraph/run.log",
+      "sha256": "cb005e9302010dd4580b89560d480d15c9f3e99689552b2963dd9c57c2ff2b0a",
+      "sizeBytes": 98
+    },
+    {
+      "path": "slotted-egraph/process.time",
+      "sha256": "535047cbdee7e9353ef5575a421a9ae3c1d90c94c88486f4b963b92cdc021957",
+      "sizeBytes": 1284
+    },
+    {
+      "path": "slotted-egraph/manifest.json",
+      "sha256": "a5d447f23a720c4490d98ef6e665769a5776c471c53994decdf95403bb73b734",
+      "sizeBytes": 2600
+    },
+    {
+      "path": "canonical/pairs.csv",
+      "sha256": "d56384d5632d2340b9836064f1be796de62ee110e073cb69092cf1dc1e7d71ca",
+      "sizeBytes": 1068134
+    },
+    {
+      "path": "canonical/summary.json",
+      "sha256": "15d233d5a0f636c67448b12f2ba5193ac3cc60407965a9701392a601ae79fa94",
+      "sizeBytes": 13476
+    },
+    {
+      "path": "canonical/metrics.properties",
+      "sha256": "3d6e1d82ba09bf80ebf86410a6d40730d900da37032b3aa2558a20d37525404a",
+      "sizeBytes": 957
+    },
+    {
+      "path": "canonical/run.log",
+      "sha256": "a8b021db686099a3f5340e4b0a2de7bc4bb8bc620eec435e5ea2c90c02dbe245",
+      "sizeBytes": 93
+    },
+    {
+      "path": "canonical/process.time",
+      "sha256": "6a7a68d70b6b13b3a979cecb4940cb4156a99af8b1b338a5240454073d382380",
+      "sizeBytes": 1275
+    },
+    {
+      "path": "canonical/manifest.json",
+      "sha256": "8d8a1c9d4237d44b46aaeb0bbaa204be35a3e7c9db8db478520c5c2c925c1201",
+      "sizeBytes": 2595
+    },
+    {
+      "path": "comparison.json",
+      "sha256": "2aa2409e43a7709837295d37c9ee009b52820fd1f90c472d8d0123559888a9de",
+      "sizeBytes": 14131
+    },
+    {
+      "path": "minimum_distances.csv",
+      "sha256": "b2b122bc2b3f674c281c7e3063e9f4d1b5f4ff9f4c5da4363d949cad6f8a1f91",
+      "sizeBytes": 389685
+    },
+    {
+      "path": "equivalence_disagreements.csv",
+      "sha256": "1079214f8ae83397626205da03c9a0cfd320177b99ea5472c31d2dbbedf8a8d4",
+      "sizeBytes": 279410
+    },
+    {
+      "path": "canonical_only_vs_slotted.md",
+      "sha256": "c0bbbd1f43f811250cbc30295672816d38f4d0818a5c508766b4a114e570f15e",
+      "sizeBytes": 627
+    },
+    {
+      "path": "summary.md",
+      "sha256": "1b62fc92e83bd3116e0bf4ee0b450040c2e2491abbe7b365f9f05ac71d99ade5",
+      "sizeBytes": 9601
+    }
+  ],
+  "javaVersion": "17.0.19",
+  "osArch": "amd64",
+  "startedAt": "2026-08-11T23:58:08.139313575Z",
+  "javaSourceSha256": "7721fbe868910abc54fe58724ebadce097cc6f3927cdaafb2ea79517afe999a1",
+  "logicalProcessors": 32,
+  "osVersion": "7.0.0-28-generic",
+  "host": "augustus-x870e",
+  "limit": 0,
+  "datasetFileCount": 5500,
+  "datasetSha256": "e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0",
+  "heap": "3g",
+  "workers": 32,
+  "completedAt": "2026-08-11T23:58:22.897946345Z",
+  "ruleSetVersion": "canonical-equivalences-v1",
+  "outputSchemaVersion": "candis-ablation-output-v3",
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
+  "javaVendor": "Ubuntu",
+  "osName": "Linux",
+  "dirtyTree": true,
+  "manifestSchemaVersion": "candis-ablation-manifest-v1",
+  "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
+  "gitSha": "9953c5d2161d23d557d2a00cb02ef1b4bef95809",
+  "datasetByteCount": 5312721,
+  "ruleNames": [
+    "operator aliases",
+    "NOOP elimination",
+    "capture-avoiding let beta reduction",
+    "implication elimination",
+    "iff elimination",
+    "formula ITE elimination",
+    "boolean constant negation and double negation",
+    "De Morgan",
+    "atomic negation duals",
+    "temporal negation duals",
+    "quantifier negation duals",
+    "no-to-all-not quantifier expansion",
+    "empty quantifier domains",
+    "safe existential-conjunction prenex",
+    "safe universal-disjunction prenex",
+    "associativity",
+    "commutativity",
+    "idempotence",
+    "boolean identities and annihilators",
+    "boolean complements",
+    "membership in none/univ",
+    "relational union with none",
+    "relational intersection with none"
+  ],
+  "runId": "ae363ef2-b0f2-40e9-b86c-348488d2630f"
+}

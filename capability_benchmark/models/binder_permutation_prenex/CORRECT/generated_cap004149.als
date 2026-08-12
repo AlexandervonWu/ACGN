@@ -1,0 +1,31 @@
+var sig File {
+	var link : lone File
+}
+var sig Trash in File {}
+
+var sig Protected in File {}
+
+pred inv1 {
+no (Trash + Protected)
+}
+
+pred inv1c {
+	no Trash + Protected
+}
+
+check correct { inv1 <=> inv1c}
+pred under { inv1 and !inv1c}
+pred over { !inv1 and inv1c}
+run over 
+run under 
+
+
+
+
+sig CapBenchA { capBenchR: set CapBenchA }
+sig CapBenchB { capBenchS: set CapBenchB }
+
+pred cap004149 { ((some x, y: CapBenchA | x->y in capBenchR) and (inv1 and ((some capBenchS or no CapBenchA) or no CapBenchA))) }
+pred cap004149c { some a, b: CapBenchA | (b->a in capBenchR and (inv1 and ((some capBenchS or no CapBenchA) or no CapBenchA))) }
+assert CapBenchEquivalent_cap004149 { cap004149 iff cap004149c }
+check CapBenchEquivalent_cap004149 for 4

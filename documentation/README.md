@@ -18,6 +18,8 @@ representations.
 - [Building and testing](#building-and-testing)
 - [Dataset runners](#dataset-runners)
 - [Ablation study](#ablation-study)
+- [Targeted capability benchmark](#targeted-capability-benchmark)
+- [Canonical memory attribution](#canonical-memory-attribution)
 - [Generated outputs](#generated-outputs)
 - [Interpretation and limits](#interpretation-and-limits)
 
@@ -526,6 +528,64 @@ A "found semantic equivalent" in the efficiency table is a zero-distance pair
 whose dataset label is `CORRECT`. It uses the dataset's existing SAT-validated
 label and does not rerun the SAT solver during the ablation.
 
+## Targeted Capability Benchmark
+
+`CapabilityBenchmark` is a deterministic companion experiment for the existing
+six arms, not a seventh generic arm. It embeds small equivalence-by-construction
+formula pairs into real zero-parameter predicates selected from Alloy4Fun
+`CORRECT` files. Families isolate alpha-renaming, ACI, same-block binder
+permutations, scope-safe prenexing, logical/negation normalization, temporal
+normalization, and compositions of those transformations.
+
+```bash
+./scripts/run_capability_benchmark.sh \
+  --dataset classified-data \
+  --output capability_benchmark \
+  --target 500 --seed 55520260811 \
+  --threads 32 --max-heap 3g
+```
+
+Generation compiles every model, rejects parser-AST-identical pairs, deduplicates
+formula pairs, and records rejection reasons. The generated assertion documents
+the intended equivalence; the benchmark ground truth comes from the recorded
+sound rewrite and its side condition, not from the source file's dataset label.
+The report preserves every expected-boundary miss in
+`unexpected_failures.csv`, plus pair-level distances, family recovery, arm
+transitions, CPU/wall costs, representation proxies, and natural-corpus context.
+The launcher also executes one deterministic scope-4 SAT check per transformation
+subtype by default (`--soundness-per-subtype N`) and labels that evidence as a
+bounded sanity check rather than proof.
+
+Principal outputs are `metadata.{json,csv}`, `skips.csv`, `results.{json,csv}`,
+`pair_results.csv`, `transitions.csv`, `unexpected_failures.csv`, `REPORT.md`,
+`soundness.{json,csv}`, `SOUNDNESS.md`, and the normal six-arm directories under
+`arms/`.
+
+## Canonical Memory Attribution
+
+`CanonicalMemoryAttribution` adds opt-in, no-op-by-default observations at the
+temporal skeleton, normalization, preparation, and comparison boundaries. It
+also counts canonical edit-distance DP arrays. Ordinary canonicalization does
+not invoke explicit GC. The launcher runs an identical deterministic subset at
+multiple worker counts in fresh JVMs and performs a clearly separated post-run
+diagnostic GC only after timed work and artifact serialization.
+
+```bash
+./scripts/run_canonical_memory_attribution.sh \
+  --input classified-data \
+  --output canonical_memory \
+  --limit 2000 --seed 55520260811 \
+  --workers 1,8,32 --max-heap 3g
+```
+
+Each worker directory contains `pairs.csv`, `phase_events.csv`,
+`heap_samples.csv`, `phase_summary.csv`, `metrics.json`, `process.time`, and
+`run.log`. The combined `REPORT.md`, `results.json`, and `phase_summary.csv`
+compare wall/CPU/RSS/heap scaling and verify that all worker counts produced the
+same pair results. Process heap is global; concurrent phase samples are
+attribution evidence and structural counts are implementation proxies, not a
+substitute for an object-layout profiler.
+
 ## Generated Outputs
 
 ### `distance_results/`
@@ -568,6 +628,21 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
 - `<arm>/metrics.properties`: compact run metrics and worker count
 - `<arm>/summary.json`: grouped run details
 - `<arm>/manifest.json`: arm context plus output hashes
+
+### `capability_benchmark/`
+
+- `REPORT.md`: family-by-arm recovery, capability boundaries, transitions, and costs
+- `metadata.{json,csv}`: seeds, source hashes, formulas, transformations, side conditions, and AST sizes
+- `pair_results.csv`: every generated pair's distance and zero status under all six arms
+- `unexpected_failures.csv`: expected-boundary misses retained for inspection
+- `soundness.{json,csv}` and `SOUNDNESS.md`: bounded subtype checks, including inconclusive temporal evidence
+- `arms/`: ordinary process-isolated six-arm output for the generated corpus
+
+### `canonical_memory/`
+
+- `REPORT.md` and `results.json`: worker-scaling and retention diagnosis
+- `phase_summary.csv`: combined begin/end phase timing and heap-delta proxies
+- `workers-{1,8,32}/`: identical deterministic selections with pair results, raw phase/heap samples, JVM metrics, and GNU time/RSS output
 
 ## Interpretation And Limits
 
