@@ -910,10 +910,10 @@ public class NormalForm {
             case ALL:
             case NO:
             case LONE:
+            case NOTONE:
                 return true;
             case SOME:
             case ONE:
-            case NOTONE:
             case NOTLONE:
                 return false;
             default:

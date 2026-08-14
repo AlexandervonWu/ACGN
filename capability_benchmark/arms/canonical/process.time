@@ -1,18 +1,18 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx3g -cp /tmp/acgn-capability-benchmark.frQqsp:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input capability_benchmark/models --output capability_benchmark/arms/canonical --engine canonical --threads 32"
-	User time (seconds): 44.14
-	System time (seconds): 1.24
-	Percent of CPU this job got: 1804%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.51
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx3g -cp /tmp/acgn-capability-benchmark.sINAzA:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input capability_benchmark/models --output capability_benchmark/arms/canonical --engine canonical --threads 32"
+	User time (seconds): 45.74
+	System time (seconds): 1.17
+	Percent of CPU this job got: 1917%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.44
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 1514720
+	Maximum resident set size (kbytes): 1559592
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 399587
-	Voluntary context switches: 190790
-	Involuntary context switches: 9872
+	Minor (reclaiming a frame) page faults: 410483
+	Voluntary context switches: 137949
+	Involuntary context switches: 16609
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 2200

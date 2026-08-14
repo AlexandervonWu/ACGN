@@ -2,34 +2,34 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "7cd35eb373d3d329870413429f440a1aa51e47a358b350fcb62d26bcc930edd9",
-      "sizeBytes": 1074436
+      "sha256": "c9da66c01dfc9058db66f30bfa41e02dfb8372e76db4cef8ba6b82539995c640",
+      "sizeBytes": 1073901
     },
     {
       "path": "summary.json",
-      "sha256": "e95ba539f3a23f930e14c9acd0e334dee2263d9500e0245c74b4ad421fdf8729",
-      "sizeBytes": 13772
+      "sha256": "0173fa46c60a927736c44cf31662e792daf22c03db3c7a2525b235a6058f19fc",
+      "sizeBytes": 13773
     },
     {
       "path": "metrics.properties",
-      "sha256": "b504ec9ad8c13bee7dd7e35d0eb9c27d4be26f382941698877be46f6ef07d54f",
+      "sha256": "848998963f38ccd35293d6e8a07a7893c676eedaf1735c44e6eb8e47c6b250d8",
       "sizeBytes": 989
     },
     {
       "path": "run.log",
-      "sha256": "855ac9ce021004a1220d857bdc4ea573b35007eb2d561ce6dad9a1b054393570",
+      "sha256": "2c3b2d98add730706688b5ca993534ca92166571bfea30d3d29582eddcc7afc6",
       "sizeBytes": 103
     },
     {
       "path": "process.time",
-      "sha256": "0ae5f3cf0c1e6c6d429f50bd57118b6df31f819172362624992788a0381acc7b",
+      "sha256": "ceb76ed2f0e7095929a959f03fe7a7316f2e9cacf1cac0bed63329e6edb1171b",
       "sizeBytes": 1294
     }
   ],
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-12T14:09:47.612305736Z",
-  "javaSourceSha256": "85d8f3bcf874772f488fab441c85ef64399477d846d28c47d0b8f2e56e7ba59e",
+  "startedAt": "2026-08-14T14:26:43.873889632Z",
+  "javaSourceSha256": "c0c0fc3f03eb914cfc174b565d023efa5e68d1c0c84198cb9d17e3214028aa26",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -53,7 +53,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v1",
   "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
-  "gitSha": "01d1e3134671d9f1ef9278021aa18a3d12afa408",
+  "gitSha": "67c94e2ddf4bdee34ecf3f9c21c393f438f4e0ef",
   "datasetByteCount": 5312721,
   "ruleNames": [
     "operator aliases",
@@ -81,5 +81,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "9a74e29d-d38c-46e7-b855-fd327cdda3c0"
+  "runId": "75ce4485-9444-403c-991d-2609b7e77f08"
 }

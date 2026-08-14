@@ -109,12 +109,12 @@ a full textual-language-compatible port of external egglog.
 
 | Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 17.470 | 4.466 | 997.504 | 58.184 |
-| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 17.360 | 5.738 | 905.094 | 57.865 |
-| Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.120 | 4.628 | 980.988 | 56.740 |
-| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 17.450 | 5.274 | 948.785 | 56.410 |
-| Slotted e-graph | 2,162 | 11.253% | 17.694 | 18.000 | 15.312 | 1,075.449 | 52.952 |
-| Full canonical method | 2,235 | 11.633% | 13.540 | 19.050 | 13.607 | 3,566.262 | 28.700 |
+| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 18.860 | 4.574 | 940.730 | 58.184 |
+| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.820 | 5.666 | 937.262 | 57.865 |
+| Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.300 | 4.263 | 930.586 | 56.740 |
+| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 19.030 | 5.200 | 943.770 | 56.410 |
+| Slotted e-graph | 2,162 | 11.253% | 17.694 | 18.150 | 15.723 | 1,077.098 | 52.952 |
+| Full canonical method | 2,235 | 11.633% | 13.540 | 18.490 | 12.889 | 3,592.613 | 28.700 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -204,10 +204,10 @@ nearest-correct run, their correlations with raw reward error were 0.141856,
 
 ### Runtime and memory interpretation
 
-The full canonical arm completed the 61,598-pair corpus in 19.050 seconds on a
+The full canonical arm completed the 61,598-pair corpus in 18.490 seconds on a
 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
 compact structural representation averaged 28.700 units, 23.803 reachable
-e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,566.262
+e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,592.613
 MiB RSS.
 
 A deterministic 2,000-file attribution run explains the apparent mismatch:
@@ -483,8 +483,8 @@ from every current distance and ablation run.
 
 The checked-in six-arm natural-corpus snapshot records:
 
-- run ID `2610bc86-0acc-4b20-a001-6055ee36a081`;
-- source SHA `01d1e3134671d9f1ef9278021aa18a3d12afa408` with a dirty worktree;
+- run ID `b6878ce2-b791-4a64-ad2f-1c2e3ff93893`;
+- source SHA `67c94e2ddf4bdee34ecf3f9c21c393f438f4e0ef` with a dirty worktree;
 - dataset SHA-256
   `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
 - Java 17.0.19, 32 workers, a 3 GiB heap cap, rule set
@@ -492,7 +492,7 @@ The checked-in six-arm natural-corpus snapshot records:
   and hashes of every generated arm and combined output.
 
 The checked-in capability snapshot uses run ID
-`9a74e29d-d38c-46e7-b855-fd327cdda3c0` and the same v2 rule set. Its arm
+`75ce4485-9444-403c-991d-2609b7e77f08` and the same v2 rule set. Its arm
 manifests and generated-report hashes are anchored by the capability
 [`run-manifest.json`](capability_benchmark/arms/run-manifest.json).
 

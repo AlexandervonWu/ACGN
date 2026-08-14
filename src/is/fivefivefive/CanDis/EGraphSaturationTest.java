@@ -293,6 +293,36 @@ public final class EGraphSaturationTest {
         assertEquals(Opcode.CONSTANT, universal.getMatrixEGraph().getOpcode(), "all x: none | P must be true");
         assertEquals("true", universal.getMatrixEGraph().getSourceName(), "all x: none | P must be true");
         assertEquals(0, universal.getMatrixQuantiVars().size(), "empty-domain universal must not retain a binding");
+
+        NormalForm notOne = new NormalForm();
+        notOne.addEClass(node(
+                Opcode.NOT,
+                false,
+                false,
+                node(Opcode.ONE, false, false,
+                        relDeclOfType("none", "x"), predicate("P", variable("x")))));
+        notOne.normalize();
+        assertEquals(Opcode.CONSTANT, notOne.getMatrixEGraph().getOpcode(),
+                "not one x: none | P must be true");
+        assertEquals("true", notOne.getMatrixEGraph().getSourceName(),
+                "not one x: none | P must be true");
+        assertEquals(0, notOne.getMatrixQuantiVars().size(),
+                "empty-domain NOTONE must not retain a binding");
+
+        NormalForm notLone = new NormalForm();
+        notLone.addEClass(node(
+                Opcode.NOT,
+                false,
+                false,
+                node(Opcode.LONE, false, false,
+                        relDeclOfType("none", "x"), predicate("P", variable("x")))));
+        notLone.normalize();
+        assertEquals(Opcode.CONSTANT, notLone.getMatrixEGraph().getOpcode(),
+                "not lone x: none | P must be false");
+        assertEquals("false", notLone.getMatrixEGraph().getSourceName(),
+                "not lone x: none | P must be false");
+        assertEquals(0, notLone.getMatrixQuantiVars().size(),
+                "empty-domain NOTLONE must not retain a binding");
     }
 
     private static void testIteEliminatedFromNormalForm() {
