@@ -101,6 +101,28 @@ public final class TypedSlotContext implements Iterable<TypedSlot>, Comparable<T
         return fromSet(result);
     }
 
+    public TypedSlotContext minus(TypedSlotContext other) {
+        Objects.requireNonNull(other, "other");
+        if (other.isEmpty()) {
+            return this;
+        }
+        NavigableSet<TypedSlot> result = new TreeSet<>(slots);
+        result.removeAll(other.slots);
+        return result.size() == slots.size() ? this : fromSet(result);
+    }
+
+    public boolean isDisjoint(TypedSlotContext other) {
+        Objects.requireNonNull(other, "other");
+        TypedSlotContext smaller = size() <= other.size() ? this : other;
+        TypedSlotContext larger = smaller == this ? other : this;
+        for (TypedSlot slot : smaller) {
+            if (larger.contains(slot)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public TypedSlotContext union(TypedSlotContext other) {
         Objects.requireNonNull(other, "other");
         if (other.isEmpty()) {

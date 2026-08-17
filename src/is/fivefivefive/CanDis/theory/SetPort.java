@@ -15,6 +15,7 @@ public final class SetPort implements PortValue {
             List<? extends PortValue> elements) {
         this.schema = Objects.requireNonNull(schema, "schema");
         this.context = Objects.requireNonNull(context, "context");
+        PortValues.requireAdmissibleCardinality(schema.emptiness(), elements);
         this.elements = PortValues.immutableSet(schema.elementSchema(), context, elements);
     }
 

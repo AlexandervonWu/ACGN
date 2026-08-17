@@ -1,158 +1,234 @@
-# Phase E Graph-Relative Canonicalizer Report
+# Phase E Quotient-First Canonicalizer Report
 
-This report records Phase E against Definition 6, Proposition 2, Corollary 3,
-Section 3.7, and Appendix C.2 of `E_Graphs_Draft_LNCS.pdf`. The normative PDF
-SHA-256 is
-`77ea879143f4b593c62a147ba78ffc4da5854815d73a5437865d11196f532a6d`.
-The audited repository commit is
-`a9261da4c096f6ba5fcb1a34bcac93cb1b1df23d`; Phase E remains an isolated
-worktree addition under `is.fivefivefive.CanDis.theory`.
+> Historical gate report. Structural `canon_G` remains unchanged, while the
+> formerly blocked coherent wrapper and source insertion are now implemented;
+> see [`theory-pre-phase-h-unblocked.md`](theory-pre-phase-h-unblocked.md).
 
-No reproducibility program, runner, script, manifest, legacy engine, dataset
-processor, or terminal-facing package was changed. The exact engine exposes a
-stable public canonicalization boundary for eventual Phase I integration.
+This report records the Phase E reimplementation against the controlling
+mission text and the coherent main-text contract of the current LNCS-3 draft.
 
-### Implemented
+- Mission SHA-256: `53f7fec4db8ff7aefb0192120739a2c1fc47e2d71153571be6c8e5b56ba33fbd`
+- LNCS-3 SHA-256: `6b128156008abe8065fe2cf3871950ff0206a47dcc263e3486e475053e4a0d33`
+- Date: `2026-08-16`
+- Scope: isolated package `is.fivefivefive.CanDis.theory`
 
-| Formal object or step | Java representation | Enforced semantics |
-| -- | -- | -- |
-| Indexed structural alpha | `TypedAlphaEquivalence.structuralNodes/Ports` | One typed free renaming, structural operator/type equality, Seq position, Bag occurrence matching, Set mutual matching, and capture-avoiding same-typed binder extension |
-| Graph-relative alpha | `TypedAlphaEquivalence.graphRelativeNodes/Ports` | Quiescent typed find, common leader, and exact equation against one stored leader permutation; separate from Java equality and class membership |
-| Leader-first normalization | `LeaderNormalizer` | Replaces every invocation by its composed leader invocation before orbit construction and never opens the leader |
-| Typed free orbit | `TypedRenamingEnumerator` | Deterministic uncapped streaming enumeration of all and only type-preserving bijections |
-| Reference `canon_G` | `ExhaustiveGraphCanonicalizer` | Enumerates the full Cartesian product of free renamings and every leader-symmetry choice, then chooses the least complete key |
-| Production `canon_G` | `ProductionGraphCanonicalizer` | Streams free renamings and performs bottom-up orbit minimization; no factorial candidate collection beyond the required free orbit |
-| Port normalization | Both canonicalizers plus explicit port constructors | Seq preserves order/multiplicity, Bag sorts and retains multiplicity, Set sorts and deduplicates only after one whole-node renaming |
-| Canonical result | `CanonicalizationResult` | Stores source, least `CanonicalShape`, and canonical-to-source `TypedRenaming`; constructor validates endpoints/output and canonicalizers replay the graph-relative witness |
-| Exact engine API | `TypedSlottedPortEGraph.canonicalize` | Quiescence-guarded production path with engine ID `typed-slotted-port-egraph` and canonicalizer version `canon-g-production-v1` |
-| Formal-domain guard | `CanonicalizationDomainException` | Rejects support loss after a proper parent embedding rather than forging a non-bijective "renaming" |
+No reproducibility program, terminal package, experiment runner, manifest,
+dataset processor, legacy e-graph, or Alloy adapter was changed.
 
-The reference and production implementations are intentionally independent at
-the orbit-combination level. The reference materializes every recursive
-symmetry product. Production chooses the least occurrence representative and
-relies on complete Seq/Bag/Set structural ordering. Their complete
-`CanonicalizationResult` values, including witness tie-breaking, are compared
-differentially.
+## Result
 
-Binder alpha-renaming is implemented. Descriptor-indexed binder-block
-automorphisms are not guessed from same-typed coordinates: until Phase F
-provides certified `Aut(beta)`, their admissible group is identity.
+The structural Gate E passes. The implementation now has two independent
+canonicalizers over the exact Phase DA kernel:
 
-### Formal obligations discharged
+- `ExhaustiveGraphCanonicalizer` materializes each finite local leader or
+  binder orbit and selects its least member.
+- `ProductionGraphCanonicalizer` streams the same local orbits and retains only
+  the current least member.
 
-The living matrix now marks these additional rows `EXACT`:
+Both return the same complete structural result
 
-- `ALPHA-01` through `ALPHA-03`
-- `GEQ-02` and `GEQ-03`
-- `CAN-01` through `CAN-03`
-- `CAN-06` through `CAN-09`
-- `TEST-01`
+```text
+(K_G(n), p, sigma, iota, omega, xi)
+```
 
-The differential criterion of Gate E passes for every representable
-support-preserving generated state. Total Gate E acceptance remains blocked by
-E-TB01 below, so `CAN-10`, `TEST-02`, and `TEST-04` remain `PARTIAL`.
-Certificate-dependent `GEQ-01`, `CAN-04`, and `CAN-05` also remain `PARTIAL`
-until Phase F.
+where `sigma : Can(Delta) -> Delta`, `iota : Delta -> Gamma_0`, and
+`omega = iota o sigma`. Only `p` is a `CanonicalShape` and therefore eligible
+as a hash-cons key. `xi` remains certificate-free structural provenance.
 
-| Status | Current rows |
-| -- | --: |
-| `EXACT` | 54 |
-| `PARTIAL` | 35 |
-| `ABSENT` | 9 |
-| `CONTRADICTED` | 22 |
-| `UNCERTAIN` | 0 |
-| **Total** | **120** |
+## Algorithm
 
-There are 66 unresolved rows. The count includes all nine `T1-*` theorem
-obligations; earlier snapshots were corrected after their aggregation command
-was found to exclude IDs containing digits.
+```text
+canon_G(n):
+  require G quiescent
+  require context(n) = support(n) = Gamma_0
 
-### Tests
+  (K, iota, xi) := leaderKernelTrace_G(n)
+  Delta := context(K) = support(K)
+  C := Can(Delta)
 
-Executed at `2026-08-16T14:48:26-05:00` on OpenJDK 17.0.19:
+  best := none
+  for each typed bijection sigma : C -> Delta:
+    rho := inverse(sigma)
+    p := rebuild K in C by applying Q_G to every port under rho
+    require support(p) = C
+    retain the least (p, sigma), breaking equal-shape ties by sigma
 
-| Check | Result | Evidence |
-| -- | -- | -- |
-| Theory package with `javac -Xlint:all` | PASS | No compiler warnings |
-| `TheoryFoundationsTest` | PASS | 1,052 checks; seed `55520260816` |
-| `TheoryPortsTest` | PASS | 956 checks; seed `55520260817` |
-| `TheoryStateTest` | PASS | 4,193 checks; seed `55520260818` |
-| `TheoryCanonicalizationTest` | PASS | 11,162 checks; seed `55520260819` |
-| Full repository compilation | PASS | Every Java source compiled against `lib/*` |
-| `EGraphSaturationTest` | PASS | Existing test main completed unchanged |
-| `EGraphAblationTest` | PASS | Existing test main completed unchanged |
-| `CanonicalBacktranslatorTest` | PASS | Existing test main completed unchanged |
-| `MASGVisitorTypeRegressionTest` | PASS | Existing test main completed unchanged |
-| Bounded backtranslation equivalence | PASS | 20 predicates from 10 files at scope 3; 0 mismatches; 0 failures |
+  omega := sigma.andThen(iota)
+  return (K, p, sigma, iota, omega, xi)
 
-The Phase E suite includes exact `7! = 5,040` same-typed free renamings,
-cross-type rejection, indexed alpha groupoid laws, differently named binders,
-non-alpha occurrence patterns, leader paths, identity-only and generated `S3`
-symmetry groups, Seq/Bag/Set symmetry products, flat ACI nodes, bag
-multiplicity, global-set false-dedup adversaries, witness replay, shape
-idempotence, deterministic witness selection, dirty-query rejection, and the
-proper-parent support-loss counterexample.
+Q_G(port, rho):
+  Slot(x):
+    return Slot(rho(x))
 
-### Remaining mismatches
+  Invocation(mu * leader):
+    require leader is current
+    return min { (rho o mu o pi) * leader | pi in G_leader }
 
-#### Located fault and contradiction ledger
+  Seq(values):
+    return Seq([Q_G(value, rho) in source order])
 
-| ID | Located fault or contradiction | Disposition in Phase E | Remaining dependency |
+  Bag(values):
+    return Bag(sort([Q_G(value, rho) for every occurrence]))
+
+  Set(values):
+    return Set(unique(sort([Q_G(value, rho) for every element])))
+
+  Bind(x, body):
+    b := least fresh canonical bound slot
+    return Bind(b, Q_G(body, rho union {x -> b}))
+
+  BindBlock(beta, alpha, body):
+    nu := beta.freshOccurrenceRenaming(codomain(rho))
+    return min {
+      BindBlock(beta, nu,
+        Q_G(body,
+          rho union (alpha^-1 ; pi ; nu)))
+      | pi in Aut(beta)
+    }
+```
+
+The `BindBlock` minimum is computed before returning to an enclosing container.
+Thus a Set containing `{b, pi.b}` becomes a singleton after local quotienting,
+while a Bag retains two equal occurrences. A recursive call never allocates a
+new free context; nested binders only extend the one global free renaming with
+fresh bound coordinates.
+
+## Enforced Invariants
+
+1. Leader lookup and exact support contraction happen once in Phase DA before
+   the free orbit is allocated.
+2. Quotient normalization sees only current leader invocations and never calls
+   `find` or unfolds an e-class.
+3. One typed free-slot bijection is shared by the entire node.
+4. Unary and block binders extend that bijection capture-safely and locally.
+5. A block ranges over exactly its declared descriptor-preserving `Aut(beta)`;
+   same type alone never creates a permutation.
+6. Invocation and block minima are selected before parent container behavior.
+7. Seq preserves order and multiplicity.
+8. Bag discards order but retains every occurrence.
+9. Set deduplicates exact locally normalized structural classes only.
+10. Complete structural keys decide every minimum; unequal key collisions fail
+    closed.
+11. Strict support contraction is represented by proper `iota` and `omega`
+    embeddings, never by weakening `TypedRenaming`.
+12. The result validates operator, output type, canonical/effective contexts,
+    and `omega = iota o sigma`.
+13. Witness replay compares the canonical shape with the exact kernel, not the
+    larger pre-find source context.
+14. Dirty graphs and non-exact source nodes remain rejected.
+15. No structural trace is labeled as an equality certificate.
+
+## Located Faults And Corrections
+
+| ID | Located fault | Correction | Remaining dependency |
 | -- | -- | -- | -- |
-| E-F01 | Legacy canonicalization uses bounded/local untyped permutations | Added separate uncapped typed reference and production implementations; legacy code remains honestly labeled and untouched | Phase I comparative integration |
-| E-F02 | Independent local alpha keys can collapse distinct elements of one Set | Both implementations share one whole-node renaming before Set uniqueness; `{(x,y),(y,x)}` remains two classes | None |
-| E-F03 | The initial Phase E draft selected the canonical free context before explicitly running find | **Corrected:** `LeaderNormalizer` is now a first pass, and support preservation is checked before any free orbit is allocated | E-TB01 for the proper-embedding case |
-| E-F04 | Local symmetry minimization in production could have interacted incorrectly with Bag sorting or Set deduplication | The exhaustive implementation enumerates all products; generated identity, swap, and full S3 Seq/Bag/Set cases return exactly the same shape and witness | Continue differential testing as certified groups enter in Phase F |
-| E-F05 | A boolean equality helper could conflate structural alpha, graph-relative equality, and arbitrary class membership | Separate named APIs and a four-way adversarial test now preserve the distinction | None |
-| E-F06 | Bag alpha-equivalence requires multiplicity-preserving occurrence matching rather than list equality | Implemented deterministic bipartite perfect matching; Seq remains pointwise and Set uses mutual mates | None |
-| E-F07 | Canonicalization or graph-relative comparison on dirty U/M/H state could observe stale ownership | Both public operations reject non-quiescent graphs before traversal | Phase G may rebuild instead of rejecting |
-| E-F08 | `G_a` and binder-block groups still lack semantic provenance | Canonicalizers consume only the graph-owned typed group and perform no heuristic binder-block permutation; rows remain partial | Phase F certificates and complete descriptors |
-| E-F09 | Experimental integration needs stable arm/version identity without premature rewiring | Added stable engine and canonicalizer identifiers plus `graph.canonicalize`; source audit confirms no non-theory import | Phase I manifest/runner arm |
-| E-F10 | Historical matrix totals silently omitted the nine `T1-*` rows because the aggregation regex allowed only letters before `-` | **Corrected:** all Phase A-E reports now count the full 120-row matrix | None |
+| E2-F01 | The old canonicalizers consumed ambient post-find syntax and required find to preserve support | Both consume `LeaderKernelResult.kernel()` and enumerate over its exact `Delta` | None structurally |
+| E2-F02 | Proper parent embeddings caused a domain exception because the old witness targeted `Gamma_0` | `sigma` targets `Delta`; `iota` and `omega` retain the proper ambient embedding | Phase F certifies/replays the parent path |
+| E2-F03 | `BindBlock` was rejected despite being a first-class Phase C port | Both recursions transport and minimize exactly `Aut(beta)` in a fixed fresh occurrence context | Phase F certifies nonidentity generators |
+| E2-F04 | The reference arm used whole-candidate Cartesian products instead of the LNCS-3 local quotient order | Reference now materializes each local orbit and selects its least member before container reconstruction | None structurally |
+| E2-F05 | The production arm had local invocation minimization but no uniform recursive `Q_G` contract | All six port constructors now follow one quotient-first recursion | None structurally |
+| E2-F06 | Set behavior could not test the decisive `{b,pi.b}` block adversary | Added Set-collapse, Bag-multiplicity, identity-only, and nested-block differential cases | None structurally |
+| E2-F07 | The old result omitted `K`, `iota`, `omega`, and `xi` | `CanonicalizationResult` now exposes the complete structural tuple and formal aliases | Coherent `d^w` wrapper remains Phase F |
+| E2-F08 | Witness verification compared a shape directly with the original ambient source | Replay now compares `p` with exact `K` under `sigma`; source transport remains in `xi/iota` | Phase F supplies dependent source-to-kernel replay |
+| E2-F09 | Canonicalizer version identifiers still named the provisional algorithm | Versions are `canon-g-exhaustive-v2` and `canon-g-production-v2` | Phase I records them in manifests |
+| E2-F10 | Premature integration would invalidate empirical reproducibility artifacts | Exact Phase E remains isolated; no harness or terminal path changed | Phase I only |
 
-### Theory blockers
+## Theory Blockers
 
-`E-TB01: proper parent embeddings conflict with the canonical witness postcondition.`
+### E2-TB01: certificate-before-canonicalizer phase ordering
 
-Definition 5 permits a proper embedding on a parent edge:
+- **Exact conflict:** mission Section 11 steps 5-6 require certified leader and
+  binder groups, while Section 37 schedules the certificate hierarchy only in
+  Phase F, after Gate E.
+- **Smallest counterexample:** a two-slot leader or two-coordinate block whose
+  intended group is generated by one swap. Gate E must enumerate that swap,
+  but no Phase E value can prove its witness equation.
+- **Why implementation alone cannot satisfy both:** consuming the declaration
+  violates Section 11; restricting every group to identity cannot implement
+  `canon_G` on a legal nontrivial certified state that the phase order provides
+  no way to represent.
+- **Required correction:** move certificate carriers and verified group
+  admission into a prerequisite Phase F0, or state Gate E parametrically over
+  an already certified group interface and defer public graph admission to F.
 
-```text
-U(a) = m * leader,  m : S_leader -> S_a
-```
+The current groups are finite, typed, and descriptor-preserving, but their
+nonidentity generators do not carry semantic certificates. Phase E is complete
+relative to declared groups; `CAN-04`, `CAN-05`, `GEQ-01`, and related theorem
+rows remain `PARTIAL`. Relabeling declarations as certificates is forbidden.
 
-Take `S_a={x,y}`, `S_leader={x}`, and `m(x)=x`. The exact-support node
-`wrap(id_{S_a}*a)` has support `{x,y}`. Canonicalization step 1 replaces its
-invocation by `m*leader`, whose support is `{x}`. Figure 4 and the canonical
-shape postcondition nevertheless require both:
+### PF3-TB01: structural trace is not a dependent certificate
 
-```text
-slots(Shape_G(n)) = Can({x,y})
-sigma_n in TRen(Can({x,y}), {x,y})
-```
+- **Exact conflict:** Section 3.6 defines structural `xi_n`; Lemma 8 defines
+  `d_n^w` only after fixing coherent `w`; Appendix C Figure 4 constructs `d_n`
+  from `G,n` alone.
+- **Smallest counterexample:** one source invocation whose `find` path contains
+  one parent step. The graph records the structural step, but contains neither
+  the endpoint witness terms nor an equality certificate interpreting it.
+- **Why implementation alone cannot satisfy it:** the dependent endpoint
+  `floor(n)_w` changes with `w`, so no value computed solely from `G,n` can
+  inhabit the displayed certificate type for every coherent family.
+- **Required correction:** keep
+  `leaderKernelTrace_G(n) -> (K,iota,xi)` and add
+  `replayKernelCertificate_{G,w}(K,iota,xi) -> d_n^w` in Phase F.
 
-No leader-normalized syntax contains the second coordinate, so its structural
-support cannot equal the two-slot canonical context. Dropping the coordinate
-instead yields a one-slot shape and cannot retain the required bijective
-two-slot witness. Relaxing `TypedRenaming` to an injection would violate
-Definition 2 and Corollary 3, so the implementation rejects this state with
-`CanonicalizationDomainException`.
+The implementation follows that coherent split and returns `xi_n`, never an
+uncertified `d_n`.
 
-Two coherent theory-level corrections are available:
+### PF3-TB02: draft appendix still omits structural fields
 
-1. Restrict `canon_G` and Corollary 3 to leader-normalized nodes, with `Gamma`
-   defined after find, and separately retain a typed weakening/provenance map
-   from effective support into the original ambient context.
-2. Require every `U` edge consumed by `canon_G` to be a typed renaming; handle
-   certified interface restriction through a separate transport operation that
-   rewrites all incident invocations before quiescence.
+- **Exact conflict:** Section 3.6 defines the six-field structural result
+  `(K,p,sigma,iota,omega,xi)`, while Appendix C Figure 4 returns a different
+  five-field value that omits `K` and `xi` and substitutes `d`.
+- **Smallest counterexample:** every input node, including an empty-context
+  leaf, produces a result from which a typed insertion cannot project the
+  formally required kernel or replay trace.
+- **Why implementation alone cannot satisfy it:** one Java return type cannot
+  simultaneously have both incompatible dependent product shapes.
+- **Required correction:** make Figure 4 return the Section 3.6 structural
+  tuple, then define a separate coherent-prefix wrapper containing `d_n^w` and
+  retaining `xi_n` as insertion provenance.
 
-The current Java code chooses neither correction silently.
+The artifact-side omission is repaired in `CanonicalizationResult`; the draft
+contradiction remains a camera-ready blocker, not a reason to weaken the Java
+result.
 
-### Next dependency
+## Matrix
 
-Resolve E-TB01 at the theory level before claiming total `canon_G` or
-Corollary 3. Phase F certificate carriers can otherwise proceed independently:
-input equality, parent edge, congruence, symmetry, binder automorphism,
-interface restriction, and container-law certificates must bind typed endpoints
-to the existing Phase B-E values. The public canonicalizer should then consume
-only certified group state without changing its orbit algorithm.
+Phase E moves `CAN-01`, `CAN-06`, `CAN-09`, `CAN-10`, `CAN-11`, `TEST-02`,
+and `TEST-04` from `PARTIAL` to `EXACT`.
+
+| Status | Rows |
+| -- | --: |
+| `EXACT` | 59 |
+| `PARTIAL` | 36 |
+| `ABSENT` | 9 |
+| `CONTRADICTED` | 21 |
+| `UNCERTAIN` | 0 |
+| **Total** | **125** |
+
+Certificate-dependent rows deliberately do not move.
+
+## Verification
+
+The focused Phase B-E suites pass on OpenJDK 17.0.19:
+
+| Suite | Checks |
+| -- | --: |
+| `TheoryFoundationsTest` | 1,053 |
+| `TheoryPortsTest` | 1,006 |
+| `TheoryStateTest` | 4,193 |
+| `TheoryCanonicalizationTest` | 11,186 |
+| `TheoryLeaderKernelTest` | 233 |
+| **Total** | **17,671** |
+
+The theory package compiles with `javac -Xlint:all` and no warnings. The full
+repository compiles against `lib/*`. The unchanged `EGraphSaturationTest`,
+`EGraphAblationTest`, `CanonicalBacktranslatorTest`, and
+`MASGVisitorTypeRegressionTest` all pass.
+
+## Next Boundary
+
+Phase F must introduce certificate-bearing group admission and replay
+`xi_n -> d_n^w` without changing the structural `canon_G` orbit algorithm.
+Only after that gate should certified insertion consume this result, and only
+Phase I should connect the exact engine to the existing experimental workflow.

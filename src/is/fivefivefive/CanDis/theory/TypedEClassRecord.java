@@ -87,6 +87,36 @@ public final class TypedEClassRecord {
         return new TypedEClassRecord(interfaceView, updated, symmetryGroup);
     }
 
+    TypedEClassRecord withoutStoredShape(CanonicalShape shape) {
+        Objects.requireNonNull(shape, "shape");
+        if (!shapeWitnesses.containsKey(shape)) {
+            return this;
+        }
+        NavigableMap<CanonicalShape, ShapeWitness> updated =
+                new TreeMap<>(shapeWitnesses);
+        updated.remove(shape);
+        return new TypedEClassRecord(interfaceView, updated, symmetryGroup);
+    }
+
+    TypedEClassRecord withoutStoredShapes() {
+        return shapeWitnesses.isEmpty()
+                ? this
+                : new TypedEClassRecord(
+                        interfaceView, Collections.emptyMap(), symmetryGroup);
+    }
+
+    TypedEClassRecord withInterfaceAndState(
+            TypedEClassInterface replacement,
+            Map<CanonicalShape, ShapeWitness> witnesses,
+            TypedSymmetryGroup group) {
+        if (!id().equals(Objects.requireNonNull(replacement, "replacement").id())
+                || !outputType().equals(replacement.outputType())) {
+            throw new IllegalArgumentException(
+                    "An interface transition must preserve e-class id and output type");
+        }
+        return new TypedEClassRecord(replacement, witnesses, group);
+    }
+
     private static void putShape(
             NavigableMap<CanonicalShape, ShapeWitness> target,
             CanonicalShape shape,

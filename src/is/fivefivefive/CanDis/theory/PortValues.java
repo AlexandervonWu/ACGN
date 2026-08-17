@@ -16,6 +16,16 @@ final class PortValues {
     private PortValues() {
     }
 
+    static void requireAdmissibleCardinality(
+            ContainerEmptiness emptiness,
+            List<? extends PortValue> values) {
+        Objects.requireNonNull(emptiness, "emptiness");
+        Objects.requireNonNull(values, "values");
+        if (!emptiness.admitsEmpty() && values.isEmpty()) {
+            throw new IllegalArgumentException("A K+ port must contain at least one element");
+        }
+    }
+
     static List<PortValue> validatedElements(
             PortSchema elementSchema,
             TypedSlotContext context,

@@ -149,6 +149,9 @@ public final class OperatorDeclaration {
         if (schema instanceof BindPortSchema) {
             return ((BindPortSchema) schema).bodySchema();
         }
+        if (schema instanceof BindBlockPortSchema) {
+            return ((BindBlockPortSchema) schema).bodySchema();
+        }
         return null;
     }
 

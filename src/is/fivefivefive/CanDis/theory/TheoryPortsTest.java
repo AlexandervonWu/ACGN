@@ -24,7 +24,10 @@ public final class TheoryPortsTest {
         testSchemasAndPolymorphicSignatures();
         testOnePortTypingAndAction();
         testSeqBagSetSemantics();
+        testIndexedContainerEmptiness();
         testCaptureAvoidingBinderAction();
+        testBinderBlockCarrierAndAlpha();
+        testNestedBinderBlocks();
         testTypedNodeConstructionAndUnits();
         testVisibleOnlyFlatConstruction();
         testStructuralOrderLaws();
@@ -259,6 +262,486 @@ public final class TheoryPortsTest {
                                 OnePort.slot(context, free)))));
     }
 
+    private static void testIndexedContainerEmptiness() {
+        OnePortSchema element = new OnePortSchema(GraphType.INT);
+        PortSchema.Kind[] kinds = {
+            PortSchema.Kind.SEQ,
+            PortSchema.Kind.BAG,
+            PortSchema.Kind.SET
+        };
+        for (PortSchema.Kind kind : kinds) {
+            PortSchema nonemptySchema = containerSchema(
+                    kind, ContainerEmptiness.K_PLUS, element);
+            PortSchema unitSchema = containerSchema(
+                    kind, ContainerEmptiness.K_ZERO, element);
+            check(!nonemptySchema.equals(unitSchema), kind + " distinguishes K+ from K0");
+            check(!nonemptySchema.structuralKey().equals(unitSchema.structuralKey()),
+                    kind + " structural key retains its emptiness index");
+            expectThrows(IllegalArgumentException.class, () -> emptyContainer(nonemptySchema));
+
+            PortValue empty = emptyContainer(unitSchema);
+            ContainerLawDeclaration.Kind lawKind = containerLawKind(kind);
+            ContainerLawDeclaration noUnit = laws(
+                    lawKind,
+                    true,
+                    kind != PortSchema.Kind.SEQ,
+                    kind == PortSchema.Kind.SET,
+                    false);
+            expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
+                    "illegal-k0-" + kind,
+                    Collections.singletonList(unitSchema),
+                    GraphType.BOOL,
+                    lawMap(0, noUnit),
+                    null));
+
+            ContainerLawDeclaration unit = laws(
+                    lawKind,
+                    true,
+                    kind != PortSchema.Kind.SEQ,
+                    kind == PortSchema.Kind.SET,
+                    true);
+            InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                    "unit-" + kind,
+                    Collections.singletonList(unitSchema),
+                    GraphType.BOOL,
+                    lawMap(0, unit),
+                    null).instantiateMonomorphic();
+            TypedENode node = TypedENode.construct(
+                    operator,
+                    TypedSlotContext.empty(),
+                    Collections.singletonList(empty));
+            check(node.support().isEmpty(), kind + " K0 accepts its declared empty unit");
+
+            InstantiatedOperator flatNonempty = flatOperator(
+                    "flat-nonempty-" + kind, GraphType.INT, kind, false);
+            expectThrows(IllegalArgumentException.class, () -> TypedENode.flatConstruct(
+                    new FlatApplication(
+                            flatNonempty,
+                            TypedSlotContext.empty(),
+                            Collections.emptyList()),
+                    nodeToSeal -> {
+                        throw new AssertionError("An empty flat application has no child to seal");
+                    }));
+            InstantiatedOperator flatUnit = flatOperator(
+                    "flat-unit-" + kind, GraphType.INT, kind, true);
+            TypedENode flatUnitNode = TypedENode.flatConstruct(
+                    new FlatApplication(
+                            flatUnit,
+                            TypedSlotContext.empty(),
+                            Collections.emptyList()),
+                    nodeToSeal -> {
+                        throw new AssertionError("An empty flat application has no child to seal");
+                    });
+            check(flatUnitNode.support().isEmpty(),
+                    kind + " flat construction preserves the K0 unit case");
+        }
+
+        TypedSlot bound = TypedSlot.source(USER, 199);
+        TypedSlotContext bodyContext = TypedSlotContext.singleton(bound);
+        PortPath nestedPath = PortPath.at(0).child();
+        for (PortSchema.Kind kind : kinds) {
+            PortSchema nestedUnitSchema = containerSchema(
+                    kind, ContainerEmptiness.K_ZERO, new OnePortSchema(USER));
+            BindPortSchema binderSchema = new BindPortSchema(USER, nestedUnitSchema);
+            BindPort emptyBinder = new BindPort(
+                    binderSchema,
+                    TypedSlotContext.empty(),
+                    bound,
+                    emptyContainer(nestedUnitSchema, bodyContext));
+            ContainerLawDeclaration.Kind lawKind = containerLawKind(kind);
+            expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
+                    "illegal-nested-k0-" + kind,
+                    Collections.singletonList(binderSchema),
+                    GraphType.BOOL,
+                    lawMap(nestedPath,
+                            laws(
+                                    lawKind,
+                                    true,
+                                    kind != PortSchema.Kind.SEQ,
+                                    kind == PortSchema.Kind.SET,
+                                    false)),
+                    null));
+            InstantiatedOperator nestedUnit = OperatorDeclaration.monomorphic(
+                    "nested-k0-" + kind,
+                    Collections.singletonList(binderSchema),
+                    GraphType.BOOL,
+                    lawMap(nestedPath,
+                            laws(
+                                    lawKind,
+                                    true,
+                                    kind != PortSchema.Kind.SEQ,
+                                    kind == PortSchema.Kind.SET,
+                                    true)),
+                    null).instantiateMonomorphic();
+            check(TypedENode.construct(
+                            nestedUnit,
+                            TypedSlotContext.empty(),
+                            Collections.singletonList(emptyBinder)).support().isEmpty(),
+                    "Nested " + kind + " K0 is checked at its exact recursive path");
+        }
+    }
+
+    private static void testBinderBlockCarrierAndAlpha() {
+        TypedSlot first = TypedSlot.canonicalBound(USER, 0);
+        TypedSlot second = TypedSlot.canonicalBound(USER, 1);
+        TypedSlotContext delta = TypedSlotContext.of(first, second);
+        StructuralKey userDomain = StructuralKey.leaf("binder-domain", "User");
+        BinderCoordinateDescriptor firstCoordinate = new BinderCoordinateDescriptor(
+                first,
+                userDomain,
+                "ALL",
+                "SET",
+                17,
+                TypedSlotContext.empty());
+        BinderCoordinateDescriptor secondCoordinate = new BinderCoordinateDescriptor(
+                second,
+                userDomain,
+                "ALL",
+                "SET",
+                17,
+                TypedSlotContext.empty());
+        TypedPermutation swap = TypedPermutation.of(
+                delta, mapOf(first, second, second, first));
+        List<BinderCoordinateDescriptor> symmetricCoordinates = Arrays.asList(
+                firstCoordinate, secondCoordinate);
+        BinderAutomorphismCertificate symmetricCertificate =
+                new BinderAutomorphismCertificate(
+                        symmetricCoordinates,
+                        swap,
+                        CertificateOrigin.binderAutomorphism(
+                                "phase-c-fixture", "symmetric-user-pair", 0));
+        BinderBlockDescriptor symmetric = BinderBlockDescriptor.certified(
+                symmetricCoordinates,
+                Collections.singletonList(symmetricCertificate));
+        check(symmetric.automorphisms().elements().size() == 2,
+                "A descriptor-preserving swap generates exactly S2");
+        check(symmetric.automorphisms().contains(swap),
+                "Aut(beta) contains its descriptor-preserving generator");
+
+        TypedSlot third = TypedSlot.canonicalBound(USER, 2);
+        TypedSlotContext deltaThree = TypedSlotContext.of(first, second, third);
+        BinderCoordinateDescriptor thirdCoordinate = new BinderCoordinateDescriptor(
+                third,
+                userDomain,
+                "ALL",
+                "SET",
+                17,
+                TypedSlotContext.empty());
+        TypedPermutation swapFirstSecond = TypedPermutation.of(
+                deltaThree, mapOf(first, second, second, first, third, third));
+        TypedPermutation swapSecondThird = TypedPermutation.of(
+                deltaThree, mapOf(first, first, second, third, third, second));
+        TypedPermutation cycle = TypedPermutation.of(
+                deltaThree, mapOf(first, second, second, third, third, first));
+        BinderBlockDescriptor symmetricThreeBySwaps = new BinderBlockDescriptor(
+                Arrays.asList(firstCoordinate, secondCoordinate, thirdCoordinate),
+                Arrays.asList(swapFirstSecond, swapSecondThird));
+        BinderBlockDescriptor symmetricThreeByCycle = new BinderBlockDescriptor(
+                Arrays.asList(firstCoordinate, secondCoordinate, thirdCoordinate),
+                Arrays.asList(swapFirstSecond, cycle));
+        check(symmetricThreeBySwaps.equals(symmetricThreeByCycle),
+                "Aut(beta) equality is extensional across generator bases");
+        check(symmetricThreeBySwaps.structuralKey()
+                        .equals(symmetricThreeByCycle.structuralKey()),
+                "Aut(beta) structural keys are extensional across generator bases");
+
+        BinderBlockDescriptor relabeledDisjointness = new BinderBlockDescriptor(
+                Arrays.asList(
+                        new BinderCoordinateDescriptor(
+                                first, userDomain, "ALL", "SET", 91,
+                                TypedSlotContext.empty()),
+                        new BinderCoordinateDescriptor(
+                                second, userDomain, "ALL", "SET", 91,
+                                TypedSlotContext.empty())),
+                Collections.singletonList(swap));
+        check(symmetric.equals(relabeledDisjointness),
+                "Disjointness class identity is normalized by partition, not source label");
+
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        firstCoordinate,
+                        new BinderCoordinateDescriptor(
+                                second, userDomain, "SOME", "SET", 17,
+                                TypedSlotContext.empty())),
+                Collections.singletonList(swap)));
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        firstCoordinate,
+                        new BinderCoordinateDescriptor(
+                                second,
+                                StructuralKey.leaf("binder-domain", "Admin"),
+                                "ALL",
+                                "SET",
+                                17,
+                                TypedSlotContext.empty())),
+                Collections.singletonList(swap)));
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        firstCoordinate,
+                        new BinderCoordinateDescriptor(
+                                second, userDomain, "ALL", "ONE", 17,
+                                TypedSlotContext.empty())),
+                Collections.singletonList(swap)));
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        firstCoordinate,
+                        new BinderCoordinateDescriptor(
+                                second, userDomain, "ALL", "SET", 23,
+                                TypedSlotContext.empty())),
+                Collections.singletonList(swap)));
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        firstCoordinate,
+                        new BinderCoordinateDescriptor(
+                                second, userDomain, "ALL", "SET", 17,
+                                TypedSlotContext.singleton(first))),
+                Collections.singletonList(swap)));
+        expectThrows(IllegalArgumentException.class, () -> new BinderBlockDescriptor(
+                Arrays.asList(
+                        new BinderCoordinateDescriptor(
+                                first, userDomain, "ALL", "SET", 17,
+                                TypedSlotContext.singleton(second)),
+                        secondCoordinate),
+                Collections.emptyList()));
+
+        OnePortSchema oneUser = new OnePortSchema(USER);
+        SeqPortSchema bodySchema = new SeqPortSchema(oneUser);
+        BindBlockPortSchema schema = new BindBlockPortSchema(symmetric, bodySchema);
+        SeqPortSchema blockUnitBodySchema = new SeqPortSchema(
+                ContainerEmptiness.K_ZERO, oneUser);
+        BindBlockPortSchema blockUnitSchema = new BindBlockPortSchema(
+                symmetric, blockUnitBodySchema);
+        TypedRenaming canonicalOccurrence = symmetric.freshOccurrenceRenaming(
+                TypedSlotContext.empty());
+        BindBlockPort emptyBlock = new BindBlockPort(
+                blockUnitSchema,
+                TypedSlotContext.empty(),
+                canonicalOccurrence,
+                new SeqPort(
+                        blockUnitBodySchema,
+                        canonicalOccurrence.codomain(),
+                        Collections.emptyList()));
+        PortPath blockBodyPath = PortPath.at(0).child();
+        expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
+                "illegal-block-unit",
+                Collections.singletonList(blockUnitSchema),
+                GraphType.BOOL,
+                lawMap(blockBodyPath,
+                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, false)),
+                null));
+        InstantiatedOperator blockUnitOperator = OperatorDeclaration.monomorphic(
+                "block-unit",
+                Collections.singletonList(blockUnitSchema),
+                GraphType.BOOL,
+                lawMap(blockBodyPath,
+                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, true)),
+                null).instantiateMonomorphic();
+        check(TypedENode.construct(
+                        blockUnitOperator,
+                        TypedSlotContext.empty(),
+                        Collections.singletonList(emptyBlock)).support().isEmpty(),
+                "Signature traversal checks K0 laws beneath BindBlock");
+
+        TypedSlot canonicalFree = TypedSlot.canonicalFree(USER, 0);
+        TypedSlotContext canonicalContext = TypedSlotContext.singleton(canonicalFree);
+        TypedRenaming canonicalBlockOccurrence = symmetric.freshOccurrenceRenaming(
+                canonicalContext);
+        TypedSlotContext canonicalBodyContext = canonicalContext.union(
+                canonicalBlockOccurrence.codomain());
+        List<TypedSlot> canonicalBound = new ArrayList<>(
+                canonicalBlockOccurrence.codomain().slots());
+        BindBlockPort canonicalBlock = new BindBlockPort(
+                schema,
+                canonicalContext,
+                canonicalBlockOccurrence,
+                new SeqPort(
+                        bodySchema,
+                        canonicalBodyContext,
+                        Arrays.asList(
+                                OnePort.slot(canonicalBodyContext, canonicalFree),
+                                OnePort.slot(canonicalBodyContext, canonicalBound.get(0)),
+                                OnePort.slot(canonicalBodyContext, canonicalBound.get(1)))));
+        InstantiatedOperator blockOperator = OperatorDeclaration.monomorphic(
+                "block-shape",
+                Collections.singletonList(schema),
+                GraphType.BOOL,
+                lawMap(PortPath.at(0).child(),
+                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, false)),
+                null).instantiateMonomorphic();
+        TypedENode canonicalBlockNode = TypedENode.construct(
+                blockOperator,
+                canonicalContext,
+                Collections.singletonList(canonicalBlock));
+        check(CanonicalShape.of(canonicalBlockNode).exactSlots().equals(canonicalContext),
+                "Canonical shapes validate the fixed binder-block occurrence context");
+        TypedSlottedPortEGraph blockGraph = TypedSlottedPortEGraph.structuralFixture();
+        CanonicalizationResult canonicalBlockResult = blockGraph.canonicalize(
+                canonicalBlockNode);
+        check(canonicalBlockResult.shape().node().ports().get(0)
+                        instanceof BindBlockPort
+                        && canonicalBlockResult.verifyWitness(blockGraph),
+                "Phase E canonicalizes first-class binder blocks with a replayable witness");
+        TypedSlot leftFree = TypedSlot.source(USER, 400);
+        TypedSlot rightFree = TypedSlot.source(USER, 401);
+        TypedSlot leftFirst = TypedSlot.canonicalBound(USER, 5);
+        TypedSlot leftSecond = TypedSlot.canonicalBound(USER, 6);
+        TypedSlot rightFirst = TypedSlot.canonicalBound(USER, 9);
+        TypedSlot rightSecond = TypedSlot.canonicalBound(USER, 10);
+        TypedRenaming leftOccurrence = TypedRenaming.of(
+                delta,
+                TypedSlotContext.of(leftFirst, leftSecond),
+                mapOf(first, leftFirst, second, leftSecond));
+        TypedRenaming rightOccurrence = TypedRenaming.of(
+                delta,
+                TypedSlotContext.of(rightFirst, rightSecond),
+                mapOf(first, rightFirst, second, rightSecond));
+        TypedSlotContext leftContext = TypedSlotContext.singleton(leftFree);
+        TypedSlotContext rightContext = TypedSlotContext.singleton(rightFree);
+        TypedSlotContext leftBodyContext = leftContext.union(leftOccurrence.codomain());
+        TypedSlotContext rightBodyContext = rightContext.union(rightOccurrence.codomain());
+        BindBlockPort left = new BindBlockPort(
+                schema,
+                leftContext,
+                leftOccurrence,
+                new SeqPort(
+                        bodySchema,
+                        leftBodyContext,
+                        Arrays.asList(
+                                OnePort.slot(leftBodyContext, leftFirst),
+                                OnePort.slot(leftBodyContext, leftSecond),
+                                OnePort.slot(leftBodyContext, leftFree))));
+        BindBlockPort rightSwapped = new BindBlockPort(
+                schema,
+                rightContext,
+                rightOccurrence,
+                new SeqPort(
+                        bodySchema,
+                        rightBodyContext,
+                        Arrays.asList(
+                                OnePort.slot(rightBodyContext, rightSecond),
+                                OnePort.slot(rightBodyContext, rightFirst),
+                                OnePort.slot(rightBodyContext, rightFree))));
+        TypedRenaming freeRenaming = TypedRenaming.of(
+                leftContext, rightContext, mapOf(leftFree, rightFree));
+        check(TypedAlphaEquivalence.structuralPorts(left, rightSwapped, freeRenaming),
+                "Binder-block alpha-equivalence quantifies over exactly Aut(beta)");
+        check(left.support().equals(leftContext),
+                "Binder-block support subtracts the complete occurrence context");
+
+        BinderBlockDescriptor identityOnly = new BinderBlockDescriptor(
+                Arrays.asList(firstCoordinate, secondCoordinate), Collections.emptyList());
+        BindBlockPortSchema identitySchema = new BindBlockPortSchema(identityOnly, bodySchema);
+        BindBlockPort identityLeft = new BindBlockPort(
+                identitySchema, leftContext, leftOccurrence, left.body());
+        BindBlockPort identityRight = new BindBlockPort(
+                identitySchema, rightContext, rightOccurrence, rightSwapped.body());
+        check(!TypedAlphaEquivalence.structuralPorts(
+                        identityLeft, identityRight, freeRenaming),
+                "Same-typed coordinates are not permuted without membership in Aut(beta)");
+
+        TypedSlot actedFree = TypedSlot.source(USER, 402);
+        TypedSlot occupied = TypedSlot.canonicalBound(USER, 0);
+        TypedSlotContext actedContext = TypedSlotContext.of(actedFree, occupied);
+        TypedEmbedding action = TypedEmbedding.of(
+                leftContext, actedContext, mapOf(leftFree, actedFree));
+        BindBlockPort acted = left.act(action);
+        check(acted.boundContext().equals(TypedSlotContext.of(
+                        TypedSlot.canonicalBound(USER, 1),
+                        TypedSlot.canonicalBound(USER, 2))),
+                "Block action chooses one fixed fresh occurrence context");
+        check(acted.support().equals(action.imageOf(left.support())),
+                "Binder-block support is equivariant under a proper embedding");
+
+        TypedSlot middleFree = TypedSlot.source(USER, 403);
+        TypedSlot finalFree = TypedSlot.source(USER, 404);
+        TypedRenaming firstAction = TypedRenaming.of(
+                leftContext,
+                TypedSlotContext.singleton(middleFree),
+                mapOf(leftFree, middleFree));
+        TypedRenaming secondAction = TypedRenaming.of(
+                TypedSlotContext.singleton(middleFree),
+                TypedSlotContext.singleton(finalFree),
+                mapOf(middleFree, finalFree));
+        check(left.act(firstAction).act(secondAction)
+                        .equals(left.act(firstAction.andThen(secondAction))),
+                "Binder-block action composes with its fixed fresh policy");
+
+        TypedRenaming overlapping = TypedRenaming.of(
+                delta,
+                TypedSlotContext.of(leftFree, leftSecond),
+                mapOf(first, leftFree, second, leftSecond));
+        expectThrows(IllegalArgumentException.class, () -> new BindBlockPort(
+                schema, leftContext, overlapping, left.body()));
+
+        GraphType alpha = GraphType.typeVariable("a");
+        TypedSlot alphaSlot = TypedSlot.canonicalBound(alpha, 0);
+        BinderBlockDescriptor polymorphicDescriptor = new BinderBlockDescriptor(
+                Collections.singletonList(new BinderCoordinateDescriptor(
+                        alphaSlot,
+                        StructuralKey.leaf("binder-domain", "S"),
+                        "ALL",
+                        "SET",
+                        BinderCoordinateDescriptor.NO_DISJOINTNESS_CLASS,
+                        TypedSlotContext.empty())),
+                Collections.emptyList());
+        BindBlockPortSchema polymorphicSchema = new BindBlockPortSchema(
+                polymorphicDescriptor, new OnePortSchema(alpha));
+        BindBlockPortSchema instantiated = polymorphicSchema.substitute(
+                Collections.singletonMap("a", USER));
+        check(instantiated.descriptor().boundContext().equals(
+                        TypedSlotContext.singleton(TypedSlot.canonicalBound(USER, 0))),
+                "Binder descriptors participate in recursive type substitution");
+        check(instantiated.bodySchema().equals(new OnePortSchema(USER)),
+                "Binder-block body schema is instantiated with its descriptor");
+    }
+
+    private static void testNestedBinderBlocks() {
+        TypedSlot descriptorSlot = TypedSlot.canonicalBound(USER, 0);
+        BinderBlockDescriptor descriptor = new BinderBlockDescriptor(
+                Collections.singletonList(new BinderCoordinateDescriptor(
+                        descriptorSlot,
+                        StructuralKey.leaf("binder-domain", "User"),
+                        "ALL",
+                        "SET",
+                        BinderCoordinateDescriptor.NO_DISJOINTNESS_CLASS,
+                        TypedSlotContext.empty())),
+                Collections.emptyList());
+        SeqPortSchema leafSchema = new SeqPortSchema(new OnePortSchema(USER));
+        BindBlockPortSchema innerSchema = new BindBlockPortSchema(descriptor, leafSchema);
+        BindBlockPortSchema outerSchema = new BindBlockPortSchema(descriptor, innerSchema);
+        TypedSlot free = TypedSlot.source(USER, 500);
+        TypedSlotContext context = TypedSlotContext.singleton(free);
+        TypedRenaming outerOccurrence = descriptor.freshOccurrenceRenaming(context);
+        TypedSlotContext innerContext = context.union(outerOccurrence.codomain());
+        TypedRenaming innerOccurrence = descriptor.freshOccurrenceRenaming(innerContext);
+        TypedSlotContext leafContext = innerContext.union(innerOccurrence.codomain());
+        SeqPort leaf = new SeqPort(
+                leafSchema,
+                leafContext,
+                Arrays.asList(
+                        OnePort.slot(leafContext, free),
+                        OnePort.slot(leafContext, outerOccurrence.codomain().iterator().next()),
+                        OnePort.slot(leafContext, innerOccurrence.codomain().iterator().next())));
+        BindBlockPort inner = new BindBlockPort(
+                innerSchema, innerContext, innerOccurrence, leaf);
+        BindBlockPort outer = new BindBlockPort(
+                outerSchema, context, outerOccurrence, inner);
+        check(outer.support().equals(context),
+                "Nested block support removes each occurrence-local bound context");
+
+        TypedSlot targetFree = TypedSlot.source(USER, 501);
+        TypedRenaming action = TypedRenaming.of(
+                context,
+                TypedSlotContext.singleton(targetFree),
+                mapOf(free, targetFree));
+        BindBlockPort acted = outer.act(action);
+        BindBlockPort actedInner = (BindBlockPort) acted.body();
+        check(acted.boundContext().isDisjoint(actedInner.boundContext()),
+                "Nested block action allocates pairwise fresh occurrence contexts");
+        check(acted.support().equals(TypedSlotContext.singleton(targetFree)),
+                "Nested binder-block action preserves exact free support");
+    }
+
     private static void testTypedNodeConstructionAndUnits() {
         TypedSlot x = TypedSlot.source(USER, 0);
         TypedSlot y = TypedSlot.source(USER, 1);
@@ -293,65 +776,6 @@ public final class TheoryPortsTest {
                         pairDeclaration.instantiateMonomorphic(), context, Arrays.asList(px,
                                 OnePort.slot(TypedSlotContext.singleton(y), y))));
 
-        SeqPortSchema inputs = new SeqPortSchema(new OnePortSchema(GraphType.INT));
-        OperatorDeclaration noUnit = OperatorDeclaration.monomorphic(
-                "nonempty-test",
-                Collections.singletonList(inputs),
-                GraphType.BOOL,
-                lawMap(0, laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, false)),
-                null);
-        SeqPort empty = new SeqPort(inputs, TypedSlotContext.empty(), Collections.emptyList());
-        expectThrows(IllegalArgumentException.class,
-                () -> TypedENode.construct(
-                        noUnit.instantiateMonomorphic(), TypedSlotContext.empty(),
-                        Collections.singletonList(empty)));
-
-        OperatorDeclaration withUnit = OperatorDeclaration.monomorphic(
-                "empty-test",
-                Collections.singletonList(inputs),
-                GraphType.BOOL,
-                lawMap(0, laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, true)),
-                null);
-        TypedENode unitNode = TypedENode.construct(
-                withUnit.instantiateMonomorphic(), TypedSlotContext.empty(),
-                Collections.singletonList(empty));
-        check(unitNode.support().isEmpty(), "Certified unit permits an empty variadic port");
-
-        TypedSlot bound = TypedSlot.source(USER, 99);
-        TypedSlotContext bodyContext = TypedSlotContext.singleton(bound);
-        SeqPortSchema nestedInputs = new SeqPortSchema(new OnePortSchema(USER));
-        BindPortSchema binderSchema = new BindPortSchema(USER, nestedInputs);
-        BindPort emptyBinder = new BindPort(
-                binderSchema,
-                TypedSlotContext.empty(),
-                bound,
-                new SeqPort(nestedInputs, bodyContext, Collections.emptyList()));
-        PortPath nestedPath = PortPath.at(0).child();
-        OperatorDeclaration nestedNoUnit = OperatorDeclaration.monomorphic(
-                "nested-nonempty-test",
-                Collections.singletonList(binderSchema),
-                GraphType.BOOL,
-                lawMap(nestedPath,
-                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, false)),
-                null);
-        expectThrows(IllegalArgumentException.class,
-                () -> TypedENode.construct(
-                        nestedNoUnit.instantiateMonomorphic(),
-                        TypedSlotContext.empty(),
-                        Collections.singletonList(emptyBinder)));
-        OperatorDeclaration nestedWithUnit = OperatorDeclaration.monomorphic(
-                "nested-empty-test",
-                Collections.singletonList(binderSchema),
-                GraphType.BOOL,
-                lawMap(nestedPath,
-                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, true)),
-                null);
-        TypedENode nestedUnitNode = TypedENode.construct(
-                nestedWithUnit.instantiateMonomorphic(),
-                TypedSlotContext.empty(),
-                Collections.singletonList(emptyBinder));
-        check(nestedUnitNode.support().isEmpty(),
-                "Unit declarations are checked at the exact nested schema path");
     }
 
     private static void testVisibleOnlyFlatConstruction() {
@@ -527,25 +951,85 @@ public final class TheoryPortsTest {
         check(FlatInput.class.isSealed(), "Visible flat-input grammar is sealed");
     }
 
+    private static PortSchema containerSchema(
+            PortSchema.Kind kind,
+            ContainerEmptiness emptiness,
+            PortSchema elementSchema) {
+        switch (kind) {
+            case SEQ:
+                return new SeqPortSchema(emptiness, elementSchema);
+            case BAG:
+                return new BagPortSchema(emptiness, elementSchema);
+            case SET:
+                return new SetPortSchema(emptiness, elementSchema);
+            default:
+                throw new IllegalArgumentException("Not a container kind: " + kind);
+        }
+    }
+
+    private static PortValue emptyContainer(PortSchema schema) {
+        return emptyContainer(schema, TypedSlotContext.empty());
+    }
+
+    private static PortValue emptyContainer(
+            PortSchema schema,
+            TypedSlotContext context) {
+        if (schema instanceof SeqPortSchema) {
+            return new SeqPort(
+                    (SeqPortSchema) schema,
+                    context,
+                    Collections.emptyList());
+        }
+        if (schema instanceof BagPortSchema) {
+            return new BagPort(
+                    (BagPortSchema) schema,
+                    context,
+                    Collections.emptyList());
+        }
+        if (schema instanceof SetPortSchema) {
+            return new SetPort(
+                    (SetPortSchema) schema,
+                    context,
+                    Collections.emptyList());
+        }
+        throw new IllegalArgumentException("Not a container schema: " + schema);
+    }
+
+    private static ContainerLawDeclaration.Kind containerLawKind(PortSchema.Kind kind) {
+        switch (kind) {
+            case SEQ:
+                return ContainerLawDeclaration.Kind.SEQ;
+            case BAG:
+                return ContainerLawDeclaration.Kind.BAG;
+            case SET:
+                return ContainerLawDeclaration.Kind.SET;
+            default:
+                throw new IllegalArgumentException("Not a container kind: " + kind);
+        }
+    }
+
     private static InstantiatedOperator flatOperator(
             String name,
             GraphType output,
             PortSchema.Kind kind,
             boolean unit) {
         OnePortSchema element = new OnePortSchema(output);
+        ContainerEmptiness emptiness = unit
+                ? ContainerEmptiness.K_ZERO
+                : ContainerEmptiness.K_PLUS;
         PortSchema schema;
         ContainerLawDeclaration law;
         switch (kind) {
             case SEQ:
-                schema = new SeqPortSchema(element);
+                schema = new SeqPortSchema(emptiness, element);
                 law = laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, unit);
                 break;
             case BAG:
-                schema = new BagPortSchema(element);
+                schema = new BagPortSchema(emptiness, element);
                 law = laws(ContainerLawDeclaration.Kind.BAG, true, true, false, unit);
                 break;
             case SET:
-                schema = new SetPortSchema(element);
+                schema = new SetPortSchema(emptiness, element);
                 law = laws(ContainerLawDeclaration.Kind.SET, true, true, true, unit);
                 break;
             default:

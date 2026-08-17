@@ -71,17 +71,33 @@ public final class CanonicalShape implements Comparable<CanonicalShape> {
             }
             return;
         }
-        BindPort binder = (BindPort) port;
-        TypedSlot expectedBound = CanonicalSlotAlphabet.fresh(
-                binder.schema().boundType(),
-                SlotAlphabet.CANONICAL_BOUND,
-                expectedContext);
-        if (!expectedBound.equals(binder.boundSlot())) {
-            throw new IllegalArgumentException(
-                    "Canonical binder must use the fixed least fresh bound coordinate");
+        if (port instanceof BindPort) {
+            BindPort binder = (BindPort) port;
+            TypedSlot expectedBound = CanonicalSlotAlphabet.fresh(
+                    binder.schema().boundType(),
+                    SlotAlphabet.CANONICAL_BOUND,
+                    expectedContext);
+            if (!expectedBound.equals(binder.boundSlot())) {
+                throw new IllegalArgumentException(
+                        "Canonical binder must use the fixed least fresh bound coordinate");
+            }
+            validateCanonicalPort(
+                    binder.body(), freeSlots, boundSlots.plus(binder.boundSlot()));
+            return;
         }
-        validateCanonicalPort(
-                binder.body(), freeSlots, boundSlots.plus(binder.boundSlot()));
+        if (port instanceof BindBlockPort) {
+            BindBlockPort block = (BindBlockPort) port;
+            TypedRenaming expectedOccurrence = block.schema().descriptor()
+                    .freshOccurrenceRenaming(expectedContext);
+            if (!expectedOccurrence.equals(block.descriptorToOccurrence())) {
+                throw new IllegalArgumentException(
+                        "Canonical binder block must use its fixed fresh occurrence context");
+            }
+            validateCanonicalPort(
+                    block.body(), freeSlots, boundSlots.union(block.boundContext()));
+            return;
+        }
+        throw new IllegalStateException("Unhandled port value " + port.getClass().getName());
     }
 
     public TypedENode node() {

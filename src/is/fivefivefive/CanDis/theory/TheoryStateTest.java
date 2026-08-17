@@ -206,7 +206,7 @@ public final class TheoryStateTest {
         expectThrows(IllegalArgumentException.class,
                 () -> new ParentStep(child, TypedInvocation.identity(middle)));
 
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(child));
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(middle));
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(leader));
@@ -400,7 +400,7 @@ public final class TheoryStateTest {
 
     private static void testGraphOwnershipAndQuiescence() {
         ShapeFixture fixture = shapeFixture(EClassId.of(300));
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(fixture.record);
         check(graph.status() == GraphStatus.QUIESCENT,
                 "An isolated registered record preserves quiescence");
@@ -428,7 +428,7 @@ public final class TheoryStateTest {
         TypedEClassRecord parentRecord = TypedEClassRecord.empty(parentInterface);
         graph.registerRecordForPhaseD(parentRecord);
 
-        TypedSlottedPortEGraph reverseOrder = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph reverseOrder = TypedSlottedPortEGraph.structuralFixture();
         reverseOrder.registerRecordForPhaseD(parentRecord);
         reverseOrder.registerRecordForPhaseD(fixture.record);
         check(graph.stateStructuralKey().equals(reverseOrder.stateStructuralKey()),
@@ -472,7 +472,7 @@ public final class TheoryStateTest {
                 owner,
                 Collections.singletonMap(missingChildShape, emptyWitness),
                 TypedSymmetryGroup.identity(TypedSlotContext.empty()));
-        TypedSlottedPortEGraph bottomUp = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph bottomUp = TypedSlottedPortEGraph.structuralFixture();
         expectThrows(IllegalArgumentException.class,
                 () -> bottomUp.registerRecordForPhaseD(missingChildRecord));
         check(bottomUp.classes().isEmpty(),

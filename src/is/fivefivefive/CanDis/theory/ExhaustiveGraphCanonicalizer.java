@@ -7,9 +7,9 @@ import java.util.NavigableMap;
 import java.util.Objects;
 import java.util.TreeMap;
 
-/** Slow specification implementation that enumerates the complete finite orbit. */
+/** Slow independent specification implementation of quotient-first {@code canon_G}. */
 public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicalizer {
-    public static final String VERSION = "canon-g-exhaustive-v1";
+    public static final String VERSION = "canon-g-exhaustive-v2";
     private static final ExhaustiveGraphCanonicalizer INSTANCE =
             new ExhaustiveGraphCanonicalizer();
 
@@ -32,16 +32,16 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
                 throw new IllegalArgumentException(
                         "canon_G requires a node whose context is its exact support");
             }
-            TypedENode leaderNormalized = LeaderNormalizer.normalize(graph, node);
-            requireLeaderNormalizationPreservesSupport(node, leaderNormalized);
+            LeaderKernelResult leaderKernel = graph.extractLeaderKernel(node);
+            TypedENode kernel = leaderKernel.kernel();
+            TypedSlotContext canonicalContext = kernel.context().canonicalFreeContext();
             BestCandidate best = new BestCandidate();
-            TypedSlotContext canonicalContext = leaderNormalized.support().canonicalFreeContext();
             TypedRenamingEnumerator.forEach(
                     canonicalContext,
-                    leaderNormalized.support(),
-                    witness -> enumerateForRenaming(
-                            graph, leaderNormalized, canonicalContext, witness, best));
-            CanonicalizationResult result = best.result(node);
+                    kernel.context(),
+                    witness -> enumerateFreeCandidate(
+                            graph, kernel, canonicalContext, witness, best));
+            CanonicalizationResult result = best.result(leaderKernel);
             if (!result.verifyWitness(graph)) {
                 throw new IllegalStateException(
                         "Exhaustive canon_G returned a witness that does not replay");
@@ -51,112 +51,94 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
         }
     }
 
-    private static void enumerateForRenaming(
+    private static void enumerateFreeCandidate(
             TypedSlottedPortEGraph graph,
-            TypedENode node,
+            TypedENode kernel,
             TypedSlotContext canonicalContext,
             TypedRenaming witness,
             BestCandidate best) {
         TypedRenaming sourceToCanonical = witness.inverse();
-        List<List<PortValue>> alternatives = new ArrayList<>(node.ports().size());
-        for (PortValue port : node.ports()) {
-            alternatives.add(enumeratePort(graph, port, sourceToCanonical));
+        List<PortValue> ports = new ArrayList<>(kernel.ports().size());
+        for (PortValue port : kernel.ports()) {
+            ports.add(referenceQuotient(graph, port, sourceToCanonical));
         }
-        enumerateNodeProducts(
-                node,
-                canonicalContext,
-                alternatives,
-                0,
-                new ArrayList<>(),
-                witness,
-                best);
+        TypedENode candidate = kernel.rebuildCanonicalCandidate(
+                canonicalContext, ports);
+        if (!candidate.support().equals(canonicalContext)) {
+            throw new CanonicalizationDomainException(
+                    "Reference quotient changed exact kernel support from "
+                            + canonicalContext + " to " + candidate.support());
+        }
+        best.consider(CanonicalShape.of(candidate), witness);
     }
 
-    private static void enumerateNodeProducts(
-            TypedENode source,
-            TypedSlotContext canonicalContext,
-            List<List<PortValue>> alternatives,
-            int index,
-            List<PortValue> selected,
-            TypedRenaming witness,
-            BestCandidate best) {
-        if (index == alternatives.size()) {
-            TypedENode candidate = source.rebuildCanonicalCandidate(
-                    canonicalContext, selected);
-            requireCanonicalSupport(candidate, canonicalContext);
-            best.consider(CanonicalShape.of(candidate), witness);
-            return;
-        }
-        for (PortValue value : alternatives.get(index)) {
-            selected.add(value);
-            enumerateNodeProducts(
-                    source,
-                    canonicalContext,
-                    alternatives,
-                    index + 1,
-                    selected,
-                    witness,
-                    best);
-            selected.remove(selected.size() - 1);
-        }
-    }
-
-    private static List<PortValue> enumeratePort(
+    /**
+     * Materializes every candidate in each local leader or binder orbit, then
+     * returns its least member before the enclosing container is constructed.
+     */
+    private static PortValue referenceQuotient(
             TypedSlottedPortEGraph graph,
             PortValue port,
             TypedRenaming renaming) {
         if (!port.context().equals(renaming.source())) {
             throw new IllegalArgumentException(
-                    "Canonical port renaming must start at the port context");
+                    "Reference port renaming must start at the port context");
         }
         if (port instanceof OnePort) {
-            return enumerateOne(graph, (OnePort) port, renaming);
+            return least(enumerateOneOrbit(graph, (OnePort) port, renaming));
         }
         if (port instanceof SeqPort) {
             SeqPort sequence = (SeqPort) port;
-            return enumerateContainer(
-                    graph,
-                    sequence.elements(),
-                    renaming,
-                    values -> new SeqPort(
-                            sequence.schema(), renaming.codomain(), values));
+            return new SeqPort(
+                    sequence.schema(),
+                    renaming.codomain(),
+                    referenceElements(graph, sequence.elements(), renaming));
         }
         if (port instanceof BagPort) {
             BagPort bag = (BagPort) port;
-            return enumerateContainer(
-                    graph,
-                    bag.occurrences(),
-                    renaming,
-                    values -> new BagPort(
-                            bag.schema(), renaming.codomain(), values));
+            return new BagPort(
+                    bag.schema(),
+                    renaming.codomain(),
+                    referenceElements(graph, bag.occurrences(), renaming));
         }
         if (port instanceof SetPort) {
             SetPort set = (SetPort) port;
-            return enumerateContainer(
-                    graph,
-                    set.elements(),
-                    renaming,
-                    values -> new SetPort(
-                            set.schema(), renaming.codomain(), values));
+            return new SetPort(
+                    set.schema(),
+                    renaming.codomain(),
+                    referenceElements(graph, set.elements(), renaming));
         }
+        if (port instanceof BindBlockPort) {
+            return least(enumerateBlockOrbit(
+                    graph, (BindBlockPort) port, renaming));
+        }
+
         BindPort binder = (BindPort) port;
         TypedSlot canonicalBound = CanonicalSlotAlphabet.fresh(
                 binder.schema().boundType(),
                 SlotAlphabet.CANONICAL_BOUND,
                 renaming.codomain());
-        TypedRenaming extended = renaming.disjointExtension(
+        TypedRenaming bodyRenaming = renaming.disjointExtension(
                 binder.boundSlot(), canonicalBound).asRenaming();
-        NavigableMap<StructuralKey, PortValue> results = new TreeMap<>();
-        for (PortValue body : enumeratePort(graph, binder.body(), extended)) {
-            putUnique(
-                    results,
-                    new BindPort(
-                            binder.schema(), renaming.codomain(), canonicalBound, body));
-        }
-        return immutableValues(results);
+        return new BindPort(
+                binder.schema(),
+                renaming.codomain(),
+                canonicalBound,
+                referenceQuotient(graph, binder.body(), bodyRenaming));
     }
 
-    private static List<PortValue> enumerateOne(
+    private static List<PortValue> referenceElements(
+            TypedSlottedPortEGraph graph,
+            List<PortValue> source,
+            TypedRenaming renaming) {
+        List<PortValue> result = new ArrayList<>(source.size());
+        for (PortValue value : source) {
+            result.add(referenceQuotient(graph, value, renaming));
+        }
+        return result;
+    }
+
+    private static List<PortValue> enumerateOneOrbit(
             TypedSlottedPortEGraph graph,
             OnePort port,
             TypedRenaming renaming) {
@@ -168,104 +150,89 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
                     new SlotPortLeaf(renaming.apply(((SlotPortLeaf) leaf).slot()))));
         }
 
-        TypedInvocation invocation = ((InvocationPortLeaf) leaf).invocation();
-        TypedFindResult find = graph.findForCanonicalization(invocation);
-        TypedInvocation leader = find.leaderInvocation();
-        TypedSymmetryGroup group = graph.eclass(leader.eclass().id()).symmetryGroup();
-        NavigableMap<StructuralKey, PortValue> results = new TreeMap<>();
+        TypedInvocation leader = ((InvocationPortLeaf) leaf).invocation();
+        if (!graph.isLeader(leader.eclass().id())) {
+            throw new IllegalStateException(
+                    "Reference quotient requires leader-kernel invocations");
+        }
+        TypedSymmetryGroup group = graph.symmetryGroupForCanonicalization(
+                leader.eclass());
+        List<PortValue> orbit = new ArrayList<>(group.elements().size());
         for (TypedPermutation permutation : group.elements()) {
             TypedEmbedding embedding = permutation
                     .andThen(leader.embedding())
                     .andThen(renaming);
-            putUnique(
-                    results,
-                    new OnePort(
-                            port.schema(),
-                            renaming.codomain(),
-                            new InvocationPortLeaf(new TypedInvocation(
-                                    leader.eclass(), embedding))));
+            orbit.add(new OnePort(
+                    port.schema(),
+                    renaming.codomain(),
+                    new InvocationPortLeaf(new TypedInvocation(
+                            leader.eclass(), embedding))));
         }
-        return immutableValues(results);
+        return uniqueOrbit(orbit);
     }
 
-    private static List<PortValue> enumerateContainer(
+    private static List<PortValue> enumerateBlockOrbit(
             TypedSlottedPortEGraph graph,
-            List<PortValue> source,
-            TypedRenaming renaming,
-            ContainerFactory factory) {
-        List<List<PortValue>> alternatives = new ArrayList<>(source.size());
-        for (PortValue element : source) {
-            alternatives.add(enumeratePort(graph, element, renaming));
+            BindBlockPort block,
+            TypedRenaming freeRenaming) {
+        BinderBlockDescriptor descriptor = block.schema().descriptor();
+        TypedRenaming targetOccurrence = descriptor.freshOccurrenceRenaming(
+                freeRenaming.codomain());
+        BinderAutomorphismGroup automorphisms =
+                graph.binderGroupForCanonicalization(descriptor);
+        List<PortValue> orbit = new ArrayList<>(automorphisms.elements().size());
+        for (TypedPermutation permutation : automorphisms.elements()) {
+            TypedRenaming occurrenceRenaming = block.descriptorToOccurrence()
+                    .inverse()
+                    .andThen(permutation)
+                    .andThen(targetOccurrence);
+            TypedRenaming bodyRenaming = freeRenaming
+                    .disjointUnion(occurrenceRenaming)
+                    .asRenaming();
+            PortValue body = referenceQuotient(graph, block.body(), bodyRenaming);
+            orbit.add(new BindBlockPort(
+                    block.schema(),
+                    freeRenaming.codomain(),
+                    targetOccurrence,
+                    body));
         }
-        NavigableMap<StructuralKey, PortValue> results = new TreeMap<>();
-        enumerateContainerProducts(
-                alternatives, 0, new ArrayList<>(), factory, results);
-        return immutableValues(results);
+        return uniqueOrbit(orbit);
     }
 
-    private static void enumerateContainerProducts(
-            List<List<PortValue>> alternatives,
-            int index,
-            List<PortValue> selected,
-            ContainerFactory factory,
-            NavigableMap<StructuralKey, PortValue> results) {
-        if (index == alternatives.size()) {
-            putUnique(results, factory.create(new ArrayList<>(selected)));
-            return;
+    private static List<PortValue> uniqueOrbit(List<PortValue> source) {
+        NavigableMap<StructuralKey, PortValue> unique = new TreeMap<>();
+        for (PortValue value : source) {
+            PortValue previous = unique.putIfAbsent(value.structuralKey(), value);
+            if (previous != null && !previous.equals(value)) {
+                throw new IllegalStateException(
+                        "Structural key collision between unequal orbit members");
+            }
         }
-        for (PortValue value : alternatives.get(index)) {
-            selected.add(value);
-            enumerateContainerProducts(
-                    alternatives, index + 1, selected, factory, results);
-            selected.remove(selected.size() - 1);
-        }
+        return Collections.unmodifiableList(new ArrayList<>(unique.values()));
     }
 
-    private static void putUnique(
-            NavigableMap<StructuralKey, PortValue> target,
-            PortValue value) {
-        StructuralKey key = value.structuralKey();
-        PortValue prior = target.putIfAbsent(key, value);
-        if (prior != null && !prior.equals(value)) {
-            throw new IllegalStateException(
-                    "Structural key collision between unequal canonical ports");
+    private static PortValue least(List<PortValue> orbit) {
+        if (orbit.isEmpty()) {
+            throw new IllegalStateException("A local quotient orbit must contain identity");
         }
-    }
-
-    private static List<PortValue> immutableValues(
-            NavigableMap<StructuralKey, PortValue> values) {
-        return Collections.unmodifiableList(new ArrayList<>(values.values()));
-    }
-
-    private static void requireCanonicalSupport(
-            TypedENode candidate,
-            TypedSlotContext canonicalContext) {
-        if (!candidate.support().equals(canonicalContext)) {
-            throw new CanonicalizationDomainException(
-                    "Leader normalization changed exact support from "
-                            + canonicalContext + " to " + candidate.support()
-                            + "; Figure 4 cannot provide its required bijective witness");
+        PortValue least = orbit.get(0);
+        for (int index = 1; index < orbit.size(); index++) {
+            PortValue candidate = orbit.get(index);
+            int comparison = candidate.structuralKey().compareTo(least.structuralKey());
+            if (comparison == 0 && !candidate.equals(least)) {
+                throw new IllegalStateException(
+                        "Structural key collision between unequal canonical ports");
+            }
+            if (comparison < 0) {
+                least = candidate;
+            }
         }
-    }
-
-    private static void requireLeaderNormalizationPreservesSupport(
-            TypedENode source,
-            TypedENode normalized) {
-        if (!source.support().equals(normalized.support())) {
-            throw new CanonicalizationDomainException(
-                    "Leader normalization changed exact support from "
-                            + source.support() + " to " + normalized.support()
-                            + "; Figure 4 cannot provide its required bijective witness");
-        }
+        return least;
     }
 
     @Override
     public String version() {
         return VERSION;
-    }
-
-    private interface ContainerFactory {
-        PortValue create(List<PortValue> values);
     }
 
     private static final class BestCandidate {
@@ -292,12 +259,12 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
             }
         }
 
-        CanonicalizationResult result(TypedENode source) {
+        CanonicalizationResult result(LeaderKernelResult leaderKernel) {
             if (shape == null || witness == null) {
                 throw new IllegalStateException(
                         "No typed free-slot bijection was available to canon_G");
             }
-            return new CanonicalizationResult(source, shape, witness);
+            return new CanonicalizationResult(leaderKernel, shape, witness);
         }
     }
 }

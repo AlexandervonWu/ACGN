@@ -2,11 +2,13 @@
 
 This document began as the Phase A architecture audit for commit
 `a9261da4c096f6ba5fcb1a34bcac93cb1b1df23d`. The current normative source is
-`E_Graphs_Draft_LNCS-1.pdf` with SHA-256
-`6e44bae88fcd82fd9cd26db54d52025affb9f7d21d5cc3a2165211ab52a9d42f`.
-It describes the legacy code as found and records the isolated exact path as
+`E_Graphs_Draft_LNCS-3.pdf` with SHA-256
+`6b128156008abe8065fe2cf3871950ff0206a47dcc263e3486e475053e4a0d33`;
+the LNCS-3 re-audit used HEAD `f0e326ab41fbdda9e21b36cb11aecc1863d9712d`
+in a dirty worktree.
+It describes the legacy code as found and records the isolated theory path as
 phase gates are implemented. Names under **Required exact boundary** that are
-not listed in the Phase B-E exact package remain proposed later-phase classes.
+not listed in the current theory package remain proposed later-phase classes.
 
 ## Current Execution Paths
 
@@ -53,10 +55,15 @@ approximate union-find, slot maps, shapes, hash-consing, and permutation
 groups, but paper section 5.2 explicitly records that they are not the typed,
 certificate-checked construction.
 
-### Theory-faithful carrier, port, state, and canonicalization path
+### Theory-faithful typed graph path
 
-Phases B-E add an isolated carrier, explicit-port algebra, Definition 5 state,
-and graph-relative canonicalization without changing either execution path above:
+Phases B-G add an isolated carrier, explicit-port algebra, Definition 5 state,
+structural leader-kernel extraction, quotient-first canonicalization, and a
+closed typed certificate/rebuild algebra without changing either execution path above.
+LNCS-3 extended the Phase C and E contracts; revised Phase C, Phase DA, Phase
+E, Phase F certificate admission, and Phase G fixed-batch rebuilding are implemented. The draft's
+witness-dependent whole-node replay remains separated from the structural
+canonicalization result rather than being fabricated from graph state alone:
 
 ```text
 GraphType
@@ -66,28 +73,61 @@ GraphType
        -> TypedRenaming -> TypedPermutation
   -> TypedEClassInterface
   -> TypedInvocation
-  -> PortSchema = One | Seq | Bag | Set | Bind
+  -> BinderCoordinateDescriptor -> BinderBlockDescriptor
+       -> BinderAutomorphismGroup [certificate-bearing generators]
+  -> [implemented] PortSchema = One | K^epsilon | Bind | BindBlock
+       K in {Seq, Bag, Set}, epsilon in {+, 0}
   -> OperatorDeclaration -> InstantiatedOperator
-  -> PortValue = One | Seq | Bag | Set | Bind
+  -> [implemented] PortValue = One | K^epsilon | Bind | BindBlock
        structural action + support + deterministic key
   -> FlatApplication -> TypedENode.flatConstruct
   -> CanonicalShape -> ShapeWitness
   -> TypedEClassRecord = (tau, S, B, G)
   -> ParentStep -> ParentPath -> TypedRenamedUnionFind
   -> TypedSlottedPortEGraph = (U, M, H, status)
-  -> LeaderNormalizer
+  -> [implemented Phase DA] LeaderKernelExtractor
+       LeaderKernelResult(K, iota, xi)
+       LeaderKernelTrace + LeaderPortTrace
+       ContainerNormalizationTrace
+       ExactContextRestrictor
+  -> LeaderNormalizer [compatibility projection]
   -> TypedAlphaEquivalence
   -> TypedRenamingEnumerator
-  -> ExhaustiveGraphCanonicalizer || ProductionGraphCanonicalizer
-  -> CanonicalizationResult(shape, witness) [provisional support-preserving result]
-  -> required: EffectiveCanonicalizationResult(kernel, shape, sigma, iota, omega, d)
+  -> [implemented Phase E]
+       ExhaustiveGraphCanonicalizer || ProductionGraphCanonicalizer
+       local Q_G before Seq/Bag/Set reconstruction
+  -> CanonicalizationResult(kernel, shape, sigma, iota, omega, xi)
+  -> [implemented Phase F]
+       TypedCertificateEndpoint -> sealed TypedEqualityCertificate
+       input/rewrite, forward congruence, parent edge, symmetry,
+       binder automorphism, interface restriction, and container laws
+       CertificateVerifier + certificate-preserving find
+       unionCertified + addSymmetryCertified
+  -> [implemented Phase G]
+       ParentRecordKey reverse uses + deduplicated dirty queue
+       exact shape equations (EC)
+       RebuildCongruenceCertificate + EffectiveShapeCollisionCertificate
+       restrictInterfaceCertified + historical invocation transport
+       fixed-batch rebuild to exact quiescent H
+  -> [implemented after repaired PF3]
+       CoherentWitnessFamily(EC, PC, SC)
+       ContainerNormalizationCertificate + StructuralAlphaCertificate
+       KernelReplayCertificate(xi,w) = d_n^w
+       CertifiedCanonicalizationResult(K,p,sigma,iota,omega,xi,d)
+       graph-owned certified insertNode + retained collision provenance
 ```
 
 The hierarchies are immutable and sealed. `NodeSealer` is the narrow callback
 through which a graph turns a visible different-headed nested node into an
 opaque invocation; Phase C validates its observable type, context, and support
-contract. Phase D now supplies graph-owned state and provenance-preserving
-leader lookup. Source/rewrite insertion remains a later controlled transition.
+contract. Phase D supplies graph-owned state and provenance-preserving leader
+lookup. Phase DA turns that lookup into an exact leader kernel and structural
+replay trace. Phase F gives every represented equality-producing transition a
+machine-checked proof object and preserves parent proofs through path
+compression. Phase G adds certificate-preserving interface restriction and
+administrative rebuilding. The repaired PF3 contract additionally supplies
+coherent witness capture, endpoint-checked trace replay, and certified source
+insertion without connecting the isolated engine to legacy rewrites or runners.
 
 No legacy runner, dataset program, command-line entry point, reproducibility
 script, experiment manifest, or existing terminal package depends on this path
@@ -105,19 +145,21 @@ underneath it.
 | Embedding | `theory.TypedEmbedding` | Sealed, total, immutable, type-preserving injection over declared contexts | Phase B exact | Reuse in typed actions and renamed union-find edges |
 | Renaming/permutation | `theory.TypedRenaming`, `theory.TypedPermutation` | Sealed onto and same-context refinements | Phase B exact | Reuse in canonicalization and certified symmetry groups |
 | Invocation `m*a` | `theory.TypedInvocation` and `TypedEClassInterface` | Class interface plus validated embedding; caller context is codomain; graph registration rejects ID/metadata reuse | Phase B carrier and Phase D ownership exact | Preserve in certified transitions |
-| Port grammar | `theory.PortSchema` and `theory.PortValue`; legacy child lists remain separate | Five sealed schema classes and five sealed immutable value classes | Phase C grammar, typing, action, support, and local normalization exact | Reused without conversion in Phase D stored shapes |
-| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; legacy opcode tables remain separate | Type parameters, recursive schemas, output, law declarations, and flat port are one immutable value | Phase C typed signature exact; semantic law certificates await Phase F | Bind Phase F certificates to these declarations |
-| `U` | Exact `TypedRenamedUnionFind`; legacy `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, and retained primitive paths | Phase D embedding/state component exact; parent certificates await Phase F | Attach `ParentEdgeCertificate` to primitive steps |
-| `M(a).tau_a` | `TypedEClassRecord.interfaceValue().outputType()` | Immutable graph-owned output type | Phase D exact | Preserve in all certified mutations |
-| `M(a).S_a` | `TypedEClassRecord.interfaceValue().exposedSlots()` | Immutable graph-owned finite typed context | Phase D exact | Change only by certified Phase F restriction |
-| `M(a).B_a` | `TypedEClassRecord.storedShapes()` | Immutable ordered `CanonicalShape -> ShapeWitness` dependent map; current Phase E returns the shape and instantiating renaming only on the support-preserving domain | Phase D carrier exact; revised Appendix C result transport remains partial | Populate only after effective-support canonicalization and certified insertion are reconciled |
-| `M(a).G_a` | `TypedSymmetryGroup` | Exact finite typed closure on `S_a` | Typed group exact; nontrivial provenance partial | Add and transport Phase F symmetry certificates |
-| `H` | `TypedSlottedPortEGraph` hash-cons | Typed canonical shape to leader class ID with a checked iff invariant at quiescence | Phase D exact current-state invariant | Maintain transactionally during Phase G rebuild |
-| Dirty state | `GraphStatus` in `TypedSlottedPortEGraph` | Explicit `DIRTY`/`QUIESCENT`; dirty H queries reject | Phase D guard partial because parent-use queue/rebuild is absent | Add deduplicated dirty-parent queue and exact rebuild in Phase G |
-| Equality provenance | None | Direct mutation | Absent | Sealed typed certificate hierarchy |
-| `canon_G` | `ExhaustiveGraphCanonicalizer` and `ProductionGraphCanonicalizer`; legacy `SlotCanonicalizer` remains separate | Exact kernel orbit on support-preserving states; current result lacks the revised appendix's kernel, ambient embedding, and derivation | Differential tests pass on the guarded domain; PF-TB01-PF-TB03 block totality and stable certificate endpoints | Repair Sections 3.6-3.7/Theorem 1, implement the effective result, then add certified binder/symmetry inputs |
-| Indexed alpha relation | `TypedAlphaEquivalence` | Separate structural and graph-relative recursive judgements over nodes and all five ports | Structural relation exact; graph-relative relation partial until group provenance exists | Consume only Phase F certified group state |
-| Invariant checker | `TypedSlottedPortEGraph.checkInvariants()`; legacy scenario assertions | Audits all currently representable U/M/H, metadata, child, group, and quiescent hash-cons invariants | Phase D coverage partial pending certificates/rebuild | Extend checker with every Phase F-G transition object |
+| Port grammar | `theory.PortSchema` and `theory.PortValue`; legacy child lists remain separate | Six sealed schema/value variants implement `One`, indexed Seq/Bag/Set, unary `Bind`, and descriptor-indexed `BindBlock`; strict consumption requires certified container laws and binder automorphisms | Phase C carrier and Phase F provenance gate exact | Preserve certificates during source insertion and later integration |
+| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; legacy opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Phase I adapter must issue only supported signature axioms |
+| `U` | Exact `TypedRenamedUnionFind`; legacy `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, retained primitive paths, historical restriction transport, and composed certificates | Phase D/F carrier plus Phase G transport exact | Preserve this boundary in the Alloy adapter |
+| `M(a).tau_a` | `TypedEClassRecord.interfaceView().outputType()` | Immutable graph-owned output type | Phase D exact | Preserve in all certified mutations |
+| `M(a).S_a` | `TypedEClassRecord.interfaceView().exposedSlots()` | Immutable graph-owned finite typed context replaced only by a prevalidated factorization transaction; fresh insertion exposes exactly `Delta_n` | Phase G restriction and certified source insertion exact | Preserve this interface in the Phase I adapter |
+| `M(a).B_a` | `TypedEClassRecord.shapeWitnesses()` | Immutable ordered `CanonicalShape -> ShapeWitness` map; every strict entry has an exact EC, including fresh source insertions | Fixed-batch rebuild and source insertion exact | Preserve source provenance when adapting rewrites |
+| `M(a).G_a` | `TypedSymmetryGroup` | Exact finite typed closure on `S_a`, with derivations for every element and certified stabilizer transport through union/restriction | Phase F/G exact | Phase I adapter must issue only supported symmetry origins |
+| `H` | `TypedSlottedPortEGraph` hash-cons | Typed canonical shape to leader ID; rebuild removes stale keys, handles certified collisions, and restores the checked iff | Phase G exact for fixed batches | Preserve in Phase I measurement clients |
+| Dirty state | `GraphStatus`, `ParentRecordKey`, reverse parent uses | Explicit status, exact reverse index, deduplicated queue, and private in-flight marker; dirty H/canonicalization queries reject | Phase G exact | Measurement integration must retain the guard |
+| Equality provenance | `TypedEqualityCertificate` hierarchy and `CertificateVerifier` | Closed typed derivations including ECs, context restriction, concrete container normalization, structural alpha, kernel replay, witness definition, rebuild congruence, and effective-shape collision | Phase F/G plus repaired PF3 replay exact for represented transitions | Phase I must preserve certificate-bearing admission |
+| Coherent witness family | `CoherentWitnessFamily` | Graph-owned immutable EC/PC/SC reconstruction snapshot tied to a semantic revision; path compression preserves it and graph mutation makes it stale | Repaired PF3 coherent-prefix contract exact | Capture only at strict quiescent prefixes |
+| `leaderKernelTrace_G` | `LeaderKernelExtractor`, `LeaderKernelResult`, `LeaderKernelTrace`, `KernelReplayCertificate` | Structural extraction returns `(K,iota,xi)`; separate replay against coherent `w` composes find, container, congruence, and alpha steps to exact `d_n^w` endpoints | Structural and dependent boundaries exact | Do not relabel `xi` itself as a certificate |
+| `canon_G` | Both graph canonicalizers plus `CertifiedCanonicalizationResult`; legacy `SlotCanonicalizer` remains separate | Structural result remains `(K,p,sigma,iota,omega,xi)`; coherent wrapper adds only endpoint-checked `d_n^w`, and only `p` is hashed | Structural Phase E and repaired PF3 wrapper exact | Preserve the projection distinction in integration |
+| Indexed alpha relation | `TypedAlphaEquivalence` | Separate structural and graph-relative recursive judgements over nodes and all six ports; strict graph-relative comparison admits only certified group state | Phase E relation plus Phase F group provenance exact | Preserve this boundary in the Alloy adapter |
+| Invariant checker | `TypedSlottedPortEGraph.checkInvariants()`; legacy scenario assertions | Recomputes U/M domains, EC/PC/SC proofs, restriction history, exact reverse uses, dirty coverage, node-law provenance, nonleader emptiness, and quiescent H iff B | Phase G exact for represented state | Extend only for later source insertion/unfolding state |
 
 The corresponding row-level evidence is in
 [`theory-artifact-matrix.md`](theory-artifact-matrix.md), especially `STATE-*`,
@@ -125,8 +167,10 @@ The corresponding row-level evidence is in
 
 ## Current Mutation Inventory
 
-The following paths can change a graph-relevant value. None currently carries
-the complete typed certificate boundary required by the paper.
+The following legacy paths can change a graph-relevant value and remain
+deliberately outside the exact package. The exact package separately exposes
+fixed-batch admission, certified union/symmetry/restriction, provenance find,
+and deterministic rebuilding. Source/rewrite insertion is still closed.
 
 | Owner | Mutation path | State affected | Current guard | Formal consequence |
 | -- | -- | -- | -- | -- |
@@ -154,64 +198,86 @@ measurements can observe state without a formal graph-wide quiescence guard.
 
 ## Required Exact Engine Boundary
 
-Later phases extend the distinct Phase B-E path rather than relabeling a legacy
-arm. The carrier, port, signature, flat-construction, Definition 5 state, and
-canonicalization blocks shown here are implemented:
+Later phases extend the distinct Phase B-G path rather than relabeling a legacy
+arm. The carrier, port, signature, flat-construction, Definition 5 state,
+canonicalization, and certificate-admission blocks shown here are implemented:
 
 ```text
 Alloy typed adapter
   -> Typed source/rewrite syntax
   -> [implemented] GraphType / TypedSlotContext /
        TypedEmbedding / TypedInvocation
-  -> [implemented] OperatorDeclaration + structural law declarations
-       One / Seq / Bag / Set / Bind ports
+  -> [implemented] OperatorDeclaration + certified law declarations
+       One / K+/K0 Seq / Bag / Set / Bind / BindBlock ports
+       complete binder descriptors + certified descriptor-preserving Aut(beta)
        typed action, support, deterministic structural keys
        visible-only TypedENode.flatConstruct
   -> [implemented] CanonicalShape + ShapeWitness
-       TypedEClassRecord + TypedSymmetryGroup
-       TypedRenamedUnionFind + provenance-retaining find
+       TypedEClassRecord + certificate-bearing TypedSymmetryGroup
+       TypedRenamedUnionFind + certificate-preserving find
        TypedSlottedPortEGraph(U, M, H, status)
-  -> [support-preserving implementation, PF-TB01-PF-TB03 guarded] leader-first canon_G
-       exhaustive reference + streaming production
+  -> [implemented Phase DA] leaderKernelTrace_G
+       exact K_G(n) + iota_n + structural xi_n
+  -> [implemented Phase E] leader-first canon_G
+       quotient-first exhaustive reference + streaming production
        indexed structural / graph-relative alpha
-       least CanonicalShape + instantiating TypedRenaming
-  -> [Phase F] insertNode
-  -> unionCertified / addSymmetryCertified /
-     restrictInterfaceCertified
-  -> [Phase G] dirty-parent rebuild to quiescence
+       effective kernel + least shape + sigma/iota/omega/xi
+  -> [implemented Phase F] sealed typed certificate algebra
+       certified laws/groups + unionCertified + addSymmetryCertified
+  -> [implemented Phase G]
+       certified fixed-batch record admission + exact EC map
+       reverse parent index + deduplicated dirty records
+       atomic restrictInterfaceCertified transport
+       generated rebuild/collision certificates + certified union
+       uncapped rewrite-disabled rebuild to quiescence
+  -> [implemented repaired-PF3 boundary]
+       coherent EC/PC/SC w + replay(xi,w) -> exact d_n^w
+       complete certified result + graph-owned insertNode
   -> [Phase H] finite-unfolding conformance
 ```
 
-Phase D intentionally exposes no public raw link or record-registration API.
-Its package-private setup transitions exist only to test the state algebra
-before certificates are available. `ParentPath` retains primitive historical
-steps across compression, but those steps are not mislabeled as proof objects;
-Phase F must attach the required certificates.
+The exact path exposes no public raw link or record-registration API. Phase D's
+package-private setup transitions exist only to test the state algebra
+independently of later gates; Phase G's public admission method requires a
+complete certified fixed-batch record. The public graph defaults to strict
+certificate mode; `ParentPath` retains primitive certified steps across
+compression and reconstructs their transported transitive proof for the caller
+context.
 
-The exact graph already exposes the stable identifiers
-`typed-slotted-port-egraph` and `canon-g-production-v1`. Its public
-`canonicalize` method is an isolated provisional boundary: revised Appendix C
-requires a richer effective-support result before Phase F or I may depend on
-it. No current experiment or terminal package imports it, so that repair does
-not require changing any legacy measurement.
+The exact graph exposes stable identifiers `typed-slotted-port-egraph`,
+`leader-kernel-trace-v1`, `canon-g-production-v2`, and
+`typed-certificate-algebra-v3`; Phase G additionally reports
+`typed-fixed-batch-rebuild-v1`. Its public
+`extractLeaderKernel` method is the Phase DA structural boundary; its public
+`canonicalize` method is the isolated structural Phase E boundary;
+`canonicalizeCertified` is the coherent witness-dependent wrapper; and
+`insertNode` is the isolated certified source/rewrite mutation boundary. No
+current experiment or terminal package imports them, preserving Phase I.
 
-Phase E also exposes a formal conflict instead of weakening a carrier. Revised
-Appendix C selects effective support and a separate ambient embedding, but
-Sections 3.6-3.7, Corollary 3, and Theorem 1 still use the incompatible
-pre-find/full-support contract. Both implementations throw
-`CanonicalizationDomainException`; `theory-pre-phase-f-audit.md` records the
-three remaining theory blockers and the required proof updates.
+LNCS-3 resolves the former quotient-order defect: Figure 4 now minimizes each
+invocation and binder-block orbit before Bag aggregation or Set deduplication.
+It simultaneously regresses the provenance boundary by constructing `d_n`
+without coherent `w` and returning neither `K_G(n)` nor `xi_n`, contrary to the
+main Section 3.6 result and Theorem 1. The implementation follows the coherent
+main-text structural result and does not counterfeit a witness-indexed
+certificate. The repaired Figure 4 contract in `appendixC_v5.tex` separates
+`leaderKernelTrace_G` from `replayKernelCertificate_{G,w}` and returns all
+structural fields. The implementation now follows that split. The earlier
+LNCS-3 contradiction remains recorded historically in
+`theory-pre-phase-f-audit-lncs3.md`.
 
 The mutation surface should be limited to these graph-owned operations:
 
 | Operation | Accepted evidence | Postcondition |
 | -- | -- | -- |
-| `insertNode` | Well-typed flat node plus certified source-to-kernel provenance | Fresh class exposes the full support selected by the resolved PF-TB02 contract; shape witness and dirty uses recorded |
-| `unionCertified` | Typed input/rewrite or congruence certificate | Distinct leaders joined by a certified parent edge; same leader does not alter symmetry |
-| `addSymmetryCertified` | Symmetry certificate with endpoint equation and induced typed permutation | Verified generator added to `G_a` |
-| `restrictInterfaceCertified` | Independence/factorization certificate | All shapes, parent embeddings, and certificates transported; parents dirtied |
-| `findWithProvenance` | Typed invocation | Leader invocation, composed embedding, and certificate derivation |
-| `rebuild` | Dirty graph | Deduplicated parent worklist exhausted and `H` invariant restored |
+| `insertNode` (implemented, isolated) | Well-typed exact-support node plus current `CoherentWitnessFamily` | Replays `xi` to `d_n^w`, exposes `Delta_n`, stores the exact EC and complete source record, returns a certified leader invocation, and routes collisions through both source proofs |
+| `admitFixedBatchRecordCertified` (implemented) | Already-flat canonical records plus one exact EC per shape | Bottom-up finite batch is published without claiming source `d_n^w` insertion |
+| `unionCertified` (implemented) | `ParentEdgeCertificate` rooted in typed input/rewrite equality or forward congruence | Distinct leaders joined by a certified parent edge; same leader does not alter symmetry |
+| `addSymmetryCertified` (implemented) | Symmetry certificate with endpoint equation and induced typed permutation | Verified generator added to `G_a` |
+| `verifyInterfaceRestriction` (implemented, read-only) | Independence/factorization certificate | Exact proper subcontext, factorization, and shape-witness transport are accepted without partial mutation |
+| `restrictInterfaceCertified` (implemented) | Verified restriction certificate | Shapes/ECs, UF parent proofs, symmetry stabilizer, metadata history, and dirty parents are transported atomically |
+| `findWithProvenance` (implemented) | Current or certified historical typed invocation | Normalized invocation, leader invocation, embedding, and replayable restriction/parent certificate path |
+| `rebuild` (implemented) | Dirty fixed-batch graph | Deduplicated worklist exhausted, collisions certified, and exact `H` restored; no rewrite insertion or pass cap |
 | `checkInvariants` | Any state, with quiescence-aware checks | Exact diagnostic or success; no mutation except an explicitly selected rebuild |
 
 Internal parent edges, class interfaces, stored shapes, symmetry groups, and
@@ -222,14 +288,20 @@ hash-cons ownership must be immutable outside that boundary.
 | Phase | Depends on | Enables | Matrix families |
 | -- | -- | -- | -- |
 | B: foundational algebra (complete) | Phase A audit | Typed invocation and support | `TY`, `EMB`, `INV`, `SUP` |
-| C: ports and signatures (complete) | Phase B | Flat typed construction and Phase B-C total keys | `PORT`, `SIG`, structural portions of `LAW`, `FLAT`, `ORD` |
+| C: ports and signatures (structural gate complete under LNCS-3) | Phase B | Indexed `K+`/`K0`, first-class `BindBlock`, flat typed construction, and total keys | `PORT`, `SIG`, structural portions of `LAW`, `FLAT`, `ORD`, `BIND` |
 | D: state and renamed union-find (complete) | B-C | Direct `G=(U,M,H)` representation and provenance-retaining typed find | `STATE`, `UF`, `HC` |
-| E: canonicalization (support-preserving domain implemented; PF-TB01-PF-TB03 open) | B-D | Differential exhaustive/production kernel orbit, exact indexed alpha, and a provisional integration API | `ALPHA`, `GEQ`, `CAN`, `SYM`, `BIND` |
-| F: certificates (blocked at entry) | B-E plus resolution of PF-TB01-PF-TB03 | Certified source-to-kernel transport, union, symmetry, and restriction | `CERT`, `UNION`, `REST`, `CONG` |
-| G: rebuilding | D-F | Quiescent hash-cons and invariant checking | `REB`, `CHK`, `T1` |
+| E: canonicalization (structural gate complete) | B-D plus revised C | Quotient-first effective-kernel reference/production canonicalization, exact indexed alpha, and trace-bearing result | `ALPHA`, `GEQ`, `CAN`, `SYM`, `BIND` |
+| F: certificates (admission gate complete) | Revised C-E | Typed proof algebra, certified law/group admission, union, symmetry, restriction-factorization checking, and proof-preserving find | `CERT`, `UNION`, `REST`, `CONG` |
+| G: rebuilding plus repaired-PF3 source boundary | D-F plus repaired Figure 4 | Quiescent certified hash-cons, restriction transport, coherent replay, source insertion, and invariant checking | `REB`, `CHK`, `REST`, `CERT`, `MUT`, `T1` |
 | H: finite unfolding | F-G | Executable theorem conformance | `FIN`, `TEST` |
 | I: Alloy/evaluation integration | B-H | Separate theory-faithful experiment arm | `INT`, `RW` |
 
 No later phase can safely compensate for an unresolved foundational embedding
 or context invariant: types and map direction must be fixed before graph-state
-or certificate work begins.
+or certificate work begins. Phase F implementation evidence and the
+source-replay no-go boundary are in
+[`theory-phase-f-certificates.md`](theory-phase-f-certificates.md). Phase G
+algorithms, corrected faults, and gate evidence are in
+[`theory-phase-g-rebuild.md`](theory-phase-g-rebuild.md). The post-repair
+replay/insertion work is recorded in
+[`theory-pre-phase-h-unblocked.md`](theory-pre-phase-h-unblocked.md).

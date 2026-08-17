@@ -12,6 +12,8 @@ public final class TypedAlphaEquivalence {
             TypedENode left,
             TypedENode right,
             TypedRenaming renaming) {
+        CertificateVerifier.requireCertifiedAlphaNode(left);
+        CertificateVerifier.requireCertifiedAlphaNode(right);
         return nodesRelated(null, false, left, right, renaming);
     }
 
@@ -19,6 +21,8 @@ public final class TypedAlphaEquivalence {
             PortValue left,
             PortValue right,
             TypedRenaming renaming) {
+        CertificateVerifier.requireCertifiedAlphaPort(left);
+        CertificateVerifier.requireCertifiedAlphaPort(right);
         return portsRelated(null, false, left, right, renaming);
     }
 
@@ -122,19 +126,59 @@ public final class TypedAlphaEquivalence {
                     && everyHasMate(
                             graph, graphRelative, rightElements, leftElements, renaming.inverse());
         }
-        BindPort leftBinder = (BindPort) left;
-        BindPort rightBinder = (BindPort) right;
-        if (!leftBinder.boundSlot().type().equals(rightBinder.boundSlot().type())) {
-            return false;
+        if (left instanceof BindPort) {
+            BindPort leftBinder = (BindPort) left;
+            BindPort rightBinder = (BindPort) right;
+            if (!leftBinder.boundSlot().type().equals(rightBinder.boundSlot().type())) {
+                return false;
+            }
+            TypedRenaming extended = renaming.disjointExtension(
+                    leftBinder.boundSlot(), rightBinder.boundSlot()).asRenaming();
+            return portsRelated(
+                    graph,
+                    graphRelative,
+                    leftBinder.body(),
+                    rightBinder.body(),
+                    extended);
         }
-        TypedRenaming extended = renaming.disjointExtension(
-                leftBinder.boundSlot(), rightBinder.boundSlot()).asRenaming();
-        return portsRelated(
-                graph,
-                graphRelative,
-                leftBinder.body(),
-                rightBinder.body(),
-                extended);
+        if (left instanceof BindBlockPort) {
+            return blocksRelated(
+                    graph,
+                    graphRelative,
+                    (BindBlockPort) left,
+                    (BindBlockPort) right,
+                    renaming);
+        }
+        throw new IllegalStateException("Unhandled port value " + left.getClass().getName());
+    }
+
+    private static boolean blocksRelated(
+            TypedSlottedPortEGraph graph,
+            boolean graphRelative,
+            BindBlockPort left,
+            BindBlockPort right,
+            TypedRenaming freeRenaming) {
+        BinderAutomorphismGroup group = graphRelative
+                ? graph.binderGroupForCanonicalization(left.schema().descriptor())
+                : left.schema().descriptor().automorphisms();
+        for (TypedPermutation automorphism : group.elements()) {
+            TypedRenaming boundAlignment = left.descriptorToOccurrence()
+                    .inverse()
+                    .andThen(automorphism)
+                    .andThen(right.descriptorToOccurrence());
+            TypedRenaming extended = freeRenaming
+                    .disjointUnion(boundAlignment)
+                    .asRenaming();
+            if (portsRelated(
+                    graph,
+                    graphRelative,
+                    left.body(),
+                    right.body(),
+                    extended)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean onePortsRelated(
@@ -168,7 +212,8 @@ public final class TypedAlphaEquivalence {
             return false;
         }
         TypedEmbedding renamedLeft = leftLeader.embedding().andThen(renaming);
-        TypedSymmetryGroup group = graph.eclass(leftLeader.eclass().id()).symmetryGroup();
+        TypedSymmetryGroup group = graph.symmetryGroupForCanonicalization(
+                leftLeader.eclass());
         for (TypedPermutation permutation : group.elements()) {
             TypedEmbedding permutedRight = permutation.andThen(rightLeader.embedding());
             if (renamedLeft.equals(permutedRight)) {

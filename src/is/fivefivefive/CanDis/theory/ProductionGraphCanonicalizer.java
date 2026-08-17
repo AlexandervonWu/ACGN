@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/** Streaming production implementation of the exact finite canon_G orbit. */
+/** Streaming production implementation of quotient-first {@code canon_G}. */
 public final class ProductionGraphCanonicalizer implements TypedGraphCanonicalizer {
-    public static final String VERSION = "canon-g-production-v1";
+    public static final String VERSION = "canon-g-production-v2";
     private static final ProductionGraphCanonicalizer INSTANCE =
             new ProductionGraphCanonicalizer();
 
@@ -26,16 +26,16 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
         synchronized (graph) {
             graph.requireQuiescentForCanonicalization();
             requireExactSource(node);
-            TypedENode leaderNormalized = LeaderNormalizer.normalize(graph, node);
-            requireLeaderNormalizationPreservesSupport(node, leaderNormalized);
+            LeaderKernelResult leaderKernel = graph.extractLeaderKernel(node);
+            TypedENode kernel = leaderKernel.kernel();
             BestCandidate best = new BestCandidate();
-            TypedSlotContext canonicalContext = leaderNormalized.support().canonicalFreeContext();
+            TypedSlotContext canonicalContext = kernel.context().canonicalFreeContext();
             TypedRenamingEnumerator.forEach(
                     canonicalContext,
-                    leaderNormalized.support(),
+                    kernel.context(),
                     witness -> considerRenaming(
-                            graph, leaderNormalized, canonicalContext, witness, best));
-            CanonicalizationResult result = best.result(node);
+                            graph, kernel, canonicalContext, witness, best));
+            CanonicalizationResult result = best.result(leaderKernel);
             if (!result.verifyWitness(graph)) {
                 throw new IllegalStateException(
                         "Production canon_G returned a witness that does not replay");
@@ -61,25 +61,14 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
         TypedRenaming sourceToCanonical = witness.inverse();
         List<PortValue> ports = new ArrayList<>(node.ports().size());
         for (PortValue port : node.ports()) {
-            ports.add(canonicalPort(graph, port, sourceToCanonical));
+            ports.add(quotientPort(graph, port, sourceToCanonical));
         }
         TypedENode candidate = node.rebuildCanonicalCandidate(canonicalContext, ports);
         requireCanonicalSupport(candidate, canonicalContext);
         best.consider(CanonicalShape.of(candidate), witness);
     }
 
-    private static void requireLeaderNormalizationPreservesSupport(
-            TypedENode source,
-            TypedENode normalized) {
-        if (!source.support().equals(normalized.support())) {
-            throw new CanonicalizationDomainException(
-                    "Leader normalization changed exact support from "
-                            + source.support() + " to " + normalized.support()
-                            + "; Figure 4 cannot provide its required bijective witness");
-        }
-    }
-
-    private static PortValue canonicalPort(
+    private static PortValue quotientPort(
             TypedSlottedPortEGraph graph,
             PortValue port,
             TypedRenaming renaming) {
@@ -92,21 +81,24 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
         }
         if (port instanceof SeqPort) {
             SeqPort sequence = (SeqPort) port;
-            List<PortValue> elements = canonicalElements(
+            List<PortValue> elements = quotientElements(
                     graph, sequence.elements(), renaming);
             return new SeqPort(sequence.schema(), renaming.codomain(), elements);
         }
         if (port instanceof BagPort) {
             BagPort bag = (BagPort) port;
-            List<PortValue> occurrences = canonicalElements(
+            List<PortValue> occurrences = quotientElements(
                     graph, bag.occurrences(), renaming);
             return new BagPort(bag.schema(), renaming.codomain(), occurrences);
         }
         if (port instanceof SetPort) {
             SetPort set = (SetPort) port;
-            List<PortValue> elements = canonicalElements(
+            List<PortValue> elements = quotientElements(
                     graph, set.elements(), renaming);
             return new SetPort(set.schema(), renaming.codomain(), elements);
+        }
+        if (port instanceof BindBlockPort) {
+            return quotientBlock(graph, (BindBlockPort) port, renaming);
         }
         BindPort binder = (BindPort) port;
         TypedSlot canonicalBound = CanonicalSlotAlphabet.fresh(
@@ -115,18 +107,50 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
                 renaming.codomain());
         TypedRenaming extended = renaming.disjointExtension(
                 binder.boundSlot(), canonicalBound).asRenaming();
-        PortValue body = canonicalPort(graph, binder.body(), extended);
+        PortValue body = quotientPort(graph, binder.body(), extended);
         return new BindPort(
                 binder.schema(), renaming.codomain(), canonicalBound, body);
     }
 
-    private static List<PortValue> canonicalElements(
+    private static BindBlockPort quotientBlock(
+            TypedSlottedPortEGraph graph,
+            BindBlockPort block,
+            TypedRenaming freeRenaming) {
+        BinderBlockDescriptor descriptor = block.schema().descriptor();
+        TypedRenaming targetOccurrence = descriptor.freshOccurrenceRenaming(
+                freeRenaming.codomain());
+        BindBlockPort best = null;
+        for (TypedPermutation permutation
+                : graph.binderGroupForCanonicalization(descriptor).elements()) {
+            TypedRenaming boundRenaming = block.descriptorToOccurrence()
+                    .inverse()
+                    .andThen(permutation)
+                    .andThen(targetOccurrence);
+            TypedRenaming bodyRenaming = freeRenaming
+                    .disjointUnion(boundRenaming)
+                    .asRenaming();
+            PortValue body = quotientPort(graph, block.body(), bodyRenaming);
+            BindBlockPort candidate = new BindBlockPort(
+                    block.schema(),
+                    freeRenaming.codomain(),
+                    targetOccurrence,
+                    body);
+            best = least(best, candidate);
+        }
+        if (best == null) {
+            throw new IllegalStateException(
+                    "A binder automorphism group must contain identity");
+        }
+        return best;
+    }
+
+    private static List<PortValue> quotientElements(
             TypedSlottedPortEGraph graph,
             List<PortValue> elements,
             TypedRenaming renaming) {
         List<PortValue> result = new ArrayList<>(elements.size());
         for (PortValue element : elements) {
-            result.add(canonicalPort(graph, element, renaming));
+            result.add(quotientPort(graph, element, renaming));
         }
         return result;
     }
@@ -143,10 +167,13 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
                     new SlotPortLeaf(renaming.apply(((SlotPortLeaf) leaf).slot())));
         }
 
-        TypedInvocation invocation = ((InvocationPortLeaf) leaf).invocation();
-        TypedFindResult find = graph.findForCanonicalization(invocation);
-        TypedInvocation leader = find.leaderInvocation();
-        TypedSymmetryGroup group = graph.eclass(leader.eclass().id()).symmetryGroup();
+        TypedInvocation leader = ((InvocationPortLeaf) leaf).invocation();
+        if (!graph.isLeader(leader.eclass().id())) {
+            throw new IllegalStateException(
+                    "Quotient normalization requires leader-kernel invocations");
+        }
+        TypedSymmetryGroup group = graph.symmetryGroupForCanonicalization(
+                leader.eclass());
         OnePort best = null;
         for (TypedPermutation permutation : group.elements()) {
             TypedEmbedding embedding = permutation
@@ -157,10 +184,7 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
                     renaming.codomain(),
                     new InvocationPortLeaf(new TypedInvocation(
                             leader.eclass(), embedding)));
-            if (best == null
-                    || candidate.structuralKey().compareTo(best.structuralKey()) < 0) {
-                best = candidate;
-            }
+            best = least(best, candidate);
         }
         if (best == null) {
             throw new IllegalStateException("A typed symmetry group must contain identity");
@@ -168,14 +192,25 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
         return best;
     }
 
+    private static <T extends PortValue> T least(T current, T candidate) {
+        if (current == null) {
+            return candidate;
+        }
+        int comparison = candidate.structuralKey().compareTo(current.structuralKey());
+        if (comparison == 0 && !candidate.equals(current)) {
+            throw new IllegalStateException(
+                    "Structural key collision between unequal canonical ports");
+        }
+        return comparison < 0 ? candidate : current;
+    }
+
     private static void requireCanonicalSupport(
             TypedENode candidate,
             TypedSlotContext canonicalContext) {
         if (!candidate.support().equals(canonicalContext)) {
             throw new CanonicalizationDomainException(
-                    "Leader normalization changed exact support from "
-                            + canonicalContext + " to " + candidate.support()
-                            + "; Figure 4 cannot provide its required bijective witness");
+                    "Quotient normalization changed exact kernel support from "
+                            + canonicalContext + " to " + candidate.support());
         }
     }
 
@@ -208,12 +243,12 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
             }
         }
 
-        CanonicalizationResult result(TypedENode source) {
+        CanonicalizationResult result(LeaderKernelResult leaderKernel) {
             if (shape == null || witness == null) {
                 throw new IllegalStateException(
                         "No typed free-slot bijection was available to canon_G");
             }
-            return new CanonicalizationResult(source, shape, witness);
+            return new CanonicalizationResult(leaderKernel, shape, witness);
         }
     }
 }

@@ -40,6 +40,57 @@ final class TypedRenamedUnionFind {
         assignments.put(step.child().id(), ParentAssignment.direct(step));
     }
 
+    /** Atomically narrows one leader and replays every incident parent path. */
+    synchronized void restrictLeader(
+            InterfaceRestrictionCertificate restriction) {
+        Objects.requireNonNull(restriction, "restriction");
+        CertificateVerifier.verifyInterfaceRestriction(restriction);
+        TypedEClassInterface original = restriction.originalInterface();
+        TypedEClassInterface replacement = restriction.restrictedInterface();
+        requireRegistered(original);
+        if (!isLeader(original.id())) {
+            throw new IllegalArgumentException(
+                    "Only a current leader interface may be restricted");
+        }
+
+        Map<EClassId, TypedFindResult> affected = new TreeMap<>();
+        for (TypedEClassInterface candidate : interfaces.values()) {
+            TypedFindResult result = findWithoutCompression(
+                    TypedInvocation.identity(candidate));
+            if (result.leaderInvocation().eclass().equals(original)) {
+                affected.put(candidate.id(), result);
+            }
+        }
+
+        Map<EClassId, ParentAssignment> replacements = new TreeMap<>();
+        replacements.put(original.id(), ParentAssignment.root(replacement));
+        for (Map.Entry<EClassId, TypedFindResult> entry : affected.entrySet()) {
+            if (entry.getKey().equals(original.id())) {
+                continue;
+            }
+            TypedFindResult result = entry.getValue();
+            TypedEClassInterface child = result.originalInvocation().eclass();
+            TypedEmbedding oldLeaderInChild = result.leaderInvocation().embedding();
+            TypedEmbedding newLeaderInChild = restriction.inclusion()
+                    .andThen(oldLeaderInChild);
+            TypedEqualityCertificate path = result.parentCertificate();
+            TypedEqualityCertificate factorization = EqualityCertificates.rename(
+                    restriction.factorization(), oldLeaderInChild);
+            TypedEqualityCertificate derivation = EqualityCertificates.transitive(
+                    path, factorization);
+            ParentEdgeCertificate edge = new ParentEdgeCertificate(
+                    child,
+                    new TypedInvocation(replacement, newLeaderInChild),
+                    derivation);
+            replacements.put(child.id(), ParentAssignment.direct(
+                    ParentStep.certified(edge)));
+        }
+
+        interfaces.put(original.id(), replacement);
+        assignments.putAll(replacements);
+        checkInvariants();
+    }
+
     synchronized TypedFindResult findWithProvenance(TypedInvocation invocation) {
         return find(invocation, true);
     }

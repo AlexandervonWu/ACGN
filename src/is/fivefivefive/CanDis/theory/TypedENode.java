@@ -141,10 +141,23 @@ public final class TypedENode implements HasSlotSupport {
         boolean empty = (port instanceof SeqPort && ((SeqPort) port).isEmpty())
                 || (port instanceof BagPort && ((BagPort) port).isEmpty())
                 || (port instanceof SetPort && ((SetPort) port).isEmpty());
-        if (empty && !operator.lawForPath(path).hasUnit()) {
-            throw new IllegalArgumentException(
-                    "Empty variadic port at " + path
-                            + " requires an explicit unit-law declaration");
+        if (empty) {
+            ContainerEmptiness emptiness;
+            if (port instanceof SeqPort) {
+                emptiness = ((SeqPort) port).schema().emptiness();
+            } else if (port instanceof BagPort) {
+                emptiness = ((BagPort) port).schema().emptiness();
+            } else {
+                emptiness = ((SetPort) port).schema().emptiness();
+            }
+            if (!emptiness.admitsEmpty()) {
+                throw new IllegalArgumentException("Empty K+ port at " + path);
+            }
+            if (!operator.lawForPath(path).hasUnit()) {
+                throw new IllegalArgumentException(
+                        "Empty K0 port at " + path
+                                + " requires an explicit unit-law declaration");
+            }
         }
         PortPath childPath = path.child();
         if (port instanceof SeqPort) {
@@ -161,6 +174,8 @@ public final class TypedENode implements HasSlotSupport {
             }
         } else if (port instanceof BindPort) {
             rejectUncertifiedEmpty(childPath, ((BindPort) port).body());
+        } else if (port instanceof BindBlockPort) {
+            rejectUncertifiedEmpty(childPath, ((BindBlockPort) port).body());
         }
     }
 

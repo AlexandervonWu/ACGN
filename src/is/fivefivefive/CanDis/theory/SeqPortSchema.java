@@ -5,12 +5,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-/** Schema {@code Seq(kappa)}. */
+/** Schema {@code Seq^epsilon(kappa)}. */
 public final class SeqPortSchema implements PortSchema {
+    private final ContainerEmptiness emptiness;
     private final PortSchema elementSchema;
 
+    /** Shorthand for the nonempty schema {@code Seq+(kappa)}. */
     public SeqPortSchema(PortSchema elementSchema) {
+        this(ContainerEmptiness.K_PLUS, elementSchema);
+    }
+
+    public SeqPortSchema(ContainerEmptiness emptiness, PortSchema elementSchema) {
+        this.emptiness = Objects.requireNonNull(emptiness, "emptiness");
         this.elementSchema = Objects.requireNonNull(elementSchema, "elementSchema");
+    }
+
+    public ContainerEmptiness emptiness() {
+        return emptiness;
     }
 
     public PortSchema elementSchema() {
@@ -29,28 +40,31 @@ public final class SeqPortSchema implements PortSchema {
 
     @Override
     public SeqPortSchema substitute(Map<String, GraphType> substitution) {
-        return new SeqPortSchema(elementSchema.substitute(substitution));
+        return new SeqPortSchema(emptiness, elementSchema.substitute(substitution));
     }
 
     @Override
     public StructuralKey structuralKey() {
-        return StructuralKey.branch(
-                "schema/seq", Collections.singletonList(elementSchema.structuralKey()));
+        return StructuralKey.of(
+                "schema/seq",
+                Collections.singletonList(emptiness.name()),
+                Collections.singletonList(elementSchema.structuralKey()));
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof SeqPortSchema
+                && emptiness == ((SeqPortSchema) other).emptiness
                 && elementSchema.equals(((SeqPortSchema) other).elementSchema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind(), elementSchema);
+        return Objects.hash(kind(), emptiness, elementSchema);
     }
 
     @Override
     public String toString() {
-        return "Seq(" + elementSchema + ")";
+        return "Seq" + emptiness.symbol() + "(" + elementSchema + ")";
     }
 }

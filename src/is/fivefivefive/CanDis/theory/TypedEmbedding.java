@@ -119,6 +119,20 @@ public sealed class TypedEmbedding permits TypedRenaming {
         return new TypedEmbedding(source.plus(sourceSlot), codomain.plus(targetSlot), extended);
     }
 
+    public TypedEmbedding disjointUnion(TypedEmbedding other) {
+        Objects.requireNonNull(other, "other");
+        if (!source.isDisjoint(other.source) || !codomain.isDisjoint(other.codomain)) {
+            throw new IllegalArgumentException(
+                    "Embedding union requires disjoint source and codomain contexts");
+        }
+        Map<TypedSlot, TypedSlot> combined = new LinkedHashMap<>(mapping);
+        combined.putAll(other.mapping);
+        return new TypedEmbedding(
+                source.union(other.source),
+                codomain.union(other.codomain),
+                combined);
+    }
+
     /** Returns {@code after o this}. */
     public TypedEmbedding andThen(TypedEmbedding after) {
         Objects.requireNonNull(after, "after");

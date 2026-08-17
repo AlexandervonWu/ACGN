@@ -5,12 +5,23 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-/** Schema {@code Set(kappa)}. */
+/** Schema {@code Set^epsilon(kappa)}. */
 public final class SetPortSchema implements PortSchema {
+    private final ContainerEmptiness emptiness;
     private final PortSchema elementSchema;
 
+    /** Shorthand for the nonempty schema {@code Set+(kappa)}. */
     public SetPortSchema(PortSchema elementSchema) {
+        this(ContainerEmptiness.K_PLUS, elementSchema);
+    }
+
+    public SetPortSchema(ContainerEmptiness emptiness, PortSchema elementSchema) {
+        this.emptiness = Objects.requireNonNull(emptiness, "emptiness");
         this.elementSchema = Objects.requireNonNull(elementSchema, "elementSchema");
+    }
+
+    public ContainerEmptiness emptiness() {
+        return emptiness;
     }
 
     public PortSchema elementSchema() {
@@ -29,28 +40,31 @@ public final class SetPortSchema implements PortSchema {
 
     @Override
     public SetPortSchema substitute(Map<String, GraphType> substitution) {
-        return new SetPortSchema(elementSchema.substitute(substitution));
+        return new SetPortSchema(emptiness, elementSchema.substitute(substitution));
     }
 
     @Override
     public StructuralKey structuralKey() {
-        return StructuralKey.branch(
-                "schema/set", Collections.singletonList(elementSchema.structuralKey()));
+        return StructuralKey.of(
+                "schema/set",
+                Collections.singletonList(emptiness.name()),
+                Collections.singletonList(elementSchema.structuralKey()));
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof SetPortSchema
+                && emptiness == ((SetPortSchema) other).emptiness
                 && elementSchema.equals(((SetPortSchema) other).elementSchema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind(), elementSchema);
+        return Objects.hash(kind(), emptiness, elementSchema);
     }
 
     @Override
     public String toString() {
-        return "Set(" + elementSchema + ")";
+        return "Set" + emptiness.symbol() + "(" + elementSchema + ")";
     }
 }

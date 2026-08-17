@@ -5,13 +5,15 @@ import java.util.Set;
 
 /** The explicit port grammar from Definition 3. */
 public sealed interface PortSchema permits
-        OnePortSchema, SeqPortSchema, BagPortSchema, SetPortSchema, BindPortSchema {
+        OnePortSchema, SeqPortSchema, BagPortSchema, SetPortSchema,
+        BindPortSchema, BindBlockPortSchema {
     enum Kind {
         ONE,
         SEQ,
         BAG,
         SET,
-        BIND
+        BIND,
+        BIND_BLOCK
     }
 
     Kind kind();

@@ -25,10 +25,12 @@ public final class TheoryCanonicalizationTest {
         testGraphRelativeRelationDistinctions();
         testContainerCanonicalizationAndGlobalSetRenaming();
         testLeaderNormalizationAndSymmetry();
+        testBinderBlockQuotientFirst();
+        testNestedBinderBlockQuotient();
         testGeneratedSymmetryDifferential();
         testGeneratedDifferentialCanonicalization();
         testDeterminismAndIdempotence();
-        testDirtyAndSupportShrinkRejection();
+        testDirtyRejectionAndSupportContraction();
         testCanonicalizerBoundary();
         System.out.println("TheoryCanonicalizationTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
@@ -67,7 +69,7 @@ public final class TheoryCanonicalizationTest {
                 operator,
                 source,
                 Collections.singletonList(new SeqPort(schema, source, elements)));
-        assertDifferential(new TypedSlottedPortEGraph(), node);
+        assertDifferential(TypedSlottedPortEGraph.structuralFixture(), node);
     }
 
     private static void testStructuralAlphaGroupoidAndBinders() {
@@ -123,9 +125,9 @@ public final class TheoryCanonicalizationTest {
                         leftNode, rightNode, freeRename),
                 "Binder alpha accepts a fresh same-typed bound coordinate");
         CanonicalizationResult leftCanonical = assertDifferential(
-                new TypedSlottedPortEGraph(), leftNode);
+                TypedSlottedPortEGraph.structuralFixture(), leftNode);
         CanonicalizationResult rightCanonical = assertDifferential(
-                new TypedSlottedPortEGraph(), rightNode);
+                TypedSlottedPortEGraph.structuralFixture(), rightNode);
         check(leftCanonical.shape().equals(rightCanonical.shape()),
                 "Alpha-renamed binders have one canonical shape");
         BindPort canonicalBinder = (BindPort) leftCanonical.shape().node().ports().get(0);
@@ -149,7 +151,7 @@ public final class TheoryCanonicalizationTest {
                 EClassId.of(100), GraphType.BOOL, context);
         TypedEClassInterface child = new TypedEClassInterface(
                 EClassId.of(101), GraphType.BOOL, context);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(parent));
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(child));
         graph.linkLeadersForPhaseD(new ParentStep(
@@ -180,7 +182,7 @@ public final class TheoryCanonicalizationTest {
 
         TypedEClassInterface unsymmetric = new TypedEClassInterface(
                 EClassId.of(102), GraphType.BOOL, context);
-        TypedSlottedPortEGraph identityGraph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph identityGraph = TypedSlottedPortEGraph.structuralFixture();
         identityGraph.registerRecordForPhaseD(TypedEClassRecord.empty(unsymmetric));
         TypedInvocation direct = TypedInvocation.identity(unsymmetric);
         TypedInvocation swapped = new TypedInvocation(
@@ -220,7 +222,7 @@ public final class TheoryCanonicalizationTest {
         TypedENode renamedNode = TypedENode.construct(
                 setOperator, renamed, Collections.singletonList(renamedSet));
 
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         CanonicalizationResult left = assertDifferential(graph, sourceNode);
         CanonicalizationResult right = assertDifferential(graph, renamedNode);
         check(left.shape().equals(right.shape()),
@@ -287,7 +289,7 @@ public final class TheoryCanonicalizationTest {
                 EClassId.of(200), GraphType.BOOL, context);
         TypedEClassInterface child = new TypedEClassInterface(
                 EClassId.of(201), GraphType.BOOL, context);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(TypedEClassRecord.of(
                 leader, Collections.emptyMap(), symmetry));
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(child));
@@ -364,9 +366,131 @@ public final class TheoryCanonicalizationTest {
                 "Bag retains both occurrences after symmetry-orbit minimization");
     }
 
+    private static void testBinderBlockQuotientFirst() {
+        TypedSlot descriptorFirst = TypedSlot.canonicalBound(USER, 0);
+        TypedSlot descriptorSecond = TypedSlot.canonicalBound(USER, 1);
+        TypedSlotContext descriptorContext = TypedSlotContext.of(
+                descriptorFirst, descriptorSecond);
+        StructuralKey domain = StructuralKey.leaf("binder-domain", "User");
+        BinderCoordinateDescriptor first = new BinderCoordinateDescriptor(
+                descriptorFirst,
+                domain,
+                "ALL",
+                "SET",
+                0,
+                TypedSlotContext.empty());
+        BinderCoordinateDescriptor second = new BinderCoordinateDescriptor(
+                descriptorSecond,
+                domain,
+                "ALL",
+                "SET",
+                0,
+                TypedSlotContext.empty());
+        TypedPermutation swap = TypedPermutation.of(
+                descriptorContext,
+                mapOf(
+                        descriptorFirst, descriptorSecond,
+                        descriptorSecond, descriptorFirst));
+        BinderBlockDescriptor symmetric = new BinderBlockDescriptor(
+                Arrays.asList(first, second), Collections.singletonList(swap));
+        OnePortSchema oneUser = new OnePortSchema(USER);
+        SeqPortSchema bodySchema = new SeqPortSchema(oneUser);
+        BindBlockPortSchema blockSchema = new BindBlockPortSchema(
+                symmetric, bodySchema);
+
+        TypedSlot free = TypedSlot.source(USER, 600);
+        TypedSlotContext context = TypedSlotContext.singleton(free);
+        TypedRenaming occurrence = symmetric.freshOccurrenceRenaming(context);
+        List<TypedSlot> bound = new ArrayList<>(occurrence.codomain().slots());
+        TypedSlotContext bodyContext = context.union(occurrence.codomain());
+        BindBlockPort direct = new BindBlockPort(
+                blockSchema,
+                context,
+                occurrence,
+                new SeqPort(
+                        bodySchema,
+                        bodyContext,
+                        Arrays.asList(
+                                OnePort.slot(bodyContext, free),
+                                OnePort.slot(bodyContext, bound.get(0)),
+                                OnePort.slot(bodyContext, bound.get(1)))));
+        BindBlockPort permuted = new BindBlockPort(
+                blockSchema,
+                context,
+                occurrence,
+                new SeqPort(
+                        bodySchema,
+                        bodyContext,
+                        Arrays.asList(
+                                OnePort.slot(bodyContext, free),
+                                OnePort.slot(bodyContext, bound.get(1)),
+                                OnePort.slot(bodyContext, bound.get(0)))));
+
+        SetPortSchema setSchema = new SetPortSchema(blockSchema);
+        InstantiatedOperator setOperator = operator(
+                "set-of-binder-blocks",
+                Collections.singletonList(setSchema),
+                GraphType.BOOL);
+        TypedENode setNode = TypedENode.construct(
+                setOperator,
+                context,
+                Collections.singletonList(new SetPort(
+                        setSchema, context, Arrays.asList(direct, permuted))));
+        check(((SetPort) setNode.ports().get(0)).elements().size() == 2,
+                "Structurally distinct block occurrences enter the local quotient separately");
+        CanonicalizationResult setResult = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(), setNode);
+        check(((SetPort) setResult.shape().node().ports().get(0)).elements().size() == 1,
+                "Set deduplicates binder-block orbit mates after local quotienting");
+
+        BagPortSchema bagSchema = new BagPortSchema(blockSchema);
+        InstantiatedOperator bagOperator = operator(
+                "bag-of-binder-blocks",
+                Collections.singletonList(bagSchema),
+                GraphType.BOOL);
+        CanonicalizationResult bagResult = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(),
+                TypedENode.construct(
+                        bagOperator,
+                        context,
+                        Collections.singletonList(new BagPort(
+                                bagSchema, context, Arrays.asList(direct, permuted)))));
+        BagPort canonicalBag = (BagPort) bagResult.shape().node().ports().get(0);
+        check(canonicalBag.occurrences().size() == 2
+                        && canonicalBag.occurrences().get(0)
+                                .equals(canonicalBag.occurrences().get(1)),
+                "Bag retains both locally quotient-equal block occurrences");
+
+        BinderBlockDescriptor identityOnly = new BinderBlockDescriptor(
+                Arrays.asList(first, second), Collections.emptyList());
+        BindBlockPortSchema identityBlockSchema = new BindBlockPortSchema(
+                identityOnly, bodySchema);
+        BindBlockPort identityDirect = new BindBlockPort(
+                identityBlockSchema, context, occurrence, direct.body());
+        BindBlockPort identityPermuted = new BindBlockPort(
+                identityBlockSchema, context, occurrence, permuted.body());
+        SetPortSchema identitySetSchema = new SetPortSchema(identityBlockSchema);
+        InstantiatedOperator identitySetOperator = operator(
+                "identity-set-of-binder-blocks",
+                Collections.singletonList(identitySetSchema),
+                GraphType.BOOL);
+        CanonicalizationResult identityResult = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(),
+                TypedENode.construct(
+                        identitySetOperator,
+                        context,
+                        Collections.singletonList(new SetPort(
+                                identitySetSchema,
+                                context,
+                                Arrays.asList(identityDirect, identityPermuted)))));
+        check(((SetPort) identityResult.shape().node().ports().get(0))
+                        .elements().size() == 2,
+                "Identity-only Aut(beta) never guesses a same-typed block permutation");
+    }
+
     private static void testGeneratedDifferentialCanonicalization() {
         Random random = new Random(SEED);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         for (int trial = 0; trial < 160; trial++) {
             int slotCount = 1 + random.nextInt(4);
             List<TypedSlot> slots = new ArrayList<>();
@@ -444,6 +568,110 @@ public final class TheoryCanonicalizationTest {
                 "Different canonical patterns have no graph-relative typed renaming");
     }
 
+    private static void testNestedBinderBlockQuotient() {
+        StructuralKey domain = StructuralKey.leaf("binder-domain", "User");
+        TypedSlot innerFirst = TypedSlot.canonicalBound(USER, 0);
+        TypedSlot innerSecond = TypedSlot.canonicalBound(USER, 1);
+        TypedSlotContext innerDescriptorContext = TypedSlotContext.of(
+                innerFirst, innerSecond);
+        BinderCoordinateDescriptor innerFirstCoordinate =
+                new BinderCoordinateDescriptor(
+                        innerFirst, domain, "ALL", "SET", 0,
+                        TypedSlotContext.empty());
+        BinderCoordinateDescriptor innerSecondCoordinate =
+                new BinderCoordinateDescriptor(
+                        innerSecond, domain, "ALL", "SET", 0,
+                        TypedSlotContext.empty());
+        BinderBlockDescriptor innerDescriptor = new BinderBlockDescriptor(
+                Arrays.asList(innerFirstCoordinate, innerSecondCoordinate),
+                Collections.singletonList(TypedPermutation.of(
+                        innerDescriptorContext,
+                        mapOf(
+                                innerFirst, innerSecond,
+                                innerSecond, innerFirst))));
+
+        TypedSlot outerSlot = TypedSlot.canonicalBound(USER, 0);
+        BinderBlockDescriptor outerDescriptor = new BinderBlockDescriptor(
+                Collections.singletonList(new BinderCoordinateDescriptor(
+                        outerSlot,
+                        domain,
+                        "ALL",
+                        "SET",
+                        BinderCoordinateDescriptor.NO_DISJOINTNESS_CLASS,
+                        TypedSlotContext.empty())),
+                Collections.emptyList());
+        SeqPortSchema innerBodySchema = new SeqPortSchema(new OnePortSchema(USER));
+        BindBlockPortSchema innerBlockSchema = new BindBlockPortSchema(
+                innerDescriptor, innerBodySchema);
+        SetPortSchema outerBodySchema = new SetPortSchema(innerBlockSchema);
+        BindBlockPortSchema outerBlockSchema = new BindBlockPortSchema(
+                outerDescriptor, outerBodySchema);
+
+        TypedSlot free = TypedSlot.source(USER, 650);
+        TypedSlotContext freeContext = TypedSlotContext.singleton(free);
+        TypedRenaming outerOccurrence = outerDescriptor.freshOccurrenceRenaming(
+                freeContext);
+        TypedSlot outerBound = outerOccurrence.codomain().slots().first();
+        TypedSlotContext outerBodyContext = freeContext.union(
+                outerOccurrence.codomain());
+        TypedRenaming innerOccurrence = innerDescriptor.freshOccurrenceRenaming(
+                outerBodyContext);
+        List<TypedSlot> innerBound = new ArrayList<>(
+                innerOccurrence.codomain().slots());
+        TypedSlotContext innerBodyContext = outerBodyContext.union(
+                innerOccurrence.codomain());
+        BindBlockPort innerDirect = new BindBlockPort(
+                innerBlockSchema,
+                outerBodyContext,
+                innerOccurrence,
+                new SeqPort(
+                        innerBodySchema,
+                        innerBodyContext,
+                        Arrays.asList(
+                                OnePort.slot(innerBodyContext, free),
+                                OnePort.slot(innerBodyContext, outerBound),
+                                OnePort.slot(innerBodyContext, innerBound.get(0)),
+                                OnePort.slot(innerBodyContext, innerBound.get(1)))));
+        BindBlockPort innerSwapped = new BindBlockPort(
+                innerBlockSchema,
+                outerBodyContext,
+                innerOccurrence,
+                new SeqPort(
+                        innerBodySchema,
+                        innerBodyContext,
+                        Arrays.asList(
+                                OnePort.slot(innerBodyContext, free),
+                                OnePort.slot(innerBodyContext, outerBound),
+                                OnePort.slot(innerBodyContext, innerBound.get(1)),
+                                OnePort.slot(innerBodyContext, innerBound.get(0)))));
+        BindBlockPort outerBlock = new BindBlockPort(
+                outerBlockSchema,
+                freeContext,
+                outerOccurrence,
+                new SetPort(
+                        outerBodySchema,
+                        outerBodyContext,
+                        Arrays.asList(innerDirect, innerSwapped)));
+        InstantiatedOperator operator = operator(
+                "nested-binder-blocks",
+                Collections.singletonList(outerBlockSchema),
+                GraphType.BOOL);
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
+        CanonicalizationResult result = assertDifferential(
+                graph,
+                TypedENode.construct(
+                        operator,
+                        freeContext,
+                        Collections.singletonList(outerBlock)));
+        BindBlockPort canonicalOuter = (BindBlockPort) result.shape()
+                .node().ports().get(0);
+        SetPort canonicalBody = (SetPort) canonicalOuter.body();
+        check(canonicalBody.elements().size() == 1,
+                "Nested block orbits are minimized before their enclosing Set");
+        check(result.verifyWitness(graph),
+                "Nested block quotient retains a graph-relative typed witness");
+    }
+
     private static void testGeneratedSymmetryDifferential() {
         TypedSlot x = TypedSlot.source(USER, 700);
         TypedSlot y = TypedSlot.source(USER, 701);
@@ -459,7 +687,7 @@ public final class TheoryCanonicalizationTest {
                 "Two adjacent swaps generate the full typed S3 orbit");
         TypedEClassInterface eclass = new TypedEClassInterface(
                 EClassId.of(250), GraphType.BOOL, context);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(TypedEClassRecord.of(
                 eclass, Collections.emptyMap(), group));
 
@@ -519,7 +747,7 @@ public final class TheoryCanonicalizationTest {
                                 OnePort.slot(context, y),
                                 OnePort.slot(context, x),
                                 OnePort.slot(context, y)))));
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         CanonicalizationResult first = graph.canonicalize(node);
         CanonicalizationResult second = graph.canonicalize(node);
         check(first.equals(second), "Repeated production canonicalization is deterministic");
@@ -537,7 +765,7 @@ public final class TheoryCanonicalizationTest {
                 "Reference canonicalizer exposes a stable version identifier");
     }
 
-    private static void testDirtyAndSupportShrinkRejection() {
+    private static void testDirtyRejectionAndSupportContraction() {
         TypedSlot x = TypedSlot.source(USER, 90);
         TypedSlot y = TypedSlot.source(USER, 91);
         TypedSlotContext twoSlots = TypedSlotContext.of(x, y);
@@ -546,7 +774,7 @@ public final class TheoryCanonicalizationTest {
                 EClassId.of(300), GraphType.BOOL, oneSlot);
         TypedEClassInterface child = new TypedEClassInterface(
                 EClassId.of(301), GraphType.BOOL, twoSlots);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(parent));
         graph.registerRecordForPhaseD(TypedEClassRecord.empty(child));
         graph.linkLeadersForPhaseD(new ParentStep(
@@ -565,9 +793,64 @@ public final class TheoryCanonicalizationTest {
                         twoSlots, TypedInvocation.identity(child))));
         expectThrows(IllegalStateException.class, () -> graph.canonicalize(node));
         graph.sealEmptyShapeFixtureForPhaseE();
-        expectThrows(CanonicalizationDomainException.class, () -> graph.canonicalize(node));
-        expectThrows(CanonicalizationDomainException.class,
-                () -> ExhaustiveGraphCanonicalizer.instance().canonicalize(graph, node));
+        CanonicalizationResult result = assertDifferential(graph, node);
+        TypedSlotContext canonicalEffective = oneSlot.canonicalFreeContext();
+        check(result.source().equals(node)
+                        && result.kernel().context().equals(oneSlot)
+                        && result.effectiveSupport().equals(oneSlot),
+                "Canonicalization retains the source and normalizes its exact effective kernel");
+        check(result.shape().exactSlots().equals(canonicalEffective)
+                        && result.witness().source().equals(canonicalEffective)
+                        && result.witness().codomain().equals(oneSlot),
+                "sigma is a typed bijection from Can(Delta) to the effective support");
+        check(result.inclusion().equals(TypedEmbedding.inclusion(oneSlot, twoSlots))
+                        && !result.inclusion().isRenaming(),
+                "iota is retained as a proper typed inclusion");
+        check(result.ambientTransport().equals(
+                        result.witness().andThen(result.inclusion()))
+                        && !result.ambientTransport().isRenaming(),
+                "omega is exactly iota after sigma and remains a proper embedding");
+        check(result.trace().equals(result.leaderKernel().trace())
+                        && result.verifyWitness(graph),
+                "The complete result retains xi and replays its effective witness");
+        check(result.canonicalShape().equals(result.shape())
+                        && result.sigma().equals(result.witness())
+                        && result.iota().equals(result.inclusion())
+                        && result.omega().equals(result.ambientTransport())
+                        && result.xi().equals(result.trace()),
+                "The complete result exposes all formal tuple components directly");
+
+        TypedSlot z = TypedSlot.source(USER, 92);
+        TypedSlotContext oneAmbientSlot = TypedSlotContext.singleton(z);
+        TypedSlotContext empty = TypedSlotContext.empty();
+        TypedEClassInterface emptyParent = new TypedEClassInterface(
+                EClassId.of(302), GraphType.BOOL, empty);
+        TypedEClassInterface oneSlotChild = new TypedEClassInterface(
+                EClassId.of(303), GraphType.BOOL, oneAmbientSlot);
+        TypedSlottedPortEGraph emptyKernelGraph = TypedSlottedPortEGraph.structuralFixture();
+        emptyKernelGraph.registerRecordForPhaseD(TypedEClassRecord.empty(emptyParent));
+        emptyKernelGraph.registerRecordForPhaseD(TypedEClassRecord.empty(oneSlotChild));
+        emptyKernelGraph.linkLeadersForPhaseD(new ParentStep(
+                oneSlotChild,
+                new TypedInvocation(
+                        emptyParent,
+                        TypedEmbedding.inclusion(empty, oneAmbientSlot))));
+        emptyKernelGraph.sealEmptyShapeFixtureForPhaseE();
+        TypedENode emptyKernelSource = TypedENode.construct(
+                wrapper,
+                oneAmbientSlot,
+                Collections.singletonList(OnePort.invocation(
+                        oneAmbientSlot, TypedInvocation.identity(oneSlotChild))));
+        CanonicalizationResult emptyKernelResult = assertDifferential(
+                emptyKernelGraph, emptyKernelSource);
+        check(emptyKernelResult.effectiveSupport().isEmpty()
+                        && emptyKernelResult.shape().exactSlots().isEmpty()
+                        && emptyKernelResult.sigma().equals(
+                                TypedRenaming.identity(empty)),
+                "Canonicalization admits contraction to the empty effective context");
+        check(!emptyKernelResult.iota().isRenaming()
+                        && emptyKernelResult.omega().equals(emptyKernelResult.iota()),
+                "Empty sigma composes to the proper empty-to-ambient transport");
     }
 
     private static void testCanonicalizerBoundary() {
@@ -585,7 +868,7 @@ public final class TheoryCanonicalizationTest {
         }
         check(!CanonicalizationResult.class.isAssignableFrom(CanonicalShape.class),
                 "A canonical shape is distinct from its instantiating witness result");
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         check("typed-slotted-port-egraph".equals(graph.engineIdentifier()),
                 "Exact engine exposes an unambiguous integration identifier");
         check(ProductionGraphCanonicalizer.VERSION.equals(graph.canonicalizerVersion()),
@@ -696,6 +979,8 @@ public final class TheoryCanonicalizationTest {
             child = ((SetPortSchema) schema).elementSchema();
         } else if (schema instanceof BindPortSchema) {
             child = ((BindPortSchema) schema).bodySchema();
+        } else if (schema instanceof BindBlockPortSchema) {
+            child = ((BindBlockPortSchema) schema).bodySchema();
         }
         if (child != null) {
             collectLaws(child, path.child(), laws);

@@ -117,6 +117,46 @@ public final class ParentPath {
         return steps.isEmpty();
     }
 
+    public boolean hasCertificates() {
+        for (ParentStep step : steps) {
+            if (!step.hasCertificate()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** Composes the retained primitive (PC) proofs in the path's start context. */
+    public TypedEqualityCertificate composedCertificate() {
+        if (steps.isEmpty()) {
+            return EqualityCertificates.reflexive(
+                    TypedCertificateEndpoint.eclassWitness(start));
+        }
+        if (!hasCertificates()) {
+            throw new IllegalStateException(
+                    "A structural Phase D path cannot be replayed as a certificate");
+        }
+        TypedEqualityCertificate result = steps.get(0).certificate();
+        TypedEmbedding prefix = steps.get(0).embedding();
+        for (int index = 1; index < steps.size(); index++) {
+            ParentStep step = steps.get(index);
+            TypedEqualityCertificate transported = EqualityCertificates.rename(
+                    step.certificate(), prefix);
+            result = EqualityCertificates.transitive(result, transported);
+            prefix = step.embedding().andThen(prefix);
+        }
+        TypedCertificateEndpoint expectedRight = TypedCertificateEndpoint.invocation(
+                new TypedInvocation(end, compositeEmbedding));
+        if (!result.leftEndpoint().equals(
+                    TypedCertificateEndpoint.eclassWitness(start))
+                || !result.rightEndpoint().equals(expectedRight)) {
+            throw new IllegalStateException(
+                    "Composed parent certificate has the wrong path endpoints");
+        }
+        CertificateVerifier.verify(result);
+        return result;
+    }
+
     public StructuralKey structuralKey() {
         return structuralKey;
     }
