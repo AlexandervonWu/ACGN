@@ -27,6 +27,7 @@ public class QuantiVar {
     private int id;
     private String name;
     private String originalName;
+    private final java.util.Set<String> originalNames;
     private String typeName;
     private String carrierTypeName;
     private String deBruijnKey;
@@ -41,6 +42,8 @@ public class QuantiVar {
         this.id = id;
         this.name = name;
         this.originalName = originalName;
+        this.originalNames = new java.util.LinkedHashSet<>();
+        addOriginalName(originalName);
         this.typeName = typeName;
         this.carrierTypeName = typeName;
         this.deBruijnKey = name;
@@ -57,6 +60,17 @@ public class QuantiVar {
     }
     public String getOriginalName() {
         return originalName;
+    }
+    public java.util.Set<String> getOriginalNames() {
+        return java.util.Collections.unmodifiableSet(originalNames);
+    }
+    public void addOriginalName(String alias) {
+        if (alias != null && !alias.isEmpty()) {
+            originalNames.add(alias);
+            if (originalName == null || originalName.isEmpty()) {
+                originalName = alias;
+            }
+        }
     }
     public String getTypeName() {
         return typeName;

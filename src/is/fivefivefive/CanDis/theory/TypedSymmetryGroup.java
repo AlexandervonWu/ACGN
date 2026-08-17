@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 
 /** Immutable finite typed subgroup with certificates for every generator. */
@@ -16,6 +17,8 @@ public final class TypedSymmetryGroup {
     private final List<SymmetryCertificate> generatorCertificates;
     private final List<TypedPermutation> elements;
     private final StructuralKey structuralKey;
+    // Positive memo only; the group and interface values are immutable.
+    private final Set<TypedEClassInterface> certifiedInterfaces = new java.util.HashSet<>();
 
     private TypedSymmetryGroup(
             TypedSlotContext context,
@@ -126,8 +129,11 @@ public final class TypedSymmetryGroup {
         return certified(eclass, certificates);
     }
 
-    void requireCertifiedFor(TypedEClassInterface eclass) {
+    synchronized void requireCertifiedFor(TypedEClassInterface eclass) {
         Objects.requireNonNull(eclass, "eclass");
+        if (certifiedInterfaces.contains(eclass)) {
+            return;
+        }
         if (!context.equals(eclass.exposedSlots())
                 || generatorCertificates.size() != generators.size()) {
             throw new IllegalStateException(
@@ -148,6 +154,7 @@ public final class TypedSymmetryGroup {
         for (TypedEqualityCertificate derivation : derivations.values()) {
             CertificateVerifier.verify(derivation);
         }
+        certifiedInterfaces.add(eclass);
     }
 
     /** Reconstructs the generator/inverse/composition proof for one group element. */

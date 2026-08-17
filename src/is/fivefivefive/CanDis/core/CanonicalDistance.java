@@ -10,6 +10,11 @@ import java.util.Set;
 
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 
+/**
+ * Specification and reference implementation of the CanDis repair metric over
+ * repaired normal forms. Its decomposition, edit units, alpha minimization,
+ * and unordered matching are metric semantics, not approximation heuristics.
+ */
 public final class CanonicalDistance {
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
 
@@ -28,10 +33,47 @@ public final class CanonicalDistance {
     }
 
     public static int distance(Prepared left, Prepared right) {
+        return evaluate(left, right).distance();
+    }
+
+    /** Exposes the normative metric decomposition without changing its units. */
+    public static DistanceBreakdown evaluate(Prepared left, Prepared right) {
         int temporalDistance = treeDistance(left.temporalTree, right.temporalTree);
         int quantificationDistance = quantificationDistance(left.normalForms, right.normalForms);
         int matrixDistance = matrixDistance(left.normalForms, right.normalForms, left.metadata, right.metadata);
-        return temporalDistance + quantificationDistance + matrixDistance;
+        return new DistanceBreakdown(
+                temporalDistance, quantificationDistance, matrixDistance);
+    }
+
+    public static final class DistanceBreakdown {
+        private final int temporalDistance;
+        private final int quantifierDistance;
+        private final int matrixDistance;
+
+        private DistanceBreakdown(
+                int temporalDistance,
+                int quantifierDistance,
+                int matrixDistance) {
+            this.temporalDistance = temporalDistance;
+            this.quantifierDistance = quantifierDistance;
+            this.matrixDistance = matrixDistance;
+        }
+
+        public int temporalDistance() {
+            return temporalDistance;
+        }
+
+        public int quantifierDistance() {
+            return quantifierDistance;
+        }
+
+        public int matrixDistance() {
+            return matrixDistance;
+        }
+
+        public int distance() {
+            return temporalDistance + quantifierDistance + matrixDistance;
+        }
     }
 
     public static List<String> edits(Prepared left, Prepared right) {
@@ -330,6 +372,8 @@ public final class CanonicalDistance {
                 candidateCount(a, leftBindings, rightBindings),
                 candidateCount(b, leftBindings, rightBindings)));
         Map<String, String> mapping = new HashMap<>();
+        int requiredMatches = maximumCompatibleMatches(
+                leftNames, leftBindings, rightBindings);
         return bestMappedDistance(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
@@ -339,6 +383,8 @@ public final class CanonicalDistance {
                 mapping,
                 new HashSet<>(),
                 0,
+                0,
+                requiredMatches,
                 Integer.MAX_VALUE,
                 leftMetadata,
                 rightMetadata);
@@ -374,6 +420,8 @@ public final class CanonicalDistance {
                 candidateCount(a, leftBindings, rightBindings),
                 candidateCount(b, leftBindings, rightBindings)));
         BestMapping best = new BestMapping();
+        int requiredMatches = maximumCompatibleMatches(
+                leftNames, leftBindings, rightBindings);
         searchBestMapping(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
@@ -383,6 +431,8 @@ public final class CanonicalDistance {
                 new HashMap<>(),
                 new HashSet<>(),
                 0,
+                0,
+                requiredMatches,
                 best);
         return best.mapping;
     }
@@ -396,8 +446,13 @@ public final class CanonicalDistance {
             Map<String, String> mapping,
             Set<String> usedRightNames,
             int index,
+            int matched,
+            int requiredMatches,
             BestMapping best) {
         if (index == leftNames.size()) {
+            if (matched != requiredMatches) {
+                return;
+            }
             int distance = eGraphDistance(left, right, mapping);
             if (distance < best.distance) {
                 best.distance = distance;
@@ -417,16 +472,18 @@ public final class CanonicalDistance {
             mapping.put(leftName, rightEntry.getKey());
             usedRightNames.add(rightEntry.getKey());
             searchBestMapping(left, right, leftNames, leftBindings, rightBindings,
-                    mapping, usedRightNames, index + 1, best);
+                    mapping, usedRightNames, index + 1,
+                    matched + 1, requiredMatches, best);
             usedRightNames.remove(rightEntry.getKey());
             mapping.remove(leftName);
             if (best.distance == 0) {
                 return;
             }
         }
-        if (!mapped) {
+        if (!mapped || matched + leftNames.size() - index - 1 >= requiredMatches) {
             searchBestMapping(left, right, leftNames, leftBindings, rightBindings,
-                    mapping, usedRightNames, index + 1, best);
+                    mapping, usedRightNames, index + 1,
+                    matched, requiredMatches, best);
         }
     }
 
@@ -453,10 +510,15 @@ public final class CanonicalDistance {
             Map<String, String> mapping,
             Set<String> usedRightNames,
             int index,
+            int matched,
+            int requiredMatches,
             int best,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
         if (index == leftNames.size()) {
+            if (matched != requiredMatches) {
+                return best;
+            }
             return Math.min(best, eGraphDistance(left, right, mapping, leftMetadata, rightMetadata));
         }
         String leftName = leftNames.get(index);
@@ -479,6 +541,8 @@ public final class CanonicalDistance {
                     mapping,
                     usedRightNames,
                     index + 1,
+                    matched + 1,
+                    requiredMatches,
                     best,
                     leftMetadata,
                     rightMetadata);
@@ -488,7 +552,7 @@ public final class CanonicalDistance {
                 return 0;
             }
         }
-        if (!mapped) {
+        if (!mapped || matched + leftNames.size() - index - 1 >= requiredMatches) {
             best = bestMappedDistance(
                     left,
                     right,
@@ -498,11 +562,59 @@ public final class CanonicalDistance {
                     mapping,
                     usedRightNames,
                     index + 1,
+                    matched,
+                    requiredMatches,
                     best,
                     leftMetadata,
                     rightMetadata);
         }
         return best;
+    }
+
+    private static int maximumCompatibleMatches(
+            List<String> leftNames,
+            Map<String, BindingDescriptor> leftBindings,
+            Map<String, BindingDescriptor> rightBindings) {
+        Map<String, String> matchedLeftByRight = new HashMap<>();
+        int result = 0;
+        for (String leftName : leftNames) {
+            if (augmentCompatibleMatching(
+                    leftName,
+                    leftBindings,
+                    rightBindings,
+                    matchedLeftByRight,
+                    new HashSet<>())) {
+                result++;
+            }
+        }
+        return result;
+    }
+
+    private static boolean augmentCompatibleMatching(
+            String leftName,
+            Map<String, BindingDescriptor> leftBindings,
+            Map<String, BindingDescriptor> rightBindings,
+            Map<String, String> matchedLeftByRight,
+            Set<String> visitedRight) {
+        BindingDescriptor left = leftBindings.get(leftName);
+        for (Map.Entry<String, BindingDescriptor> right : rightBindings.entrySet()) {
+            if (!visitedRight.add(right.getKey())
+                    || !left.compatibleWith(right.getValue())) {
+                continue;
+            }
+            String previousLeft = matchedLeftByRight.get(right.getKey());
+            if (previousLeft == null
+                    || augmentCompatibleMatching(
+                            previousLeft,
+                            leftBindings,
+                            rightBindings,
+                            matchedLeftByRight,
+                            visitedRight)) {
+                matchedLeftByRight.put(right.getKey(), leftName);
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Map<String, BindingDescriptor> variableBindings(NormalForm nf) {
@@ -1341,8 +1453,8 @@ public final class CanonicalDistance {
     }
 
     private static String typeKey(QuantiVar qv) {
-        String carrier = qv.getCarrierTypeName();
-        return carrier == null ? "" : carrier;
+        String type = qv.getTypeName();
+        return type == null ? "" : type;
     }
 
     private static boolean sameType(String left, String right) {

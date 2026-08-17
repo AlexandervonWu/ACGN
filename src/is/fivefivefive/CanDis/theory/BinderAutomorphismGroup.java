@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 
 /** Finite typed subgroup declared by one complete binder descriptor. */
@@ -16,6 +17,9 @@ public final class BinderAutomorphismGroup {
     private final List<BinderAutomorphismCertificate> generatorCertificates;
     private final List<TypedPermutation> elements;
     private final StructuralKey structuralKey;
+    // Positive memo only; descriptors and their certificate groups are immutable.
+    private final Set<BinderBlockDescriptor> certifiedDescriptors =
+            Collections.newSetFromMap(new java.util.IdentityHashMap<>());
 
     BinderAutomorphismGroup(
             TypedSlotContext context,
@@ -64,7 +68,7 @@ public final class BinderAutomorphismGroup {
                 throw new IllegalArgumentException(
                         "Binder certificate acts on a different bound context");
             }
-            StructuralKey key = TheoryKeys.embedding(checked.permutation());
+            StructuralKey key = actionKey(checked.permutation());
             BinderAutomorphismCertificate prior = certifiedByGenerator.putIfAbsent(
                     key, checked);
             if (prior != null && !prior.equals(checked)) {
@@ -75,7 +79,7 @@ public final class BinderAutomorphismGroup {
         List<BinderAutomorphismCertificate> orderedCertificates = new ArrayList<>();
         for (TypedPermutation generator : this.generators) {
             BinderAutomorphismCertificate certificate = certifiedByGenerator.get(
-                    TheoryKeys.embedding(generator));
+                    actionKey(generator));
             if (certificate != null) {
                 orderedCertificates.add(certificate);
             }
@@ -92,7 +96,7 @@ public final class BinderAutomorphismGroup {
         for (TypedPermutation element : elements) {
             children.add(StructuralKey.branch(
                     "binder-automorphism-element",
-                    Collections.singletonList(TheoryKeys.embedding(element))));
+                    Collections.singletonList(actionKey(element))));
         }
         this.structuralKey = StructuralKey.branch("binder-automorphism-group", children);
     }
@@ -113,7 +117,7 @@ public final class BinderAutomorphismGroup {
             TypedPermutation current = pending.removeFirst();
             for (TypedPermutation step : steps) {
                 TypedPermutation candidate = current.andThen(step);
-                StructuralKey key = TheoryKeys.embedding(candidate);
+                StructuralKey key = actionKey(candidate);
                 TypedPermutation prior = closure.putIfAbsent(key, candidate);
                 if (prior == null) {
                     pending.addLast(candidate);
@@ -134,10 +138,10 @@ public final class BinderAutomorphismGroup {
         }
     }
 
-    private static void putUnique(
+    private void putUnique(
             Map<StructuralKey, TypedPermutation> target,
             TypedPermutation permutation) {
-        StructuralKey key = TheoryKeys.embedding(permutation);
+        StructuralKey key = actionKey(permutation);
         TypedPermutation prior = target.putIfAbsent(key, permutation);
         if (prior != null && !prior.equals(permutation)) {
             throw new IllegalStateException(
@@ -165,30 +169,88 @@ public final class BinderAutomorphismGroup {
     public TypedEqualityCertificate derivationFor(
             BinderBlockDescriptor descriptor,
             TypedPermutation permutation) {
-        Map<StructuralKey, TypedEqualityCertificate> derivations =
-                deriveAll(descriptor);
-        TypedEqualityCertificate result = derivations.get(
-                TheoryKeys.embedding(Objects.requireNonNull(permutation, "permutation")));
-        if (result == null || !contains(permutation)) {
+        Objects.requireNonNull(permutation, "permutation");
+        validateCertificates(descriptor);
+        if (!contains(permutation)) {
             throw new IllegalArgumentException(
                     "Permutation is outside this binder automorphism group");
+        }
+        TypedPermutation identity = TypedPermutation.identity(context);
+        TypedCertificateEndpoint identityEndpoint = TypedCertificateEndpoint.binderPattern(
+                descriptor.payloadKey(), context, identity);
+        if (identity.equals(permutation)) {
+            return EqualityCertificates.reflexive(identityEndpoint);
+        }
+
+        List<CertifiedStep> steps = certifiedSteps();
+        Map<StructuralKey, DerivationLink> predecessors = new TreeMap<>();
+        Deque<TypedPermutation> pending = new ArrayDeque<>();
+        StructuralKey identityKey = actionKey(identity);
+        StructuralKey targetKey = actionKey(permutation);
+        predecessors.put(identityKey, null);
+        pending.add(identity);
+        while (!pending.isEmpty() && !predecessors.containsKey(targetKey)) {
+            TypedPermutation current = pending.removeFirst();
+            StructuralKey currentKey = actionKey(current);
+            for (CertifiedStep step : steps) {
+                TypedPermutation candidate = current.andThen(step.permutation);
+                StructuralKey candidateKey = actionKey(candidate);
+                if (predecessors.containsKey(candidateKey)) {
+                    continue;
+                }
+                predecessors.put(
+                        candidateKey, new DerivationLink(currentKey, step));
+                pending.addLast(candidate);
+            }
+        }
+        if (!predecessors.containsKey(targetKey)) {
+            throw new IllegalStateException(
+                    "Certified generators did not reconstruct a retained group element");
+        }
+        List<CertifiedStep> word = new ArrayList<>();
+        StructuralKey cursor = targetKey;
+        while (!cursor.equals(identityKey)) {
+            DerivationLink link = predecessors.get(cursor);
+            if (link == null) {
+                throw new IllegalStateException("Broken binder derivation predecessor chain");
+            }
+            word.add(link.step);
+            cursor = link.previous;
+        }
+        Collections.reverse(word);
+        TypedPermutation current = identity;
+        TypedEqualityCertificate result = EqualityCertificates.reflexive(identityEndpoint);
+        for (CertifiedStep step : word) {
+            TypedEqualityCertificate transportedCurrent = EqualityCertificates.rename(
+                    result, step.permutation);
+            result = EqualityCertificates.transitive(
+                    step.certificate, transportedCurrent);
+            current = current.andThen(step.permutation);
+        }
+        if (!current.equals(permutation)) {
+            throw new IllegalStateException(
+                    "Reconstructed binder derivation reaches the wrong permutation");
+        }
+        TypedCertificateEndpoint expectedRight = TypedCertificateEndpoint.binderPattern(
+                descriptor.payloadKey(), context, permutation);
+        if (!result.leftEndpoint().equals(identityEndpoint)
+                || !result.rightEndpoint().equals(expectedRight)) {
+            throw new IllegalStateException(
+                    "Reconstructed binder derivation has incorrect endpoints");
         }
         CertificateVerifier.verify(result);
         return result;
     }
 
-    void requireCertifiedFor(BinderBlockDescriptor descriptor) {
-        Map<StructuralKey, TypedEqualityCertificate> derivations = deriveAll(descriptor);
-        if (derivations.size() != elements.size()) {
-            throw new IllegalStateException(
-                    "Certified binder derivations and group closure differ");
+    synchronized void requireCertifiedFor(BinderBlockDescriptor descriptor) {
+        if (certifiedDescriptors.contains(Objects.requireNonNull(descriptor, "descriptor"))) {
+            return;
         }
-        for (TypedEqualityCertificate derivation : derivations.values()) {
-            CertificateVerifier.verify(derivation);
-        }
+        validateCertificates(descriptor);
+        certifiedDescriptors.add(descriptor);
     }
 
-    private Map<StructuralKey, TypedEqualityCertificate> deriveAll(
+    private void validateCertificates(
             BinderBlockDescriptor descriptor) {
         Objects.requireNonNull(descriptor, "descriptor");
         if (!context.equals(descriptor.boundContext())
@@ -203,17 +265,9 @@ public final class BinderAutomorphismGroup {
                         "Binder certificate belongs to a different descriptor");
             }
         }
+    }
 
-        TypedPermutation identity = TypedPermutation.identity(context);
-        Map<StructuralKey, TypedEqualityCertificate> derivations = new TreeMap<>();
-        Deque<TypedPermutation> pending = new ArrayDeque<>();
-        TypedCertificateEndpoint identityEndpoint = TypedCertificateEndpoint.binderPattern(
-                descriptor.payloadKey(), context, identity);
-        derivations.put(
-                TheoryKeys.embedding(identity),
-                EqualityCertificates.reflexive(identityEndpoint));
-        pending.add(identity);
-
+    private List<CertifiedStep> certifiedSteps() {
         List<CertifiedStep> steps = new ArrayList<>(generators.size() * 2);
         for (int index = 0; index < generators.size(); index++) {
             TypedPermutation generator = generators.get(index);
@@ -224,37 +278,7 @@ public final class BinderAutomorphismGroup {
                     EqualityCertificates.rename(proof, inverse));
             steps.add(new CertifiedStep(inverse, inverseProof));
         }
-        while (!pending.isEmpty()) {
-            TypedPermutation current = pending.removeFirst();
-            TypedEqualityCertificate currentProof = derivations.get(
-                    TheoryKeys.embedding(current));
-            for (CertifiedStep step : steps) {
-                TypedPermutation candidate = current.andThen(step.permutation);
-                StructuralKey key = TheoryKeys.embedding(candidate);
-                if (derivations.containsKey(key)) {
-                    continue;
-                }
-                TypedEqualityCertificate transportedCurrent = EqualityCertificates.rename(
-                        currentProof, step.permutation);
-                TypedEqualityCertificate candidateProof = EqualityCertificates.transitive(
-                        step.certificate, transportedCurrent);
-                derivations.put(key, candidateProof);
-                pending.addLast(candidate);
-            }
-        }
-        for (TypedPermutation element : elements) {
-            TypedEqualityCertificate result = derivations.get(
-                    TheoryKeys.embedding(element));
-            TypedCertificateEndpoint expectedRight = TypedCertificateEndpoint.binderPattern(
-                    descriptor.payloadKey(), context, element);
-            if (result == null
-                    || !result.leftEndpoint().equals(identityEndpoint)
-                    || !result.rightEndpoint().equals(expectedRight)) {
-                throw new IllegalStateException(
-                        "Reconstructed binder derivation has incorrect endpoints");
-            }
-        }
-        return derivations;
+        return steps;
     }
 
     public List<TypedPermutation> elements() {
@@ -267,9 +291,9 @@ public final class BinderAutomorphismGroup {
                 || !context.equals(permutation.codomain())) {
             return false;
         }
-        StructuralKey key = TheoryKeys.embedding(permutation);
+        StructuralKey key = actionKey(permutation);
         for (TypedPermutation element : elements) {
-            int comparison = TheoryKeys.embedding(element).compareTo(key);
+            int comparison = actionKey(element).compareTo(key);
             if (comparison == 0) {
                 return element.equals(permutation);
             }
@@ -278,6 +302,10 @@ public final class BinderAutomorphismGroup {
             }
         }
         return false;
+    }
+
+    private StructuralKey actionKey(TypedPermutation permutation) {
+        return TheoryKeys.permutationAction(context, permutation);
     }
 
     public StructuralKey structuralKey() {
@@ -313,6 +341,16 @@ public final class BinderAutomorphismGroup {
                 TypedEqualityCertificate certificate) {
             this.permutation = permutation;
             this.certificate = certificate;
+        }
+    }
+
+    private static final class DerivationLink {
+        private final StructuralKey previous;
+        private final CertifiedStep step;
+
+        private DerivationLink(StructuralKey previous, CertifiedStep step) {
+            this.previous = previous;
+            this.step = step;
         }
     }
 }

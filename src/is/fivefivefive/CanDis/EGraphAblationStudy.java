@@ -22,11 +22,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -111,39 +113,75 @@ public final class EGraphAblationStudy {
         }
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threads));
         try {
-            List<Future<FileResult>> futures = new ArrayList<>(files.size());
-            for (Path file : files) {
-                Callable<FileResult> task = () -> processFile(options, file);
-                futures.add(executor.submit(task));
+            CompletionService<IndexedFileResult> completion =
+                    new ExecutorCompletionService<>(executor);
+            Map<Future<IndexedFileResult>, Integer> active = new HashMap<>();
+            for (int index = 0; index < files.size(); index++) {
+                final int fileIndex = index;
+                Future<IndexedFileResult> future = completion.submit(
+                        () -> new IndexedFileResult(fileIndex,
+                                processFile(options, files.get(fileIndex))));
+                active.put(future, fileIndex);
             }
-            List<FileResult> results = new ArrayList<>(files.size());
-            for (int i = 0; i < futures.size(); i++) {
+            List<FileResult> results = new ArrayList<>(
+                    java.util.Collections.nCopies(files.size(), null));
+            ExperimentProgress progress = ExperimentProgress.start(
+                    originalErr,
+                    "EGraphAblationStudy/" + options.engine.id,
+                    files.size(),
+                    "files",
+                    "with " + Math.max(1, options.threads) + " workers");
+            int completed = 0;
+            while (completed < files.size()) {
+                Future<IndexedFileResult> future;
                 try {
-                    results.add(futures.get(i).get());
+                    future = completion.poll(30, TimeUnit.SECONDS);
                 } catch (InterruptedException exception) {
                     Thread.currentThread().interrupt();
-                    results.add(FileResult.failure(options.input, files.get(i),
-                            "InterruptedException: " + exception.getMessage()));
-                } catch (ExecutionException exception) {
-                    Throwable cause = exception.getCause() == null ? exception : exception.getCause();
-                    results.add(FileResult.failure(options.input, files.get(i),
-                            cause.getClass().getSimpleName() + ": " + cause.getMessage()));
+                    throw new IllegalStateException("Ablation run was interrupted", exception);
                 }
-                if (options.verbose && (i + 1) % 1000 == 0) {
-                    originalErr.println(options.engine.id + ": collected " + (i + 1) + "/" + files.size());
-                }
-            }
-
-            // Parser/library races are transient in this corpus; retry only failed files serially.
-            for (int i = 0; i < results.size(); i++) {
-                if (results.get(i).error == null) {
+                if (future == null) {
+                    progress.heartbeat(completed, active.size(), null);
                     continue;
                 }
-                FileResult retry = processFile(options, files.get(i));
-                if (retry.error == null) {
-                    results.set(i, retry);
+                Integer expectedIndex = active.remove(future);
+                int index = expectedIndex == null ? completed : expectedIndex;
+                try {
+                    IndexedFileResult indexed = future.get();
+                    results.set(indexed.index, indexed.result);
+                } catch (ExecutionException exception) {
+                    Throwable cause = exception.getCause() == null ? exception : exception.getCause();
+                    results.set(index, FileResult.failure(options.input, files.get(index),
+                            cause.getClass().getSimpleName() + ": " + cause.getMessage()));
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Ablation run was interrupted", exception);
+                }
+                progress.update(++completed);
+            }
+            progress.finish(completed);
+
+            // Parser/library races are transient in this corpus; retry only failed files serially.
+            List<Integer> failedIndexes = new ArrayList<>();
+            for (int index = 0; index < results.size(); index++) {
+                if (results.get(index).error != null) {
+                    failedIndexes.add(index);
                 }
             }
+            ExperimentProgress retryProgress = ExperimentProgress.start(
+                    originalErr,
+                    "EGraphAblationStudy/" + options.engine.id + "/retry",
+                    failedIndexes.size(),
+                    "files");
+            int retried = 0;
+            for (int index : failedIndexes) {
+                FileResult retry = processFile(options, files.get(index));
+                if (retry.error == null) {
+                    results.set(index, retry);
+                }
+                retryProgress.update(++retried);
+            }
+            retryProgress.finish(retried);
             return results;
         } finally {
             executor.shutdownNow();
@@ -271,8 +309,8 @@ public final class EGraphAblationStudy {
                 CanonicalAlloyPipeline.prepare(leftNormalized);
         CanonicalAlloyPipeline.Prepared rightPrepared =
                 CanonicalAlloyPipeline.prepare(rightNormalized);
-        result.representationUnits = (long) leftPrepared.representationSize()
-                + rightPrepared.representationSize();
+        result.representationUnits = (long) leftPrepared.repairObservationSize()
+                + rightPrepared.repairObservationSize();
         result.distance = CanonicalAlloyPipeline.distance(leftPrepared, rightPrepared);
         result.equivalent = result.distance == 0;
         result.stats = new EGraphStats(
@@ -497,6 +535,12 @@ public final class EGraphAblationStudy {
         root.put("measurementProjectionVersion", options.engine.usesExactEngine()
                 ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
                 : "not-applicable");
+        root.put("quotientMetricVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION
+                : "not-applicable");
+        root.put("canonicalRepresentativeTedVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION
+                : "not-applicable");
         root.put("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
         root.put("sharedBaselineRewriteRules", new JSONArray(JavaEgglog.ruleNames()));
         root.put("threadCount", options.threads);
@@ -535,6 +579,12 @@ public final class EGraphAblationStudy {
         properties.setProperty("canonicalPipelineVersion", options.engine.pipelineVersion());
         properties.setProperty("measurementProjectionVersion", options.engine.usesExactEngine()
                 ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
+                : "not-applicable");
+        properties.setProperty("quotientMetricVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION
+                : "not-applicable");
+        properties.setProperty("canonicalRepresentativeTedVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION
                 : "not-applicable");
         properties.setProperty("alloyAdapterVersion", options.engine.usesExactEngine()
                 ? TheoryAlloyAdapter.ADAPTER_VERSION : "not-applicable");
@@ -590,7 +640,8 @@ public final class EGraphAblationStudy {
         EGGLOG_DEBRUIJN("java-egglog-debruijn",
                 "Java egglog core storing bound variables as De Bruijn indices"),
         SLOTTED("slotted-egraph", "Legacy slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
-        CANONICAL("canonical", "Legacy bounded temporal/prenex/slotted canonical-form method"),
+        CANONICAL("canonical",
+                "Legacy temporal/prenex/slotted method with bounded rewrite saturation"),
         TYPED_SLOTTED_PORT(
                 "typed-slotted-port-egraph",
                 "Complete CanonicalAlloyPipeline over the exact TypedSlottedPortEGraph");
@@ -777,6 +828,16 @@ public final class EGraphAblationStudy {
             FileResult result = new FileResult(root, file);
             result.error = error;
             return result;
+        }
+    }
+
+    private static final class IndexedFileResult {
+        private final int index;
+        private final FileResult result;
+
+        private IndexedFileResult(int index, FileResult result) {
+            this.index = index;
+            this.result = result;
         }
     }
 

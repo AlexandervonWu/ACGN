@@ -38,9 +38,17 @@ public final class CapabilitySoundnessCheck {
         List<Map<String, String>> metadata = readCsv(options.root.resolve("metadata.csv"));
         List<Map<String, String>> selected = select(metadata, options.perSubtype);
         List<Result> results = new ArrayList<>();
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "CapabilitySoundnessCheck",
+                selected.size(),
+                "checks");
+        int completed = 0;
         for (Map<String, String> row : selected) {
             results.add(check(options.root.resolve("models").resolve(row.get("relativePath")), row));
+            progress.update(++completed);
         }
+        progress.finish(completed);
         writeCsv(options.root.resolve("soundness.csv"), results);
         writeJson(options.root.resolve("soundness.json"), options, results);
         writeMarkdown(options.root.resolve("SOUNDNESS.md"), options, results);

@@ -24,6 +24,7 @@ import is.fivefivefive.CanDis.core.NormalForm;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 import is.fivefivefive.CanDis.core.QuantiVar;
 import is.fivefivefive.CanDis.theory.BagPortSchema;
+import is.fivefivefive.CanDis.theory.BagPort;
 import is.fivefivefive.CanDis.theory.BindBlockPort;
 import is.fivefivefive.CanDis.theory.BindBlockPortSchema;
 import is.fivefivefive.CanDis.theory.BinderAutomorphismCertificate;
@@ -33,6 +34,7 @@ import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
 import is.fivefivefive.CanDis.theory.CanonicalShape;
 import is.fivefivefive.CanDis.theory.CertificateOrigin;
 import is.fivefivefive.CanDis.theory.CertifiedInsertionResult;
+import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
 import is.fivefivefive.CanDis.theory.CoherentWitnessFamily;
 import is.fivefivefive.CanDis.theory.ContainerEmptiness;
 import is.fivefivefive.CanDis.theory.ContainerLawCertificate;
@@ -67,8 +69,8 @@ import is.fivefivefive.CanDis.theory.TypedSlottedPortEGraph;
 
 /** Converts normalized Alloy temporal phases into the exact typed graph. */
 public final class TheoryAlloyAdapter {
-    public static final String ADAPTER_VERSION = "typed-alloy-normal-form-adapter-v1";
-    public static final String SIGNATURE_VERSION = "canonical-alloy-signature-v1";
+    public static final String ADAPTER_VERSION = "typed-alloy-normal-form-adapter-v7";
+    public static final String SIGNATURE_VERSION = "canonical-alloy-signature-v6";
     public static final String INVARIANT_MODE = "strict-every-transition";
     private static final GraphType REL = GraphType.constructor("AlloyRel");
 
@@ -80,7 +82,12 @@ public final class TheoryAlloyAdapter {
     }
 
     public static final class Result {
+        private final CertifiedSemanticArtifact semanticArtifact;
         private final StructuralKey canonicalKey;
+        private final List<BinderBlockDescriptor> phaseBinderDescriptors;
+        private final List<List<Integer>> phaseSourceCoordinates;
+        private final Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors;
+        private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates;
         private final long eclasses;
         private final long enodes;
         private final long slots;
@@ -91,7 +98,12 @@ public final class TheoryAlloyAdapter {
         private final long observationNanos;
 
         private Result(
+                CertifiedSemanticArtifact semanticArtifact,
                 StructuralKey canonicalKey,
+                List<? extends BinderBlockDescriptor> phaseBinderDescriptors,
+                List<? extends List<Integer>> phaseSourceCoordinates,
+                Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors,
+                Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates,
                 long eclasses,
                 long enodes,
                 long slots,
@@ -100,7 +112,30 @@ public final class TheoryAlloyAdapter {
                 long constructionNanos,
                 long unfoldingNanos,
                 long observationNanos) {
+            this.semanticArtifact = Objects.requireNonNull(
+                    semanticArtifact, "semanticArtifact");
             this.canonicalKey = canonicalKey;
+            this.phaseBinderDescriptors = Collections.unmodifiableList(
+                    new ArrayList<>(phaseBinderDescriptors));
+            List<List<Integer>> coordinateCopies = new ArrayList<>(
+                    phaseSourceCoordinates.size());
+            for (List<Integer> coordinates : phaseSourceCoordinates) {
+                coordinateCopies.add(Collections.unmodifiableList(
+                        new ArrayList<>(coordinates)));
+            }
+            this.phaseSourceCoordinates = Collections.unmodifiableList(coordinateCopies);
+            this.localBinderDescriptors = Collections.unmodifiableMap(
+                    new IdentityHashMap<>(localBinderDescriptors));
+            IdentityHashMap<EGraphNode, Map<String, Integer>> localCoordinateCopies =
+                    new IdentityHashMap<>();
+            for (Map.Entry<EGraphNode, Map<String, Integer>> entry
+                    : localBinderSourceCoordinates.entrySet()) {
+                localCoordinateCopies.put(
+                        entry.getKey(),
+                        Collections.unmodifiableMap(new LinkedHashMap<>(entry.getValue())));
+            }
+            this.localBinderSourceCoordinates = Collections.unmodifiableMap(
+                    localCoordinateCopies);
             this.eclasses = eclasses;
             this.enodes = enodes;
             this.slots = slots;
@@ -113,6 +148,30 @@ public final class TheoryAlloyAdapter {
 
         public StructuralKey canonicalKey() {
             return canonicalKey;
+        }
+
+        public CertifiedSemanticArtifact semanticArtifact() {
+            return semanticArtifact;
+        }
+
+        /** Certified binder carrier for each repaired normal-form phase, in phase order. */
+        public List<BinderBlockDescriptor> phaseBinderDescriptors() {
+            return phaseBinderDescriptors;
+        }
+
+        /** Source NormalForm binding index to certified descriptor coordinate. */
+        public List<List<Integer>> phaseSourceCoordinates() {
+            return phaseSourceCoordinates;
+        }
+
+        /** Certified descriptors for source binders retained inside a phase matrix. */
+        public Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors() {
+            return localBinderDescriptors;
+        }
+
+        /** Source local-variable name to certified descriptor coordinate. */
+        public Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates() {
+            return localBinderSourceCoordinates;
         }
 
         public long eclasses() {
@@ -152,8 +211,19 @@ public final class TheoryAlloyAdapter {
         private final List<NormalForm> normalForms;
         private final Set<NormalForm> declaredForms;
         private final Set<NormalForm> builtForms = Collections.newSetFromMap(new IdentityHashMap<>());
+        private final Map<NormalForm, BinderBlockDescriptor> phaseBinderDescriptors =
+                new IdentityHashMap<>();
+        private final Map<NormalForm, List<Integer>> phaseSourceCoordinates =
+                new IdentityHashMap<>();
+        private final Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors =
+                new IdentityHashMap<>();
+        private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates =
+                new IdentityHashMap<>();
         private final TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
         private final Map<InvocationKey, TypedInvocation> memo = new HashMap<>();
+        private final Map<OnePort, TypedInvocation> relationalCoercions = new HashMap<>();
+        private final Map<String, List<ContainerLawDeclaration>> certifiedContainerLaws =
+                new LinkedHashMap<>();
         private final Set<InvocationKey> active = new HashSet<>();
         private long rebuilds;
 
@@ -162,6 +232,32 @@ public final class TheoryAlloyAdapter {
             this.normalForms = Collections.unmodifiableList(new ArrayList<>(normalForms));
             this.declaredForms = Collections.newSetFromMap(new IdentityHashMap<>());
             this.declaredForms.addAll(normalForms);
+            certifySourceContainerLaws();
+        }
+
+        private void certifySourceContainerLaws() {
+            Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            for (NormalForm normalForm : normalForms) {
+                certifySourceContainerLaws(normalForm.getMatrixEGraph(), visited);
+            }
+        }
+
+        private void certifySourceContainerLaws(
+                EGraphNode node,
+                Set<EGraphNode> visited) {
+            if (node == null || !visited.add(node)) {
+                return;
+            }
+            if (node.isFlexibleArity()) {
+                PortSchema schema = containerSchema(
+                        node.getFlexibleArityKind(),
+                        new OnePortSchema(outputType(node)));
+                String operator = semanticHead(node);
+                recordContainerLaws(operator, certifiedLaws(schema, operator));
+            }
+            for (EGraphNode child : node.getChildren()) {
+                certifySourceContainerLaws(child, visited);
+            }
         }
 
         private Result build() {
@@ -211,8 +307,27 @@ public final class TheoryAlloyAdapter {
             }
             long eclasses = graph.classes().size();
             long estimatedBytes = 64L * eclasses + 112L * enodes + 32L * slots;
+            CertifiedSemanticArtifact semanticArtifact = new CertifiedSemanticArtifact(
+                    root, graph.classes(), family, unfoldings, certifiedContainerLaws);
+            List<BinderBlockDescriptor> orderedPhaseDescriptors = new ArrayList<>(normalForms.size());
+            List<List<Integer>> orderedSourceCoordinates = new ArrayList<>(normalForms.size());
+            for (NormalForm normalForm : normalForms) {
+                BinderBlockDescriptor descriptor = phaseBinderDescriptors.get(normalForm);
+                List<Integer> sourceCoordinates = phaseSourceCoordinates.get(normalForm);
+                if (descriptor == null || sourceCoordinates == null) {
+                    throw new IllegalStateException(
+                            "A normalized temporal phase has no certified binder plan");
+                }
+                orderedPhaseDescriptors.add(descriptor);
+                orderedSourceCoordinates.add(sourceCoordinates);
+            }
             return new Result(
+                    semanticArtifact,
                     key,
+                    orderedPhaseDescriptors,
+                    orderedSourceCoordinates,
+                    localBinderDescriptors,
+                    localBinderSourceCoordinates,
                     eclasses,
                     enodes,
                     slots,
@@ -255,6 +370,14 @@ public final class TheoryAlloyAdapter {
             }
 
             BinderPlan plan = binderPlan(phase.getMatrixQuantiVars(), ambient);
+            if (phaseBinderDescriptors.put(phase, plan.descriptor) != null) {
+                throw new IllegalStateException(
+                        "A temporal phase received two certified binder descriptors");
+            }
+            if (phaseSourceCoordinates.put(phase, plan.sourceToCoordinate) != null) {
+                throw new IllegalStateException(
+                        "A temporal phase received two certified coordinate maps");
+            }
             TypedSlotContext bodyContext = ambient.union(plan.occurrence.codomain());
             Map<String, TypedSlot> bodyBindings = new LinkedHashMap<>(inheritedBindings);
             for (int index = 0; index < plan.variables.size(); index++) {
@@ -524,31 +647,76 @@ public final class TheoryAlloyAdapter {
                 TypedSlotContext context,
                 List<OnePort> operands) {
             GraphType output = outputType(source);
-            if (source.isFlexibleArity()
-                    && !operands.isEmpty()
-                    && operands.stream().allMatch(port -> port.schema().type().equals(output))) {
-                PortSchema container = containerSchema(
-                        source.getFlexibleArityKind(), new OnePortSchema(output));
-                ContainerLawDeclaration laws = certifiedLaws(
-                        container, semanticHead(source));
+            List<OnePort> typedOperands = operands;
+            if (!source.isFlexibleArity() && source.isOrderInsensitive()) {
+                if (!isCertifiedFixedCommutative(source.getOpcode())) {
+                    throw new IllegalStateException(
+                            "No Alloy signature certificate for fixed commutativity of "
+                                    + source.getOpcode());
+                }
+                typedOperands = fixedCommutativeOperands(source, context, operands);
+                if (typedOperands.isEmpty()) {
+                    throw new IllegalStateException(
+                            "A fixed commutative Alloy operator has no operands");
+                }
+                PortSchema element = typedOperands.get(0).schema();
+                if (!typedOperands.stream().allMatch(
+                        operand -> operand.schema().equals(element))) {
+                    throw new IllegalStateException(
+                            "A fixed commutative Alloy operator has heterogeneous operands");
+                }
+                BagPortSchema container = new BagPortSchema(
+                        ContainerEmptiness.K_PLUS, element);
+                String operator = semanticHead(source);
+                ContainerLawDeclaration laws = certifiedLaws(container, operator);
+                recordContainerLaws(operator, laws);
                 OperatorDeclaration declaration = OperatorDeclaration.monomorphic(
-                        semanticHead(source),
+                        operator,
                         Collections.singletonList(container),
                         output,
                         Collections.singletonMap(PortPath.at(0), laws),
-                        0);
-                InstantiatedOperator operator = declaration.instantiateMonomorphic();
-                List<FlatInput> leaves = new ArrayList<>(operands.size());
+                        null);
+                return TypedENode.construct(
+                        declaration.instantiateMonomorphic(),
+                        context,
+                        Collections.singletonList(
+                                new BagPort(container, context, typedOperands)));
+            }
+            if (source.isFlexibleArity() && output.equals(REL)) {
+                typedOperands = new ArrayList<>(operands.size());
                 for (OnePort operand : operands) {
-                    leaves.add(new FlatLeaf(operand));
+                    typedOperands.add(asRelationalOperand(operand, context));
                 }
-                FlatApplication application = new FlatApplication(operator, context, leaves);
-                return TypedENode.flatConstruct(application, this::insert);
+            }
+            if (source.isFlexibleArity()
+                    && typedOperands.stream().allMatch(
+                            port -> port.schema().type().equals(output))) {
+                PortSchema container = containerSchema(
+                        source.getFlexibleArityKind(), new OnePortSchema(output));
+                String operator = semanticHead(source);
+                ContainerLawDeclaration laws = certifiedLaws(container, operator);
+                recordContainerLaws(operator, laws);
+                if (!typedOperands.isEmpty()) {
+                    OperatorDeclaration declaration = OperatorDeclaration.monomorphic(
+                            operator,
+                            Collections.singletonList(container),
+                            output,
+                            Collections.singletonMap(PortPath.at(0), laws),
+                            0);
+                    InstantiatedOperator instantiated = declaration.instantiateMonomorphic();
+                    List<FlatInput> leaves = new ArrayList<>(typedOperands.size());
+                    for (OnePort operand : typedOperands) {
+                        leaves.add(new FlatLeaf(operand));
+                    }
+                    FlatApplication application = new FlatApplication(
+                            instantiated, context, leaves);
+                    return TypedENode.flatConstruct(application, this::insert);
+                }
             }
 
-            List<PortSchema> schemas = new ArrayList<>(operands.size());
-            List<PortValue> ports = new ArrayList<>(operands.size());
-            for (OnePort operand : operands) {
+            List<PortSchema> schemas = new ArrayList<>(typedOperands.size());
+            List<PortValue> ports = new ArrayList<>(typedOperands.size());
+            for (OnePort operand : typedOperands) {
                 schemas.add(operand.schema());
                 ports.add(operand);
             }
@@ -556,6 +724,58 @@ public final class TheoryAlloyAdapter {
                     semanticHead(source), schemas, output, Collections.emptyMap(), null);
             return TypedENode.construct(
                     declaration.instantiateMonomorphic(), context, ports);
+        }
+
+        private List<OnePort> fixedCommutativeOperands(
+                EGraphNode source,
+                TypedSlotContext context,
+                List<OnePort> operands) {
+            if (source.getOpcode() != Opcode.EQUALS
+                    && source.getOpcode() != Opcode.NOT_EQUALS) {
+                return operands;
+            }
+            List<OnePort> relational = new ArrayList<>(operands.size());
+            for (OnePort operand : operands) {
+                relational.add(asRelationalOperand(operand, context));
+            }
+            return relational;
+        }
+
+        private static boolean isCertifiedFixedCommutative(Opcode opcode) {
+            return opcode == Opcode.IFF
+                    || opcode == Opcode.EQUALS
+                    || opcode == Opcode.NOT_EQUALS;
+        }
+
+        private void recordContainerLaws(
+                String operator,
+                ContainerLawDeclaration laws) {
+            List<ContainerLawDeclaration> declarations = certifiedContainerLaws
+                    .computeIfAbsent(operator, ignored -> new ArrayList<>());
+            for (ContainerLawDeclaration existing : declarations) {
+                if (existing.kind() == laws.kind()) {
+                    return;
+                }
+            }
+            declarations.add(laws);
+        }
+
+        private OnePort asRelationalOperand(OnePort operand, TypedSlotContext context) {
+            if (operand.schema().type().equals(REL)) {
+                return operand;
+            }
+            TypedInvocation invocation = relationalCoercions.get(operand);
+            if (invocation == null) {
+                invocation = insert(fixedNode(
+                        "ALLOY/RELATIONAL-VARIABLE",
+                        REL,
+                        context,
+                        Collections.singletonList(operand)));
+                relationalCoercions.put(operand, invocation);
+            } else if (!invocation.callerContext().equals(context)) {
+                throw new IllegalStateException("Relational coercion key lost its caller context");
+            }
+            return OnePort.invocation(context, invocation);
         }
 
         private TypedInvocation buildLocalBinder(
@@ -593,10 +813,25 @@ public final class TheoryAlloyAdapter {
                             domainKey,
                             source.getOpcode().name(),
                             multiplicity,
-                            disjointnessClass));
+                            disjointnessClass,
+                            bindingType(variable)));
                 }
             }
             BinderPlan plan = localBinderPlan(locals, context);
+            if (localBinderDescriptors.put(source, plan.descriptor) != null) {
+                throw new IllegalStateException(
+                        "A local matrix binder received two certified descriptors");
+            }
+            Map<String, Integer> sourceCoordinates = new LinkedHashMap<>();
+            for (int index = 0; index < locals.size(); index++) {
+                sourceCoordinates.put(
+                        locals.get(index).name,
+                        plan.sourceToCoordinate.get(index));
+            }
+            if (localBinderSourceCoordinates.put(source, sourceCoordinates) != null) {
+                throw new IllegalStateException(
+                        "A local matrix binder received two source-coordinate maps");
+            }
             TypedSlotContext bodyContext = context.union(plan.occurrence.codomain());
             Map<String, TypedSlot> bodyBindings = new LinkedHashMap<>(bindings);
             for (int index = 0; index < locals.size(); index++) {
@@ -649,7 +884,12 @@ public final class TheoryAlloyAdapter {
 
         private BinderPlan binderPlan(List<QuantiVar> variables, TypedSlotContext ambient) {
             List<BindingPayload> payloads = new ArrayList<>(variables.size());
+            int exchangeClass = -1;
+            QuantiVar previous = null;
             for (QuantiVar variable : variables) {
+                if (previous == null || !sameExchangeRun(previous, variable)) {
+                    exchangeClass++;
+                }
                 payloads.add(new BindingPayload(
                         variable.getQuantifier().name(),
                         variable.getCardinality().name(),
@@ -658,12 +898,24 @@ public final class TheoryAlloyAdapter {
                                 : BinderCoordinateDescriptor.NO_DISJOINTNESS_CLASS,
                         StructuralKey.of(
                                 "alloy-binder-domain",
-                                List.of(normalizeType(variable.getTypeName()),
-                                        normalizeType(variable.getCarrierTypeName())),
+                                List.of(normalizeType(variable.getCarrierTypeName())),
                                 Collections.emptyList()),
-                        bindingType(variable)));
+                        bindingType(variable),
+                        exchangeClass));
+                previous = variable;
             }
-            return binderPlan(variables, payloads, ambient);
+            return binderPlan(variables, payloads, ambient, true);
+        }
+
+        private static boolean sameExchangeRun(QuantiVar left, QuantiVar right) {
+            if (left.getQuantifier() != right.getQuantifier()) {
+                return false;
+            }
+            if (left.getQuantifier() == QuantiVar.Quantifier.ALL
+                    || left.getQuantifier() == QuantiVar.Quantifier.SOME) {
+                return true;
+            }
+            return left.getBindingPath().equals(right.getBindingPath());
         }
 
         private BinderPlan localBinderPlan(
@@ -673,25 +925,50 @@ public final class TheoryAlloyAdapter {
             List<BindingPayload> payloads = new ArrayList<>(locals.size());
             for (int index = 0; index < locals.size(); index++) {
                 LocalCoordinate local = locals.get(index);
-                QuantiVar placeholder = new QuantiVar(index, local.name, "", "AlloyRel");
+                QuantiVar placeholder = new QuantiVar(index, local.name, "", local.type.toString());
                 variables.add(placeholder);
                 payloads.add(new BindingPayload(
                         local.quantifier,
                         local.multiplicity,
                         local.disjointnessClass,
                         local.domain,
-                        REL));
+                        local.type,
+                        0));
             }
-            return binderPlan(variables, payloads, ambient);
+            return binderPlan(variables, payloads, ambient, false);
         }
 
         private BinderPlan binderPlan(
                 List<QuantiVar> variables,
                 List<BindingPayload> payloads,
-                TypedSlotContext ambient) {
+                TypedSlotContext ambient,
+                boolean canonicalizeIndependentOrder) {
+            if (variables.size() != payloads.size()) {
+                throw new IllegalArgumentException(
+                        "Binder variables and payloads must have equal arity");
+            }
+            List<Integer> order = new ArrayList<>(variables.size());
+            for (int index = 0; index < variables.size(); index++) {
+                order.add(index);
+            }
+            if (canonicalizeIndependentOrder) {
+                order.sort((left, right) -> compareBindingPayloads(
+                        payloads.get(left), payloads.get(right), left, right));
+            }
+            List<QuantiVar> orderedVariables = new ArrayList<>(variables.size());
+            List<BindingPayload> orderedPayloads = new ArrayList<>(payloads.size());
+            List<Integer> sourceToCoordinate = new ArrayList<>(
+                    Collections.nCopies(variables.size(), -1));
+            for (int coordinate = 0; coordinate < order.size(); coordinate++) {
+                int source = order.get(coordinate);
+                orderedVariables.add(variables.get(source));
+                orderedPayloads.add(payloads.get(source));
+                sourceToCoordinate.set(source, coordinate);
+            }
+
             Map<GraphType, Integer> ordinals = new TreeMap<>();
             List<BinderCoordinateDescriptor> coordinates = new ArrayList<>(variables.size());
-            for (BindingPayload payload : payloads) {
+            for (BindingPayload payload : orderedPayloads) {
                 int ordinal = ordinals.getOrDefault(payload.type, 0);
                 ordinals.put(payload.type, ordinal + 1);
                 coordinates.add(new BinderCoordinateDescriptor(
@@ -700,6 +977,7 @@ public final class TheoryAlloyAdapter {
                         payload.quantifier,
                         payload.multiplicity,
                         payload.disjointnessClass,
+                        payload.exchangeClass,
                         TypedSlotContext.empty()));
             }
             TypedSlotContext descriptorContext = TypedSlotContext.of(
@@ -708,15 +986,18 @@ public final class TheoryAlloyAdapter {
                             .toList());
             List<BinderAutomorphismCertificate> certificates = new ArrayList<>();
             int certificateOrdinal = 0;
-            for (int index = 1; index < payloads.size(); index++) {
-                if (!payloads.get(index - 1).equals(payloads.get(index))) {
+            Map<BindingPayload, Integer> previousByPayload = new LinkedHashMap<>();
+            for (int index = 0; index < orderedPayloads.size(); index++) {
+                Integer previousIndex = previousByPayload.put(
+                        orderedPayloads.get(index), index);
+                if (previousIndex == null) {
                     continue;
                 }
                 Map<TypedSlot, TypedSlot> swap = new LinkedHashMap<>();
                 for (TypedSlot slot : descriptorContext) {
                     swap.put(slot, slot);
                 }
-                TypedSlot left = coordinates.get(index - 1).canonicalSlot();
+                TypedSlot left = coordinates.get(previousIndex).canonicalSlot();
                 TypedSlot right = coordinates.get(index).canonicalSlot();
                 swap.put(left, right);
                 swap.put(right, left);
@@ -732,10 +1013,43 @@ public final class TheoryAlloyAdapter {
             BinderBlockDescriptor descriptor = BinderBlockDescriptor.certified(
                     coordinates, certificates);
             return new BinderPlan(
-                    variables,
+                    orderedVariables,
                     coordinates,
                     descriptor,
-                    descriptor.freshOccurrenceRenaming(ambient));
+                    descriptor.freshOccurrenceRenaming(ambient),
+                    sourceToCoordinate);
+        }
+
+        private static int compareBindingPayloads(
+                BindingPayload left,
+                BindingPayload right,
+                int leftSource,
+                int rightSource) {
+            int comparison = Integer.compare(left.exchangeClass, right.exchangeClass);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = left.type.compareTo(right.type);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = left.domain.compareTo(right.domain);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = left.quantifier.compareTo(right.quantifier);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = left.multiplicity.compareTo(right.multiplicity);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = Integer.compare(
+                    left.disjointnessClass, right.disjointnessClass);
+            return comparison != 0
+                    ? comparison
+                    : Integer.compare(leftSource, rightSource);
         }
 
         private TypedInvocation asInvocation(
@@ -796,7 +1110,6 @@ public final class TheoryAlloyAdapter {
                 normalized = normalized.act(TypedEmbedding.inclusion(
                         normalized.callerContext(), callerContext));
             }
-            graph.checkInvariants();
             return normalized;
         }
 
@@ -865,7 +1178,21 @@ public final class TheoryAlloyAdapter {
 
     private static GraphType bindingType(QuantiVar variable) {
         String type = normalizeType(variable.getTypeName());
-        return "int".equalsIgnoreCase(type) ? GraphType.INT : REL;
+        return bindingType(type);
+    }
+
+    private static GraphType bindingType(EGraphNode variable) {
+        return bindingType(normalizeType(variable.getSourceType()));
+    }
+
+    private static GraphType bindingType(String type) {
+        String normalized = type.startsWith("VAR_") ? type.substring(4) : type;
+        if ("int".equalsIgnoreCase(normalized)) {
+            return GraphType.INT;
+        }
+        return GraphType.constructor(
+                "AlloyCarrier",
+                Collections.singletonList(GraphType.constructor(normalized)));
     }
 
     private static String semanticHead(EGraphNode node) {
@@ -874,6 +1201,7 @@ public final class TheoryAlloyAdapter {
             case CONSTANT:
             case GLOBALBINDING:
             case CALL:
+            case REF:
             case SHADOW:
                 head.append('/').append(normalizeAtom(node.getSourceName()));
                 break;
@@ -897,7 +1225,9 @@ public final class TheoryAlloyAdapter {
             QuantiVar variable,
             TypedSlot slot) {
         putBinding(bindings, variable.getName(), slot);
-        putBinding(bindings, variable.getOriginalName(), slot);
+        for (String alias : variable.getOriginalNames()) {
+            putBinding(bindings, alias, slot);
+        }
         putBinding(bindings, variable.getDeBruijnKey(), slot);
     }
 
@@ -914,9 +1244,16 @@ public final class TheoryAlloyAdapter {
     private static boolean hasBinding(
             Map<String, TypedSlot> bindings,
             QuantiVar variable) {
-        return bindings.containsKey(variable.getName())
-                || bindings.containsKey(variable.getOriginalName())
-                || bindings.containsKey(variable.getDeBruijnKey());
+        if (bindings.containsKey(variable.getName())
+                || bindings.containsKey(variable.getDeBruijnKey())) {
+            return true;
+        }
+        for (String alias : variable.getOriginalNames()) {
+            if (bindings.containsKey(alias)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Map<String, String> identitySlotNames(EGraphNode node) {
@@ -1052,16 +1389,20 @@ public final class TheoryAlloyAdapter {
         private final List<BinderCoordinateDescriptor> coordinates;
         private final BinderBlockDescriptor descriptor;
         private final TypedRenaming occurrence;
+        private final List<Integer> sourceToCoordinate;
 
         private BinderPlan(
                 List<QuantiVar> variables,
                 List<BinderCoordinateDescriptor> coordinates,
                 BinderBlockDescriptor descriptor,
-                TypedRenaming occurrence) {
+                TypedRenaming occurrence,
+                List<Integer> sourceToCoordinate) {
             this.variables = Collections.unmodifiableList(new ArrayList<>(variables));
             this.coordinates = Collections.unmodifiableList(new ArrayList<>(coordinates));
             this.descriptor = descriptor;
             this.occurrence = occurrence;
+            this.sourceToCoordinate = Collections.unmodifiableList(
+                    new ArrayList<>(sourceToCoordinate));
         }
     }
 
@@ -1071,18 +1412,21 @@ public final class TheoryAlloyAdapter {
         private final int disjointnessClass;
         private final StructuralKey domain;
         private final GraphType type;
+        private final int exchangeClass;
 
         private BindingPayload(
                 String quantifier,
                 String multiplicity,
                 int disjointnessClass,
                 StructuralKey domain,
-                GraphType type) {
+                GraphType type,
+                int exchangeClass) {
             this.quantifier = quantifier;
             this.multiplicity = multiplicity;
             this.disjointnessClass = disjointnessClass;
             this.domain = domain;
             this.type = type;
+            this.exchangeClass = exchangeClass;
         }
 
         @Override
@@ -1094,13 +1438,16 @@ public final class TheoryAlloyAdapter {
             return quantifier.equals(payload.quantifier)
                     && multiplicity.equals(payload.multiplicity)
                     && disjointnessClass == payload.disjointnessClass
+                    && exchangeClass == payload.exchangeClass
                     && domain.equals(payload.domain)
                     && type.equals(payload.type);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(quantifier, multiplicity, disjointnessClass, domain, type);
+            return Objects.hash(
+                    quantifier, multiplicity, disjointnessClass,
+                    domain, type, exchangeClass);
         }
     }
 
@@ -1110,18 +1457,21 @@ public final class TheoryAlloyAdapter {
         private final String quantifier;
         private final String multiplicity;
         private final int disjointnessClass;
+        private final GraphType type;
 
         private LocalCoordinate(
                 String name,
                 StructuralKey domain,
                 String quantifier,
                 String multiplicity,
-                int disjointnessClass) {
+                int disjointnessClass,
+                GraphType type) {
             this.name = name;
             this.domain = domain;
             this.quantifier = quantifier;
             this.multiplicity = multiplicity;
             this.disjointnessClass = disjointnessClass;
+            this.type = type;
         }
     }
 

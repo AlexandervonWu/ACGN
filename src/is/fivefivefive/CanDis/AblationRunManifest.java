@@ -30,8 +30,8 @@ import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
 
 /** Creates and validates reproducibility manifests for process-isolated ablation runs. */
 final class AblationRunManifest {
-    static final String MANIFEST_SCHEMA_VERSION = "candis-ablation-manifest-v2";
-    static final String OUTPUT_SCHEMA_VERSION = "candis-ablation-output-v4";
+    static final String MANIFEST_SCHEMA_VERSION = "candis-ablation-manifest-v3";
+    static final String OUTPUT_SCHEMA_VERSION = "candis-ablation-output-v5";
     static final String ARM_MANIFEST = "manifest.json";
     static final String ROOT_MANIFEST = "run-manifest.json";
     private static final List<String> ARM_OUTPUTS = List.of(
@@ -132,6 +132,12 @@ final class AblationRunManifest {
                         ? CanonicalAlloyPipeline.PIPELINE_VERSION : "legacy-bounded")
                 .put("measurementProjectionVersion", exact
                         ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
+                        : "not-applicable")
+                .put("quotientMetricVersion", exact
+                        ? CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION
+                        : "not-applicable")
+                .put("canonicalRepresentativeTedVersion", exact
+                        ? CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION
                         : "not-applicable")
                 .put("boundedSettings", bounded);
     }

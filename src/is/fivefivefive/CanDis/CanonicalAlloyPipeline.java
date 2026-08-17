@@ -1,25 +1,28 @@
 package is.fivefivefive.CanDis;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.IdentityHashMap;
-import java.util.Map;
 import java.util.Objects;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
-import is.fivefivefive.CanDis.theory.StructuralKey;
+import is.fivefivefive.CanDis.canonical.CanonicalObservation;
+import is.fivefivefive.CanDis.canonical.CanonicalRepresentativeTreeDistance;
+import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
+import is.fivefivefive.CanDis.metric.RepairProjection;
+import is.fivefivefive.CanDis.metric.RepairView;
+import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
 
 /**
- * Complete Alloy normalization followed by the exact typed slotted-port
- * e-graph boundary. The legacy {@link Canonical} result remains available for
- * compatibility measurements.
+ * Three-layer Alloy boundary: certified semantics, canonical equality, and the
+ * established repair metric evaluated over certified admissible alignments.
+ * Canonical representative TED remains available only as an explicitly named
+ * diagnostic baseline.
  */
 public final class CanonicalAlloyPipeline {
-    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v1";
-    public static final String MEASUREMENT_PROJECTION_VERSION =
-            "finite-term-semantic-projection-v1";
+    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v10-three-layer";
+    public static final String MEASUREMENT_PROJECTION_VERSION = RepairProjection.VERSION;
+    public static final String REPRESENTATIVE_TED_VERSION =
+            CanonicalRepresentativeTreeDistance.VERSION;
+    public static final String QUOTIENT_METRIC_VERSION = QuotientRepairDistance.VERSION;
 
     private CanonicalAlloyPipeline() {
     }
@@ -30,137 +33,73 @@ public final class CanonicalAlloyPipeline {
 
     public static Prepared prepare(Canonical.Prepared normalized) {
         Objects.requireNonNull(normalized, "normalized");
-        return new Prepared(TheoryAlloyAdapter.adapt(normalized.normalizedForms()));
+        TheoryAlloyAdapter.Result result = TheoryAlloyAdapter.adapt(
+                normalized.normalizedForms());
+        return new Prepared(normalized, result);
     }
 
+    /**
+     * Primary repair metric. Its geometry is specified by CanonicalDistance;
+     * faithful certificates replace the legacy structural assumptions.
+     */
     public static int distance(Prepared left, Prepared right) {
+        return distanceEvaluation(left, right).distance();
+    }
+
+    public static QuotientRepairDistance.Result distanceEvaluation(
+            Prepared left,
+            Prepared right) {
+        requirePrepared(left, right);
+        return QuotientRepairDistance.enforceCertifiedKernel(
+                QuotientRepairDistance.evaluate(left.repairView, right.repairView),
+                left.observation.equivalentTo(right.observation));
+    }
+
+    /** Diagnostic baseline retained to expose canonical-representative discontinuity. */
+    public static int canonicalRepresentativeTreeDistance(Prepared left, Prepared right) {
+        requirePrepared(left, right);
+        return CanonicalRepresentativeTreeDistance.distance(
+                left.observation, right.observation);
+    }
+
+    private static void requirePrepared(Prepared left, Prepared right) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
-        if (left.canonicalKey.equals(right.canonicalKey)) {
-            return 0;
-        }
-        return treeDistance(
-                left.distanceKey,
-                right.distanceKey,
-                new IdentityHashMap<>(),
-                new IdentityHashMap<>());
-    }
-
-    private static StructuralKey semanticProjection(StructuralKey key) {
-        if (!"canonical-alloy-form".equals(key.tag())
-                && !key.tag().startsWith("finite-term/")) {
-            throw new IllegalArgumentException(
-                    "Semantic projection requires a finite-term key, found " + key.tag());
-        }
-        java.util.List<String> scalars = new java.util.ArrayList<>(key.scalars());
-        StringBuilder layout = new StringBuilder(key.children().size());
-        java.util.List<StructuralKey> children = new java.util.ArrayList<>();
-        for (int index = 0; index < key.children().size(); index++) {
-            StructuralKey child = key.children().get(index);
-            if ("canonical-alloy-form".equals(child.tag())
-                    || child.tag().startsWith("finite-term/")) {
-                layout.append('T');
-                children.add(semanticProjection(child));
-            } else {
-                layout.append('M');
-                scalars.add(index + ":" + child.stableString());
-            }
-        }
-        scalars.add("layout=" + layout);
-        return StructuralKey.of(key.tag(), scalars, children);
-    }
-
-    private static int treeDistance(
-            StructuralKey left,
-            StructuralKey right,
-            Map<StructuralKey, IdentityHashMap<StructuralKey, Integer>> memo,
-            Map<StructuralKey, Integer> sizes) {
-        IdentityHashMap<StructuralKey, Integer> rightMemo = memo.get(left);
-        Integer remembered = rightMemo == null ? null : rightMemo.get(right);
-        if (remembered != null) {
-            return remembered;
-        }
-        int distance = left.tag().equals(right.tag())
-                && left.scalars().equals(right.scalars()) ? 0 : 1;
-        int leftCount = left.children().size();
-        int rightCount = right.children().size();
-        int[][] forest = new int[leftCount + 1][rightCount + 1];
-        for (int i = 1; i <= leftCount; i++) {
-            forest[i][0] = Math.addExact(
-                    forest[i - 1][0], treeSize(left.children().get(i - 1), sizes));
-        }
-        for (int j = 1; j <= rightCount; j++) {
-            forest[0][j] = Math.addExact(
-                    forest[0][j - 1], treeSize(right.children().get(j - 1), sizes));
-        }
-        for (int i = 1; i <= leftCount; i++) {
-            StructuralKey leftChild = left.children().get(i - 1);
-            for (int j = 1; j <= rightCount; j++) {
-                StructuralKey rightChild = right.children().get(j - 1);
-                int delete = Math.addExact(forest[i - 1][j], treeSize(leftChild, sizes));
-                int insert = Math.addExact(forest[i][j - 1], treeSize(rightChild, sizes));
-                int update = Math.addExact(
-                        forest[i - 1][j - 1],
-                        treeDistance(leftChild, rightChild, memo, sizes));
-                forest[i][j] = Math.min(update, Math.min(delete, insert));
-            }
-        }
-        distance = Math.addExact(distance, forest[leftCount][rightCount]);
-        if (rightMemo == null) {
-            rightMemo = new IdentityHashMap<>();
-            memo.put(left, rightMemo);
-        }
-        rightMemo.put(right, distance);
-        return distance;
-    }
-
-    private static int treeSize(
-            StructuralKey key,
-            Map<StructuralKey, Integer> sizes) {
-        Integer remembered = sizes.get(key);
-        if (remembered != null) {
-            return remembered;
-        }
-        int size = 1;
-        for (StructuralKey child : key.children()) {
-            size = Math.addExact(size, treeSize(child, sizes));
-        }
-        sizes.put(key, size);
-        return size;
-    }
-
-    private static String sha256(String value) {
-        try {
-            byte[] digest = MessageDigest.getInstance("SHA-256")
-                    .digest(value.getBytes(StandardCharsets.UTF_8));
-            StringBuilder result = new StringBuilder(digest.length * 2);
-            for (byte item : digest) {
-                result.append(String.format(java.util.Locale.ROOT, "%02x", item & 0xff));
-            }
-            return result.toString();
-        } catch (NoSuchAlgorithmException exception) {
-            throw new IllegalStateException("SHA-256 is unavailable", exception);
-        }
     }
 
     public static final class Prepared {
-        private final StructuralKey canonicalKey;
-        private final StructuralKey distanceKey;
-        private final int representationSize;
+        private final CertifiedSemanticArtifact semanticArtifact;
+        private final CanonicalObservation observation;
+        private final RepairView repairView;
+        private final int representativeTreeSize;
+        private final int repairObservationSize;
         private final long eclasses;
         private final long enodes;
         private final long slots;
         private final long rebuilds;
         private final long estimatedBytes;
-        private final String digest;
         private final long constructionNanos;
         private final long unfoldingNanos;
         private final long observationNanos;
+        private final long repairProjectionNanos;
 
-        private Prepared(TheoryAlloyAdapter.Result result) {
-            canonicalKey = result.canonicalKey();
-            distanceKey = semanticProjection(canonicalKey);
-            representationSize = treeSize(distanceKey, new IdentityHashMap<>());
+        private Prepared(
+                Canonical.Prepared normalized,
+                TheoryAlloyAdapter.Result result) {
+            semanticArtifact = result.semanticArtifact();
+            observation = new CanonicalObservation(result.canonicalKey());
+            representativeTreeSize = CanonicalRepresentativeTreeDistance.size(observation);
+            long projectionStarted = System.nanoTime();
+            repairView = RepairProjection.project(
+                    semanticArtifact,
+                    normalized.normalizedForms(),
+                    result.phaseBinderDescriptors(),
+                    result.phaseSourceCoordinates(),
+                    result.localBinderDescriptors(),
+                    result.localBinderSourceCoordinates(),
+                    observation.digest());
+            repairProjectionNanos = System.nanoTime() - projectionStarted;
+            repairObservationSize = repairView.semanticSize();
             eclasses = result.eclasses();
             enodes = result.enodes();
             slots = result.slots();
@@ -169,11 +108,71 @@ public final class CanonicalAlloyPipeline {
             constructionNanos = result.constructionNanos();
             unfoldingNanos = result.unfoldingNanos();
             observationNanos = result.observationNanos();
-            digest = sha256(canonicalKey.stableString());
         }
 
+        private Prepared(Prepared source) {
+            semanticArtifact = null;
+            observation = source.observation;
+            repairView = source.repairView;
+            representativeTreeSize = source.representativeTreeSize;
+            repairObservationSize = source.repairObservationSize;
+            eclasses = source.eclasses;
+            enodes = source.enodes;
+            slots = source.slots;
+            rebuilds = source.rebuilds;
+            estimatedBytes = source.estimatedBytes;
+            constructionNanos = source.constructionNanos;
+            unfoldingNanos = source.unfoldingNanos;
+            observationNanos = source.observationNanos;
+            repairProjectionNanos = source.repairProjectionNanos;
+        }
+
+        public CertifiedSemanticArtifact semanticArtifact() {
+            if (semanticArtifact == null) {
+                throw new IllegalStateException(
+                        "The compact comparison representation does not retain the construction artifact");
+            }
+            return semanticArtifact;
+        }
+
+        /** Whether this value still owns the proof-heavy construction artifact. */
+        public boolean retainsSemanticArtifact() {
+            return semanticArtifact != null;
+        }
+
+        /**
+         * Drops construction-only graph witnesses after their certified observation and
+         * repair projection have been produced. Equality and every distance operation are
+         * unchanged; callers needing certificate replay must retain the original value.
+         */
+        public Prepared compactForComparison() {
+            return semanticArtifact == null ? this : new Prepared(this);
+        }
+
+        public CanonicalObservation canonicalObservation() {
+            return observation;
+        }
+
+        public RepairView repairView() {
+            return repairView;
+        }
+
+        /** Size of the established metric's certified repair observation. */
+        public int repairObservationSize() {
+            return repairObservationSize;
+        }
+
+        /** Size of the diagnostic canonical-representative TED tree. */
+        public int representativeTreeSize() {
+            return representativeTreeSize;
+        }
+
+        /**
+         * Compatibility alias for the former exact measurement size. New
+         * repair-distance normalization must use {@link #repairObservationSize()}.
+         */
         public int representationSize() {
-            return representationSize;
+            return representativeTreeSize;
         }
 
         public long eclassCount() {
@@ -208,20 +207,25 @@ public final class CanonicalAlloyPipeline {
             return observationNanos;
         }
 
+        public long repairProjectionNanos() {
+            return repairProjectionNanos;
+        }
+
         public String digest() {
-            return digest;
+            return observation.digest();
         }
 
         public String stableForm() {
-            return canonicalKey.stableString();
+            return observation.stableForm();
         }
 
+        /** Stable diagnostic projection consumed only by representative TED. */
         public String measurementForm() {
-            return distanceKey.stableString();
+            return CanonicalRepresentativeTreeDistance.projection(observation).stableString();
         }
 
         public boolean equivalentTo(Prepared other) {
-            return other != null && canonicalKey.equals(other.canonicalKey);
+            return other != null && observation.equivalentTo(other.observation);
         }
     }
 }

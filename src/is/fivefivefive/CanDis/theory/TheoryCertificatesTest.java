@@ -416,6 +416,19 @@ public final class TheoryCertificatesTest {
                 CertificateOrigin.binderAutomorphism(
                         "test-signature", "incompatible", 1)));
 
+        List<BinderCoordinateDescriptor> separateScopes = Arrays.asList(
+                new BinderCoordinateDescriptor(
+                        x, domain, "all", "one", -1, 0,
+                        TypedSlotContext.empty()),
+                new BinderCoordinateDescriptor(
+                        y, domain, "all", "one", -1, 1,
+                        TypedSlotContext.empty()));
+        expectThrows(IllegalArgumentException.class, () -> new BinderAutomorphismCertificate(
+                separateScopes,
+                swap,
+                CertificateOrigin.binderAutomorphism(
+                        "test-signature", "cross-exchange-scope", 2)));
+
         BindBlockPortSchema certifiedSchema = new BindBlockPortSchema(
                 certified, new OnePortSchema(USER));
         TypedRenaming occurrence = certified.freshOccurrenceRenaming(

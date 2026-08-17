@@ -1,14 +1,17 @@
 # CanDis
 
-CanDis constructs a temporal, prenex, slotted e-graph representation of Alloy
-predicates and computes a canonical edit distance between two predicates. The
-repository also contains dataset runners, backtranslation, semantic checks, and
-an ablation suite comparing fixed-arity, egglog-like, slotted, and full canonical
+CanDis constructs a temporal, prenex, typed slotted-port representation of Alloy
+predicates and evaluates the established repair metric on its certified
+semantic quotient. Canonical equality, deterministic representatives, and
+repair distance are separate layers. The repository also contains dataset
+runners, backtranslation, semantic checks, and a seven-arm ablation comparing
+fixed-arity, De Bruijn, egglog-like, slotted, legacy-canonical, and exact
 representations.
 
 ## Contents
 
 - [Concepts](#concepts)
+- [Current experimental snapshot](#current-experimental-snapshot)
 - [Architecture](#architecture)
 - [Canonicalization pipeline](#canonicalization-pipeline)
 - [Canonical representation](#canonical-representation)
@@ -26,13 +29,14 @@ representations.
 ## Concepts
 
 CanDis compares an Alloy predicate with another predicate, normally a student
-answer and an oracle answer for the same invariant question. It uses three
-levels of representation:
+answer and an oracle answer for the same invariant question. The source path
+passes through three representation levels:
 
 1. **Raw AST:** parser nodes with source-level operators and identifiers.
 2. **MASG/IR:** an augmented multigraph converted into temporal normal forms.
-3. **Canonical form:** a temporal tree whose phases contain prenex binding lists
-   and saturated slotted e-graph matrices.
+3. **Certified canonical form:** typed slotted-port semantic state, a
+   deterministic equality observation, and a repair view preserving source edit
+   units.
 
 The full distance is structural. It is designed to assign zero cost to the
 implemented equivalence theory, including alpha-equivalence, declaration
@@ -41,6 +45,32 @@ selected quantifier rewrites.
 
 `distance == 0` means equality under that implemented theory. It is not a
 complete theorem prover for arbitrary Alloy semantics.
+
+## Current Experimental Snapshot
+
+The August 17, 2026 snapshot uses 66,080 source files. Every runner excludes
+4,482 student-oracle pairs with identical parser ASTs before pool construction,
+leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
+
+| Evaluation | Headline result |
+| --- | --- |
+| Paired student-oracle (`pipeline-v9`, metric v4) | 61,598 successes, 0 failures; mean certified repair distance 14.014010; 2,317 `CORRECT` zeroes; 0 incorrect zeroes |
+| Nearest correct pool (`pipeline-v10`, metric v5) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 10.865050 |
+| Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,318 canonical components, 10,257 AST-different zero-distance truth pairs |
+| Seven-arm natural corpus | exact arm retained 2,316 legacy-canonical zeroes and added 1; both canonical arms had 0 incorrect zeroes |
+| Generated capability matrix | slotted, legacy-canonical, and exact arms recovered 5,500/5,500 pairs; all 11 expected capability boundaries matched |
+
+The exact arm averaged 29.830 representation units, 20.935 reachable e-classes,
+and 18.059 reachable e-nodes, but required 2,303.890 seconds wall time versus
+18.470 seconds for the legacy canonical arm. Maximum RSS was 3,603.680 versus
+3,529.023 MiB. Its cost is dominated by certificate-bearing construction,
+renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
+not by larger output terms or the final repair-distance recurrence.
+
+The ablation and capability manifests record a dirty source tree at Git SHA
+`cc53042333fa3a1c820eb5715aa3b124e03d0ff1`. Their source, dataset, and output
+hashes are the exact provenance for these results; a clean tagged rerun remains
+a release task.
 
 ## Architecture
 
@@ -292,6 +322,11 @@ AST opcodes are canonicalized before these rules are compared.
 
 ## Canonical Distance
 
+`CanonicalDistance` is the repair-metric specification. The three-layer
+pipeline preserves this edit algebra while replacing uncertified scope
+assumptions with faithful binder and operator certificates. Canonical
+representative TED is reported separately and is not this metric.
+
 For prepared forms `L` and `R`:
 
 ```text
@@ -319,9 +354,26 @@ Symmetric `ALL` and `SOME` groups are canonically ordered by their binding tuple
 ### Matrix component
 
 `D_matrix` computes a minimum unit-cost rooted edit distance over saturated
-matrix representatives. It minimizes across compatible binding permutations,
-alpha-renamed slots, and retained e-class alternatives. A node replacement
-costs one; subtree insertion and deletion cost their canonical node counts.
+matrix representatives. Pairwise alpha alignment enumerates every
+maximum-cardinality partial variable mapping admitted by an order-preserving
+matching of certified scope blocks. Ordered children use sequence DP;
+commutative, Bag, and Set children use minimum-cost assignment. A node
+replacement costs one; subtree insertion and deletion cost their canonical
+node counts.
+
+The mapping is chosen once per binder owner across the complete aligned phase
+family. Temporal descendants reuse that choice for inherited coordinates, so a
+parent implication and its `eventually` child cannot silently choose different
+alpha permutations. A changed declaration may retain the same owner-coordinate
+alignment, ensuring that one quantifier-tuple modification still costs one.
+
+Prenex bindings and local expression binders use different certified coordinate
+maps. Local comprehensions and sums are compared over their own descriptor
+automorphism groups, with depth-qualified coordinates preventing accidental
+capture. Fixed commutative operators such as equality and inequality expose a
+two-operand Bag port; this permits exchange without claiming associativity.
+Named non-temporal references also remain semantic atoms: for example,
+`ordering/first` and `ordering/last` have distinct exact signatures.
 
 `Canonical.edits` emits a readable edit path. It uses temporal labels such as
 `left branch of UNTIL` and source variable names where available, while the
@@ -381,9 +433,11 @@ parser dependencies to `AlloyTerm`.
 ### Backtranslation
 
 `CanonicalBacktranslator` emits Alloy predicate text from one normal form or a
-temporal normal-form list. Regression tests compile the emitted predicate with
-the Alloy parser. Backtranslation is intended for validation and inspection;
-the original source formatting is not preserved.
+temporal normal-form list. Local relational comprehensions are emitted as
+`{decls | formula}`, including when nested below closure. Regression tests
+compile the emitted predicate with the Alloy parser. Backtranslation is
+intended for validation and inspection; the original source formatting is not
+preserved.
 
 ## Building And Testing
 
@@ -441,8 +495,10 @@ oracle, computes lexical, raw-AST, and canonical distances, optionally evaluates
 rewards, and writes JSON plus Markdown statistics.
 
 The unqualified canonical fields use the Phase I `CanonicalAlloyPipeline`
-backed by the exact `TypedSlottedPortEGraph`. Bounded legacy values remain in
-explicit `legacyCanonical*` and `legacyDiagnostic*` fields.
+backed by the exact `TypedSlottedPortEGraph` and the certified port of the
+established metric. Direct legacy-execution values remain in explicit
+`legacyCanonical*` fields as differential evidence; readable edit paths remain
+`legacyDiagnostic*`.
 
 ```bash
 java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.CanonicalBatchTest \
@@ -489,10 +545,32 @@ java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.Alloy4FunAugmenter \
 Additional options are `--skip-rewards`, `--audit-only`, `--limit N`, and
 `--verbose`.
 
+The augmenter stores compact certified comparison values after construction:
+canonical equality and repair distance retain the same observation and repair
+view, while construction-only graph witnesses are released. Faithful graph
+construction is memory-bounded independently of parser and distance workers.
+The progress line reports both values; for example, `--threads 32` under
+`-Xmx2g` currently selects four canonical builders. The builder count is capped
+at 16 and reduced further when the configured maximum heap is smaller.
+
+Strict-kernel failures report the incorrect source, truth reference, both
+canonical digests, and temporal/quantifier/matrix components. The current
+pool-100 rewarded full-corpus run completes all 61,598 eligible models and
+42,386 incorrect rankings with no parse, strict-kernel, or reward failure.
+
 The runners skip raw-AST-identical predicate pairs where configured. Dataset
 labels are read from the problem-class and correctness directories. Correctness
 labels include `CORRECT`, `OVERCONSTRAINED`, `UNDERCONSTRAINED`, and `BOTH`, with
 case-normalization handled by dataset conventions.
+
+All corpus-scale runners emit bounded progress checkpoints with completed and
+total work, throughput, and ETA. If no task completes for 30 seconds, they emit
+a heartbeat with the number of tasks still in flight. This applies to batch and
+augmentation stages, individual ablation arms and their process-isolated suite,
+memory attribution, capability generation/reporting and bounded soundness,
+semantic-soundness claims, and backtranslation equivalence checks. Parallel
+collectors report completion order while retaining source order in generated
+artifacts.
 
 ## Ablation Study
 
@@ -505,7 +583,7 @@ The ablation suite compares seven process-isolated arms:
 4. `java-egglog-debruijn`: the variadic arm with De Bruijn variable storage.
 5. `slotted-egraph`: renamed slots, slot redundancy, and permutation groups.
 6. `canonical`: temporal partitioning, per-phase prenexing, binding tuples, and
-   the retained bounded matrix representation.
+   bounded rewrite saturation around the reference metric implementation.
 7. `typed-slotted-port-egraph`: complete `CanonicalAlloyPipeline` adaptation,
    certified exact graph insertion/rebuild, and finite-term observation.
 
@@ -555,6 +633,25 @@ A "found semantic equivalent" in the efficiency table is a zero-distance pair
 whose dataset label is `CORRECT`. It uses the dataset's existing SAT-validated
 label and does not rerun the SAT solver during the ablation.
 
+The current full-corpus result is:
+
+| Arm | `CORRECT` zeroes | Mean distance | Wall s | Engine CPU s | Max RSS MiB |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `raw-egraph` | 823 | 18.390 | 18.260 | 4.517 | 933.320 |
+| `raw-egraph-debruijn` | 2,163 | 17.923 | 16.580 | 5.289 | 864.070 |
+| `java-egglog` | 823 | 17.996 | 16.400 | 4.094 | 874.352 |
+| `java-egglog-debruijn` | 2,163 | 17.530 | 16.630 | 4.997 | 915.074 |
+| `slotted-egraph` | 2,162 | 17.694 | 17.390 | 14.642 | 936.621 |
+| `canonical` | 2,316 | 14.029 | 18.470 | 13.255 | 3,529.023 |
+| `typed-slotted-port-egraph` | 2,317 | 14.042 | 2,303.890 | 47,451.149 | 3,603.680 |
+
+All arms completed all 61,598 eligible pairs with zero failures and zero
+incorrect zero-distance merges. Pair-level transitions show `+1/-0` from
+legacy canonical to exact. The exact arm's p50 and p95 engine latencies were
+555.391 and 4,394.306 ms. Consult the generated report for per-pair transitions,
+representation counts, and process metadata rather than copying this summary
+into a paper table by hand.
+
 ## Targeted Capability Benchmark
 
 `CapabilityBenchmark` is a deterministic companion experiment for all seven
@@ -582,6 +679,12 @@ transitions, CPU/wall costs, representation proxies, and natural-corpus context.
 The launcher also executes one deterministic scope-4 SAT check per transformation
 subtype by default (`--soundness-per-subtype N`) and labels that evidence as a
 bounded sanity check rather than proof.
+
+In the current 5,500-pair run, raw and Java egglog each recovered 47.00%; their
+De Bruijn variants recovered 65.96%; and slotted, legacy-canonical, and exact
+each recovered 100.00%. Every expected first-capable boundary matched. The 29
+bounded checks had zero conclusive non-temporal failures; six temporal checks
+remain explicitly inconclusive because no temporal backend was available.
 
 Principal outputs are `metadata.{json,csv}`, `skips.csv`, `results.{json,csv}`,
 `pair_results.csv`, `transitions.csv`, `unexpected_failures.csv`, `REPORT.md`,
@@ -685,9 +788,11 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
   retained source names when possible.
 - BAG multiplicity is semantically significant. Duplicate removal is limited to
   operators explicitly classified as ACI/SET or to proven tautological rules.
-- Canonical peak memory can be higher than the baseline e-graphs because prepared
-  forms retain temporal phases, binding metadata, e-class alternatives, slots,
-  and readable source information.
+- Both canonical arms peak near 3.5 GiB RSS versus roughly 0.9 GiB for the first
+  five baselines. The exact arm's principal penalty is CPU and latency, not
+  additional output units: certificates, orbit witnesses, immutable mutation
+  records, strict invariant checks, and finite unfoldings are construction
+  state rather than repair-observation nodes.
 - Batch reward values depend on the sampled Alloy instance pool and are not
   semantic proofs.
 

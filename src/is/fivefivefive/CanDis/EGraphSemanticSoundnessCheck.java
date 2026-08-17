@@ -16,9 +16,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.json.JSONArray;
@@ -64,21 +68,37 @@ public final class EGraphSemanticSoundnessCheck {
         List<Claim> work = new ArrayList<>(claims.values());
         work.sort(Comparator.comparing(claim -> claim.relativePath));
 
-        ExecutorService executor = Executors.newFixedThreadPool(options.threads);
-        List<Future<Result>> futures = new ArrayList<>(work.size());
-        for (Claim claim : work) {
-            futures.add(executor.submit(new VerifyTask(options.inputRoot, claim)));
-        }
-        executor.shutdown();
-
         List<Result> results = new ArrayList<>(work.size());
-        int completed = 0;
-        for (Future<Result> future : futures) {
-            results.add(future.get());
-            completed++;
-            if (completed % 500 == 0 || completed == work.size()) {
-                System.out.printf(Locale.ROOT, "Verified %,d / %,d claims%n", completed, work.size());
+        ExecutorService executor = Executors.newFixedThreadPool(options.threads);
+        try {
+            CompletionService<Result> completion = new ExecutorCompletionService<>(executor);
+            for (Claim claim : work) {
+                completion.submit(new VerifyTask(options.inputRoot, claim));
             }
+            ExperimentProgress progress = ExperimentProgress.start(
+                    System.err,
+                    "EGraphSemanticSoundnessCheck/claims",
+                    work.size(),
+                    "claims",
+                    "with " + options.threads + " workers");
+            int completed = 0;
+            while (completed < work.size()) {
+                Future<Result> future = completion.poll(30, TimeUnit.SECONDS);
+                if (future == null) {
+                    progress.heartbeat(completed, work.size() - completed, null);
+                    continue;
+                }
+                try {
+                    results.add(future.get());
+                } catch (ExecutionException exception) {
+                    Throwable cause = exception.getCause() == null ? exception : exception.getCause();
+                    throw new IllegalStateException("Semantic soundness worker failed", cause);
+                }
+                progress.update(++completed);
+            }
+            progress.finish(completed);
+        } finally {
+            executor.shutdownNow();
         }
         results.sort(Comparator.comparing(result -> result.claim.relativePath));
         List<ProbeResult> probes = runProbes();
@@ -156,9 +176,17 @@ public final class EGraphSemanticSoundnessCheck {
                     .sorted().toList();
         }
         List<ProbeResult> results = new ArrayList<>(files.size());
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "EGraphSemanticSoundnessCheck/probes",
+                files.size(),
+                "probes");
+        int completed = 0;
         for (Path file : files) {
             results.add(runProbe(file));
+            progress.update(++completed);
         }
+        progress.finish(completed);
         return results;
     }
 

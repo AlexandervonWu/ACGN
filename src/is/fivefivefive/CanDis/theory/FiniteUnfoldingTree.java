@@ -12,6 +12,8 @@ import java.util.TreeMap;
 /**
  * One complete finite derivation of {@code Rep_G(m*a,t;iota)} before a final
  * weakening. Every invocation leaf has been replaced by another complete tree.
+ * This is a proof/equality observation, not the repair-metric tree; Layer 3
+ * consumes a separate certified repair view of the repaired normal form.
  */
 public final class FiniteUnfoldingTree {
     private final TypedInvocation rootInvocation;
@@ -461,7 +463,28 @@ public final class FiniteUnfoldingTree {
                 children.add(transformed);
                 changed |= transformed != child;
             }
-            return changed ? StructuralKey.of(key.tag(), key.scalars(), children) : key;
+            if (!changed) {
+                return key;
+            }
+            if ("finite-term/bag".equals(key.tag())) {
+                List<StructuralKey> values = new ArrayList<>(children.subList(1, children.size()));
+                Collections.sort(values);
+                List<StructuralKey> normalized = new ArrayList<>(children.size());
+                normalized.add(children.get(0));
+                normalized.addAll(values);
+                children = normalized;
+            } else if ("finite-term/set".equals(key.tag())) {
+                NavigableMap<StructuralKey, StructuralKey> unique = new TreeMap<>();
+                for (int index = 1; index < children.size(); index++) {
+                    StructuralKey child = children.get(index);
+                    unique.put(child, child);
+                }
+                List<StructuralKey> normalized = new ArrayList<>(unique.size() + 1);
+                normalized.add(children.get(0));
+                normalized.addAll(unique.values());
+                children = normalized;
+            }
+            return StructuralKey.of(key.tag(), key.scalars(), children);
         }
 
         private List<StructuralKey> normalizePorts(

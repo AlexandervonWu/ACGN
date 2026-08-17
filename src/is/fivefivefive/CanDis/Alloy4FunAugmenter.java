@@ -28,6 +28,8 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -42,6 +44,7 @@ import parser.ast.nodes.Predicate;
 import parser.etc.Pair;
 import parser.util.AlloyUtil;
 import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
 import is.fivefivefive.CanDis.theory.CertificateVerifier;
 import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
@@ -59,6 +62,9 @@ public class Alloy4FunAugmenter {
     private static final int REPORT_BUFFER_SIZE = 1024 * 1024;
     private static final int EXPECTED_FULL_SOURCE_FILES = 66_080;
     private static final int EXPECTED_FULL_CONSIDERED_FILES = 61_598;
+    private static final int MAX_CANONICAL_WORKERS = 16;
+    private static final long CANONICAL_WORKER_HEAP_BYTES = 384L * 1024L * 1024L;
+    private static final long CANONICAL_HEAP_RESERVE_BYTES = 512L * 1024L * 1024L;
 
     public static void main(String[] args) throws IOException {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
@@ -91,9 +97,17 @@ public class Alloy4FunAugmenter {
 
         stageStarted = beginStage("Building correct-reference pools");
         Map<String, QuestionGroup> groups = groups(records);
+        ExperimentProgress poolProgress = ExperimentProgress.start(
+                System.err,
+                "Alloy4FunAugmenter/reference-pools",
+                groups.size(),
+                "groups");
+        int completedGroups = 0;
         for (QuestionGroup group : groups.values()) {
             group.buildReferences(options.verbose);
+            poolProgress.update(++completedGroups);
         }
+        poolProgress.finish(completedGroups);
         endStage("Building correct-reference pools", stageStarted);
 
         List<AstIdenticalComparison> astIdenticalComparisons = astIdenticalComparisons(groups);
@@ -199,6 +213,8 @@ public class Alloy4FunAugmenter {
         ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache = new ConcurrentHashMap<>();
         ConcurrentMap<RepresentationKey, CanonicalAlloyPipeline.Prepared> exactCache =
                 new ConcurrentHashMap<>();
+        int canonicalWorkers = effectiveCanonicalWorkers(options.threadCount);
+        Semaphore canonicalPermits = new Semaphore(canonicalWorkers, true);
         if (!options.verbose) {
             PrintStream sink = new PrintStream(new OutputStream() {
                 @Override
@@ -208,64 +224,132 @@ public class Alloy4FunAugmenter {
             System.setOut(sink);
             System.setErr(sink);
         }
-        ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
+        int workers = Math.max(1, options.threadCount);
+        int maximumInFlight = workers > Integer.MAX_VALUE / 4
+                ? Integer.MAX_VALUE
+                : workers * 4;
+        ExecutorService executor = Executors.newFixedThreadPool(workers);
         try {
-            List<Future<ModelRecord>> futures = new ArrayList<>(files.size());
-            for (Path file : files) {
-                futures.add(executor.submit(
-                        () -> parseRecord(
+            CompletionService<IndexedModelRecord> completion =
+                    new ExecutorCompletionService<>(executor);
+            Map<Future<IndexedModelRecord>, Integer> active = new HashMap<>();
+            List<ModelRecord> records = new ArrayList<>(
+                    java.util.Collections.nCopies(files.size(), null));
+            int submitted = 0;
+            while (submitted < files.size() && active.size() < maximumInFlight) {
+                final int fileIndex = submitted++;
+                Future<IndexedModelRecord> future = completion.submit(
+                        () -> new IndexedModelRecord(fileIndex, parseRecord(
                                 options.inputDir,
-                                file,
+                                files.get(fileIndex),
                                 options.verbose,
                                 astCache,
                                 canonicalCache,
-                                exactCache)));
+                                exactCache,
+                                canonicalPermits)));
+                active.put(future, fileIndex);
             }
-            List<ModelRecord> records = new ArrayList<>(files.size());
-            for (int i = 0; i < futures.size(); i++) {
+            ExperimentProgress progress = ExperimentProgress.start(
+                    originalErr,
+                    "Alloy4FunAugmenter/parse",
+                    files.size(),
+                    "files",
+                    "with " + workers + " workers, " + canonicalWorkers
+                            + " canonical builders, and at most " + maximumInFlight
+                            + " tasks in flight");
+            int completed = 0;
+            while (completed < files.size()) {
+                Future<IndexedModelRecord> future;
                 try {
-                    records.add(futures.get(i).get());
+                    future = completion.poll(30, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    records.add(ModelRecord.failed(options.inputDir, files.get(i), "InterruptedException: " + e.getMessage()));
+                    throw new IllegalStateException("Alloy model parsing was interrupted", e);
+                }
+                if (future == null) {
+                    progress.heartbeat(
+                            completed,
+                            active.size(),
+                            earliestUnresolvedDetail(active, files, options.inputDir));
+                    continue;
+                }
+                Integer expectedIndex = active.remove(future);
+                int index = expectedIndex == null ? completed : expectedIndex;
+                try {
+                    IndexedModelRecord indexed = future.get();
+                    index = indexed.index;
+                    records.set(index, indexed.record);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Alloy model parsing was interrupted", e);
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause() == null ? e : e.getCause();
-                    records.add(ModelRecord.failed(options.inputDir, files.get(i),
+                    records.set(index, ModelRecord.failed(options.inputDir, files.get(index),
                             cause.getClass().getSimpleName() + ": " + cause.getMessage()));
                 }
+                progress.update(++completed);
+                while (submitted < files.size() && active.size() < maximumInFlight) {
+                    final int fileIndex = submitted++;
+                    Future<IndexedModelRecord> next = completion.submit(
+                            () -> new IndexedModelRecord(fileIndex, parseRecord(
+                                    options.inputDir,
+                                    files.get(fileIndex),
+                                    options.verbose,
+                                    astCache,
+                                    canonicalCache,
+                                    exactCache,
+                                    canonicalPermits)));
+                    active.put(next, fileIndex);
+                }
             }
+            progress.finish(completed);
             List<Integer> failedIndexes = new ArrayList<>();
-            List<Future<ModelRecord>> retries = new ArrayList<>();
+            CompletionService<IndexedModelRecord> retries =
+                    new ExecutorCompletionService<>(executor);
             for (int i = 0; i < records.size(); i++) {
                 if (!records.get(i).success()) {
                     final int failedIndex = i;
                     failedIndexes.add(failedIndex);
-                    retries.add(executor.submit(
-                            () -> parseRecord(
+                    retries.submit(() -> new IndexedModelRecord(failedIndex, parseRecord(
                                     options.inputDir,
                                     files.get(failedIndex),
                                     options.verbose,
                                     astCache,
                                     canonicalCache,
-                                    exactCache)));
+                                    exactCache,
+                                    canonicalPermits)));
                 }
             }
-            if (!retries.isEmpty()) {
-                originalErr.println("[Alloy4FunAugmenter] Retrying " + retries.size()
+            if (!failedIndexes.isEmpty()) {
+                originalErr.println("[Alloy4FunAugmenter] Retrying " + failedIndexes.size()
                         + " parse failures in parallel...");
             }
-            for (int i = 0; i < retries.size(); i++) {
+            ExperimentProgress retryProgress = ExperimentProgress.start(
+                    originalErr,
+                    "Alloy4FunAugmenter/parse-retry",
+                    failedIndexes.size(),
+                    "files");
+            int retried = 0;
+            while (retried < failedIndexes.size()) {
                 try {
-                    ModelRecord retry = retries.get(i).get();
-                    if (retry.success()) {
-                        records.set(failedIndexes.get(i), retry);
+                    Future<IndexedModelRecord> future = retries.poll(30, TimeUnit.SECONDS);
+                    if (future == null) {
+                        retryProgress.heartbeat(
+                                retried, failedIndexes.size() - retried, null);
+                        continue;
+                    }
+                    IndexedModelRecord retry = future.get();
+                    if (retry.record.success()) {
+                        records.set(retry.index, retry.record);
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 } catch (ExecutionException ignored) {
                 }
+                retryProgress.update(++retried);
             }
+            retryProgress.finish(retried);
             astCache.clear();
             canonicalCache.clear();
             exactCache.clear();
@@ -285,7 +369,8 @@ public class Alloy4FunAugmenter {
             boolean verbose,
             ConcurrentMap<String, RawAstTree> astCache,
             ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache,
-            ConcurrentMap<RepresentationKey, CanonicalAlloyPipeline.Prepared> exactCache) {
+            ConcurrentMap<RepresentationKey, CanonicalAlloyPipeline.Prepared> exactCache,
+            Semaphore canonicalPermits) {
         ModelRecord record = new ModelRecord(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
@@ -321,28 +406,35 @@ public class Alloy4FunAugmenter {
             if (!"CORRECT".equals(record.statusFolder)) {
                 return record;
             }
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
-            visitor.visit(model, null);
-            DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-            Multigraph studentGraph = forest.get(pair.leftId);
-            Multigraph oracleGraph = forest.get(pair.rightId);
-            if (studentGraph == null || oracleGraph == null) {
-                record.error = "Could not find both predicate graphs in MASG forest.";
-            } else {
-                record.studentCanonical = canonicalCache.computeIfAbsent(
-                        RepresentationKey.student(record),
-                        key -> Canonical.prepare(studentGraph));
-                record.oracleCanonical = canonicalCache.computeIfAbsent(
-                        RepresentationKey.oracle(record),
-                        key -> Canonical.prepare(oracleGraph));
-                record.studentExact = exactCache.computeIfAbsent(
-                        RepresentationKey.student(record),
-                        key -> CanonicalAlloyPipeline.prepare(record.studentCanonical));
-                record.oracleExact = exactCache.computeIfAbsent(
-                        RepresentationKey.oracle(record),
-                        key -> CanonicalAlloyPipeline.prepare(record.oracleCanonical));
-                record.legacyCanonicalSize = Canonical.canonicalFormSize(record.studentCanonical);
-                record.canonicalSize = record.studentExact.representationSize();
+            acquireCanonicalPermit(canonicalPermits);
+            try {
+                MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+                visitor.visit(model, null);
+                DoubleMap<Integer, Multigraph> forest = visitor.getForest();
+                Multigraph studentGraph = forest.get(pair.leftId);
+                Multigraph oracleGraph = forest.get(pair.rightId);
+                if (studentGraph == null || oracleGraph == null) {
+                    record.error = "Could not find both predicate graphs in MASG forest.";
+                } else {
+                    record.studentCanonical = canonicalCache.computeIfAbsent(
+                            RepresentationKey.student(record),
+                            key -> Canonical.prepare(studentGraph));
+                    record.oracleCanonical = canonicalCache.computeIfAbsent(
+                            RepresentationKey.oracle(record),
+                            key -> Canonical.prepare(oracleGraph));
+                    record.studentExact = exactCache.computeIfAbsent(
+                            RepresentationKey.student(record),
+                            key -> CanonicalAlloyPipeline.prepare(record.studentCanonical)
+                                    .compactForComparison());
+                    record.oracleExact = exactCache.computeIfAbsent(
+                            RepresentationKey.oracle(record),
+                            key -> CanonicalAlloyPipeline.prepare(record.oracleCanonical)
+                                    .compactForComparison());
+                    record.legacyCanonicalSize = Canonical.canonicalFormSize(record.studentCanonical);
+                    record.canonicalSize = record.studentExact.repairObservationSize();
+                }
+            } finally {
+                canonicalPermits.release();
             }
         } catch (Throwable t) {
             if (verbose) {
@@ -368,7 +460,9 @@ public class Alloy4FunAugmenter {
                 throw new IllegalStateException("Could not find predicate graph in MASG forest.");
             }
             Canonical.Prepared legacy = Canonical.prepare(graph);
-            return new PreparedPair(legacy, CanonicalAlloyPipeline.prepare(legacy));
+            return new PreparedPair(
+                    legacy,
+                    CanonicalAlloyPipeline.prepare(legacy).compactForComparison());
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable t) {
@@ -399,6 +493,53 @@ public class Alloy4FunAugmenter {
             System.setErr(originalErr);
             sink.close();
         }
+    }
+
+    private static PreparedPair loadPreparedBounded(
+            ModelRecord record,
+            boolean oracle,
+            Semaphore canonicalPermits) {
+        acquireCanonicalPermit(canonicalPermits);
+        try {
+            return loadPrepared(record, oracle);
+        } finally {
+            canonicalPermits.release();
+        }
+    }
+
+    private static void acquireCanonicalPermit(Semaphore canonicalPermits) {
+        try {
+            canonicalPermits.acquire();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Canonical preparation was interrupted", exception);
+        }
+    }
+
+    private static int effectiveCanonicalWorkers(int requestedWorkers) {
+        long maximumHeap = Runtime.getRuntime().maxMemory();
+        long usableHeap = Math.max(
+                CANONICAL_WORKER_HEAP_BYTES,
+                maximumHeap - CANONICAL_HEAP_RESERVE_BYTES);
+        long heapBound = Math.max(1L, usableHeap / CANONICAL_WORKER_HEAP_BYTES);
+        return Math.max(1, Math.min(
+                Math.min(Math.max(1, requestedWorkers), MAX_CANONICAL_WORKERS),
+                (int) Math.min(Integer.MAX_VALUE, heapBound)));
+    }
+
+    private static String earliestUnresolvedDetail(
+            Map<? extends Future<?>, Integer> active,
+            List<Path> files,
+            Path inputRoot) {
+        int earliest = Integer.MAX_VALUE;
+        for (int index : active.values()) {
+            earliest = Math.min(earliest, index);
+        }
+        if (earliest == Integer.MAX_VALUE) {
+            return null;
+        }
+        return "earliest unresolved source item " + (earliest + 1) + "/" + files.size()
+                + " (" + inputRoot.relativize(files.get(earliest)).toString().replace('\\', '/') + ")";
     }
 
     private static RawAstTree internAst(RawAstTree ast, ConcurrentMap<String, RawAstTree> cache) {
@@ -462,6 +603,8 @@ public class Alloy4FunAugmenter {
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
         try {
             CompletionService<RankingBatch> completion = new ExecutorCompletionService<>(executor);
+            int canonicalWorkers = effectiveCanonicalWorkers(options.threadCount);
+            Semaphore canonicalPermits = new Semaphore(canonicalWorkers, true);
             int taskCount = 0;
             for (QuestionGroup group : groups.values()) {
                 if (group.rankingReferences().isEmpty()) {
@@ -476,28 +619,41 @@ public class Alloy4FunAugmenter {
                     ModelRecord representative = equivalentRecords.get(0);
                     completion.submit(() -> new RankingBatch(
                             equivalentRecords,
-                            nearestIncorrectMatch(group, representative)));
+                            nearestIncorrectMatch(group, representative, canonicalPermits)));
                     taskCount++;
                 }
             }
             List<IncorrectMatch> matches = new ArrayList<>();
-            for (int i = 0; i < taskCount; i++) {
+            ExperimentProgress progress = ExperimentProgress.start(
+                    originalErr,
+                    "Alloy4FunAugmenter/ranking",
+                    taskCount,
+                    "tasks",
+                    "with " + Math.max(1, options.threadCount) + " workers and "
+                            + canonicalWorkers + " canonical builders");
+            int completed = 0;
+            while (completed < taskCount) {
                 try {
-                    RankingBatch batch = completion.take().get();
+                    Future<RankingBatch> future = completion.poll(30, TimeUnit.SECONDS);
+                    if (future == null) {
+                        progress.heartbeat(completed, taskCount - completed, null);
+                        continue;
+                    }
+                    RankingBatch batch = future.get();
                     IncorrectMatch template = batch.template;
                     if (template == null) {
                         for (ModelRecord record : batch.records) {
                             releaseRankingRepresentation(record);
                         }
-                        continue;
-                    }
-                    for (ModelRecord record : batch.records) {
-                        record.canonicalSize = template.record.canonicalSize;
-                        record.legacyCanonicalSize = template.record.legacyCanonicalSize;
-                        matches.add(record == template.record
-                                ? template
-                                : new IncorrectMatch(record, template));
-                        releaseRankingRepresentation(record);
+                    } else {
+                        for (ModelRecord record : batch.records) {
+                            record.canonicalSize = template.record.canonicalSize;
+                            record.legacyCanonicalSize = template.record.legacyCanonicalSize;
+                            matches.add(record == template.record
+                                    ? template
+                                    : new IncorrectMatch(record, template));
+                            releaseRankingRepresentation(record);
+                        }
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -508,7 +664,9 @@ public class Alloy4FunAugmenter {
                             "Incorrect-predicate ranking failed before reports could be published",
                             cause);
                 }
+                progress.update(++completed);
             }
+            progress.finish(completed);
             matches.sort(Comparator.comparing((IncorrectMatch match) -> match.record.relativePath));
             return matches;
         } finally {
@@ -671,16 +829,20 @@ public class Alloy4FunAugmenter {
         return count;
     }
 
-    private static IncorrectMatch nearestIncorrectMatch(QuestionGroup group, ModelRecord incorrect) {
+    private static IncorrectMatch nearestIncorrectMatch(
+            QuestionGroup group,
+            ModelRecord incorrect,
+            Semaphore canonicalPermits) {
         if (astIdenticalReferenceCount(group, incorrect) == group.rankingReferences().size()) {
             return null;
         }
         if (incorrect.studentCanonical == null || incorrect.studentExact == null) {
-            PreparedPair prepared = loadPrepared(incorrect, false);
+            PreparedPair prepared = loadPreparedBounded(
+                    incorrect, false, canonicalPermits);
             incorrect.studentCanonical = prepared.legacy;
             incorrect.studentExact = prepared.exact;
             incorrect.legacyCanonicalSize = Canonical.canonicalFormSize(incorrect.studentCanonical);
-            incorrect.canonicalSize = incorrect.studentExact.representationSize();
+            incorrect.canonicalSize = incorrect.studentExact.repairObservationSize();
         }
         IncorrectMatch match = new IncorrectMatch(incorrect);
         for (Reference reference : group.rankingReferences()) {
@@ -691,8 +853,29 @@ public class Alloy4FunAugmenter {
             int rawAst = rawAstTreeDistance(incorrect.studentAst, reference.ast);
             int legacyCanonical = Canonical.distance(
                     incorrect.studentCanonical, reference.canonical);
-            int canonical = CanonicalAlloyPipeline.distance(
-                    incorrect.studentExact, reference.exact);
+            int canonical;
+            try {
+                canonical = CanonicalAlloyPipeline.distance(
+                        incorrect.studentExact, reference.exact);
+            } catch (IllegalStateException exception) {
+                QuotientRepairDistance.Result candidate = QuotientRepairDistance.evaluate(
+                        incorrect.studentExact.repairView(), reference.exact.repairView());
+                throw new IllegalStateException(
+                        "Incorrect-ranking kernel violation for "
+                                + group.questionSet + "/" + group.invariantId
+                                + ": " + incorrect.relativePath
+                                + " [" + incorrect.statusFolder + "] versus "
+                                + referenceLocation(reference)
+                                + "; leftObservation="
+                                + incorrect.studentExact.canonicalObservation().digest()
+                                + "; rightObservation="
+                                + reference.exact.canonicalObservation().digest()
+                                + "; repair=(total=" + candidate.distance()
+                                + ", temporal=" + candidate.temporalDistance()
+                                + ", quantifiers=" + candidate.quantifierDistance()
+                                + ", matrix=" + candidate.matrixDistance() + ")",
+                        exception);
+            }
             match.levenshtein.add(reference, levenshtein);
             match.rawAst.add(reference, rawAst);
             match.legacyCanonical.add(reference, legacyCanonical);
@@ -716,19 +899,36 @@ public class Alloy4FunAugmenter {
         }
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
         try {
-            List<Future<?>> futures = new ArrayList<>(matches.size());
+            CompletionService<Void> completion = new ExecutorCompletionService<>(executor);
             for (IncorrectMatch match : matches) {
-                futures.add(executor.submit(() -> computeReward(match, options.rewardPoolSize)));
+                completion.submit(() -> {
+                    computeReward(match, options.rewardPoolSize);
+                    return null;
+                });
             }
-            for (Future<?> future : futures) {
+            ExperimentProgress progress = ExperimentProgress.start(
+                    originalErr,
+                    "Alloy4FunAugmenter/rewards",
+                    matches.size(),
+                    "predicates",
+                    "with " + Math.max(1, options.threadCount) + " workers");
+            int completed = 0;
+            while (completed < matches.size()) {
                 try {
+                    Future<Void> future = completion.poll(30, TimeUnit.SECONDS);
+                    if (future == null) {
+                        progress.heartbeat(completed, matches.size() - completed, null);
+                        continue;
+                    }
                     future.get();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    return;
+                    break;
                 } catch (ExecutionException ignored) {
                 }
+                progress.update(++completed);
             }
+            progress.finish(completed);
         } finally {
             executor.shutdownNow();
             if (!options.verbose) {
@@ -760,8 +960,15 @@ public class Alloy4FunAugmenter {
 
     private static void writeAugmentedFiles(Map<String, QuestionGroup> groups, Path outputDir) throws IOException {
         Path correctRoot = outputDir.resolve("correct");
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "Alloy4FunAugmenter/write-pools",
+                groups.size(),
+                "groups");
+        int completed = 0;
         for (QuestionGroup group : groups.values()) {
             if (group.references.isEmpty()) {
+                progress.update(++completed);
                 continue;
             }
             Files.createDirectories(correctRoot.resolve(group.questionSet));
@@ -780,7 +987,9 @@ public class Alloy4FunAugmenter {
                     writer.write("\n}\n\n");
                 }
             }
+            progress.update(++completed);
         }
+        progress.finish(completed);
     }
 
     private static void writeCorrectPoolEquivalenceJson(
@@ -811,18 +1020,38 @@ public class Alloy4FunAugmenter {
             int threadCount) {
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, threadCount));
         try {
-            List<Future<List<CorrectPoolPair>>> futures = new ArrayList<>();
+            CompletionService<CorrectPoolBatch> completion =
+                    new ExecutorCompletionService<>(executor);
+            int taskCount = 0;
             for (QuestionGroup group : groups.values()) {
                 List<Reference> references = group.references;
                 for (int i = 0; i < references.size(); i++) {
                     final int leftIndex = i;
-                    futures.add(executor.submit(() -> correctPoolPairsForLeft(group, references, leftIndex)));
+                    completion.submit(() -> correctPoolPairsForLeft(
+                            group, references, leftIndex));
+                    taskCount++;
                 }
             }
             List<CorrectPoolPair> pairs = new ArrayList<>();
-            for (Future<List<CorrectPoolPair>> future : futures) {
+            List<IllegalStateException> kernelViolations = new ArrayList<>();
+            ExperimentProgress progress = ExperimentProgress.start(
+                    System.err,
+                    "Alloy4FunAugmenter/correct-pairs",
+                    taskCount,
+                    "tasks",
+                    "with " + Math.max(1, threadCount) + " workers");
+            int completed = 0;
+            while (completed < taskCount) {
                 try {
-                    pairs.addAll(future.get());
+                    Future<CorrectPoolBatch> future =
+                            completion.poll(30, TimeUnit.SECONDS);
+                    if (future == null) {
+                        progress.heartbeat(completed, taskCount - completed, null);
+                        continue;
+                    }
+                    CorrectPoolBatch batch = future.get();
+                    pairs.addAll(batch.pairs);
+                    kernelViolations.addAll(batch.kernelViolations);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new IllegalStateException("Correct-pool comparison was interrupted", e);
@@ -832,6 +1061,18 @@ public class Alloy4FunAugmenter {
                             "Correct-pool comparison failed before reports could be published",
                             cause);
                 }
+                progress.update(++completed);
+            }
+            progress.finish(completed);
+            if (!kernelViolations.isEmpty()) {
+                IllegalStateException failure = new IllegalStateException(
+                        "Correct-pool comparison found " + kernelViolations.size()
+                                + " strict-kernel violation(s); first violation follows",
+                        kernelViolations.get(0));
+                for (int i = 1; i < kernelViolations.size(); i++) {
+                    failure.addSuppressed(kernelViolations.get(i));
+                }
+                throw failure;
             }
             pairs.sort(Comparator
                     .comparing((CorrectPoolPair pair) -> pair.group.questionSet)
@@ -844,11 +1085,12 @@ public class Alloy4FunAugmenter {
         }
     }
 
-    private static List<CorrectPoolPair> correctPoolPairsForLeft(
+    private static CorrectPoolBatch correctPoolPairsForLeft(
             QuestionGroup group,
             List<Reference> references,
             int leftIndex) {
         List<CorrectPoolPair> pairs = new ArrayList<>();
+        List<IllegalStateException> kernelViolations = new ArrayList<>();
         Reference left = references.get(leftIndex);
         for (int j = leftIndex + 1; j < references.size(); j++) {
             Reference right = references.get(j);
@@ -860,7 +1102,22 @@ public class Alloy4FunAugmenter {
             }
             int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
             int legacyCanonicalDistance = Canonical.distance(left.canonical, right.canonical);
-            int canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
+            int canonicalDistance;
+            try {
+                canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
+            } catch (IllegalStateException exception) {
+                kernelViolations.add(new IllegalStateException(
+                        "Correct-pool kernel violation for "
+                                + group.questionSet + "/" + group.invariantId
+                                + ": " + referenceLocation(left)
+                                + " versus " + referenceLocation(right)
+                                + "; leftObservation="
+                                + left.exact.canonicalObservation().digest()
+                                + "; rightObservation="
+                                + right.exact.canonicalObservation().digest(),
+                        exception));
+                continue;
+            }
             if (canonicalDistance == 0) {
                 pairs.add(new CorrectPoolPair(
                         group,
@@ -871,7 +1128,15 @@ public class Alloy4FunAugmenter {
                         legacyCanonicalDistance));
             }
         }
-        return pairs;
+        return new CorrectPoolBatch(pairs, kernelViolations);
+    }
+
+    private static String referenceLocation(Reference reference) {
+        return reference.augmentedName + " [" + reference.kind + ", "
+                + (reference.source == null
+                        ? "generated"
+                        : reference.source.relativePath)
+                + "]";
     }
 
     private static void writeCorrectPoolPairJson(Writer writer, CorrectPoolPair pair) throws IOException {
@@ -927,6 +1192,10 @@ public class Alloy4FunAugmenter {
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
             writer.write("  \"measurementProjectionVersion\": \""
                     + CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION + "\",\n");
+            writer.write("  \"quotientMetricVersion\": \""
+                    + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "\",\n");
+            writer.write("  \"canonicalRepresentativeTedVersion\": \""
+                    + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "\",\n");
             writer.write("  \"alloyAdapterVersion\": \""
                     + TheoryAlloyAdapter.ADAPTER_VERSION + "\",\n");
             writer.write("  \"invariantCheckMode\": \""
@@ -1026,9 +1295,13 @@ public class Alloy4FunAugmenter {
             writer.write("- Thread count: " + options.threadCount + "\n\n");
             writer.write("- Canonical engine: `CanonicalAlloyPipeline` (`"
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
+            writer.write("- Canonical repair metric: `"
+                    + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`\n");
+            writer.write("- Canonical representative TED is diagnostic only: `"
+                    + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "`\n");
             writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
                     + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
-            writer.write("- Legacy bounded canonical rankings retained in `index.json`: yes\n\n");
+            writer.write("- Direct legacy metric rankings retained in `index.json` as a differential oracle: yes\n\n");
             writer.write("- Reward pool size: " + options.rewardPoolSize + "\n\n");
             writer.write("- Rewards enabled: " + !options.skipRewards + "\n\n");
 
@@ -2719,6 +2992,16 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static final class IndexedModelRecord {
+        private final int index;
+        private final ModelRecord record;
+
+        private IndexedModelRecord(int index, ModelRecord record) {
+            this.index = index;
+            this.record = record;
+        }
+    }
+
     private static final class PreparedPair {
         private final Canonical.Prepared legacy;
         private final CanonicalAlloyPipeline.Prepared exact;
@@ -2868,7 +3151,7 @@ public class Alloy4FunAugmenter {
             this.ast = ast;
             this.canonical = canonical;
             this.exact = exact;
-            this.canonicalSize = exact.representationSize();
+            this.canonicalSize = exact.repairObservationSize();
             this.legacyCanonicalSize = Canonical.canonicalFormSize(canonical);
             this.source = source;
         }
@@ -2895,6 +3178,18 @@ public class Alloy4FunAugmenter {
             this.rawAstDistance = rawAstDistance;
             this.canonicalDistance = canonicalDistance;
             this.legacyCanonicalDistance = legacyCanonicalDistance;
+        }
+    }
+
+    private static final class CorrectPoolBatch {
+        private final List<CorrectPoolPair> pairs;
+        private final List<IllegalStateException> kernelViolations;
+
+        private CorrectPoolBatch(
+                List<CorrectPoolPair> pairs,
+                List<IllegalStateException> kernelViolations) {
+            this.pairs = pairs;
+            this.kernelViolations = kernelViolations;
         }
     }
 

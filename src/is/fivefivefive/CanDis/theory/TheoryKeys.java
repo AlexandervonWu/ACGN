@@ -51,6 +51,28 @@ final class TheoryKeys {
         return StructuralKey.branch("embedding", parts);
     }
 
+    /** Compact action key for a permutation whose context is stored by its owner. */
+    static StructuralKey permutationAction(
+            TypedSlotContext context,
+            TypedPermutation permutation) {
+        if (!context.equals(permutation.source())
+                || !context.equals(permutation.codomain())) {
+            throw new IllegalArgumentException(
+                    "A compact permutation action requires its owning context");
+        }
+        List<TypedSlot> slots = new ArrayList<>(context.slots());
+        Map<TypedSlot, Integer> indices = new java.util.HashMap<>();
+        for (int index = 0; index < slots.size(); index++) {
+            indices.put(slots.get(index), index);
+        }
+        List<String> image = new ArrayList<>(slots.size());
+        for (TypedSlot slot : slots) {
+            image.add(Integer.toString(indices.get(permutation.apply(slot))));
+        }
+        return StructuralKey.of(
+                "permutation-action", image, Collections.emptyList());
+    }
+
     static StructuralKey eclass(TypedEClassInterface eclass) {
         return StructuralKey.of(
                 "eclass",

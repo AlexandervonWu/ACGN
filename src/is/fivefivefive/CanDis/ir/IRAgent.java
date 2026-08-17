@@ -141,13 +141,13 @@ public class IRAgent {
         observer.onStage("temporal-negation", normalForm, nfs);
         Map<String, QuantiVar> descendants = new HashMap<>(inherited);
         for (QuantiVar variable : normalForm.getParams()) {
-            if (variable.getOriginalName() != null) {
-                descendants.put(variable.getOriginalName(), variable);
+            for (String alias : variable.getOriginalNames()) {
+                descendants.put(alias, variable);
             }
         }
         for (QuantiVar variable : normalForm.getMatrixQuantiVars()) {
-            if (variable.getOriginalName() != null) {
-                descendants.put(variable.getOriginalName(), variable);
+            for (String alias : variable.getOriginalNames()) {
+                descendants.put(alias, variable);
             }
         }
         for (NormalForm child : normalForm.getTemporalChildren()) {

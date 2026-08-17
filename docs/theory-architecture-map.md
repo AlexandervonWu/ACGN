@@ -36,16 +36,18 @@ Alloy parser / MASGVisitor
             fixed-batch rebuild + strict checkInvariants
             current coherent finite-unfolding observation
           -> CanonicalAlloyPipeline
-               full-key equality/digest
-               injective semantic edit projection
+               CanonicalObservation equality/digest/serialization
+               RepairProjection with certified phase descriptors
+               established CanonicalDistance geometry on the quotient
+               CanonicalRepresentativeTreeDistance diagnostic only
   -> batch, augmentation, ablation, and capability clients
 ```
 
 The mutable `EGraphNode` graph is now an explicit preprocessing IR, not the
 formal state. `TheoryAlloyAdapter` is the one-way boundary into the exact
 `G=(U,M,H)` implementation. It never exposes a raw exact mutation path, and
-the legacy `Canonical` result remains available only under compatibility
-fields. Relevant entry points are `IRAgent`, `NormalForm`, `Canonical.prepare`,
+direct `Canonical` execution remains available as the normative metric
+differential. Relevant entry points are `IRAgent`, `NormalForm`, `Canonical.prepare`,
 `TheoryAlloyAdapter`, and `CanonicalAlloyPipeline`.
 
 ### Legacy ablation paths
@@ -137,9 +139,12 @@ GraphType
   -> [implemented Phase I]
        TheoryAlloyAdapter
        CanonicalAlloyPipeline
+       CertifiedSemanticArtifact -> CanonicalObservation
+       CertifiedSemanticArtifact + repaired NormalForm -> RepairProjection
+       RepairView -> QuotientRepairDistance (legacy metric semantics)
        CanonicalBatchTest + Alloy4FunAugmenter
        typed-slotted-port-egraph ablation/capability arm
-       manifest-v2 compatibility and output-hash gate
+       manifest-v3 compatibility and output-hash gate
 ```
 
 The hierarchies are immutable and sealed. `NodeSealer` is the narrow callback
@@ -169,7 +174,7 @@ so historical and exact measurements are not conflated.
 | Renaming/permutation | `theory.TypedRenaming`, `theory.TypedPermutation` | Sealed onto and same-context refinements | Phase B exact | Reuse in canonicalization and certified symmetry groups |
 | Invocation `m*a` | `theory.TypedInvocation` and `TypedEClassInterface` | Class interface plus validated embedding; caller context is codomain; graph registration rejects ID/metadata reuse | Phase B carrier and Phase D ownership exact | Preserve in certified transitions |
 | Port grammar | `theory.PortSchema` and `theory.PortValue`; legacy child lists remain separate | Six sealed schema/value variants implement `One`, indexed Seq/Bag/Set, unary `Bind`, and descriptor-indexed `BindBlock`; strict consumption requires certified container laws and binder automorphisms | Phase C carrier and Phase F provenance gate exact | Preserve certificates during source insertion and later integration |
-| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; legacy opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v1` container and binder axioms |
+| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; legacy opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v6` named-reference, container, fixed-commutativity, and binder axioms |
 | `U` | Exact `TypedRenamedUnionFind`; legacy `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, retained primitive paths, historical restriction transport, and composed certificates | Phase D/F carrier plus Phase G transport exact | Preserve this boundary in the Alloy adapter |
 | `M(a).tau_a` | `TypedEClassRecord.interfaceView().outputType()` | Immutable graph-owned output type | Phase D exact | Preserve in all certified mutations |
 | `M(a).S_a` | `TypedEClassRecord.interfaceView().exposedSlots()` | Immutable graph-owned finite typed context replaced only by a prevalidated factorization transaction; fresh insertion exposes exactly `Delta_n` | Phase G restriction and certified source insertion exact | Adapter narrows source nodes to exact support and widens only returned invocations |
@@ -278,7 +283,7 @@ The exact graph exposes stable identifiers `typed-slotted-port-egraph`,
 `leader-kernel-trace-v1`, `canon-g-production-v2`, and
 `typed-certificate-algebra-v3`; Phase G additionally reports
 `typed-fixed-batch-rebuild-v1`, and Phase H reports
-`typed-finite-unfolding-oracle-v1`. Its public
+`typed-finite-unfolding-oracle-v2`. Its public
 `extractLeaderKernel` method is the Phase DA structural boundary; its public
 `canonicalize` method is the isolated structural Phase E boundary;
 `canonicalizeCertified` is the coherent witness-dependent wrapper; and

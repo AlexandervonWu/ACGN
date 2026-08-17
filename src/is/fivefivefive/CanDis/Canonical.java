@@ -22,6 +22,12 @@ public final class Canonical {
         return CanonicalDistance.distance(left.delegate, right.delegate);
     }
 
+    public static CanonicalDistance.DistanceBreakdown distanceBreakdown(
+            Prepared left,
+            Prepared right) {
+        return CanonicalDistance.evaluate(left.delegate, right.delegate);
+    }
+
     public static List<String> edits(Multigraph left, Multigraph right) {
         return edits(prepare(left), prepare(right));
     }

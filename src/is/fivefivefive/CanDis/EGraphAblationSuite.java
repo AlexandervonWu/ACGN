@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -64,6 +65,13 @@ public final class EGraphAblationSuite {
                     options.seed);
         }
         List<RunMetrics> runs = new ArrayList<>();
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "EGraphAblationSuite/arms",
+                ENGINES.size(),
+                "arms",
+                options.reportOnly ? "in report-only mode" : "in isolated JVMs");
+        int completedArms = 0;
         for (String engine : ENGINES) {
             if (options.reportOnly) {
                 Path engineDir = options.output.resolve(engine);
@@ -73,9 +81,11 @@ public final class EGraphAblationSuite {
                         engineDir.resolve("pairs.csv")));
             } else {
                 System.out.println("Running " + engine + "...");
-                runs.add(runEngine(engine, options, context));
+                runs.add(runEngine(engine, options, context, progress, completedArms));
             }
+            progress.update(++completedArms);
         }
+        progress.finish(completedArms);
         validateParallelism(options, runs);
         writeComparisonJson(options.output.resolve("comparison.json"), options, context, runs);
         writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
@@ -95,7 +105,9 @@ public final class EGraphAblationSuite {
     private static RunMetrics runEngine(
             String engine,
             Options options,
-            AblationRunManifest.Context context) throws Exception {
+            AblationRunManifest.Context context,
+            ExperimentProgress progress,
+            int completedArms) throws Exception {
         Path engineDir = options.output.resolve(engine);
         Files.createDirectories(engineDir);
         Path timeFile = engineDir.resolve("process.time");
@@ -133,7 +145,13 @@ public final class EGraphAblationSuite {
         builder.redirectErrorStream(true);
         builder.redirectOutput(logFile.toFile());
         Process process = builder.start();
-        int exitCode = process.waitFor();
+        while (!process.waitFor(30, TimeUnit.SECONDS)) {
+            progress.heartbeat(
+                    completedArms,
+                    1,
+                    "running " + engine + "; details in " + logFile);
+        }
+        int exitCode = process.exitValue();
         if (exitCode != 0) {
             throw new IllegalStateException(engine + " exited with " + exitCode + "; see " + logFile);
         }
@@ -342,7 +360,8 @@ public final class EGraphAblationSuite {
                 + "bound-variable storage.\n");
         markdown.append("5. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
                 + "renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.\n");
-        markdown.append("6. **Legacy bounded canonical:** the retained temporal/prenex/slotted implementation used by prior artifacts.\n");
+        markdown.append("6. **Legacy canonical:** the retained temporal/prenex/slotted implementation, "
+                + "with bounded rewrite saturation and the reference repair metric.\n");
         markdown.append("7. **Typed slotted-port exact pipeline:** the complete `CanonicalAlloyPipeline`, using "
                 + "certified insertion, exact-support typed slots, strict invariant checks, congruence rebuild, "
                 + "and finite-unfolding observation.\n\n");
@@ -408,7 +427,7 @@ public final class EGraphAblationSuite {
                 .append(differenceSize(egglogDeBruijn.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
         int legacyAdds = differenceSize(legacyCanonical.equivalentPaths, slotted.equivalentPaths);
         int legacyLosses = differenceSize(slotted.equivalentPaths, legacyCanonical.equivalentPaths);
-        markdown.append("- The legacy bounded canonical arm adds ")
+        markdown.append("- The legacy canonical arm adds ")
                 .append(legacyAdds).append(" zeroes over slotted storage and loses ")
                 .append(legacyLosses).append(".\n");
         int canonicalAdds = differenceSize(canonical.equivalentPaths, legacyCanonical.equivalentPaths);
@@ -461,7 +480,9 @@ public final class EGraphAblationSuite {
                 .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
                 .append("under alpha-renaming and declaration permutation groups, while the two De Bruijn arms ")
                 .append("index bound variables before e-graph storage and distance. Eclass equality has distance zero. ")
-                .append("The legacy canonical arm uses its bounded edit distance; the exact arm measures normalized finite-unfolding structural keys.\n\n");
+                .append("Both canonical arms use the established repair metric. The exact arm obtains admissible "
+                        + "scope and operator alignments from the certified semantic artifact; normalized "
+                        + "finite-unfolding keys define equality but are not edited to obtain distance.\n\n");
         markdown.append("| Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |\n");
         markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (RunMetrics run : runs) {

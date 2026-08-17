@@ -78,6 +78,7 @@ Boolean model evaluates all of them to `false`.
 | H-F05 | Emitting depth-cut leaves would not witness the paper's finite `Rep_G` relation | Depth exhaustion now yields no candidate; only complete finite trees are returned |
 | H-F06 | The architecture map still said source insertion was closed after the repaired-PF3 implementation had added `insertNode` | Updated the map and package description to distinguish implemented source insertion from still-open Alloy adapter wiring |
 | H-F07 | The first reachability check used compressing `find`, so a rejected unequal nonleader pair could change administrative state | Added a noncompressing provenance lookup for Phase H and a full-state before/after regression |
+| H-F08 | A post-Phase-I integration case exposed that applying `Aut(beta)` after initial Bag/Set normalization could invalidate operand order and Set uniqueness in the transformed finite-term key | Re-normalize every affected Bag and Set after each binder-coordinate action; a nested-versus-grouped subtype-binder integration regression now checks the complete observation |
 
 ## Validation Matrix
 

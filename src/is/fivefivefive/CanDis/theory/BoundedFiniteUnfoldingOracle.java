@@ -11,7 +11,7 @@ import java.util.TreeMap;
 
 /** Bounded, read-only artifact oracle for the indexed finite-unfolding relation. */
 public final class BoundedFiniteUnfoldingOracle {
-    public static final String VERSION = "typed-finite-unfolding-oracle-v1";
+    public static final String VERSION = "typed-finite-unfolding-oracle-v2";
 
     private final TypedSlottedPortEGraph graph;
     private final CoherentWitnessFamily witnessFamily;

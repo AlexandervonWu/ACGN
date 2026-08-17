@@ -5,6 +5,13 @@
 - Mode: union of all equivalence claims
 - Threads: 32
 
+> **Snapshot status:** This bounded check was generated from the August 14
+> six-arm outputs. The August 17 seven-arm run reports 2,317 exact
+> typed-slotted-port zeroes, all labeled `CORRECT`, and no incorrect zeroes.
+> Its current union contains 79 claims not covered by this report. Rerun
+> `EGraphSemanticSoundnessCheck` before citing bounded SAT evidence for the
+> complete exact zero set.
+
 This is a bounded semantic check using each model's own `check correct` command. An Alloy counterexample disproves a merge; absence of a counterexample is evidence only within that command's scope and temporal bounds.
 
 ## Results By Arm

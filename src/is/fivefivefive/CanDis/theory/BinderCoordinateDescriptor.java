@@ -14,6 +14,7 @@ public final class BinderCoordinateDescriptor {
     private final String quantifier;
     private final String multiplicity;
     private final int disjointnessClass;
+    private final int exchangeClass;
     private final TypedSlotContext dependencies;
 
     public BinderCoordinateDescriptor(
@@ -23,6 +24,18 @@ public final class BinderCoordinateDescriptor {
             String multiplicity,
             int disjointnessClass,
             TypedSlotContext dependencies) {
+        this(canonicalSlot, domain, quantifier, multiplicity,
+                disjointnessClass, 0, dependencies);
+    }
+
+    public BinderCoordinateDescriptor(
+            TypedSlot canonicalSlot,
+            StructuralKey domain,
+            String quantifier,
+            String multiplicity,
+            int disjointnessClass,
+            int exchangeClass,
+            TypedSlotContext dependencies) {
         this.canonicalSlot = Objects.requireNonNull(canonicalSlot, "canonicalSlot");
         this.domain = Objects.requireNonNull(domain, "domain");
         this.quantifier = requireText(quantifier, "quantifier");
@@ -31,6 +44,10 @@ public final class BinderCoordinateDescriptor {
             throw new IllegalArgumentException("Disjointness class must be -1 or non-negative");
         }
         this.disjointnessClass = disjointnessClass;
+        if (exchangeClass < 0) {
+            throw new IllegalArgumentException("Exchange class must be non-negative");
+        }
+        this.exchangeClass = exchangeClass;
         this.dependencies = Objects.requireNonNull(dependencies, "dependencies");
         if (canonicalSlot.alphabet() != SlotAlphabet.CANONICAL_BOUND) {
             throw new IllegalArgumentException(
@@ -73,6 +90,10 @@ public final class BinderCoordinateDescriptor {
         return disjointnessClass;
     }
 
+    public int exchangeClass() {
+        return exchangeClass;
+    }
+
     public TypedSlotContext dependencies() {
         return dependencies;
     }
@@ -95,6 +116,7 @@ public final class BinderCoordinateDescriptor {
                 quantifier,
                 multiplicity,
                 normalizedDisjointnessClass,
+                exchangeClass,
                 TypedSlotContext.of(mappedDependencies));
     }
 
@@ -107,6 +129,21 @@ public final class BinderCoordinateDescriptor {
                 domain,
                 quantifier,
                 multiplicity,
+                normalizedClass,
+                exchangeClass,
+                dependencies);
+    }
+
+    BinderCoordinateDescriptor withExchangeClass(int normalizedClass) {
+        if (normalizedClass == exchangeClass) {
+            return this;
+        }
+        return new BinderCoordinateDescriptor(
+                canonicalSlot,
+                domain,
+                quantifier,
+                multiplicity,
+                disjointnessClass,
                 normalizedClass,
                 dependencies);
     }
@@ -127,7 +164,8 @@ public final class BinderCoordinateDescriptor {
                 && domain.equals(other.domain)
                 && quantifier.equals(other.quantifier)
                 && multiplicity.equals(other.multiplicity)
-                && disjointnessClass == other.disjointnessClass;
+                && disjointnessClass == other.disjointnessClass
+                && exchangeClass == other.exchangeClass;
     }
 
     public StructuralKey structuralKey() {
@@ -136,7 +174,8 @@ public final class BinderCoordinateDescriptor {
                 Arrays.asList(
                         quantifier,
                         multiplicity,
-                        Integer.toString(disjointnessClass)),
+                        Integer.toString(disjointnessClass),
+                        Integer.toString(exchangeClass)),
                 Arrays.asList(
                         TheoryKeys.slot(canonicalSlot),
                         domain,
@@ -154,6 +193,7 @@ public final class BinderCoordinateDescriptor {
                 && quantifier.equals(descriptor.quantifier)
                 && multiplicity.equals(descriptor.multiplicity)
                 && disjointnessClass == descriptor.disjointnessClass
+                && exchangeClass == descriptor.exchangeClass
                 && dependencies.equals(descriptor.dependencies);
     }
 
@@ -165,6 +205,7 @@ public final class BinderCoordinateDescriptor {
                 quantifier,
                 multiplicity,
                 disjointnessClass,
+                exchangeClass,
                 dependencies);
     }
 
@@ -173,6 +214,7 @@ public final class BinderCoordinateDescriptor {
         return quantifier + " " + canonicalSlot + ":" + domain
                 + "[mult=" + multiplicity
                 + ",disj=" + disjointnessClass
+                + ",exchange=" + exchangeClass
                 + ",deps=" + dependencies + "]";
     }
 }

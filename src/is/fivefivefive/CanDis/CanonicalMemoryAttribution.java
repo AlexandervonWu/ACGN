@@ -26,13 +26,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.concurrent.Callable;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
@@ -117,7 +119,8 @@ public final class CanonicalMemoryAttribution {
 
     private static RunState processFiles(List<Path> selected, Options options, PhaseRecorder recorder) {
         List<Path> files = new ArrayList<>(selected);
-        List<FileResult> results = new ArrayList<>(files.size());
+        List<FileResult> results = new ArrayList<>(
+                Collections.nCopies(files.size(), null));
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
         PrintStream sink = new PrintStream(new OutputStream() {
@@ -128,22 +131,50 @@ public final class CanonicalMemoryAttribution {
         ExecutorService executor = Executors.newFixedThreadPool(options.workers);
         int retries = 0;
         try {
-            List<Future<FileResult>> futures = new ArrayList<>(files.size());
-            for (Path file : files) {
-                Callable<FileResult> task = () -> processFile(options.input, file, recorder);
-                futures.add(executor.submit(task));
+            CompletionService<IndexedFileResult> completion =
+                    new ExecutorCompletionService<>(executor);
+            Map<Future<IndexedFileResult>, Integer> active = new HashMap<>();
+            for (int index = 0; index < files.size(); index++) {
+                final int fileIndex = index;
+                Future<IndexedFileResult> future = completion.submit(
+                        () -> new IndexedFileResult(fileIndex,
+                                processFile(options.input, files.get(fileIndex), recorder)));
+                active.put(future, fileIndex);
             }
-            for (int i = 0; i < futures.size(); i++) {
+            ExperimentProgress progress = ExperimentProgress.start(
+                    originalErr,
+                    "CanonicalMemoryAttribution/files",
+                    files.size(),
+                    "files",
+                    "with " + options.workers + " workers");
+            int completed = 0;
+            while (completed < files.size()) {
+                Future<IndexedFileResult> future;
                 try {
-                    results.add(futures.get(i).get());
+                    future = completion.poll(30, TimeUnit.SECONDS);
                 } catch (InterruptedException exception) {
                     Thread.currentThread().interrupt();
-                    results.add(FileResult.failure(options.input, files.get(i), "InterruptedException"));
+                    throw new IllegalStateException("Memory attribution was interrupted", exception);
+                }
+                if (future == null) {
+                    progress.heartbeat(completed, active.size(), null);
+                    continue;
+                }
+                Integer expectedIndex = active.remove(future);
+                int index = expectedIndex == null ? completed : expectedIndex;
+                try {
+                    IndexedFileResult indexed = future.get();
+                    results.set(indexed.index, indexed.result);
                 } catch (ExecutionException exception) {
                     Throwable cause = exception.getCause() == null ? exception : exception.getCause();
-                    results.add(FileResult.failure(options.input, files.get(i), error(cause)));
+                    results.set(index, FileResult.failure(options.input, files.get(index), error(cause)));
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Memory attribution was interrupted", exception);
                 }
+                progress.update(++completed);
             }
+            progress.finish(completed);
         } finally {
             executor.shutdownNow();
             System.setOut(originalOut);
@@ -152,6 +183,16 @@ public final class CanonicalMemoryAttribution {
         }
 
         // Alloy parser internals can race. Match the production ablation's serial retry policy.
+        int failed = 0;
+        for (FileResult result : results) {
+            failed += result.error.isEmpty() ? 0 : 1;
+        }
+        ExperimentProgress retryProgress = ExperimentProgress.start(
+                originalErr,
+                "CanonicalMemoryAttribution/retry",
+                failed,
+                "files");
+        int completedRetries = 0;
         for (int i = 0; i < results.size(); i++) {
             if (results.get(i).error.isEmpty()) {
                 continue;
@@ -162,7 +203,9 @@ public final class CanonicalMemoryAttribution {
                 retry.retried = true;
                 results.set(i, retry);
             }
+            retryProgress.update(++completedRetries);
         }
+        retryProgress.finish(completedRetries);
         results.sort(Comparator.comparing(result -> result.relativePath));
         return new RunState(files, results, retries);
     }
@@ -740,6 +783,16 @@ public final class CanonicalMemoryAttribution {
             FileResult result = new FileResult(root, file);
             result.error = error;
             return result;
+        }
+    }
+
+    private static final class IndexedFileResult {
+        private final int index;
+        private final FileResult result;
+
+        private IndexedFileResult(int index, FileResult result) {
+            this.index = index;
+            this.result = result;
         }
     }
 

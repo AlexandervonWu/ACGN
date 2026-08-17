@@ -438,8 +438,8 @@ public final class EGraphSaturationTest {
 
         assertEquals(Cardinality.ONE, complexDomain.getMatrixQuantiVars().get(0).getCardinality(),
                 "complex-domain cardinality must stay encoded in QuantiVar");
-        assertEquals("univ", complexDomain.getMatrixQuantiVars().get(0).getCarrierTypeName(),
-                "a matrix guard must replace the arbitrary inferred carrier with univ");
+        assertEquals("Person", complexDomain.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "a matrix guard must preserve the primitive renaming carrier");
         assertTrue(containsOpcode(complexDomain.getMatrixEGraph(), Opcode.IN),
                 "non-primitive domain must still be pushed down into the matrix");
         assertTrue(!containsOpcode(complexDomain.getMatrixEGraph(), Opcode.ONE),
@@ -499,12 +499,12 @@ public final class EGraphSaturationTest {
     }
 
     private static void testCommutativeComplexDomainsUseCanonicalCarrier() {
-        NormalForm left = quantifiedIntersectionDomain("Protected", "Trash", "Protected");
-        NormalForm right = quantifiedIntersectionDomain("Trash", "Protected", "Trash");
+        NormalForm left = quantifiedIntersectionDomain("Protected", "Trash", "File");
+        NormalForm right = quantifiedIntersectionDomain("Trash", "Protected", "File");
 
-        assertEquals("univ", left.getMatrixQuantiVars().get(0).getCarrierTypeName(),
-                "a complex intersection domain must use the canonical univ carrier");
-        assertEquals("univ", right.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+        assertEquals("File", left.getMatrixQuantiVars().get(0).getCarrierTypeName(),
+                "a complex intersection domain must retain its primitive carrier");
+        assertEquals("File", right.getMatrixQuantiVars().get(0).getCarrierTypeName(),
                 "commuting an intersection must not change its effective carrier");
         assertEquals(0, normalFormDistance(left, right),
                 "A & B and B & A domains must produce the same guarded quantifier form");
@@ -688,6 +688,8 @@ public final class EGraphSaturationTest {
 
         assertEquals(Quantifier.SOME, antecedentQuantifier.getMatrixQuantiVars().get(0).getQuantifier(),
                 "forall in an implication antecedent must become some after branch rewriting and NNF");
+        assertEquals("S", antecedentQuantifier.getMatrixQuantiVars().get(0).getTypeName(),
+                "unsafe prenexing must retain the primitive alpha-renaming color");
         assertEquals("univ", antecedentQuantifier.getMatrixQuantiVars().get(0).getCarrierTypeName(),
                 "unsafe existential lift across OR must use a nonempty carrier");
         assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.IN),

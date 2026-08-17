@@ -1663,6 +1663,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private SigSymbol typeCheckExpr(ExprOrFormula e) {
         // use this function to check the overall set / type of the expression
         // System.out.println(e);
+        SigSymbol annotated = typeCheckAnnotatedExpr(e);
+        if (annotated != null) {
+            return annotated;
+        }
         SigSymbol inferred = null;
         if (e instanceof SigExpr) {
             SigExpr sigExpr = (SigExpr) e;
@@ -1708,7 +1712,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // use its THEN branch\
             inferred = typeCheckExpr(((ITEExpr) e).getThenClause());
         }
-        return inferred == null ? typeCheckAnnotatedExpr(e) : inferred;
+        return inferred;
     }
 
     private SigSymbol typeCheckAnnotatedExpr(ExprOrFormula expr) {

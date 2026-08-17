@@ -6,6 +6,8 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.core.NormalForm;
+import is.fivefivefive.CanDis.core.QuantiVar;
 import parser.ast.nodes.ModelUnit;
 
 public final class MASGVisitorTypeRegressionTest {
@@ -16,11 +18,14 @@ public final class MASGVisitorTypeRegressionTest {
         String source = String.join("\n",
                 "sig User { follows: set User }",
                 "sig Photo {}",
+                "sig File {}",
+                "sig Protected, Trash in File {}",
                 "pred candidate {",
                 "  all x: univ | x in User implies x in User",
                 "  all u: User | all f: u - u.follows | f in User",
                 "  all y: User | some z: y | z in User",
                 "  all n: none | n = n",
+                "  all pt: Protected & Trash | pt in File",
                 "}",
                 "pred oracle { no none }",
                 "assert quantified {",
@@ -50,6 +55,19 @@ public final class MASGVisitorTypeRegressionTest {
         long enodes = Canonical.enodeCount(preparedCandidate);
         if (eclasses <= 0 || enodes < eclasses) {
             throw new AssertionError("Prepared canonical form did not retain valid e-graph counts");
+        }
+        boolean guardedPrimitiveCarrier = false;
+        for (NormalForm form : preparedCandidate.normalizedForms()) {
+            for (QuantiVar variable : form.getMatrixQuantiVars()) {
+                if (variable.getOriginalNames().contains("pt")) {
+                    guardedPrimitiveCarrier = "File".equals(variable.getTypeName())
+                            && "univ".equals(variable.getCarrierTypeName());
+                }
+            }
+        }
+        if (!guardedPrimitiveCarrier) {
+            throw new AssertionError(
+                    "A guarded binder did not separate primitive color from prenex carrier");
         }
         System.out.println("MASGVisitorTypeRegressionTest passed");
     }

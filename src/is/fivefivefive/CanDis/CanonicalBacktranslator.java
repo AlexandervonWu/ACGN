@@ -3,9 +3,12 @@ package is.fivefivefive.CanDis;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.ir.IRAgent;
@@ -99,14 +102,18 @@ public final class CanonicalBacktranslator {
             return TRUE_FORMULA;
         }
         Map<String, String> aliases = aliasesWithBindings(inheritedAliases, normalForm.getMatrixQuantiVars());
+        Map<String, String> temporal = temporalChildrenFormula(
+                normalForm.getTemporalChildren(), aliases);
+        aliases.putAll(temporal);
+        Set<String> referencedTemporal = temporalReferences(normalForm.getMatrixEGraph());
         List<String> parts = new ArrayList<>();
         String matrix = matrixFormula(normalForm.getMatrixEGraph(), aliases);
         if (!isTrue(matrix)) {
             parts.add(matrix);
         }
-        for (String temporal : temporalChildrenFormula(normalForm.getTemporalChildren(), aliases)) {
-            if (!isTrue(temporal)) {
-                parts.add(temporal);
+        for (Map.Entry<String, String> entry : temporal.entrySet()) {
+            if (!referencedTemporal.contains(entry.getKey()) && !isTrue(entry.getValue())) {
+                parts.add(entry.getValue());
             }
         }
         String body = parts.isEmpty() ? TRUE_FORMULA : parenthesizedJoin(parts, "and");
@@ -117,16 +124,20 @@ public final class CanonicalBacktranslator {
         Map<String, String> aliases = new HashMap<>(inherited);
         if (bindings != null) {
             for (QuantiVar binding : bindings) {
-                if (binding.getOriginalName() != null && binding.getName() != null) {
-                    aliases.put(binding.getOriginalName(), binding.getName());
+                if (binding.getName() != null) {
+                    for (String alias : binding.getOriginalNames()) {
+                        aliases.put(alias, binding.getName());
+                    }
                 }
             }
         }
         return aliases;
     }
 
-    private static List<String> temporalChildrenFormula(List<NormalForm> children, Map<String, String> aliases) {
-        List<String> parts = new ArrayList<>();
+    private static Map<String, String> temporalChildrenFormula(
+            List<NormalForm> children,
+            Map<String, String> aliases) {
+        Map<String, String> parts = new LinkedHashMap<>();
         if (children == null) {
             return parts;
         }
@@ -135,11 +146,12 @@ public final class CanonicalBacktranslator {
             TemporalOp op = child.getTemporalOp();
             if (i + 1 < children.size() && isLeftBinaryTemporal(op)
                     && matchingRightBinaryTemporal(op) == children.get(i + 1).getTemporalOp()) {
-                parts.add("(" + formula(child, aliases) + " " + binaryTemporalName(op) + " "
-                        + formula(children.get(i + 1), aliases) + ")");
+                parts.put("temporal[" + i + ":2]",
+                        "(" + formula(child, aliases) + " " + binaryTemporalName(op) + " "
+                                + formula(children.get(i + 1), aliases) + ")");
                 i++;
             } else {
-                parts.add(temporalFormula(child, aliases));
+                parts.put("temporal[" + i + ":1]", temporalFormula(child, aliases));
             }
         }
         return parts;
@@ -167,14 +179,18 @@ public final class CanonicalBacktranslator {
 
     private static String formulaWithoutTemporalSiblings(NormalForm normalForm, Map<String, String> inheritedAliases) {
         Map<String, String> aliases = aliasesWithBindings(inheritedAliases, normalForm.getMatrixQuantiVars());
+        Map<String, String> temporal = temporalChildrenFormula(
+                normalForm.getTemporalChildren(), aliases);
+        aliases.putAll(temporal);
+        Set<String> referencedTemporal = temporalReferences(normalForm.getMatrixEGraph());
         List<String> parts = new ArrayList<>();
         String matrix = matrixFormula(normalForm.getMatrixEGraph(), aliases);
         if (!isTrue(matrix)) {
             parts.add(matrix);
         }
-        for (String temporal : temporalChildrenFormula(normalForm.getTemporalChildren(), aliases)) {
-            if (!isTrue(temporal)) {
-                parts.add(temporal);
+        for (Map.Entry<String, String> entry : temporal.entrySet()) {
+            if (!referencedTemporal.contains(entry.getKey()) && !isTrue(entry.getValue())) {
+                parts.add(entry.getValue());
             }
         }
         String body = parts.isEmpty() ? TRUE_FORMULA : parenthesizedJoin(parts, "and");
@@ -260,6 +276,13 @@ public final class CanonicalBacktranslator {
                 return alloyName(firstNonEmpty(node.getSourceName(), node.getSourceType()));
             case CONSTANT:
                 return constantName(node);
+            case REF:
+                String temporal = aliases.get(node.getSourceName());
+                if (temporal == null) {
+                    throw new IllegalStateException(
+                            "Unresolved temporal normal-form reference " + node.getSourceName());
+                }
+                return temporal;
             case TEMPORALROOT:
                 return formulaFromChildren(node.getChildren(), "and", aliases);
             case NOT:
@@ -530,6 +553,9 @@ public final class CanonicalBacktranslator {
             return formulaFromChildren(node.getChildren(), "and", aliases);
         }
         String body = bodies.isEmpty() ? TRUE_FORMULA : parenthesizedJoin(bodies, "and");
+        if (node.getOpcode() == Opcode.COMPREHENSION) {
+            return "{" + String.join(", ", declarations) + " | " + body + "}";
+        }
         return "(" + quantifierKeyword(node.getOpcode()) + " "
                 + String.join(", ", declarations) + " | " + body + ")";
     }
@@ -569,7 +595,6 @@ public final class CanonicalBacktranslator {
             case SUM:
                 return "sum";
             case EXISTS:
-            case COMPREHENSION:
             default:
                 return "some";
         }
@@ -636,6 +661,24 @@ public final class CanonicalBacktranslator {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private static Set<String> temporalReferences(EGraphNode root) {
+        Set<String> references = new LinkedHashSet<>();
+        collectTemporalReferences(root, references);
+        return references;
+    }
+
+    private static void collectTemporalReferences(EGraphNode node, Set<String> references) {
+        if (node == null) {
+            return;
+        }
+        if (node.getOpcode() == Opcode.REF && node.getSourceName() != null) {
+            references.add(node.getSourceName());
+        }
+        for (EGraphNode child : node.getChildren()) {
+            collectTemporalReferences(child, references);
         }
     }
 

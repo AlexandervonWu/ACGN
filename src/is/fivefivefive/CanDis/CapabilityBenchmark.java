@@ -81,6 +81,13 @@ public final class CapabilityBenchmark {
         List<GeneratedPair> generated = new ArrayList<>();
         List<Skip> skips = new ArrayList<>();
         int sequence = 0;
+        long requestedPairs = (long) Family.values().length * options.target;
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "CapabilityBenchmark/generate",
+                requestedPairs,
+                "accepted pairs",
+                "rejected attempts do not advance completion");
 
         for (Family family : Family.values()) {
             int accepted = 0;
@@ -93,6 +100,7 @@ public final class CapabilityBenchmark {
                 if (!uniquePairs.add(uniqueKey)) {
                     skips.add(new Skip(family.id, seed.relativePath, "duplicate-formula-pair"));
                     attempt++;
+                    progress.update(generated.size());
                     continue;
                 }
 
@@ -109,6 +117,7 @@ public final class CapabilityBenchmark {
                     uniquePairs.remove(uniqueKey);
                     skips.add(new Skip(family.id, seed.relativePath, validation.reason));
                     attempt++;
+                    progress.update(generated.size());
                     continue;
                 }
                 generated.add(new GeneratedPair(
@@ -126,11 +135,13 @@ public final class CapabilityBenchmark {
                         validation.rightAstSize));
                 accepted++;
                 attempt++;
+                progress.update(generated.size());
             }
             if (accepted < options.target) {
                 skips.add(new Skip(family.id, "", "target-not-reached:" + accepted + "/" + options.target));
             }
         }
+        progress.finish(generated.size());
 
         generated.sort(Comparator.comparing(pair -> pair.relativePath));
         writeMetadata(options, seeds, generated, skips);
@@ -332,6 +343,12 @@ public final class CapabilityBenchmark {
             PairRecord pair = new PairRecord(row);
             pairs.put(pair.relativePath, pair);
         }
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "CapabilityBenchmark/report-arms",
+                ARMS.size(),
+                "arms");
+        int completedArms = 0;
         for (String arm : ARMS) {
             Path pairCsv = options.output.resolve("arms").resolve(arm).resolve("pairs.csv");
             for (Map<String, String> row : readCsv(pairCsv)) {
@@ -340,7 +357,9 @@ public final class CapabilityBenchmark {
                     pair.outcomes.put(arm, Outcome.from(row));
                 }
             }
+            progress.update(++completedArms);
         }
+        progress.finish(completedArms);
 
         Map<String, FamilyReport> reports = new LinkedHashMap<>();
         for (Family family : Family.values()) {

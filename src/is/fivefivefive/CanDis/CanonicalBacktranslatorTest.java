@@ -20,6 +20,7 @@ public final class CanonicalBacktranslatorTest {
     public static void main(String[] args) throws Exception {
         testQuantifiedNormalFormCompiles();
         testDisjointBindingGroupCompiles();
+        testLocalComprehensionCompilesAsRelation();
         testTemporalNormalFormCompiles();
         System.out.println("CanonicalBacktranslatorTest passed");
     }
@@ -66,6 +67,14 @@ public final class CanonicalBacktranslatorTest {
         NormalForm after = new NormalForm(root, TemporalOp.AFTER, 99);
         root.addTemporalChild(after);
         after.addEClass(node(Opcode.IN, false, false, global("s"), global("S")));
+        EGraphNode reference = node(Opcode.REF, false, false);
+        reference.setSourceName("temporal[0:1]");
+        root.addEClass(node(
+                Opcode.OR,
+                true,
+                true,
+                node(Opcode.SOME, false, false, global("S")),
+                reference));
         root.normalize();
         after.normalize();
 
@@ -74,6 +83,37 @@ public final class CanonicalBacktranslatorTest {
                 CanonicalBacktranslator.predicate("canonical_temporal", Arrays.asList(root, after)));
         assertCompiles(module);
         assertContains(module, "after", "temporal child must be emitted with its temporal operator");
+        if (module.contains("temporal[0:")) {
+            throw new AssertionError(
+                    "temporal references must be substituted in place:\n" + module);
+        }
+    }
+
+    private static void testLocalComprehensionCompilesAsRelation() throws Exception {
+        NormalForm normalForm = new NormalForm();
+        EGraphNode comprehension = node(
+                Opcode.COMPREHENSION,
+                false,
+                false,
+                relDeclOfType("State", "s1", "s2"),
+                node(
+                        Opcode.IN,
+                        false,
+                        false,
+                        variable("s2"),
+                        node(Opcode.JOIN, false, true, variable("s1"), global("trans"))));
+        normalForm.addEClass(node(
+                Opcode.SOME,
+                false,
+                false,
+                node(Opcode.CLOSURE, false, false, comprehension)));
+        normalForm.normalize();
+
+        String module = module("canonical_backtranslation_comprehension",
+                "sig State { trans: set State }\n",
+                CanonicalBacktranslator.predicate("canonical_comprehension", normalForm));
+        assertCompiles(module);
+        assertContains(module, "^{", "a local comprehension under closure must remain relational");
     }
 
     private static String module(String moduleName, String prelude, String predicate) {

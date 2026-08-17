@@ -3,8 +3,10 @@
 ACGN is a research codebase for Alloy program representation, generation, and
 repair analysis. Its current evaluation stack, **CanDis**, converts Alloy
 predicates into temporal prenex normal forms backed by slotted, variadic
-e-graphs and computes a canonical edit distance that discounts a defined set of
-semantic-preserving rewrites.
+e-graphs. It now separates certified semantic legality, deterministic canonical
+equality, and the established repair metric on the certified quotient instead
+of treating tree edit
+distance between canonical representatives as the repair metric.
 
 The repository contains:
 
@@ -26,16 +28,29 @@ separate semantic evidence.
 
 ## Headline Results
 
-The checked-in full-corpus results were generated on August 11-12, 2026. They
-predate the Phase I exact-engine integration and therefore remain a historical
-six-arm compatibility snapshot. Current source adds a seventh
-`typed-slotted-port-egraph` arm and makes `CanonicalAlloyPipeline` primary in
-the two corpus runners; do not attribute the historical numbers to that exact
-arm until the documented full-corpus rerun is complete. Per-problem and
-per-status tables are in
+The checked-in experimental snapshot was regenerated on August 17, 2026. It
+contains all seven ablation arms over the same 61,598 nontrivial corpus pairs,
+a 5,500-pair capability matrix, the paired student-oracle evaluation, and the
+augmented nearest-correct evaluation. Per-problem and per-status tables are in
 [`distance_results/summary.md`](distance_results/summary.md),
 [`alloy4fun-augmented/summary.md`](alloy4fun-augmented/summary.md), and
 [`egraph_ablation/summary.md`](egraph_ablation/summary.md).
+
+The current three-layer implementation treats `CanonicalDistance` as the
+repair-metric specification, retains canonical-representative TED as an
+explicit baseline, and makes `certified-legacy-repair-distance-v5` primary.
+Layer 1 certifies legal scopes and symmetries; Layer 3 preserves the legacy
+temporal/quantifier/matrix decomposition, unit edits, alpha minimization, and
+unordered assignment. One binder-owner mapping is reused by every inherited
+temporal phase; this is the certified correction to the legacy phase-local
+alignment space. The full exact ablation arm completed all 61,598 eligible
+pairs with zero failures and zero incorrect zero-distance merges. It retained
+all 2,316 legacy-canonical zeroes and certified one additional `CORRECT` pair.
+
+The result directories are internally hash-checked, but their manifests record
+a dirty source tree. Their source and output hashes therefore identify the
+reported artifacts; a clean, tagged rerun remains necessary for camera-ready
+provenance.
 
 ### Corpus and paired-oracle distance
 
@@ -53,17 +68,20 @@ truth-pool construction.
 | Eligible incorrect pairs | 42,386 |
 | Mean predicate-body Levenshtein distance | 39.261064 |
 | Mean raw-AST Zhang-Shasha distance | 22.841358 |
-| Mean canonical distance | 13.540131 |
-| Mean normalized Levenshtein / AST / canonical distance | 0.547644 / 0.811451 / 0.720049 |
-| Mean raw-AST / canonical representation size | 26.787315 / 17.328598 |
-| Compression from the ratio of those means | 35.310433% |
-| AST-different `CORRECT` pairs at canonical distance zero | 2,235 |
-| Canonical distance range | 0 to 142 |
+| Mean certified repair / direct reference distance | 14.014010 / 14.029027 |
+| Mean canonical-representative TED baseline | 37.119306 |
+| Mean normalized Levenshtein / AST / certified repair distance | 0.547644 / 0.811451 / 0.716590 |
+| Mean raw-AST / repair-observation size | 26.787315 / 18.117812 |
+| Compression from the ratio of those means | 32.364% |
+| AST-different `CORRECT` pairs at certified distance zero | 2,317 |
+| Incorrect zero-distance merges | 0 |
+| Certified repair distance range | 0 to 139 |
 
-Normalization uses each student predicate's own lexical, AST, or canonical
-size. The 2,235 zeroes are 11.633% of the eligible `CORRECT` pairs. No
-AST-different predicate labeled incorrect received distance zero in the
-checked-in six-arm ablation.
+This paired snapshot uses `canonical-alloy-pipeline-v9-three-layer` and
+`certified-legacy-repair-distance-v4`. Normalization divides by the larger
+corresponding representation of the student-oracle pair. The directly executed
+legacy metric remains a differential oracle, and representative TED is a
+separate baseline rather than the repair metric.
 
 ### Augmented correct pools and nearest repairs
 
@@ -77,50 +95,55 @@ metric is minimized independently over all truths in its group.
 | Invariant question groups | 181 |
 | Correct truth predicates, including 181 oracles | 19,393 |
 | AST-distinct truths | 4,496 |
-| Unique canonical truth forms | 2,436 |
-| AST-different, canonically equivalent truth pairs | 8,721 |
+| Unique canonical truth forms | 2,318 |
+| AST-different, canonically equivalent truth pairs | 10,257 |
 | Incorrect predicates ranked | 42,386 |
 | Groups using oracle plus correct students / oracle only | 176 / 5 |
 | Mean nearest Levenshtein distance | 28.054924 |
 | Mean nearest raw-AST distance | 15.987944 |
-| Mean nearest canonical distance | 10.172109 |
-| Mean relative Levenshtein / AST / canonical distance | 0.415603 / 0.608420 / 0.595229 |
+| Mean nearest certified canonical distance | 10.865050 |
+| Mean relative Levenshtein / AST / canonical distance | 0.415603 / 0.608420 / 0.602071 |
 
 Repair-radius coverage shows how many incorrect predicates have at least one
 correct reference within the given edit budget:
 
 | Radius | Raw AST | Canonical |
 | ---: | ---: | ---: |
-| 1 | 3,479 (8.2%) | 3,432 (8.1%) |
-| 2 | 4,962 (11.7%) | 7,580 (17.9%) |
-| 5 | 10,106 (23.8%) | 16,082 (37.9%) |
-| 10 | 18,242 (43.0%) | 27,797 (65.6%) |
+| 1 | 3,479 (8.2%) | 2,346 (5.5%) |
+| 2 | 4,962 (11.7%) | 5,446 (12.8%) |
+| 5 | 10,106 (23.8%) | 13,976 (33.0%) |
+| 10 | 18,242 (43.0%) | 26,274 (62.0%) |
 
 At radii expressed as a fraction of each incorrect predicate's representation
 size, the coverage is:
 
 | Relative radius | Levenshtein | Raw AST | Canonical |
 | ---: | ---: | ---: | ---: |
-| 5% | 1,085 (2.6%) | 2,049 (4.8%) | 313 (0.7%) |
-| 10% | 2,939 (6.9%) | 4,110 (9.7%) | 2,302 (5.4%) |
-| 20% | 8,169 (19.3%) | 7,476 (17.6%) | 6,928 (16.3%) |
-| 50% | 30,080 (71.0%) | 18,668 (44.0%) | 19,342 (45.6%) |
+| 5% | 1,085 (2.6%) | 2,049 (4.8%) | 318 (0.8%) |
+| 10% | 2,939 (6.9%) | 4,110 (9.7%) | 1,568 (3.7%) |
+| 20% | 8,169 (19.3%) | 7,476 (17.6%) | 5,862 (13.8%) |
+| 50% | 30,080 (71.0%) | 18,668 (44.0%) | 18,263 (43.1%) |
 
-### Archived six-arm e-graph ablation
+This augmented snapshot uses `canonical-alloy-pipeline-v10-three-layer` and
+`certified-legacy-repair-distance-v5`. Its pool-100 Rewarder pass completed all
+42,386 incorrect predicates without a reward failure.
 
-All six arms processed the same 61,598 eligible pairs with 32 workers in fresh
-JVMs. The first five use the same `canonical-equivalences-v2` rule program.
+### Seven-arm e-graph ablation
+
+All seven arms processed the same 61,598 eligible pairs with 32 workers in
+fresh JVMs. The first five use the same `canonical-equivalences-v2` rule program.
 `java-egglog` is a Java replica of the execution model used in this study, not
 a full textual-language-compatible port of external egglog.
 
 | Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 18.860 | 4.574 | 940.730 | 58.184 |
-| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.820 | 5.666 | 937.262 | 57.865 |
-| Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.300 | 4.263 | 930.586 | 56.740 |
-| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 19.030 | 5.200 | 943.770 | 56.410 |
-| Slotted e-graph | 2,162 | 11.253% | 17.694 | 18.150 | 15.723 | 1,077.098 | 52.952 |
-| Bounded canonical method | 2,235 | 11.633% | 13.540 | 18.490 | 12.889 | 3,592.613 | 28.700 |
+| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 18.260 | 4.517 | 933.320 | 58.184 |
+| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.580 | 5.289 | 864.070 | 57.865 |
+| Java egglog-like variadic | 823 | 4.284% | 17.996 | 16.400 | 4.094 | 874.352 | 56.740 |
+| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 16.630 | 4.997 | 915.074 | 56.410 |
+| Slotted e-graph | 2,162 | 11.253% | 17.694 | 17.390 | 14.642 | 936.621 | 52.952 |
+| Legacy canonical | 2,316 | 12.055% | 14.029 | 18.470 | 13.255 | 3,529.023 | 29.843 |
+| Typed slotted-port exact | 2,317 | 12.060% | 14.042 | 2,303.890 | 47,451.149 | 3,603.680 | 29.830 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -130,8 +153,10 @@ Key transitions in the observed zero-distance sets are:
   natural corpus.
 - Slotted storage retains 2,160 egglog-plus-De-Bruijn zeroes, adds 2, and loses
   3. Those three are documented false negatives, not semantic counterexamples.
-- Bounded canonicalization adds 73 zeroes over slotted storage and loses none of
-  the slotted zeroes.
+- Legacy canonicalization adds 154 zeroes over slotted storage and loses none
+  of the slotted zeroes.
+- The exact typed slotted-port pipeline retains all 2,316 legacy zeroes and
+  adds one `CORRECT` zero. Neither canonical arm produces an incorrect zero.
 
 The full transition data and pair identities are in
 [`equivalence_disagreements.csv`](egraph_ablation/equivalence_disagreements.csv).
@@ -149,14 +174,17 @@ in each of 11 transformation families.
 | Java egglog-like variadic | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
 | Java egglog-like + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
 | Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Bounded canonical method | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Legacy canonical | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Typed slotted-port exact | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
 
 De Bruijn encoding gives complete alpha-equivalence recovery, but the raw and
 egglog-like representations do not implement general declaration-block
 permutations. The raw and egglog-like arms recover 1 of 500 binder-permutation
 cases incidentally, and their De Bruijn variants recover 22 of 500. Slotted and
 canonical representations recover all 500 alpha-equivalence and all 500
-binder-permutation cases. The complete family matrix is in
+binder-permutation cases. The exact arm agrees with both of them on every
+generated pair, and all 11 expected first-capable boundaries match the observed
+matrix. The complete family matrix is in
 [`capability_benchmark/REPORT.md`](capability_benchmark/REPORT.md).
 
 **AC/logical v2 correction.** Fixed-arity re-binarization could expose a
@@ -165,15 +193,16 @@ matcher recognized only an explicit `A` / `not A` pair. Rule set
 `canonical-equivalences-v2` recognizes those duals and folds only
 domain-independent constant quantified bodies. Raw and raw-plus-De-Bruijn
 coverage for the composed AC-plus-logical-normalization family increased from
-479/500 to 500/500; all six arms now recover all 500 cases. The natural-corpus
+479/500 to 500/500; all seven arms now recover all 500 cases. The natural-corpus
 zero sets did not change, no incorrect zeroes were introduced, and
 [`unexpected_failures.csv`](capability_benchmark/unexpected_failures.csv) is
 empty.
 
 ### Bounded semantic evidence
 
-The semantic checker reran the union of all 2,238 natural-corpus equivalence
-claims using each model's own Alloy `check correct` command:
+The most recent bounded semantic checker predates the exact-arm rerun. It
+checked the then-current union of 2,238 natural-corpus equivalence claims using
+each model's own Alloy `check correct` command:
 
 | Arm | Claims checked | Bounded counterexamples | Errors |
 | --- | ---: | ---: | ---: |
@@ -184,11 +213,15 @@ claims using each model's own Alloy `check correct` command:
 Four targeted negative probes for capture, comprehension-column permutation,
 signature shadowing, and temporal implication all had Alloy counterexamples and
 were rejected by every arm. This is bounded evidence, not an unbounded proof.
-The targeted capability soundness sample had zero conclusive non-temporal
-failures across 29 subtype checks; six temporal checks were inconclusive because
-the installed solver lacked a temporal backend. One of those inconclusive raw
-solver runs reported a counterexample under Alloy's warned static temporal
-reduction, so it is recorded but not counted as conclusive evidence. See
+The current seven-arm corpus run supplies a separate label-agreement check: all
+2,317 exact zeroes are in `CORRECT`, and none of 42,386 incorrect pairs is zero.
+That is not a replacement for rerunning the bounded checker on the 79 newly
+observed claims. The current targeted capability soundness sample had zero
+conclusive non-temporal failures across 29 subtype checks; six temporal checks
+were inconclusive because the installed solver lacked a temporal backend. One
+of those inconclusive raw solver runs reported a counterexample under Alloy's
+warned static temporal reduction, so it is recorded but not counted as
+conclusive evidence. See
 [`semantic_soundness.md`](egraph_ablation/semantic_soundness.md) and
 [`capability_benchmark/SOUNDNESS.md`](capability_benchmark/SOUNDNESS.md).
 
@@ -199,22 +232,32 @@ as semantic equivalence proofs.
 
 | Protocol | Pool | Predicates | Mean candidate reward | Headline Pearson result |
 | --- | ---: | ---: | ---: | ---: |
-| Paired student vs oracle | 10 | 61,598 | 0.567082 | canonical distance vs reward: -0.042870 |
-| Incorrect vs nearest-correct pool | 100 | 42,386 | 0.352766 | canonical distance vs `1 - reward`: 0.064245 |
+| Paired student vs oracle | 10 | 61,598 | 0.567082 | certified distance vs reward: -0.040249 |
+| Incorrect vs nearest-correct pool | 100 | 42,386 | 0.352766 | certified distance vs `1 - reward`: 0.056805 |
 
 For the paired run, oracle self-reward averaged 1.000000. On the 42,386
-non-`CORRECT` pairs, Levenshtein, raw AST, and canonical correlations with
-candidate reward were -0.089408, -0.073326, and -0.042870. In the augmented
-nearest-correct run, their correlations with raw reward error were 0.141856,
-0.123954, and 0.064245. All are weak in these sampled configurations.
+non-`CORRECT` pairs, Levenshtein, raw AST, and certified repair correlations
+with candidate reward were -0.089408, -0.073326, and -0.040249. In the
+augmented nearest-correct run, their correlations with raw reward error were
+0.141856, 0.123954, and 0.056805. All are weak in these sampled configurations.
 
 ### Runtime and memory interpretation
 
-The archived bounded-canonical arm completed the 61,598-pair corpus in 18.490 seconds on a
-32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
-compact structural representation averaged 28.700 units, 23.803 reachable
-e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,592.613
-MiB RSS.
+The legacy canonical arm completed the 61,598-pair corpus in 18.470 seconds on
+a 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
+representation averaged 29.843 units, 25.022 reachable e-classes, and 25.173
+reachable e-nodes, with 3,529.023 MiB maximum RSS.
+
+The exact typed slotted-port arm completed the same pairs in 2,303.890 seconds
+(26.743 pairs/s). It used 47,451.149 engine CPU seconds, with per-pair engine
+latency p50 555.391 ms and p95 4,394.306 ms. Its normalized observations were
+slightly smaller at 29.830 units, 20.935 reachable e-classes, and 18.059
+reachable e-nodes, while maximum RSS was similar at 3,603.680 MiB. The roughly
+125x wall-time increase is therefore not representation growth: it comes from
+certificate validation, exact renaming-orbit enumeration, immutable graph
+transactions, strict invariant checks, rebuild-to-quiescence, and complete
+finite unfolding. The established repair metric itself is not the dominant
+cost.
 
 A deterministic 2,000-file attribution run explains the apparent mismatch:
 
@@ -249,33 +292,56 @@ polarity determine which quantifiers can be moved safely:
 9. Store each binding as a primitive carrier, quantifier/cardinality,
    disjointness class, and canonical slot. Move only non-primitive domain
    constraints into the matrix.
-10. Normalize introduced constraints, flatten variadic operators, and saturate
+10. Reuse typed slot ordinals across compatible sibling universal-conjunction
+    or existential-disjunction scopes, using the maximum live arity; nested
+    binders and quantifier/connective barriers retain distinct coordinates.
+11. Normalize introduced constraints, flatten variadic operators, and saturate
     local equivalences to a fixed point.
 
 Variadic children use three laws: `SEQ` for associativity, `BAG` for
 associativity plus commutativity while retaining multiplicity, and `SET` for
 associativity, commutativity, and idempotence. Binder permutation groups apply
-only where declaration semantics allow them.
+only within one complete, certified exchange class; continuous compatible
+nested declarations may share a class, while a scope barrier cannot.
+Named non-temporal references retain their symbol identity, so built-ins such
+as `ordering/first` and `ordering/last` cannot collapse.
 
 The Phase I primary exact path next converts every normalized phase through
 `TheoryAlloyAdapter`, which creates typed ports and complete binder blocks,
 issues structured certificates for Seq=A, Bag=AC, and Set=ACI, inserts every
 node through `TypedSlottedPortEGraph.insertNode`, rebuilds to strict quiescence,
-and observes a current complete finite-unfolding family. Full normalized keys
-define equality and digests. An injective semantic projection removes proof
-schema nodes from edit-unit counting without changing which pairs have distance
-zero.
+and observes a current complete finite-unfolding family. The resulting
+`CertifiedSemanticArtifact` is the proof-bearing semantic layer. Full
+normalized keys enter `CanonicalObservation` and define equality, digests, and
+reproducible serialization.
 
-The retained `legacyCanonicalDistance` is the former sum of:
+Repair distance is a separate consumer, but it is not a newly invented
+projection metric. `CanonicalDistance` specifies its geometry. `RepairProjection` erases proof,
+schema, rebuilding, ambient-support, and port-wrapper plumbing while retaining
+semantic operators, declaration tuples, temporal structure, container kinds,
+and certified binder actions. `QuotientRepairDistance` preserves the same
+temporal/quantifier/matrix edit algebra, using ordered DP for
+sequences, multiplicity-aware assignment for bags, minimum assignment for
+sets, direct comparison for `one`, and pairwise binder-orbit minimization.
+Canonical-representative TED remains available only as
+`CanonicalRepresentativeTreeDistance`; no isometry theorem is claimed for it.
+
+The `CanonicalDistance` specification is the sum of:
 
 1. Zhang-Shasha edit distance over the temporal tree;
 2. unit-cost additions, deletions, or modifications of phase-local binding
    tuples, minimized over valid binding permutations;
 3. e-graph matrix edit distance under semantically equivalent slot bindings.
 
-`CanonicalBatchTest` and `Alloy4FunAugmenter` emit that legacy value only as a
-compatibility diagnostic; their unqualified canonical fields now use the exact
-pipeline.
+`CanonicalBatchTest` reports the faithful port, the directly executed metric
+specification, and representative TED separately. Its unqualified
+canonical distance is the established repair metric evaluated with certified
+scope legality; the directly executed legacy implementation and
+canonical-representative TED fields are explicit differential diagnostics.
+
+The architectural contracts, exact/bounded guarantees, projection
+classification, and controlled comparison are in
+[`docs/three-layer-canonical-repair-architecture.md`](docs/three-layer-canonical-repair-architecture.md).
 
 The complete ordered rules, side conditions, opcode inventory, and fixed-point
 policy are in [`documentation/REWRITE_SYSTEM.md`](documentation/REWRITE_SYSTEM.md).
@@ -312,13 +378,15 @@ src/is/fivefivefive/CanDis/core/          parser-independent canonical-distance 
 src/is/fivefivefive/CanDis/core/egraph/   six retained ablation representation engines
 src/is/fivefivefive/CanDis/theory/        exact typed slotted-port e-graph and proofs
 src/is/fivefivefive/CanDis/adapter/       Alloy adapters, including exact typed adaptation
+src/is/fivefivefive/CanDis/canonical/     canonical equality, hashing, serialization, TED baseline
+src/is/fivefivefive/CanDis/metric/        certified port of the established repair metric
 src/is/fivefivefive/CanDis/ir/            MASG to canonical IR conversion
 src/is/fivefivefive/AlloyDataProcessor/   corpus preprocessing utilities
 classified-data/                          source student/oracle dataset
 distance_results/                         paired-oracle metrics, JSON, CSV, plots, tables
 alloy4fun-augmented/                       correct pools and nearest-repair rankings
-egraph_ablation/                           archived six-arm natural-corpus evaluation
-capability_benchmark/                      generated transformation benchmark
+egraph_ablation/                           current seven-arm natural-corpus evaluation
+capability_benchmark/                      current seven-arm transformation benchmark
 canonical_memory/                          worker-scaling and phase attribution
 documentation/                             CanDis and rewrite-system references
 scripts/                                   build and evaluation launchers
@@ -357,6 +425,7 @@ Run the focused regression suite:
 
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
+java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.metric.QuotientRepairDistanceTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.ablation.EGraphAblationTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.EGraphSaturationTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBacktranslatorTest
@@ -424,8 +493,10 @@ audit CSVs, reward CSVs, and coverage/correlation SVGs.
 ```
 
 The suite runs all seven arms sequentially in fresh JVMs. The seventh is
-`typed-slotted-port-egraph`, backed by `CanonicalAlloyPipeline`; `canonical`
-continues to denote the bounded legacy method. Each arm uses
+`typed-slotted-port-egraph`, backed by the faithful graph and certified port of
+the established metric in `CanonicalAlloyPipeline`; the `canonical` arm
+continues to denote the legacy implementation with bounded rewrite saturation,
+not an approximate repair metric. Each arm uses
 `min(requested workers, logical processors, 32)` threads. A smoke run can add
 `--limit 100` and use a `/tmp` output directory.
 
@@ -505,10 +576,10 @@ from every current distance and ablation run.
 
 ## Reproducibility
 
-The checked-in historical six-arm natural-corpus snapshot records:
+The checked-in seven-arm natural-corpus snapshot records:
 
-- run ID `b6878ce2-b791-4a64-ad2f-1c2e3ff93893`;
-- source SHA `67c94e2ddf4bdee34ecf3f9c21c393f438f4e0ef` with a dirty worktree;
+- run ID `cfe55f5d-daf6-4ae1-808e-3eaa863015a8`;
+- source SHA `cc53042333fa3a1c820eb5715aa3b124e03d0ff1` with a dirty worktree;
 - dataset SHA-256
   `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
 - Java 17.0.19, 32 workers, a 3 GiB heap cap, rule set
@@ -516,8 +587,11 @@ The checked-in historical six-arm natural-corpus snapshot records:
   and hashes of every generated arm and combined output.
 
 The checked-in capability snapshot uses run ID
-`75ce4485-9444-403c-991d-2609b7e77f08` and the same v2 rule set. Its arm
-manifests and generated-report hashes are anchored by the capability
+`dfd614b7-661d-4be6-8b46-6459e00809ad`, source SHA
+`cc53042333fa3a1c820eb5715aa3b124e03d0ff1`, generated-dataset SHA-256
+`e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0`,
+and the same v2 rule set. Its arm manifests and generated-report hashes are
+anchored by the capability
 [`run-manifest.json`](capability_benchmark/arms/run-manifest.json).
 
 See [`run-manifest.json`](egraph_ablation/run-manifest.json). Because that
@@ -537,8 +611,9 @@ to the repository's current `HEAD`.
   representations and should not be compared as if their units were identical.
 - Rewarder uses finite instance pools. Pool size and cache state are part of the
   experimental configuration.
-- Full-corpus runtime is parser-heavy. Structural byte estimates describe graph
-  objects and are not substitutes for measured process RSS.
+- Baseline-arm wall time is parser-heavy; the exact arm is dominated by
+  certificate-bearing graph construction and orbit work. Structural byte
+  estimates describe graph objects and are not substitutes for measured RSS.
 - The ACGN learning/generation code is research infrastructure; some historical
   entry points, including the old RL frame, are retained for experiments rather
   than presented as a production API.
@@ -550,7 +625,7 @@ to the repository's current `HEAD`.
 - [Phase I exact-engine integration, invariants, faults, and reproduction](docs/theory-phase-i-artifact-integration.md)
 - [Paired-distance paper tables](distance_results/paper_tables.md)
 - [Augmented dataset summary](alloy4fun-augmented/summary.md)
-- [Archived six-arm ablation report](egraph_ablation/summary.md)
+- [Current seven-arm ablation report](egraph_ablation/summary.md)
 - [Targeted capability benchmark](capability_benchmark/REPORT.md)
 - [Canonical memory attribution](canonical_memory/REPORT.md)
 

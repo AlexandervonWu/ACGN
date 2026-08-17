@@ -46,9 +46,17 @@ public final class CanonicalBacktranslationEquivalenceTest {
             files = new ArrayList<>(files.subList(0, options.limit));
         }
         List<EquivalenceResult> results = new ArrayList<>();
+        ExperimentProgress progress = ExperimentProgress.start(
+                System.err,
+                "CanonicalBacktranslationEquivalenceTest",
+                files.size(),
+                "files");
+        int completed = 0;
         for (Path file : files) {
             results.addAll(checkFile(options.input, file, options.scope));
+            progress.update(++completed);
         }
+        progress.finish(completed);
         writeJson(options, files.size(), results);
         long mismatches = results.stream().filter(result -> result.mismatch()).count();
         long failures = results.stream().filter(result -> result.error != null).count();

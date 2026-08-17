@@ -1,0 +1,108 @@
+{
+  "outputs": [
+    {
+      "path": "pairs.csv",
+      "sha256": "367665e55c83cf6d031d511a9d0612d163a58c5c71871fd54be417069ed712fe",
+      "sizeBytes": 1135990
+    },
+    {
+      "path": "summary.json",
+      "sha256": "d924350e7151da27b6c10902caee46bb376475d1e6862d9f13bc27b34288768e",
+      "sizeBytes": 14432
+    },
+    {
+      "path": "metrics.properties",
+      "sha256": "5284a28ef48aee4d08f38a10711898258b01802733e84e7d7d4b25743947b455",
+      "sizeBytes": 1624
+    },
+    {
+      "path": "run.log",
+      "sha256": "13bc4b5669b4d6f12f8925356d11563b9fedd5aabc04e45868be6b17dbfa1a4d",
+      "sizeBytes": 2447
+    },
+    {
+      "path": "process.time",
+      "sha256": "b621f925990b352aac49bdeb5dcb6023f21ab30f7d8017b8e4d41ff068e42186",
+      "sizeBytes": 1355
+    }
+  ],
+  "seed": 55520260811,
+  "javaVersion": "17.0.19",
+  "osArch": "amd64",
+  "startedAt": "2026-08-17T23:27:19.964886047Z",
+  "javaSourceSha256": "7920d45f549768fb4531c6a985727bb34525b1fb73bb66f67900dc528ef841bf",
+  "result": {
+    "failures": 0,
+    "successes": 5500,
+    "skippedIdenticalRawAstPairs": 0,
+    "files": 5500
+  },
+  "logicalProcessors": 32,
+  "osVersion": "7.0.0-28-generic",
+  "engine": {
+    "quotientMetricVersion": "certified-legacy-repair-distance-v5",
+    "canonicalizerVersion": "canon-g-production-v2",
+    "canonicalPipelineVersion": "canonical-alloy-pipeline-v10-three-layer",
+    "boundedSettings": {
+      "legacyMaximumTermSize": 0,
+      "legacyRewriteIterations": 0,
+      "finiteUnfoldingMaximumDepth": "eclasses+1",
+      "finiteUnfoldingMaximumAlternatives": 64
+    },
+    "invariantCheckMode": "strict-every-transition",
+    "measurementProjectionVersion": "faithful-legacy-repair-projection-v6",
+    "certificateMode": "required",
+    "engineIdentifier": "TypedSlottedPortEGraph",
+    "theoryFaithfulEngineUsed": true,
+    "certificateVerifierVersion": "typed-certificate-algebra-v3",
+    "finiteUnfoldingVersion": "typed-finite-unfolding-oracle-v2",
+    "canonicalRepresentativeTedVersion": "canonical-representative-ted-v1",
+    "armId": "typed-slotted-port-egraph",
+    "alloyAdapterVersion": "typed-alloy-normal-form-adapter-v7",
+    "ruleSetId": "canonical-alloy-signature-v6"
+  },
+  "host": "augustus-x870e",
+  "limit": 0,
+  "datasetFileCount": 5500,
+  "datasetSha256": "e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0",
+  "heap": "3g",
+  "workers": 32,
+  "arm": "typed-slotted-port-egraph",
+  "ruleSetVersion": "canonical-equivalences-v2",
+  "outputSchemaVersion": "candis-ablation-output-v5",
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
+  "javaVendor": "Ubuntu",
+  "osName": "Linux",
+  "dirtyTree": true,
+  "manifestSchemaVersion": "candis-ablation-manifest-v3",
+  "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
+  "gitSha": "cc53042333fa3a1c820eb5715aa3b124e03d0ff1",
+  "datasetByteCount": 5312721,
+  "ruleNames": [
+    "operator aliases",
+    "NOOP elimination",
+    "capture-avoiding let beta reduction",
+    "implication elimination",
+    "iff elimination",
+    "formula ITE elimination",
+    "boolean constant negation and double negation",
+    "De Morgan",
+    "atomic negation duals",
+    "temporal negation duals",
+    "quantifier negation duals",
+    "no-to-all-not quantifier expansion",
+    "empty quantifier domains",
+    "constant quantifier bodies",
+    "safe existential-conjunction prenex",
+    "safe universal-disjunction prenex",
+    "associativity",
+    "commutativity",
+    "idempotence",
+    "boolean identities and annihilators",
+    "boolean complements",
+    "membership in none/univ",
+    "relational union with none",
+    "relational intersection with none"
+  ],
+  "runId": "dfd614b7-661d-4be6-8b46-6459e00809ad"
+}

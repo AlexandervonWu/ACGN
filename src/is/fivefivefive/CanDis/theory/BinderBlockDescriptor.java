@@ -79,7 +79,9 @@ public final class BinderBlockDescriptor {
         Objects.requireNonNull(source, "coordinates");
         List<BinderCoordinateDescriptor> result = new ArrayList<>(source.size());
         Map<Integer, Integer> normalizedClasses = new LinkedHashMap<>();
+        Map<Integer, Integer> normalizedExchangeClasses = new LinkedHashMap<>();
         int nextClass = 0;
+        int nextExchangeClass = 0;
         for (BinderCoordinateDescriptor value : source) {
             BinderCoordinateDescriptor coordinate = Objects.requireNonNull(
                     value, "binder coordinate");
@@ -92,6 +94,14 @@ public final class BinderBlockDescriptor {
                 }
                 coordinate = coordinate.withDisjointnessClass(normalized);
             }
+            Integer normalizedExchange = normalizedExchangeClasses.get(
+                    coordinate.exchangeClass());
+            if (normalizedExchange == null) {
+                normalizedExchange = nextExchangeClass++;
+                normalizedExchangeClasses.put(
+                        coordinate.exchangeClass(), normalizedExchange);
+            }
+            coordinate = coordinate.withExchangeClass(normalizedExchange);
             result.add(coordinate);
         }
         return Collections.unmodifiableList(result);

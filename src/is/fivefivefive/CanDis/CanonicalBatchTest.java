@@ -14,11 +14,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.TreeMap;
+import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -33,6 +36,8 @@ import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
 import parser.etc.Pair;
 import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.core.CanonicalDistance;
+import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
 import is.fivefivefive.CanDis.theory.CertificateVerifier;
 import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
@@ -56,23 +61,22 @@ public class CanonicalBatchTest {
         }
 
         Summary summary = new Summary(!options.skipRewards);
-        List<FileResult> results = processFiles(files, options);
         try (Writer json = Files.newBufferedWriter(jsonPath, StandardCharsets.UTF_8)) {
             writeJsonHeader(json, options, files.size());
-            int written = 0;
-            for (FileResult result : results) {
+            int[] written = {0};
+            processFiles(files, options, result -> {
                 summary.add(result);
                 if (result.skipped) {
-                    continue;
+                    return;
                 }
-                if (written++ > 0) {
+                if (written[0]++ > 0) {
                     json.write(",\n");
                 }
                 writeJsonResult(json, result);
                 if (options.verbose) {
                     System.err.println(result.relativePath + " -> " + result.status());
                 }
-            }
+            });
             writeJsonFooter(json, summary);
         }
         writeMarkdown(markdownPath, options, summary);
@@ -80,55 +84,153 @@ public class CanonicalBatchTest {
         System.out.println("Wrote " + markdownPath);
     }
 
-    private static List<FileResult> processFiles(List<Path> files, Options options) {
+    private static void processFiles(
+            List<Path> files,
+            Options options,
+            ResultSink sink) throws IOException {
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
+        PrintStream discarded = null;
         if (!options.verbose) {
-            PrintStream sink = new PrintStream(new OutputStream() {
+            discarded = new PrintStream(new OutputStream() {
                 @Override
                 public void write(int b) {
                 }
             });
-            System.setOut(sink);
-            System.setErr(sink);
+            System.setOut(discarded);
+            System.setErr(discarded);
         }
-        ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, options.threadCount));
+        int workers = Math.max(1, options.threadCount);
+        int maximumInFlight = workers > Integer.MAX_VALUE / 4
+                ? Integer.MAX_VALUE
+                : workers * 4;
+        ExecutorService executor = Executors.newFixedThreadPool(workers);
         try {
-            List<Future<FileResult>> futures = new ArrayList<>(files.size());
-            for (Path file : files) {
-                Callable<FileResult> task = () -> processFile(options.inputDir, file, options);
-                futures.add(executor.submit(task));
+            CompletionService<IndexedResult> completions =
+                    new ExecutorCompletionService<>(executor);
+            Map<Future<IndexedResult>, Integer> active = new HashMap<>();
+            Map<Integer, FileResult> ready = new TreeMap<>();
+            int submitted = 0;
+            int completed = 0;
+            int emitted = 0;
+            long started = System.nanoTime();
+            long lastProgress = started;
+            int progressStep = Math.max(
+                    1,
+                    Math.min(1000, Math.max(1, (files.size() + 19) / 20)));
+            originalErr.println("CanonicalBatchTest: processing " + files.size()
+                    + " files with " + workers + " workers and at most "
+                    + maximumInFlight + " tasks in flight.");
+            while (submitted < files.size() && submitted - emitted < maximumInFlight) {
+                int index = submitted++;
+                Future<IndexedResult> future = completions.submit(
+                        () -> processIndexedFile(index, files.get(index), options));
+                active.put(future, index);
             }
-            List<FileResult> results = new ArrayList<>(files.size());
-            for (int i = 0; i < futures.size(); i++) {
+
+            while (completed < files.size()) {
+                Future<IndexedResult> future;
                 try {
-                    results.add(futures.get(i).get());
+                    future = completions.poll(30, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    results.add(failedResult(options.inputDir, files.get(i), "InterruptedException: " + e.getMessage()));
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause() == null ? e : e.getCause();
-                    results.add(failedResult(options.inputDir, files.get(i),
-                            cause.getClass().getSimpleName() + ": " + cause.getMessage()));
+                    throw new IOException("Canonical batch processing was interrupted", e);
                 }
-            }
-            for (int i = 0; i < results.size(); i++) {
-                if (results.get(i).error == null) {
+                if (future == null) {
+                    String unresolved = emitted < files.size()
+                            ? options.inputDir.relativize(files.get(emitted)).toString()
+                            : "<none>";
+                    originalErr.println("CanonicalBatchTest: still working; " + completed
+                            + "/" + files.size() + " complete and " + active.size()
+                            + " tasks in flight; earliest unresolved item is "
+                            + (emitted + 1) + "/" + files.size() + " (" + unresolved + ").");
+                    lastProgress = System.nanoTime();
                     continue;
                 }
-                FileResult retry = processFile(options.inputDir, files.get(i), options);
-                if (retry.error == null) {
-                    results.set(i, retry);
+                Integer expectedIndex = active.remove(future);
+                IndexedResult indexed;
+                try {
+                    indexed = future.get();
+                    if (expectedIndex != null && expectedIndex.intValue() != indexed.index) {
+                        throw new IllegalStateException("Completion index mismatch");
+                    }
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause() == null ? e : e.getCause();
+                    if (cause instanceof VirtualMachineError) {
+                        throw (VirtualMachineError) cause;
+                    }
+                    int index = expectedIndex == null ? completed : expectedIndex;
+                    indexed = new IndexedResult(
+                            index,
+                            failedResult(options.inputDir, files.get(index),
+                                    cause.getClass().getSimpleName() + ": " + cause.getMessage()));
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Canonical batch result retrieval was interrupted", e);
+                }
+                ready.put(indexed.index, indexed.result);
+                completed++;
+
+                while (ready.containsKey(emitted)) {
+                    sink.accept(ready.remove(emitted));
+                    emitted++;
+                }
+                long now = System.nanoTime();
+                if (completed % progressStep == 0
+                        || completed == files.size()
+                        || now - lastProgress >= TimeUnit.SECONDS.toNanos(30)) {
+                    long elapsedNanos = Math.max(1L, now - started);
+                    double seconds = elapsedNanos / 1_000_000_000.0;
+                    double rate = completed / seconds;
+                    long remainingSeconds = rate <= 0.0
+                            ? 0L
+                            : Math.round((files.size() - completed) / rate);
+                    originalErr.printf(
+                            java.util.Locale.ROOT,
+                            "CanonicalBatchTest: %,d/%,d complete (%.1f%%), %.2f files/s, ETA %s.%n",
+                            completed,
+                            files.size(),
+                            files.isEmpty() ? 100.0 : 100.0 * completed / files.size(),
+                            rate,
+                            formatDuration(remainingSeconds));
+                    lastProgress = now;
+                }
+
+                while (submitted < files.size() && submitted - emitted < maximumInFlight) {
+                    int index = submitted++;
+                    Future<IndexedResult> next = completions.submit(
+                            () -> processIndexedFile(index, files.get(index), options));
+                    active.put(next, index);
                 }
             }
-            return results;
         } finally {
             executor.shutdownNow();
             if (!options.verbose) {
                 System.setOut(originalOut);
                 System.setErr(originalErr);
+                discarded.close();
             }
         }
+    }
+
+    private static IndexedResult processIndexedFile(
+            int index,
+            Path file,
+            Options options) {
+        FileResult result = processFile(options.inputDir, file, options);
+        if (result.error != null) {
+            result = processFile(options.inputDir, file, options);
+        }
+        return new IndexedResult(index, result);
+    }
+
+    private static String formatDuration(long seconds) {
+        long hours = seconds / 3600;
+        long minutes = seconds % 3600 / 60;
+        long remainder = seconds % 60;
+        return hours > 0
+                ? String.format(java.util.Locale.ROOT, "%dh %02dm %02ds", hours, minutes, remainder)
+                : String.format(java.util.Locale.ROOT, "%dm %02ds", minutes, remainder);
     }
 
     private static FileResult failedResult(Path inputRoot, Path file, String error) {
@@ -194,7 +296,12 @@ public class CanonicalBatchTest {
             result.legacyCanonicalFormSize = Math.max(
                     result.leftLegacyCanonicalFormSize,
                     result.rightLegacyCanonicalFormSize);
-            result.legacyCanonicalDistance = Canonical.distance(leftCanonical, rightCanonical);
+            CanonicalDistance.DistanceBreakdown legacyBreakdown =
+                    Canonical.distanceBreakdown(leftCanonical, rightCanonical);
+            result.legacyCanonicalDistance = legacyBreakdown.distance();
+            result.legacyTemporalDistance = legacyBreakdown.temporalDistance();
+            result.legacyQuantifierDistance = legacyBreakdown.quantifierDistance();
+            result.legacyMatrixDistance = legacyBreakdown.matrixDistance();
             result.normalizedLegacyCanonicalDistance = normalizedDistance(
                     result.legacyCanonicalDistance,
                     result.legacyCanonicalFormSize);
@@ -205,14 +312,33 @@ public class CanonicalBatchTest {
             exactStarted = System.nanoTime();
             CanonicalAlloyPipeline.Prepared rightExact = CanonicalAlloyPipeline.prepare(rightCanonical);
             result.rightExactPreparationNanos = System.nanoTime() - exactStarted;
-            result.leftCanonicalFormSize = leftExact.representationSize();
-            result.rightCanonicalFormSize = rightExact.representationSize();
+            result.leftCanonicalFormSize = leftExact.repairObservationSize();
+            result.rightCanonicalFormSize = rightExact.repairObservationSize();
             result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
+            result.leftCanonicalRepresentativeTreeSize = leftExact.representativeTreeSize();
+            result.rightCanonicalRepresentativeTreeSize = rightExact.representativeTreeSize();
+            result.canonicalRepresentativeTreeSize = Math.max(
+                    result.leftCanonicalRepresentativeTreeSize,
+                    result.rightCanonicalRepresentativeTreeSize);
             result.representationSizesAvailable = true;
             exactStarted = System.nanoTime();
-            result.distance = CanonicalAlloyPipeline.distance(leftExact, rightExact);
+            QuotientRepairDistance.Result quotient =
+                    CanonicalAlloyPipeline.distanceEvaluation(leftExact, rightExact);
+            result.distance = quotient.distance();
+            result.quotientTemporalDistance = quotient.temporalDistance();
+            result.quotientQuantifierDistance = quotient.quantifierDistance();
+            result.quotientMatrixDistance = quotient.matrixDistance();
             result.exactDistanceNanos = System.nanoTime() - exactStarted;
+            result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
+            result.quotientBinderAlignments = quotient.binderAlignments();
             result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
+            exactStarted = System.nanoTime();
+            result.canonicalRepresentativeTreeDistance =
+                    CanonicalAlloyPipeline.canonicalRepresentativeTreeDistance(leftExact, rightExact);
+            result.canonicalRepresentativeTreeDistanceNanos = System.nanoTime() - exactStarted;
+            result.normalizedCanonicalRepresentativeTreeDistance = normalizedDistance(
+                    result.canonicalRepresentativeTreeDistance,
+                    result.canonicalRepresentativeTreeSize);
             result.leftExactDigest = leftExact.digest();
             result.rightExactDigest = rightExact.digest();
             result.exactEclasses = leftExact.eclassCount() + rightExact.eclassCount();
@@ -225,6 +351,8 @@ public class CanonicalBatchTest {
                     + rightExact.unfoldingNanos();
             result.exactObservationNanos = leftExact.observationNanos()
                     + rightExact.observationNanos();
+            result.exactRepairProjectionNanos = leftExact.repairProjectionNanos()
+                    + rightExact.repairProjectionNanos();
             result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
             result.rightIRTemporalFOL = Canonical.irTemporalFol(rightCanonical);
             result.edits = Canonical.edits(leftCanonical, rightCanonical);
@@ -234,6 +362,8 @@ public class CanonicalBatchTest {
                 computeRewardMetrics(module, result, options.rewardPoolSize);
             }
             return result;
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable t) {
             if (options.verbose) {
                 t.printStackTrace(System.err);
@@ -263,6 +393,8 @@ public class CanonicalBatchTest {
                     result.rightPredicate,
                     poolSize);
             result.rewardGap = result.groundTruthReward - result.candidateReward;
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable t) {
             result.rewardError = t.getClass().getSimpleName() + ": " + t.getMessage();
         }
@@ -447,6 +579,10 @@ public class CanonicalBatchTest {
         writer.write("  \"canonicalPipelineVersion\": \"" + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
         writer.write("  \"measurementProjectionVersion\": \""
                 + CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION + "\",\n");
+        writer.write("  \"quotientMetricVersion\": \""
+                + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "\",\n");
+        writer.write("  \"canonicalRepresentativeTedVersion\": \""
+                + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "\",\n");
         writer.write("  \"alloyAdapterVersion\": \"" + TheoryAlloyAdapter.ADAPTER_VERSION + "\",\n");
         writer.write("  \"invariantCheckMode\": \"" + TheoryAlloyAdapter.INVARIANT_MODE + "\",\n");
         writer.write("  \"canonicalizerVersion\": \"" + ProductionGraphCanonicalizer.VERSION + "\",\n");
@@ -466,20 +602,34 @@ public class CanonicalBatchTest {
         writer.write("    \"skippedIdenticalRawAstPairs\": " + summary.skipped + ",\n");
         writer.write("    \"failures\": " + summary.failures + ",\n");
         writer.write("    \"averageDistance\": " + number(summary.averageDistance()) + ",\n");
+        writer.write("    \"averageCanonicalRepresentativeTreeDistance\": "
+                + number(summary.averageCanonicalRepresentativeTreeDistance()) + ",\n");
         writer.write("    \"averageLegacyCanonicalDistance\": "
                 + number(summary.averageLegacyCanonicalDistance()) + ",\n");
         writer.write("    \"averagePredicateBodyLevenshteinDistance\": " + number(summary.averageLevenshteinDistance()) + ",\n");
         writer.write("    \"averageRawAstTreeDistance\": " + number(summary.averageRawAstTreeDistance()) + ",\n");
         writer.write("    \"averageRawAstSize\": " + number(summary.averageRawAstSize()) + ",\n");
         writer.write("    \"averageCanonicalFormSize\": " + number(summary.averageCanonicalFormSize()) + ",\n");
+        writer.write("    \"averageCanonicalRepresentativeTreeSize\": "
+                + number(summary.averageCanonicalRepresentativeTreeSize()) + ",\n");
         writer.write("    \"averageLegacyCanonicalFormSize\": "
                 + number(summary.averageLegacyCanonicalFormSize()) + ",\n");
         writer.write("    \"averageNormalizedLevenshteinDistance\": "
                 + number(summary.averageNormalizedLevenshteinDistance()) + ",\n");
         writer.write("    \"averageNormalizedRawAstDistance\": " + number(summary.averageNormalizedRawAstDistance()) + ",\n");
         writer.write("    \"averageNormalizedCanonicalDistance\": " + number(summary.averageNormalizedCanonicalDistance()) + ",\n");
+        writer.write("    \"averageNormalizedCanonicalRepresentativeTreeDistance\": "
+                + number(summary.averageNormalizedCanonicalRepresentativeTreeDistance()) + ",\n");
+        writer.write("    \"averageNormalizedLegacyCanonicalDistance\": "
+                + number(summary.averageNormalizedLegacyCanonicalDistance()) + ",\n");
         writer.write("    \"correctCanonicalZeroRawAstNonzero\": "
                 + summary.correctCanonicalZeroRawAstNonzero + ",\n");
+        writer.write("    \"incorrectCanonicalZero\": " + summary.incorrectCanonicalZero + ",\n");
+        writer.write("    \"inexactAlphaSearches\": " + summary.inexactAlphaSearches + ",\n");
+        writer.write("    \"averageQuotientDistanceNanos\": "
+                + number(summary.averageQuotientDistanceNanos()) + ",\n");
+        writer.write("    \"averageCanonicalRepresentativeTreeDistanceNanos\": "
+                + number(summary.averageRepresentativeDistanceNanos()) + ",\n");
         writer.write("    \"minDistance\": " + summary.minDistanceJson() + ",\n");
         writer.write("    \"maxDistance\": " + summary.maxDistanceJson() + ",\n");
         writer.write("    \"rewardSuccesses\": " + summary.rewardSuccesses + ",\n");
@@ -489,12 +639,20 @@ public class CanonicalBatchTest {
         writer.write("    \"averageRewardGap\": " + number(summary.averageRewardGap()) + ",\n");
         writer.write("    \"distanceCandidateRewardPearsonSamples\": " + summary.distanceRewardSamples + ",\n");
         writer.write("    \"distanceCandidateRewardPearson\": " + number(summary.distanceRewardCorrelation()) + ",\n");
+        writer.write("    \"canonicalRepresentativeTedCandidateRewardPearson\": "
+                + number(summary.representativeRewardCorrelation()) + ",\n");
+        writer.write("    \"legacyCanonicalCandidateRewardPearson\": "
+                + number(summary.legacyRewardCorrelation()) + ",\n");
         writer.write("    \"levenshteinCandidateRewardPearson\": " + number(summary.levenshteinRewardCorrelation()) + ",\n");
         writer.write("    \"rawAstCandidateRewardPearson\": " + number(summary.rawAstRewardCorrelation()) + ",\n");
         writer.write("    \"normalizedRawAstCandidateRewardPearson\": "
                 + number(summary.normalizedRawAstRewardCorrelation()) + ",\n");
         writer.write("    \"normalizedCanonicalCandidateRewardPearson\": "
                 + number(summary.normalizedCanonicalRewardCorrelation()) + ",\n");
+        writer.write("    \"normalizedCanonicalRepresentativeTedCandidateRewardPearson\": "
+                + number(summary.normalizedRepresentativeRewardCorrelation()) + ",\n");
+        writer.write("    \"normalizedLegacyCanonicalCandidateRewardPearson\": "
+                + number(summary.normalizedLegacyRewardCorrelation()) + ",\n");
         writer.write("    \"representationSamples\": " + summary.representationSamples + ",\n");
         writer.write("    \"averageStudentRawAstSize\": " + number(summary.averageStudentRawAstSize()) + ",\n");
         writer.write("    \"averageStudentCanonicalFormSize\": "
@@ -552,6 +710,12 @@ public class CanonicalBatchTest {
             writer.write("      \"leftCanonicalFormSize\": " + result.leftCanonicalFormSize + ",\n");
             writer.write("      \"rightCanonicalFormSize\": " + result.rightCanonicalFormSize + ",\n");
             writer.write("      \"canonicalFormSize\": " + result.canonicalFormSize + ",\n");
+            writer.write("      \"leftCanonicalRepresentativeTreeSize\": "
+                    + result.leftCanonicalRepresentativeTreeSize + ",\n");
+            writer.write("      \"rightCanonicalRepresentativeTreeSize\": "
+                    + result.rightCanonicalRepresentativeTreeSize + ",\n");
+            writer.write("      \"canonicalRepresentativeTreeSize\": "
+                    + result.canonicalRepresentativeTreeSize + ",\n");
             writer.write("      \"leftLegacyCanonicalFormSize\": "
                     + result.leftLegacyCanonicalFormSize + ",\n");
             writer.write("      \"rightLegacyCanonicalFormSize\": "
@@ -560,8 +724,24 @@ public class CanonicalBatchTest {
             writer.write("      \"leftCanonicalCompressionRatePercent\": "
                     + number(result.leftCanonicalCompressionRatePercent()) + ",\n");
             writer.write("      \"distance\": " + result.distance + ",\n");
+            writer.write("      \"quotientTemporalDistance\": "
+                    + result.quotientTemporalDistance + ",\n");
+            writer.write("      \"quotientQuantifierDistance\": "
+                    + result.quotientQuantifierDistance + ",\n");
+            writer.write("      \"quotientMatrixDistance\": "
+                    + result.quotientMatrixDistance + ",\n");
             writer.write("      \"normalizedCanonicalDistance\": " + number(result.normalizedCanonicalDistance) + ",\n");
+            writer.write("      \"canonicalRepresentativeTreeDistance\": "
+                    + result.canonicalRepresentativeTreeDistance + ",\n");
+            writer.write("      \"normalizedCanonicalRepresentativeTreeDistance\": "
+                    + number(result.normalizedCanonicalRepresentativeTreeDistance) + ",\n");
             writer.write("      \"legacyCanonicalDistance\": " + result.legacyCanonicalDistance + ",\n");
+            writer.write("      \"legacyTemporalDistance\": "
+                    + result.legacyTemporalDistance + ",\n");
+            writer.write("      \"legacyQuantifierDistance\": "
+                    + result.legacyQuantifierDistance + ",\n");
+            writer.write("      \"legacyMatrixDistance\": "
+                    + result.legacyMatrixDistance + ",\n");
             writer.write("      \"normalizedLegacyCanonicalDistance\": "
                     + number(result.normalizedLegacyCanonicalDistance) + ",\n");
             writer.write("      \"leftExactDigest\": \"" + result.leftExactDigest + "\",\n");
@@ -575,11 +755,19 @@ public class CanonicalBatchTest {
             writer.write("      \"rightExactPreparationNanos\": "
                     + result.rightExactPreparationNanos + ",\n");
             writer.write("      \"exactDistanceNanos\": " + result.exactDistanceNanos + ",\n");
+            writer.write("      \"canonicalRepresentativeTreeDistanceNanos\": "
+                    + result.canonicalRepresentativeTreeDistanceNanos + ",\n");
+            writer.write("      \"quotientDistanceExactForStoredOrbits\": "
+                    + result.quotientDistanceExactForStoredOrbits + ",\n");
+            writer.write("      \"quotientBinderAlignments\": "
+                    + result.quotientBinderAlignments + ",\n");
             writer.write("      \"exactConstructionNanos\": "
                     + result.exactConstructionNanos + ",\n");
             writer.write("      \"exactUnfoldingNanos\": " + result.exactUnfoldingNanos + ",\n");
             writer.write("      \"exactObservationNanos\": "
                     + result.exactObservationNanos + ",\n");
+            writer.write("      \"exactRepairProjectionNanos\": "
+                    + result.exactRepairProjectionNanos + ",\n");
             writer.write("      \"rewardPoolSize\": " + result.rewardPoolSize + ",\n");
             if (result.rewardSkipped) {
                 writer.write("      \"candidateReward\": null,\n");
@@ -641,37 +829,57 @@ public class CanonicalBatchTest {
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
             writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
                     + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
-            writer.write("- Legacy bounded canonical measurements retained: yes\n");
+            writer.write("- Primary metric: established repair metric over the certified quotient (`"
+                    + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`)\n");
+            writer.write("- Canonical representative TED retained only as baseline: `"
+                    + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "`\n");
+            writer.write("- Direct legacy metric implementation retained as a differential oracle: yes\n");
             writer.write("- Total files: " + summary.total + "\n");
             writer.write("- Successful distances: " + summary.successes + "\n");
             writer.write("- Skipped identical raw AST predicate pairs: " + summary.skipped + "\n");
             writer.write("- Failures: " + summary.failures + "\n");
-            writer.write("- Average distance: " + number(summary.averageDistance()) + "\n");
-            writer.write("- Average legacy canonical distance: "
+            writer.write("- Average certified repair distance: "
+                    + number(summary.averageDistance()) + "\n");
+            writer.write("- Average canonical representative TED baseline: "
+                    + number(summary.averageCanonicalRepresentativeTreeDistance()) + "\n");
+            writer.write("- Average direct reference-metric distance: "
                     + number(summary.averageLegacyCanonicalDistance()) + "\n");
             writer.write("- Average predicate-body Levenshtein distance: "
                     + number(summary.averageLevenshteinDistance()) + "\n");
             writer.write("- Average raw AST tree distance: " + number(summary.averageRawAstTreeDistance()) + "\n");
             writer.write("- Average raw AST size: " + number(summary.averageRawAstSize()) + "\n");
-            writer.write("- Average canonical form size: " + number(summary.averageCanonicalFormSize()) + "\n");
-            writer.write("- Average legacy canonical form size: "
+            writer.write("- Average repair observation size: "
+                    + number(summary.averageCanonicalFormSize()) + "\n");
+            writer.write("- Average canonical representative tree size: "
+                    + number(summary.averageCanonicalRepresentativeTreeSize()) + "\n");
+            writer.write("- Average reference NormalForm metric size: "
                     + number(summary.averageLegacyCanonicalFormSize()) + "\n");
             writer.write("- Average normalized predicate-body Levenshtein distance: "
                     + number(summary.averageNormalizedLevenshteinDistance()) + "\n");
             writer.write("- Average normalized raw AST distance: "
                     + number(summary.averageNormalizedRawAstDistance()) + "\n");
-            writer.write("- Average normalized canonical distance: "
+            writer.write("- Average normalized certified repair distance: "
                     + number(summary.averageNormalizedCanonicalDistance()) + "\n");
+            writer.write("- Average normalized canonical representative TED: "
+                    + number(summary.averageNormalizedCanonicalRepresentativeTreeDistance()) + "\n");
+            writer.write("- Average normalized direct reference-metric distance: "
+                    + number(summary.averageNormalizedLegacyCanonicalDistance()) + "\n");
             writer.write("- CORRECT models with canonical distance 0 and raw AST distance > 0: "
                     + summary.correctCanonicalZeroRawAstNonzero + "\n");
+            writer.write("- Incorrect zero-distance merges: " + summary.incorrectCanonicalZero + "\n");
+            writer.write("- Inexact alpha searches: " + summary.inexactAlphaSearches + "\n");
+            writer.write("- Average certified repair metric time: "
+                    + number(summary.averageQuotientDistanceNanos() / 1_000_000.0) + " ms\n");
+            writer.write("- Average canonical representative TED time: "
+                    + number(summary.averageRepresentativeDistanceNanos() / 1_000_000.0) + " ms\n");
             writer.write("- Min distance: " + summary.minDistanceMarkdown() + "\n");
             writer.write("- Max distance: " + summary.maxDistanceMarkdown() + "\n\n");
 
-            writer.write("## Canonical Representation Compression\n\n");
-            writer.write("Compression rate is `100 * (raw AST size - canonical form size) / raw AST size`. "
+            writer.write("## Repair Observation Compression\n\n");
+            writer.write("Compression rate is `100 * (raw AST size - repair observation size) / raw AST size`. "
                     + "Negative values indicate expansion. Sizes are for the student predicate associated with "
                     + "the directory label; identical-AST pairs are excluded.\n\n");
-            writer.write("| Problem class | Correctness division | Models | Avg raw AST size | Avg canonical size | Compression rate |\n");
+            writer.write("| Problem class | Correctness division | Models | Avg raw AST size | Avg repair observation size | Compression rate |\n");
             writer.write("| --- | --- | ---: | ---: | ---: | ---: |\n");
             for (Stats stats : summary.groupStats.values()) {
                 writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
@@ -687,23 +895,31 @@ public class CanonicalBatchTest {
                     + "raw AST nodes for AST distance, and canonical-form size for canonical distance. Identical "
                     + "raw-AST pairs skipped by the test are excluded.\n\n");
             writer.write("| Problem class | Semantic correctness class | Comparisons | "
-                    + "Avg Levenshtein | Avg raw AST | Avg canonical | "
-                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |\n");
-            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+                    + "Avg Levenshtein | Avg raw AST | Avg direct reference metric | Avg representative TED | Avg certified repair metric | "
+                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative direct reference metric | Avg relative representative TED | Avg relative certified repair metric |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             writer.write("| **All problem classes** | **All statuses** | **" + summary.successes + "** | **"
                     + number(summary.averageLevenshteinDistance()) + "** | **"
                     + number(summary.averageRawAstTreeDistance()) + "** | **"
+                    + number(summary.averageLegacyCanonicalDistance()) + "** | **"
+                    + number(summary.averageCanonicalRepresentativeTreeDistance()) + "** | **"
                     + number(summary.averageDistance()) + "** | **"
                     + number(summary.averageNormalizedLevenshteinDistance()) + "** | **"
                     + number(summary.averageNormalizedRawAstDistance()) + "** | **"
+                    + number(summary.averageNormalizedLegacyCanonicalDistance()) + "** | **"
+                    + number(summary.averageNormalizedCanonicalRepresentativeTreeDistance()) + "** | **"
                     + number(summary.averageNormalizedCanonicalDistance()) + "** |\n");
             for (Stats stats : summary.groupStats.values()) {
                 writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
                         + stats.successes + " | " + number(stats.averageLevenshteinDistance()) + " | "
                         + number(stats.averageRawAstTreeDistance()) + " | "
+                        + number(stats.averageLegacyCanonicalDistance()) + " | "
+                        + number(stats.averageCanonicalRepresentativeTreeDistance()) + " | "
                         + number(stats.averageDistance()) + " | "
                         + number(stats.averageNormalizedLevenshteinDistance()) + " | "
                         + number(stats.averageNormalizedRawAstDistance()) + " | "
+                        + number(stats.averageNormalizedLegacyCanonicalDistance()) + " | "
+                        + number(stats.averageNormalizedCanonicalRepresentativeTreeDistance()) + " | "
                         + number(stats.averageNormalizedCanonicalDistance()) + " |\n");
             }
             writer.write("\n");
@@ -718,8 +934,12 @@ public class CanonicalBatchTest {
             writer.write("- Average reward gap: " + number(summary.averageRewardGap()) + "\n");
             writer.write("- Pearson correlation sample: non-CORRECT rewarded predicates ("
                     + summary.distanceRewardSamples + " files)\n");
-            writer.write("- Pearson correlation, distance vs candidate reward: "
+            writer.write("- Pearson correlation, certified repair distance vs candidate reward: "
                     + number(summary.distanceRewardCorrelation()) + "\n\n");
+            writer.write("- Pearson correlation, canonical representative TED vs candidate reward: "
+                    + number(summary.representativeRewardCorrelation()) + "\n");
+            writer.write("- Pearson correlation, direct reference-metric distance vs candidate reward: "
+                    + number(summary.legacyRewardCorrelation()) + "\n");
             writer.write("- Pearson correlation, Levenshtein vs candidate reward: "
                     + number(summary.levenshteinRewardCorrelation()) + "\n");
             writer.write("- Pearson correlation, raw AST tree distance vs candidate reward: "
@@ -728,6 +948,10 @@ public class CanonicalBatchTest {
                     + number(summary.normalizedRawAstRewardCorrelation()) + "\n");
             writer.write("- Pearson correlation, normalized canonical distance vs candidate reward: "
                     + number(summary.normalizedCanonicalRewardCorrelation()) + "\n\n");
+            writer.write("- Pearson correlation, normalized canonical representative TED vs candidate reward: "
+                    + number(summary.normalizedRepresentativeRewardCorrelation()) + "\n\n");
+            writer.write("- Pearson correlation, normalized direct reference-metric distance vs candidate reward: "
+                    + number(summary.normalizedLegacyRewardCorrelation()) + "\n\n");
 
             writer.write("## By Problem Class And Status\n\n");
             writer.write("| Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |\n");
@@ -842,6 +1066,21 @@ public class CanonicalBatchTest {
         }
     }
 
+    @FunctionalInterface
+    private interface ResultSink {
+        void accept(FileResult result) throws IOException;
+    }
+
+    private static final class IndexedResult {
+        private final int index;
+        private final FileResult result;
+
+        private IndexedResult(int index, FileResult result) {
+            this.index = index;
+            this.result = result;
+        }
+    }
+
     private static class PredicatePair {
         private final String leftName;
         private final String rightName;
@@ -882,12 +1121,23 @@ public class CanonicalBatchTest {
         private int leftCanonicalFormSize;
         private int rightCanonicalFormSize;
         private int canonicalFormSize;
+        private int leftCanonicalRepresentativeTreeSize;
+        private int rightCanonicalRepresentativeTreeSize;
+        private int canonicalRepresentativeTreeSize;
         private int leftLegacyCanonicalFormSize;
         private int rightLegacyCanonicalFormSize;
         private int legacyCanonicalFormSize;
         private int distance;
+        private int quotientTemporalDistance;
+        private int quotientQuantifierDistance;
+        private int quotientMatrixDistance;
         private double normalizedCanonicalDistance;
+        private int canonicalRepresentativeTreeDistance;
+        private double normalizedCanonicalRepresentativeTreeDistance;
         private int legacyCanonicalDistance;
+        private int legacyTemporalDistance;
+        private int legacyQuantifierDistance;
+        private int legacyMatrixDistance;
         private double normalizedLegacyCanonicalDistance;
         private String leftExactDigest;
         private String rightExactDigest;
@@ -898,9 +1148,13 @@ public class CanonicalBatchTest {
         private long leftExactPreparationNanos;
         private long rightExactPreparationNanos;
         private long exactDistanceNanos;
+        private long canonicalRepresentativeTreeDistanceNanos;
         private long exactConstructionNanos;
         private long exactUnfoldingNanos;
         private long exactObservationNanos;
+        private long exactRepairProjectionNanos;
+        private boolean quotientDistanceExactForStoredOrbits;
+        private long quotientBinderAlignments;
         private int rewardPoolSize;
         private double candidateReward;
         private double groundTruthReward;
@@ -948,16 +1202,24 @@ public class CanonicalBatchTest {
         private int skipped;
         private int failures;
         private long distanceSum;
+        private long canonicalRepresentativeTreeDistanceSum;
         private long legacyCanonicalDistanceSum;
         private long levenshteinDistanceSum;
         private long rawAstTreeDistanceSum;
         private long rawAstSizeSum;
         private long canonicalFormSizeSum;
+        private long canonicalRepresentativeTreeSizeSum;
         private long legacyCanonicalFormSizeSum;
         private double normalizedLevenshteinDistanceSum;
         private double normalizedRawAstDistanceSum;
         private double normalizedCanonicalDistanceSum;
+        private double normalizedCanonicalRepresentativeTreeDistanceSum;
+        private double normalizedLegacyCanonicalDistanceSum;
         private int correctCanonicalZeroRawAstNonzero;
+        private int incorrectCanonicalZero;
+        private int inexactAlphaSearches;
+        private long quotientDistanceNanosSum;
+        private long representativeDistanceNanosSum;
         private Integer minDistance;
         private Integer maxDistance;
         private int rewardSuccesses;
@@ -982,6 +1244,18 @@ public class CanonicalBatchTest {
         private double normalizedCanonicalRewardXSum;
         private double normalizedCanonicalRewardXXSum;
         private double normalizedCanonicalRewardXYSum;
+        private double representativeRewardXSum;
+        private double representativeRewardXXSum;
+        private double representativeRewardXYSum;
+        private double normalizedRepresentativeRewardXSum;
+        private double normalizedRepresentativeRewardXXSum;
+        private double normalizedRepresentativeRewardXYSum;
+        private double legacyRewardXSum;
+        private double legacyRewardXXSum;
+        private double legacyRewardXYSum;
+        private double normalizedLegacyRewardXSum;
+        private double normalizedLegacyRewardXXSum;
+        private double normalizedLegacyRewardXYSum;
         private int representationSamples;
         private long studentRawAstSizeSum;
         private long studentCanonicalFormSizeSum;
@@ -1008,19 +1282,33 @@ public class CanonicalBatchTest {
             } else if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
+                canonicalRepresentativeTreeDistanceSum +=
+                        result.canonicalRepresentativeTreeDistance;
                 legacyCanonicalDistanceSum += result.legacyCanonicalDistance;
                 levenshteinDistanceSum += result.predicateBodyLevenshteinDistance;
                 rawAstTreeDistanceSum += result.rawAstTreeDistance;
                 rawAstSizeSum += result.rawAstSize;
                 canonicalFormSizeSum += result.canonicalFormSize;
+                canonicalRepresentativeTreeSizeSum += result.canonicalRepresentativeTreeSize;
                 legacyCanonicalFormSizeSum += result.legacyCanonicalFormSize;
                 normalizedLevenshteinDistanceSum += result.normalizedLevenshteinDistance;
                 normalizedRawAstDistanceSum += result.normalizedRawAstDistance;
                 normalizedCanonicalDistanceSum += result.normalizedCanonicalDistance;
+                normalizedCanonicalRepresentativeTreeDistanceSum +=
+                        result.normalizedCanonicalRepresentativeTreeDistance;
+                normalizedLegacyCanonicalDistanceSum += result.normalizedLegacyCanonicalDistance;
+                quotientDistanceNanosSum += result.exactDistanceNanos;
+                representativeDistanceNanosSum += result.canonicalRepresentativeTreeDistanceNanos;
+                if (!result.quotientDistanceExactForStoredOrbits) {
+                    inexactAlphaSearches++;
+                }
                 if ("CORRECT".equals(result.statusFolder)
                         && result.distance == 0
                         && result.rawAstTreeDistance > 0) {
                     correctCanonicalZeroRawAstNonzero++;
+                }
+                if (!"CORRECT".equals(result.statusFolder) && result.distance == 0) {
+                    incorrectCanonicalZero++;
                 }
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
@@ -1051,6 +1339,28 @@ public class CanonicalBatchTest {
                         normalizedCanonicalRewardXXSum += result.normalizedCanonicalDistance
                                 * result.normalizedCanonicalDistance;
                         normalizedCanonicalRewardXYSum += result.normalizedCanonicalDistance * result.candidateReward;
+                        representativeRewardXSum += result.canonicalRepresentativeTreeDistance;
+                        representativeRewardXXSum += (double) result.canonicalRepresentativeTreeDistance
+                                * result.canonicalRepresentativeTreeDistance;
+                        representativeRewardXYSum += result.canonicalRepresentativeTreeDistance
+                                * result.candidateReward;
+                        normalizedRepresentativeRewardXSum +=
+                                result.normalizedCanonicalRepresentativeTreeDistance;
+                        normalizedRepresentativeRewardXXSum +=
+                                result.normalizedCanonicalRepresentativeTreeDistance
+                                * result.normalizedCanonicalRepresentativeTreeDistance;
+                        normalizedRepresentativeRewardXYSum +=
+                                result.normalizedCanonicalRepresentativeTreeDistance
+                                * result.candidateReward;
+                        legacyRewardXSum += result.legacyCanonicalDistance;
+                        legacyRewardXXSum += (double) result.legacyCanonicalDistance
+                                * result.legacyCanonicalDistance;
+                        legacyRewardXYSum += result.legacyCanonicalDistance * result.candidateReward;
+                        normalizedLegacyRewardXSum += result.normalizedLegacyCanonicalDistance;
+                        normalizedLegacyRewardXXSum += result.normalizedLegacyCanonicalDistance
+                                * result.normalizedLegacyCanonicalDistance;
+                        normalizedLegacyRewardXYSum += result.normalizedLegacyCanonicalDistance
+                                * result.candidateReward;
                     }
                 }
             } else {
@@ -1067,6 +1377,11 @@ public class CanonicalBatchTest {
 
         private double averageLegacyCanonicalDistance() {
             return successes == 0 ? 0.0 : (double) legacyCanonicalDistanceSum / successes;
+        }
+
+        private double averageCanonicalRepresentativeTreeDistance() {
+            return successes == 0 ? 0.0
+                    : (double) canonicalRepresentativeTreeDistanceSum / successes;
         }
 
         private double averageLevenshteinDistance() {
@@ -1089,6 +1404,11 @@ public class CanonicalBatchTest {
             return successes == 0 ? 0.0 : (double) legacyCanonicalFormSizeSum / successes;
         }
 
+        private double averageCanonicalRepresentativeTreeSize() {
+            return successes == 0 ? 0.0
+                    : (double) canonicalRepresentativeTreeSizeSum / successes;
+        }
+
         private double averageNormalizedLevenshteinDistance() {
             return successes == 0 ? 0.0 : normalizedLevenshteinDistanceSum / successes;
         }
@@ -1099,6 +1419,23 @@ public class CanonicalBatchTest {
 
         private double averageNormalizedCanonicalDistance() {
             return successes == 0 ? 0.0 : normalizedCanonicalDistanceSum / successes;
+        }
+
+        private double averageNormalizedCanonicalRepresentativeTreeDistance() {
+            return successes == 0 ? 0.0
+                    : normalizedCanonicalRepresentativeTreeDistanceSum / successes;
+        }
+
+        private double averageNormalizedLegacyCanonicalDistance() {
+            return successes == 0 ? 0.0 : normalizedLegacyCanonicalDistanceSum / successes;
+        }
+
+        private double averageQuotientDistanceNanos() {
+            return successes == 0 ? 0.0 : (double) quotientDistanceNanosSum / successes;
+        }
+
+        private double averageRepresentativeDistanceNanos() {
+            return successes == 0 ? 0.0 : (double) representativeDistanceNanosSum / successes;
         }
 
         private double averageStudentRawAstSize() {
@@ -1179,6 +1516,46 @@ public class CanonicalBatchTest {
                     normalizedCanonicalRewardXYSum);
         }
 
+        private double representativeRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    representativeRewardXSum,
+                    distanceRewardYSum,
+                    representativeRewardXXSum,
+                    distanceRewardYYSum,
+                    representativeRewardXYSum);
+        }
+
+        private double normalizedRepresentativeRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    normalizedRepresentativeRewardXSum,
+                    distanceRewardYSum,
+                    normalizedRepresentativeRewardXXSum,
+                    distanceRewardYYSum,
+                    normalizedRepresentativeRewardXYSum);
+        }
+
+        private double legacyRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    legacyRewardXSum,
+                    distanceRewardYSum,
+                    legacyRewardXXSum,
+                    distanceRewardYYSum,
+                    legacyRewardXYSum);
+        }
+
+        private double normalizedLegacyRewardCorrelation() {
+            return correlation(
+                    distanceRewardSamples,
+                    normalizedLegacyRewardXSum,
+                    distanceRewardYSum,
+                    normalizedLegacyRewardXXSum,
+                    distanceRewardYYSum,
+                    normalizedLegacyRewardXYSum);
+        }
+
         private String minDistanceJson() {
             return minDistance == null ? "null" : minDistance.toString();
         }
@@ -1204,11 +1581,15 @@ public class CanonicalBatchTest {
         private int skipped;
         private int failures;
         private long distanceSum;
+        private long canonicalRepresentativeTreeDistanceSum;
+        private long legacyCanonicalDistanceSum;
         private long levenshteinDistanceSum;
         private long rawAstTreeDistanceSum;
         private double normalizedLevenshteinDistanceSum;
         private double normalizedRawAstDistanceSum;
         private double normalizedCanonicalDistanceSum;
+        private double normalizedCanonicalRepresentativeTreeDistanceSum;
+        private double normalizedLegacyCanonicalDistanceSum;
         private Integer minDistance;
         private Integer maxDistance;
         private int rewardSuccesses;
@@ -1240,11 +1621,17 @@ public class CanonicalBatchTest {
             } else if (result.success()) {
                 successes++;
                 distanceSum += result.distance;
+                canonicalRepresentativeTreeDistanceSum +=
+                        result.canonicalRepresentativeTreeDistance;
+                legacyCanonicalDistanceSum += result.legacyCanonicalDistance;
                 levenshteinDistanceSum += result.predicateBodyLevenshteinDistance;
                 rawAstTreeDistanceSum += result.rawAstTreeDistance;
                 normalizedLevenshteinDistanceSum += result.normalizedLevenshteinDistance;
                 normalizedRawAstDistanceSum += result.normalizedRawAstDistance;
                 normalizedCanonicalDistanceSum += result.normalizedCanonicalDistance;
+                normalizedCanonicalRepresentativeTreeDistanceSum +=
+                        result.normalizedCanonicalRepresentativeTreeDistance;
+                normalizedLegacyCanonicalDistanceSum += result.normalizedLegacyCanonicalDistance;
                 minDistance = minDistance == null ? result.distance : Math.min(minDistance, result.distance);
                 maxDistance = maxDistance == null ? result.distance : Math.max(maxDistance, result.distance);
                 if (result.rewardComputed && result.rewardError == null) {
@@ -1272,6 +1659,15 @@ public class CanonicalBatchTest {
             return successes == 0 ? 0.0 : (double) levenshteinDistanceSum / successes;
         }
 
+        private double averageCanonicalRepresentativeTreeDistance() {
+            return successes == 0 ? 0.0
+                    : (double) canonicalRepresentativeTreeDistanceSum / successes;
+        }
+
+        private double averageLegacyCanonicalDistance() {
+            return successes == 0 ? 0.0 : (double) legacyCanonicalDistanceSum / successes;
+        }
+
         private double averageRawAstTreeDistance() {
             return successes == 0 ? 0.0 : (double) rawAstTreeDistanceSum / successes;
         }
@@ -1286,6 +1682,15 @@ public class CanonicalBatchTest {
 
         private double averageNormalizedCanonicalDistance() {
             return successes == 0 ? 0.0 : normalizedCanonicalDistanceSum / successes;
+        }
+
+        private double averageNormalizedCanonicalRepresentativeTreeDistance() {
+            return successes == 0 ? 0.0
+                    : normalizedCanonicalRepresentativeTreeDistanceSum / successes;
+        }
+
+        private double averageNormalizedLegacyCanonicalDistance() {
+            return successes == 0 ? 0.0 : normalizedLegacyCanonicalDistanceSum / successes;
         }
 
         private double averageCandidateReward() {
