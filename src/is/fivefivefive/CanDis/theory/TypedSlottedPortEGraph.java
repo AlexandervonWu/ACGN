@@ -357,6 +357,15 @@ public final class TypedSlottedPortEGraph {
                 new LinkedHashMap<>(shapeCertificates));
     }
 
+    /** Opens a read-only bounded {@code Rep_G} oracle on one coherent prefix. */
+    public synchronized BoundedFiniteUnfoldingOracle finiteUnfoldingOracle(
+            CoherentWitnessFamily family,
+            FiniteUnfoldingBounds bounds) {
+        requireCurrentWitnessFamily(Objects.requireNonNull(family, "family"));
+        return BoundedFiniteUnfoldingOracle.create(
+                this, family, Objects.requireNonNull(bounds, "bounds"));
+    }
+
     synchronized void requireCurrentWitnessFamily(CoherentWitnessFamily family) {
         if (certificateMode != GraphCertificateMode.REQUIRED) {
             throw new IllegalStateException(
@@ -525,6 +534,14 @@ public final class TypedSlottedPortEGraph {
 
     synchronized TypedFindResult findWithoutCompressionForTesting(TypedInvocation invocation) {
         return findNormalized(Objects.requireNonNull(invocation, "invocation"), false);
+    }
+
+    /** Nonmutating provenance lookup used by the read-only Phase H oracle. */
+    synchronized TypedFindResult findForFiniteUnfolding(TypedInvocation invocation) {
+        TypedFindResult result = findNormalized(
+                Objects.requireNonNull(invocation, "invocation"), false);
+        checkInvariants();
+        return result;
     }
 
     public synchronized TypedEClassRecord eclass(EClassId id) {

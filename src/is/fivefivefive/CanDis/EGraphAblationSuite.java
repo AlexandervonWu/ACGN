@@ -27,14 +27,15 @@ public final class EGraphAblationSuite {
     private static final List<String> ENGINES = List.of(
             "raw-egraph", "raw-egraph-debruijn",
             "java-egglog", "java-egglog-debruijn",
-            "slotted-egraph", "canonical");
+            "slotted-egraph", "canonical", "typed-slotted-port-egraph");
     private static final List<String[]> TRANSITIONS = List.of(
             new String[] {"raw-egraph", "raw-egraph-debruijn"},
             new String[] {"raw-egraph", "java-egglog"},
             new String[] {"raw-egraph-debruijn", "java-egglog-debruijn"},
             new String[] {"java-egglog", "java-egglog-debruijn"},
             new String[] {"java-egglog-debruijn", "slotted-egraph"},
-            new String[] {"slotted-egraph", "canonical"});
+            new String[] {"slotted-egraph", "canonical"},
+            new String[] {"canonical", "typed-slotted-port-egraph"});
 
     private EGraphAblationSuite() {
     }
@@ -53,9 +54,14 @@ public final class EGraphAblationSuite {
             options.threads = context.workers;
             options.maxHeap = context.heap;
             options.limit = context.limit;
+            options.seed = context.seed;
         } else {
             context = AblationRunManifest.capture(
-                    options.input, options.maxHeap, options.threads, options.limit);
+                    options.input,
+                    options.maxHeap,
+                    options.threads,
+                    options.limit,
+                    options.seed);
         }
         List<RunMetrics> runs = new ArrayList<>();
         for (String engine : ENGINES) {
@@ -154,6 +160,7 @@ public final class EGraphAblationSuite {
         root.put("threadPolicy", AblationParallelism.POLICY);
         root.put("maxHeap", options.maxHeap);
         root.put("limit", options.limit);
+        root.put("seed", options.seed);
         root.put("javaVersion", System.getProperty("java.version"));
         root.put("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
         root.put("sharedBaselineRewriteRules", new JSONArray(JavaEgglog.ruleNames()));
@@ -228,7 +235,8 @@ public final class EGraphAblationSuite {
             String key = problem + "\u0000" + status;
             grouped.put(key, grouped.getOrDefault(key, 0) + 1);
         }
-        StringBuilder markdown = new StringBuilder("# Canonical-Only Equivalences\n\n");
+        RunMetrics exact = findRun(runs, "typed-slotted-port-egraph");
+        StringBuilder markdown = new StringBuilder("# Legacy Canonical-Only Equivalences\n\n");
         markdown.append("This file is generated from the same manifests and pair CSVs as the combined ablation report.\n\n");
         markdown.append("- Run ID: `").append(context.runId).append("`\n");
         markdown.append("- Git SHA: `").append(context.gitSha).append("`\n");
@@ -248,8 +256,8 @@ public final class EGraphAblationSuite {
                     .append(entry.getValue()).append(" |\n");
         }
         markdown.append("\n## Pairs\n\n");
-        markdown.append("| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Canonical zero |\n");
-        markdown.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        markdown.append("| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Legacy canonical zero | Exact pipeline zero |\n");
+        markdown.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (String predicatePath : canonicalOnly) {
             markdown.append("| `").append(predicatePath).append("` | ")
                     .append(canonical.statusByPath.getOrDefault(predicatePath, "")).append(" | ")
@@ -257,7 +265,8 @@ public final class EGraphAblationSuite {
                     .append(rawDeBruijn.equivalentPaths.contains(predicatePath)).append(" | ")
                     .append(egglog.equivalentPaths.contains(predicatePath)).append(" | ")
                     .append(egglogDeBruijn.equivalentPaths.contains(predicatePath)).append(" | ")
-                    .append(slotted.equivalentPaths.contains(predicatePath)).append(" | true |\n");
+                    .append(slotted.equivalentPaths.contains(predicatePath)).append(" | true | ")
+                    .append(exact.equivalentPaths.contains(predicatePath)).append(" |\n");
         }
         Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
     }
@@ -302,7 +311,8 @@ public final class EGraphAblationSuite {
             Options options,
             AblationRunManifest.Context context,
             List<RunMetrics> runs) throws IOException {
-        RunMetrics canonical = findRun(runs, "canonical");
+        RunMetrics legacyCanonical = findRun(runs, "canonical");
+        RunMetrics canonical = findRun(runs, "typed-slotted-port-egraph");
         StringBuilder markdown = new StringBuilder();
         markdown.append("# Alloy E-Graph Ablation\n\n");
         markdown.append("- Generated at: `").append(Instant.now()).append("`\n");
@@ -313,6 +323,7 @@ public final class EGraphAblationSuite {
         markdown.append("- Input root: `").append(options.input).append("`\n");
         markdown.append("- Predicate-pair limit: ")
                 .append(options.limit == 0 ? "full corpus" : Integer.toString(options.limit)).append("\n");
+        markdown.append("- Deterministic seed: `").append(options.seed).append("`\n");
         markdown.append("- Worker threads per arm: ").append(options.threads).append("\n");
         markdown.append("- Logical processors: ").append(AblationParallelism.logicalProcessors()).append("\n");
         markdown.append("- Thread policy: `").append(AblationParallelism.POLICY).append("`\n");
@@ -331,8 +342,10 @@ public final class EGraphAblationSuite {
                 + "bound-variable storage.\n");
         markdown.append("5. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
                 + "renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.\n");
-        markdown.append("6. **Canonical:** the current method, adding temporal-phase partitioning, connective "
-                + "elimination, strict per-phase prenexing, primitive binding tuples, and canonical variadic matrices.\n\n");
+        markdown.append("6. **Legacy bounded canonical:** the retained temporal/prenex/slotted implementation used by prior artifacts.\n");
+        markdown.append("7. **Typed slotted-port exact pipeline:** the complete `CanonicalAlloyPipeline`, using "
+                + "certified insertion, exact-support typed slots, strict invariant checks, congruence rebuild, "
+                + "and finite-unfolding observation.\n\n");
 
         markdown.append("## Shared Rule Program\n\n");
         markdown.append("The first five arms use the same `").append(JavaEgglog.ruleSetVersion())
@@ -393,17 +406,16 @@ public final class EGraphAblationSuite {
                 .append(differenceSize(slotted.equivalentPaths, egglogDeBruijn.equivalentPaths))
                 .append(" pairs over the De Bruijn egglog arm, with ")
                 .append(differenceSize(egglogDeBruijn.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
-        int canonicalAdds = differenceSize(canonical.equivalentPaths, slotted.equivalentPaths);
-        int canonicalLosses = differenceSize(slotted.equivalentPaths, canonical.equivalentPaths);
-        String canonicalRelationship = canonicalLosses == 0
-                ? (canonicalAdds == 0
-                        ? "has the same zero set as the slotted arm on this corpus: it adds "
-                        : "is a strict superset of the slotted arm on this corpus: it adds ")
-                : "is not a strict superset of the slotted arm on this corpus: it adds ";
-        markdown.append("- The current canonical method ")
-                .append(canonicalRelationship)
-                .append(canonicalAdds).append(" zeroes and loses ").append(canonicalLosses)
-                .append(". Its zero set contains ")
+        int legacyAdds = differenceSize(legacyCanonical.equivalentPaths, slotted.equivalentPaths);
+        int legacyLosses = differenceSize(slotted.equivalentPaths, legacyCanonical.equivalentPaths);
+        markdown.append("- The legacy bounded canonical arm adds ")
+                .append(legacyAdds).append(" zeroes over slotted storage and loses ")
+                .append(legacyLosses).append(".\n");
+        int canonicalAdds = differenceSize(canonical.equivalentPaths, legacyCanonical.equivalentPaths);
+        int canonicalLosses = differenceSize(legacyCanonical.equivalentPaths, canonical.equivalentPaths);
+        markdown.append("- The exact `CanonicalAlloyPipeline` adds ")
+                .append(canonicalAdds).append(" zeroes over the legacy canonical arm and loses ")
+                .append(canonicalLosses).append(". Its zero set contains ")
                 .append(canonical.incorrectEquivalent).append(" predicates labeled incorrect; the slotted arm contains ")
                 .append(slotted.incorrectEquivalent).append(".\n");
         markdown.append("- Relative to the full method, the slotted arm uses ")
@@ -445,11 +457,11 @@ public final class EGraphAblationSuite {
         }
 
         markdown.append("\n## Minimum Edit Distance\n\n");
-        markdown.append("For the five e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
+        markdown.append("For the five legacy e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
                 .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
                 .append("under alpha-renaming and declaration permutation groups, while the two De Bruijn arms ")
                 .append("index bound variables before e-graph storage and distance. Eclass equality has distance zero. ")
-                .append("The canonical arm uses the production canonical edit distance.\n\n");
+                .append("The legacy canonical arm uses its bounded edit distance; the exact arm measures normalized finite-unfolding structural keys.\n\n");
         markdown.append("| Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |\n");
         markdown.append("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (RunMetrics run : runs) {
@@ -464,7 +476,7 @@ public final class EGraphAblationSuite {
 
         markdown.append("\n## Relative To Full Method\n\n");
         markdown.append("Ratios below use engine CPU time and maximum RSS; values below 1 use less than the "
-                + "current full canonical arm.\n\n");
+                + "exact typed slotted-port arm.\n\n");
         markdown.append("| Arm | Engine CPU ratio | Max RSS ratio | Representation-unit ratio |\n");
         markdown.append("| --- | ---: | ---: | ---: |\n");
         for (RunMetrics run : runs) {
@@ -500,10 +512,9 @@ public final class EGraphAblationSuite {
                     .append(run.peakEstimatedBytes).append(" |\n");
         }
         markdown.append("\nThe structural byte count is an implementation-level estimate for graph objects; "
-                + "Max RSS is the primary measured memory result. Canonical representation units are the existing "
-                + "canonical-form size, while the five baseline units are retained e-nodes. E-class and e-node "
-                + "columns are reachable saturated-graph counts for every arm; canonical e-nodes include retained "
-                + "alternatives across all temporal matrices.\n");
+                + "Max RSS is the primary measured memory result. Legacy canonical units retain the historical "
+                + "canonical-form size; exact units count its normalized finite-unfolding key. E-class and e-node "
+                + "columns for the exact arm are reachable strict graph counts across both predicates.\n");
         markdown.append("\n## Reproduce\n\n");
         markdown.append("```bash\n");
         markdown.append("./scripts/run_egraph_ablation.sh --input ").append(options.input)
@@ -542,6 +553,7 @@ public final class EGraphAblationSuite {
         private Path output = Paths.get("egraph_ablation");
         private int threads = AblationParallelism.defaultWorkers();
         private int limit;
+        private long seed = CapabilityBenchmark.DEFAULT_SEED;
         private String maxHeap = "3g";
         private boolean verbose;
         private boolean reportOnly;
@@ -561,6 +573,9 @@ public final class EGraphAblationSuite {
                         break;
                     case "--limit":
                         options.limit = Math.max(0, Integer.parseInt(value(args, ++i, "--limit")));
+                        break;
+                    case "--seed":
+                        options.seed = Long.parseLong(value(args, ++i, "--seed"));
                         break;
                     case "--max-heap":
                         options.maxHeap = value(args, ++i, "--max-heap");

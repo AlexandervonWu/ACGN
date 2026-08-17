@@ -200,6 +200,14 @@ public final class TypedENode implements HasSlotSupport {
         return support;
     }
 
+    /**
+     * Narrows only the ambient caller context to this node's exact free-slot
+     * support. The port syntax and every invocation target are preserved.
+     */
+    public TypedENode inExactSupportContext() {
+        return ExactContextRestrictor.restrictToSupport(this);
+    }
+
     public TypedENode act(TypedEmbedding embedding) {
         Objects.requireNonNull(embedding, "embedding");
         if (!context.equals(embedding.source())) {

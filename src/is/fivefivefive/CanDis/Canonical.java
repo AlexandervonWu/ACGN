@@ -1,9 +1,12 @@
 package is.fivefivefive.CanDis;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
+import is.fivefivefive.CanDis.core.NormalForm;
 import is.fivefivefive.CanDis.ir.IRAgent;
 
 /** Alloy/MASG adapter for the parser-independent canonical-distance core. */
@@ -57,15 +60,25 @@ public final class Canonical {
         }
         IRAgent agent = new IRAgent(graph);
         agent.computeNormalForm();
-        return new Prepared(CanonicalDistance.prepare(agent.normalForms()));
+        List<NormalForm> normalized = Collections.unmodifiableList(
+                new ArrayList<>(agent.normalForms()));
+        return new Prepared(CanonicalDistance.prepare(normalized), normalized);
     }
 
     /** Compatibility wrapper that keeps Alloy-specific code out of the core API. */
     public static final class Prepared {
         private final CanonicalDistance.Prepared delegate;
+        private final List<NormalForm> normalizedForms;
 
-        private Prepared(CanonicalDistance.Prepared delegate) {
+        private Prepared(
+                CanonicalDistance.Prepared delegate,
+                List<NormalForm> normalizedForms) {
             this.delegate = delegate;
+            this.normalizedForms = normalizedForms;
+        }
+
+        List<NormalForm> normalizedForms() {
+            return normalizedForms;
         }
     }
 }

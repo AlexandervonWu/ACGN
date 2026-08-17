@@ -38,6 +38,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
+import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.EGraphStats;
@@ -46,6 +47,9 @@ import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
 import is.fivefivefive.CanDis.core.egraph.RawDeBruijnEGraph;
 import is.fivefivefive.CanDis.core.egraph.RawEGraph;
 import is.fivefivefive.CanDis.core.egraph.SlottedEGraph;
+import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
+import is.fivefivefive.CanDis.theory.CertificateVerifier;
+import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
@@ -181,6 +185,8 @@ public final class EGraphAblationStudy {
             long engineCpuStarted = currentThreadCpuNanos();
             if (options.engine == Engine.CANONICAL) {
                 runCanonical(model, pair, result);
+            } else if (options.engine == Engine.TYPED_SLOTTED_PORT) {
+                runTypedSlottedPort(model, pair, result);
             } else {
                 AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left);
                 AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right);
@@ -244,6 +250,42 @@ public final class EGraphAblationStudy {
         long enodes = Canonical.enodeCount(leftPrepared) + Canonical.enodeCount(rightPrepared);
         result.stats = new EGraphStats(eclasses, enodes, 0, 0,
                 0, 0, 0, 0, 0, result.representationUnits * 64L);
+    }
+
+    private static void runTypedSlottedPort(
+            ModelUnit model,
+            PredicatePair pair,
+            FileResult result) {
+        MASGVisitor visitor = focusedVisitor(model, pair);
+        DoubleMap<Integer, Multigraph> forest = visitor.getForest();
+        Integer leftId = visitor.getForestId(pair.leftName);
+        Integer rightId = visitor.getForestId(pair.rightName);
+        Multigraph left = leftId == null ? null : forest.get(leftId);
+        Multigraph right = rightId == null ? null : forest.get(rightId);
+        if (left == null || right == null) {
+            throw new IllegalStateException("Could not find both predicate graphs in MASG forest");
+        }
+        Canonical.Prepared leftNormalized = Canonical.prepare(left);
+        Canonical.Prepared rightNormalized = Canonical.prepare(right);
+        CanonicalAlloyPipeline.Prepared leftPrepared =
+                CanonicalAlloyPipeline.prepare(leftNormalized);
+        CanonicalAlloyPipeline.Prepared rightPrepared =
+                CanonicalAlloyPipeline.prepare(rightNormalized);
+        result.representationUnits = (long) leftPrepared.representationSize()
+                + rightPrepared.representationSize();
+        result.distance = CanonicalAlloyPipeline.distance(leftPrepared, rightPrepared);
+        result.equivalent = result.distance == 0;
+        result.stats = new EGraphStats(
+                leftPrepared.eclassCount() + rightPrepared.eclassCount(),
+                leftPrepared.enodeCount() + rightPrepared.enodeCount(),
+                0,
+                leftPrepared.rebuildCount() + rightPrepared.rebuildCount(),
+                0,
+                0,
+                leftPrepared.slotCount() + rightPrepared.slotCount(),
+                0,
+                0,
+                leftPrepared.estimatedBytes() + rightPrepared.estimatedBytes());
     }
 
     private static MASGVisitor focusedVisitor(ModelUnit model, PredicatePair pair) {
@@ -446,6 +488,15 @@ public final class EGraphAblationStudy {
         root.put("inputRoot", options.input.toString());
         root.put("engine", options.engine.id);
         root.put("engineDescription", options.engine.description);
+        root.put("engineIdentifier", options.engine.engineIdentifier());
+        root.put("theoryFaithfulEngineUsed", options.engine.usesExactEngine());
+        root.put("invariantCheckMode", options.engine.invariantMode());
+        root.put("canonicalizerVersion", options.engine.canonicalizerVersion());
+        root.put("certificateMode", options.engine.certificateMode());
+        root.put("canonicalPipelineVersion", options.engine.pipelineVersion());
+        root.put("measurementProjectionVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
+                : "not-applicable");
         root.put("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
         root.put("sharedBaselineRewriteRules", new JSONArray(JavaEgglog.ruleNames()));
         root.put("threadCount", options.threads);
@@ -475,6 +526,22 @@ public final class EGraphAblationStudy {
         Properties properties = new Properties();
         properties.setProperty("engine", options.engine.id);
         properties.setProperty("description", options.engine.description);
+        properties.setProperty("engineIdentifier", options.engine.engineIdentifier());
+        properties.setProperty("theoryFaithfulEngineUsed",
+                Boolean.toString(options.engine.usesExactEngine()));
+        properties.setProperty("invariantCheckMode", options.engine.invariantMode());
+        properties.setProperty("canonicalizerVersion", options.engine.canonicalizerVersion());
+        properties.setProperty("certificateMode", options.engine.certificateMode());
+        properties.setProperty("canonicalPipelineVersion", options.engine.pipelineVersion());
+        properties.setProperty("measurementProjectionVersion", options.engine.usesExactEngine()
+                ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
+                : "not-applicable");
+        properties.setProperty("alloyAdapterVersion", options.engine.usesExactEngine()
+                ? TheoryAlloyAdapter.ADAPTER_VERSION : "not-applicable");
+        properties.setProperty("finiteUnfoldingVersion", options.engine.usesExactEngine()
+                ? BoundedFiniteUnfoldingOracle.VERSION : "not-applicable");
+        properties.setProperty("certificateVerifierVersion", options.engine.usesExactEngine()
+                ? CertificateVerifier.VERSION : "not-applicable");
         properties.setProperty("sharedBaselineRuleSet", JavaEgglog.ruleSetVersion());
         properties.setProperty("sharedBaselineRuleCount", Integer.toString(JavaEgglog.ruleNames().size()));
         properties.setProperty("cpuAccounting", "thread-cpu-v1");
@@ -522,8 +589,11 @@ public final class EGraphAblationStudy {
         EGGLOG("java-egglog", "Java egglog core replica with shared variadic rules and rebuilding"),
         EGGLOG_DEBRUIJN("java-egglog-debruijn",
                 "Java egglog core storing bound variables as De Bruijn indices"),
-        SLOTTED("slotted-egraph", "Slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
-        CANONICAL("canonical", "Current temporal/prenex/slotted canonical-form method");
+        SLOTTED("slotted-egraph", "Legacy slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
+        CANONICAL("canonical", "Legacy bounded temporal/prenex/slotted canonical-form method"),
+        TYPED_SLOTTED_PORT(
+                "typed-slotted-port-egraph",
+                "Complete CanonicalAlloyPipeline over the exact TypedSlottedPortEGraph");
 
         private final String id;
         private final String description;
@@ -550,6 +620,30 @@ public final class EGraphAblationStudy {
             }
         }
 
+        private boolean usesExactEngine() {
+            return this == TYPED_SLOTTED_PORT;
+        }
+
+        private String engineIdentifier() {
+            return usesExactEngine() ? "TypedSlottedPortEGraph" : "legacy-bounded/" + id;
+        }
+
+        private String invariantMode() {
+            return usesExactEngine() ? TheoryAlloyAdapter.INVARIANT_MODE : "legacy-arm-local-checks";
+        }
+
+        private String canonicalizerVersion() {
+            return usesExactEngine() ? ProductionGraphCanonicalizer.VERSION : "legacy-bounded";
+        }
+
+        private String certificateMode() {
+            return usesExactEngine() ? "required" : "not-applicable";
+        }
+
+        private String pipelineVersion() {
+            return usesExactEngine() ? CanonicalAlloyPipeline.PIPELINE_VERSION : "legacy-bounded";
+        }
+
         private static Engine parse(String value) {
             String normalized = value.toLowerCase(Locale.ROOT).replace('_', '-');
             for (Engine engine : values()) {
@@ -571,6 +665,11 @@ public final class EGraphAblationStudy {
             }
             if ("slotted".equals(normalized)) {
                 return SLOTTED;
+            }
+            if ("typed-slotted-port".equals(normalized)
+                    || "theory".equals(normalized)
+                    || "exact".equals(normalized)) {
+                return TYPED_SLOTTED_PORT;
             }
             throw new IllegalArgumentException("Unknown engine: " + value);
         }

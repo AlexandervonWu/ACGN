@@ -12,7 +12,8 @@ The repository contains:
   learning, reward, and instance-pool implementation;
 - **CanDis**, including the canonicalization pipeline, distance metric,
   backtranslation, and reusable JDK-only core;
-- raw, De Bruijn, egglog-like, slotted, and canonical e-graph ablations;
+- six retained raw, De Bruijn, egglog-like, slotted, and bounded-canonical
+  ablations plus the exact typed-slotted-port arm;
 - the 66,080-file classified Alloy corpus and an augmented nearest-repair
   dataset;
 - generated tables, plots, manifests, bounded semantic checks, and memory
@@ -25,8 +26,13 @@ separate semantic evidence.
 
 ## Headline Results
 
-The checked-in full-corpus results were generated on August 11-12, 2026. Exact
-per-problem and per-status tables are in
+The checked-in full-corpus results were generated on August 11-12, 2026. They
+predate the Phase I exact-engine integration and therefore remain a historical
+six-arm compatibility snapshot. Current source adds a seventh
+`typed-slotted-port-egraph` arm and makes `CanonicalAlloyPipeline` primary in
+the two corpus runners; do not attribute the historical numbers to that exact
+arm until the documented full-corpus rerun is complete. Per-problem and
+per-status tables are in
 [`distance_results/summary.md`](distance_results/summary.md),
 [`alloy4fun-augmented/summary.md`](alloy4fun-augmented/summary.md), and
 [`egraph_ablation/summary.md`](egraph_ablation/summary.md).
@@ -56,8 +62,8 @@ truth-pool construction.
 
 Normalization uses each student predicate's own lexical, AST, or canonical
 size. The 2,235 zeroes are 11.633% of the eligible `CORRECT` pairs. No
-AST-different predicate labeled incorrect received distance zero in the current
-six-arm ablation.
+AST-different predicate labeled incorrect received distance zero in the
+checked-in six-arm ablation.
 
 ### Augmented correct pools and nearest repairs
 
@@ -100,7 +106,7 @@ size, the coverage is:
 | 20% | 8,169 (19.3%) | 7,476 (17.6%) | 6,928 (16.3%) |
 | 50% | 30,080 (71.0%) | 18,668 (44.0%) | 19,342 (45.6%) |
 
-### Six-arm e-graph ablation
+### Archived six-arm e-graph ablation
 
 All six arms processed the same 61,598 eligible pairs with 32 workers in fresh
 JVMs. The first five use the same `canonical-equivalences-v2` rule program.
@@ -114,7 +120,7 @@ a full textual-language-compatible port of external egglog.
 | Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.300 | 4.263 | 930.586 | 56.740 |
 | Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 19.030 | 5.200 | 943.770 | 56.410 |
 | Slotted e-graph | 2,162 | 11.253% | 17.694 | 18.150 | 15.723 | 1,077.098 | 52.952 |
-| Full canonical method | 2,235 | 11.633% | 13.540 | 18.490 | 12.889 | 3,592.613 | 28.700 |
+| Bounded canonical method | 2,235 | 11.633% | 13.540 | 18.490 | 12.889 | 3,592.613 | 28.700 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -124,7 +130,7 @@ Key transitions in the observed zero-distance sets are:
   natural corpus.
 - Slotted storage retains 2,160 egglog-plus-De-Bruijn zeroes, adds 2, and loses
   3. Those three are documented false negatives, not semantic counterexamples.
-- Full canonicalization adds 73 zeroes over slotted storage and loses none of
+- Bounded canonicalization adds 73 zeroes over slotted storage and loses none of
   the slotted zeroes.
 
 The full transition data and pair identities are in
@@ -143,7 +149,7 @@ in each of 11 transformation families.
 | Java egglog-like variadic | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
 | Java egglog-like + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
 | Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Full canonical method | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Bounded canonical method | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
 
 De Bruijn encoding gives complete alpha-equivalence recovery, but the raw and
 egglog-like representations do not implement general declaration-block
@@ -204,7 +210,7 @@ nearest-correct run, their correlations with raw reward error were 0.141856,
 
 ### Runtime and memory interpretation
 
-The full canonical arm completed the 61,598-pair corpus in 18.490 seconds on a
+The archived bounded-canonical arm completed the 61,598-pair corpus in 18.490 seconds on a
 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
 compact structural representation averaged 28.700 units, 23.803 reachable
 e-classes, and 23.940 reachable e-nodes, but process memory peaked at 3,592.613
@@ -251,12 +257,25 @@ associativity plus commutativity while retaining multiplicity, and `SET` for
 associativity, commutativity, and idempotence. Binder permutation groups apply
 only where declaration semantics allow them.
 
-Canonical distance is the sum of:
+The Phase I primary exact path next converts every normalized phase through
+`TheoryAlloyAdapter`, which creates typed ports and complete binder blocks,
+issues structured certificates for Seq=A, Bag=AC, and Set=ACI, inserts every
+node through `TypedSlottedPortEGraph.insertNode`, rebuilds to strict quiescence,
+and observes a current complete finite-unfolding family. Full normalized keys
+define equality and digests. An injective semantic projection removes proof
+schema nodes from edit-unit counting without changing which pairs have distance
+zero.
+
+The retained `legacyCanonicalDistance` is the former sum of:
 
 1. Zhang-Shasha edit distance over the temporal tree;
 2. unit-cost additions, deletions, or modifications of phase-local binding
    tuples, minimized over valid binding permutations;
 3. e-graph matrix edit distance under semantically equivalent slot bindings.
+
+`CanonicalBatchTest` and `Alloy4FunAugmenter` emit that legacy value only as a
+compatibility diagnostic; their unqualified canonical fields now use the exact
+pipeline.
 
 The complete ordered rules, side conditions, opcode inventory, and fixed-point
 policy are in [`documentation/REWRITE_SYSTEM.md`](documentation/REWRITE_SYSTEM.md).
@@ -290,14 +309,15 @@ non-functional in source.
 src/is/fivefivefive/ACGN/                 original ACGN graph, generator, learner, rewarder
 src/is/fivefivefive/CanDis/               runners, compatibility facade, checks, reports
 src/is/fivefivefive/CanDis/core/          parser-independent canonical-distance core
-src/is/fivefivefive/CanDis/core/egraph/   six e-graph/canonical representation engines
-src/is/fivefivefive/CanDis/adapter/       Alloy AST to core-term adapter
+src/is/fivefivefive/CanDis/core/egraph/   six retained ablation representation engines
+src/is/fivefivefive/CanDis/theory/        exact typed slotted-port e-graph and proofs
+src/is/fivefivefive/CanDis/adapter/       Alloy adapters, including exact typed adaptation
 src/is/fivefivefive/CanDis/ir/            MASG to canonical IR conversion
 src/is/fivefivefive/AlloyDataProcessor/   corpus preprocessing utilities
 classified-data/                          source student/oracle dataset
 distance_results/                         paired-oracle metrics, JSON, CSV, plots, tables
 alloy4fun-augmented/                       correct pools and nearest-repair rankings
-egraph_ablation/                           six-arm natural-corpus evaluation
+egraph_ablation/                           archived six-arm natural-corpus evaluation
 capability_benchmark/                      generated transformation benchmark
 canonical_memory/                          worker-scaling and phase attribution
 documentation/                             CanDis and rewrite-system references
@@ -336,6 +356,7 @@ export ACGN_CLASSPATH="$BUILD_DIR:lib/*"
 Run the focused regression suite:
 
 ```bash
+java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.ablation.EGraphAblationTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.EGraphSaturationTest
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBacktranslatorTest
@@ -361,11 +382,12 @@ below are checked-in snapshots and a full rerun overwrites them.
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
   classified-data distance_results \
-  --threads 32 --reward-pool 10
+  --threads 32 --skip-rewards
 ```
 
 Use `--limit N` for a smoke run. The runner writes `distances.json` and
-`summary.md`; it always attempts Rewarder evaluation. Regenerate its plotting
+`summary.md`. Remove `--skip-rewards` and add `--reward-pool 10` for the
+rewarded run. Regenerate its plotting
 CSV, SVG/PNG figures, and paper tables with:
 
 ```bash
@@ -392,7 +414,7 @@ Principal outputs are `index.json`, `summary.md`, per-question correct pools,
 `correct_ast_diff_canonical_equiv.json`, nearest-repair rankings, AST-identity
 audit CSVs, reward CSVs, and coverage/correlation SVGs.
 
-### Six-arm ablation
+### Seven-arm ablation
 
 ```bash
 ./scripts/run_egraph_ablation.sh \
@@ -401,7 +423,9 @@ audit CSVs, reward CSVs, and coverage/correlation SVGs.
   --threads 32 --max-heap 3g
 ```
 
-The suite runs all six arms sequentially in fresh JVMs. Each arm uses
+The suite runs all seven arms sequentially in fresh JVMs. The seventh is
+`typed-slotted-port-egraph`, backed by `CanonicalAlloyPipeline`; `canonical`
+continues to denote the bounded legacy method. Each arm uses
 `min(requested workers, logical processors, 32)` threads. A smoke run can add
 `--limit 100` and use a `/tmp` output directory.
 
@@ -481,7 +505,7 @@ from every current distance and ablation run.
 
 ## Reproducibility
 
-The checked-in six-arm natural-corpus snapshot records:
+The checked-in historical six-arm natural-corpus snapshot records:
 
 - run ID `b6878ce2-b791-4a64-ad2f-1c2e3ff93893`;
 - source SHA `67c94e2ddf4bdee34ecf3f9c21c393f438f4e0ef` with a dirty worktree;
@@ -523,9 +547,10 @@ to the repository's current `HEAD`.
 
 - [CanDis architecture, APIs, runners, and generated outputs](documentation/README.md)
 - [Ordered rewrite system and side conditions](documentation/REWRITE_SYSTEM.md)
+- [Phase I exact-engine integration, invariants, faults, and reproduction](docs/theory-phase-i-artifact-integration.md)
 - [Paired-distance paper tables](distance_results/paper_tables.md)
 - [Augmented dataset summary](alloy4fun-augmented/summary.md)
-- [Six-arm ablation report](egraph_ablation/summary.md)
+- [Archived six-arm ablation report](egraph_ablation/summary.md)
 - [Targeted capability benchmark](capability_benchmark/REPORT.md)
 - [Canonical memory attribution](canonical_memory/REPORT.md)
 

@@ -23,11 +23,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
+import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
+import is.fivefivefive.CanDis.theory.CertificateVerifier;
+import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
 
 /** Creates and validates reproducibility manifests for process-isolated ablation runs. */
 final class AblationRunManifest {
-    static final String MANIFEST_SCHEMA_VERSION = "candis-ablation-manifest-v1";
-    static final String OUTPUT_SCHEMA_VERSION = "candis-ablation-output-v3";
+    static final String MANIFEST_SCHEMA_VERSION = "candis-ablation-manifest-v2";
+    static final String OUTPUT_SCHEMA_VERSION = "candis-ablation-output-v4";
     static final String ARM_MANIFEST = "manifest.json";
     static final String ROOT_MANIFEST = "run-manifest.json";
     private static final List<String> ARM_OUTPUTS = List.of(
@@ -36,7 +40,12 @@ final class AblationRunManifest {
     private AblationRunManifest() {
     }
 
-    static Context capture(Path input, String heap, int workers, int limit) throws IOException {
+    static Context capture(
+            Path input,
+            String heap,
+            int workers,
+            int limit,
+            long seed) throws IOException {
         Fingerprint dataset = fingerprint(input, ".als");
         Fingerprint sources = fingerprint(Paths.get("src"), ".java");
         String gitSha = command("git", "rev-parse", "HEAD");
@@ -62,12 +71,14 @@ final class AblationRunManifest {
                 System.getProperty("os.version", "unknown"),
                 System.getProperty("os.arch", "unknown"),
                 Instant.now().toString(),
-                limit);
+                limit,
+                seed);
     }
 
     static void writeArm(Path engineDir, String engine, Context context) throws IOException {
         JSONObject manifest = context.toJson();
         manifest.put("arm", engine);
+        manifest.put("engine", engineMetadata(engine));
         Properties metrics = new Properties();
         try (InputStream input = Files.newInputStream(engineDir.resolve("metrics.properties"))) {
             metrics.load(input);
@@ -79,6 +90,50 @@ final class AblationRunManifest {
                 .put("failures", longProperty(metrics, "failures")));
         manifest.put("outputs", outputEntries(engineDir, ARM_OUTPUTS));
         Files.writeString(engineDir.resolve(ARM_MANIFEST), manifest.toString(2) + "\n", StandardCharsets.UTF_8);
+    }
+
+    private static JSONObject engineMetadata(String engine) {
+        boolean exact = "typed-slotted-port-egraph".equals(engine);
+        JSONObject bounded = new JSONObject();
+        if (exact) {
+            bounded.put("legacyRewriteIterations", 0)
+                    .put("legacyMaximumTermSize", 0)
+                    .put("finiteUnfoldingMaximumDepth", "eclasses+1")
+                    .put("finiteUnfoldingMaximumAlternatives", 64);
+        } else {
+            bounded.put("legacyRewriteIterations", 32)
+                    .put("legacyMaximumTermSize", 50_000)
+                    .put("finiteUnfoldingMaximumDepth", "not-applicable")
+                    .put("finiteUnfoldingMaximumAlternatives", 0);
+        }
+        return new JSONObject()
+                .put("armId", engine)
+                .put("engineIdentifier", exact
+                        ? "TypedSlottedPortEGraph"
+                        : "legacy-bounded/" + engine)
+                .put("theoryFaithfulEngineUsed", exact)
+                .put("invariantCheckMode", exact
+                        ? TheoryAlloyAdapter.INVARIANT_MODE
+                        : "legacy-arm-local-checks")
+                .put("ruleSetId", exact
+                        ? TheoryAlloyAdapter.SIGNATURE_VERSION
+                        : JavaEgglog.ruleSetVersion())
+                .put("canonicalizerVersion", exact
+                        ? ProductionGraphCanonicalizer.VERSION
+                        : "legacy-bounded")
+                .put("certificateMode", exact ? "required" : "not-applicable")
+                .put("certificateVerifierVersion", exact
+                        ? CertificateVerifier.VERSION : "not-applicable")
+                .put("finiteUnfoldingVersion", exact
+                        ? BoundedFiniteUnfoldingOracle.VERSION : "not-applicable")
+                .put("alloyAdapterVersion", exact
+                        ? TheoryAlloyAdapter.ADAPTER_VERSION : "not-applicable")
+                .put("canonicalPipelineVersion", exact
+                        ? CanonicalAlloyPipeline.PIPELINE_VERSION : "legacy-bounded")
+                .put("measurementProjectionVersion", exact
+                        ? CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION
+                        : "not-applicable")
+                .put("boundedSettings", bounded);
     }
 
     static Context loadCompatibleArms(Path output, List<String> engines) throws IOException {
@@ -303,6 +358,7 @@ final class AblationRunManifest {
         final String osArch;
         final String startedAt;
         final int limit;
+        final long seed;
 
         private Context(
                 String runId,
@@ -325,7 +381,8 @@ final class AblationRunManifest {
                 String osVersion,
                 String osArch,
                 String startedAt,
-                int limit) {
+                int limit,
+                long seed) {
             this.runId = runId;
             this.gitSha = gitSha;
             this.dirtyTree = dirtyTree;
@@ -347,6 +404,7 @@ final class AblationRunManifest {
             this.osArch = osArch;
             this.startedAt = startedAt;
             this.limit = limit;
+            this.seed = seed;
         }
 
         JSONObject toJson() {
@@ -374,7 +432,8 @@ final class AblationRunManifest {
                     .put("osVersion", osVersion)
                     .put("osArch", osArch)
                     .put("startedAt", startedAt)
-                    .put("limit", limit);
+                    .put("limit", limit)
+                    .put("seed", seed);
         }
 
         static Context fromJson(JSONObject json) {
@@ -407,7 +466,8 @@ final class AblationRunManifest {
                     json.getString("osVersion"),
                     json.getString("osArch"),
                     json.getString("startedAt"),
-                    json.getInt("limit"));
+                    json.getInt("limit"),
+                    json.getLong("seed"));
         }
 
         void requireCompatible(Context other, String arm) {
@@ -432,6 +492,7 @@ final class AblationRunManifest {
             require(osArch, other.osArch, "osArch", arm);
             require(startedAt, other.startedAt, "startedAt", arm);
             require(limit, other.limit, "limit", arm);
+            require(seed, other.seed, "seed", arm);
         }
 
         private static void require(Object expected, Object actual, String field, String arm) {

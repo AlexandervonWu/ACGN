@@ -41,14 +41,15 @@ public final class CapabilityBenchmark {
     private static final List<String> ARMS = List.of(
             "raw-egraph", "raw-egraph-debruijn",
             "java-egglog", "java-egglog-debruijn",
-            "slotted-egraph", "canonical");
+            "slotted-egraph", "canonical", "typed-slotted-port-egraph");
     private static final List<String[]> TRANSITIONS = List.of(
             new String[] {"raw-egraph", "raw-egraph-debruijn"},
             new String[] {"raw-egraph", "java-egglog"},
             new String[] {"raw-egraph-debruijn", "java-egglog-debruijn"},
             new String[] {"java-egglog", "java-egglog-debruijn"},
             new String[] {"java-egglog-debruijn", "slotted-egraph"},
-            new String[] {"slotted-egraph", "canonical"});
+            new String[] {"slotted-egraph", "canonical"},
+            new String[] {"canonical", "typed-slotted-port-egraph"});
     private static final String BENCHMARK_DECLARATIONS = "\n\n"
             + "sig CapBenchA { capBenchR: set CapBenchA }\n"
             + "sig CapBenchB { capBenchS: set CapBenchB }\n\n";

@@ -11,11 +11,13 @@ public final class StructuralKey implements Comparable<StructuralKey> {
     private final String tag;
     private final List<String> scalars;
     private final List<StructuralKey> children;
+    private final int hashCode;
 
     private StructuralKey(String tag, List<String> scalars, List<StructuralKey> children) {
         this.tag = requireText(tag, "tag");
         this.scalars = immutableStrings(scalars);
         this.children = immutableChildren(children);
+        this.hashCode = Objects.hash(this.tag, this.scalars, this.children);
     }
 
     public static StructuralKey of(
@@ -127,6 +129,9 @@ public final class StructuralKey implements Comparable<StructuralKey> {
 
     @Override
     public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
         if (!(other instanceof StructuralKey)) {
             return false;
         }
@@ -138,7 +143,7 @@ public final class StructuralKey implements Comparable<StructuralKey> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(tag, scalars, children);
+        return hashCode;
     }
 
     @Override

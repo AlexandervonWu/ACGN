@@ -440,10 +440,14 @@ core JAR.
 oracle, computes lexical, raw-AST, and canonical distances, optionally evaluates
 rewards, and writes JSON plus Markdown statistics.
 
+The unqualified canonical fields use the Phase I `CanonicalAlloyPipeline`
+backed by the exact `TypedSlottedPortEGraph`. Bounded legacy values remain in
+explicit `legacyCanonical*` and `legacyDiagnostic*` fields.
+
 ```bash
 java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.CanonicalBatchTest \
   classified-data distance_results \
-  --threads 32 --reward-pool 10
+  --threads 32 --skip-rewards
 ```
 
 Options:
@@ -454,6 +458,7 @@ Options:
 | second positional path | output directory, default `distance_results` |
 | `--threads N` | file workers, default `32` |
 | `--reward-pool N` | reward instance-pool size, default `10` |
+| `--skip-rewards` | produce structural results without running Rewarder |
 | `--limit N` | process only the first `N` files |
 | `--verbose` | print individual failures and progress |
 
@@ -463,6 +468,10 @@ Options:
 places the oracle and AST-distinct correct student answers into one co-equal
 reference pool, ranks every incorrect answer against every correct reference,
 and writes an augmented research dataset.
+
+Canonical pool equivalence and nearest-reference ranking use the exact Phase I
+pipeline. The legacy canonical ranking is retained in one shared comparison
+pass for compatibility.
 
 Before constructing any question group or truth pool, it removes files whose
 student predicate and paired oracle predicate have identical raw ASTs. On the
@@ -487,7 +496,7 @@ case-normalization handled by dataset conventions.
 
 ## Ablation Study
 
-The ablation suite compares six process-isolated arms:
+The ablation suite compares seven process-isolated arms:
 
 1. `raw-egraph`: fixed-arity e-graph plus the shared rewrite program.
 2. `raw-egraph-debruijn`: the fixed-arity arm with bound variables stored as
@@ -496,7 +505,9 @@ The ablation suite compares six process-isolated arms:
 4. `java-egglog-debruijn`: the variadic arm with De Bruijn variable storage.
 5. `slotted-egraph`: renamed slots, slot redundancy, and permutation groups.
 6. `canonical`: temporal partitioning, per-phase prenexing, binding tuples, and
-   the production matrix representation.
+   the retained bounded matrix representation.
+7. `typed-slotted-port-egraph`: complete `CanonicalAlloyPipeline` adaptation,
+   certified exact graph insertion/rebuild, and finite-term observation.
 
 The two De Bruijn arms retain named terms as capture-safe rewrite witnesses and
 freshly encode each retained witness before hash-consing, e-class comparison,
@@ -520,9 +531,10 @@ min(requested threads, logical processors, 32)
 
 Every arm writes a manifest containing the run ID, Git/source state, dataset
 fingerprint, rule/schema versions, JVM and heap, worker count, host/CPU details,
-start time, and output hashes. The suite rejects a combined report unless all
-six manifests describe the same run context and every retained arm output
-still matches its recorded hash. Useful options are `--limit N`, `--threads N`,
+start time, exact-engine/invariant/certificate/canonicalizer/bound settings,
+and output hashes. The suite rejects a combined report unless all seven
+manifests describe the same run context and every retained arm output still
+matches its recorded hash. Useful options are `--limit N`, `--threads N`,
 `--verbose`, and `--report-only`. `--report-only` verifies those manifests and
 regenerates all combined reports, including the canonical-only/slotted report,
 without rerunning the engines.
@@ -533,7 +545,7 @@ The report includes:
 
 - process wall time, process CPU, worker engine CPU, peak heap, and maximum RSS
 - equivalent-pair coverage by dataset label
-- minimum edit distances for all six representations
+- minimum edit distances for all seven representations
 - pair-level transitions isolating De Bruijn encoding, variadic representation,
   slots, and full canonicalization
 - semantically labeled equivalent discoveries per wall second, CPU second, and
@@ -545,8 +557,8 @@ label and does not rerun the SAT solver during the ablation.
 
 ## Targeted Capability Benchmark
 
-`CapabilityBenchmark` is a deterministic companion experiment for the existing
-six arms, not a seventh generic arm. It embeds small equivalence-by-construction
+`CapabilityBenchmark` is a deterministic companion experiment for all seven
+arms. It embeds small equivalence-by-construction
 formula pairs into real zero-parameter predicates selected from Alloy4Fun
 `CORRECT` files. Families isolate alpha-renaming, ACI, same-block binder
 permutations, scope-safe prenexing, logical/negation normalization, temporal
@@ -573,7 +585,7 @@ bounded sanity check rather than proof.
 
 Principal outputs are `metadata.{json,csv}`, `skips.csv`, `results.{json,csv}`,
 `pair_results.csv`, `transitions.csv`, `unexpected_failures.csv`, `REPORT.md`,
-`soundness.{json,csv}`, `SOUNDNESS.md`, and the normal six-arm directories under
+`soundness.{json,csv}`, `SOUNDNESS.md`, and the normal seven-arm directories under
 `arms/`.
 
 ## Canonical Memory Attribution
@@ -648,10 +660,10 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
 
 - `REPORT.md`: family-by-arm recovery, capability boundaries, transitions, and costs
 - `metadata.{json,csv}`: seeds, source hashes, formulas, transformations, side conditions, and AST sizes
-- `pair_results.csv`: every generated pair's distance and zero status under all six arms
+- `pair_results.csv`: every generated pair's distance and zero status under all seven arms
 - `unexpected_failures.csv`: expected-boundary misses retained for inspection
 - `soundness.{json,csv}` and `SOUNDNESS.md`: bounded subtype checks, including inconclusive temporal evidence
-- `arms/`: ordinary process-isolated six-arm output for the generated corpus
+- `arms/`: ordinary process-isolated seven-arm output for the generated corpus
 
 ### `canonical_memory/`
 

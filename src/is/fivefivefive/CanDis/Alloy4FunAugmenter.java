@@ -41,6 +41,10 @@ import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
 import parser.etc.Pair;
 import parser.util.AlloyUtil;
+import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
+import is.fivefivefive.CanDis.theory.CertificateVerifier;
+import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
 
 public class Alloy4FunAugmenter {
     private static final String DEFAULT_INPUT = "classified-data";
@@ -193,6 +197,8 @@ public class Alloy4FunAugmenter {
         PrintStream originalErr = System.err;
         ConcurrentMap<String, RawAstTree> astCache = new ConcurrentHashMap<>();
         ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache = new ConcurrentHashMap<>();
+        ConcurrentMap<RepresentationKey, CanonicalAlloyPipeline.Prepared> exactCache =
+                new ConcurrentHashMap<>();
         if (!options.verbose) {
             PrintStream sink = new PrintStream(new OutputStream() {
                 @Override
@@ -207,7 +213,13 @@ public class Alloy4FunAugmenter {
             List<Future<ModelRecord>> futures = new ArrayList<>(files.size());
             for (Path file : files) {
                 futures.add(executor.submit(
-                        () -> parseRecord(options.inputDir, file, options.verbose, astCache, canonicalCache)));
+                        () -> parseRecord(
+                                options.inputDir,
+                                file,
+                                options.verbose,
+                                astCache,
+                                canonicalCache,
+                                exactCache)));
             }
             List<ModelRecord> records = new ArrayList<>(files.size());
             for (int i = 0; i < futures.size(); i++) {
@@ -234,7 +246,8 @@ public class Alloy4FunAugmenter {
                                     files.get(failedIndex),
                                     options.verbose,
                                     astCache,
-                                    canonicalCache)));
+                                    canonicalCache,
+                                    exactCache)));
                 }
             }
             if (!retries.isEmpty()) {
@@ -255,6 +268,7 @@ public class Alloy4FunAugmenter {
             }
             astCache.clear();
             canonicalCache.clear();
+            exactCache.clear();
             return records;
         } finally {
             executor.shutdownNow();
@@ -270,7 +284,8 @@ public class Alloy4FunAugmenter {
             Path file,
             boolean verbose,
             ConcurrentMap<String, RawAstTree> astCache,
-            ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache) {
+            ConcurrentMap<RepresentationKey, Canonical.Prepared> canonicalCache,
+            ConcurrentMap<RepresentationKey, CanonicalAlloyPipeline.Prepared> exactCache) {
         ModelRecord record = new ModelRecord(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
@@ -320,7 +335,14 @@ public class Alloy4FunAugmenter {
                 record.oracleCanonical = canonicalCache.computeIfAbsent(
                         RepresentationKey.oracle(record),
                         key -> Canonical.prepare(oracleGraph));
-                record.canonicalSize = Canonical.canonicalFormSize(record.studentCanonical);
+                record.studentExact = exactCache.computeIfAbsent(
+                        RepresentationKey.student(record),
+                        key -> CanonicalAlloyPipeline.prepare(record.studentCanonical));
+                record.oracleExact = exactCache.computeIfAbsent(
+                        RepresentationKey.oracle(record),
+                        key -> CanonicalAlloyPipeline.prepare(record.oracleCanonical));
+                record.legacyCanonicalSize = Canonical.canonicalFormSize(record.studentCanonical);
+                record.canonicalSize = record.studentExact.representationSize();
             }
         } catch (Throwable t) {
             if (verbose) {
@@ -331,7 +353,7 @@ public class Alloy4FunAugmenter {
         return record;
     }
 
-    private static Canonical.Prepared loadCanonical(ModelRecord record, boolean oracle) {
+    private static PreparedPair loadPrepared(ModelRecord record, boolean oracle) {
         try {
             CompModule module = AlloyUtil.compileAlloyModule(record.file.toString());
             ModelUnit model = new ModelUnit(null, module);
@@ -345,7 +367,8 @@ public class Alloy4FunAugmenter {
             if (graph == null) {
                 throw new IllegalStateException("Could not find predicate graph in MASG forest.");
             }
-            return Canonical.prepare(graph);
+            Canonical.Prepared legacy = Canonical.prepare(graph);
+            return new PreparedPair(legacy, CanonicalAlloyPipeline.prepare(legacy));
         } catch (RuntimeException e) {
             throw e;
         } catch (Throwable t) {
@@ -356,9 +379,9 @@ public class Alloy4FunAugmenter {
         }
     }
 
-    private static Canonical.Prepared loadCanonicalQuietly(ModelRecord record, boolean oracle, boolean verbose) {
+    private static PreparedPair loadPreparedQuietly(ModelRecord record, boolean oracle, boolean verbose) {
         if (verbose) {
-            return loadCanonical(record, oracle);
+            return loadPrepared(record, oracle);
         }
         PrintStream originalOut = System.out;
         PrintStream originalErr = System.err;
@@ -370,7 +393,7 @@ public class Alloy4FunAugmenter {
         System.setOut(sink);
         System.setErr(sink);
         try {
-            return loadCanonical(record, oracle);
+            return loadPrepared(record, oracle);
         } finally {
             System.setOut(originalOut);
             System.setErr(originalErr);
@@ -470,6 +493,7 @@ public class Alloy4FunAugmenter {
                     }
                     for (ModelRecord record : batch.records) {
                         record.canonicalSize = template.record.canonicalSize;
+                        record.legacyCanonicalSize = template.record.legacyCanonicalSize;
                         matches.add(record == template.record
                                 ? template
                                 : new IncorrectMatch(record, template));
@@ -477,8 +501,12 @@ public class Alloy4FunAugmenter {
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break;
-                } catch (ExecutionException ignored) {
+                    throw new IllegalStateException("Incorrect-predicate ranking was interrupted", e);
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause() == null ? e : e.getCause();
+                    throw new IllegalStateException(
+                            "Incorrect-predicate ranking failed before reports could be published",
+                            cause);
                 }
             }
             matches.sort(Comparator.comparing((IncorrectMatch match) -> match.record.relativePath));
@@ -495,6 +523,7 @@ public class Alloy4FunAugmenter {
     private static void releaseRankingRepresentation(ModelRecord record) {
         record.studentAst = null;
         record.studentCanonical = null;
+        record.studentExact = null;
         record.studentBody = null;
         record.prelude = null;
     }
@@ -646,9 +675,12 @@ public class Alloy4FunAugmenter {
         if (astIdenticalReferenceCount(group, incorrect) == group.rankingReferences().size()) {
             return null;
         }
-        if (incorrect.studentCanonical == null) {
-            incorrect.studentCanonical = loadCanonical(incorrect, false);
-            incorrect.canonicalSize = Canonical.canonicalFormSize(incorrect.studentCanonical);
+        if (incorrect.studentCanonical == null || incorrect.studentExact == null) {
+            PreparedPair prepared = loadPrepared(incorrect, false);
+            incorrect.studentCanonical = prepared.legacy;
+            incorrect.studentExact = prepared.exact;
+            incorrect.legacyCanonicalSize = Canonical.canonicalFormSize(incorrect.studentCanonical);
+            incorrect.canonicalSize = incorrect.studentExact.representationSize();
         }
         IncorrectMatch match = new IncorrectMatch(incorrect);
         for (Reference reference : group.rankingReferences()) {
@@ -657,9 +689,13 @@ public class Alloy4FunAugmenter {
             }
             int levenshtein = levenshteinDistance(incorrect.studentBody, reference.body);
             int rawAst = rawAstTreeDistance(incorrect.studentAst, reference.ast);
-            int canonical = Canonical.distance(incorrect.studentCanonical, reference.canonical);
+            int legacyCanonical = Canonical.distance(
+                    incorrect.studentCanonical, reference.canonical);
+            int canonical = CanonicalAlloyPipeline.distance(
+                    incorrect.studentExact, reference.exact);
             match.levenshtein.add(reference, levenshtein);
             match.rawAst.add(reference, rawAst);
+            match.legacyCanonical.add(reference, legacyCanonical);
             match.canonical.add(reference, canonical);
         }
         match.sortRankings();
@@ -756,7 +792,7 @@ public class Alloy4FunAugmenter {
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
             writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
             writer.write("  \"outputRoot\": \"" + escape(options.outputDir.toString()) + "\",\n");
-            writer.write("  \"criterion\": \"Pairs within each augmented correct pool whose raw AST distance is greater than zero and canonical distance is zero.\",\n");
+            writer.write("  \"criterion\": \"Pairs within each augmented correct pool whose raw AST distance is greater than zero and CanonicalAlloyPipeline distance is zero.\",\n");
             writer.write("  \"pairCount\": " + pairs.size() + ",\n");
             writer.write("  \"pairs\": [\n");
             for (int i = 0; i < pairs.size(); i++) {
@@ -789,8 +825,12 @@ public class Alloy4FunAugmenter {
                     pairs.addAll(future.get());
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
-                    break;
-                } catch (ExecutionException ignored) {
+                    throw new IllegalStateException("Correct-pool comparison was interrupted", e);
+                } catch (ExecutionException e) {
+                    Throwable cause = e.getCause() == null ? e : e.getCause();
+                    throw new IllegalStateException(
+                            "Correct-pool comparison failed before reports could be published",
+                            cause);
                 }
             }
             pairs.sort(Comparator
@@ -819,9 +859,16 @@ public class Alloy4FunAugmenter {
                 continue;
             }
             int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
-            int canonicalDistance = Canonical.distance(left.canonical, right.canonical);
+            int legacyCanonicalDistance = Canonical.distance(left.canonical, right.canonical);
+            int canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
             if (canonicalDistance == 0) {
-                pairs.add(new CorrectPoolPair(group, left, right, rawAstDistance, canonicalDistance));
+                pairs.add(new CorrectPoolPair(
+                        group,
+                        left,
+                        right,
+                        rawAstDistance,
+                        canonicalDistance,
+                        legacyCanonicalDistance));
             }
         }
         return pairs;
@@ -834,6 +881,8 @@ public class Alloy4FunAugmenter {
         writer.write("      \"augmentedFile\": \"" + escape("correct/" + pair.group.questionSet + "/" + pair.group.invariantId + ".als") + "\",\n");
         writer.write("      \"rawAstDistance\": " + pair.rawAstDistance + ",\n");
         writer.write("      \"canonicalDistance\": " + pair.canonicalDistance + ",\n");
+        writer.write("      \"legacyCanonicalDistance\": "
+                + pair.legacyCanonicalDistance + ",\n");
         writer.write("      \"left\": ");
         writeReferenceJson(writer, pair.left);
         writer.write(",\n");
@@ -873,6 +922,23 @@ public class Alloy4FunAugmenter {
             writer.write("  \"threadCount\": " + options.threadCount + ",\n");
             writer.write("  \"rewardPoolSize\": " + options.rewardPoolSize + ",\n");
             writer.write("  \"rewardsEnabled\": " + !options.skipRewards + ",\n");
+            writer.write("  \"canonicalEngine\": \"CanonicalAlloyPipeline\",\n");
+            writer.write("  \"canonicalPipelineVersion\": \""
+                    + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
+            writer.write("  \"measurementProjectionVersion\": \""
+                    + CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION + "\",\n");
+            writer.write("  \"alloyAdapterVersion\": \""
+                    + TheoryAlloyAdapter.ADAPTER_VERSION + "\",\n");
+            writer.write("  \"invariantCheckMode\": \""
+                    + TheoryAlloyAdapter.INVARIANT_MODE + "\",\n");
+            writer.write("  \"canonicalizerVersion\": \""
+                    + ProductionGraphCanonicalizer.VERSION + "\",\n");
+            writer.write("  \"certificateVerifierVersion\": \""
+                    + CertificateVerifier.VERSION + "\",\n");
+            writer.write("  \"certificateMode\": \"required\",\n");
+            writer.write("  \"finiteUnfoldingVersion\": \""
+                    + BoundedFiniteUnfoldingOracle.VERSION + "\",\n");
+            writer.write("  \"legacyCanonicalRetained\": true,\n");
             writer.write("  \"summary\": {\n");
             writer.write("    \"groups\": " + summary.groups + ",\n");
             writer.write("    \"parsedModels\": " + summary.parsedModels + ",\n");
@@ -958,6 +1024,11 @@ public class Alloy4FunAugmenter {
                     + astIdenticalPredicatePairCount + "\n");
             writer.write("- Alloy files considered and used: " + records.size() + "\n");
             writer.write("- Thread count: " + options.threadCount + "\n\n");
+            writer.write("- Canonical engine: `CanonicalAlloyPipeline` (`"
+                    + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
+            writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
+                    + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
+            writer.write("- Legacy bounded canonical rankings retained in `index.json`: yes\n\n");
             writer.write("- Reward pool size: " + options.rewardPoolSize + "\n\n");
             writer.write("- Rewards enabled: " + !options.skipRewards + "\n\n");
 
@@ -1224,7 +1295,7 @@ public class Alloy4FunAugmenter {
 
     private static void writeRewardCsv(Path path, List<IncorrectMatch> matches) throws IOException {
         try (Writer writer = outputWriter(path)) {
-            writer.write("relativePath,questionSet,statusFolder,invariantId,levenshteinDistance,rawAstDistance,canonicalDistance,levenshteinSize,rawAstSize,canonicalSize,levenshteinDistanceRatio,rawAstDistanceRatio,canonicalDistanceRatio,candidateReward,rewardError,rewardPoolSize,rewardErrorMessage\n");
+            writer.write("relativePath,questionSet,statusFolder,invariantId,levenshteinDistance,rawAstDistance,canonicalDistance,legacyCanonicalDistance,levenshteinSize,rawAstSize,canonicalSize,legacyCanonicalSize,levenshteinDistanceRatio,rawAstDistanceRatio,canonicalDistanceRatio,legacyCanonicalDistanceRatio,candidateReward,rewardError,rewardPoolSize,rewardErrorMessage\n");
             for (IncorrectMatch match : matches) {
                 writer.write(csv(match.record.relativePath) + ",");
                 writer.write(csv(match.record.questionSet) + ",");
@@ -1233,12 +1304,17 @@ public class Alloy4FunAugmenter {
                 writer.write(match.levenshtein.first().distance + ",");
                 writer.write(match.rawAst.first().distance + ",");
                 writer.write(match.canonical.first().distance + ",");
+                writer.write(match.legacyCanonical.first().distance + ",");
                 writer.write(match.record.levenshteinSize + ",");
                 writer.write(match.record.rawAstSize + ",");
                 writer.write(match.record.canonicalSize + ",");
+                writer.write(match.record.legacyCanonicalSize + ",");
                 writer.write(number(ratio(match.levenshtein.first().distance, match.record.levenshteinSize)) + ",");
                 writer.write(number(ratio(match.rawAst.first().distance, match.record.rawAstSize)) + ",");
                 writer.write(number(ratio(match.canonical.first().distance, match.record.canonicalSize)) + ",");
+                writer.write(number(ratio(
+                        match.legacyCanonical.first().distance,
+                        match.record.legacyCanonicalSize)) + ",");
                 if (match.rewardComputed && match.rewardErrorMessage == null) {
                     writer.write(number(match.candidateReward) + ",");
                     writer.write(number(match.rewardError) + ",");
@@ -1819,12 +1895,17 @@ public class Alloy4FunAugmenter {
         writer.write("      \"levenshteinSize\": " + record.levenshteinSize + ",\n");
         writer.write("      \"rawAstSize\": " + record.rawAstSize + ",\n");
         writer.write("      \"canonicalSize\": " + record.canonicalSize + ",\n");
+        writer.write("      \"legacyCanonicalSize\": " + record.legacyCanonicalSize + ",\n");
         writer.write("      \"levenshteinDistanceRatio\": "
                 + number(ratio(match.levenshtein.first().distance, record.levenshteinSize)) + ",\n");
         writer.write("      \"rawAstDistanceRatio\": "
                 + number(ratio(match.rawAst.first().distance, record.rawAstSize)) + ",\n");
         writer.write("      \"canonicalDistanceRatio\": "
                 + number(ratio(match.canonical.first().distance, record.canonicalSize)) + ",\n");
+        writer.write("      \"legacyCanonicalDistanceRatio\": "
+                + number(ratio(
+                        match.legacyCanonical.first().distance,
+                        record.legacyCanonicalSize)) + ",\n");
         writer.write("      \"rewardPoolSize\": " + match.rewardPoolSize + ",\n");
         if (match.rewardComputed && match.rewardErrorMessage == null) {
             writer.write("      \"candidateReward\": " + number(match.candidateReward) + ",\n");
@@ -1845,6 +1926,9 @@ public class Alloy4FunAugmenter {
         writer.write("      \"nearestCanonical\": ");
         writeNearestJson(writer, match.canonical);
         writer.write(",\n");
+        writer.write("      \"nearestLegacyCanonical\": ");
+        writeNearestJson(writer, match.legacyCanonical);
+        writer.write(",\n");
         writer.write("      \"levenshteinRanking\": ");
         writeRankingJson(writer, match.levenshtein);
         writer.write(",\n");
@@ -1853,6 +1937,9 @@ public class Alloy4FunAugmenter {
         writer.write(",\n");
         writer.write("      \"canonicalRanking\": ");
         writeRankingJson(writer, match.canonical);
+        writer.write(",\n");
+        writer.write("      \"legacyCanonicalRanking\": ");
+        writeRankingJson(writer, match.legacyCanonical);
         writer.write("\n");
         writer.write("    }");
     }
@@ -2595,9 +2682,12 @@ public class Alloy4FunAugmenter {
         private RawAstTree oracleAst;
         private Canonical.Prepared studentCanonical;
         private Canonical.Prepared oracleCanonical;
+        private CanonicalAlloyPipeline.Prepared studentExact;
+        private CanonicalAlloyPipeline.Prepared oracleExact;
         private int levenshteinSize;
         private int rawAstSize;
         private int canonicalSize;
+        private int legacyCanonicalSize;
         private boolean astIdenticalStudentOracle;
         private String contextFingerprint;
         private String oracleAstFingerprint;
@@ -2629,6 +2719,18 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static final class PreparedPair {
+        private final Canonical.Prepared legacy;
+        private final CanonicalAlloyPipeline.Prepared exact;
+
+        private PreparedPair(
+                Canonical.Prepared legacy,
+                CanonicalAlloyPipeline.Prepared exact) {
+            this.legacy = legacy;
+            this.exact = exact;
+        }
+    }
+
     private static class QuestionGroup {
         private final String questionSet;
         private final String invariantId;
@@ -2651,8 +2753,10 @@ public class Alloy4FunAugmenter {
                 releaseOracleRepresentations();
                 return;
             }
-            if (oracleSource.oracleCanonical == null) {
-                oracleSource.oracleCanonical = loadCanonicalQuietly(oracleSource, true, verbose);
+            if (oracleSource.oracleCanonical == null || oracleSource.oracleExact == null) {
+                PreparedPair prepared = loadPreparedQuietly(oracleSource, true, verbose);
+                oracleSource.oracleCanonical = prepared.legacy;
+                oracleSource.oracleExact = prepared.exact;
             }
             Reference oracle = new Reference(
                     invariantId + "_oracle",
@@ -2660,6 +2764,7 @@ public class Alloy4FunAugmenter {
                     oracleSource.oracleBody,
                     oracleSource.oracleAst,
                     oracleSource.oracleCanonical,
+                    oracleSource.oracleExact,
                     oracleSource);
             Set<String> fingerprints = new HashSet<>();
             truthCandidateCount++;
@@ -2673,6 +2778,7 @@ public class Alloy4FunAugmenter {
                         record.studentBody,
                         record.studentAst,
                         record.studentCanonical,
+                        record.studentExact,
                         record);
                 if (addAstDistinctReference(reference, fingerprints)) {
                     index++;
@@ -2695,12 +2801,14 @@ public class Alloy4FunAugmenter {
             for (ModelRecord record : correct) {
                 record.studentAst = null;
                 record.studentCanonical = null;
+                record.studentExact = null;
             }
         }
 
         private void releaseOracleRepresentations() {
             for (ModelRecord record : records) {
                 record.oracleCanonical = null;
+                record.oracleExact = null;
                 record.oracleAst = null;
                 record.oracleBody = null;
             }
@@ -2741,7 +2849,9 @@ public class Alloy4FunAugmenter {
         private final String body;
         private final RawAstTree ast;
         private final Canonical.Prepared canonical;
+        private final CanonicalAlloyPipeline.Prepared exact;
         private final int canonicalSize;
+        private final int legacyCanonicalSize;
         private final ModelRecord source;
 
         private Reference(
@@ -2750,13 +2860,16 @@ public class Alloy4FunAugmenter {
                 String body,
                 RawAstTree ast,
                 Canonical.Prepared canonical,
+                CanonicalAlloyPipeline.Prepared exact,
                 ModelRecord source) {
             this.augmentedName = augmentedName;
             this.kind = kind;
             this.body = body;
             this.ast = ast;
             this.canonical = canonical;
-            this.canonicalSize = Canonical.canonicalFormSize(canonical);
+            this.exact = exact;
+            this.canonicalSize = exact.representationSize();
+            this.legacyCanonicalSize = Canonical.canonicalFormSize(canonical);
             this.source = source;
         }
     }
@@ -2767,18 +2880,21 @@ public class Alloy4FunAugmenter {
         private final Reference right;
         private final int rawAstDistance;
         private final int canonicalDistance;
+        private final int legacyCanonicalDistance;
 
         private CorrectPoolPair(
                 QuestionGroup group,
                 Reference left,
                 Reference right,
                 int rawAstDistance,
-                int canonicalDistance) {
+                int canonicalDistance,
+                int legacyCanonicalDistance) {
             this.group = group;
             this.left = left;
             this.right = right;
             this.rawAstDistance = rawAstDistance;
             this.canonicalDistance = canonicalDistance;
+            this.legacyCanonicalDistance = legacyCanonicalDistance;
         }
     }
 
@@ -2860,6 +2976,7 @@ public class Alloy4FunAugmenter {
         private final Nearest levenshtein;
         private final Nearest rawAst;
         private final Nearest canonical;
+        private final Nearest legacyCanonical;
         private int rewardPoolSize;
         private double candidateReward;
         private double rewardError;
@@ -2871,6 +2988,7 @@ public class Alloy4FunAugmenter {
             this.levenshtein = new Nearest();
             this.rawAst = new Nearest();
             this.canonical = new Nearest();
+            this.legacyCanonical = new Nearest();
         }
 
         private IncorrectMatch(ModelRecord record, IncorrectMatch template) {
@@ -2878,12 +2996,14 @@ public class Alloy4FunAugmenter {
             this.levenshtein = template.levenshtein;
             this.rawAst = template.rawAst;
             this.canonical = template.canonical;
+            this.legacyCanonical = template.legacyCanonical;
         }
 
         private void sortRankings() {
             levenshtein.sort();
             rawAst.sort();
             canonical.sort();
+            legacyCanonical.sort();
         }
     }
 
