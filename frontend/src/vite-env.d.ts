@@ -9,3 +9,9 @@ interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
 
+interface Window {
+  __ALLOY_EGRAPH_CONFIG__?: {
+    analysisApiBaseUrl?: string;
+    useMockApi?: boolean;
+  };
+}

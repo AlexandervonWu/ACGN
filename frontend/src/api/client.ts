@@ -17,10 +17,9 @@ import {
   mockHealthCheck,
   mockInspectModel,
 } from "../mocks/api";
+import { analysisApiBaseUrl, useMockApi } from "./config";
 
-const configuredBaseUrl = import.meta.env.VITE_ANALYSIS_API_BASE_URL?.trim();
-export const useMockApi = import.meta.env.VITE_USE_MOCK_API !== "false";
-export const analysisApiBaseUrl = configuredBaseUrl?.replace(/\/$/, "") ?? "";
+export { analysisApiBaseUrl, useMockApi } from "./config";
 
 export class AnalysisApiError extends Error {
   readonly kind: ApiErrorKind;
@@ -40,7 +39,7 @@ function requireBaseUrl(): string {
   if (!analysisApiBaseUrl) {
     throw new AnalysisApiError(
       "configuration",
-      "VITE_ANALYSIS_API_BASE_URL is required when mock mode is disabled.",
+      "Configure analysisApiBaseUrl in runtime-config.js or provide VITE_ANALYSIS_API_BASE_URL.",
     );
   }
   return analysisApiBaseUrl;

@@ -636,9 +636,9 @@ npm run build
 
 The production output is `frontend/dist/`. It includes an IIS 10-compatible
 `web.config` for SPA routing and can be copied directly into an IIS site or
-application. Set `VITE_USE_MOCK_API=false` and
-`VITE_ANALYSIS_API_BASE_URL=https://analysis.example.org` before building to
-connect it to the Java analysis API. See the
+application. Live same-origin API mode is the default. A deployment can edit
+`frontend/dist/runtime-config.js` to select a separate Java analysis API or
+explicitly enable the bundled mock examples without rebuilding. See the
 [`frontend deployment guide`](frontend/README.md) for endpoint contracts,
 subpath hosting, security headers, and troubleshooting.
 

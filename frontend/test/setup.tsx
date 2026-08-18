@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
+vi.stubEnv("VITE_USE_MOCK_API", "true");
+
 class ResizeObserverStub {
   observe() {}
   unobserve() {}
@@ -94,4 +96,3 @@ vi.mock("@xyflow/react", () => ({
     setCenter: vi.fn(async () => undefined),
   }),
 }));
-
