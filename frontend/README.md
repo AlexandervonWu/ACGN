@@ -11,6 +11,7 @@ Static React application                 Analysis service
 ----------------------------------       -------------------------------
 Monaco Alloy editor                 POST /api/v1/model/inspect
 Callable and stage navigation       POST /api/v1/egraph/analyze
+Two-callable repair comparison      POST /api/v1/egraph/compare
 React Flow e-class graph            GET  /api/v1/health
 Inspector and virtualized trace          Alloy/Java semantic pipeline
 Zod boundary validation             <--- JSON Visualization IR v1.x
@@ -192,6 +193,25 @@ The detailed executable contract is in [`src/api/schema.ts`](src/api/schema.ts).
 
 The included Java analysis service translates typed e-classes, typed ports, slots, and sequence/bag/set container laws into this IR. The frontend does not accept serialized Java objects and does not infer Alloy semantics.
 
+### Compare callables
+
+```http
+POST /api/v1/egraph/compare
+Content-Type: application/json
+```
+
+```json
+{
+  "model": "sig User {} pred p { some User } pred q { no User }",
+  "leftCallable": { "name": "p", "kind": "predicate" },
+  "rightCallable": { "name": "q", "kind": "predicate" }
+}
+```
+
+The response contains both canonical operands, the total repair distance, temporal/quantifier/matrix components, and an ordered `operations` array. Every operation has a component, kind, path, cost, and readable summary; unit operations may also include explicit `source` and `target` terms. Operation costs must sum to the total distance. When the certified minimum and the readable Fast Rewrite edit decomposition agree, the service emits unit operations. Otherwise it emits a component-cost aggregate rather than presenting an uncertified edit path. The `exactForStoredOrbits` field distinguishes exact stored-orbit search from a bounded orbit search.
+
+The executable response contract is `CallableComparisonSchema` in [`src/api/schema.ts`](src/api/schema.ts). It also enforces that certified equality is exactly the zero-distance kernel.
+
 ## CORS
 
 For a frontend at `https://egraph.example.org` and a backend at `https://analysis.example.org`, the backend should allow:
@@ -270,7 +290,7 @@ javac -version
 From the repository on a development or build machine:
 
 ```powershell
-Set-Location C:\src\ACGN\frontend
+Set-Location .\frontend
 npm ci
 npm test
 npm run build
@@ -319,7 +339,7 @@ window.__ALLOY_EGRAPH_CONFIG__ = {
 };
 ```
 
-An empty base URL means the page origin. The client appends `/api/v1/health`, `/api/v1/model/inspect`, and `/api/v1/egraph/analyze`.
+An empty base URL means the page origin. The client appends `/api/v1/health`, `/api/v1/model/inspect`, `/api/v1/egraph/analyze`, and `/api/v1/egraph/compare`.
 
 For a separate API hostname:
 
@@ -355,27 +375,26 @@ On Linux, the repository helper compiles and starts the service:
   --workers 8
 ```
 
-On Windows PowerShell, compile with a Java argument file to avoid command-line length limits:
+On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../scripts/run_visualization_server.ps1) launcher from the repository root. It locates the repository from its own path, validates the JDK, creates a UTF-8 response file for `javac`, compiles the server, and starts it with a Windows classpath:
 
 ```powershell
-$Repo = (Resolve-Path "C:\src\ACGN").Path
-$Build = Join-Path $Repo "build\visualization-server"
-$Sources = Join-Path $Build "sources.txt"
+.\scripts\run_visualization_server.ps1 `
+  -BindAddress 127.0.0.1 `
+  -Port 8080 `
+  -AllowOrigin https://egraph.example.org `
+  -Workers 8
+```
 
-Remove-Item $Build -Recurse -Force -ErrorAction SilentlyContinue
-New-Item -ItemType Directory -Force $Build | Out-Null
-Get-ChildItem (Join-Path $Repo "src") -Recurse -Filter *.java |
-  ForEach-Object { '"' + $_.FullName + '"' } |
-  Set-Content -Encoding ascii $Sources
+Run a compile-only check before configuring a service:
 
-& javac --release 17 -cp "${Repo}\lib\*" -d $Build "@$Sources"
-& java --add-modules jdk.httpserver `
-  -cp "${Build};${Repo}\lib\*" `
-  is.fivefivefive.CanDis.VisualizationServer `
-  --bind 127.0.0.1 `
-  --port 8080 `
-  --allow-origin https://egraph.example.org `
-  --workers 8
+```powershell
+.\scripts\run_visualization_server.ps1 -CompileOnly
+```
+
+The script accepts an optional `-BuildDirectory`. Relative build paths are resolved from the repository root. If Windows execution policy blocks repository scripts, permit only this process and rerun it:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
 Run the Java command under a Windows service wrapper or another supervised service mechanism for production. Capture standard output and error for diagnostics, configure automatic restart, and use an account with read access to the compiled classes and `lib` directory. Keep `--bind 127.0.0.1` when IIS proxies locally. If the API is on another host, place it behind HTTPS and restrict its listening port with the firewall.
@@ -486,6 +505,7 @@ JavaScript must be permitted by the site's content-security policy. Monaco creat
 
 - Use the file-open icon in **Source** to load a local `.als` file. The browser reads its text locally and sends only that source text to the configured analysis service.
 - Choose any discovered predicate or function from the **Target** selector, then use **Analyze** or `Ctrl/Cmd+Enter`.
+- Choose a second predicate or function under **Compare**, then use **Compare distance**. The trace area becomes a repair view with temporal, quantifier, and matrix costs plus visual source-to-target operations; close it to restore the trace.
 - Click an e-class to inspect class-level type, support, alternatives, provenance, and invariants.
 - Click an e-node row for exact children, slots, container semantics, source, and certificates.
 - Shift-click two members of one e-class to request the included equivalence explanation.
@@ -507,7 +527,7 @@ Certificate `kind` values are intentionally open. Unknown certificates render as
 npm test
 ```
 
-The suite covers schema fixtures and corrupt data, root reachability, depth bounding, class collapsing, source-range conversion, persistent slot selection, unknown certificate fallback, and a complete mock workflow from model inspection through source-to-graph navigation.
+The suite covers schema fixtures and corrupt data, comparison-cost invariants, distance-operation rendering, root reachability, depth bounding, class collapsing, source-range conversion, persistent slot selection, unknown certificate fallback, and complete mock workflows for graph analysis and callable comparison.
 
 ```bash
 npm run build

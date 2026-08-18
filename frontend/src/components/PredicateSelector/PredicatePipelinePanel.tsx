@@ -1,4 +1,4 @@
-import { GitBranch, LoaderCircle } from "lucide-react";
+import { GitBranch, GitCompareArrows, LoaderCircle } from "lucide-react";
 import type {
   Diagnostic,
   EGraphAnalysis,
@@ -15,10 +15,15 @@ interface PredicatePipelinePanelProps {
   inspectionError?: string;
   analysis?: EGraphAnalysis;
   selectedPredicate?: string;
+  comparisonTarget?: string;
   currentStageId?: string;
   exampleName: ExampleName;
   inspecting: boolean;
+  comparing: boolean;
+  canCompare: boolean;
   onSelectPredicate: (name: string) => void;
+  onSelectComparisonTarget: (name: string) => void;
+  onCompare: () => void;
   onSelectStage: (stage: NormalizationStage) => void;
   onSelectExample: (name: ExampleName) => void;
 }
@@ -28,10 +33,15 @@ export function PredicatePipelinePanel({
   inspectionError,
   analysis,
   selectedPredicate,
+  comparisonTarget,
   currentStageId,
   exampleName,
   inspecting,
+  comparing,
+  canCompare,
   onSelectPredicate,
+  onSelectComparisonTarget,
+  onCompare,
   onSelectStage,
   onSelectExample,
 }: PredicatePipelinePanelProps) {
@@ -85,6 +95,47 @@ export function PredicatePipelinePanel({
               </optgroup>
             )}
           </select>
+        </label>
+        <label>
+          <span>Compare</span>
+          <div className="comparison-control">
+            <select
+              aria-label="Callable to compare with"
+              disabled={inspecting || callables.length === 0}
+              value={comparisonTarget ?? ""}
+              onChange={(event) => onSelectComparisonTarget(event.target.value)}
+            >
+              <option value="">Choose a predicate or function</option>
+              {predicates.length > 0 && (
+                <optgroup label="Predicates">
+                  {predicates.map((callable) => (
+                    <option key={`compare-predicate:${callable.name}`} value={callable.name}>
+                      {callable.name} - pred
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {functions.length > 0 && (
+                <optgroup label="Functions">
+                  {functions.map((callable) => (
+                    <option key={`compare-function:${callable.name}`} value={callable.name}>
+                      {callable.name} - {"returnType" in callable ? callable.returnType ?? "fun" : "fun"}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+            </select>
+            <button
+              type="button"
+              className="icon-button comparison-command"
+              aria-label="Compare callables"
+              title="Compare callables"
+              disabled={!canCompare}
+              onClick={onCompare}
+            >
+              {comparing ? <LoaderCircle className="spin" size={14} /> : <GitCompareArrows size={14} />}
+            </button>
+          </div>
         </label>
         {inspecting && <LoaderCircle className="spin" size={15} aria-label="Inspecting model" />}
       </div>

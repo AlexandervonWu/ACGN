@@ -4,16 +4,19 @@ import { AlertOctagon, X } from "lucide-react";
 import {
   AnalysisApiError,
   analyzeCallable,
+  compareCallables,
   healthCheck,
   inspectModel,
 } from "../api/client";
 import type {
   CallableReference,
+  CallableComparison,
   EGraphAnalysis,
   NormalizationStage,
   SourceMapping,
 } from "../api/types";
 import { GraphEmptyState } from "../components/Graph/GraphEmptyState";
+import { DistancePanel } from "../components/Distance/DistancePanel";
 import { Header, type BackendState } from "../components/Header/Header";
 import { Inspector } from "../components/Inspector/Inspector";
 import { InspectorEmptyState } from "../components/Inspector/InspectorEmptyState";
@@ -73,6 +76,8 @@ export function App() {
   const [model, setModel] = useState(examples[initialExample]);
   const [analysis, setAnalysis] = useState<EGraphAnalysis>();
   const [analysisOrigin, setAnalysisOrigin] = useState<AnalysisOrigin>();
+  const [comparisonTarget, setComparisonTarget] = useState<string>();
+  const [comparison, setComparison] = useState<CallableComparison>();
   const [analysisError, setAnalysisError] = useState<unknown>();
   const abortRef = useRef<AbortController>();
   const queryClient = useQueryClient();
@@ -124,6 +129,14 @@ export function App() {
     }
   }, [inspection.data, selectedPredicate, setSelectedPredicate]);
 
+  useEffect(() => {
+    const callables = inspection.data?.callables ?? [];
+    if (comparisonTarget && !callables.some((callable) => callable.name === comparisonTarget)) {
+      setComparisonTarget(undefined);
+      setComparison(undefined);
+    }
+  }, [comparisonTarget, inspection.data]);
+
   const analysisMutation = useMutation({
     mutationFn: async ({ source, callable }: { source: string; callable: CallableReference }) => {
       abortRef.current = new AbortController();
@@ -131,6 +144,7 @@ export function App() {
     },
     onSuccess: (result, variables) => {
       setAnalysis(result);
+      setComparison(undefined);
       setAnalysisOrigin({ model: variables.source, callable: variables.callable });
       setAnalysisError(undefined);
       resetForAnalysis(result.graph.rootEClassId, result.stages[0]?.id);
@@ -146,14 +160,58 @@ export function App() {
     },
   });
 
+  const comparisonMutation = useMutation({
+    mutationFn: async ({
+      source,
+      left,
+      right,
+    }: {
+      source: string;
+      left: CallableReference;
+      right: CallableReference;
+    }) => {
+      abortRef.current = new AbortController();
+      return compareCallables(source, left, right, abortRef.current.signal);
+    },
+    onSuccess: (result) => {
+      setComparison(result);
+      setAnalysisError(undefined);
+    },
+    onError: (error) => {
+      if (!(error instanceof AnalysisApiError && error.kind === "cancelled")) {
+        setAnalysisError(error);
+        void queryClient.invalidateQueries({ queryKey: ["analysis-backend-health"] });
+      }
+    },
+    onSettled: () => {
+      abortRef.current = undefined;
+    },
+  });
+
+  const isBusy = analysisMutation.isPending || comparisonMutation.isPending;
+
   const runAnalysis = () => {
-    if (!selectedPredicate || analysisMutation.isPending) return;
+    if (!selectedPredicate || isBusy) return;
     const callable = inspection.data?.callables.find((candidate) => candidate.name === selectedPredicate);
     if (!callable) return;
     setAnalysisError(undefined);
     analysisMutation.mutate({
       source: model,
       callable: { name: callable.name, kind: callable.kind },
+    });
+  };
+
+  const runComparison = () => {
+    if (!selectedPredicate || !comparisonTarget || isBusy) return;
+    const callables = inspection.data?.callables ?? [];
+    const left = callables.find((candidate) => candidate.name === selectedPredicate);
+    const right = callables.find((candidate) => candidate.name === comparisonTarget);
+    if (!left || !right) return;
+    setAnalysisError(undefined);
+    comparisonMutation.mutate({
+      source: model,
+      left: { name: left.name, kind: left.kind },
+      right: { name: right.name, kind: right.kind },
     });
   };
 
@@ -237,13 +295,30 @@ export function App() {
     setExampleName(name);
     setModel(examples[name]);
     setSelectedPredicate(undefined);
+    setComparisonTarget(undefined);
+    setComparison(undefined);
     setAnalysisError(undefined);
     const nextUrl = new URL(window.location.href);
     nextUrl.searchParams.set("example", name);
     window.history.replaceState({}, "", nextUrl);
   };
 
-  const backendState: BackendState = analysisMutation.isPending
+  const changeModel = (source: string) => {
+    setModel(source);
+    setComparison(undefined);
+  };
+
+  const selectPrimaryCallable = (name: string) => {
+    setSelectedPredicate(name || undefined);
+    setComparison(undefined);
+  };
+
+  const selectComparisonCallable = (name: string) => {
+    setComparisonTarget(name || undefined);
+    setComparison(undefined);
+  };
+
+  const backendState: BackendState = isBusy
     ? "analyzing"
     : health.isPending ? "checking" : health.isSuccess ? "connected" : "unreachable";
   const parseHasErrors = inspection.data?.parseDiagnostics.some((diagnostic) => diagnostic.severity === "error") ?? false;
@@ -255,7 +330,7 @@ export function App() {
     <div className="app-root">
       <Header
         backendState={backendState}
-        canAnalyze={Boolean(selectedPredicate) && !parseHasErrors && !analysisMutation.isPending}
+        canAnalyze={Boolean(selectedPredicate) && !parseHasErrors && !isBusy}
         analysis={analysis}
         onAnalyze={runAnalysis}
         onCancel={() => abortRef.current?.abort()}
@@ -288,7 +363,7 @@ export function App() {
             slotEntityIds={slotEntityIds}
             ambiguousMappingIds={ambiguousMappingIds}
             inspecting={inspection.isFetching}
-            onChange={setModel}
+            onChange={changeModel}
             onAnalyze={runAnalysis}
             onMappingsSelected={mappingsSelected}
             onMappingSelected={activateMapping}
@@ -302,14 +377,21 @@ export function App() {
           inspectionError={inspection.error ? describeError(inspection.error).message : undefined}
           analysis={analysis}
           selectedPredicate={selectedPredicate}
+          comparisonTarget={comparisonTarget}
           currentStageId={currentStageId}
           exampleName={exampleName}
           inspecting={inspection.isFetching}
-          onSelectPredicate={setSelectedPredicate}
+          comparing={comparisonMutation.isPending}
+          canCompare={Boolean(selectedPredicate && comparisonTarget) && !parseHasErrors && !isBusy}
+          onSelectPredicate={selectPrimaryCallable}
+          onSelectComparisonTarget={selectComparisonCallable}
+          onCompare={runComparison}
           onSelectStage={selectStage}
           onSelectExample={selectExample}
         />
-        <TracePanel trace={analysis?.trace} graph={analysis?.graph} />
+        {comparison
+          ? <DistancePanel comparison={comparison} onClose={() => setComparison(undefined)} />
+          : <TracePanel trace={analysis?.trace} graph={analysis?.graph} />}
         {analysis ? <Inspector analysis={analysis} /> : <InspectorEmptyState />}
       </main>
     </div>

@@ -54,6 +54,18 @@ public final class VisualizationServer {
             return new Response(200, service.analyze(
                     request.optString("model", ""), callable.name, callable.kind));
         }));
+        server.createContext("/api/v1/egraph/compare", new Endpoint(configuration, exchange -> {
+            requireMethod(exchange, "POST");
+            JSONObject request = requestJson(exchange);
+            CallableRequest left = CallableRequest.from(request, "leftCallable");
+            CallableRequest right = CallableRequest.from(request, "rightCallable");
+            return new Response(200, service.compare(
+                    request.optString("model", ""),
+                    left.name,
+                    left.kind,
+                    right.name,
+                    right.kind));
+        }));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             server.stop(1);
             executor.shutdownNow();
@@ -203,6 +215,18 @@ public final class VisualizationServer {
                         "Callable kind must be predicate or function.");
             }
             return new CallableRequest(name, kind);
+        }
+
+        private static CallableRequest from(JSONObject request, String field) {
+            JSONObject callable = request.optJSONObject(field);
+            if (callable == null) {
+                throw new HttpFailure(
+                        400,
+                        "callable_required",
+                        field + " must identify a predicate or function.");
+            }
+            JSONObject wrapper = new JSONObject().put("callable", callable);
+            return from(wrapper);
         }
     }
 

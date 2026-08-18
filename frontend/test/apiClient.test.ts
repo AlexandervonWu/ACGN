@@ -63,4 +63,49 @@ describe("live API response boundary", () => {
       predicate: "neighbors",
     });
   });
+
+  it("sends both typed callables to the certified comparison endpoint", async () => {
+    const response = {
+      schemaVersion: "1.0",
+      model: { name: "submitted.als" },
+      left: {
+        name: "neighbors", kind: "function", originalText: "User", normalizedText: "User",
+        canonicalText: "User", digest: "left", representationSize: 1,
+      },
+      right: {
+        name: "connected", kind: "predicate", originalText: "some User", normalizedText: "some User",
+        canonicalText: "SOME(User)", digest: "right", representationSize: 2,
+      },
+      metricVersion: "certified-repair-v1",
+      certifiedEquivalent: false,
+      operationDetail: "mixed",
+      distance: {
+        total: 1, temporal: 0, quantifier: 0, matrix: 1,
+        exactForStoredOrbits: true, binderAlignments: 1,
+      },
+      operations: [{
+        id: "op-0", index: 0, component: "matrix", kind: "aggregate", path: "matrix",
+        summary: "Minimum certified matrix repair", cost: 1, detail: "aggregate",
+      }],
+    };
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify(response), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { compareCallables } = await import("../src/api/client");
+
+    await compareCallables(
+      "fun neighbors: univ { univ } pred connected { some univ }",
+      { name: "neighbors", kind: "function" },
+      { name: "connected", kind: "predicate" },
+    );
+
+    const [url, init] = fetchMock.mock.calls[0]!;
+    expect(String(url)).toBe("https://analysis.example.test/api/v1/egraph/compare");
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      leftCallable: { name: "neighbors", kind: "function" },
+      rightCallable: { name: "connected", kind: "predicate" },
+    });
+  });
 });

@@ -372,6 +372,109 @@ export const EGraphAnalysisSchema = z.object({
   });
 });
 
+export const DistanceComponentSchema = z.enum([
+  "temporal",
+  "quantifier",
+  "matrix",
+  "equivalence",
+]);
+
+export const DistanceOperationSchema = z.object({
+  id,
+  index: z.number().int().nonnegative(),
+  component: DistanceComponentSchema,
+  kind: z.enum(["insert", "delete", "replace", "modify", "aggregate", "no-op"]),
+  path: z.string(),
+  summary: z.string(),
+  source: z.string().optional(),
+  target: z.string().optional(),
+  cost: z.number().int().nonnegative(),
+  detail: z.enum(["unit", "aggregate"]),
+});
+
+export const ComparisonCallableSchema = z.object({
+  name: id,
+  kind: CallableKindSchema,
+  returnType: z.string().optional(),
+  originalText: z.string(),
+  normalizedText: z.string(),
+  canonicalText: z.string(),
+  digest: id,
+  representationSize: z.number().int().nonnegative(),
+});
+
+export const DistanceBreakdownSchema = z.object({
+  total: z.number().int().nonnegative(),
+  temporal: z.number().int().nonnegative(),
+  quantifier: z.number().int().nonnegative(),
+  matrix: z.number().int().nonnegative(),
+  exactForStoredOrbits: z.boolean(),
+  binderAlignments: z.number().int().nonnegative(),
+});
+
+export const DistanceStatisticsSchema = z.object({
+  parseMs: z.number().nonnegative().optional(),
+  preparationMs: z.number().nonnegative().optional(),
+  distanceMs: z.number().nonnegative().optional(),
+  totalMs: z.number().nonnegative().optional(),
+});
+
+export const CallableComparisonSchema = z.object({
+  schemaVersion: z.string().regex(/^\d+\.\d+(?:\.\d+)?$/),
+  model: ModelMetadataSchema,
+  left: ComparisonCallableSchema,
+  right: ComparisonCallableSchema,
+  metricVersion: id,
+  certifiedEquivalent: z.boolean(),
+  operationDetail: z.enum(["unit", "mixed"]),
+  distance: DistanceBreakdownSchema,
+  operations: z.array(DistanceOperationSchema),
+  statistics: DistanceStatisticsSchema.optional(),
+}).superRefine((comparison, context) => {
+  const componentTotal = comparison.distance.temporal
+    + comparison.distance.quantifier
+    + comparison.distance.matrix;
+  if (componentTotal !== comparison.distance.total) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["distance", "total"],
+      message: `Distance components sum to ${componentTotal}, not ${comparison.distance.total}.`,
+    });
+  }
+
+  const operationTotal = comparison.operations.reduce(
+    (sum, operation) => sum + operation.cost,
+    0,
+  );
+  if (operationTotal !== comparison.distance.total) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["operations"],
+      message: `Operation costs sum to ${operationTotal}, not ${comparison.distance.total}.`,
+    });
+  }
+
+  if (comparison.certifiedEquivalent !== (comparison.distance.total === 0)) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["certifiedEquivalent"],
+      message: "Certified equivalence must coincide with the zero-distance kernel.",
+    });
+  }
+
+  const operationIds = new Set<string>();
+  comparison.operations.forEach((operation, index) => {
+    if (operationIds.has(operation.id)) {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["operations", index, "id"],
+        message: `Duplicate operation ID ${operation.id}.`,
+      });
+    }
+    operationIds.add(operation.id);
+  });
+});
+
 export const HealthStatusSchema = z.object({
   status: z.enum(["ok", "degraded"]),
   version: z.string().optional(),

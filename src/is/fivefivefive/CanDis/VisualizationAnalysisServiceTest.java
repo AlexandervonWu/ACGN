@@ -25,6 +25,10 @@ public final class VisualizationAnalysisServiceTest {
 
         assertAnalysis(service.analyze(MODEL, "neighbors", "function"), "neighbors", "function");
         assertAnalysis(service.analyze(MODEL, "hasNeighbor", "predicate"), "hasNeighbor", "predicate");
+        assertComparison(service.compare(
+                MODEL, "neighbors", "function", "hasNeighbor", "predicate"), false);
+        assertComparison(service.compare(
+                MODEL, "neighbors", "function", "neighbors", "function"), true);
         System.out.println("VisualizationAnalysisServiceTest passed");
     }
 
@@ -59,5 +63,31 @@ public final class VisualizationAnalysisServiceTest {
             }
         }
         throw new AssertionError("Visualization root " + root + " is absent for " + name);
+    }
+
+    private static void assertComparison(JSONObject comparison, boolean equivalent) {
+        if (!comparison.getJSONObject("left").has("canonicalText")
+                || !comparison.getJSONObject("right").has("canonicalText")) {
+            throw new AssertionError("Comparison omitted callable representations: " + comparison);
+        }
+        JSONObject distance = comparison.getJSONObject("distance");
+        int total = distance.getInt("total");
+        if (total != distance.getInt("temporal")
+                        + distance.getInt("quantifier")
+                        + distance.getInt("matrix")) {
+            throw new AssertionError("Distance components do not sum to total: " + distance);
+        }
+        int operationCost = 0;
+        JSONArray operations = comparison.getJSONArray("operations");
+        for (int index = 0; index < operations.length(); index++) {
+            operationCost += operations.getJSONObject(index).getInt("cost");
+        }
+        if (operationCost != total) {
+            throw new AssertionError("Operation costs do not witness the distance: " + comparison);
+        }
+        if (comparison.getBoolean("certifiedEquivalent") != equivalent
+                || (total == 0) != equivalent) {
+            throw new AssertionError("Certified zero kernel mismatch: " + comparison);
+        }
     }
 }

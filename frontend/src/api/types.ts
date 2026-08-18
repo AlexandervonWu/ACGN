@@ -1,6 +1,7 @@
 import type { z } from "zod";
 import type {
   AnalysisStatisticsSchema,
+  CallableComparisonSchema,
   CallableKindSchema,
   CallableMetadataSchema,
   CallableSummarySchema,
@@ -10,6 +11,10 @@ import type {
   ChildRefSchema,
   ContainerMetadataSchema,
   DiagnosticSchema,
+  DistanceBreakdownSchema,
+  DistanceComponentSchema,
+  DistanceOperationSchema,
+  DistanceStatisticsSchema,
   EClassSchema,
   EGraphAnalysisSchema,
   EGraphSchema,
@@ -37,6 +42,7 @@ import type {
 export type SourcePosition = z.infer<typeof SourcePositionSchema>;
 export type SourceRange = z.infer<typeof SourceRangeSchema>;
 export type Diagnostic = z.infer<typeof DiagnosticSchema>;
+export type CallableComparison = z.infer<typeof CallableComparisonSchema>;
 export type CallableKind = z.infer<typeof CallableKindSchema>;
 export type CallableSummary = z.infer<typeof CallableSummarySchema>;
 export type PredicateSummary = z.infer<typeof PredicateSummarySchema>;
@@ -64,6 +70,10 @@ export type ModelMetadata = z.infer<typeof ModelMetadataSchema>;
 export type PredicateMetadata = z.infer<typeof PredicateMetadataSchema>;
 export type CallableMetadata = z.infer<typeof CallableMetadataSchema>;
 export type AnalysisStatistics = z.infer<typeof AnalysisStatisticsSchema>;
+export type DistanceComponent = z.infer<typeof DistanceComponentSchema>;
+export type DistanceOperation = z.infer<typeof DistanceOperationSchema>;
+export type DistanceBreakdown = z.infer<typeof DistanceBreakdownSchema>;
+export type DistanceStatistics = z.infer<typeof DistanceStatisticsSchema>;
 export type EGraphAnalysis = z.infer<typeof EGraphAnalysisSchema>;
 export type HealthStatus = z.infer<typeof HealthStatusSchema>;
 

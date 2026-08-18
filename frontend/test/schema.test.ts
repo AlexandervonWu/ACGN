@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { EGraphAnalysisSchema, ModelInspectionSchema } from "../src/api/schema";
+import {
+  CallableComparisonSchema,
+  EGraphAnalysisSchema,
+  ModelInspectionSchema,
+} from "../src/api/schema";
 import aci from "../src/mocks/aci.json";
 import alpha from "../src/mocks/alpha.json";
 import callables from "../src/mocks/callables.json";
@@ -8,6 +12,50 @@ import simple from "../src/mocks/simple.json";
 import slots from "../src/mocks/slots.json";
 
 describe("Visualization IR schema", () => {
+  const zeroComparison = {
+    schemaVersion: "1.0",
+    model: { name: "test.als" },
+    left: {
+      name: "p",
+      kind: "predicate",
+      originalText: "some univ",
+      normalizedText: "some univ",
+      canonicalText: "SOME(univ)",
+      digest: "left-digest",
+      representationSize: 2,
+    },
+    right: {
+      name: "q",
+      kind: "predicate",
+      originalText: "some univ",
+      normalizedText: "some univ",
+      canonicalText: "SOME(univ)",
+      digest: "right-digest",
+      representationSize: 2,
+    },
+    metricVersion: "certified-repair-v1",
+    certifiedEquivalent: true,
+    operationDetail: "unit",
+    distance: {
+      total: 0,
+      temporal: 0,
+      quantifier: 0,
+      matrix: 0,
+      exactForStoredOrbits: true,
+      binderAlignments: 1,
+    },
+    operations: [{
+      id: "op-0",
+      index: 0,
+      component: "equivalence",
+      kind: "no-op",
+      path: "quotient",
+      summary: "No repair required",
+      cost: 0,
+      detail: "unit",
+    }],
+  } as const;
+
   it("accepts mixed predicates and functions during model inspection", () => {
     const parsed = ModelInspectionSchema.parse({
       callables: [
@@ -57,5 +105,19 @@ describe("Visualization IR schema", () => {
     if (!parsed.success) {
       expect(parsed.error.issues.some((issue) => issue.message.includes("missing-class"))).toBe(true);
     }
+  });
+
+  it("validates a certified callable comparison", () => {
+    expect(CallableComparisonSchema.safeParse(zeroComparison).success).toBe(true);
+  });
+
+  it("rejects comparison operations that do not witness the distance", () => {
+    const corrupt = structuredClone(zeroComparison) as Record<string, unknown>;
+    corrupt.distance = {
+      ...(corrupt.distance as object),
+      total: 1,
+      matrix: 1,
+    };
+    expect(CallableComparisonSchema.safeParse(corrupt).success).toBe(false);
   });
 });

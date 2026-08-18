@@ -1,5 +1,6 @@
 import type { TypeOf, ZodTypeAny } from "zod";
 import {
+  CallableComparisonSchema,
   EGraphAnalysisSchema,
   HealthStatusSchema,
   ModelInspectionSchema,
@@ -8,12 +9,14 @@ import type {
   AnalysisOptions,
   ApiErrorKind,
   CallableReference,
+  CallableComparison,
   EGraphAnalysis,
   HealthStatus,
   ModelInspection,
 } from "./types";
 import {
   mockAnalyzePredicate,
+  mockCompareCallables,
   mockHealthCheck,
   mockInspectModel,
 } from "../mocks/api";
@@ -228,6 +231,51 @@ export async function analyzeCallable(
       );
   }
   return requireSupportedSchema(analysis);
+}
+
+export async function compareCallables(
+  model: string,
+  leftCallable: CallableReference,
+  rightCallable: CallableReference,
+  signal?: AbortSignal,
+): Promise<CallableComparison> {
+  let comparison: CallableComparison;
+  if (useMockApi) {
+    try {
+      comparison = await mockCompareCallables(
+        model,
+        leftCallable,
+        rightCallable,
+        signal,
+      );
+    } catch (error) {
+      if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
+        throw new AnalysisApiError("cancelled", "The comparison request was cancelled.");
+      }
+      throw new AnalysisApiError(
+        "analysis",
+        error instanceof Error ? error.message : "Mock comparison failed.",
+      );
+    }
+  } else {
+    comparison = await request(
+      "/api/v1/egraph/compare",
+      CallableComparisonSchema,
+      {
+        method: "POST",
+        body: JSON.stringify({ model, leftCallable, rightCallable }),
+      },
+      signal,
+    );
+  }
+  const major = Number.parseInt(comparison.schemaVersion.split(".")[0] ?? "", 10);
+  if (major !== 1) {
+    throw new AnalysisApiError(
+      "unsupported-version",
+      `Backend comparison schema ${comparison.schemaVersion} is not supported. Supported: 1.x.`,
+    );
+  }
+  return comparison;
 }
 
 /** Compatibility wrapper for predicate-only integrations. */

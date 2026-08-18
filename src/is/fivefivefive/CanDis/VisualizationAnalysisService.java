@@ -24,6 +24,8 @@ import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.core.CanonicalDistance;
+import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BagPort;
 import is.fivefivefive.CanDis.theory.BindBlockPort;
 import is.fivefivefive.CanDis.theory.BindPort;
@@ -156,6 +158,300 @@ public final class VisualizationAnalysisService {
         return response;
     }
 
+    public JSONObject compare(
+            String source,
+            String leftName,
+            String leftKind,
+            String rightName,
+            String rightKind) {
+        requireModel(source);
+        long totalStarted = System.nanoTime();
+        long phaseStarted = totalStarted;
+        ParsedModel parsed = parse(source);
+        long parseNanos = System.nanoTime() - phaseStarted;
+        CallableDeclaration leftDeclaration = requireCallable(parsed, leftName, leftKind);
+        CallableDeclaration rightDeclaration = requireCallable(parsed, rightName, rightKind);
+
+        phaseStarted = System.nanoTime();
+        Set<String> selected = new HashSet<>();
+        selected.add(leftDeclaration.name);
+        selected.add(rightDeclaration.name);
+        MASGVisitor visitor = focusedVisitor(parsed.model, selected);
+        ComparisonOperand left = comparisonOperand(visitor, leftDeclaration);
+        ComparisonOperand right = comparisonOperand(visitor, rightDeclaration);
+        long preparationNanos = System.nanoTime() - phaseStarted;
+
+        phaseStarted = System.nanoTime();
+        QuotientRepairDistance.Result distance = CanonicalAlloyPipeline.distanceEvaluation(
+                left.certified, right.certified);
+        CanonicalDistance.DistanceBreakdown readableBreakdown =
+                Canonical.distanceBreakdown(left.fast, right.fast);
+        List<String> readableEdits = distance.distance() == 0
+                ? java.util.Collections.singletonList("no-op")
+                : Canonical.edits(left.fast, right.fast);
+        OperationResult operationResult = operations(
+                distance, readableBreakdown, readableEdits);
+        long distanceNanos = System.nanoTime() - phaseStarted;
+
+        return new JSONObject()
+                .put("schemaVersion", SCHEMA_VERSION)
+                .put("model", new JSONObject()
+                        .put("name", "submitted.als")
+                        .put("digest", sha256(source))
+                        .put("sourceLength", source.length()))
+                .put("left", comparisonMetadata(left))
+                .put("right", comparisonMetadata(right))
+                .put("metricVersion", CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION)
+                .put("certifiedEquivalent", left.certified.equivalentTo(right.certified))
+                .put("operationDetail", operationResult.detail)
+                .put("distance", new JSONObject()
+                        .put("total", distance.distance())
+                        .put("temporal", distance.temporalDistance())
+                        .put("quantifier", distance.quantifierDistance())
+                        .put("matrix", distance.matrixDistance())
+                        .put("exactForStoredOrbits", distance.exactForStoredOrbits())
+                        .put("binderAlignments", distance.binderAlignments()))
+                .put("operations", operationResult.operations)
+                .put("statistics", new JSONObject()
+                        .put("parseMs", milliseconds(parseNanos))
+                        .put("preparationMs", milliseconds(preparationNanos))
+                        .put("distanceMs", milliseconds(distanceNanos))
+                        .put("totalMs", milliseconds(System.nanoTime() - totalStarted)));
+    }
+
+    private static CallableDeclaration requireCallable(
+            ParsedModel parsed,
+            String name,
+            String requestedKind) {
+        CallableDeclaration declaration = parsed.find(name, requestedKind);
+        if (declaration == null) {
+            throw new AnalysisException(
+                    404,
+                    "callable_not_found",
+                    "No " + normalizedKind(requestedKind) + " named '" + name
+                            + "' exists in the model.");
+        }
+        return declaration;
+    }
+
+    private static ComparisonOperand comparisonOperand(
+            MASGVisitor visitor,
+            CallableDeclaration declaration) {
+        Integer graphId = visitor.getForestId(declaration.name);
+        Multigraph graph = graphId == null ? null : visitor.getForest().get(graphId);
+        if (graph == null) {
+            throw new AnalysisException(
+                    500,
+                    "analysis_error",
+                    "MASG construction produced no graph for '" + declaration.name + "'.");
+        }
+        Canonical.Prepared fast = Canonical.prepare(graph);
+        return new ComparisonOperand(
+                declaration,
+                fast,
+                CanonicalAlloyPipeline.prepare(fast));
+    }
+
+    private static JSONObject comparisonMetadata(ComparisonOperand operand) {
+        JSONObject result = new JSONObject()
+                .put("name", operand.declaration.name)
+                .put("kind", operand.declaration.kind)
+                .put("originalText", operand.declaration.bodyText())
+                .put("normalizedText", String.join("\n", Canonical.irTemporalFol(operand.fast)))
+                .put("canonicalText", operand.certified.stableForm())
+                .put("digest", operand.certified.digest())
+                .put("representationSize", operand.certified.repairObservationSize());
+        if (operand.declaration.returnType != null) {
+            result.put("returnType", operand.declaration.returnType);
+        }
+        return result;
+    }
+
+    private static OperationResult operations(
+            QuotientRepairDistance.Result exact,
+            CanonicalDistance.DistanceBreakdown readable,
+            List<String> readableEdits) {
+        Map<String, List<String>> byComponent = new LinkedHashMap<>();
+        byComponent.put("temporal", new ArrayList<>());
+        byComponent.put("quantifier", new ArrayList<>());
+        byComponent.put("matrix", new ArrayList<>());
+        for (String edit : readableEdits) {
+            if (edit == null || edit.equals("no-op")) {
+                continue;
+            }
+            byComponent.get(operationComponent(edit)).add(edit);
+        }
+
+        JSONArray result = new JSONArray();
+        if (exact.distance() == 0) {
+            result.put(new JSONObject()
+                    .put("id", "op-0")
+                    .put("index", 0)
+                    .put("component", "equivalence")
+                    .put("kind", "no-op")
+                    .put("path", "quotient")
+                    .put("summary", "Certified semantic equality; no repair is required.")
+                    .put("cost", 0)
+                    .put("detail", "unit"));
+            return new OperationResult(result, "unit");
+        }
+
+        boolean allUnit = true;
+        int index = 0;
+        index = appendOperations(
+                result,
+                byComponent.get("temporal"),
+                "temporal",
+                exact.temporalDistance(),
+                readable.temporalDistance(),
+                index);
+        allUnit &= componentHasUnitWitness(
+                byComponent.get("temporal"),
+                exact.temporalDistance(),
+                readable.temporalDistance());
+        index = appendOperations(
+                result,
+                byComponent.get("quantifier"),
+                "quantifier",
+                exact.quantifierDistance(),
+                readable.quantifierDistance(),
+                index);
+        allUnit &= componentHasUnitWitness(
+                byComponent.get("quantifier"),
+                exact.quantifierDistance(),
+                readable.quantifierDistance());
+        appendOperations(
+                result,
+                byComponent.get("matrix"),
+                "matrix",
+                exact.matrixDistance(),
+                readable.matrixDistance(),
+                index);
+        allUnit &= componentHasUnitWitness(
+                byComponent.get("matrix"),
+                exact.matrixDistance(),
+                readable.matrixDistance());
+
+        int represented = 0;
+        for (int operation = 0; operation < result.length(); operation++) {
+            represented = Math.addExact(
+                    represented, result.getJSONObject(operation).getInt("cost"));
+        }
+        if (represented != exact.distance()) {
+            throw new IllegalStateException(
+                    "Visualized operation cost " + represented
+                            + " differs from certified distance " + exact.distance());
+        }
+        return new OperationResult(result, allUnit ? "unit" : "mixed");
+    }
+
+    private static boolean componentHasUnitWitness(
+            List<String> edits,
+            int exactCost,
+            int readableCost) {
+        return exactCost == 0
+                || (exactCost == readableCost && edits.size() == exactCost);
+    }
+
+    private static int appendOperations(
+            JSONArray output,
+            List<String> edits,
+            String component,
+            int exactCost,
+            int readableCost,
+            int startIndex) {
+        if (exactCost == 0) {
+            return startIndex;
+        }
+        int index = startIndex;
+        if (componentHasUnitWitness(edits, exactCost, readableCost)) {
+            for (String edit : edits) {
+                output.put(unitOperation(edit, component, index++));
+            }
+            return index;
+        }
+        output.put(new JSONObject()
+                .put("id", "op-" + index)
+                .put("index", index)
+                .put("component", component)
+                .put("kind", "aggregate")
+                .put("path", component)
+                .put("summary", "Minimum certified " + component
+                        + " repair under admissible alignment")
+                .put("cost", exactCost)
+                .put("detail", "aggregate"));
+        return index + 1;
+    }
+
+    private static JSONObject unitOperation(String edit, String component, int index) {
+        int separator = edit.indexOf(": ");
+        String path = separator < 0 ? component : edit.substring(0, separator);
+        String action = separator < 0 ? edit : edit.substring(separator + 2);
+        String kind = operationKind(action);
+        String body = action.startsWith(kind + " ")
+                ? action.substring(kind.length() + 1) : action;
+        JSONObject result = new JSONObject()
+                .put("id", "op-" + index)
+                .put("index", index)
+                .put("component", component)
+                .put("kind", kind)
+                .put("path", path)
+                .put("summary", edit)
+                .put("cost", 1)
+                .put("detail", "unit");
+        int arrow = body.indexOf(" -> ");
+        if (arrow >= 0) {
+            result.put("source", body.substring(0, arrow))
+                    .put("target", body.substring(arrow + 4));
+        } else if (kind.equals("insert")) {
+            result.put("target", body);
+        } else if (kind.equals("delete")) {
+            result.put("source", body);
+        }
+        return result;
+    }
+
+    private static String operationKind(String action) {
+        for (String kind : List.of("insert", "delete", "replace", "modify")) {
+            if (action.startsWith(kind + " ")) {
+                return kind;
+            }
+        }
+        return "replace";
+    }
+
+    private static String operationComponent(String edit) {
+        if (edit.startsWith("temporal")) {
+            return "temporal";
+        }
+        return edit.contains(".quantifier") ? "quantifier" : "matrix";
+    }
+
+    private static final class ComparisonOperand {
+        private final CallableDeclaration declaration;
+        private final Canonical.Prepared fast;
+        private final CanonicalAlloyPipeline.Prepared certified;
+
+        private ComparisonOperand(
+                CallableDeclaration declaration,
+                Canonical.Prepared fast,
+                CanonicalAlloyPipeline.Prepared certified) {
+            this.declaration = declaration;
+            this.fast = fast;
+            this.certified = certified;
+        }
+    }
+
+    private static final class OperationResult {
+        private final JSONArray operations;
+        private final String detail;
+
+        private OperationResult(JSONArray operations, String detail) {
+            this.operations = operations;
+            this.detail = detail;
+        }
+    }
+
     private static JSONObject callableMetadata(
             CallableDeclaration declaration,
             TypedInvocation root,
@@ -201,7 +497,16 @@ public final class VisualizationAnalysisService {
     }
 
     private static MASGVisitor focusedVisitor(ModelUnit model, String selectedName) {
-        Set<String> callables = callableClosure(model, selectedName);
+        return focusedVisitor(model, java.util.Collections.singleton(selectedName));
+    }
+
+    private static MASGVisitor focusedVisitor(
+            ModelUnit model,
+            Set<String> selectedNames) {
+        Set<String> callables = new HashSet<>();
+        for (String selectedName : selectedNames) {
+            callables.addAll(callableClosure(model, selectedName));
+        }
         MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
         try {
             visitor.visit(model, null);

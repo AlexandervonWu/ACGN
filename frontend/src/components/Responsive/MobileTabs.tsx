@@ -5,7 +5,7 @@ const tabs: Array<{ id: MobilePanel; label: string; icon: typeof Braces }> = [
   { id: "source", label: "Source", icon: Braces },
   { id: "graph", label: "Graph", icon: Network },
   { id: "pipeline", label: "Pipeline", icon: GitBranch },
-  { id: "trace", label: "Trace", icon: ListTree },
+  { id: "trace", label: "Trace/Dist", icon: ListTree },
   { id: "inspector", label: "Inspector", icon: PanelRight },
 ];
 
@@ -22,4 +22,3 @@ export function MobileTabs() {
     </nav>
   );
 }
-

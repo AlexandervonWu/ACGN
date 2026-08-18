@@ -612,7 +612,9 @@ source predicates and functions, pipeline phases, variadic e-classes, slot bindi
 certificates, rewrite traces, and diagnostics. Its checked-in mock fixtures make
 the interface usable without a backend. The included Java HTTP adapter parses
 arbitrary submitted Alloy models and exports any selected predicate or function
-as versioned Visualization IR. The
+as versioned Visualization IR. The explorer can also compare any two discovered
+callables with the certificate-integrated repair metric and visualize the
+temporal, quantifier, and matrix edit operations. The
 browser client visualizes results and does not reimplement Alloy parsing,
 canonicalization, certification, or repair distance.
 
