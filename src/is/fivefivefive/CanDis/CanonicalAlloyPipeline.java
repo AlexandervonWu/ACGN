@@ -10,6 +10,8 @@ import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.metric.RepairProjection;
 import is.fivefivefive.CanDis.metric.RepairView;
 import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
+import is.fivefivefive.CanDis.theory.CertificateExportSession;
+import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
 
 /**
  * Three-layer Alloy boundary: certified semantics, canonical equality, and the
@@ -35,6 +37,25 @@ public final class CanonicalAlloyPipeline {
         Objects.requireNonNull(normalized, "normalized");
         TheoryAlloyAdapter.Result result = TheoryAlloyAdapter.adapt(
                 normalized.normalizedForms());
+        return new Prepared(normalized, result);
+    }
+
+    /**
+     * Explicit proof-retaining preparation. Callers must export before using
+     * {@link Prepared#compactForComparison()}.
+     */
+    public static Prepared prepareForVerification(Multigraph graph) {
+        return prepareForVerification(Canonical.prepare(graph));
+    }
+
+    public static Prepared prepareForVerification(Canonical.Prepared normalized) {
+        Objects.requireNonNull(normalized, "normalized");
+        RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
+        String commit = System.getProperty("acgn.producer.commit", "unrecorded");
+        boolean dirty = Boolean.parseBoolean(
+                System.getProperty("acgn.producer.dirty", "true"));
+        TheoryAlloyAdapter.Result result = TheoryAlloyAdapter.adaptForVerification(
+                normalized.normalizedForms(), sink, commit, dirty);
         return new Prepared(normalized, result);
     }
 
@@ -82,6 +103,7 @@ public final class CanonicalAlloyPipeline {
         private final long unfoldingNanos;
         private final long observationNanos;
         private final long repairProjectionNanos;
+        private final CertificateExportSession exportSession;
 
         private Prepared(
                 Canonical.Prepared normalized,
@@ -99,6 +121,8 @@ public final class CanonicalAlloyPipeline {
                     result.localBinderSourceCoordinates(),
                     observation.digest());
             repairProjectionNanos = System.nanoTime() - projectionStarted;
+            exportSession = result.retainsCertificateExportSession()
+                    ? result.certificateExportSession() : null;
             repairObservationSize = repairView.semanticSize();
             eclasses = result.eclasses();
             enodes = result.enodes();
@@ -125,6 +149,7 @@ public final class CanonicalAlloyPipeline {
             unfoldingNanos = source.unfoldingNanos;
             observationNanos = source.observationNanos;
             repairProjectionNanos = source.repairProjectionNanos;
+            exportSession = null;
         }
 
         public CertifiedSemanticArtifact semanticArtifact() {
@@ -138,6 +163,19 @@ public final class CanonicalAlloyPipeline {
         /** Whether this value still owns the proof-heavy construction artifact. */
         public boolean retainsSemanticArtifact() {
             return semanticArtifact != null;
+        }
+
+        public boolean retainsCertificateExportSession() {
+            return exportSession != null;
+        }
+
+        public CertificateExportSession certificateExportSession() {
+            if (exportSession == null) {
+                throw new IllegalStateException(
+                        "This value was not prepared through prepareForVerification, "
+                                + "or it has been compacted");
+            }
+            return exportSession;
         }
 
         /**

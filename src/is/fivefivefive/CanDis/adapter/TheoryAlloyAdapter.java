@@ -35,6 +35,8 @@ import is.fivefivefive.CanDis.theory.CanonicalShape;
 import is.fivefivefive.CanDis.theory.CertificateOrigin;
 import is.fivefivefive.CanDis.theory.CertifiedInsertionResult;
 import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
+import is.fivefivefive.CanDis.theory.CertificateExportSession;
+import is.fivefivefive.CanDis.theory.CertificateTraceSink;
 import is.fivefivefive.CanDis.theory.CoherentWitnessFamily;
 import is.fivefivefive.CanDis.theory.ContainerEmptiness;
 import is.fivefivefive.CanDis.theory.ContainerLawCertificate;
@@ -49,6 +51,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
 import is.fivefivefive.CanDis.theory.InstantiatedOperator;
 import is.fivefivefive.CanDis.theory.OnePort;
 import is.fivefivefive.CanDis.theory.OnePortSchema;
+import is.fivefivefive.CanDis.theory.NoOpCertificateTraceSink;
 import is.fivefivefive.CanDis.theory.OperatorDeclaration;
 import is.fivefivefive.CanDis.theory.PortPath;
 import is.fivefivefive.CanDis.theory.PortSchema;
@@ -63,6 +66,7 @@ import is.fivefivefive.CanDis.theory.TypedEmbedding;
 import is.fivefivefive.CanDis.theory.TypedInvocation;
 import is.fivefivefive.CanDis.theory.TypedPermutation;
 import is.fivefivefive.CanDis.theory.TypedRenaming;
+import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
 import is.fivefivefive.CanDis.theory.TypedSlot;
 import is.fivefivefive.CanDis.theory.TypedSlotContext;
 import is.fivefivefive.CanDis.theory.TypedSlottedPortEGraph;
@@ -78,7 +82,24 @@ public final class TheoryAlloyAdapter {
     }
 
     public static Result adapt(List<NormalForm> normalForms) {
-        return new Builder(normalForms).build();
+        return new Builder(
+                normalForms,
+                NoOpCertificateTraceSink.instance(),
+                "not-recorded",
+                true).build();
+    }
+
+    /** Exact proof-retaining path used only by Phase J export. */
+    public static Result adaptForVerification(
+            List<NormalForm> normalForms,
+            RecordingCertificateTraceSink sink,
+            String producerCommit,
+            boolean producerDirty) {
+        return new Builder(
+                normalForms,
+                Objects.requireNonNull(sink, "sink"),
+                Objects.requireNonNull(producerCommit, "producerCommit"),
+                producerDirty).build();
     }
 
     public static final class Result {
@@ -96,6 +117,7 @@ public final class TheoryAlloyAdapter {
         private final long constructionNanos;
         private final long unfoldingNanos;
         private final long observationNanos;
+        private final CertificateExportSession exportSession;
 
         private Result(
                 CertifiedSemanticArtifact semanticArtifact,
@@ -111,7 +133,8 @@ public final class TheoryAlloyAdapter {
                 long estimatedBytes,
                 long constructionNanos,
                 long unfoldingNanos,
-                long observationNanos) {
+                long observationNanos,
+                CertificateExportSession exportSession) {
             this.semanticArtifact = Objects.requireNonNull(
                     semanticArtifact, "semanticArtifact");
             this.canonicalKey = canonicalKey;
@@ -144,6 +167,7 @@ public final class TheoryAlloyAdapter {
             this.constructionNanos = constructionNanos;
             this.unfoldingNanos = unfoldingNanos;
             this.observationNanos = observationNanos;
+            this.exportSession = exportSession;
         }
 
         public StructuralKey canonicalKey() {
@@ -205,6 +229,18 @@ public final class TheoryAlloyAdapter {
         public long observationNanos() {
             return observationNanos;
         }
+
+        public CertificateExportSession certificateExportSession() {
+            if (exportSession == null) {
+                throw new IllegalStateException(
+                        "Ordinary adaptation does not retain a certificate export session");
+            }
+            return exportSession;
+        }
+
+        public boolean retainsCertificateExportSession() {
+            return exportSession != null;
+        }
     }
 
     private static final class Builder {
@@ -219,7 +255,10 @@ public final class TheoryAlloyAdapter {
                 new IdentityHashMap<>();
         private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates =
                 new IdentityHashMap<>();
-        private final TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        private final TypedSlottedPortEGraph graph;
+        private final RecordingCertificateTraceSink recordingSink;
+        private final String producerCommit;
+        private final boolean producerDirty;
         private final Map<InvocationKey, TypedInvocation> memo = new HashMap<>();
         private final Map<OnePort, TypedInvocation> relationalCoercions = new HashMap<>();
         private final Map<String, List<ContainerLawDeclaration>> certifiedContainerLaws =
@@ -227,8 +266,18 @@ public final class TheoryAlloyAdapter {
         private final Set<InvocationKey> active = new HashSet<>();
         private long rebuilds;
 
-        private Builder(List<NormalForm> normalForms) {
+        private Builder(
+                List<NormalForm> normalForms,
+                CertificateTraceSink traceSink,
+                String producerCommit,
+                boolean producerDirty) {
             Objects.requireNonNull(normalForms, "normalForms");
+            this.graph = new TypedSlottedPortEGraph(
+                    Objects.requireNonNull(traceSink, "traceSink"));
+            this.recordingSink = traceSink instanceof RecordingCertificateTraceSink
+                    ? (RecordingCertificateTraceSink) traceSink : null;
+            this.producerCommit = producerCommit;
+            this.producerDirty = producerDirty;
             this.normalForms = Collections.unmodifiableList(new ArrayList<>(normalForms));
             this.declaredForms = Collections.newSetFromMap(new IdentityHashMap<>());
             this.declaredForms.addAll(normalForms);
@@ -309,6 +358,22 @@ public final class TheoryAlloyAdapter {
             long estimatedBytes = 64L * eclasses + 112L * enodes + 32L * slots;
             CertifiedSemanticArtifact semanticArtifact = new CertifiedSemanticArtifact(
                     root, graph.classes(), family, unfoldings, certifiedContainerLaws);
+            CertificateExportSession exportSession = recordingSink == null
+                    ? null
+                    : new CertificateExportSession(
+                            recordingSink,
+                            graph,
+                            semanticArtifact,
+                            key,
+                            certifiedContainerLaws,
+                            producerCommit,
+                            producerDirty,
+                            ADAPTER_VERSION + ";"
+                                    + SIGNATURE_VERSION + ";"
+                                    + graph.canonicalizerVersion() + ";"
+                                    + graph.leaderKernelVersion() + ";"
+                                    + graph.certificateVersion() + ";"
+                                    + graph.rebuildVersion());
             List<BinderBlockDescriptor> orderedPhaseDescriptors = new ArrayList<>(normalForms.size());
             List<List<Integer>> orderedSourceCoordinates = new ArrayList<>(normalForms.size());
             for (NormalForm normalForm : normalForms) {
@@ -335,7 +400,8 @@ public final class TheoryAlloyAdapter {
                     estimatedBytes,
                     constructionNanos,
                     unfoldingNanos,
-                    observationNanos);
+                    observationNanos,
+                    exportSession);
         }
 
         private TypedSlotContext addParameters(

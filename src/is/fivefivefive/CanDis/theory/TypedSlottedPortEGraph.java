@@ -31,21 +31,33 @@ public final class TypedSlottedPortEGraph {
     private final NavigableMap<EClassId, CertifiedInsertionResult>
             insertionHistory = new TreeMap<>();
     private final GraphCertificateMode certificateMode;
+    private final CertificateTraceSink traceSink;
     private GraphStatus status = GraphStatus.QUIESCENT;
     private long coherenceRevision;
+    private long traceSequence;
     private boolean rebuildActive;
     private ParentRecordKey rebuildingRecord;
 
     public TypedSlottedPortEGraph() {
-        this(GraphCertificateMode.REQUIRED);
+        this(GraphCertificateMode.REQUIRED, NoOpCertificateTraceSink.instance());
     }
 
-    private TypedSlottedPortEGraph(GraphCertificateMode certificateMode) {
+    /** Explicit proof-retaining construction; ordinary callers use the no-op default. */
+    public TypedSlottedPortEGraph(CertificateTraceSink traceSink) {
+        this(GraphCertificateMode.REQUIRED, traceSink);
+    }
+
+    private TypedSlottedPortEGraph(
+            GraphCertificateMode certificateMode,
+            CertificateTraceSink traceSink) {
         this.certificateMode = Objects.requireNonNull(certificateMode, "certificateMode");
+        this.traceSink = Objects.requireNonNull(traceSink, "traceSink");
     }
 
     static TypedSlottedPortEGraph structuralFixture() {
-        return new TypedSlottedPortEGraph(GraphCertificateMode.STRUCTURAL_FIXTURE);
+        return new TypedSlottedPortEGraph(
+                GraphCertificateMode.STRUCTURAL_FIXTURE,
+                NoOpCertificateTraceSink.instance());
     }
 
     public String engineIdentifier() {
@@ -209,9 +221,14 @@ public final class TypedSlottedPortEGraph {
             throw new IllegalArgumentException(
                     "Certified union endpoints must be current distinct leaders");
         }
+        CertificateTraceSnapshot before = traceSnapshot();
         ParentStep step = unionCertifiedInternal(checked);
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
+        appendTrace(
+                CertificateTraceEvent.Kind.UNION,
+                before,
+                new CertificateTracePayload.Union(checked));
         return step;
     }
 
@@ -235,6 +252,7 @@ public final class TypedSlottedPortEGraph {
         if (current.contains(checked.inducedPermutation())) {
             return false;
         }
+        CertificateTraceSnapshot before = traceSnapshot();
         TypedSymmetryGroup updated = current.withCertifiedGenerator(
                 record.interfaceView(), checked);
         classes.put(leaderId, record.withSymmetryGroup(updated));
@@ -242,6 +260,10 @@ public final class TypedSlottedPortEGraph {
         status = GraphStatus.DIRTY;
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
+        appendTrace(
+                CertificateTraceEvent.Kind.ADD_SYMMETRY,
+                before,
+                new CertificateTracePayload.Symmetry(leaderId, checked));
         return true;
     }
 
@@ -294,6 +316,7 @@ public final class TypedSlottedPortEGraph {
             throw new IllegalArgumentException(
                     "Only a current leader interface may be restricted");
         }
+        CertificateTraceSnapshot before = traceSnapshot();
 
         TypedSymmetryGroup restrictedGroup = restrictSymmetryGroup(
                 originalRecord, checked);
@@ -326,12 +349,24 @@ public final class TypedSlottedPortEGraph {
         status = GraphStatus.DIRTY;
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
+        appendTrace(
+                CertificateTraceEvent.Kind.RESTRICT_INTERFACE,
+                before,
+                new CertificateTracePayload.Restriction(checked));
     }
 
     public synchronized TypedFindResult findWithProvenance(TypedInvocation invocation) {
+        CertificateTraceSnapshot before = traceSnapshot();
         TypedFindResult result = findNormalized(
                 Objects.requireNonNull(invocation, "invocation"), true);
         checkInvariants();
+        if (traceSink.enabled()
+                && !before.stateKey().equals(stateStructuralKey())) {
+            appendTrace(
+                    CertificateTraceEvent.Kind.PATH_COMPRESSION,
+                    before,
+                    new CertificateTracePayload.PathCompression(result));
+        }
         return result;
     }
 
@@ -414,6 +449,7 @@ public final class TypedSlottedPortEGraph {
     public synchronized CertifiedInsertionResult insertNode(
             TypedENode node,
             CoherentWitnessFamily family) {
+        CertificateTraceSnapshot before = traceSnapshot();
         TypedENode source = Objects.requireNonNull(node, "node");
         requireCurrentWitnessFamily(Objects.requireNonNull(family, "family"));
         requireCertifiedNodeTheory(source);
@@ -517,6 +553,12 @@ public final class TypedSlottedPortEGraph {
         insertionHistory.put(freshId, insertion);
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
+        appendTrace(
+                collision == null
+                        ? CertificateTraceEvent.Kind.INSERT_FRESH
+                        : CertificateTraceEvent.Kind.INSERT_COLLISION,
+                before,
+                new CertificateTracePayload.Insertion(insertion));
         return insertion;
     }
 
@@ -702,6 +744,7 @@ public final class TypedSlottedPortEGraph {
                     continue;
                 }
                 rebuildingRecord = key;
+                CertificateTraceSnapshot beforeRecord = traceSnapshot();
                 RebuildStepResult step;
                 try {
                     step = rebuildRecord(key);
@@ -718,16 +761,27 @@ public final class TypedSlottedPortEGraph {
                 collisions += step.collision ? 1 : 0;
                 unions += step.union ? 1 : 0;
                 checkInvariants();
+                appendTrace(
+                        CertificateTraceEvent.Kind.REBUILD_RECORD,
+                        beforeRecord,
+                        new CertificateTracePayload.RebuildRecord(
+                                key, step.changed, step.collision, step.union));
             }
             requireCollisionFreeLeaderKeys();
+            CertificateTraceSnapshot beforeCompletion = traceSnapshot();
             rebuildHashConsExactly();
             status = GraphStatus.QUIESCENT;
             if (changed != 0 || collisions != 0 || unions != 0) {
                 coherenceRevision = Math.incrementExact(coherenceRevision);
             }
             checkInvariants();
-            return new RebuildReport(
+            RebuildReport report = new RebuildReport(
                     processed, changed, collisions, unions, maximumDirty);
+            appendTrace(
+                    CertificateTraceEvent.Kind.REBUILD_COMPLETE,
+                    beforeCompletion,
+                    new CertificateTracePayload.RebuildComplete(report));
+            return report;
         } catch (RuntimeException exception) {
             status = GraphStatus.DIRTY;
             throw exception;
@@ -1359,6 +1413,54 @@ public final class TypedSlottedPortEGraph {
                             entry.getValue().structuralKey())));
         }
         return StructuralKey.branch("typed-slotted-port-egraph", children);
+    }
+
+    /** Final state capture for an explicit proof-retaining export session. */
+    public synchronized CertificateTraceSnapshot certificateTraceSnapshot() {
+        if (!traceSink.enabled()) {
+            throw new IllegalStateException(
+                    "The ordinary graph does not retain an export trace");
+        }
+        checkInvariants();
+        return traceSnapshot();
+    }
+
+    private CertificateTraceSnapshot traceSnapshot() {
+        if (!traceSink.enabled()) {
+            return null;
+        }
+        Map<EClassId, Set<ParentRecordKey>> useCopies = new LinkedHashMap<>();
+        for (Map.Entry<EClassId, NavigableSet<ParentRecordKey>> entry
+                : parentUses.entrySet()) {
+            useCopies.put(entry.getKey(), new LinkedHashSet<>(entry.getValue()));
+        }
+        return new CertificateTraceSnapshot(
+                coherenceRevision,
+                status,
+                classes,
+                unionFind.assignments(),
+                hashCons,
+                shapeCertificates,
+                useCopies,
+                dirtyParents,
+                restrictionHistory,
+                insertionHistory,
+                stateStructuralKey());
+    }
+
+    private void appendTrace(
+            CertificateTraceEvent.Kind kind,
+            CertificateTraceSnapshot before,
+            CertificateTracePayload payload) {
+        if (!traceSink.enabled()) {
+            return;
+        }
+        if (before == null) {
+            throw new IllegalStateException("Enabled certificate trace has no pre-state");
+        }
+        CertificateTraceSnapshot after = traceSnapshot();
+        traceSink.append(new CertificateTraceEvent(
+                traceSequence++, kind, before, after, payload));
     }
 
     public synchronized void checkInvariants() {
