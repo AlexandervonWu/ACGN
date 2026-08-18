@@ -29,8 +29,9 @@ describe("mock-backed explorer workflow", () => {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
     render(<QueryClientProvider client={client}><App /></QueryClientProvider>);
 
-    const predicate = await screen.findByRole("option", { name: /inv7/i }, { timeout: 2500 });
-    await user.click(predicate);
+    await screen.findByRole("option", { name: /inv7 - pred/i }, { timeout: 2500 });
+    const target = screen.getByRole("combobox", { name: "Callable to visualize" });
+    await user.selectOptions(target, "inv7");
     await user.click(screen.getByRole("button", { name: /^analyze$/i }));
 
     await waitFor(() => expect(screen.getByTestId("react-flow")).toBeInTheDocument(), { timeout: 2500 });
@@ -51,8 +52,9 @@ describe("mock-backed explorer workflow", () => {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
     render(<QueryClientProvider client={client}><App /></QueryClientProvider>);
 
-    const callable = await screen.findByRole("option", { name: /neighbors set User/i }, { timeout: 2500 });
-    await user.click(callable);
+    await screen.findByRole("option", { name: /neighbors - set User/i }, { timeout: 2500 });
+    const target = screen.getByRole("combobox", { name: "Callable to visualize" });
+    await user.selectOptions(target, "neighbors");
     await user.click(screen.getByRole("button", { name: /^analyze$/i }));
 
     await waitFor(() => expect(screen.getByTestId("react-flow")).toBeInTheDocument(), { timeout: 2500 });

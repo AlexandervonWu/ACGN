@@ -1,4 +1,4 @@
-import { Braces, ChevronRight, GitBranch, LoaderCircle, Sigma } from "lucide-react";
+import { GitBranch, LoaderCircle } from "lucide-react";
 import type {
   Diagnostic,
   EGraphAnalysis,
@@ -35,6 +35,9 @@ export function PredicatePipelinePanel({
   onSelectStage,
   onSelectExample,
 }: PredicatePipelinePanelProps) {
+  const callables = inspection?.callables ?? [];
+  const predicates = callables.filter((callable) => callable.kind === "predicate");
+  const functions = callables.filter((callable) => callable.kind === "function");
   const diagnostics: Diagnostic[] = [
     ...(inspection?.parseDiagnostics ?? []),
     ...(analysis?.diagnostics ?? []),
@@ -54,28 +57,41 @@ export function PredicatePipelinePanel({
             <option value="callables">Function callable</option>
           </select>
         </label>
+        <label>
+          <span>Target</span>
+          <select
+            aria-label="Callable to visualize"
+            disabled={inspecting || callables.length === 0}
+            value={selectedPredicate ?? ""}
+            onChange={(event) => onSelectPredicate(event.target.value)}
+          >
+            <option value="">Choose a predicate or function</option>
+            {predicates.length > 0 && (
+              <optgroup label="Predicates">
+                {predicates.map((callable) => (
+                  <option key={`predicate:${callable.name}`} value={callable.name}>
+                    {callable.name} - pred
+                  </option>
+                ))}
+              </optgroup>
+            )}
+            {functions.length > 0 && (
+              <optgroup label="Functions">
+                {functions.map((callable) => (
+                  <option key={`function:${callable.name}`} value={callable.name}>
+                    {callable.name} - {"returnType" in callable ? callable.returnType ?? "fun" : "fun"}
+                  </option>
+                ))}
+              </optgroup>
+            )}
+          </select>
+        </label>
         {inspecting && <LoaderCircle className="spin" size={15} aria-label="Inspecting model" />}
       </div>
-      <div className="predicate-list" role="listbox" aria-label="Model predicates and functions">
-        {(inspection?.callables ?? []).map((callable) => (
-          <button
-            type="button"
-            role="option"
-            aria-selected={selectedPredicate === callable.name}
-            className={selectedPredicate === callable.name ? "is-selected" : ""}
-            key={`${callable.kind}:${callable.name}`}
-            onClick={() => onSelectPredicate(callable.name)}
-          >
-            {callable.kind === "function" ? <Sigma size={14} /> : <Braces size={14} />}
-            <span>{callable.name}<small>{callable.kind === "function" ? callable.returnType ?? "fun" : "pred"}</small></span>
-            {selectedPredicate === callable.name && <ChevronRight size={14} />}
-          </button>
-        ))}
-        {!inspecting && !inspectionError && inspection?.callables.length === 0 && (
-          <div className="empty-inline">No predicates or functions returned</div>
-        )}
-        {inspectionError && <div className="inline-error">{inspectionError}</div>}
-      </div>
+      {!inspecting && !inspectionError && inspection?.callables.length === 0 && (
+        <div className="empty-inline">No predicates or functions returned</div>
+      )}
+      {inspectionError && <div className="inline-error">{inspectionError}</div>}
       <div className="subsection-title"><GitBranch size={13} /> Normalization</div>
       <Pipeline
         stages={analysis?.stages ?? []}

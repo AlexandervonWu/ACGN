@@ -219,7 +219,8 @@ JavaScript must be permitted by the site's content-security policy. Monaco creat
 
 ## Interaction Model
 
-- Select a discovered predicate or function and use **Analyze** or `Ctrl/Cmd+Enter`.
+- Use the file-open icon in **Source** to load a local `.als` file. The browser reads its text locally and sends only that source text to the configured analysis service.
+- Choose any discovered predicate or function from the **Target** selector, then use **Analyze** or `Ctrl/Cmd+Enter`.
 - Click an e-class to inspect class-level type, support, alternatives, provenance, and invariants.
 - Click an e-node row for exact children, slots, container semantics, source, and certificates.
 - Shift-click two members of one e-class to request the included equivalence explanation.
@@ -251,6 +252,7 @@ The build runs TypeScript project checking before Vite emits production assets.
 
 ## Known Limitations
 
+- A single-file upload resolves Alloy's bundled modules such as `util/ordering`. A model that opens project-local sibling modules must currently be made self-contained before upload because browsers do not disclose neighboring files.
 - The Java adapter currently exports certified graph structure and pipeline representations; detailed source spans, per-rewrite trace events, and certificate payloads remain optional and may be absent.
 - Stage text and mappings are selectable. Stage-specific graph switching remains unavailable unless the backend supplies addressable snapshots.
 - SVG export is a deterministic representation of the currently bounded graph, not a capture of React Flow's viewport. PNG export is deferred.

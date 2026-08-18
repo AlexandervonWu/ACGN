@@ -24,8 +24,10 @@ describe("callable selector", () => {
       onSelectExample={vi.fn()}
     />);
 
-    expect(screen.getByRole("option", { name: /connected pred/i })).toBeInTheDocument();
-    await user.click(screen.getByRole("option", { name: /neighbors set User/i }));
+    const target = screen.getByRole("combobox", { name: "Callable to visualize" });
+    expect(screen.getByRole("option", { name: /connected - pred/i })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: /neighbors - set User/i })).toBeInTheDocument();
+    await user.selectOptions(target, "neighbors");
     expect(select).toHaveBeenCalledWith("neighbors");
   });
 });
