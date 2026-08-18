@@ -38,16 +38,52 @@ augmented nearest-correct evaluation. Per-problem and per-status tables are in
 [`alloy4fun-augmented/summary.md`](alloy4fun-augmented/summary.md), and
 [`egraph_ablation/summary.md`](egraph_ablation/summary.md).
 
-The current three-layer implementation treats `CanonicalDistance` as the
-repair-metric specification, retains canonical-representative TED as an
-explicit baseline, and makes `certified-legacy-repair-distance-v5` primary.
-Layer 1 certifies legal scopes and symmetries; Layer 3 preserves the legacy
+The artifact maintains two canonicalization paths. The **Fast Rewrite IR** is
+the temporal/prenex `NormalForm` pipeline, bounded local saturation, and direct
+`CanonicalDistance` implementation developed for high-throughput repair
+experiments. The **Certificate-Integrated IR** adapts the repaired normal form
+into typed slotted ports, admits only certificate-backed laws and symmetries,
+checks graph invariants, and evaluates the same repair geometry on the
+certified quotient. Neither path is deprecated: the Fast Rewrite IR is the
+efficient reference implementation of the metric, while the
+Certificate-Integrated IR is the fail-closed semantic-assurance path.
+
+The three-layer Certificate-Integrated IR treats `CanonicalDistance` as the
+repair-metric specification and retains canonical-representative TED as an
+explicit baseline. Its manifest identifier remains
+`certified-legacy-repair-distance-v5` for compatibility with existing runs;
+that string names the certified port of the **Fast Rewrite metric**. Layer 1
+certifies legal scopes and symmetries; Layer 3 preserves the Fast Rewrite IR's
 temporal/quantifier/matrix decomposition, unit edits, alpha minimization, and
 unordered assignment. One binder-owner mapping is reused by every inherited
-temporal phase; this is the certified correction to the legacy phase-local
-alignment space. The full exact ablation arm completed all 61,598 eligible
-pairs with zero failures and zero incorrect zero-distance merges. It retained
-all 2,316 legacy-canonical zeroes and certified one additional `CORRECT` pair.
+temporal phase, narrowing a phase-local alignment space that the certificate
+model showed to be too broad. The full certificate-integrated ablation arm
+completed all 61,598 eligible pairs with zero failures and zero incorrect
+zero-distance merges. It retained all 2,316 Fast Rewrite IR zeroes and
+certified one additional `CORRECT` pair.
+
+### Implementation tradeoff
+
+| Property | Fast Rewrite IR | Certificate-Integrated IR |
+| --- | --- | --- |
+| Intended use | Large-corpus ranking, iteration, and direct repair-metric evaluation | Audited equality, certified admissibility, and high-assurance validation |
+| Rewrite/equality authority | Implemented rewrite rules and repaired IR invariants | Typed signatures, explicit ports, structured certificates, strict graph invariants, and certified finite observations |
+| Failure policy | Assumes the directly encoded rewrite and scope machinery is valid | Rejects missing, stale, ill-typed, or uncertified semantic evidence |
+| Metric | Direct `CanonicalDistance` | The same edit algebra restricted by certified scope and symmetry information |
+| Full-corpus wall time | 18.360 s | 2,265.990 s |
+| Full-corpus engine CPU | 13.107 s | 52,088.164 s |
+| Maximum RSS | 3,989.914 MiB | 4,671.211 MiB |
+| `CORRECT` zeroes / incorrect zeroes | 2,316 / 0 | 2,317 / 0 |
+
+The measured speed difference is about 123x in wall time. It buys stronger
+semantic assurance, not a different repair objective: the
+Certificate-Integrated IR validates law provenance, scope legality,
+congruence, and quiescence before accepting equality. The Fast Rewrite IR
+remains the practical choice for broad exploratory experiments. The
+Certificate-Integrated IR is appropriate when fail-closed handling of
+unsupported transformations and auditable proof carriers matter. The zero
+incorrect merges and bounded Alloy checks are empirical evidence, not an
+unbounded semantic proof for either path.
 
 The result directories are internally hash-checked, but their manifests record
 a dirty source tree. Their source and output hashes therefore identify the
@@ -79,11 +115,12 @@ truth-pool construction.
 | Incorrect zero-distance merges | 0 |
 | Certified repair distance range | 0 to 139 |
 
-This paired snapshot uses `canonical-alloy-pipeline-v10-three-layer` and
-`certified-legacy-repair-distance-v5`. Normalization divides by the larger
-corresponding representation of the student-oracle pair. The directly executed
-legacy metric remains a differential oracle, and representative TED is a
-separate baseline rather than the repair metric.
+This paired snapshot uses `canonical-alloy-pipeline-v10-three-layer` and the
+compatibility manifest ID `certified-legacy-repair-distance-v5`. Normalization
+divides by the larger corresponding representation of the student-oracle pair.
+The directly executed Fast Rewrite metric remains a co-maintained differential
+oracle, and representative TED is a separate baseline rather than the repair
+metric.
 
 ### Augmented correct pools and nearest repairs
 
@@ -127,7 +164,7 @@ size, the coverage is:
 | 50% | 30,080 (71.0%) | 18,668 (44.0%) | 18,263 (43.1%) |
 
 This augmented snapshot uses `canonical-alloy-pipeline-v10-three-layer` and
-`certified-legacy-repair-distance-v5`. This structural run used
+the compatibility manifest ID `certified-legacy-repair-distance-v5`. This structural run used
 `--skip-rewards`: all 42,386 incorrect predicates were ranked, but reward
 values were deliberately not recomputed.
 
@@ -145,8 +182,8 @@ a full textual-language-compatible port of external egglog.
 | Java egglog-like variadic | 823 | 4.284% | 17.996 | 16.600 | 4.107 | 1,093.113 | 56.740 |
 | Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 17.050 | 5.077 | 1,007.789 | 56.410 |
 | Slotted e-graph | 2,162 | 11.253% | 17.694 | 17.010 | 14.504 | 1,090.402 | 52.952 |
-| Legacy canonical | 2,316 | 12.055% | 14.029 | 18.360 | 13.107 | 3,989.914 | 29.843 |
-| Typed slotted-port exact | 2,317 | 12.060% | 14.042 | 2,265.990 | 52,088.164 | 4,671.211 | 29.830 |
+| Fast Rewrite IR | 2,316 | 12.055% | 14.029 | 18.360 | 13.107 | 3,989.914 | 29.843 |
+| Certificate-Integrated IR | 2,317 | 12.060% | 14.042 | 2,265.990 | 52,088.164 | 4,671.211 | 29.830 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -156,9 +193,9 @@ Key transitions in the observed zero-distance sets are:
   natural corpus.
 - Slotted storage retains 2,160 egglog-plus-De-Bruijn zeroes, adds 2, and loses
   3. Those three are documented false negatives, not semantic counterexamples.
-- Legacy canonicalization adds 154 zeroes over slotted storage and loses none
+- Fast Rewrite IR canonicalization adds 154 zeroes over slotted storage and loses none
   of the slotted zeroes.
-- The exact typed slotted-port pipeline retains all 2,316 legacy zeroes and
+- The Certificate-Integrated IR retains all 2,316 Fast Rewrite IR zeroes and
   adds one `CORRECT` zero. Neither canonical arm produces an incorrect zero.
 
 The full transition data and pair identities are in
@@ -177,15 +214,15 @@ in each of 11 transformation families.
 | Java egglog-like variadic | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
 | Java egglog-like + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
 | Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Legacy canonical | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Typed slotted-port exact | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Fast Rewrite IR | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Certificate-Integrated IR | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
 
 De Bruijn encoding gives complete alpha-equivalence recovery, but the raw and
 egglog-like representations do not implement general declaration-block
 permutations. The raw and egglog-like arms recover 1 of 500 binder-permutation
 cases incidentally, and their De Bruijn variants recover 22 of 500. Slotted and
 canonical representations recover all 500 alpha-equivalence and all 500
-binder-permutation cases. The exact arm agrees with both of them on every
+binder-permutation cases. The Certificate-Integrated IR agrees with both of them on every
 generated pair, and all 11 expected first-capable boundaries match the observed
 matrix. The complete family matrix is in
 [`capability_benchmark/REPORT.md`](capability_benchmark/REPORT.md).
@@ -203,23 +240,28 @@ empty.
 
 ### Bounded semantic evidence
 
-The most recent bounded semantic checker predates the exact-arm rerun. It
-checked the then-current union of 2,238 natural-corpus equivalence claims using
-each model's own Alloy `check correct` command:
+The refreshed bounded semantic checker covers the current seven-arm union of
+2,320 natural-corpus equivalence claims using each model's own Alloy
+`check correct` command:
 
 | Arm | Claims checked | Bounded counterexamples | Errors |
 | --- | ---: | ---: | ---: |
 | Raw / raw + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
 | Egglog-like / egglog-like + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
-| Slotted / canonical | 2,162 / 2,235 | 0 / 0 | 0 / 0 |
+| Slotted / Fast Rewrite IR | 2,162 / 2,316 | 0 / 0 | 0 / 0 |
+| Certificate-Integrated IR | 2,317 | 0 | 0 |
 
 Four targeted negative probes for capture, comprehension-column permutation,
 signature shadowing, and temporal implication all had Alloy counterexamples and
-were rejected by every arm. This is bounded evidence, not an unbounded proof.
-The current seven-arm corpus run supplies a separate label-agreement check: all
-2,317 exact zeroes are in `CORRECT`, and none of 42,386 incorrect pairs is zero.
-That is not a replacement for rerunning the bounded checker on the 79 newly
-observed claims. The current targeted capability soundness sample had zero
+were rejected by every arm, including the Certificate-Integrated IR. The refreshed run checks
+all 82 exact claims absent from the old report; the earlier "79 newly observed"
+figure was the net count `2,317 - 2,238`, while three old-union claims are not in
+the certificate-integrated arm. The complete seven-arm union retains those claims as well. This
+is bounded evidence, not an unbounded proof. The claim set comes from ablation
+run `c48a105a-796c-483c-9f75-7e3a35ff1db0`; the exact negative controls use the
+post-snapshot v11 pipeline correction that preserves comprehension result-column
+order. A full v11 performance rerun remains separate from this bounded semantic
+check. The current targeted capability soundness sample had zero
 conclusive non-temporal failures across 29 subtype checks; six temporal checks
 were inconclusive because the installed solver lacked a temporal backend. One
 of those inconclusive raw solver runs reported a counterexample under Alloy's
@@ -249,7 +291,7 @@ augmented nearest-correct run, their correlations with raw reward error were
 
 ### Runtime and memory interpretation
 
-The legacy canonical arm completed the 61,598-pair corpus in 18.360 seconds on
+The Fast Rewrite IR arm completed the 61,598-pair corpus in 18.360 seconds on
 a 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 4 GiB heap cap. Its
 representation averaged 29.843 units, 25.022 reachable e-classes, and 25.173
 reachable e-nodes, with 3,989.914 MiB maximum RSS.
@@ -312,7 +354,7 @@ nested declarations may share a class, while a scope barrier cannot.
 Named non-temporal references retain their symbol identity, so built-ins such
 as `ordering/first` and `ordering/last` cannot collapse.
 
-The Phase I primary exact path next converts every normalized phase through
+The Phase I Certificate-Integrated IR next converts every normalized phase through
 `TheoryAlloyAdapter`, which creates typed ports and complete binder blocks,
 issues structured certificates for Seq=A, Bag=AC, and Set=ACI, inserts every
 node through `TypedSlottedPortEGraph.insertNode`, rebuilds to strict quiescence,
@@ -339,10 +381,10 @@ The `CanonicalDistance` specification is the sum of:
    tuples, minimized over valid binding permutations;
 3. e-graph matrix edit distance under semantically equivalent slot bindings.
 
-`CanonicalBatchTest` reports the faithful port, the directly executed metric
+`CanonicalBatchTest` reports the certificate-integrated port, the directly executed metric
 specification, and representative TED separately. Its unqualified
 canonical distance is the established repair metric evaluated with certified
-scope legality; the directly executed legacy implementation and
+scope legality; the directly executed Fast Rewrite IR and
 canonical-representative TED fields are explicit differential diagnostics.
 
 The architectural contracts, exact/bounded guarantees, projection
@@ -380,10 +422,10 @@ non-functional in source.
 ```text
 src/is/fivefivefive/ACGN/                 original ACGN graph, generator, learner, rewarder
 src/is/fivefivefive/CanDis/               runners, compatibility facade, checks, reports
-src/is/fivefivefive/CanDis/core/          parser-independent canonical-distance core
+src/is/fivefivefive/CanDis/core/          Fast Rewrite IR and parser-independent repair metric
 src/is/fivefivefive/CanDis/core/egraph/   six retained ablation representation engines
-src/is/fivefivefive/CanDis/theory/        exact typed slotted-port e-graph and proofs
-src/is/fivefivefive/CanDis/adapter/       Alloy adapters, including exact typed adaptation
+src/is/fivefivefive/CanDis/theory/        Certificate-Integrated IR typed e-graph and proofs
+src/is/fivefivefive/CanDis/adapter/       Alloy adapters, including certificate-integrated adaptation
 src/is/fivefivefive/CanDis/canonical/     canonical equality, hashing, serialization, TED baseline
 src/is/fivefivefive/CanDis/metric/        certified port of the established repair metric
 src/is/fivefivefive/CanDis/ir/            MASG to canonical IR conversion
@@ -502,10 +544,10 @@ audit CSVs, reward CSVs, and coverage/correlation SVGs.
 ```
 
 The suite runs all seven arms sequentially in fresh JVMs. The seventh is
-`typed-slotted-port-egraph`, backed by the faithful graph and certified port of
-the established metric in `CanonicalAlloyPipeline`; the `canonical` arm
-continues to denote the legacy implementation with bounded rewrite saturation,
-not an approximate repair metric. Each arm uses
+`typed-slotted-port-egraph`, backed by the Certificate-Integrated IR and its
+certified port of the established metric in `CanonicalAlloyPipeline`; the
+`canonical` arm denotes the co-maintained Fast Rewrite IR with bounded rewrite
+saturation, not an approximate repair metric. Each arm uses
 `min(requested workers, logical processors, 32)` threads. A smoke run can add
 `--limit 100` and use a `/tmp` output directory.
 
@@ -646,7 +688,7 @@ to the repository's current `HEAD`.
   representations and should not be compared as if their units were identical.
 - Rewarder uses finite instance pools. Pool size and cache state are part of the
   experimental configuration.
-- Baseline-arm wall time is parser-heavy; the exact arm is dominated by
+- Baseline-arm wall time is parser-heavy; the Certificate-Integrated IR is dominated by
   certificate-bearing graph construction and orbit work. Structural byte
   estimates describe graph objects and are not substitutes for measured RSS.
 - The ACGN learning/generation code is research infrastructure; some historical

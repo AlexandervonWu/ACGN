@@ -78,7 +78,7 @@ infer a same-type permutation.
 | C2-F07 | An initial group key included the chosen generator basis, so two presentations of the same subgroup could differ | **Corrected before gate close:** equality and keys are extensional in the closed element set | None |
 | C2-F08 | Recursive consumers assumed every non-container/non-`One` value was unary `Bind` | **Corrected:** all Phase C-DA consumers and both Phase E canonicalizers have explicit block arms | None structurally |
 | C2-F09 | The old canonicalizers had neither quotient-first block minimization nor the revised trace-bearing result | **Corrected in Phase E:** local block orbits and `(K,p,sigma,iota,omega,xi)` are implemented | Phase F certificate provenance only |
-| C2-F10 | The legacy experiment path still uses its pre-theory carrier | Deliberately unchanged under the reproducibility invariant | Phase I integration only after Gates E-H |
+| C2-F10 | The Fast Rewrite experiment path still uses its dedicated carrier | Deliberately unchanged under the reproducibility invariant | Phase I certificate integration only after Gates E-H |
 
 ## Matrix Snapshot
 

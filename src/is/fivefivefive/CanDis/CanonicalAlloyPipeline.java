@@ -20,7 +20,7 @@ import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
  * diagnostic baseline.
  */
 public final class CanonicalAlloyPipeline {
-    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v10-three-layer";
+    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v11-three-layer";
     public static final String MEASUREMENT_PROJECTION_VERSION = RepairProjection.VERSION;
     public static final String REPRESENTATIVE_TED_VERSION =
             CanonicalRepresentativeTreeDistance.VERSION;
@@ -61,7 +61,7 @@ public final class CanonicalAlloyPipeline {
 
     /**
      * Primary repair metric. Its geometry is specified by CanonicalDistance;
-     * faithful certificates replace the legacy structural assumptions.
+     * certificate-integrated evidence validates the Fast Rewrite structural assumptions.
      */
     public static int distance(Prepared left, Prepared right) {
         return distanceEvaluation(left, right).distance();

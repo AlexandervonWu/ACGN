@@ -1,7 +1,7 @@
 /**
  * Theory-faithful typed flexible-arity slotted e-graph implementation path.
  *
- * <p>This package remains implementation-independent from legacy graph state;
+ * <p>This package remains implementation-independent from Fast Rewrite graph state;
  * Phase I exposes it to Alloy experiments only through the typed adapter and
  * exact pipeline facades. Its public constructors enforce the algebraic
  * boundaries used by the formal graph implementation. The

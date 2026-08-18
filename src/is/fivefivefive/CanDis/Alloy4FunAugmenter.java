@@ -1295,13 +1295,13 @@ public class Alloy4FunAugmenter {
             writer.write("- Thread count: " + options.threadCount + "\n\n");
             writer.write("- Canonical engine: `CanonicalAlloyPipeline` (`"
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
-            writer.write("- Canonical repair metric: `"
+            writer.write("- Canonical repair metric compatibility manifest ID: `"
                     + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`\n");
             writer.write("- Canonical representative TED is diagnostic only: `"
                     + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "`\n");
             writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
                     + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
-            writer.write("- Direct legacy metric rankings retained in `index.json` as a differential oracle: yes\n\n");
+            writer.write("- Co-maintained Fast Rewrite IR rankings retained in `index.json` as a differential oracle: yes\n\n");
             writer.write("- Reward pool size: " + options.rewardPoolSize + "\n\n");
             writer.write("- Rewards enabled: " + !options.skipRewards + "\n\n");
 

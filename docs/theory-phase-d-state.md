@@ -7,7 +7,7 @@ The audited repository commit is
 `a9261da4c096f6ba5fcb1a34bcac93cb1b1df23d`; the Phase D implementation is an
 isolated worktree addition under `is.fivefivefive.CanDis.theory`.
 
-No reproducibility program, runner, script, manifest, legacy e-graph engine,
+No reproducibility program, runner, script, manifest, Fast Rewrite or comparison e-graph engine,
 dataset processor, or terminal-facing package was changed or wired to the new
 state. Phase I remains the sole integration point.
 
@@ -92,7 +92,7 @@ determinism.
 
 | ID | Located fault or contradiction | Disposition in Phase D | Remaining dependency |
 | -- | -- | -- | -- |
-| D-F01 | Legacy renamed union-find stores correspondence in the direction opposite Definition 5 and permits partial-map composition | The isolated exact `ParentStep` uses `S_parent -> S_child`; generated direction-sensitive paths pass | Phase I retires the legacy path only after Gates E-H |
+| D-F01 | Fast Rewrite renamed union-find stores correspondence in the direction opposite Definition 5 and permits partial-map composition | The isolated exact `ParentStep` uses `S_parent -> S_child`; generated direction-sensitive paths pass | Phase I integrates the certificate path only after Gates E-H while retaining Fast Rewrite IR |
 | D-F02 | Reusing an e-class ID with different output/context metadata could make invocations depend on stale snapshots | Graph registration and find now reject every metadata mismatch | None |
 | D-F03 | Existing shape storage conflates exact slots, ambient support, and the exposed class interface | `ShapeWitness` stores and validates all three separately | Phase F attaches EC provenance to the witness |
 | D-F04 | An initial Phase D ordered-map insertion could have accepted comparator-equal but unequal shape objects | **Corrected:** record construction fails closed on key collision and also rejects a second unequal witness for one shape | None |
@@ -103,7 +103,7 @@ determinism.
 | D-F09 | `CanonicalShape` can validate canonical alphabets and local typed structure but cannot establish graph-relative orbit minimality | Carrier is complete while `canon_G` rows remain unresolved | Phase E exhaustive reference canonicalizer |
 | D-F10 | Phase D needs setup transitions before certified mutation objects exist | Setup registration and leader linking are package-private; raw union-find state is not exposed | Replace callers with certified Phase F operations |
 | D-F11 | Historical status aggregation matched only alphabetic ID prefixes and silently omitted all nine `T1-*` theorem rows | **Corrected during the Phase E audit** in every phase snapshot; Gate D has 41 exact and 79 unresolved rows out of 120 | None |
-| D-F12 | Reproducibility programs still execute only legacy engines | Deliberately unchanged and import-audited; the exact package remains isolated | Phase I after Gates E-H |
+| D-F12 | Reproducibility programs still execute only Fast Rewrite and comparison engines | Deliberately unchanged and import-audited; the exact package remains isolated | Phase I after Gates E-H |
 
 ### Theory blockers
 

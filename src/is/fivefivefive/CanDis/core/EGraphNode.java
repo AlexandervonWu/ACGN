@@ -25,7 +25,7 @@ import is.fivefivefive.CanDis.core.RenamedIdUnionFind.RenamedId;
  * which can help to make the distance calculation more accurate and efficient.
  * Operands are slotted e-class invocations rather than embedded subtrees. Each
  * invocation maps the slots exposed by the referenced e-class into the caller's
- * slots. The current implementation keeps canonical representatives for legacy
+ * slots. The current implementation keeps canonical representatives for Fast Rewrite IR
  * consumers and retains rewrite alternatives in their shared e-class.
  */
 public class EGraphNode {

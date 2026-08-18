@@ -116,7 +116,7 @@ At the close of Phase H, the 125-row matrix was:
 The eight then-non-`EXACT` rows were all Phase I integration work:
 
 - `BIND-03`: Alloy binder consumers do not yet issue typed law certificates;
-- `MUT-02`: legacy parser/rewrite construction does not yet use `insertNode`;
+- `MUT-02`: Fast Rewrite parser/rewrite construction does not yet use `insertNode`;
 - `INT-02` and `INT-03`: typed Alloy adapter and reproducibility arm/manifest;
 - `RW-02`, `RW-05`, `RW-06`, and `RW-07`: existing normalization results and
   rewrite evidence are not yet translated through the exact typed boundary.

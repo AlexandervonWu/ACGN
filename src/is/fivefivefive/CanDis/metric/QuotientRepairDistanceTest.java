@@ -11,7 +11,7 @@ import is.fivefivefive.CanDis.metric.RepairView.Node;
 import is.fivefivefive.CanDis.metric.RepairView.Phase;
 import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
 
-/** Focused executable checks for the certificate-backed legacy metric port. */
+/** Focused executable checks for the certificate-backed Fast Rewrite metric port. */
 public final class QuotientRepairDistanceTest {
     private static int checks;
 

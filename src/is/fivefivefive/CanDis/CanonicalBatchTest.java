@@ -829,11 +829,12 @@ public class CanonicalBatchTest {
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
             writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
                     + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
-            writer.write("- Primary metric: established repair metric over the certified quotient (`"
-                    + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`)\n");
+            writer.write("- Primary metric: established repair metric over the certified quotient; "
+                    + "compatibility manifest ID `"
+                    + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`\n");
             writer.write("- Canonical representative TED retained only as baseline: `"
                     + CanonicalAlloyPipeline.REPRESENTATIVE_TED_VERSION + "`\n");
-            writer.write("- Direct legacy metric implementation retained as a differential oracle: yes\n");
+            writer.write("- Co-maintained Fast Rewrite IR metric retained as a differential oracle: yes\n");
             writer.write("- Total files: " + summary.total + "\n");
             writer.write("- Successful distances: " + summary.successes + "\n");
             writer.write("- Skipped identical raw AST predicate pairs: " + summary.skipped + "\n");

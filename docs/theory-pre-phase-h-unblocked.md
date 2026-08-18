@@ -6,7 +6,7 @@ This pass was completed on 2026-08-16 against the repaired Figure 4 contract
 in `appendixC_v5.tex` (SHA-256
 `e3f78ec475d1d6bbf1645e09c57714a7f040bf26dca69b9bacabd7483d577fa2`).
 It implements only work before Phase H that PF3-TB01 and PF3-TB02 had blocked.
-The legacy normalization/evaluation code, reproducibility programs, experiment
+The Fast Rewrite normalization/evaluation code, reproducibility programs, experiment
 runners, manifests, datasets, and terminal package were not changed.
 
 The repaired contract keeps three operations distinct:
@@ -96,7 +96,7 @@ The following formerly blocked rows move to `EXACT`:
 The 125-row matrix is now 110 `EXACT`, 10 `PARTIAL`, 4 `ABSENT`, and 1
 `CONTRADICTED`.
 
-`MUT-02` intentionally remains `CONTRADICTED`: legacy parser and rewrite paths
+`MUT-02` intentionally remains `CONTRADICTED`: Fast Rewrite parser and rewrite paths
 have not yet been rewired to this one insertion API. `FIN-01` and `FIN-02`
 remain Phase H work. `INT-*`, worker/process replay, and the experimental
 workflow remain Phase I work. These are not PF3 regressions and were not

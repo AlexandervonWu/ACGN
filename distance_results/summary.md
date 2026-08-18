@@ -4,9 +4,9 @@
 - Thread count: 32
 - Canonical engine: `CanonicalAlloyPipeline` (`canonical-alloy-pipeline-v10-three-layer`)
 - Exact graph: `TypedSlottedPortEGraph`; invariants: `strict-every-transition`; certificates: required
-- Primary metric: established repair metric over the certified quotient (`certified-legacy-repair-distance-v5`)
+- Primary metric: established repair metric over the certified quotient; compatibility manifest ID `certified-legacy-repair-distance-v5`
 - Canonical representative TED retained only as baseline: `canonical-representative-ted-v1`
-- Direct legacy metric implementation retained as a differential oracle: yes
+- Co-maintained Fast Rewrite IR metric retained as a differential oracle: yes
 - Total files: 66080
 - Successful distances: 61598
 - Skipped identical raw AST predicate pairs: 4482

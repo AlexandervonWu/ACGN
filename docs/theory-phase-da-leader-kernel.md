@@ -23,7 +23,7 @@ leaderKernelTrace_G(n) -> (K_G(n), iota_n, xi_n)
 
 and does not claim to produce the witness-dependent equality certificate
 `d_n^w`. No reproducibility program, experiment runner, script, manifest,
-legacy e-graph engine, dataset processor, or terminal-facing package was
+Fast Rewrite or comparison e-graph engine, dataset processor, or terminal-facing package was
 changed.
 
 ## Implemented
@@ -134,7 +134,7 @@ Executed on 2026-08-16 with OpenJDK 17.0.19:
 | `TheoryLeaderKernelTest` | PASS | 232 checks; seed `55520260820` |
 | **Focused exact-package checks** | **PASS** | **17,646 checks** |
 | Full repository compilation against `lib/*` | PASS | Every Java source compiled |
-| `EGraphSaturationTest` | PASS | Existing legacy test completed unchanged |
+| `EGraphSaturationTest` | PASS | Existing Fast Rewrite test completed unchanged |
 | `EGraphAblationTest` | PASS | Existing ablation test completed unchanged |
 
 The Phase DA gate includes the smallest strict-support parent embedding,
@@ -157,7 +157,7 @@ immutability, and 32 generated strict-support chains.
 | DA-F07 | Leader extraction could query a dirty graph and retain paths inconsistent with stale `H` | **Corrected:** the public operation shares the canonicalization quiescence guard | Phase G may rebuild rather than reject |
 | DA-F08 | LNCS-3 Figure 4 constructs `d_n` from graph structure alone | **Not bypassed:** Phase DA returns only structural `xi_n`; no certificate class or proof claim was introduced | PF3-TB01 and Phase F replay contract |
 | DA-F09 | LNCS-3 Figure 4 omits `K_G(n)` and `xi_n` from its returned record | **Corrected in the artifact:** Phase E returns both fields in its complete structural result | PF3-TB02 remains a draft contradiction |
-| DA-F10 | Premature integration could invalidate current experimental manifests and measurements | **Prevented:** no reproducibility, terminal, legacy, adapter, dataset, or report-generation code changed | Phase I only |
+| DA-F10 | Premature integration could invalidate current experimental manifests and measurements | **Prevented:** no reproducibility, terminal, Fast Rewrite, adapter, dataset, or report-generation code changed | Phase I only |
 
 ## Remaining Mismatches
 

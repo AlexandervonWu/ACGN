@@ -254,7 +254,7 @@ public final class EGraphAblationSuite {
             grouped.put(key, grouped.getOrDefault(key, 0) + 1);
         }
         RunMetrics exact = findRun(runs, "typed-slotted-port-egraph");
-        StringBuilder markdown = new StringBuilder("# Legacy Canonical-Only Equivalences\n\n");
+        StringBuilder markdown = new StringBuilder("# Fast Rewrite IR-Only Equivalences\n\n");
         markdown.append("This file is generated from the same manifests and pair CSVs as the combined ablation report.\n\n");
         markdown.append("- Run ID: `").append(context.runId).append("`\n");
         markdown.append("- Git SHA: `").append(context.gitSha).append("`\n");
@@ -274,7 +274,7 @@ public final class EGraphAblationSuite {
                     .append(entry.getValue()).append(" |\n");
         }
         markdown.append("\n## Pairs\n\n");
-        markdown.append("| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Legacy canonical zero | Exact pipeline zero |\n");
+        markdown.append("| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Fast Rewrite IR zero | Certificate-Integrated IR zero |\n");
         markdown.append("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
         for (String predicatePath : canonicalOnly) {
             markdown.append("| `").append(predicatePath).append("` | ")
@@ -329,7 +329,7 @@ public final class EGraphAblationSuite {
             Options options,
             AblationRunManifest.Context context,
             List<RunMetrics> runs) throws IOException {
-        RunMetrics legacyCanonical = findRun(runs, "canonical");
+        RunMetrics fastRewrite = findRun(runs, "canonical");
         RunMetrics canonical = findRun(runs, "typed-slotted-port-egraph");
         StringBuilder markdown = new StringBuilder();
         markdown.append("# Alloy E-Graph Ablation\n\n");
@@ -360,9 +360,9 @@ public final class EGraphAblationSuite {
                 + "bound-variable storage.\n");
         markdown.append("5. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed "
                 + "renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.\n");
-        markdown.append("6. **Legacy canonical:** the retained temporal/prenex/slotted implementation, "
-                + "with bounded rewrite saturation and the reference repair metric.\n");
-        markdown.append("7. **Typed slotted-port exact pipeline:** the complete `CanonicalAlloyPipeline`, using "
+        markdown.append("6. **Fast Rewrite IR:** the co-maintained temporal/prenex/slotted implementation, "
+                + "with bounded rewrite saturation and direct execution of the reference repair metric.\n");
+        markdown.append("7. **Certificate-Integrated IR:** the complete `CanonicalAlloyPipeline`, using "
                 + "certified insertion, exact-support typed slots, strict invariant checks, congruence rebuild, "
                 + "and finite-unfolding observation.\n\n");
 
@@ -425,15 +425,15 @@ public final class EGraphAblationSuite {
                 .append(differenceSize(slotted.equivalentPaths, egglogDeBruijn.equivalentPaths))
                 .append(" pairs over the De Bruijn egglog arm, with ")
                 .append(differenceSize(egglogDeBruijn.equivalentPaths, slotted.equivalentPaths)).append(" losses.\n");
-        int legacyAdds = differenceSize(legacyCanonical.equivalentPaths, slotted.equivalentPaths);
-        int legacyLosses = differenceSize(slotted.equivalentPaths, legacyCanonical.equivalentPaths);
-        markdown.append("- The legacy canonical arm adds ")
-                .append(legacyAdds).append(" zeroes over slotted storage and loses ")
-                .append(legacyLosses).append(".\n");
-        int canonicalAdds = differenceSize(canonical.equivalentPaths, legacyCanonical.equivalentPaths);
-        int canonicalLosses = differenceSize(legacyCanonical.equivalentPaths, canonical.equivalentPaths);
-        markdown.append("- The exact `CanonicalAlloyPipeline` adds ")
-                .append(canonicalAdds).append(" zeroes over the legacy canonical arm and loses ")
+        int fastRewriteAdds = differenceSize(fastRewrite.equivalentPaths, slotted.equivalentPaths);
+        int fastRewriteLosses = differenceSize(slotted.equivalentPaths, fastRewrite.equivalentPaths);
+        markdown.append("- The Fast Rewrite IR adds ")
+                .append(fastRewriteAdds).append(" zeroes over slotted storage and loses ")
+                .append(fastRewriteLosses).append(".\n");
+        int canonicalAdds = differenceSize(canonical.equivalentPaths, fastRewrite.equivalentPaths);
+        int canonicalLosses = differenceSize(fastRewrite.equivalentPaths, canonical.equivalentPaths);
+        markdown.append("- The Certificate-Integrated IR adds ")
+                .append(canonicalAdds).append(" zeroes over the Fast Rewrite IR and loses ")
                 .append(canonicalLosses).append(". Its zero set contains ")
                 .append(canonical.incorrectEquivalent).append(" predicates labeled incorrect; the slotted arm contains ")
                 .append(slotted.incorrectEquivalent).append(".\n");
@@ -442,6 +442,23 @@ public final class EGraphAblationSuite {
                 .append("% of engine CPU time and ")
                 .append(number(ratio(slotted.maxRssKb, canonical.maxRssKb) * 100.0))
                 .append("% of maximum RSS. End-to-end wall time is parser-dominated.\n");
+
+        markdown.append("\n## Implementation Tradeoff\n\n");
+        markdown.append("The Fast Rewrite IR directly executes the repaired temporal/prenex rewrite system and "
+                + "established metric for high-throughput corpus analysis. The Certificate-Integrated IR "
+                + "checks typed ports, law provenance, binder automorphisms, congruence quiescence, and graph "
+                + "invariants before accepting equality. It therefore provides a stronger fail-closed semantic-"
+                + "assurance boundary while preserving the same repair objective.\n\n");
+        markdown.append("On this run, certificate integration costs ")
+                .append(number(ratio(canonical.processElapsedSeconds, fastRewrite.processElapsedSeconds)))
+                .append("x wall time and ")
+                .append(number(ratio(canonical.engineCpuNanos, fastRewrite.engineCpuNanos)))
+                .append("x engine CPU, with ")
+                .append(number(ratio(canonical.maxRssKb, fastRewrite.maxRssKb)))
+                .append("x maximum RSS. The Fast Rewrite IR remains an active artifact path for broad "
+                        + "experiments; the Certificate-Integrated IR is the audit path when certified "
+                        + "admissibility matters more than throughput. Dataset labels and bounded solver checks "
+                        + "are empirical evidence, not an unbounded semantic proof.\n");
 
         markdown.append("\n## Agreement With Dataset Labels\n\n");
         markdown.append("`Equivalent` means eclass equality or canonical distance zero; it is not an additional SAT proof. "
@@ -476,11 +493,11 @@ public final class EGraphAblationSuite {
         }
 
         markdown.append("\n## Minimum Edit Distance\n\n");
-        markdown.append("For the five legacy e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
+        markdown.append("For the five retained e-graph baselines, this is the minimum unit-cost rooted-tree edit distance ")
                 .append("over concrete root witnesses retained during saturation; slotted witnesses are normalized ")
                 .append("under alpha-renaming and declaration permutation groups, while the two De Bruijn arms ")
                 .append("index bound variables before e-graph storage and distance. Eclass equality has distance zero. ")
-                .append("Both canonical arms use the established repair metric. The exact arm obtains admissible "
+                .append("Both canonical arms use the established repair metric. The Certificate-Integrated IR obtains admissible "
                         + "scope and operator alignments from the certified semantic artifact; normalized "
                         + "finite-unfolding keys define equality but are not edited to obtain distance.\n\n");
         markdown.append("| Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |\n");
@@ -533,9 +550,10 @@ public final class EGraphAblationSuite {
                     .append(run.peakEstimatedBytes).append(" |\n");
         }
         markdown.append("\nThe structural byte count is an implementation-level estimate for graph objects; "
-                + "Max RSS is the primary measured memory result. Legacy canonical units retain the historical "
-                + "canonical-form size; exact units count its normalized finite-unfolding key. E-class and e-node "
-                + "columns for the exact arm are reachable strict graph counts across both predicates.\n");
+                + "Max RSS is the primary measured memory result. Fast Rewrite IR units retain the repaired "
+                + "canonical-form size; Certificate-Integrated IR units count its normalized finite-unfolding "
+                + "key. E-class and e-node columns for the certificate-integrated arm are reachable strict graph "
+                + "counts across both predicates.\n");
         markdown.append("\n## Reproduce\n\n");
         markdown.append("```bash\n");
         markdown.append("./scripts/run_egraph_ablation.sh --input ").append(options.input)

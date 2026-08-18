@@ -158,7 +158,7 @@ public final class CanonicalAlloyPipelineTest {
             int localGroupingLegacy = legacyDistance(
                     visitor, "localGroupingLeft", "localGroupingRight");
             check(localGroupingLegacy > 0,
-                    "the local-grouping fixture must expose the documented legacy ambiguity");
+                    "the local-grouping fixture must expose the documented Fast Rewrite ambiguity");
             check(localGroupingRepair.distance() == 0,
                     "equivalent local declaration grouping must lie in the repair zero kernel");
             check(CanonicalAlloyPipeline.distance(alphaNearLeft, alphaNearRight) == 1,
@@ -208,11 +208,11 @@ public final class CanonicalAlloyPipelineTest {
             check(CanonicalAlloyPipeline.distance(
                             localComprehensionLeft, localComprehensionRight) == 0,
                     "certified local comprehension alpha names must not cost matrix edits");
-            check(localPermutationLeft.equivalentTo(localPermutationRight),
-                    "a same-descriptor local binder permutation must be alpha-equivalent");
+            check(!localPermutationLeft.equivalentTo(localPermutationRight),
+                    "comprehension result columns must retain their positional identities");
             check(CanonicalAlloyPipeline.distance(
-                            localPermutationLeft, localPermutationRight) == 0,
-                    "local binder distance must minimize over its certified permutation group");
+                            localPermutationLeft, localPermutationRight) > 0,
+                    "swapping comprehension columns must remain outside the zero kernel");
             check(!namedRefFirst.equivalentTo(namedRefLast),
                     "distinct non-temporal reference symbols must not share a certified observation");
             check(CanonicalAlloyPipeline.distance(namedRefFirst, namedRefLast) == 1,

@@ -108,7 +108,7 @@ public final class RepairView {
             return dependencies;
         }
 
-        /** The legacy conceptual edit unit: any tuple modification costs one. */
+        /** The Fast Rewrite conceptual edit unit: any tuple modification costs one. */
         public boolean sameRepairTuple(Declaration other) {
             return other != null
                     && quantifier.equals(other.quantifier)
@@ -193,7 +193,7 @@ public final class RepairView {
         }
     }
 
-    /** One legacy matrix e-node with certified flexible-container semantics. */
+    /** One Fast Rewrite matrix e-node with certified flexible-container semantics. */
     public static final class Node {
         private final String operator;
         private final String payload;

@@ -9,10 +9,10 @@
 - Thread count: 32
 
 - Canonical engine: `CanonicalAlloyPipeline` (`canonical-alloy-pipeline-v10-three-layer`)
-- Canonical repair metric: `certified-legacy-repair-distance-v5`
+- Canonical repair metric compatibility manifest ID: `certified-legacy-repair-distance-v5`
 - Canonical representative TED is diagnostic only: `canonical-representative-ted-v1`
 - Exact graph: `TypedSlottedPortEGraph`; invariants: `strict-every-transition`; certificates: required
-- Direct legacy metric rankings retained in `index.json` as a differential oracle: yes
+- Co-maintained Fast Rewrite IR rankings retained in `index.json` as a differential oracle: yes
 
 - Reward pool size: 100
 

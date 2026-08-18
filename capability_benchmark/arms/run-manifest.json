@@ -212,7 +212,7 @@
     },
     {
       "path": "comparison.json",
-      "sha256": "f5d45b6bf215721bb04092553a618276f2dfe02fb054d4506fbd8965b3ee7c47",
+      "sha256": "0572a59c5b1bb3e5b1a22260063835bc772633adfefafa23664872cab31da795",
       "sizeBytes": 16123
     },
     {
@@ -227,13 +227,13 @@
     },
     {
       "path": "canonical_only_vs_slotted.md",
-      "sha256": "be21b7cd68ef0cef9daea1b3d839bc04ed889de2799f74551d97b7870ba09a09",
-      "sizeBytes": 670
+      "sha256": "8e76d67f7423e3a00fe8092101fd504223336a8c6f8dd193feb53d8e16cf72a4",
+      "sizeBytes": 679
     },
     {
       "path": "summary.md",
-      "sha256": "900f8a93d966e2e9e642525c7a402b203e04ef87b03f3380193aace6595c6d51",
-      "sizeBytes": 10673
+      "sha256": "d31a70cd0d70f0b061ced09353240150ab2fda548d9d68e6356fe28e7edb2857",
+      "sizeBytes": 11567
     }
   ],
   "seed": 55520260811,
@@ -249,7 +249,7 @@
   "datasetSha256": "e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0",
   "heap": "4g",
   "workers": 32,
-  "completedAt": "2026-08-18T04:56:53.868650220Z",
+  "completedAt": "2026-08-18T12:00:46.479745043Z",
   "ruleSetVersion": "canonical-equivalences-v2",
   "outputSchemaVersion": "candis-ablation-output-v5",
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",

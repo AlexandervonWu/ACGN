@@ -123,7 +123,7 @@ and exact H at quiescence.
 | G-F11 | Union/restriction could discard usable certified symmetries | Transport exactly the setwise stabilizer with reconstructed proofs |
 | G-F12 | Existing tests did not distinguish rebuilding from opaque representative unfolding | Added a hidden same-headed Set regression |
 
-The legacy `SlottedEGraph` still uses capped full scans and uncertified local
+The retained comparison `SlottedEGraph` still uses capped full scans and uncertified local
 maps. That is not a contradiction inside the exact package: paper Section 5.2
 and the architecture map classify it as a retained baseline, not Phase G.
 

@@ -73,8 +73,8 @@ import is.fivefivefive.CanDis.theory.TypedSlottedPortEGraph;
 
 /** Converts normalized Alloy temporal phases into the exact typed graph. */
 public final class TheoryAlloyAdapter {
-    public static final String ADAPTER_VERSION = "typed-alloy-normal-form-adapter-v7";
-    public static final String SIGNATURE_VERSION = "canonical-alloy-signature-v6";
+    public static final String ADAPTER_VERSION = "typed-alloy-normal-form-adapter-v8";
+    public static final String SIGNATURE_VERSION = "canonical-alloy-signature-v7";
     public static final String INVARIANT_MODE = "strict-every-transition";
     private static final GraphType REL = GraphType.constructor("AlloyRel");
 
@@ -883,7 +883,7 @@ public final class TheoryAlloyAdapter {
                             bindingType(variable)));
                 }
             }
-            BinderPlan plan = localBinderPlan(locals, context);
+            BinderPlan plan = localBinderPlan(source.getOpcode(), locals, context);
             if (localBinderDescriptors.put(source, plan.descriptor) != null) {
                 throw new IllegalStateException(
                         "A local matrix binder received two certified descriptors");
@@ -985,12 +985,15 @@ public final class TheoryAlloyAdapter {
         }
 
         private BinderPlan localBinderPlan(
+                Opcode binderOpcode,
                 List<LocalCoordinate> locals,
                 TypedSlotContext ambient) {
             List<QuantiVar> variables = new ArrayList<>(locals.size());
             List<BindingPayload> payloads = new ArrayList<>(locals.size());
             for (int index = 0; index < locals.size(); index++) {
                 LocalCoordinate local = locals.get(index);
+                // A comprehension coordinate is also an ordered result column.
+                int exchangeClass = binderOpcode == Opcode.COMPREHENSION ? index : 0;
                 QuantiVar placeholder = new QuantiVar(index, local.name, "", local.type.toString());
                 variables.add(placeholder);
                 payloads.add(new BindingPayload(
@@ -999,7 +1002,7 @@ public final class TheoryAlloyAdapter {
                         local.disjointnessClass,
                         local.domain,
                         local.type,
-                        0));
+                        exchangeClass));
             }
             return binderPlan(variables, payloads, ambient, false);
         }

@@ -44,7 +44,7 @@ The living matrix now marks these rows `EXACT`:
 - `SUP-02`
 
 These statuses cover the standalone carrier algebra. They do not claim that the
-legacy engines use typed values. Later matrix rows separately require explicit
+Fast Rewrite and retained comparison engines use typed values. Later matrix rows separately require explicit
 ports, graph-table ownership, renamed union-find, certificates, and integration.
 
 Gate B is **PASS**: all foundational algebra/property tests pass, malformed
@@ -88,12 +88,12 @@ image composition.
 
 | ID | Located fault or contradiction | Disposition in Phase B | Remaining dependency |
 | -- | -- | -- | -- |
-| B-F01 | Legacy graph types are coarse enums and parser-originated strings | Correct exact carrier added; legacy path deliberately untouched | Phase C signatures and Phase D state must consume `GraphType` |
-| B-F02 | Legacy slots are strings or integer positions with no type/alphabet identity | Correct exact carrier and canonical alphabets added | Port and graph adapters must reject legacy slot values |
-| B-F03 | Legacy code calls partial injections renamings and can invert/fill them heuristically | Sealed embedding/renaming/permutation distinction added; malformed conversion rejected | Phase D must replace parent maps with this algebra |
-| B-F04 | Legacy renamed union-find stores correspondence opposite the formal parent embedding and drops coordinates | Documented, not changed under the Phase B/protected-runner scope | Phase D renamed union-find |
-| B-F05 | Legacy invocations do not derive output from a typed class interface | `TypedInvocation` now has no caller-supplied output and validates `S_a` | Phase D class table must uniquely own each interface |
-| B-F06 | Legacy support is inferred from parser/alpha names and partial map values | Exact leaf/image/union/subtraction operations added | Phase C must put support directly on sealed port/node values |
+| B-F01 | Fast Rewrite graph types are coarse enums and parser-originated strings | Correct exact carrier added; Fast Rewrite path deliberately untouched | Phase C signatures and Phase D state must consume `GraphType` |
+| B-F02 | Fast Rewrite slots are strings or integer positions with no type/alphabet identity | Correct exact carrier and canonical alphabets added | Certificate-integrated port and graph adapters must reject Fast Rewrite slot values |
+| B-F03 | Fast Rewrite code calls partial injections renamings and can invert/fill them heuristically | Sealed embedding/renaming/permutation distinction added; malformed conversion rejected | Phase D must replace parent maps with this algebra |
+| B-F04 | Fast Rewrite renamed union-find stores correspondence opposite the formal parent embedding and drops coordinates | Documented, not changed under the Phase B/protected-runner scope | Phase D renamed union-find |
+| B-F05 | Fast Rewrite invocations do not derive output from a typed class interface | `TypedInvocation` now has no caller-supplied output and validates `S_a` | Phase D class table must uniquely own each interface |
+| B-F06 | Fast Rewrite support is inferred from parser/alpha names and partial map values | Exact leaf/image/union/subtraction operations added | Phase C must put support directly on sealed port/node values |
 | B-F07 | Initial Phase B embedding classes were validated but externally subclassable, permitting an unverified subtype API | **Corrected:** `TypedEmbedding -> TypedRenaming -> TypedPermutation` is sealed/final | None |
 | B-F08 | Initial support interface allowed arbitrary implementations to report invented support | **Corrected:** `HasSlotSupport` is sealed to proven carriers | Phase C must explicitly permit only its sealed port/node variants |
 | B-F09 | One draft test attempted `removeAll` on the immutable context view while checking disjointness | **Corrected:** test uses non-mutating `Collections.disjoint`; immutable rejection remains separately tested | None |
@@ -103,7 +103,7 @@ image composition.
 
 There are 103 unresolved matrix rows. The most immediate are `PORT-*`, `SIG-*`,
 `FLAT-*`, `INV-04`, `SUP-01`, and `SUP-03`; all depend on Phase C. Existing
-legacy contradictions remain visible in the matrix and have not been relabeled
+Fast Rewrite contradictions remain visible in the matrix and have not been relabeled
 as exact merely because a separate correct carrier now exists.
 
 ### Theory blockers

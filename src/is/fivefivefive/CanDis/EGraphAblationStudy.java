@@ -639,9 +639,9 @@ public final class EGraphAblationStudy {
         EGGLOG("java-egglog", "Java egglog core replica with shared variadic rules and rebuilding"),
         EGGLOG_DEBRUIJN("java-egglog-debruijn",
                 "Java egglog core storing bound variables as De Bruijn indices"),
-        SLOTTED("slotted-egraph", "Legacy slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
+        SLOTTED("slotted-egraph", "Retained slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
         CANONICAL("canonical",
-                "Legacy temporal/prenex/slotted method with bounded rewrite saturation"),
+                "Fast Rewrite IR temporal/prenex/slotted method with bounded rewrite saturation"),
         TYPED_SLOTTED_PORT(
                 "typed-slotted-port-egraph",
                 "Complete CanonicalAlloyPipeline over the exact TypedSlottedPortEGraph");

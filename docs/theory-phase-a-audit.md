@@ -57,8 +57,8 @@ formal state.
 | P1 | Support is guessed from parser/alpha names instead of defined structurally on typed graph values | Support equivariance and safe restriction cannot be checked | `SUP-*` | B-C |
 | P1 | The structural total order omits formal type/schema/witness fields and has one unresolved completeness question | Determinism is observed only for the current representation | `ORD-*`, `CAN-09` | C-E |
 | P1 | There is no graph-wide dirty/quiescent query contract or invariant checker | Clients can neither prove nor diagnose the formal quiescent state | `HC-02`, `HC-03`, `CHK-*` | G |
-| P2 | Existing tests are primarily handwritten behavior regressions, not generated algebra, mutation fuzzing, or differential canonicalization | Passing legacy tests cannot establish the formal obligations | `TEST-*` | B-H |
-| P2 | The Alloy and experiment adapters have no separately named exact engine path or complete theory manifest fields | A future exact engine could be confused with legacy slotted measurements | `INT-*` | I |
+| P2 | Existing tests are primarily handwritten behavior regressions, not generated algebra, mutation fuzzing, or differential canonicalization | Passing Fast Rewrite tests alone cannot establish the certificate-integrated formal obligations | `TEST-*` | B-H |
+| P2 | The Alloy and experiment adapters have no separately named exact engine path or complete theory manifest fields | A future certificate-integrated engine could be confused with retained slotted measurements | `INT-*` | I |
 
 The sole `UNCERTAIN` row is `ORD-02`: current string keys appear deterministic
 for observed values, but no complete audit proves that every structurally
@@ -89,7 +89,7 @@ test is absent.
 prioritized mismatch list, and unchanged baseline results now exist and are
 cross-linked.
 
-**Theory-faithful engine acceptance remains closed.** There are 117 unresolved
+**Certificate-Integrated IR acceptance remains closed.** There are 117 unresolved
 mandatory rows. No claim is made that the current Java graph is an executable
 realization of the paper.
 

@@ -1,4 +1,4 @@
-# Legacy Canonical-Only Equivalences
+# Fast Rewrite IR-Only Equivalences
 
 This file is generated from the same manifests and pair CSVs as the combined ablation report.
 
@@ -16,5 +16,5 @@ This file is generated from the same manifests and pair CSVs as the combined abl
 
 ## Pairs
 
-| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Legacy canonical zero | Exact pipeline zero |
+| Source | Status | Raw zero | Raw DB zero | Egglog zero | Egglog DB zero | Slotted zero | Fast Rewrite IR zero | Certificate-Integrated IR zero |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |

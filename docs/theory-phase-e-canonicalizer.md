@@ -13,7 +13,7 @@ mission text and the coherent main-text contract of the current LNCS-3 draft.
 - Scope: isolated package `is.fivefivefive.CanDis.theory`
 
 No reproducibility program, terminal package, experiment runner, manifest,
-dataset processor, legacy e-graph, or Alloy adapter was changed.
+dataset processor, Fast Rewrite or comparison e-graph, or Alloy adapter was changed.
 
 ## Result
 

@@ -1,6 +1,6 @@
 # Alloy E-Graph Ablation
 
-- Generated at: `2026-08-18T04:50:58.199814165Z`
+- Generated at: `2026-08-18T12:00:39.761544414Z`
 - Run ID: `c48a105a-796c-483c-9f75-7e3a35ff1db0`
 - Git SHA: `6d409311a0962d90eb5f97fd1b1ec3d0cd040697` (dirty: true)
 - Dataset SHA-256: `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`
@@ -20,8 +20,8 @@
 3. **Java egglog core:** variadic Alloy constructors plus union facts, semi-naive rule rounds, and congruence rebuilding. This is a Java replica of the egglog execution core used here, not a textual-language-compatible port of every egglog feature.
 4. **Java egglog + De Bruijn:** the same variadic engine and rules, with nameless bound-variable storage.
 5. **Slotted e-graph:** the same raw terms and rules represented as shape-hash-consed renamed eclass invocations with exposed slots, slot redundancy, and finite permutation groups.
-6. **Legacy canonical:** the retained temporal/prenex/slotted implementation, with bounded rewrite saturation and the reference repair metric.
-7. **Typed slotted-port exact pipeline:** the complete `CanonicalAlloyPipeline`, using certified insertion, exact-support typed slots, strict invariant checks, congruence rebuild, and finite-unfolding observation.
+6. **Fast Rewrite IR:** the co-maintained temporal/prenex/slotted implementation, with bounded rewrite saturation and direct execution of the reference repair metric.
+7. **Certificate-Integrated IR:** the complete `CanonicalAlloyPipeline`, using certified insertion, exact-support typed slots, strict invariant checks, congruence rebuild, and finite-unfolding observation.
 
 ## Shared Rule Program
 
@@ -48,9 +48,15 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 - De Bruijn storage adds 1340 zero-distance pairs to the variadic egglog arm, with 0 losses.
 - Under De Bruijn storage, variadic egglog encoding adds 0 pairs over the fixed-arity arm, with 0 losses.
 - Slot-aware shapes add 2 pairs over the De Bruijn egglog arm, with 3 losses.
-- The legacy canonical arm adds 154 zeroes over slotted storage and loses 0.
-- The exact `CanonicalAlloyPipeline` adds 1 zeroes over the legacy canonical arm and loses 0. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
+- The Fast Rewrite IR adds 154 zeroes over slotted storage and loses 0.
+- The Certificate-Integrated IR adds 1 zeroes over the Fast Rewrite IR and loses 0. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
 - Relative to the full method, the slotted arm uses 0.028% of engine CPU time and 23.343% of maximum RSS. End-to-end wall time is parser-dominated.
+
+## Implementation Tradeoff
+
+The Fast Rewrite IR directly executes the repaired temporal/prenex rewrite system and established metric for high-throughput corpus analysis. The Certificate-Integrated IR checks typed ports, law provenance, binder automorphisms, congruence quiescence, and graph invariants before accepting equality. It therefore provides a stronger fail-closed semantic-assurance boundary while preserving the same repair objective.
+
+On this run, certificate integration costs 123.420x wall time and 3974.092x engine CPU, with 1.171x maximum RSS. The Fast Rewrite IR remains an active artifact path for broad experiments; the Certificate-Integrated IR is the audit path when certified admissibility matters more than throughput. Dataset labels and bounded solver checks are empirical evidence, not an unbounded semantic proof.
 
 ## Agreement With Dataset Labels
 
@@ -82,7 +88,7 @@ A found semantic equivalent is a zero-distance pair carrying the dataset's SAT-v
 
 ## Minimum Edit Distance
 
-For the five legacy e-graph baselines, this is the minimum unit-cost rooted-tree edit distance over concrete root witnesses retained during saturation; slotted witnesses are normalized under alpha-renaming and declaration permutation groups, while the two De Bruijn arms index bound variables before e-graph storage and distance. Eclass equality has distance zero. Both canonical arms use the established repair metric. The exact arm obtains admissible scope and operator alignments from the certified semantic artifact; normalized finite-unfolding keys define equality but are not edited to obtain distance.
+For the five retained e-graph baselines, this is the minimum unit-cost rooted-tree edit distance over concrete root witnesses retained during saturation; slotted witnesses are normalized under alpha-renaming and declaration permutation groups, while the two De Bruijn arms index bound variables before e-graph storage and distance. Eclass equality has distance zero. Both canonical arms use the established repair metric. The Certificate-Integrated IR obtains admissible scope and operator alignments from the certified semantic artifact; normalized finite-unfolding keys define equality but are not edited to obtain distance.
 
 | Arm | Pairs | All avg | CORRECT avg | Incorrect avg | P50 | P95 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -134,7 +140,7 @@ These edges isolate variable encoding, variadic representation, slots, and the f
 | canonical | 29.843 | 25.022 | 25.173 | 1909.958 | 10112 |
 | typed-slotted-port-egraph | 29.830 | 20.935 | 18.059 | 3832.735 | 16336 |
 
-The structural byte count is an implementation-level estimate for graph objects; Max RSS is the primary measured memory result. Legacy canonical units retain the historical canonical-form size; exact units count its normalized finite-unfolding key. E-class and e-node columns for the exact arm are reachable strict graph counts across both predicates.
+The structural byte count is an implementation-level estimate for graph objects; Max RSS is the primary measured memory result. Fast Rewrite IR units retain the repaired canonical-form size; Certificate-Integrated IR units count its normalized finite-unfolding key. E-class and e-node columns for the certificate-integrated arm are reachable strict graph counts across both predicates.
 
 ## Reproduce
 

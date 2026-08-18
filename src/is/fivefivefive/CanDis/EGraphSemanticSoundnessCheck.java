@@ -39,6 +39,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
+import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
@@ -54,7 +55,7 @@ public final class EGraphSemanticSoundnessCheck {
     private static final List<String> ENGINES = List.of(
             "raw-egraph", "raw-egraph-debruijn",
             "java-egglog", "java-egglog-debruijn",
-            "slotted-egraph", "canonical");
+            "slotted-egraph", "canonical", "typed-slotted-port-egraph");
     private static final Path PROBE_ROOT = Paths.get(
             "src/is/fivefivefive/CanDis/ablation/soundness");
 
@@ -222,6 +223,10 @@ public final class EGraphSemanticSoundnessCheck {
             Canonical.Prepared left = Canonical.prepare(forest.get(predicateIds.get(names[0])));
             Canonical.Prepared right = Canonical.prepare(forest.get(predicateIds.get(names[1])));
             result.merged.put("canonical", Canonical.distance(left, right) == 0);
+            CanonicalAlloyPipeline.Prepared exactLeft = CanonicalAlloyPipeline.prepare(left);
+            CanonicalAlloyPipeline.Prepared exactRight = CanonicalAlloyPipeline.prepare(right);
+            result.merged.put("typed-slotted-port-egraph",
+                    CanonicalAlloyPipeline.distance(exactLeft, exactRight) == 0);
 
             Command command = equivalenceCheck(module);
             if (command == null) {
@@ -256,9 +261,16 @@ public final class EGraphSemanticSoundnessCheck {
         JSONObject root = new JSONObject();
         root.put("generatedAt", Instant.now().toString());
         root.put("inputRoot", options.inputRoot.toString());
+        root.put("resultsRoot", options.resultsRoot.toString());
+        root.put("claimSourceRunId", manifestField(options.resultsRoot, "runId"));
+        root.put("claimSourceGitSha", manifestField(options.resultsRoot, "gitSha"));
+        root.put("exactPipelineVersion", CanonicalAlloyPipeline.PIPELINE_VERSION);
+        root.put("exactAdapterVersion", TheoryAlloyAdapter.ADAPTER_VERSION);
+        root.put("exactSignatureVersion", TheoryAlloyAdapter.SIGNATURE_VERSION);
         root.put("boundedByModelCommands", true);
         root.put("canonicalOnly", options.canonicalOnly);
         root.put("threadCount", options.threads);
+        root.put("checkedUniquePairs", results.size());
         JSONArray arms = new JSONArray();
         for (String engine : ENGINES) {
             arms.put(engineSummary(engine, results));
@@ -307,7 +319,13 @@ public final class EGraphSemanticSoundnessCheck {
         markdown.append("- Checked unique predicate pairs: ").append(results.size()).append("\n");
         markdown.append("- Mode: ").append(options.canonicalOnly
                 ? "canonical zero and slotted nonzero only" : "union of all equivalence claims").append("\n");
-        markdown.append("- Threads: ").append(options.threads).append("\n\n");
+        markdown.append("- Threads: ").append(options.threads).append("\n");
+        markdown.append("- Claim-source run: `")
+                .append(manifestField(options.resultsRoot, "runId")).append("`\n");
+        markdown.append("- Exact checker: `").append(CanonicalAlloyPipeline.PIPELINE_VERSION)
+                .append("` / `").append(TheoryAlloyAdapter.ADAPTER_VERSION)
+                .append("` / `").append(TheoryAlloyAdapter.SIGNATURE_VERSION)
+                .append("`\n\n");
         markdown.append("This is a bounded semantic check using each model's own `check correct` command. ")
                 .append("An Alloy counterexample disproves a merge; absence of a counterexample is evidence only ")
                 .append("within that command's scope and temporal bounds.\n\n");
@@ -343,8 +361,8 @@ public final class EGraphSemanticSoundnessCheck {
         markdown.append("\n## Targeted Rule-Level Probes\n\n");
         markdown.append("These deliberately exercise binder cases absent from the observed zero-distance corpus. ")
                 .append("A merge in a row with an Alloy counterexample is a semantic-soundness violation.\n\n");
-        markdown.append("| Probe | Alloy counterexample | Raw | Raw DB | Java egglog | Egglog DB | Slotted | Canonical |\n");
-        markdown.append("| --- | --- | --- | --- | --- | --- | --- | --- |\n");
+        markdown.append("| Probe | Alloy counterexample | Raw | Raw DB | Java egglog | Egglog DB | Slotted | Canonical | Exact |\n");
+        markdown.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- |\n");
         for (ProbeResult probe : probes) {
             markdown.append("| `").append(probe.name).append("` | ")
                     .append(probe.error.isEmpty() ? probe.counterexample : "error")
@@ -354,6 +372,7 @@ public final class EGraphSemanticSoundnessCheck {
                     .append(" | ").append(probe.merged.getOrDefault("java-egglog-debruijn", false))
                     .append(" | ").append(probe.merged.getOrDefault("slotted-egraph", false))
                     .append(" | ").append(probe.merged.getOrDefault("canonical", false))
+                    .append(" | ").append(probe.merged.getOrDefault("typed-slotted-port-egraph", false))
                     .append(" |\n");
         }
         markdown.append("\n- `let_shadow_inv1`: detects capture during beta reduction when an inner quantifier shadows a name.\n");
@@ -369,6 +388,19 @@ public final class EGraphSemanticSoundnessCheck {
             }
         }
         Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
+    }
+
+    private static String manifestField(Path resultsRoot, String field) {
+        Path manifest = resultsRoot.resolve("run-manifest.json");
+        if (!Files.isRegularFile(manifest)) {
+            return "unrecorded";
+        }
+        try {
+            return new JSONObject(Files.readString(manifest, StandardCharsets.UTF_8))
+                    .optString(field, "unrecorded");
+        } catch (RuntimeException | IOException exception) {
+            return "unreadable";
+        }
     }
 
     private static JSONObject engineSummary(String engine, List<Result> results) {

@@ -5,8 +5,8 @@ predicates and evaluates the established repair metric on its certified
 semantic quotient. Canonical equality, deterministic representatives, and
 repair distance are separate layers. The repository also contains dataset
 runners, backtranslation, semantic checks, and a seven-arm ablation comparing
-fixed-arity, De Bruijn, egglog-like, slotted, legacy-canonical, and exact
-representations.
+fixed-arity, De Bruijn, egglog-like, slotted, Fast Rewrite IR, and
+Certificate-Integrated IR representations.
 
 ## Contents
 
@@ -57,15 +57,23 @@ leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 | Paired student-oracle (`pipeline-v9`, metric v4) | 61,598 successes, 0 failures; mean certified repair distance 14.014010; 2,317 `CORRECT` zeroes; 0 incorrect zeroes |
 | Nearest correct pool (`pipeline-v10`, metric v5) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 10.865050 |
 | Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,318 canonical components, 10,257 AST-different zero-distance truth pairs |
-| Seven-arm natural corpus | exact arm retained 2,316 legacy-canonical zeroes and added 1; both canonical arms had 0 incorrect zeroes |
-| Generated capability matrix | slotted, legacy-canonical, and exact arms recovered 5,500/5,500 pairs; all 11 expected capability boundaries matched |
+| Seven-arm natural corpus | Certificate-Integrated IR retained 2,316 Fast Rewrite IR zeroes and added 1; both canonical paths had 0 incorrect zeroes |
+| Generated capability matrix | slotted, Fast Rewrite IR, and Certificate-Integrated IR arms recovered 5,500/5,500 pairs; all 11 expected capability boundaries matched |
 
-The exact arm averaged 29.830 representation units, 20.935 reachable e-classes,
-and 18.059 reachable e-nodes, but required 2,303.890 seconds wall time versus
-18.470 seconds for the legacy canonical arm. Maximum RSS was 3,603.680 versus
+The certificate-integrated arm averaged 29.830 representation units, 20.935
+reachable e-classes, and 18.059 reachable e-nodes, but required 2,303.890
+seconds wall time versus 18.470 seconds for the Fast Rewrite IR arm. Maximum RSS was 3,603.680 versus
 3,529.023 MiB. Its cost is dominated by certificate-bearing construction,
 renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
 not by larger output terms or the final repair-distance recurrence.
+
+Both implementations remain first-class artifact paths. The Fast Rewrite IR
+directly executes the repaired temporal/prenex rewrite system and established
+metric at corpus scale. The Certificate-Integrated IR reconstructs the same
+repair view through typed ports and checked certificates, and fails closed when
+scope, law, provenance, or quiescence evidence is missing. The latter provides
+a stronger semantic-assurance boundary at substantial runtime cost; neither
+the bounded checks nor the dataset labels constitute an unbounded Alloy proof.
 
 The ablation and capability manifests record a dirty source tree at Git SHA
 `cc53042333fa3a1c820eb5715aa3b124e03d0ff1`. Their source, dataset, and output
@@ -324,7 +332,7 @@ AST opcodes are canonicalized before these rules are compared.
 
 `CanonicalDistance` is the repair-metric specification. The three-layer
 pipeline preserves this edit algebra while replacing uncertified scope
-assumptions with faithful binder and operator certificates. Canonical
+assumptions with certificate-integrated binder and operator certificates. Canonical
 representative TED is reported separately and is not this metric.
 
 For prepared forms `L` and `R`:
@@ -496,9 +504,9 @@ rewards, and writes JSON plus Markdown statistics.
 
 The unqualified canonical fields use the Phase I `CanonicalAlloyPipeline`
 backed by the exact `TypedSlottedPortEGraph` and the certified port of the
-established metric. Direct legacy-execution values remain in explicit
-`legacyCanonical*` fields as differential evidence; readable edit paths remain
-`legacyDiagnostic*`.
+established metric. Direct Fast Rewrite IR values remain in the historical
+compatibility fields `legacyCanonical*`; readable Fast Rewrite edit paths use
+the compatibility name `legacyDiagnostic*`.
 
 ```bash
 java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.CanonicalBatchTest \
@@ -526,8 +534,8 @@ reference pool, ranks every incorrect answer against every correct reference,
 and writes an augmented research dataset.
 
 Canonical pool equivalence and nearest-reference ranking use the exact Phase I
-pipeline. The legacy canonical ranking is retained in one shared comparison
-pass for compatibility.
+pipeline. The Fast Rewrite IR ranking is retained in one shared comparison
+pass as a co-maintained metric reference.
 
 Before constructing any question group or truth pool, it removes files whose
 student predicate and paired oracle predicate have identical raw ASTs. On the
@@ -547,7 +555,7 @@ Additional options are `--skip-rewards`, `--audit-only`, `--limit N`, and
 
 The augmenter stores compact certified comparison values after construction:
 canonical equality and repair distance retain the same observation and repair
-view, while construction-only graph witnesses are released. Faithful graph
+view, while construction-only graph witnesses are released. Certificate-integrated graph
 construction is memory-bounded independently of parser and distance workers.
 The progress line reports both values; for example, `--threads 32` under
 `-Xmx2g` currently selects four canonical builders. The builder count is capped
@@ -646,8 +654,8 @@ The current full-corpus result is:
 | `typed-slotted-port-egraph` | 2,317 | 14.042 | 2,303.890 | 47,451.149 | 3,603.680 |
 
 All arms completed all 61,598 eligible pairs with zero failures and zero
-incorrect zero-distance merges. Pair-level transitions show `+1/-0` from
-legacy canonical to exact. The exact arm's p50 and p95 engine latencies were
+incorrect zero-distance merges. Pair-level transitions show `+1/-0` from the
+Fast Rewrite IR to the Certificate-Integrated IR. The latter's p50 and p95 engine latencies were
 555.391 and 4,394.306 ms. Consult the generated report for per-pair transitions,
 representation counts, and process metadata rather than copying this summary
 into a paper table by hand.
@@ -681,8 +689,8 @@ subtype by default (`--soundness-per-subtype N`) and labels that evidence as a
 bounded sanity check rather than proof.
 
 In the current 5,500-pair run, raw and Java egglog each recovered 47.00%; their
-De Bruijn variants recovered 65.96%; and slotted, legacy-canonical, and exact
-each recovered 100.00%. Every expected first-capable boundary matched. The 29
+De Bruijn variants recovered 65.96%; and slotted, Fast Rewrite IR, and
+Certificate-Integrated IR each recovered 100.00%. Every expected first-capable boundary matched. The 29
 bounded checks had zero conclusive non-temporal failures; six temporal checks
 remain explicitly inconclusive because no temporal backend was available.
 
@@ -789,7 +797,7 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
 - BAG multiplicity is semantically significant. Duplicate removal is limited to
   operators explicitly classified as ACI/SET or to proven tautological rules.
 - Both canonical arms peak near 3.5 GiB RSS versus roughly 0.9 GiB for the first
-  five baselines. The exact arm's principal penalty is CPU and latency, not
+  five baselines. The Certificate-Integrated IR's principal penalty is CPU and latency, not
   additional output units: certificates, orbit witnesses, immutable mutation
   records, strict invariant checks, and finite unfoldings are construction
   state rather than repair-observation nodes.

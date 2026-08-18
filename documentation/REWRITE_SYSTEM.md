@@ -5,6 +5,15 @@ used by CanDis. It describes how an Alloy predicate is transformed into a
 temporal tree of prenex normal forms whose matrices are saturated slotted
 e-graphs.
 
+The executable normalization described here is the **Fast Rewrite IR**. It is
+a co-maintained, high-throughput artifact path and directly supplies the
+established repair metric. The **Certificate-Integrated IR** consumes the same
+repaired phases through `TheoryAlloyAdapter`, represents operators with typed
+ports, and admits the corresponding A, AC, ACI, binder, and congruence actions
+only with checked evidence. Certificate integration strengthens the
+fail-closed semantic-assurance boundary; it does not replace this rewrite IR or
+define a different repair objective.
+
 The rewrite relation is intentionally incomplete. Two predicates at canonical
 distance zero are equal under the rules below; CanDis does not claim that every
 pair of semantically equivalent Alloy predicates rewrites to distance zero.

@@ -6,8 +6,8 @@ This document began as the Phase A architecture audit for commit
 `6b128156008abe8065fe2cf3871950ff0206a47dcc263e3486e475053e4a0d33`;
 the LNCS-3 re-audit used HEAD `f0e326ab41fbdda9e21b36cb11aecc1863d9712d`
 in a dirty worktree.
-It describes the legacy code as found and records the theory path from its
-isolated phase gates through the Phase I integration boundary. Names under
+It describes the Fast Rewrite IR as found and records the certificate-integrated
+theory path from its isolated phase gates through the Phase I integration boundary. Names under
 **Required exact boundary** that are not listed in the current theory package
 remain proposed later-phase classes.
 
@@ -29,7 +29,7 @@ Alloy parser / MASGVisitor
        A / AC / ACI normalization
        bounded local saturation
   -> Canonical.Prepared
-       -> legacy Canonical / CanonicalDistance compatibility diagnostics
+       -> Fast Rewrite IR Canonical / CanonicalDistance reference diagnostics
        -> TheoryAlloyAdapter
             typed signatures, slots, binders, and certified containers
             TypedSlottedPortEGraph.insertNode
@@ -46,11 +46,11 @@ Alloy parser / MASGVisitor
 The mutable `EGraphNode` graph is now an explicit preprocessing IR, not the
 formal state. `TheoryAlloyAdapter` is the one-way boundary into the exact
 `G=(U,M,H)` implementation. It never exposes a raw exact mutation path, and
-direct `Canonical` execution remains available as the normative metric
+direct `Canonical` execution remains available as the Fast Rewrite metric
 differential. Relevant entry points are `IRAgent`, `NormalForm`, `Canonical.prepare`,
 `TheoryAlloyAdapter`, and `CanonicalAlloyPipeline`.
 
-### Legacy ablation paths
+### Retained comparison engines
 
 ```text
 Alloy AST
@@ -68,12 +68,12 @@ approximate union-find, slot maps, shapes, hash-consing, and permutation
 groups, but paper section 5.2 explicitly records that they are not the typed,
 certificate-checked construction.
 
-### Theory-faithful typed graph path
+### Certificate-Integrated IR path
 
 Phases B-H add the carrier, explicit-port algebra, Definition 5 state,
 structural leader-kernel extraction, quotient-first canonicalization, a closed
 typed certificate/rebuild algebra, and bounded finite-unfolding conformance
-without changing legacy behavior. Phase I connects that exact path to the
+without changing Fast Rewrite IR behavior. Phase I connects that exact path to the
 Alloy and experiment layers as an additional, explicitly identified engine.
 LNCS-3 extended the Phase C and E contracts; revised Phase C, Phase DA, Phase
 E, Phase F certificate admission, and Phase G fixed-batch rebuilding are implemented. The draft's
@@ -141,7 +141,7 @@ GraphType
        CanonicalAlloyPipeline
        CertifiedSemanticArtifact -> CanonicalObservation
        CertifiedSemanticArtifact + repaired NormalForm -> RepairProjection
-       RepairView -> QuotientRepairDistance (legacy metric semantics)
+       RepairView -> QuotientRepairDistance (Fast Rewrite metric semantics)
        CanonicalBatchTest + Alloy4FunAugmenter
        typed-slotted-port-egraph ablation/capability arm
        manifest-v3 compatibility and output-hash gate
@@ -163,19 +163,38 @@ through the certified source boundary, and exposes exact equality/distance to
 the four experiment clients. Existing engines and their fields remain present,
 so historical and exact measurements are not conflated.
 
+## Maintained Paths And Tradeoff
+
+The Fast Rewrite IR and Certificate-Integrated IR are both maintained parts of
+the artifact. The first owns the efficient repaired `NormalForm`, bounded
+rewrite saturation, and direct `CanonicalDistance` execution. The second owns
+typed slotted-port state, certificate admission, strict congruence and
+quiescence checks, canonical observations, and the certified repair
+projection. Phase I connects them without replacing either implementation.
+
+The Fast Rewrite IR is appropriate for large-corpus ranking and rapid repeated
+experiments. The Certificate-Integrated IR spends substantially more CPU on
+proof construction, law validation, renaming orbits, rebuild, invariant
+checking, and finite observations. In return it fails closed when semantic
+admissibility cannot be certified and provides an auditable boundary against
+unsupported scope permutations or rewrite laws. The current 61,598-pair run
+measured 18.360 seconds versus 2,265.990 seconds wall time and 2,316 versus
+2,317 `CORRECT` zeroes, with no incorrect zeroes in either arm. Those corpus
+labels and bounded Alloy checks are evidence, not an unbounded soundness proof.
+
 ## Formal State Mapping
 
 | Formal component | Current candidate | Current representation | Audit result | Required exact boundary |
 | -- | -- | -- | -- | -- |
-| Type algebra | `theory.GraphType`; legacy `Metatype`/strings | Exact immutable grammar carrier consumed directly by typed schemas, signatures, and class records; legacy remains separate | Phase B-D carrier exact | Preserve through later certificates and adapters |
+| Type algebra | `theory.GraphType`; Fast Rewrite `Metatype`/strings | Exact immutable grammar carrier consumed directly by typed schemas, signatures, and class records; Fast Rewrite IR remains separate | Phase B-D carrier exact | Preserve through later certificates and adapters |
 | Typed slot | `theory.TypedSlot` | Type, disjoint alphabet, and unbounded ordinal form identity | Phase B exact | Consume only this slot value in the exact engine |
 | Typed context | `theory.TypedSlotContext` | Immutable finite sorted subset with per-type operations | Phase B exact | Consume only this context value in ports and graph state |
 | Embedding | `theory.TypedEmbedding` | Sealed, total, immutable, type-preserving injection over declared contexts | Phase B exact | Reuse in typed actions and renamed union-find edges |
 | Renaming/permutation | `theory.TypedRenaming`, `theory.TypedPermutation` | Sealed onto and same-context refinements | Phase B exact | Reuse in canonicalization and certified symmetry groups |
 | Invocation `m*a` | `theory.TypedInvocation` and `TypedEClassInterface` | Class interface plus validated embedding; caller context is codomain; graph registration rejects ID/metadata reuse | Phase B carrier and Phase D ownership exact | Preserve in certified transitions |
-| Port grammar | `theory.PortSchema` and `theory.PortValue`; legacy child lists remain separate | Six sealed schema/value variants implement `One`, indexed Seq/Bag/Set, unary `Bind`, and descriptor-indexed `BindBlock`; strict consumption requires certified container laws and binder automorphisms | Phase C carrier and Phase F provenance gate exact | Preserve certificates during source insertion and later integration |
-| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; legacy opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v6` named-reference, container, fixed-commutativity, and binder axioms |
-| `U` | Exact `TypedRenamedUnionFind`; legacy `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, retained primitive paths, historical restriction transport, and composed certificates | Phase D/F carrier plus Phase G transport exact | Preserve this boundary in the Alloy adapter |
+| Port grammar | `theory.PortSchema` and `theory.PortValue`; Fast Rewrite child lists remain separate | Six sealed schema/value variants implement `One`, indexed Seq/Bag/Set, unary `Bind`, and descriptor-indexed `BindBlock`; strict consumption requires certified container laws and binder automorphisms | Phase C carrier and Phase F provenance gate exact | Preserve certificates during source insertion and later integration |
+| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; Fast Rewrite opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v7` named-reference, container, fixed-commutativity, and binder axioms |
+| `U` | Exact `TypedRenamedUnionFind`; Fast Rewrite `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, retained primitive paths, historical restriction transport, and composed certificates | Phase D/F carrier plus Phase G transport exact | Preserve this boundary in the Alloy adapter |
 | `M(a).tau_a` | `TypedEClassRecord.interfaceView().outputType()` | Immutable graph-owned output type | Phase D exact | Preserve in all certified mutations |
 | `M(a).S_a` | `TypedEClassRecord.interfaceView().exposedSlots()` | Immutable graph-owned finite typed context replaced only by a prevalidated factorization transaction; fresh insertion exposes exactly `Delta_n` | Phase G restriction and certified source insertion exact | Adapter narrows source nodes to exact support and widens only returned invocations |
 | `M(a).B_a` | `TypedEClassRecord.shapeWitnesses()` | Immutable ordered `CanonicalShape -> ShapeWitness` map; every strict entry has an exact EC, including fresh source insertions | Fixed-batch rebuild and source insertion exact | Preserve source provenance when adapting rewrites |
@@ -187,9 +206,9 @@ so historical and exact measurements are not conflated.
 | Indexed finite unfolding | `FiniteUnfoldingTree`, `FiniteUnfoldingIndexTrace`, `FiniteUnfoldingStepIndex`, `FiniteUnfoldingCommonWeakening` | Complete bounded representation trees retain shape witnesses and ECs; every local `iota`/`mbar` square, fresh redundant image, binder scope, final weakening, and pairwise common-context restriction is checked | Phase H bounded relation exact | Consume only a current coherent quiescent prefix |
 | Finite-unfolding conformance | `FiniteUnfoldingEqualityWitness`, `BoundedFiniteUnfoldingOracle`, `FiniteUnfoldingConformanceReport` | Certified find/symmetry reachability plus independent normalized or finite-model observations over every complete bounded representation | Phase H executable oracle exact | Keep as validation evidence, not a proof or runtime equality definition |
 | `leaderKernelTrace_G` | `LeaderKernelExtractor`, `LeaderKernelResult`, `LeaderKernelTrace`, `KernelReplayCertificate` | Structural extraction returns `(K,iota,xi)`; separate replay against coherent `w` composes find, container, congruence, and alpha steps to exact `d_n^w` endpoints | Structural and dependent boundaries exact | Do not relabel `xi` itself as a certificate |
-| `canon_G` | Both graph canonicalizers plus `CertifiedCanonicalizationResult`; legacy `SlotCanonicalizer` remains separate | Structural result remains `(K,p,sigma,iota,omega,xi)`; coherent wrapper adds only endpoint-checked `d_n^w`, and only `p` is hashed | Structural Phase E and repaired PF3 wrapper exact | Preserve the projection distinction in integration |
+| `canon_G` | Both graph canonicalizers plus `CertifiedCanonicalizationResult`; Fast Rewrite `SlotCanonicalizer` remains separate | Structural result remains `(K,p,sigma,iota,omega,xi)`; coherent wrapper adds only endpoint-checked `d_n^w`, and only `p` is hashed | Structural Phase E and repaired PF3 wrapper exact | Preserve the projection distinction in integration |
 | Indexed alpha relation | `TypedAlphaEquivalence` | Separate structural and graph-relative recursive judgements over nodes and all six ports; strict graph-relative comparison admits only certified group state | Phase E relation plus Phase F group provenance exact | Preserve this boundary in the Alloy adapter |
-| Invariant checker | `TypedSlottedPortEGraph.checkInvariants()`; legacy scenario assertions | Recomputes U/M domains, EC/PC/SC proofs, restriction history, exact reverse uses, dirty coverage, node-law provenance, nonleader emptiness, and quiescent H iff B | Phase G exact for represented state | Extend only for later source insertion/unfolding state |
+| Invariant checker | `TypedSlottedPortEGraph.checkInvariants()`; Fast Rewrite scenario assertions | Recomputes U/M domains, EC/PC/SC proofs, restriction history, exact reverse uses, dirty coverage, node-law provenance, nonleader emptiness, and quiescent H iff B | Phase G exact for represented state | Extend only for later source insertion/unfolding state |
 
 The corresponding row-level evidence is in
 [`theory-artifact-matrix.md`](theory-artifact-matrix.md), especially `STATE-*`,
@@ -197,7 +216,7 @@ The corresponding row-level evidence is in
 
 ## Current Mutation Inventory
 
-The following legacy paths can change the preprocessing IR and remain
+The following Fast Rewrite IR paths can change the preprocessing IR and remain
 deliberately outside the exact package. Phase I does not reinterpret those
 objects as formal state: it translates their completed normalization result
 through `TheoryAlloyAdapter`. The exact package exposes only fixed-batch
@@ -218,12 +237,12 @@ unfolding.
 | `EGraphNode.EClass` | `addSlotSwap` / invocation equivalence (`EGraphNode.java:1083-1086,1163-1168`) | Symmetry group | Untyped bijection checks | Missing witness equation/provenance |
 | `RenamedIdUnionFind` | `register`, `updateSlots`, `union`, path compression (`RenamedIdUnionFind.java:20-123`) | Parent forest and correspondences | Untyped map validation | Wrong formal edge direction; partial composition; no path certificate |
 | `SlotPermutationGroup` | `setSlots`, `addGenerator`, `addSwap`, `addInvocationEquivalence` (`SlotPermutationGroup.java:23-106`) | Interface-local group | Untyped closure checks | Restriction and symmetry insertion are uncertified |
-| `AlloyTerm` | Public `atom`, `variable`, and `node` factories | Legacy term tree | Structural null/copy checks | Generic list can bypass formal port grammar |
+| `AlloyTerm` | Public `atom`, `variable`, and `node` factories | Retained comparison term tree | Structural null/copy checks | Generic list can bypass formal port grammar |
 | `SlottedEGraph.Core` | `add`/`intern` (`SlottedEGraph.java:101-219`) | Classes, records, parents, hash-cons | Local slot arrays | No typed schema, output, or complete witness |
 | `SlottedEGraph.Core` | `findPath` compression (`SlottedEGraph.java:236-252`) | Parent mappings | Array bounds mapped to `-1` | No total typed embedding or certificate composition |
 | `SlottedEGraph.Core` | `union` and `recordSymmetry` (`SlottedEGraph.java:255-353`) | Forest, redundant-slot count, group | Rank/count heuristics | Infers symmetry and redundancy from endpoint correspondence |
 | `SlottedEGraph.Core` | `rebuild`/`compact` (`SlottedEGraph.java:388-455`) | Records, hash-cons, interfaces, unions | Full scan capped at 16 rounds | No dirty-parent fixed point or certified restriction/congruence |
-| `IntEGraph` | `add`, `union`, `rebuild` | Ordinary e-classes and hash-cons | Structural keys | Valid legacy baseline, not renamed typed state |
+| `IntEGraph` | `add`, `union`, `rebuild` | Ordinary e-classes and hash-cons | Structural keys | Valid retained baseline, not renamed typed state |
 
 Read-only operations are also significant: `EClassRef.canonical` and
 `equivalentTo` (`EGraphNode.java:994-1021`), `Canonical.compare`, and ablation
@@ -231,7 +250,7 @@ measurements can observe state without a formal graph-wide quiescence guard.
 
 ## Required Exact Engine Boundary
 
-Later phases extend the distinct Phase B-G path rather than relabeling a legacy
+Later phases extend the distinct Phase B-G path rather than relabeling the Fast Rewrite IR
 arm. The carrier, port, signature, flat-construction, Definition 5 state,
 canonicalization, and certificate-admission blocks shown here are implemented:
 
@@ -333,7 +352,7 @@ hash-cons ownership must be immutable outside that boundary.
 | F: certificates (admission gate complete) | Revised C-E | Typed proof algebra, certified law/group admission, union, symmetry, restriction-factorization checking, and proof-preserving find | `CERT`, `UNION`, `REST`, `CONG` |
 | G: rebuilding plus repaired-PF3 source boundary | D-F plus repaired Figure 4 | Quiescent certified hash-cons, restriction transport, coherent replay, source insertion, and invariant checking | `REB`, `CHK`, `REST`, `CERT`, `MUT`, `T1` |
 | H: finite unfolding | F-G | Executable theorem conformance | `FIN`, `TEST` |
-| I: Alloy/evaluation integration | B-H | Separate theory-faithful experiment arm | `INT`, `RW` |
+| I: Alloy/evaluation integration | B-H | Separate Certificate-Integrated IR experiment arm | `INT`, `RW` |
 
 No later phase can safely compensate for an unresolved foundational embedding
 or context invariant: types and map direction must be fixed before graph-state

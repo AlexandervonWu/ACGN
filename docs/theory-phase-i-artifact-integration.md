@@ -2,13 +2,14 @@
 
 ## Scope
 
-Phase I connects the Alloy experiment layer to the exact implementation built
-in Phases B-H. The integration is additive: the legacy normalizer and its
-bounded rewrite saturation, together with all earlier ablation engines, remain
-available under explicit names. The
+Phase I connects the Alloy experiment layer to the Certificate-Integrated IR
+built in Phases B-H. The integration is additive: the Fast Rewrite IR
+normalizer and bounded rewrite saturation, together with all comparison
+engines, remain available under explicit names. The
 primary `canonical` measurements in `CanonicalBatchTest` and
-`Alloy4FunAugmenter` now come from `CanonicalAlloyPipeline`; their legacy
-counterparts are emitted as `legacyCanonical*` diagnostics.
+`Alloy4FunAugmenter` now come from `CanonicalAlloyPipeline`; Fast Rewrite
+counterparts are emitted under the historical compatibility name
+`legacyCanonical*`.
 
 The exact execution path is:
 
@@ -41,7 +42,7 @@ isometric.
 | Client | Phase I behavior | Compatibility behavior |
 | --- | --- | --- |
 | `CanonicalBatchTest` | Certified repair distance, size, digest, graph counts, and phase timings are primary | The directly executed reference implementation, its size, and diagnostic edits remain separate JSON/Markdown differential fields |
-| `Alloy4FunAugmenter` | Correct-pool equivalence and nearest canonical ranking use the exact prepared form | Legacy canonical ranking and ratios are emitted in the same pass; `--skip-rewards` avoids Rewarder work |
+| `Alloy4FunAugmenter` | Correct-pool equivalence and nearest canonical ranking use the exact prepared form | Fast Rewrite IR ranking and ratios are emitted in the same pass; `--skip-rewards` avoids Rewarder work |
 | `EGraphAblationSuite` | Adds `typed-slotted-port-egraph` as a seventh arm | The six historical arms retain their implementations and identifiers |
 | `CapabilityBenchmark` | Runs the exact seventh arm through all generated families and composed cases | Historical arm columns remain available for transition analysis |
 | `AblationRunManifest` | Schema v3 records and checks the complete Phase I engine configuration | Report-only mode rejects incompatible or modified arm outputs |
@@ -81,7 +82,7 @@ The exact arm is selected directly with
 | I-F07 | Recursive distance repeatedly hashed complete structural trees and revisited identical subproblems | Cache structural hashes and subtree sizes, use identity fast paths, and memoize prepared-pair comparisons |
 | I-F08 | The experiment harness had no exact arm and manifests could not identify certificate/invariant modes | Add the seventh arm; the current three-layer schema is `candis-ablation-manifest-v3` / `candis-ablation-output-v5` and records the quotient metric plus representative-TED versions |
 | I-F09 | Batch and augmentation smoke runs were coupled to Rewarder and its instance pools | Add `--skip-rewards`; structural outputs remain complete and rewarded reruns stay available |
-| I-F10 | Legacy diagnostic edit paths could be mistaken for the new exact distance | Rename them to `legacyDiagnostic*` / `legacyCanonical*` and identify both engines in generated metadata |
+| I-F10 | Fast Rewrite diagnostic edit paths could be mistaken for the certificate-integrated distance | Preserve the historical API names `legacyDiagnostic*` / `legacyCanonical*`, but identify both active engines explicitly in generated metadata and documentation |
 | I-F11 | Augmentation ranking and correct-pool worker exceptions were swallowed, allowing partial structural reports to look complete | Structural worker interruption or failure now aborts report publication with the original cause; Rewarder failures remain explicit per-record observations |
 | I-F12 | The adapter erased every non-integer primitive carrier to `AlloyRel`, so `canon_G` treated unrelated `User`, `Photo`, and `Ad` slots as one renaming color and explored a factorial global orbit | Preserve normalized primitive carriers as graph slot types; add relational coercions only where a flexible relational container requires homogeneous element ports; bump adapter/signature versions to v2 |
 | I-F13 | `CanonicalBatchTest` queued the entire corpus, retained every formula/edit trace until completion, emitted no progress, and retried all failures serially | Use a bounded completion window, parallel per-task retry, deterministic ordered streaming to JSON, and periodic throughput/ETA reporting |
@@ -91,30 +92,31 @@ The exact arm is selected directly with
 | I-F17 | `BinderAutomorphismGroup` repeated full source/codomain/type trees in every closure key and eagerly materialized a proof DAG for every group element | Store closure membership by compact ordinal permutation actions, validate immutable generator certificates once, and reconstruct only the requested closure proof by a deterministic predecessor search |
 | I-F18 | Phase I used ordinary TED between independently canonicalized finite-term representatives as though canonicalization were an isometry | Split `CanonicalObservation` from `QuotientRepairDistance`; retain representative TED under an explicit diagnostic name and remove it from the primary metric path |
 | I-F19 | Proof/schema wrappers, one-port carriers, binder implementation nodes, and ambient bookkeeping inflated repair sizes and made one source edit cost many tree edits | Keep those structures in Layer 1 but project the original source repair units: phases, quantifier tuples, matrix operators, and operands |
-| I-F20 | Independent binder alpha minimization and independently sorted ACI operands produced discontinuous positional alignments | Port the legacy pairwise alpha minimization and Hungarian ACI assignment onto certified scope blocks; retain ordered sequence DP and one-unit declaration changes |
-| I-F21 | The initial three-layer implementation treated legacy distance as a heuristic baseline and introduced a generic semantic-tree metric whose 100-pair mean was 16.870 instead of the normative 15.000 | Make `CanonicalDistance` the Layer-3 specification and port every recurrence/edit unit explicitly; the final 100-pair differential is 100/100 equal |
+| I-F20 | Independent binder alpha minimization and independently sorted ACI operands produced discontinuous positional alignments | Port the Fast Rewrite pairwise alpha minimization and Hungarian ACI assignment onto certified scope blocks; retain ordered sequence DP and one-unit declaration changes |
+| I-F21 | The initial three-layer implementation treated the Fast Rewrite distance as a heuristic baseline and introduced a generic semantic-tree metric whose 100-pair mean was 16.870 instead of the normative 15.000 | Make `CanonicalDistance` the Layer-3 specification and port every recurrence/edit unit explicitly; the final 100-pair differential is 100/100 equal |
 | I-F22 | Comparing raw exchange-class integers across two formulas rejected a legal class alignment after an inserted quantifier run (`1` versus `0`) | Enumerate order-preserving pairwise matchings of certified scope blocks; class identifiers remain local to each descriptor |
-| I-F23 | Unequal-arity alpha recursion committed the first compatible variable and depended on hash-map tie order | Compute maximum matching cardinality first, then minimize over every maximum partial mapping; apply the same correction to `CanonicalDistance` and the faithful port |
-| I-F24 | The repair projection inferred a full declaration-class permutation from an exchange label and per-coordinate orbit without proving that the certified group generated the complete legacy alignment space | Before exposing that space, require certified adjacent transpositions for each equal-payload declaration class; a narrower future group now fails closed rather than admitting uncertified mappings |
+| I-F23 | Unequal-arity alpha recursion committed the first compatible variable and depended on hash-map tie order | Compute maximum matching cardinality first, then minimize over every maximum partial mapping; apply the same correction to `CanonicalDistance` and the certificate-integrated port |
+| I-F24 | The repair projection inferred a full declaration-class permutation from an exchange label and per-coordinate orbit without proving that the certified group generated the complete Fast Rewrite alignment space | Before exposing that space, require certified adjacent transpositions for each equal-payload declaration class; a narrower future group now fails closed rather than admitting uncertified mappings |
 | I-F25 | A full 66,080-file batch reported 737 missing-law failures: 732 `GENERICRELDECL` Bags, four empty `AND` Sets, and one normalized-away `OR` Set. `RepairProjection` had reconstructed its law registry only from selected finite unfoldings, so source operators consumed into binder blocks or erased by normalization were absent | Record every flexible source operator's signature-certified A/AC/ACI declaration before construction, carry the immutable registry in `CertifiedSemanticArtifact`, and require that registry during repair projection. Zero-operand operators are certified even when no flat occurrence is emitted |
 | I-F26 | The same run reported 47 zero-kernel failures. Independent heterogeneous binders retained source coordinate order, and guarded binders used an order-sensitive syntactic approximation (`Protected` versus `Trash`) instead of Alloy's annotated least-parent primitive type | Canonically order independent phase coordinates within preserved exchange classes, retain an explicit source-index-to-coordinate permutation for readable repair tuples, and obtain each primitive type from Alloy's annotation. Complex guards remain only in the ACI-normalized matrix |
-| I-F27 | Once I-F25 was removed, `{x:S, y:S | P}` versus `{x,y:S | P}` exposed a certified-equality/nonzero-distance contradiction. The faithful local `BinderBlockDescriptor` erases declaration grouping, while legacy matrix syntax charged five edits for that presentation difference | Treat this as a demonstrated legacy admissible-space ambiguity: merge only adjacent, non-disjoint local declarations with identical projected domains, and only when that exact source binder has a certified local descriptor. Disjointness classes and dependency order remain barriers. This is an intentional semantic correction, not an approximate metric change |
+| I-F27 | Once I-F25 was removed, `{x:S, y:S | P}` versus `{x,y:S | P}` exposed a certified-equality/nonzero-distance contradiction. The certificate-integrated local `BinderBlockDescriptor` erases declaration grouping, while Fast Rewrite matrix syntax charged five edits for that presentation difference | Treat this as a demonstrated Fast Rewrite admissible-space ambiguity: merge only adjacent, non-disjoint local declarations with identical projected domains, and only when that exact source binder has a certified local descriptor. Disjointness classes and dependency order remain barriers. This is an intentional semantic correction, not an approximate metric change |
 | I-F28 | The adapter used `carrierTypeName` as the slot's alpha color. Unsafe strict prenexing legitimately uses nonempty `univ` as an operational quantifier carrier, but this collapsed the original primitive colors; at corpus progress 16,668, `coursesOld/both/qYmq7gitNeA9qJSbg_inv15.als` therefore exposed ten same-colored coordinates and attempted an artificial `10!` orbit | Separate the two fields: `typeName` is the Alloy-annotated least-parent primitive alpha color and repair-tuple type, while `carrierTypeName` records the operational quantifier domain (`univ` only where the prenex equivalence requires it). Descriptor slots use the former and descriptor domain payloads use the latter; syntactic type inference is fallback only |
 | I-F29 | Finite-term binder minimization acted on a body whose Bag/Set operands had already been normalized, but did not normalize those containers again after permuting their bound-coordinate markers. Nested and grouped subtype binders could therefore have repair distance zero but different canonical keys | Every binder-automorphism candidate now re-sorts Bag operands and re-sorts plus deduplicates Set operands after the coordinate action. The strict zero kernel remains enabled, and the nested/grouped `Entry`/`Exit` regression has one byte-identical canonical observation |
-| I-F30 | The next full run had one remaining zero-kernel failure: `trash_ltl/correct/WCmW6XqHcDpTMcHzX_inv16.als`. Implication elimination plus primitive-domain guarding produced the same `NOT_IN(f, Protected)` operand twice under an ACI `OR`. One copy retained the parser-only source label `BOP_IN`, so frontend saturation failed to deduplicate it; Layer 1 ignored that nonsemantic label and correctly deduplicated the Set, while `RepairProjection` copied both occurrences and charged three matrix edits | Clear parser provenance whenever normalization changes an opcode, so the repaired NormalForm itself restores ACI idempotence; also project certified `SET` containers idempotently as a boundary invariant. This is a metric-port bug fix: Set idempotence was already part of the established quotient semantics. Bag multiplicity and Seq order are unchanged. Both the direct metric oracle and faithful temporal/quantifier/matrix components are now zero |
+| I-F30 | The next full run had one remaining zero-kernel failure: `trash_ltl/correct/WCmW6XqHcDpTMcHzX_inv16.als`. Implication elimination plus primitive-domain guarding produced the same `NOT_IN(f, Protected)` operand twice under an ACI `OR`. One copy retained the parser-only source label `BOP_IN`, so frontend saturation failed to deduplicate it; Layer 1 ignored that nonsemantic label and correctly deduplicated the Set, while `RepairProjection` copied both occurrences and charged three matrix edits | Clear parser provenance whenever normalization changes an opcode, so the repaired NormalForm itself restores ACI idempotence; also project certified `SET` containers idempotently as a boundary invariant. This is a metric-port bug fix: Set idempotence was already part of the established quotient semantics. Bag multiplicity and Seq order are unchanged. Both the Fast Rewrite metric and certificate-integrated temporal/quantifier/matrix components are now zero |
 | I-F31 | The I-F30 temporal fixture exposed a pre-existing backtranslation contradiction: matrix `REF` leaves such as `temporal[0:1]` were emitted literally as Alloy source and temporal children were appended conjunctively, losing the reference's Boolean position | Render direct temporal children first, bind each unary/binary child to its exact `temporal[index:arity]` key, and substitute each `REF` in place while retaining an explicit fallback only for manually assembled unreferenced children. Unresolved references fail closed. The connective-embedded temporal regression compiles, and bounded equivalence of both predicates in the I-F30 file has zero mismatches and failures |
 | I-F32 | Corpus-scale augmentation, ablation, memory, capability, semantic-soundness, and backtranslation runners had inconsistent or absent progress output; several parallel collectors also waited in submission order, so one slow early task made productive runs appear stuck | Add one shared `ExperimentProgress` reporter with bounded checkpoints, throughput, ETA, and 30-second no-completion heartbeats. Parallel collectors consume completion order but restore results by source index, preserving deterministic artifacts. Runners that suppress noisy global output retain the original `stderr` for progress, and the process-isolated suite reports both arm completion and the currently running child log |
-| I-F33 | `Alloy4FunAugmenter` retained each proof-heavy `CertifiedSemanticArtifact` after extracting its canonical observation and repair view. At parse completion 19,282 the live 8 GiB heap held 8,044,742 / 8,052,736 KiB, RSS was 8.9 GiB, and G1 workers had consumed most elapsed CPU; the nearby source files were not pathological. It also queued all 66,080 parse futures at once | Keep full `Prepared` values as the replayable default, but add an explicit comparison compaction that retains the certified observation, repair view, and scalar statistics while releasing construction-only graph witnesses. Augmentation caches use only this compact form. Simultaneous faithful construction is bounded by the configured heap and capped at 16, while parsing and distance work retain requested parallelism. Parsing keeps at most four tasks per worker in flight, and stall heartbeats identify the earliest unresolved source path |
+| I-F33 | `Alloy4FunAugmenter` retained each proof-heavy `CertifiedSemanticArtifact` after extracting its canonical observation and repair view. At parse completion 19,282 the live 8 GiB heap held 8,044,742 / 8,052,736 KiB, RSS was 8.9 GiB, and G1 workers had consumed most elapsed CPU; the nearby source files were not pathological. It also queued all 66,080 parse futures at once | Keep full `Prepared` values as the replayable default, but add an explicit comparison compaction that retains the certified observation, repair view, and scalar statistics while releasing construction-only graph witnesses. Augmentation caches use only this compact form. Simultaneous certificate-integrated construction is bounded by the configured heap and capped at 16, while parsing and distance work retain requested parallelism. Parsing keeps at most four tasks per worker in flight, and stall heartbeats identify the earliest unresolved source path |
 | I-F34 | The strict correct-pool audit found a zero repair distance with unequal certified observations for `classroom_fol/inv11`. A safely relativized `some v: Teacher` retained operational carrier `univ` although an earlier direct `Person` prefix binder already guaranteed the primitive carrier was inhabited; the comparison formula used `Person` directly | After prenexing, propagate only guaranteed prefix-carrier witnesses. A later `univ` carrier may narrow to its primitive type only when a preceding direct binder of that type witnesses nonemptiness. The subtype guard remains in the matrix, so empty-domain semantics and the quantifier repair tuple are preserved |
 | I-F35 | The same audit exposed `classroom_fol/inv3`: `p != q` and `q != p` had repair distance zero under a certified binder swap, but the exact signature represented `NOT_EQUALS` with ordered child ports and therefore rejected its intrinsic commutativity | Represent fixed commutative `IFF`, `EQUALS`, and `NOT_EQUALS` operands through a certified ordinary `BagPort`. This certifies operand exchange without incorrectly flattening equality into an associative operator; relational equality operands are coerced before entering the homogeneous Bag |
 | I-F36 | The final strict-kernel contradiction was `lts/inv7`. Local comprehension variables had no prenex binding index, so `RepairProjection` retained parser alpha labels such as `_q1` while the exact layer correctly used the local binder descriptor and its permutation group | Carry each local binder's source-name-to-certified-coordinate map out of `TheoryAlloyAdapter`. Project local variables to depth-qualified coordinates and minimize pairwise only over the descriptor's certified automorphism elements. Nested depths prevent capture, readable aliases remain presentation data, and no symmetry is inferred from type or names |
 | I-F37 | The I-F36 round-trip fixture exposed a separate backtranslation failure: `COMPREHENSION` was rendered with the default existential keyword, so closure received a Boolean expression such as `^(some s1,s2: State | P)` | Render local comprehensions as Alloy set comprehensions `{s1,s2: State | P}`. The targeted six-file bounded check now compiles and proves all 12 backtranslated predicates with zero mismatches and zero failures |
 | I-F38 | Incorrect-predicate ranking exposed a false certified equality in `coursesOld/inv13`: `ordering/first` and `ordering/last` differed by one repair edit, but every non-temporal `REF` leaf had the same exact operator head | Include the normalized source identity in every non-temporal `REF` signature head. Temporal normal-form references are resolved before node construction and remain structural phase invocations. The concrete pair now has unequal observations and exactly one matrix edit |
-| I-F39 | `trash_ltl/inv8` exposed the opposite failure. The repaired formula compared `eventually f2 in Trash` with `eventually f1 in Trash`; phase-local minimization chose identity for the implication phase and a swap for its temporal child, although both phases refer to one owning binder. This was a legacy admissible-space ambiguity proved too broad by the faithful owner coordinates | Perform one exact maximum-cardinality alpha minimization over owner-coordinate identities across all aligned temporal phases, then reuse that mapping at every inherited occurrence. A declaration-modification fallback aligns only the same owner coordinate and cannot reuse a certified target, preserving the established one-unit quantifier edit. Consistently permuted temporal formulas remain distance zero; inconsistent targets cost one |
+| I-F39 | `trash_ltl/inv8` exposed the opposite failure. The repaired formula compared `eventually f2 in Trash` with `eventually f1 in Trash`; phase-local minimization chose identity for the implication phase and a swap for its temporal child, although both phases refer to one owning binder. This was a Fast Rewrite admissible-space ambiguity proved too broad by the certificate-integrated owner coordinates | Perform one exact maximum-cardinality alpha minimization over owner-coordinate identities across all aligned temporal phases, then reuse that mapping at every inherited occurrence. A declaration-modification fallback aligns only the same owner coordinate and cannot reuse a certified target, preserving the established one-unit quantifier edit. Consistently permuted temporal formulas remain distance zero; inconsistent targets cost one |
+| I-F40 | Adding the exact arm to semantic-soundness probes exposed an invalid local automorphism: every local binder coordinate used exchange class 0, so `{x,y:S | y in x.r}` could be identified with `{x,y:S | x in y.r}` even though comprehension coordinates are ordered result columns | Assign each comprehension coordinate its positional exchange class. Alpha-renaming still acts positionwise, while formula and summation binders retain their certified exchange groups. The repaired 185-check pipeline suite distinguishes the pair, and the refreshed bounded run checks 2,320 current union claims with 0 counterexamples, 0 errors, and all four negative probes rejected by all seven arms |
 
 ## Performance Diagnosis
 
-The August 17 investigation separated parsing, legacy normalization, exact
+The August 17 investigation separated parsing, Fast Rewrite normalization, certificate-integrated
 construction, finite unfolding, and distance measurement. Exact graph
 construction dominated; tree distance itself was below one millisecond in the
 pathological cases. Java Flight Recorder attributed the construction cost to
@@ -166,15 +168,33 @@ is a separate potentially dominant phase; use `--skip-rewards` for structural
 reproduction, then run rewarded measurements deliberately.
 
 The completed seven-arm natural-corpus run makes the remaining exact-engine
-cost concrete. At 32 workers and `-Xmx3g`, the legacy canonical arm finished
+cost concrete. At 32 workers and `-Xmx3g`, the Fast Rewrite IR arm finished
 61,598 eligible pairs in 18.470 seconds with 13.255 engine CPU seconds; the
 exact arm required 2,303.890 seconds and 47,451.149 engine CPU seconds. Exact
 per-pair latency was 555.391 ms at p50 and 4,394.306 ms at p95. Maximum RSS was
-similar, 3,529.023 MiB for legacy and 3,603.680 MiB for exact, and the exact
+similar, 3,529.023 MiB for Fast Rewrite and 3,603.680 MiB for certificate-integrated execution, and the exact
 observation was not larger: 29.830 average units versus 29.843. This confirms
 that certificate-bearing state transitions, orbit minimization, strict
 invariant checking, rebuild, and finite unfolding dominate; output size and the
 Layer-3 repair recurrence do not explain the wall-time gap.
+
+### Maintained implementation tradeoff
+
+The Fast Rewrite IR is not a discarded predecessor. It remains the efficient
+direct implementation of normalization and repair geometry used for
+large-corpus ranking, rapid iteration, and differential validation. The
+Certificate-Integrated IR is the stronger semantic-assurance path: it requires
+typed law provenance, certified binder actions, coherent congruence state, and
+strict invariant success before equality is observable. Unsupported or stale
+evidence therefore fails closed instead of being treated as an admissible
+rewrite.
+
+The measured cost is substantial: approximately 125x wall time in the cited
+run, despite similar representation sizes and maximum RSS. The artifact keeps
+both paths so experiments can choose throughput or auditable semantic
+admission without changing the underlying repair metric. Zero incorrect merges
+and bounded solver checks support the implementation, but do not establish
+unbounded Alloy equivalence.
 
 ## Manifest Contract
 
@@ -215,14 +235,14 @@ The Phase I build and focused checks were refreshed on 2026-08-17:
 - Phases B-H: 18,521 deterministic checks unchanged;
 - `EGraphAblationTest`: passed;
 - 100-file three-layer batch smoke: 100 successes, 0 failures, 0 incorrect
-  zeroes, and 100/100 equality between the normative legacy and faithful port;
+  zeroes, and 100/100 equality between the Fast Rewrite and certificate-integrated paths;
   temporal, quantifier, and matrix discrepancies were each 0/100;
-  mean legacy / representative TED / faithful repair distances were
+  mean Fast Rewrite / representative TED / certificate-integrated repair distances were
   15.000 / 35.640 / 15.000;
 - exact replay of all 784 files that failed the preceding full-corpus run:
   784 successes, 0 failures, and 0 incorrect canonical zeroes. All 737
   missing-law and all 47 zero-kernel failures were eliminated. Fifty-one
-  records differ from legacy only through I-F27's certified local-declaration
+  records differ from Fast Rewrite only through I-F27's certified local-declaration
   regrouping; the formerly contradictory correct pair now has distance zero;
 - refreshed replay after I-F28/I-F29: 784/784 successes at 32 workers in
   63.09 seconds, 0 failures, 0 incorrect zeroes, and 4.45 GiB peak process RSS;
@@ -275,13 +295,17 @@ The Phase I build and focused checks were refreshed on 2026-08-17:
   10.865050.
 - full seven-arm natural-corpus run: every arm completed all 61,598 eligible
   pairs after excluding 4,482 identical ASTs, with 0 failures and 0 incorrect
-  zeroes. Legacy canonical found 2,316 `CORRECT` zeroes; the exact arm retained
+  zeroes. Fast Rewrite IR found 2,316 `CORRECT` zeroes; the certificate-integrated arm retained
   all of them and added one. Mean distances were 14.029027 and 14.041998.
   The exact arm recorded 20.935 reachable e-classes and 18.059 reachable
   e-nodes on average.
+- refreshed seven-arm bounded soundness run after I-F40: all 2,320 unique
+  natural-corpus zero claims completed with 0 counterexamples and 0 solver
+  errors. This includes all 82 exact claims absent from the previous report;
+  all four targeted inequivalence probes are rejected by every arm.
 - full seven-arm capability run: 5,500/5,500 valid generated pairs were
   processed. Raw and egglog recovered 47.00%, their De Bruijn variants 65.96%,
-  and slotted, legacy-canonical, and exact each 100.00%. All 11 expected
+  and slotted, Fast Rewrite IR, and Certificate-Integrated IR each 100.00%. All 11 expected
   capability boundaries matched; `unexpected_failures.csv` is empty. The 29
   bounded subtype checks had 0 conclusive non-temporal failures and 6 temporal
   checks explicitly marked inconclusive.

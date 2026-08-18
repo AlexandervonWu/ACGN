@@ -201,7 +201,7 @@ resolution:
 18. Binder automorphisms preserve complete descriptors and have a certified
     consumer-invariance obligation; equal primitive type alone is insufficient.
 19. Container laws and units are certified separately from schema metadata.
-20. The exact package remains isolated from legacy experiments and the
+20. The exact package remains isolated from Fast Rewrite experiments and the
     reproducibility/terminal layer until the later integration phase.
 
 ## Verification performed
