@@ -57,6 +57,14 @@ if (-not (Test-Path -LiteralPath $LibraryDirectory -PathType Container)) {
     throw "Java library directory not found: $LibraryDirectory"
 }
 
+$LibraryFiles = @(Get-ChildItem -LiteralPath $LibraryDirectory -Recurse -File -Filter "*.jar" |
+    Sort-Object -Property FullName)
+if ($LibraryFiles.Count -eq 0) {
+    throw "No dependency JARs were found under $LibraryDirectory"
+}
+$DependencyClasspath = ($LibraryFiles | ForEach-Object { $_.FullName }) -join [IO.Path]::PathSeparator
+Write-Verbose "Dependency classpath: $DependencyClasspath"
+
 $Javac = Get-RequiredCommand "javac"
 $Java = Get-RequiredCommand "java"
 $JavacVersion = (& $Javac -version 2>&1 | Out-String).Trim()
@@ -83,12 +91,14 @@ New-Item -ItemType Directory -Path $BuildDirectory -Force | Out-Null
 
 $ArgumentFile = Join-Path $BuildDirectory "javac.args"
 $CompilerArguments = [System.Collections.Generic.List[string]]::new()
+$CompilerArguments.Add("-encoding")
+$CompilerArguments.Add("UTF-8")
 $CompilerArguments.Add("--release")
 $CompilerArguments.Add("17")
 $CompilerArguments.Add("--add-modules")
 $CompilerArguments.Add("jdk.httpserver")
 $CompilerArguments.Add("-classpath")
-$CompilerArguments.Add((ConvertTo-JavacArgFileValue (Join-Path $LibraryDirectory "*")))
+$CompilerArguments.Add((ConvertTo-JavacArgFileValue $DependencyClasspath))
 $CompilerArguments.Add("-d")
 $CompilerArguments.Add((ConvertTo-JavacArgFileValue $BuildDirectory))
 foreach ($source in $SourceFiles) {
@@ -99,6 +109,7 @@ $Utf8WithoutBom = [System.Text.UTF8Encoding]::new($false)
 [System.IO.File]::WriteAllLines($ArgumentFile, $CompilerArguments, $Utf8WithoutBom)
 
 Write-Host "Compiling $($SourceFiles.Count) Java sources with $JavacVersion ..."
+Write-Host "Using $($LibraryFiles.Count) dependency JARs from $LibraryDirectory"
 & $Javac "@$ArgumentFile"
 if ($LASTEXITCODE -ne 0) {
     throw "javac failed with exit code $LASTEXITCODE. Compiler arguments are retained in $ArgumentFile"
@@ -109,7 +120,7 @@ if ($CompileOnly) {
     return
 }
 
-$RuntimeClasspath = $BuildDirectory + [IO.Path]::PathSeparator + (Join-Path $LibraryDirectory "*")
+$RuntimeClasspath = $BuildDirectory + [IO.Path]::PathSeparator + $DependencyClasspath
 $ServerArguments = @(
     "--add-modules", "jdk.httpserver",
     "-cp", $RuntimeClasspath,

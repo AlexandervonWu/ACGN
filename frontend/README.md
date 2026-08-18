@@ -375,7 +375,7 @@ On Linux, the repository helper compiles and starts the service:
   --workers 8
 ```
 
-On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../scripts/run_visualization_server.ps1) launcher from the repository root. It locates the repository from its own path, validates the JDK, creates a UTF-8 response file for `javac`, compiles the server, and starts it with a Windows classpath:
+On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../scripts/run_visualization_server.ps1) launcher from the repository root. It locates the repository from its own path, validates the JDK, recursively resolves every JAR under the repository-root `lib` directory into an explicit Windows classpath, creates a UTF-8 response file, invokes `javac` with `-encoding UTF-8`, and starts the server with the same resolved dependencies:
 
 ```powershell
 .\scripts\run_visualization_server.ps1 `
@@ -385,10 +385,10 @@ On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../sc
   -Workers 8
 ```
 
-Run a compile-only check before configuring a service:
+Run a compile-only check before configuring a service. Add `-Verbose` to print the fully resolved dependency classpath:
 
 ```powershell
-.\scripts\run_visualization_server.ps1 -CompileOnly
+.\scripts\run_visualization_server.ps1 -CompileOnly -Verbose
 ```
 
 The script accepts an optional `-BuildDirectory`. Relative build paths are resolved from the repository root. If Windows execution policy blocks repository scripts, permit only this process and rerun it:
