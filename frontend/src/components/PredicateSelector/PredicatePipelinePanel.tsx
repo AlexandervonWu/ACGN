@@ -1,4 +1,4 @@
-import { Braces, ChevronRight, GitBranch, LoaderCircle } from "lucide-react";
+import { Braces, ChevronRight, GitBranch, LoaderCircle, Sigma } from "lucide-react";
 import type {
   Diagnostic,
   EGraphAnalysis,
@@ -40,8 +40,8 @@ export function PredicatePipelinePanel({
     ...(analysis?.diagnostics ?? []),
   ];
   return (
-    <section className="workspace-panel lower-left-panel" aria-label="Predicates and pipeline">
-      <PanelHeader title="Predicates / Pipeline" />
+    <section className="workspace-panel lower-left-panel" aria-label="Callables and pipeline">
+      <PanelHeader title="Callables / Pipeline" />
       <div className="predicate-tools">
         <label>
           <span>Example</span>
@@ -51,27 +51,28 @@ export function PredicatePipelinePanel({
             <option value="aci">ACI container</option>
             <option value="prenex">Prenex</option>
             <option value="slots">Typed slots</option>
+            <option value="callables">Function callable</option>
           </select>
         </label>
         {inspecting && <LoaderCircle className="spin" size={15} aria-label="Inspecting model" />}
       </div>
-      <div className="predicate-list" role="listbox" aria-label="Model predicates">
-        {(inspection?.predicates ?? []).map((predicate) => (
+      <div className="predicate-list" role="listbox" aria-label="Model predicates and functions">
+        {(inspection?.callables ?? []).map((callable) => (
           <button
             type="button"
             role="option"
-            aria-selected={selectedPredicate === predicate.name}
-            className={selectedPredicate === predicate.name ? "is-selected" : ""}
-            key={predicate.name}
-            onClick={() => onSelectPredicate(predicate.name)}
+            aria-selected={selectedPredicate === callable.name}
+            className={selectedPredicate === callable.name ? "is-selected" : ""}
+            key={`${callable.kind}:${callable.name}`}
+            onClick={() => onSelectPredicate(callable.name)}
           >
-            <Braces size={14} />
-            <span>{predicate.name}</span>
-            {selectedPredicate === predicate.name && <ChevronRight size={14} />}
+            {callable.kind === "function" ? <Sigma size={14} /> : <Braces size={14} />}
+            <span>{callable.name}<small>{callable.kind === "function" ? callable.returnType ?? "fun" : "pred"}</small></span>
+            {selectedPredicate === callable.name && <ChevronRight size={14} />}
           </button>
         ))}
-        {!inspecting && !inspectionError && inspection?.predicates.length === 0 && (
-          <div className="empty-inline">No predicates returned</div>
+        {!inspecting && !inspectionError && inspection?.callables.length === 0 && (
+          <div className="empty-inline">No predicates or functions returned</div>
         )}
         {inspectionError && <div className="inline-error">{inspectionError}</div>}
       </div>
@@ -85,4 +86,3 @@ export function PredicatePipelinePanel({
     </section>
   );
 }
-

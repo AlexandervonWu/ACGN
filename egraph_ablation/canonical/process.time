@@ -1,18 +1,18 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx4g -cp /tmp/acgn-egraph-ablation.cteJkW:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/ACGN/classified-data --output /home/augustus/ACGN/egraph_ablation/canonical --engine canonical --threads 32"
-	User time (seconds): 224.11
-	System time (seconds): 6.71
-	Percent of CPU this job got: 1257%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.36
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx4g -cp /tmp/acgn-egraph-ablation.uTMFgz:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/ACGN/classified-data --output /home/augustus/ACGN/egraph_ablation/canonical --engine canonical --threads 32"
+	User time (seconds): 223.23
+	System time (seconds): 7.14
+	Percent of CPU this job got: 1256%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.33
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 4085672
+	Maximum resident set size (kbytes): 4167812
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 1071912
-	Voluntary context switches: 2723697
-	Involuntary context switches: 23008
+	Minor (reclaiming a frame) page faults: 1114821
+	Voluntary context switches: 2727295
+	Involuntary context switches: 26683
 	Swaps: 0
 	File system inputs: 0
 	File system outputs: 22240

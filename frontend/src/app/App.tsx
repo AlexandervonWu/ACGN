@@ -3,11 +3,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertOctagon, X } from "lucide-react";
 import {
   AnalysisApiError,
-  analyzePredicate,
+  analyzeCallable,
   healthCheck,
   inspectModel,
 } from "../api/client";
 import type {
+  CallableReference,
   EGraphAnalysis,
   NormalizationStage,
   SourceMapping,
@@ -38,7 +39,7 @@ const GraphCanvas = lazy(async () => ({
 
 interface AnalysisOrigin {
   model: string;
-  predicate: string;
+  callable: CallableReference;
 }
 
 function uniqueMappings(mappings: SourceMapping[]): SourceMapping[] {
@@ -53,6 +54,7 @@ function describeError(error: unknown): { title: string; message: string; detail
       backend: "Backend request failed",
       parse: "Model parse failed",
       type: "Model type check failed",
+      "callable-not-found": "Callable not found",
       "predicate-not-found": "Predicate not found",
       analysis: "Analysis failed",
       schema: "Visualization schema mismatch",
@@ -114,22 +116,22 @@ export function App() {
   });
 
   useEffect(() => {
-    const predicates = inspection.data?.predicates ?? [];
-    if (predicates.length === 1 && !predicates.some((predicate) => predicate.name === selectedPredicate)) {
-      setSelectedPredicate(predicates[0]?.name);
-    } else if (selectedPredicate && !predicates.some((predicate) => predicate.name === selectedPredicate)) {
+    const callables = inspection.data?.callables ?? [];
+    if (callables.length === 1 && !callables.some((callable) => callable.name === selectedPredicate)) {
+      setSelectedPredicate(callables[0]?.name);
+    } else if (selectedPredicate && !callables.some((callable) => callable.name === selectedPredicate)) {
       setSelectedPredicate(undefined);
     }
   }, [inspection.data, selectedPredicate, setSelectedPredicate]);
 
   const analysisMutation = useMutation({
-    mutationFn: async ({ source, predicate }: { source: string; predicate: string }) => {
+    mutationFn: async ({ source, callable }: { source: string; callable: CallableReference }) => {
       abortRef.current = new AbortController();
-      return analyzePredicate(source, predicate, undefined, abortRef.current.signal);
+      return analyzeCallable(source, callable, undefined, abortRef.current.signal);
     },
     onSuccess: (result, variables) => {
       setAnalysis(result);
-      setAnalysisOrigin({ model: variables.source, predicate: variables.predicate });
+      setAnalysisOrigin({ model: variables.source, callable: variables.callable });
       setAnalysisError(undefined);
       resetForAnalysis(result.graph.rootEClassId, result.stages[0]?.id);
     },
@@ -146,8 +148,13 @@ export function App() {
 
   const runAnalysis = () => {
     if (!selectedPredicate || analysisMutation.isPending) return;
+    const callable = inspection.data?.callables.find((candidate) => candidate.name === selectedPredicate);
+    if (!callable) return;
     setAnalysisError(undefined);
-    analysisMutation.mutate({ source: model, predicate: selectedPredicate });
+    analysisMutation.mutate({
+      source: model,
+      callable: { name: callable.name, kind: callable.kind },
+    });
   };
 
   const allMappings = useMemo(() => {
@@ -242,7 +249,7 @@ export function App() {
   const parseHasErrors = inspection.data?.parseDiagnostics.some((diagnostic) => diagnostic.severity === "error") ?? false;
   const errorDescription = analysisError ? describeError(analysisError) : undefined;
   const staleAnalysis = analysis && analysisOrigin
-    && (analysisOrigin.model !== model || analysisOrigin.predicate !== selectedPredicate);
+    && (analysisOrigin.model !== model || analysisOrigin.callable.name !== selectedPredicate);
 
   return (
     <div className="app-root">
@@ -263,7 +270,7 @@ export function App() {
           <AlertOctagon size={18} />
           <div>
             <strong>{errorDescription.title}</strong>
-            <span>{selectedPredicate && <code>{selectedPredicate}</code>}{errorDescription.message}</span>
+            <span>{selectedPredicate && <><code>{selectedPredicate}</code>{" "}</>}{errorDescription.message}</span>
             {errorDescription.details !== undefined && <details><summary>Validation details</summary><pre>{JSON.stringify(errorDescription.details, null, 2)}</pre></details>}
           </div>
           <button type="button" aria-label="Dismiss error" onClick={() => setAnalysisError(undefined)}><X size={16} /></button>

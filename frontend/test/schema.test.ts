@@ -1,18 +1,43 @@
 import { describe, expect, it } from "vitest";
-import { EGraphAnalysisSchema } from "../src/api/schema";
+import { EGraphAnalysisSchema, ModelInspectionSchema } from "../src/api/schema";
 import aci from "../src/mocks/aci.json";
 import alpha from "../src/mocks/alpha.json";
+import callables from "../src/mocks/callables.json";
 import prenex from "../src/mocks/prenex.json";
 import simple from "../src/mocks/simple.json";
 import slots from "../src/mocks/slots.json";
 
 describe("Visualization IR schema", () => {
+  it("accepts mixed predicates and functions during model inspection", () => {
+    const parsed = ModelInspectionSchema.parse({
+      callables: [
+        { name: "connected", kind: "predicate" },
+        { name: "neighbors", kind: "function", returnType: "set User" },
+      ],
+      parseDiagnostics: [],
+    });
+    expect(parsed.callables).toEqual([
+      { name: "connected", kind: "predicate" },
+      { name: "neighbors", kind: "function", returnType: "set User" },
+    ]);
+    expect(parsed.predicates).toEqual([{ name: "connected", sourceRange: undefined }]);
+  });
+
+  it("normalizes a predicate-only 1.0 inspection response into callables", () => {
+    const parsed = ModelInspectionSchema.parse({
+      predicates: [{ name: "legacyPredicate" }],
+      parseDiagnostics: [],
+    });
+    expect(parsed.callables).toEqual([{ name: "legacyPredicate", kind: "predicate" }]);
+  });
+
   it.each([
     ["simple", simple],
     ["alpha", alpha],
     ["aci", aci],
     ["prenex", prenex],
     ["slots", slots],
+    ["callables", callables],
   ])("validates the %s production-shaped fixture", (_name, fixture) => {
     expect(EGraphAnalysisSchema.safeParse(fixture).success).toBe(true);
   });

@@ -496,6 +496,26 @@ core JAR.
 
 ## Dataset Runners
 
+### Serial complete workflow
+
+```bash
+./scripts/run_experiments_serial.sh
+```
+
+This launcher runs `CanonicalBatchTest`, `Alloy4FunAugmenter`, the seven-arm
+ablation, and the capability benchmark one after another. After each stage it
+checks the expected machine-readable artifacts and verifies that the Markdown
+summary contains both the Fast Rewrite IR and Certificate-Integrated IR. The
+final `experiment_results_summary.md` indexes all four detailed summaries and
+their primary data files. It is written only after every stage and dual-path
+validation succeeds.
+
+Set `LIMIT=N` for a natural-corpus smoke run, `REWARD_POOL=N` to enable rewards,
+or override `DATASET`, the four output-directory variables, `THREADS`,
+`MAX_HEAP`, `CAPABILITY_TARGET`, `SEED`, and `SERIAL_SUMMARY`. The compatibility
+field mapping is recorded in runner JSON: `canonical*` is Certificate-Integrated
+IR data and `legacyCanonical*` is Fast Rewrite IR data.
+
 ### Canonical batch comparison
 
 `CanonicalBatchTest` compares each selected student predicate with its paired
@@ -749,8 +769,10 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
   oracle
 - `summary.md`: corpus, reference diversity, minimum-distance, repair-radius,
   reward, and compression statistics
-- `correct_ast_diff_canonical_equiv.json`: AST-different correct references that
-  share a canonical form
+- `correct_ast_diff_canonical_equiv.json`: AST-different correct references at
+  zero Certificate-Integrated IR distance
+- `correct_ast_diff_fast_rewrite_equiv.json`: AST-different correct references
+  at zero Fast Rewrite IR distance
 - CSV/SVG artifacts: reward and repair-coverage analyses
 
 ### `egraph_ablation/`

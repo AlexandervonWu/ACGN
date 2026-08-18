@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "c1c33e68c98116aafa2668adc8cfd5d15e0bff53f03896c84a9fcf662c7a8324",
-      "sizeBytes": 11261004
+      "sha256": "870da958626d12cb0d710564b2bcc4ba5f98fcff36365843c026655612b0139c",
+      "sizeBytes": 11264130
     },
     {
       "path": "summary.json",
-      "sha256": "7375fbe94a825c0b4ef5da854a7d1a3693d19753862d90a27857972698673862",
-      "sizeBytes": 81257
+      "sha256": "355033f56d8a74a05b88d8b8f5c7cce10c7b57245bb589d28f8cf932edd844f0",
+      "sizeBytes": 81251
     },
     {
       "path": "metrics.properties",
-      "sha256": "203ae6d655dd134488a1ad0cc2bbce3a680b5c6f230a822b23a53e869c1ef253",
+      "sha256": "0d6dfa74704c6a9e61f4d257aa1ef5d7cf313d4096b63e232c52b7949c3edd53",
       "sizeBytes": 1491
     },
     {
       "path": "run.log",
-      "sha256": "7ba8de94b526d2302ada3f12a5705b26c6b72c01586edcc7f21d699f6cc01deb",
+      "sha256": "049d6b7686f38041575b93c997ce1b1027596db482eee670033e5e77f67c4d5c",
       "sizeBytes": 7174
     },
     {
       "path": "process.time",
-      "sha256": "17b638d5c61476e1b9c5862fd0a79baa6088714b397d0b2a55b833c526ba02f8",
+      "sha256": "5918b0999696557dc2f509481e3659a2d8279a6ea111118bd7fdec07455f80c8",
       "sizeBytes": 1312
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T04:11:29.014438836Z",
-  "javaSourceSha256": "0ac96bffbda106f7add1515d1c46951a858902c29bdebd7895ef7d69e3619ddf",
+  "startedAt": "2026-08-18T13:22:15.446562676Z",
+  "javaSourceSha256": "5ea336c31e3ef06262104b939f08f73b3acf58a4ad6f4ee68c9ceb1bddd91fea",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -76,7 +76,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "6d409311a0962d90eb5f97fd1b1ec3d0cd040697",
+  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "c48a105a-796c-483c-9f75-7e3a35ff1db0"
+  "runId": "b4ab2ed1-792f-4261-a5bb-0039731cf1ef"
 }

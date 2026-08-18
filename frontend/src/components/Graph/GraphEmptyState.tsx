@@ -11,9 +11,8 @@ export function GraphEmptyState() {
           <i /><span><Network size={19} /></span><i /><span>E</span>
         </div>
         <strong>No analysis loaded</strong>
-        <span>Select a predicate and run analysis.</span>
+        <span>Select a predicate or function and run analysis.</span>
       </div>
     </section>
   );
 }
-

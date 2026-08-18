@@ -1,4 +1,4 @@
-import type { ZodType } from "zod";
+import type { TypeOf, ZodTypeAny } from "zod";
 import {
   EGraphAnalysisSchema,
   HealthStatusSchema,
@@ -7,6 +7,7 @@ import {
 import type {
   AnalysisOptions,
   ApiErrorKind,
+  CallableReference,
   EGraphAnalysis,
   HealthStatus,
   ModelInspection,
@@ -65,6 +66,7 @@ function classifyStatus(status: number, body: unknown): ApiErrorKind {
     : "";
   if (code.includes("parse")) return "parse";
   if (code.includes("type")) return "type";
+  if (code.includes("callable") || code.includes("function")) return "callable-not-found";
   if (code.includes("predicate")) return "predicate-not-found";
   if (status === 408 || status === 504) return "timeout";
   return status >= 500 ? "analysis" : "backend";
@@ -78,7 +80,10 @@ function backendMessage(body: unknown, fallback: string): string {
   return fallback;
 }
 
-async function decodeResponse<T>(response: Response, schema: ZodType<T>): Promise<T> {
+async function decodeResponse<TSchema extends ZodTypeAny>(
+  response: Response,
+  schema: TSchema,
+): Promise<TypeOf<TSchema>> {
   let body: unknown;
   try {
     body = await response.json();
@@ -109,13 +114,13 @@ async function decodeResponse<T>(response: Response, schema: ZodType<T>): Promis
   return parsed.data;
 }
 
-async function request<T>(
+async function request<TSchema extends ZodTypeAny>(
   path: string,
-  schema: ZodType<T>,
+  schema: TSchema,
   init: RequestInit,
   sourceSignal?: AbortSignal,
   timeoutMs = 120_000,
-): Promise<T> {
+): Promise<TypeOf<TSchema>> {
   const timer = timedSignal(sourceSignal, timeoutMs);
   try {
     const response = await fetch(`${requireBaseUrl()}${path}`, {
@@ -182,9 +187,9 @@ function requireSupportedSchema(analysis: EGraphAnalysis): EGraphAnalysis {
   return analysis;
 }
 
-export async function analyzePredicate(
+export async function analyzeCallable(
   model: string,
-  predicate: string,
+  callable: CallableReference,
   options: AnalysisOptions = {},
   signal?: AbortSignal,
 ): Promise<EGraphAnalysis> {
@@ -197,7 +202,7 @@ export async function analyzePredicate(
   let analysis: EGraphAnalysis;
   if (useMockApi) {
     try {
-      analysis = await mockAnalyzePredicate(model, predicate, requestedOptions, signal);
+      analysis = await mockAnalyzePredicate(model, callable.name, requestedOptions, signal);
     } catch (error) {
       if (signal?.aborted || (error instanceof DOMException && error.name === "AbortError")) {
         throw new AnalysisApiError("cancelled", "The analysis request was cancelled.");
@@ -213,10 +218,25 @@ export async function analyzePredicate(
         EGraphAnalysisSchema,
         {
           method: "POST",
-          body: JSON.stringify({ model, predicate, options: requestedOptions }),
+          body: JSON.stringify({
+            model,
+            callable,
+            predicate: callable.name,
+            options: requestedOptions,
+          }),
         },
         signal,
       );
   }
   return requireSupportedSchema(analysis);
+}
+
+/** Compatibility wrapper for predicate-only integrations. */
+export function analyzePredicate(
+  model: string,
+  predicate: string,
+  options: AnalysisOptions = {},
+  signal?: AbortSignal,
+): Promise<EGraphAnalysis> {
+  return analyzeCallable(model, { name: predicate, kind: "predicate" }, options, signal);
 }

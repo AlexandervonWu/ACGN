@@ -6,11 +6,13 @@ import type {
   ModelInspection,
 } from "../api/types";
 import { examples } from "../examples";
+import { analysisCallable } from "../api/callables";
 import aciFixture from "./aci.json";
 import alphaFixture from "./alpha.json";
 import prenexFixture from "./prenex.json";
 import simpleFixture from "./simple.json";
 import slotsFixture from "./slots.json";
+import callablesFixture from "./callables.json";
 
 const fixtureEntries = [
   [examples.simple, simpleFixture],
@@ -18,6 +20,7 @@ const fixtureEntries = [
   [examples.aci, aciFixture],
   [examples.prenex, prenexFixture],
   [examples.slots, slotsFixture],
+  [examples.callables, callablesFixture],
 ] as const;
 
 function normalizeModel(model: string): string {
@@ -53,6 +56,7 @@ export async function mockInspectModel(
   const fixture = findFixture(model);
   if (!fixture) {
     return ModelInspectionSchema.parse({
+      callables: [],
       predicates: [],
       parseDiagnostics: [{
         severity: "warning",
@@ -60,11 +64,18 @@ export async function mockInspectModel(
       }],
     });
   }
+  const callable = analysisCallable(fixture);
   return ModelInspectionSchema.parse({
-    predicates: [{
-      name: fixture.predicate.name,
-      sourceRange: fixture.predicate.sourceRange,
+    callables: [{
+      name: callable.name,
+      kind: callable.kind,
+      sourceRange: callable.sourceRange,
+      returnType: callable.returnType,
     }],
+    predicates: callable.kind === "predicate" ? [{
+      name: callable.name,
+      sourceRange: callable.sourceRange,
+    }] : [],
     parseDiagnostics: [],
   });
 }
@@ -77,9 +88,8 @@ export async function mockAnalyzePredicate(
 ): Promise<EGraphAnalysis> {
   await mockDelay(signal);
   const fixture = findFixture(model);
-  if (!fixture || fixture.predicate.name !== predicate) {
-    throw new Error(`Mock analysis has no fixture for predicate ${predicate}.`);
+  if (!fixture || analysisCallable(fixture).name !== predicate) {
+    throw new Error(`Mock analysis has no fixture for callable ${predicate}.`);
   }
   return EGraphAnalysisSchema.parse(fixture);
 }
-

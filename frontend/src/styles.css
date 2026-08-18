@@ -208,7 +208,8 @@ code, pre { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
   width: 100%; min-height: 29px; display: flex; align-items: center; gap: 7px;
   border: 0; border-radius: 3px; background: transparent; padding: 0 7px; font-size: 12px; cursor: pointer;
 }
-.predicate-list > button span { flex: 1; text-align: left; }
+.predicate-list > button span { flex: 1; display: flex; align-items: baseline; gap: 6px; min-width: 0; text-align: left; }
+.predicate-list > button span > small { overflow: hidden; color: var(--faint); font-size: 8px; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
 .predicate-list > button:hover { background: #f0f4f5; }
 .predicate-list > button.is-selected { color: #075a56; background: var(--teal-soft); font-weight: 700; }
 .empty-inline, .inline-error { padding: 7px; font-size: 11px; color: var(--muted); }
@@ -443,8 +444,8 @@ code, pre { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
   .brand-block span { display: none; }
   .backend-status { padding: 0 6px; }
   .backend-status > span:last-child { display: none; }
-  .quiet-command { width: 32px; padding: 0; }
-  .quiet-command > svg:last-child, .quiet-command { font-size: 0; }
+  .quiet-command { width: 32px; gap: 0; padding: 0; font-size: 0; }
+  .quiet-command > svg:last-child { display: none; }
   .mobile-tabs { height: 40px; flex: 0 0 40px; display: grid; grid-template-columns: repeat(5, 1fr); background: #fff; border-bottom: 1px solid var(--line); }
   .mobile-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; display: flex; align-items: center; justify-content: center; gap: 4px; color: var(--muted); font-size: 10px; }
   .mobile-tabs button.is-active { color: var(--teal); border-bottom-color: var(--teal); background: var(--teal-soft); }

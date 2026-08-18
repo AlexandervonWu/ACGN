@@ -27,14 +27,14 @@ errs = [float(r['rewardError']) for r in rows]
 positive = [e for e in errs if e > 0.0]
 floor = min(positive) / 10.0 if positive else 1e-6
 logs = [math.log10(max(e, floor)) for e in errs]
-for key, ratio_key, label in [('levenshteinDistance', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstDistance', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalDistance', 'canonicalDistanceRatio', 'Canonical')]:
+for key, ratio_key, label in [('levenshteinDistance', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstDistance', 'rawAstDistanceRatio', 'Raw AST'), ('legacyCanonicalDistance', 'legacyCanonicalDistanceRatio', 'Fast Rewrite IR'), ('canonicalDistance', 'canonicalDistanceRatio', 'Certificate-Integrated IR')]:
     xs = [float(r[key]) for r in rows]
     ratios = [float(r[ratio_key]) for r in rows]
     print(f"Pearson {label} distance vs raw 1-reward: {corr(xs, errs):.6f}")
     print(f"Pearson {label} distance vs log10(1-reward): {corr(xs, logs):.6f}")
     print(f"Pearson {label} ratio vs raw 1-reward: {corr(ratios, errs):.6f}")
     print(f"Pearson {label} ratio vs log10(1-reward): {corr(ratios, logs):.6f}")
-for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalSize', 'canonicalDistanceRatio', 'Canonical')]:
+for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('legacyCanonicalSize', 'legacyCanonicalDistanceRatio', 'Fast Rewrite IR'), ('canonicalSize', 'canonicalDistanceRatio', 'Certificate-Integrated IR')]:
     xs = [float(r[size_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]
     ys = [float(r[ratio_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]
     print(f"Pearson {label} repair ratio vs representation size: {corr(xs, ys):.6f}")

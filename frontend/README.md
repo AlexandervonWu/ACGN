@@ -1,6 +1,6 @@
 # Alloy E-Graph Explorer
 
-`frontend/` is a standalone React and TypeScript explorer for the Alloy typed slotted e-graph artifact. It accepts Alloy source, discovers predicates through an HTTP service, validates the service's EGraph Visualization IR, and presents source mappings, normalization stages, e-classes, e-nodes, slots, support, provenance, traces, invariants, and certificates.
+`frontend/` is a standalone React and TypeScript explorer for the Alloy typed slotted e-graph artifact. It accepts Alloy source, discovers every source predicate and function through an HTTP service, validates the service's EGraph Visualization IR, and presents normalization stages, e-classes, e-nodes, slots, support, provenance, traces, invariants, and certificates.
 
 The browser is deliberately not another canonicalizer. Parsing, typing, normalization, saturation, slot semantics, support computation, and proof production remain backend responsibilities.
 
@@ -10,7 +10,7 @@ The browser is deliberately not another canonicalizer. Parsing, typing, normaliz
 Static React application                 Analysis service
 ----------------------------------       -------------------------------
 Monaco Alloy editor                 POST /api/v1/model/inspect
-Predicate and stage navigation      POST /api/v1/egraph/analyze
+Callable and stage navigation       POST /api/v1/egraph/analyze
 React Flow e-class graph            GET  /api/v1/health
 Inspector and virtualized trace          Alloy/Java semantic pipeline
 Zod boundary validation             <--- JSON Visualization IR v1.x
@@ -18,16 +18,25 @@ Zod boundary validation             <--- JSON Visualization IR v1.x
 
 Server state is managed by TanStack Query. Interaction state, such as graph filters, selected entities, selected slots, stages, and trace filters, is held in Zustand. The complete backend response has one owner and is not copied into UI stores.
 
-Graph construction is bounded before React Flow receives any nodes. The default view follows references from the predicate root to depth 5, collapses large classes, and caps the rendered neighborhood. A deterministic layered layout keeps the root above its children.
+Graph construction is bounded before React Flow receives any nodes. The default view follows references from the selected callable root to depth 5, collapses large classes, and caps the rendered neighborhood. A deterministic layered layout keeps the root above its children.
 
 ## Requirements
 
 - Node.js 18 or newer for development and builds
 - npm 9 or newer
+- Java 17 or newer for live Alloy parsing and certified e-graph analysis
 - A current Chromium, Firefox, or Edge browser
 - No Node.js runtime on the production web server
 
 ## Development
+
+```bash
+./scripts/run_visualization_server.sh \
+  --bind 127.0.0.1 --port 8080 \
+  --allow-origin http://localhost:5173
+```
+
+In a second terminal:
 
 ```bash
 cd frontend
@@ -36,7 +45,7 @@ npm install
 npm run dev
 ```
 
-The default `.env.example` enables deterministic mock mode, so the full explorer works without a Java backend. Vite prints the local development URL.
+The Java adapter compiles against the repository libraries, parses the submitted model with the existing Alloy parser, builds the selected callable's Fast Rewrite IR, and exports the Certificate-Integrated e-graph as Visualization IR 1.1. Vite prints the local development URL.
 
 Useful commands:
 
@@ -59,7 +68,7 @@ VITE_USE_MOCK_API=false
 
 Environment variables are compiled into Vite's static JavaScript. Rebuild `dist/` when changing the production backend URL. Do not place credentials in `VITE_*` variables because browser users can inspect them.
 
-Mock mode is active unless `VITE_USE_MOCK_API` is exactly `false`. It uses the same typed client functions and Zod schemas as live mode. Deep-linkable fixtures are available at:
+Set `VITE_USE_MOCK_API=true` for deterministic demo mode without Java. It uses the same typed client functions and Zod schemas as live mode. Deep-linkable predicate fixtures are available at:
 
 ```text
 ?example=simple
@@ -67,6 +76,7 @@ Mock mode is active unless `VITE_USE_MOCK_API` is exactly `false`. It uses the s
 ?example=aci
 ?example=prenex
 ?example=slots
+?example=callables
 ```
 
 The `slots` fixture contains the `inv7` acceptance model. Opening an example populates the editor but does not automatically analyze it.
@@ -104,20 +114,29 @@ Content-Type: application/json
 
 ```json
 {
-  "predicates": [
+  "callables": [
     {
       "name": "inv1",
+      "kind": "predicate",
       "sourceRange": {
         "start": { "line": 1, "column": 13 },
         "end": { "line": 1, "column": 36 }
       }
+    },
+    {
+      "name": "items",
+      "kind": "function",
+      "returnType": "set Item"
     }
   ],
+  "predicates": [{ "name": "inv1" }],
   "parseDiagnostics": []
 }
 ```
 
-### Analyze predicate
+`predicates` is retained for Visualization IR 1.0 clients. New clients use `callables`; parser-internal declarations are not exposed.
+
+### Analyze callable
 
 ```http
 POST /api/v1/egraph/analyze
@@ -127,6 +146,7 @@ Content-Type: application/json
 ```json
 {
   "model": "sig User {} pred inv1 { some User }",
+  "callable": { "name": "inv1", "kind": "predicate" },
   "predicate": "inv1",
   "options": {
     "includeStages": true,
@@ -137,11 +157,14 @@ Content-Type: application/json
 }
 ```
 
+For a function, send `{"name":"items","kind":"function"}`. The legacy `predicate` string remains in requests during the 1.x compatibility window.
+
 The response is an EGraph Visualization IR object with this top-level shape:
 
 ```text
 schemaVersion: "1.x"
 model
+callable
 predicate
 stages[]
 graph { rootEClassId, eclasses[], edges?, saturation? }
@@ -154,7 +177,7 @@ statistics?
 
 The detailed executable contract is in [`src/api/schema.ts`](src/api/schema.ts). Optional diagnostic fields may be omitted. Every successful response is validated before it enters React state. Invalid JSON, malformed IR, and unsupported schema major versions produce developer-oriented error messages while retaining the last successful graph.
 
-The analysis service must translate its internal Java representation into this IR. The frontend does not accept serialized Java objects.
+The included Java analysis service translates typed e-classes, typed ports, slots, and sequence/bag/set container laws into this IR. The frontend does not accept serialized Java objects and does not infer Alloy semantics.
 
 ## CORS
 
@@ -196,7 +219,7 @@ JavaScript must be permitted by the site's content-security policy. Monaco creat
 
 ## Interaction Model
 
-- Select a discovered predicate and use **Analyze** or `Ctrl/Cmd+Enter`.
+- Select a discovered predicate or function and use **Analyze** or `Ctrl/Cmd+Enter`.
 - Click an e-class to inspect class-level type, support, alternatives, provenance, and invariants.
 - Click an e-node row for exact children, slots, container semantics, source, and certificates.
 - Shift-click two members of one e-class to request the included equivalence explanation.
@@ -228,10 +251,10 @@ The build runs TypeScript project checking before Vite emits production assets.
 
 ## Known Limitations
 
-- The repository defines the browser contract but does not add the Java HTTP adapter. Connecting the artifact requires one backend translation layer into Visualization IR v1.x.
+- The Java adapter currently exports certified graph structure and pipeline representations; detailed source spans, per-rewrite trace events, and certificate payloads remain optional and may be absent.
 - Stage text and mappings are selectable. Stage-specific graph switching remains unavailable unless the backend supplies addressable snapshots.
 - SVG export is a deterministic representation of the currently bounded graph, not a capture of React Flow's viewport. PNG export is deferred.
-- Pane resizing and predicate-to-predicate comparison are deferred. The responsive layout uses tabs below desktop width.
+- Pane resizing and callable-to-callable comparison are deferred. The responsive layout uses tabs below desktop width.
 - Search only uses information explicitly present in the IR. It does not derive semantic aliases, support, proofs, or equivalence.
 - The mock inspector recognizes the bundled examples. It is a deterministic demo service, not an Alloy parser.
 

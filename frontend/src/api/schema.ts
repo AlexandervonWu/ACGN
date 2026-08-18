@@ -20,14 +20,37 @@ export const DiagnosticSchema = z.object({
   code: z.string().optional(),
 }).passthrough();
 
-export const PredicateSummarySchema = z.object({
+export const CallableKindSchema = z.enum(["predicate", "function"]);
+
+export const CallableSummarySchema = z.object({
   name: id,
+  kind: CallableKindSchema,
   sourceRange: SourceRangeSchema.optional(),
+  returnType: z.string().optional(),
+});
+
+export const PredicateSummarySchema = CallableSummarySchema.omit({
+  kind: true,
+  returnType: true,
 });
 
 export const ModelInspectionSchema = z.object({
-  predicates: z.array(PredicateSummarySchema),
+  callables: z.array(CallableSummarySchema).optional(),
+  predicates: z.array(PredicateSummarySchema).optional(),
   parseDiagnostics: z.array(DiagnosticSchema),
+}).passthrough().transform((inspection) => {
+  const callables = inspection.callables
+    ?? (inspection.predicates ?? []).map((predicate) => ({
+      ...predicate,
+      kind: "predicate" as const,
+    }));
+  return {
+    ...inspection,
+    callables,
+    predicates: inspection.predicates
+      ?? callables.filter((callable) => callable.kind === "predicate")
+        .map(({ name, sourceRange }) => ({ name, sourceRange })),
+  };
 });
 
 export const TypeDescriptorSchema = z.discriminatedUnion("kind", [
@@ -226,6 +249,11 @@ export const PredicateMetadataSchema = z.object({
   canonicalText: z.string().optional(),
 }).passthrough();
 
+export const CallableMetadataSchema = PredicateMetadataSchema.extend({
+  kind: CallableKindSchema,
+  returnType: z.string().optional(),
+}).passthrough();
+
 export const AnalysisStatisticsSchema = z.object({
   parseMs: z.number().nonnegative().optional(),
   normalizationMs: z.number().nonnegative().optional(),
@@ -242,6 +270,7 @@ export const EGraphAnalysisSchema = z.object({
   schemaVersion: z.string().regex(/^\d+\.\d+(?:\.\d+)?$/),
   model: ModelMetadataSchema,
   predicate: PredicateMetadataSchema,
+  callable: CallableMetadataSchema.optional(),
   stages: z.array(NormalizationStageSchema),
   graph: EGraphSchema,
   sourceMappings: z.array(SourceMappingSchema).optional(),
@@ -297,11 +326,12 @@ export const EGraphAnalysisSchema = z.object({
       message: `Graph root ${analysis.graph.rootEClassId} does not reference an e-class.`,
     });
   }
-  if (!eclassIds.has(analysis.predicate.rootEClassId)) {
+  const callableRoot = analysis.callable?.rootEClassId ?? analysis.predicate.rootEClassId;
+  if (!eclassIds.has(callableRoot)) {
     context.addIssue({
       code: z.ZodIssueCode.custom,
-      path: ["predicate", "rootEClassId"],
-      message: `Predicate root ${analysis.predicate.rootEClassId} does not reference an e-class.`,
+      path: [analysis.callable ? "callable" : "predicate", "rootEClassId"],
+      message: `Callable root ${callableRoot} does not reference an e-class.`,
     });
   }
 

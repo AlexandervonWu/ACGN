@@ -1,0 +1,105 @@
+{
+  "schemaVersion": "1.1",
+  "model": { "name": "callables.als" },
+  "predicate": {
+    "name": "neighbors",
+    "rootEClassId": "E2",
+    "originalText": "u.follows",
+    "normalizedText": "neighbors((u . follows))",
+    "canonicalText": "JOIN(RELATIONAL-VARIABLE(u), GLOBALBINDING(follows))"
+  },
+  "callable": {
+    "name": "neighbors",
+    "kind": "function",
+    "returnType": "set User",
+    "rootEClassId": "E2",
+    "originalText": "u.follows",
+    "normalizedText": "neighbors((u . follows))",
+    "canonicalText": "JOIN(RELATIONAL-VARIABLE(u), GLOBALBINDING(follows))"
+  },
+  "stages": [
+    { "id": "source", "index": 0, "name": "Source callable", "text": "u.follows" },
+    { "id": "fast-rewrite", "index": 1, "name": "Fast Rewrite IR", "text": "neighbors((u . follows))", "rootEClassId": "E2" },
+    { "id": "certificate-integrated", "index": 2, "name": "Certificate-Integrated IR", "text": "JOIN(RELATIONAL-VARIABLE(u), GLOBALBINDING(follows))", "rootEClassId": "E2" }
+  ],
+  "graph": {
+    "rootEClassId": "E2",
+    "eclasses": [
+      {
+        "id": "E0",
+        "type": { "kind": "relation", "columns": ["User"] },
+        "support": [{ "id": "Parameter0#0", "type": "User", "displayName": "u" }],
+        "effectiveSupport": [{ "id": "Parameter0#0", "type": "User", "displayName": "u" }],
+        "nodes": [{
+          "id": "N0",
+          "kind": "ALLOY/RELATIONAL-VARIABLE",
+          "displayName": "u",
+          "children": [],
+          "type": { "kind": "relation", "columns": ["User"] },
+          "slots": [{ "slotId": "Parameter0#0", "role": "free", "type": "User" }]
+        }],
+        "canonicalNodeId": "N0",
+        "representativeNodeId": "N0",
+        "invariantStatus": [{ "id": "I0", "name": "Typed support", "status": "pass" }]
+      },
+      {
+        "id": "E1",
+        "type": { "kind": "relation", "columns": ["User", "User"] },
+        "nodes": [{
+          "id": "N1",
+          "kind": "ALLOY/GLOBALBINDING/follows",
+          "displayName": "follows",
+          "children": [],
+          "type": { "kind": "relation", "columns": ["User", "User"] }
+        }],
+        "canonicalNodeId": "N1",
+        "representativeNodeId": "N1"
+      },
+      {
+        "id": "E2",
+        "type": { "kind": "relation", "columns": ["User"] },
+        "support": [{ "id": "Parameter0#0", "type": "User", "displayName": "u" }],
+        "effectiveSupport": [{ "id": "Parameter0#0", "type": "User", "displayName": "u" }],
+        "nodes": [{
+          "id": "N2",
+          "kind": "ALLOY/JOIN",
+          "displayName": ".",
+          "children": [
+            { "role": "port0[0]", "eclassId": "E0" },
+            { "role": "port0[1]", "eclassId": "E1" }
+          ],
+          "type": { "kind": "relation", "columns": ["User"] },
+          "container": {
+            "kind": "A",
+            "operator": "ALLOY/JOIN",
+            "orderInsensitive": false,
+            "duplicateElimination": false,
+            "flattened": true
+          }
+        }],
+        "canonicalNodeId": "N2",
+        "representativeNodeId": "N2",
+        "invariantStatus": [{ "id": "I2", "name": "Certified relation type", "status": "pass" }]
+      }
+    ],
+    "edges": [
+      { "id": "edge-0", "sourceEClassId": "E2", "targetEClassId": "E0", "role": "port0[0]", "enodeId": "N2" },
+      { "id": "edge-1", "sourceEClassId": "E2", "targetEClassId": "E1", "role": "port0[1]", "enodeId": "N2" }
+    ],
+    "saturation": {
+      "saturated": true,
+      "stopReason": "certified-quiescent",
+      "rounds": [{ "index": 0, "eclassCount": 3, "enodeCount": 3, "merges": 0, "rebuilds": 1 }]
+    }
+  },
+  "trace": [],
+  "certificates": [],
+  "diagnostics": [],
+  "statistics": {
+    "eclassCount": 3,
+    "enodeCount": 3,
+    "mergeCount": 0,
+    "saturationRounds": 1,
+    "rootReachableEClassCount": 3
+  }
+}

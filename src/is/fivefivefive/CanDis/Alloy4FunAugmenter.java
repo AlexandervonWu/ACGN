@@ -123,12 +123,20 @@ public class Alloy4FunAugmenter {
         endStage("Writing augmented correct pools", stageStarted);
 
         stageStarted = beginStage("Comparing canonically equivalent correct pairs");
-        List<CorrectPoolPair> correctPoolPairs =
+        CorrectPoolEquivalences correctPoolEquivalences =
                 correctAstDifferentCanonicalEquivalentPairs(groups, options.threadCount);
         writeCorrectPoolEquivalenceJson(
                 options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"),
                 options,
-                correctPoolPairs);
+                correctPoolEquivalences.certificateIntegrated,
+                "Pairs within each augmented correct pool whose raw AST distance is greater than zero "
+                        + "and Certificate-Integrated IR distance is zero.");
+        writeCorrectPoolEquivalenceJson(
+                options.outputDir.resolve("correct_ast_diff_fast_rewrite_equiv.json"),
+                options,
+                correctPoolEquivalences.fastRewrite,
+                "Pairs within each augmented correct pool whose raw AST distance is greater than zero "
+                        + "and Fast Rewrite IR distance is zero.");
         endStage("Comparing canonically equivalent correct pairs", stageStarted);
         logRankingWork(groups);
 
@@ -146,7 +154,7 @@ public class Alloy4FunAugmenter {
         stageStarted = beginStage("Writing reports and plots");
         writeJson(options.outputDir.resolve("index.json"), options, files.size(),
                 astIdenticalPredicatePairs.size(), groups, records, matches,
-                unmatched, withoutAstDistinctReference);
+                unmatched, withoutAstDistinctReference, correctPoolEquivalences);
         writeMarkdown(
                 options.outputDir.resolve("summary.md"),
                 options,
@@ -157,7 +165,7 @@ public class Alloy4FunAugmenter {
                 matches,
                 unmatched,
                 withoutAstDistinctReference,
-                correctPoolPairs);
+                correctPoolEquivalences);
         writeRewardCsv(options.outputDir.resolve("canonical_reward_points.csv"), matches);
         writeRewardPlots(options.outputDir, matches);
         writeRelativeRepairCoveragePlot(options.outputDir.resolve("relative_repair_coverage_comparison.svg"), matches);
@@ -168,6 +176,7 @@ public class Alloy4FunAugmenter {
         System.out.println("Wrote " + astIdenticalPairsPath);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
         System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"));
+        System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_fast_rewrite_equiv.json"));
         System.out.println("Wrote " + options.outputDir.resolve("summary.md"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_reward_points.csv"));
         System.out.println("Wrote " + options.outputDir.resolve("canonical_distance_vs_reward_error_raw.svg"));
@@ -995,13 +1004,14 @@ public class Alloy4FunAugmenter {
     private static void writeCorrectPoolEquivalenceJson(
             Path path,
             Options options,
-            List<CorrectPoolPair> pairs) throws IOException {
+            List<CorrectPoolPair> pairs,
+            String criterion) throws IOException {
         try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
             writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
             writer.write("  \"outputRoot\": \"" + escape(options.outputDir.toString()) + "\",\n");
-            writer.write("  \"criterion\": \"Pairs within each augmented correct pool whose raw AST distance is greater than zero and CanonicalAlloyPipeline distance is zero.\",\n");
+            writer.write("  \"criterion\": \"" + escape(criterion) + "\",\n");
             writer.write("  \"pairCount\": " + pairs.size() + ",\n");
             writer.write("  \"pairs\": [\n");
             for (int i = 0; i < pairs.size(); i++) {
@@ -1015,7 +1025,7 @@ public class Alloy4FunAugmenter {
         }
     }
 
-    private static List<CorrectPoolPair> correctAstDifferentCanonicalEquivalentPairs(
+    private static CorrectPoolEquivalences correctAstDifferentCanonicalEquivalentPairs(
             Map<String, QuestionGroup> groups,
             int threadCount) {
         ExecutorService executor = Executors.newFixedThreadPool(Math.max(1, threadCount));
@@ -1032,7 +1042,8 @@ public class Alloy4FunAugmenter {
                     taskCount++;
                 }
             }
-            List<CorrectPoolPair> pairs = new ArrayList<>();
+            List<CorrectPoolPair> certificateIntegrated = new ArrayList<>();
+            List<CorrectPoolPair> fastRewrite = new ArrayList<>();
             List<IllegalStateException> kernelViolations = new ArrayList<>();
             ExperimentProgress progress = ExperimentProgress.start(
                     System.err,
@@ -1050,7 +1061,8 @@ public class Alloy4FunAugmenter {
                         continue;
                     }
                     CorrectPoolBatch batch = future.get();
-                    pairs.addAll(batch.pairs);
+                    certificateIntegrated.addAll(batch.certificateIntegrated);
+                    fastRewrite.addAll(batch.fastRewrite);
                     kernelViolations.addAll(batch.kernelViolations);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -1074,12 +1086,14 @@ public class Alloy4FunAugmenter {
                 }
                 throw failure;
             }
-            pairs.sort(Comparator
+            Comparator<CorrectPoolPair> pairOrder = Comparator
                     .comparing((CorrectPoolPair pair) -> pair.group.questionSet)
                     .thenComparing(pair -> pair.group.invariantId)
                     .thenComparing(pair -> pair.left.augmentedName)
-                    .thenComparing(pair -> pair.right.augmentedName));
-            return pairs;
+                    .thenComparing(pair -> pair.right.augmentedName);
+            certificateIntegrated.sort(pairOrder);
+            fastRewrite.sort(pairOrder);
+            return new CorrectPoolEquivalences(certificateIntegrated, fastRewrite);
         } finally {
             executor.shutdownNow();
         }
@@ -1089,7 +1103,8 @@ public class Alloy4FunAugmenter {
             QuestionGroup group,
             List<Reference> references,
             int leftIndex) {
-        List<CorrectPoolPair> pairs = new ArrayList<>();
+        List<CorrectPoolPair> certificateIntegrated = new ArrayList<>();
+        List<CorrectPoolPair> fastRewrite = new ArrayList<>();
         List<IllegalStateException> kernelViolations = new ArrayList<>();
         Reference left = references.get(leftIndex);
         for (int j = leftIndex + 1; j < references.size(); j++) {
@@ -1097,38 +1112,78 @@ public class Alloy4FunAugmenter {
             if (left.ast.fingerprint.equals(right.ast.fingerprint)) {
                 continue;
             }
-            if (left.canonicalSize != right.canonicalSize) {
+            boolean certificateCandidate = left.canonicalSize == right.canonicalSize;
+            boolean fastRewriteCandidate = left.legacyCanonicalSize == right.legacyCanonicalSize;
+            if (!certificateCandidate && !fastRewriteCandidate) {
                 continue;
             }
             int rawAstDistance = rawAstTreeDistance(left.ast, right.ast);
-            int legacyCanonicalDistance = Canonical.distance(left.canonical, right.canonical);
-            int canonicalDistance;
-            try {
-                canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
-            } catch (IllegalStateException exception) {
-                kernelViolations.add(new IllegalStateException(
-                        "Correct-pool kernel violation for "
-                                + group.questionSet + "/" + group.invariantId
-                                + ": " + referenceLocation(left)
-                                + " versus " + referenceLocation(right)
-                                + "; leftObservation="
-                                + left.exact.canonicalObservation().digest()
-                                + "; rightObservation="
-                                + right.exact.canonicalObservation().digest(),
-                        exception));
+            int legacyCanonicalDistance = fastRewriteCandidate
+                    ? Canonical.distance(left.canonical, right.canonical)
+                    : -1;
+            int canonicalDistance = -1;
+            if (certificateCandidate) {
+                try {
+                    canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
+                } catch (IllegalStateException exception) {
+                    kernelViolations.add(correctPoolKernelViolation(
+                            group,
+                            left,
+                            right,
+                            exception));
+                    continue;
+                }
+            }
+            if (canonicalDistance != 0 && legacyCanonicalDistance != 0) {
                 continue;
             }
+            if (canonicalDistance < 0) {
+                try {
+                    canonicalDistance = CanonicalAlloyPipeline.distance(left.exact, right.exact);
+                } catch (IllegalStateException exception) {
+                    kernelViolations.add(correctPoolKernelViolation(
+                            group,
+                            left,
+                            right,
+                            exception));
+                    continue;
+                }
+            }
+            if (legacyCanonicalDistance < 0) {
+                legacyCanonicalDistance = Canonical.distance(left.canonical, right.canonical);
+            }
+            CorrectPoolPair pair = new CorrectPoolPair(
+                    group,
+                    left,
+                    right,
+                    rawAstDistance,
+                    canonicalDistance,
+                    legacyCanonicalDistance);
             if (canonicalDistance == 0) {
-                pairs.add(new CorrectPoolPair(
-                        group,
-                        left,
-                        right,
-                        rawAstDistance,
-                        canonicalDistance,
-                        legacyCanonicalDistance));
+                certificateIntegrated.add(pair);
+            }
+            if (legacyCanonicalDistance == 0) {
+                fastRewrite.add(pair);
             }
         }
-        return new CorrectPoolBatch(pairs, kernelViolations);
+        return new CorrectPoolBatch(certificateIntegrated, fastRewrite, kernelViolations);
+    }
+
+    private static IllegalStateException correctPoolKernelViolation(
+            QuestionGroup group,
+            Reference left,
+            Reference right,
+            IllegalStateException exception) {
+        return new IllegalStateException(
+                "Correct-pool kernel violation for "
+                        + group.questionSet + "/" + group.invariantId
+                        + ": " + referenceLocation(left)
+                        + " versus " + referenceLocation(right)
+                        + "; leftObservation="
+                        + left.exact.canonicalObservation().digest()
+                        + "; rightObservation="
+                        + right.exact.canonicalObservation().digest(),
+                exception);
     }
 
     private static String referenceLocation(Reference reference) {
@@ -1146,6 +1201,10 @@ public class Alloy4FunAugmenter {
         writer.write("      \"augmentedFile\": \"" + escape("correct/" + pair.group.questionSet + "/" + pair.group.invariantId + ".als") + "\",\n");
         writer.write("      \"rawAstDistance\": " + pair.rawAstDistance + ",\n");
         writer.write("      \"canonicalDistance\": " + pair.canonicalDistance + ",\n");
+        writer.write("      \"certificateIntegratedDistance\": "
+                + pair.canonicalDistance + ",\n");
+        writer.write("      \"fastRewriteCanonicalDistance\": "
+                + pair.legacyCanonicalDistance + ",\n");
         writer.write("      \"legacyCanonicalDistance\": "
                 + pair.legacyCanonicalDistance + ",\n");
         writer.write("      \"left\": ");
@@ -1173,8 +1232,10 @@ public class Alloy4FunAugmenter {
             List<ModelRecord> records,
             List<IncorrectMatch> matches,
             List<ModelRecord> unmatched,
-            List<ModelRecord> withoutAstDistinctReference) throws IOException {
+            List<ModelRecord> withoutAstDistinctReference,
+            CorrectPoolEquivalences correctPoolEquivalences) throws IOException {
         Summary summary = new Summary(groups, records, matches, unmatched, withoutAstDistinctReference);
+        DistanceTableStats distanceTable = distanceTableStats(matches);
         try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
@@ -1188,6 +1249,8 @@ public class Alloy4FunAugmenter {
             writer.write("  \"rewardPoolSize\": " + options.rewardPoolSize + ",\n");
             writer.write("  \"rewardsEnabled\": " + !options.skipRewards + ",\n");
             writer.write("  \"canonicalEngine\": \"CanonicalAlloyPipeline\",\n");
+            writer.write("  \"certificateIntegratedEngine\": \"CanonicalAlloyPipeline\",\n");
+            writer.write("  \"fastRewriteEngine\": \"Canonical/CanonicalDistance\",\n");
             writer.write("  \"canonicalPipelineVersion\": \""
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
             writer.write("  \"measurementProjectionVersion\": \""
@@ -1207,7 +1270,10 @@ public class Alloy4FunAugmenter {
             writer.write("  \"certificateMode\": \"required\",\n");
             writer.write("  \"finiteUnfoldingVersion\": \""
                     + BoundedFiniteUnfoldingOracle.VERSION + "\",\n");
+            writer.write("  \"fastRewriteCanonicalRetained\": true,\n");
             writer.write("  \"legacyCanonicalRetained\": true,\n");
+            writer.write("  \"implementationFieldMapping\": {\"certificateIntegrated\": \"canonical*\", "
+                    + "\"fastRewrite\": \"legacyCanonical*\"},\n");
             writer.write("  \"summary\": {\n");
             writer.write("    \"groups\": " + summary.groups + ",\n");
             writer.write("    \"parsedModels\": " + summary.parsedModels + ",\n");
@@ -1217,10 +1283,22 @@ public class Alloy4FunAugmenter {
             writer.write("    \"oracleReferences\": " + summary.oracleReferences + ",\n");
             writer.write("    \"uniqueCorrectStudentReferences\": " + summary.uniqueCorrectStudentReferences + ",\n");
             writer.write("    \"incorrectModelsWithNearestDistances\": " + matches.size() + ",\n");
+            writer.write("    \"correctPoolCertificateIntegratedEquivalentPairs\": "
+                    + correctPoolEquivalences.certificateIntegrated.size() + ",\n");
+            writer.write("    \"correctPoolFastRewriteEquivalentPairs\": "
+                    + correctPoolEquivalences.fastRewrite.size() + ",\n");
             writer.write("    \"rewardSuccesses\": " + summary.rewardSuccesses + ",\n");
             writer.write("    \"rewardFailures\": " + summary.rewardFailures + ",\n");
             writer.write("    \"averageCandidateReward\": " + number(summary.averageCandidateReward()) + ",\n");
             writer.write("    \"averageRewardError\": " + number(summary.averageRewardError()) + ",\n");
+            writer.write("    \"averageNearestCertificateIntegratedDistance\": "
+                    + number(distanceTable.overall.averageCanonical()) + ",\n");
+            writer.write("    \"averageNearestFastRewriteDistance\": "
+                    + number(distanceTable.overall.averageFastRewrite()) + ",\n");
+            writer.write("    \"averageRelativeNearestCertificateIntegratedDistance\": "
+                    + number(distanceTable.overall.averageCanonicalRatio()) + ",\n");
+            writer.write("    \"averageRelativeNearestFastRewriteDistance\": "
+                    + number(distanceTable.overall.averageFastRewriteRatio()) + ",\n");
             writer.write("    \"incorrectModelsWithoutAstDistinctReference\": "
                     + summary.incorrectModelsWithoutAstDistinctReference + ",\n");
             writer.write("    \"incorrectModelsWithoutCorrectReference\": " + unmatched.size() + "\n");
@@ -1272,10 +1350,12 @@ public class Alloy4FunAugmenter {
             List<IncorrectMatch> matches,
             List<ModelRecord> unmatched,
             List<ModelRecord> withoutAstDistinctReference,
-            List<CorrectPoolPair> correctPoolPairs) throws IOException {
+            CorrectPoolEquivalences correctPoolEquivalences) throws IOException {
         Summary summary = new Summary(groups, records, matches, unmatched, withoutAstDistinctReference);
         Map<String, QuestionSetStats> questionStats = questionSetStats(groups, matches);
-        Map<String, CorrectTruthStats> correctTruthStats = correctTruthStats(groups, correctPoolPairs);
+        Map<String, CorrectTruthStats> correctTruthStats = correctTruthStats(
+                groups,
+                correctPoolEquivalences);
         Map<String, RankingModeStats> modeStats = rankingModeStats(groups);
         DistanceTableStats distanceTable = distanceTableStats(matches);
         Map<String, RepairRadiusStats> repairOverall = repairRadiusStatsOverall(matches);
@@ -1293,8 +1373,9 @@ public class Alloy4FunAugmenter {
                     + astIdenticalPredicatePairCount + "\n");
             writer.write("- Alloy files considered and used: " + records.size() + "\n");
             writer.write("- Thread count: " + options.threadCount + "\n\n");
-            writer.write("- Canonical engine: `CanonicalAlloyPipeline` (`"
+            writer.write("- Certificate-Integrated IR engine: `CanonicalAlloyPipeline` (`"
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
+            writer.write("- Fast Rewrite IR engine: `Canonical` / `CanonicalDistance`\n");
             writer.write("- Canonical repair metric compatibility manifest ID: `"
                     + CanonicalAlloyPipeline.QUOTIENT_METRIC_VERSION + "`\n");
             writer.write("- Canonical representative TED is diagnostic only: `"
@@ -1324,23 +1405,28 @@ public class Alloy4FunAugmenter {
 
             writer.write("## Correct Truth Pools\n\n");
             writer.write("Truth predicates include one oracle predicate per invariant together with every CORRECT "
-                    + "student predicate. AST deduplication is applied to this combined pool; the final column "
-                    + "counts unordered pairs of AST-distinct truths whose canonical distance is zero. Unique "
-                    + "canonical forms are connected components under that zero-distance relation.\n\n");
+                    + "student predicate. AST deduplication is applied to this combined pool. The two zero-pair "
+                    + "columns report unordered AST-distinct truths at distance zero for each implementation. "
+                    + "Unique forms are connected components under the corresponding zero-distance relation.\n\n");
             writer.write("| Problem class | Correct truth predicates | AST-distinct truths | "
-                    + "Unique canonical forms | AST-different, canonically equivalent pairs |\n");
-            writer.write("| --- | ---: | ---: | ---: | ---: |\n");
+                    + "Unique Fast Rewrite forms | Fast Rewrite zero pairs | "
+                    + "Unique Certificate-Integrated forms | Certificate-Integrated zero pairs |\n");
+            writer.write("| --- | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             CorrectTruthStats totalTruthStats = new CorrectTruthStats("Total");
             for (CorrectTruthStats stats : correctTruthStats.values()) {
                 writer.write("| " + stats.questionSet + " | " + stats.correctPredicates + " | "
-                        + stats.astDistinctPredicates + " | " + stats.uniqueCanonicalForms + " | "
-                        + stats.canonicalEquivalentPairs + " |\n");
+                        + stats.astDistinctPredicates + " | " + stats.uniqueFastRewriteForms + " | "
+                        + stats.fastRewriteEquivalentPairs + " | "
+                        + stats.uniqueCertificateForms + " | "
+                        + stats.certificateEquivalentPairs + " |\n");
                 totalTruthStats.add(stats);
             }
             writer.write("| **Total** | **" + totalTruthStats.correctPredicates + "** | **"
                     + totalTruthStats.astDistinctPredicates + "** | **"
-                    + totalTruthStats.uniqueCanonicalForms + "** | **"
-                    + totalTruthStats.canonicalEquivalentPairs + "** |\n\n");
+                    + totalTruthStats.uniqueFastRewriteForms + "** | **"
+                    + totalTruthStats.fastRewriteEquivalentPairs + "** | **"
+                    + totalTruthStats.uniqueCertificateForms + "** | **"
+                    + totalTruthStats.certificateEquivalentPairs + "** |\n\n");
 
             writer.write("## Ranking Pools\n\n");
             writer.write("| Mode | Groups | Incorrect predicates | Min refs | Max refs |\n");
@@ -1358,37 +1444,44 @@ public class Alloy4FunAugmenter {
                     + "the incorrect predicate's own body length, raw AST size, or canonical-form size. "
                     + "CORRECT predicates are excluded.\n\n");
             writer.write("| Problem class | Incorrectness class | Incorrect predicates | "
-                    + "Avg nearest Levenshtein | Avg nearest raw AST | Avg nearest canonical | "
-                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative canonical |\n");
-            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+                    + "Avg nearest Levenshtein | Avg nearest raw AST | Avg nearest Fast Rewrite IR | "
+                    + "Avg nearest Certificate-Integrated IR | Avg relative Levenshtein | "
+                    + "Avg relative raw AST | Avg relative Fast Rewrite IR | "
+                    + "Avg relative Certificate-Integrated IR |\n");
+            writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             DistanceStats allDistances = distanceTable.overall;
             writer.write("| **All problem classes** | **All incorrectness classes** | **"
                     + allDistances.count + "** | **" + number(allDistances.averageLevenshtein())
                     + "** | **" + number(allDistances.averageRawAst())
+                    + "** | **" + number(allDistances.averageFastRewrite())
                     + "** | **" + number(allDistances.averageCanonical())
                     + "** | **" + number(allDistances.averageLevenshteinRatio())
                     + "** | **" + number(allDistances.averageRawAstRatio())
+                    + "** | **" + number(allDistances.averageFastRewriteRatio())
                     + "** | **" + number(allDistances.averageCanonicalRatio()) + "** |\n");
             for (DistanceStats stats : distanceTable.byProblemAndStatus.values()) {
                 writer.write("| " + stats.problemClass + " | " + stats.statusFolder + " | "
                         + stats.count + " | " + number(stats.averageLevenshtein()) + " | "
-                        + number(stats.averageRawAst()) + " | " + number(stats.averageCanonical()) + " | "
+                        + number(stats.averageRawAst()) + " | " + number(stats.averageFastRewrite()) + " | "
+                        + number(stats.averageCanonical()) + " | "
                         + number(stats.averageLevenshteinRatio()) + " | "
                         + number(stats.averageRawAstRatio()) + " | "
+                        + number(stats.averageFastRewriteRatio()) + " | "
                         + number(stats.averageCanonicalRatio()) + " |\n");
             }
             writer.write("\n");
 
             writer.write("## Relative Repair Coverage Comparison\n\n");
             writer.write("The SVG plots smooth empirical coverage curves from 0% to 100% of each metric's representation size. The table gives selected checkpoints.\n\n");
-            writer.write("| Fraction of representation size | Levenshtein / body chars | Raw AST / AST size | Canonical / canonical size |\n");
-            writer.write("| --- | ---: | ---: | ---: |\n");
+            writer.write("| Fraction of representation size | Levenshtein / body chars | Raw AST / AST size | Fast Rewrite IR / form size | Certificate-Integrated IR / observation size |\n");
+            writer.write("| --- | ---: | ---: | ---: | ---: |\n");
             RepairRadiusStats allRepairCoverage = repairOverall.get("All incorrect");
             if (allRepairCoverage != null) {
                 for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
                     writer.write("| <= " + percentLabel(RELATIVE_REPAIR_RADII[i]) + " | "
                             + countPercent(allRepairCoverage.levenshteinRelativeWithin[i], allRepairCoverage.count)
                             + " | " + countPercent(allRepairCoverage.rawAstRelativeWithin[i], allRepairCoverage.count)
+                            + " | " + countPercent(allRepairCoverage.fastRewriteRelativeWithin[i], allRepairCoverage.count)
                             + " | " + countPercent(allRepairCoverage.canonicalRelativeWithin[i], allRepairCoverage.count)
                             + " |\n");
                 }
@@ -1398,14 +1491,16 @@ public class Alloy4FunAugmenter {
 
             writer.write("## Raw Edit Distance Coverage Comparison\n\n");
             writer.write("The SVG plots empirical coverage curves over absolute edit-distance radius for Raw AST "
-                    + "and Canonical repairs. Its x-axis is capped at " + RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE
+                    + "and Certificate-Integrated IR repairs. The table also retains Fast Rewrite IR coverage. "
+                    + "Its x-axis is capped at " + RAW_EDIT_REPAIR_PLOT_MAX_DISTANCE
                     + " edits; predicates beyond that radius remain in the coverage denominator.\n\n");
-            writer.write("| Edit-distance radius | Raw AST | Canonical |\n");
-            writer.write("| --- | ---: | ---: |\n");
+            writer.write("| Edit-distance radius | Raw AST | Fast Rewrite IR | Certificate-Integrated IR |\n");
+            writer.write("| --- | ---: | ---: | ---: |\n");
             if (allRepairCoverage != null) {
                 for (int i = 0; i < REPAIR_RADII.length; i++) {
                     writer.write("| <= " + REPAIR_RADII[i] + " | "
                             + countPercent(allRepairCoverage.rawAstWithin[i], allRepairCoverage.count)
+                            + " | " + countPercent(allRepairCoverage.fastRewriteWithin[i], allRepairCoverage.count)
                             + " | " + countPercent(allRepairCoverage.canonicalWithin[i], allRepairCoverage.count)
                             + " |\n");
                 }
@@ -1428,9 +1523,11 @@ public class Alloy4FunAugmenter {
             writer.write("## Reward Error Correlations\n\n");
             RewardDistanceStats levenshteinReward = rewardDistanceStats(matches, "levenshtein");
             RewardDistanceStats rawAstReward = rewardDistanceStats(matches, "rawAst");
+            RewardDistanceStats fastRewriteReward = rewardDistanceStats(matches, "fastRewrite");
             RewardDistanceStats canonicalReward = rewardDistanceStats(matches, "canonical");
             RewardDistanceStats levenshteinRatioReward = rewardRatioStats(matches, "levenshtein");
             RewardDistanceStats rawAstRatioReward = rewardRatioStats(matches, "rawAst");
+            RewardDistanceStats fastRewriteRatioReward = rewardRatioStats(matches, "fastRewrite");
             RewardDistanceStats canonicalRatioReward = rewardRatioStats(matches, "canonical");
             writer.write("- Rewarded incorrect predicates: " + canonicalReward.count + "\n\n");
             writer.write("| Metric | Pearson distance vs raw `1 - reward` | Pearson distance vs `log10(1 - reward)` | Pearson relative distance vs raw `1 - reward` | Pearson relative distance vs `log10(1 - reward)` |\n");
@@ -1443,7 +1540,11 @@ public class Alloy4FunAugmenter {
                     + number(rawAstReward.logCorrelation()) + " | "
                     + number(rawAstRatioReward.rawCorrelation()) + " | "
                     + number(rawAstRatioReward.logCorrelation()) + " |\n");
-            writer.write("| Canonical | " + number(canonicalReward.rawCorrelation()) + " | "
+            writer.write("| Fast Rewrite IR | " + number(fastRewriteReward.rawCorrelation()) + " | "
+                    + number(fastRewriteReward.logCorrelation()) + " | "
+                    + number(fastRewriteRatioReward.rawCorrelation()) + " | "
+                    + number(fastRewriteRatioReward.logCorrelation()) + " |\n");
+            writer.write("| Certificate-Integrated IR | " + number(canonicalReward.rawCorrelation()) + " | "
                     + number(canonicalReward.logCorrelation()) + " | "
                     + number(canonicalRatioReward.rawCorrelation()) + " | "
                     + number(canonicalRatioReward.logCorrelation()) + " |\n\n");
@@ -1472,10 +1573,16 @@ public class Alloy4FunAugmenter {
             writer.write(" | AST <= " + radius);
         }
         for (int radius : REPAIR_RADII) {
-            writer.write(" | Canonical <= " + radius);
+            writer.write(" | Fast Rewrite <= " + radius);
+        }
+        for (int radius : REPAIR_RADII) {
+            writer.write(" | Certificate-Integrated <= " + radius);
         }
         writer.write(" |\n");
         writer.write("| --- | ---:");
+        for (int ignored : REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
         for (int ignored : REPAIR_RADII) {
             writer.write(" | ---:");
         }
@@ -1487,6 +1594,9 @@ public class Alloy4FunAugmenter {
             writer.write("| " + row.label + " | " + row.count);
             for (int i = 0; i < REPAIR_RADII.length; i++) {
                 writer.write(" | " + countPercent(row.rawAstWithin[i], row.count));
+            }
+            for (int i = 0; i < REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.fastRewriteWithin[i], row.count));
             }
             for (int i = 0; i < REPAIR_RADII.length; i++) {
                 writer.write(" | " + countPercent(row.canonicalWithin[i], row.count));
@@ -1509,10 +1619,16 @@ public class Alloy4FunAugmenter {
             writer.write(" | AST <= " + percentLabel(radius));
         }
         for (double radius : RELATIVE_REPAIR_RADII) {
-            writer.write(" | Canonical <= " + percentLabel(radius));
+            writer.write(" | Fast Rewrite <= " + percentLabel(radius));
+        }
+        for (double radius : RELATIVE_REPAIR_RADII) {
+            writer.write(" | Certificate-Integrated <= " + percentLabel(radius));
         }
         writer.write(" |\n");
         writer.write("| --- | ---:");
+        for (double ignored : RELATIVE_REPAIR_RADII) {
+            writer.write(" | ---:");
+        }
         for (double ignored : RELATIVE_REPAIR_RADII) {
             writer.write(" | ---:");
         }
@@ -1530,6 +1646,9 @@ public class Alloy4FunAugmenter {
             }
             for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
                 writer.write(" | " + countPercent(row.rawAstRelativeWithin[i], row.count));
+            }
+            for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
+                writer.write(" | " + countPercent(row.fastRewriteRelativeWithin[i], row.count));
             }
             for (int i = 0; i < RELATIVE_REPAIR_RADII.length; i++) {
                 writer.write(" | " + countPercent(row.canonicalRelativeWithin[i], row.count));
@@ -2141,14 +2260,14 @@ public class Alloy4FunAugmenter {
             writer.write("positive = [e for e in errs if e > 0.0]\n");
             writer.write("floor = min(positive) / 10.0 if positive else 1e-6\n");
             writer.write("logs = [math.log10(max(e, floor)) for e in errs]\n");
-            writer.write("for key, ratio_key, label in [('levenshteinDistance', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstDistance', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalDistance', 'canonicalDistanceRatio', 'Canonical')]:\n");
+            writer.write("for key, ratio_key, label in [('levenshteinDistance', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstDistance', 'rawAstDistanceRatio', 'Raw AST'), ('legacyCanonicalDistance', 'legacyCanonicalDistanceRatio', 'Fast Rewrite IR'), ('canonicalDistance', 'canonicalDistanceRatio', 'Certificate-Integrated IR')]:\n");
             writer.write("    xs = [float(r[key]) for r in rows]\n");
             writer.write("    ratios = [float(r[ratio_key]) for r in rows]\n");
             writer.write("    print(f\"Pearson {label} distance vs raw 1-reward: {corr(xs, errs):.6f}\")\n");
             writer.write("    print(f\"Pearson {label} distance vs log10(1-reward): {corr(xs, logs):.6f}\")\n");
             writer.write("    print(f\"Pearson {label} ratio vs raw 1-reward: {corr(ratios, errs):.6f}\")\n");
             writer.write("    print(f\"Pearson {label} ratio vs log10(1-reward): {corr(ratios, logs):.6f}\")\n");
-            writer.write("for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('canonicalSize', 'canonicalDistanceRatio', 'Canonical')]:\n");
+            writer.write("for size_key, ratio_key, label in [('levenshteinSize', 'levenshteinDistanceRatio', 'Levenshtein'), ('rawAstSize', 'rawAstDistanceRatio', 'Raw AST'), ('legacyCanonicalSize', 'legacyCanonicalDistanceRatio', 'Fast Rewrite IR'), ('canonicalSize', 'canonicalDistanceRatio', 'Certificate-Integrated IR')]:\n");
             writer.write("    xs = [float(r[size_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]\n");
             writer.write("    ys = [float(r[ratio_key]) for r in all_rows if r.get(size_key) and r.get(ratio_key)]\n");
             writer.write("    print(f\"Pearson {label} repair ratio vs representation size: {corr(xs, ys):.6f}\")\n");
@@ -2280,9 +2399,10 @@ public class Alloy4FunAugmenter {
 
     private static Map<String, CorrectTruthStats> correctTruthStats(
             Map<String, QuestionGroup> groups,
-            List<CorrectPoolPair> correctPoolPairs) {
+            CorrectPoolEquivalences equivalences) {
         Map<String, CorrectTruthStats> stats = new java.util.TreeMap<>();
-        Map<Reference, Reference> canonicalParents = new java.util.IdentityHashMap<>();
+        Map<Reference, Reference> certificateParents = new java.util.IdentityHashMap<>();
+        Map<Reference, Reference> fastRewriteParents = new java.util.IdentityHashMap<>();
         for (QuestionGroup group : groups.values()) {
             CorrectTruthStats setStats = stats.computeIfAbsent(
                     group.questionSet,
@@ -2290,21 +2410,31 @@ public class Alloy4FunAugmenter {
             setStats.correctPredicates += group.truthCandidateCount;
             setStats.astDistinctPredicates += group.references.size();
             for (Reference reference : group.references) {
-                canonicalParents.put(reference, reference);
+                certificateParents.put(reference, reference);
+                fastRewriteParents.put(reference, reference);
             }
         }
-        for (CorrectPoolPair pair : correctPoolPairs) {
+        for (CorrectPoolPair pair : equivalences.certificateIntegrated) {
             stats.computeIfAbsent(pair.group.questionSet, CorrectTruthStats::new)
-                    .canonicalEquivalentPairs++;
-            unionCanonicalForms(canonicalParents, pair.left, pair.right);
+                    .certificateEquivalentPairs++;
+            unionCanonicalForms(certificateParents, pair.left, pair.right);
+        }
+        for (CorrectPoolPair pair : equivalences.fastRewrite) {
+            stats.computeIfAbsent(pair.group.questionSet, CorrectTruthStats::new)
+                    .fastRewriteEquivalentPairs++;
+            unionCanonicalForms(fastRewriteParents, pair.left, pair.right);
         }
         for (QuestionGroup group : groups.values()) {
-            Set<Reference> canonicalForms =
+            Set<Reference> certificateForms =
+                    java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+            Set<Reference> fastRewriteForms =
                     java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
             for (Reference reference : group.references) {
-                canonicalForms.add(canonicalRoot(canonicalParents, reference));
+                certificateForms.add(canonicalRoot(certificateParents, reference));
+                fastRewriteForms.add(canonicalRoot(fastRewriteParents, reference));
             }
-            stats.get(group.questionSet).uniqueCanonicalForms += canonicalForms.size();
+            stats.get(group.questionSet).uniqueCertificateForms += certificateForms.size();
+            stats.get(group.questionSet).uniqueFastRewriteForms += fastRewriteForms.size();
         }
         return stats;
     }
@@ -2439,6 +2569,9 @@ public class Alloy4FunAugmenter {
         if ("rawAst".equals(metric)) {
             return match.rawAst.first().distance;
         }
+        if ("fastRewrite".equals(metric)) {
+            return match.legacyCanonical.first().distance;
+        }
         return match.canonical.first().distance;
     }
 
@@ -2449,6 +2582,9 @@ public class Alloy4FunAugmenter {
         if ("rawAst".equals(metric)) {
             return match.record.rawAstSize;
         }
+        if ("fastRewrite".equals(metric)) {
+            return match.record.legacyCanonicalSize;
+        }
         return match.record.canonicalSize;
     }
 
@@ -2458,6 +2594,9 @@ public class Alloy4FunAugmenter {
         }
         if ("rawAst".equals(metric)) {
             return ratio(match.rawAst.first().distance, match.record.rawAstSize);
+        }
+        if ("fastRewrite".equals(metric)) {
+            return ratio(match.legacyCanonical.first().distance, match.record.legacyCanonicalSize);
         }
         return ratio(match.canonical.first().distance, match.record.canonicalSize);
     }
@@ -2499,6 +2638,9 @@ public class Alloy4FunAugmenter {
         if ("rawAst".equals(metric)) {
             return match.rawAst.first().distance;
         }
+        if ("fastRewrite".equals(metric)) {
+            return match.legacyCanonical.first().distance;
+        }
         return match.canonical.first().distance;
     }
 
@@ -2508,6 +2650,9 @@ public class Alloy4FunAugmenter {
         }
         if ("rawAst".equals(metric)) {
             return ratio(match.rawAst.first().distance, match.record.rawAstSize);
+        }
+        if ("fastRewrite".equals(metric)) {
+            return ratio(match.legacyCanonical.first().distance, match.record.legacyCanonicalSize);
         }
         return ratio(match.canonical.first().distance, match.record.canonicalSize);
     }
@@ -3182,14 +3327,29 @@ public class Alloy4FunAugmenter {
     }
 
     private static final class CorrectPoolBatch {
-        private final List<CorrectPoolPair> pairs;
+        private final List<CorrectPoolPair> certificateIntegrated;
+        private final List<CorrectPoolPair> fastRewrite;
         private final List<IllegalStateException> kernelViolations;
 
         private CorrectPoolBatch(
-                List<CorrectPoolPair> pairs,
+                List<CorrectPoolPair> certificateIntegrated,
+                List<CorrectPoolPair> fastRewrite,
                 List<IllegalStateException> kernelViolations) {
-            this.pairs = pairs;
+            this.certificateIntegrated = certificateIntegrated;
+            this.fastRewrite = fastRewrite;
             this.kernelViolations = kernelViolations;
+        }
+    }
+
+    private static final class CorrectPoolEquivalences {
+        private final List<CorrectPoolPair> certificateIntegrated;
+        private final List<CorrectPoolPair> fastRewrite;
+
+        private CorrectPoolEquivalences(
+                List<CorrectPoolPair> certificateIntegrated,
+                List<CorrectPoolPair> fastRewrite) {
+            this.certificateIntegrated = certificateIntegrated;
+            this.fastRewrite = fastRewrite;
         }
     }
 
@@ -3360,8 +3520,10 @@ public class Alloy4FunAugmenter {
         private final String questionSet;
         private int correctPredicates;
         private int astDistinctPredicates;
-        private int uniqueCanonicalForms;
-        private int canonicalEquivalentPairs;
+        private int uniqueFastRewriteForms;
+        private int fastRewriteEquivalentPairs;
+        private int uniqueCertificateForms;
+        private int certificateEquivalentPairs;
 
         private CorrectTruthStats(String questionSet) {
             this.questionSet = questionSet;
@@ -3370,8 +3532,10 @@ public class Alloy4FunAugmenter {
         private void add(CorrectTruthStats other) {
             correctPredicates += other.correctPredicates;
             astDistinctPredicates += other.astDistinctPredicates;
-            uniqueCanonicalForms += other.uniqueCanonicalForms;
-            canonicalEquivalentPairs += other.canonicalEquivalentPairs;
+            uniqueFastRewriteForms += other.uniqueFastRewriteForms;
+            fastRewriteEquivalentPairs += other.fastRewriteEquivalentPairs;
+            uniqueCertificateForms += other.uniqueCertificateForms;
+            certificateEquivalentPairs += other.certificateEquivalentPairs;
         }
     }
 
@@ -3416,9 +3580,11 @@ public class Alloy4FunAugmenter {
         private int count;
         private long levenshteinSum;
         private long rawAstSum;
+        private long fastRewriteSum;
         private long canonicalSum;
         private double levenshteinRatioSum;
         private double rawAstRatioSum;
+        private double fastRewriteRatioSum;
         private double canonicalRatioSum;
 
         private DistanceStats(String problemClass, String statusFolder) {
@@ -3430,9 +3596,13 @@ public class Alloy4FunAugmenter {
             count++;
             levenshteinSum += match.levenshtein.first().distance;
             rawAstSum += match.rawAst.first().distance;
+            fastRewriteSum += match.legacyCanonical.first().distance;
             canonicalSum += match.canonical.first().distance;
             levenshteinRatioSum += ratio(match.levenshtein.first().distance, match.record.levenshteinSize);
             rawAstRatioSum += ratio(match.rawAst.first().distance, match.record.rawAstSize);
+            fastRewriteRatioSum += ratio(
+                    match.legacyCanonical.first().distance,
+                    match.record.legacyCanonicalSize);
             canonicalRatioSum += ratio(match.canonical.first().distance, match.record.canonicalSize);
         }
 
@@ -3448,6 +3618,10 @@ public class Alloy4FunAugmenter {
             return count == 0 ? 0.0 : (double) canonicalSum / count;
         }
 
+        private double averageFastRewrite() {
+            return count == 0 ? 0.0 : (double) fastRewriteSum / count;
+        }
+
         private double averageLevenshteinRatio() {
             return count == 0 ? 0.0 : levenshteinRatioSum / count;
         }
@@ -3459,15 +3633,21 @@ public class Alloy4FunAugmenter {
         private double averageCanonicalRatio() {
             return count == 0 ? 0.0 : canonicalRatioSum / count;
         }
+
+        private double averageFastRewriteRatio() {
+            return count == 0 ? 0.0 : fastRewriteRatioSum / count;
+        }
     }
 
     private static class RepairRadiusStats {
         private final String label;
         private int count;
         private final int[] rawAstWithin = new int[REPAIR_RADII.length];
+        private final int[] fastRewriteWithin = new int[REPAIR_RADII.length];
         private final int[] canonicalWithin = new int[REPAIR_RADII.length];
         private final int[] levenshteinRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
         private final int[] rawAstRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
+        private final int[] fastRewriteRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
         private final int[] canonicalRelativeWithin = new int[RELATIVE_REPAIR_RADII.length];
 
         private RepairRadiusStats(String label) {
@@ -3478,13 +3658,18 @@ public class Alloy4FunAugmenter {
             count++;
             int levenshteinDistance = match.levenshtein.first().distance;
             int rawAstDistance = match.rawAst.first().distance;
+            int fastRewriteDistance = match.legacyCanonical.first().distance;
             int canonicalDistance = match.canonical.first().distance;
             double levenshteinRatio = ratio(levenshteinDistance, match.record.levenshteinSize);
             double rawAstRatio = ratio(rawAstDistance, match.record.rawAstSize);
+            double fastRewriteRatio = ratio(fastRewriteDistance, match.record.legacyCanonicalSize);
             double canonicalRatio = ratio(canonicalDistance, match.record.canonicalSize);
             for (int i = 0; i < REPAIR_RADII.length; i++) {
                 if (rawAstDistance <= REPAIR_RADII[i]) {
                     rawAstWithin[i]++;
+                }
+                if (fastRewriteDistance <= REPAIR_RADII[i]) {
+                    fastRewriteWithin[i]++;
                 }
                 if (canonicalDistance <= REPAIR_RADII[i]) {
                     canonicalWithin[i]++;
@@ -3496,6 +3681,9 @@ public class Alloy4FunAugmenter {
                 }
                 if (rawAstRatio <= RELATIVE_REPAIR_RADII[i]) {
                     rawAstRelativeWithin[i]++;
+                }
+                if (fastRewriteRatio <= RELATIVE_REPAIR_RADII[i]) {
+                    fastRewriteRelativeWithin[i]++;
                 }
                 if (canonicalRatio <= RELATIVE_REPAIR_RADII[i]) {
                     canonicalRelativeWithin[i]++;

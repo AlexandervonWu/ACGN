@@ -1,6 +1,9 @@
 import type { z } from "zod";
 import type {
   AnalysisStatisticsSchema,
+  CallableKindSchema,
+  CallableMetadataSchema,
+  CallableSummarySchema,
   CertificateSchema,
   CertificateStepSchema,
   CertificateTermSchema,
@@ -34,6 +37,8 @@ import type {
 export type SourcePosition = z.infer<typeof SourcePositionSchema>;
 export type SourceRange = z.infer<typeof SourceRangeSchema>;
 export type Diagnostic = z.infer<typeof DiagnosticSchema>;
+export type CallableKind = z.infer<typeof CallableKindSchema>;
+export type CallableSummary = z.infer<typeof CallableSummarySchema>;
 export type PredicateSummary = z.infer<typeof PredicateSummarySchema>;
 export type ModelInspection = z.infer<typeof ModelInspectionSchema>;
 export type TypeDescriptor = z.infer<typeof TypeDescriptorSchema>;
@@ -57,6 +62,7 @@ export type CertificateStep = z.infer<typeof CertificateStepSchema>;
 export type Certificate = z.infer<typeof CertificateSchema>;
 export type ModelMetadata = z.infer<typeof ModelMetadataSchema>;
 export type PredicateMetadata = z.infer<typeof PredicateMetadataSchema>;
+export type CallableMetadata = z.infer<typeof CallableMetadataSchema>;
 export type AnalysisStatistics = z.infer<typeof AnalysisStatisticsSchema>;
 export type EGraphAnalysis = z.infer<typeof EGraphAnalysisSchema>;
 export type HealthStatus = z.infer<typeof HealthStatusSchema>;
@@ -68,16 +74,21 @@ export interface AnalysisOptions {
   includeSourceMappings?: boolean;
 }
 
+export interface CallableReference {
+  name: string;
+  kind: CallableKind;
+}
+
 export type ApiErrorKind =
   | "configuration"
   | "network"
   | "backend"
   | "parse"
   | "type"
+  | "callable-not-found"
   | "predicate-not-found"
   | "analysis"
   | "schema"
   | "unsupported-version"
   | "timeout"
   | "cancelled";
-

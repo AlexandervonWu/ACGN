@@ -11,6 +11,7 @@ import {
   Square,
 } from "lucide-react";
 import type { EGraphAnalysis } from "../../api/types";
+import { analysisCallable } from "../../api/callables";
 import { useMockApi } from "../../api/client";
 import { IconButton } from "../Common/IconButton";
 
@@ -108,7 +109,7 @@ export function Header({
               </button>
               <button
                 type="button"
-                disabled={!analysis.predicate.canonicalText}
+                disabled={!analysisCallable(analysis).canonicalText}
                 onClick={async () => {
                   await onCopyCanonical();
                   setCopied(true);
@@ -121,7 +122,7 @@ export function Header({
           )}
         </div>
         {!canAnalyze && backendState !== "analyzing" && (
-          <span className="sr-only"><Ban size={14} /> Select a predicate before analysis.</span>
+          <span className="sr-only"><Ban size={14} /> Select a predicate or function before analysis.</span>
         )}
       </div>
     </header>

@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "fe4f05cc7956b3f0a2d650a2b208ce2f994a4d562778ea59085eee9a44dccfb1",
-      "sizeBytes": 1068058
+      "sha256": "6e6f5db8225cfc2c8c68d917f0b3a75b044c97690963e5373fad5147d8ef57be",
+      "sizeBytes": 1067247
     },
     {
       "path": "summary.json",
-      "sha256": "9bb5aed156cd08f28a878ddba171962133ac7fd455f9c627b1c155923938a807",
-      "sizeBytes": 13967
+      "sha256": "b7985d5e42c9975ffe540f66f5287cf4d36fc961d632da3319fcfcc4919f46c7",
+      "sizeBytes": 13984
     },
     {
       "path": "metrics.properties",
-      "sha256": "dc25ee48397798154619b7b3a78deb72901ce575cb0694ecc82eb548f8c9cfea",
-      "sizeBytes": 1461
+      "sha256": "8cda44503706b7364bde6a7157f4eabab3db71bc78931cc125c06a5ebabfa1e8",
+      "sizeBytes": 1471
     },
     {
       "path": "run.log",
-      "sha256": "03eaeaa2413e9007926d62be5dcbc1e887d08159c05ccc7ab98ae877a2d6b11b",
+      "sha256": "bae67181d3639e62975a3ad9ff542ac42ef15118898a8673d623bc57cd351a48",
       "sizeBytes": 2099
     },
     {
       "path": "process.time",
-      "sha256": "9581a5fe9d1608e8aa7ae950b57d3a210e767c576f170e20c2060f5d5dcc5590",
+      "sha256": "b48239697c7b7da2995ec1ac7a6caac895c7fdec168398d0c6deea8fd9b33103",
       "sizeBytes": 1315
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T04:51:08.482595784Z",
-  "javaSourceSha256": "0ac96bffbda106f7add1515d1c46951a858902c29bdebd7895ef7d69e3619ddf",
+  "startedAt": "2026-08-18T14:02:44.041321454Z",
+  "javaSourceSha256": "5438d2dade7502a2e0906ff80cf12e61d39ff5dd3e8013c335e297c95b3247aa",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -76,7 +76,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
-  "gitSha": "6d409311a0962d90eb5f97fd1b1ec3d0cd040697",
+  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
   "datasetByteCount": 5312721,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "eab0aa53-e9a9-4ad5-be79-8837c72fa610"
+  "runId": "d06fc18f-8d04-4ba3-bebf-af2ddc0aabd7"
 }

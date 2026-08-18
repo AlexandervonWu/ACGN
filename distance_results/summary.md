@@ -2,7 +2,8 @@
 
 - Input root: `/home/augustus/ACGN/classified-data`
 - Thread count: 32
-- Canonical engine: `CanonicalAlloyPipeline` (`canonical-alloy-pipeline-v10-three-layer`)
+- Certificate-Integrated IR engine: `CanonicalAlloyPipeline` (`canonical-alloy-pipeline-v11-three-layer`)
+- Fast Rewrite IR engine: `Canonical` / `CanonicalDistance`
 - Exact graph: `TypedSlottedPortEGraph`; invariants: `strict-every-transition`; certificates: required
 - Primary metric: established repair metric over the certified quotient; compatibility manifest ID `certified-legacy-repair-distance-v5`
 - Canonical representative TED retained only as baseline: `canonical-representative-ted-v1`
@@ -11,25 +12,25 @@
 - Successful distances: 61598
 - Skipped identical raw AST predicate pairs: 4482
 - Failures: 0
-- Average certified repair distance: 14.041998
+- Average Certificate-Integrated IR repair distance: 14.042096
 - Average canonical representative TED baseline: 37.119533
-- Average direct reference-metric distance: 14.029027
+- Average Fast Rewrite IR distance: 14.029027
 - Average predicate-body Levenshtein distance: 39.261064
 - Average raw AST tree distance: 22.841358
 - Average raw AST size: 26.787315
-- Average repair observation size: 18.117812
+- Average Certificate-Integrated IR repair observation size: 18.117812
 - Average canonical representative tree size: 39.169843
-- Average reference NormalForm metric size: 18.126871
+- Average Fast Rewrite IR NormalForm size: 18.126871
 - Average normalized predicate-body Levenshtein distance: 0.547644
 - Average normalized raw AST distance: 0.811451
-- Average normalized certified repair distance: 0.717861
+- Average normalized Certificate-Integrated IR distance: 0.717864
 - Average normalized canonical representative TED: 0.903699
-- Average normalized direct reference-metric distance: 0.716832
+- Average normalized Fast Rewrite IR distance: 0.716832
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 2317
 - Incorrect zero-distance merges: 0
 - Inexact alpha searches: 0
-- Average certified repair metric time: 0.104502 ms
-- Average canonical representative TED time: 0.498176 ms
+- Average certified repair metric time: 0.098837 ms
+- Average canonical representative TED time: 0.507042 ms
 - Min distance: 0
 - Max distance: 139
 
@@ -112,9 +113,9 @@ Compression rate is `100 * (raw AST size - repair observation size) / raw AST si
 
 Raw columns use edit-distance units. Relative columns divide each distance by the larger corresponding representation of the student-oracle pair: body characters for Levenshtein, raw AST nodes for AST distance, and canonical-form size for canonical distance. Identical raw-AST pairs skipped by the test are excluded.
 
-| Problem class | Semantic correctness class | Comparisons | Avg Levenshtein | Avg raw AST | Avg direct reference metric | Avg representative TED | Avg certified repair metric | Avg relative Levenshtein | Avg relative raw AST | Avg relative direct reference metric | Avg relative representative TED | Avg relative certified repair metric |
+| Problem class | Semantic correctness class | Comparisons | Avg Levenshtein | Avg raw AST | Avg Fast Rewrite IR | Avg representative TED | Avg Certificate-Integrated IR | Avg relative Levenshtein | Avg relative raw AST | Avg relative Fast Rewrite IR | Avg relative representative TED | Avg relative Certificate-Integrated IR |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| **All problem classes** | **All statuses** | **61598** | **39.261064** | **22.841358** | **14.029027** | **37.119533** | **14.041998** | **0.547644** | **0.811451** | **0.716832** | **0.903699** | **0.717861** |
+| **All problem classes** | **All statuses** | **61598** | **39.261064** | **22.841358** | **14.029027** | **37.119533** | **14.042096** | **0.547644** | **0.811451** | **0.716832** | **0.903699** | **0.717864** |
 | classroom_fol | BOTH | 1696 | 54.403302 | 29.843750 | 17.307193 | 43.257665 | 17.323703 | 0.624351 | 0.860807 | 0.805077 | 0.929331 | 0.805978 |
 | classroom_fol | CORRECT | 1613 | 34.698078 | 19.522009 | 10.019839 | 27.625542 | 9.973342 | 0.537345 | 0.811881 | 0.630509 | 0.926789 | 0.629619 |
 | classroom_fol | OVERCONSTRAINED | 383 | 44.506527 | 23.219321 | 13.543081 | 35.154047 | 13.553525 | 0.596239 | 0.824708 | 0.766016 | 0.926950 | 0.766582 |
@@ -143,10 +144,10 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 | graphs | CORRECT | 820 | 25.169512 | 15.212195 | 8.510976 | 26.423171 | 8.503659 | 0.594930 | 0.736133 | 0.630423 | 0.952117 | 0.630384 |
 | graphs | OVERCONSTRAINED | 645 | 17.427907 | 15.305426 | 8.762791 | 27.502326 | 8.762791 | 0.479910 | 0.696726 | 0.651575 | 0.968512 | 0.651575 |
 | graphs | UNDERCONSTRAINED | 326 | 24.696319 | 17.156442 | 9.340491 | 25.907975 | 9.340491 | 0.617945 | 0.848759 | 0.744298 | 0.998768 | 0.744298 |
-| lts | BOTH | 555 | 50.536937 | 35.338739 | 21.700901 | 43.758559 | 21.277477 | 0.641920 | 0.895019 | 0.755090 | 0.933836 | 0.744306 |
+| lts | BOTH | 555 | 50.536937 | 35.338739 | 21.700901 | 43.758559 | 21.279279 | 0.641920 | 0.895019 | 0.755090 | 0.933836 | 0.744366 |
 | lts | CORRECT | 249 | 29.991968 | 19.634538 | 10.156627 | 23.807229 | 9.939759 | 0.550300 | 0.726068 | 0.537863 | 0.810913 | 0.532090 |
-| lts | OVERCONSTRAINED | 458 | 46.735808 | 31.982533 | 20.159389 | 41.080786 | 19.877729 | 0.615166 | 0.839382 | 0.737521 | 0.939234 | 0.731752 |
-| lts | UNDERCONSTRAINED | 254 | 39.291339 | 26.740157 | 16.783465 | 38.208661 | 16.464567 | 0.556787 | 0.744322 | 0.689935 | 0.928211 | 0.682236 |
+| lts | OVERCONSTRAINED | 458 | 46.735808 | 31.982533 | 20.159389 | 41.080786 | 19.879913 | 0.615166 | 0.839382 | 0.737521 | 0.939234 | 0.731793 |
+| lts | UNDERCONSTRAINED | 254 | 39.291339 | 26.740157 | 16.783465 | 38.208661 | 16.480315 | 0.556787 | 0.744322 | 0.689935 | 0.928211 | 0.682728 |
 | productionLineNew | BOTH | 656 | 45.213415 | 28.455793 | 15.954268 | 41.532012 | 15.914634 | 0.509207 | 0.868169 | 0.743016 | 0.891551 | 0.742920 |
 | productionLineNew | CORRECT | 693 | 34.992785 | 20.793651 | 11.401154 | 29.141414 | 11.408369 | 0.445274 | 0.726740 | 0.551477 | 0.696584 | 0.551642 |
 | productionLineNew | OVERCONSTRAINED | 320 | 39.903125 | 24.296875 | 14.196875 | 35.615625 | 14.246875 | 0.459963 | 0.754725 | 0.674293 | 0.785955 | 0.675846 |
@@ -194,19 +195,19 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 - Average ground-truth self reward: 0.000000
 - Average reward gap: 0.000000
 - Pearson correlation sample: non-CORRECT rewarded predicates (0 files)
-- Pearson correlation, certified repair distance vs candidate reward: 0.000000
+- Pearson correlation, Certificate-Integrated IR distance vs candidate reward: 0.000000
 
 - Pearson correlation, canonical representative TED vs candidate reward: 0.000000
-- Pearson correlation, direct reference-metric distance vs candidate reward: 0.000000
+- Pearson correlation, Fast Rewrite IR distance vs candidate reward: 0.000000
 - Pearson correlation, Levenshtein vs candidate reward: 0.000000
 - Pearson correlation, raw AST tree distance vs candidate reward: 0.000000
 
 - Pearson correlation, normalized raw AST distance vs candidate reward: 0.000000
-- Pearson correlation, normalized canonical distance vs candidate reward: 0.000000
+- Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: 0.000000
 
 - Pearson correlation, normalized canonical representative TED vs candidate reward: 0.000000
 
-- Pearson correlation, normalized direct reference-metric distance vs candidate reward: 0.000000
+- Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: 0.000000
 
 ## By Problem Class And Status
 
@@ -240,10 +241,10 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 | graphs | CORRECT | 1058 | 820 | 238 | 0 | 8.503659 | 0.000000 | 0.000000 | 0 | 67 |
 | graphs | OVERCONSTRAINED | 645 | 645 | 0 | 0 | 8.762791 | 0.000000 | 0.000000 | 1 | 35 |
 | graphs | UNDERCONSTRAINED | 326 | 326 | 0 | 0 | 9.340491 | 0.000000 | 0.000000 | 1 | 29 |
-| lts | BOTH | 555 | 555 | 0 | 0 | 21.277477 | 0.000000 | 0.000000 | 1 | 67 |
+| lts | BOTH | 555 | 555 | 0 | 0 | 21.279279 | 0.000000 | 0.000000 | 1 | 67 |
 | lts | CORRECT | 577 | 249 | 328 | 0 | 9.939759 | 0.000000 | 0.000000 | 0 | 42 |
-| lts | OVERCONSTRAINED | 458 | 458 | 0 | 0 | 19.877729 | 0.000000 | 0.000000 | 1 | 84 |
-| lts | UNDERCONSTRAINED | 254 | 254 | 0 | 0 | 16.464567 | 0.000000 | 0.000000 | 1 | 67 |
+| lts | OVERCONSTRAINED | 458 | 458 | 0 | 0 | 19.879913 | 0.000000 | 0.000000 | 1 | 84 |
+| lts | UNDERCONSTRAINED | 254 | 254 | 0 | 0 | 16.480315 | 0.000000 | 0.000000 | 1 | 67 |
 | productionLineNew | BOTH | 656 | 656 | 0 | 0 | 15.914634 | 0.000000 | 0.000000 | 1 | 69 |
 | productionLineNew | CORRECT | 818 | 693 | 125 | 0 | 11.408369 | 0.000000 | 0.000000 | 0 | 75 |
 | productionLineNew | OVERCONSTRAINED | 320 | 320 | 0 | 0 | 14.246875 | 0.000000 | 0.000000 | 1 | 52 |

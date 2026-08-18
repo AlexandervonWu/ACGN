@@ -25049,7 +25049,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "lts/both/4EeeEcFRo35q346WF_inv4.als","BOTH",36,36,35,36,35,22,22
 "lts/both/4FDsE2atyeEY52y2e_inv3.als","BOTH",20,20,19,19,21,19,19
 "lts/both/4YK67weXYRR8Y5id8_inv4.als","BOTH",31,31,30,30,30,29,29
-"lts/both/4Z3wyHCNKhQH6ef3L_inv4.als","BOTH",32,32,31,31,33,23,21
+"lts/both/4Z3wyHCNKhQH6ef3L_inv4.als","BOTH",32,32,31,31,33,23,22
 "lts/both/4avdBNN5x2ouYwWER_inv3.als","BOTH",18,18,17,17,17,10,10
 "lts/both/4gfZBpyyjTfchnyF2_inv4.als","BOTH",38,38,37,37,37,28,28
 "lts/both/4hyFThRypAjg3xs5r_inv4.als","BOTH",34,33,32,32,32,26,26
@@ -25851,7 +25851,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "lts/over/4HuoLaozsuEc4ZwcS_inv6.als","OVERCONSTRAINED",13,13,12,12,12,5,5
 "lts/over/4LJzqMMahYQ8aiRyi_inv7.als","OVERCONSTRAINED",35,29,35,29,27,34,34
 "lts/over/4RmofT5FBRkBDFDAW_inv5.als","OVERCONSTRAINED",14,13,13,12,13,12,12
-"lts/over/4aoKFwAkqb3nh3dhv_inv7.als","OVERCONSTRAINED",45,43,45,43,42,66,65
+"lts/over/4aoKFwAkqb3nh3dhv_inv7.als","OVERCONSTRAINED",45,43,45,43,42,66,66
 "lts/over/4dRPRhJ5PobxYD892_inv4.als","OVERCONSTRAINED",38,38,37,37,37,29,29
 "lts/over/4o64K7HceCcS6AaWh_inv1.als","OVERCONSTRAINED",15,14,14,13,13,7,7
 "lts/over/4pYcpnTR2gcBYsnPf_inv3.als","OVERCONSTRAINED",9,7,7,5,5,2,2
@@ -26316,7 +26316,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "lts/under/6gjNZGbSgM8rx3WB9_inv5.als","UNDERCONSTRAINED",16,14,14,12,14,8,8
 "lts/under/6hRYmf2oLrh4GBGhw_inv7.als","UNDERCONSTRAINED",44,44,44,44,43,42,42
 "lts/under/6ki2Xi9WXB4Dv2yFq_inv4.als","UNDERCONSTRAINED",34,34,33,33,36,32,32
-"lts/under/6upMQnkPWKZHhBWZG_inv4.als","UNDERCONSTRAINED",40,39,37,37,37,16,12
+"lts/under/6upMQnkPWKZHhBWZG_inv4.als","UNDERCONSTRAINED",40,39,37,37,37,16,14
 "lts/under/6yheadZAyckqeegcG_inv3.als","UNDERCONSTRAINED",3,3,2,2,2,2,2
 "lts/under/7DB7urE7QWhKe89rr_inv5.als","UNDERCONSTRAINED",13,12,13,11,13,7,7
 "lts/under/7L9rvA7mZBXLd8fPP_inv5.als","UNDERCONSTRAINED",14,13,13,12,13,12,12
@@ -26329,7 +26329,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "lts/under/8LoF4Rany5svq7sks_inv3.als","UNDERCONSTRAINED",16,15,15,15,15,9,9
 "lts/under/8jz7PxHm6JdnPJ4sA_inv4.als","UNDERCONSTRAINED",47,48,45,46,46,32,32
 "lts/under/95Z5p8BfLzpFZdubs_inv6.als","UNDERCONSTRAINED",11,11,11,11,11,6,6
-"lts/under/9oFtSC8vQDhgMQL8B_inv4.als","UNDERCONSTRAINED",40,39,37,37,37,16,12
+"lts/under/9oFtSC8vQDhgMQL8B_inv4.als","UNDERCONSTRAINED",40,39,37,37,37,16,14
 "lts/under/9ubZFmohyCanv4Zfe_inv4.als","UNDERCONSTRAINED",37,37,36,36,36,28,28
 "lts/under/AQsxdnxS8FLhABogD_inv2.als","UNDERCONSTRAINED",10,10,10,10,10,12,12
 "lts/under/AksJv3fyZ6ynXAAxY_inv3.als","UNDERCONSTRAINED",2,2,2,2,2,2,2

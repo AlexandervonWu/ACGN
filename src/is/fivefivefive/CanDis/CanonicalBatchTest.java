@@ -576,6 +576,8 @@ public class CanonicalBatchTest {
         writer.write("  \"fileCount\": " + fileCount + ",\n");
         writer.write("  \"threadCount\": " + options.threadCount + ",\n");
         writer.write("  \"canonicalEngine\": \"CanonicalAlloyPipeline\",\n");
+        writer.write("  \"certificateIntegratedEngine\": \"CanonicalAlloyPipeline\",\n");
+        writer.write("  \"fastRewriteEngine\": \"Canonical/CanonicalDistance\",\n");
         writer.write("  \"canonicalPipelineVersion\": \"" + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
         writer.write("  \"measurementProjectionVersion\": \""
                 + CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION + "\",\n");
@@ -589,7 +591,10 @@ public class CanonicalBatchTest {
         writer.write("  \"certificateVerifierVersion\": \"" + CertificateVerifier.VERSION + "\",\n");
         writer.write("  \"certificateMode\": \"required\",\n");
         writer.write("  \"finiteUnfoldingVersion\": \"" + BoundedFiniteUnfoldingOracle.VERSION + "\",\n");
+        writer.write("  \"fastRewriteCanonicalRetained\": true,\n");
         writer.write("  \"legacyCanonicalRetained\": true,\n");
+        writer.write("  \"implementationFieldMapping\": {\"certificateIntegrated\": \"canonical/distance*\", "
+                + "\"fastRewrite\": \"legacyCanonical*\"},\n");
         writer.write("  \"rewardsEnabled\": " + !options.skipRewards + ",\n");
         writer.write("  \"results\": [\n");
     }
@@ -602,25 +607,37 @@ public class CanonicalBatchTest {
         writer.write("    \"skippedIdenticalRawAstPairs\": " + summary.skipped + ",\n");
         writer.write("    \"failures\": " + summary.failures + ",\n");
         writer.write("    \"averageDistance\": " + number(summary.averageDistance()) + ",\n");
+        writer.write("    \"averageCertificateIntegratedCanonicalDistance\": "
+                + number(summary.averageDistance()) + ",\n");
         writer.write("    \"averageCanonicalRepresentativeTreeDistance\": "
                 + number(summary.averageCanonicalRepresentativeTreeDistance()) + ",\n");
         writer.write("    \"averageLegacyCanonicalDistance\": "
+                + number(summary.averageLegacyCanonicalDistance()) + ",\n");
+        writer.write("    \"averageFastRewriteCanonicalDistance\": "
                 + number(summary.averageLegacyCanonicalDistance()) + ",\n");
         writer.write("    \"averagePredicateBodyLevenshteinDistance\": " + number(summary.averageLevenshteinDistance()) + ",\n");
         writer.write("    \"averageRawAstTreeDistance\": " + number(summary.averageRawAstTreeDistance()) + ",\n");
         writer.write("    \"averageRawAstSize\": " + number(summary.averageRawAstSize()) + ",\n");
         writer.write("    \"averageCanonicalFormSize\": " + number(summary.averageCanonicalFormSize()) + ",\n");
+        writer.write("    \"averageCertificateIntegratedFormSize\": "
+                + number(summary.averageCanonicalFormSize()) + ",\n");
         writer.write("    \"averageCanonicalRepresentativeTreeSize\": "
                 + number(summary.averageCanonicalRepresentativeTreeSize()) + ",\n");
         writer.write("    \"averageLegacyCanonicalFormSize\": "
+                + number(summary.averageLegacyCanonicalFormSize()) + ",\n");
+        writer.write("    \"averageFastRewriteCanonicalFormSize\": "
                 + number(summary.averageLegacyCanonicalFormSize()) + ",\n");
         writer.write("    \"averageNormalizedLevenshteinDistance\": "
                 + number(summary.averageNormalizedLevenshteinDistance()) + ",\n");
         writer.write("    \"averageNormalizedRawAstDistance\": " + number(summary.averageNormalizedRawAstDistance()) + ",\n");
         writer.write("    \"averageNormalizedCanonicalDistance\": " + number(summary.averageNormalizedCanonicalDistance()) + ",\n");
+        writer.write("    \"averageNormalizedCertificateIntegratedDistance\": "
+                + number(summary.averageNormalizedCanonicalDistance()) + ",\n");
         writer.write("    \"averageNormalizedCanonicalRepresentativeTreeDistance\": "
                 + number(summary.averageNormalizedCanonicalRepresentativeTreeDistance()) + ",\n");
         writer.write("    \"averageNormalizedLegacyCanonicalDistance\": "
+                + number(summary.averageNormalizedLegacyCanonicalDistance()) + ",\n");
+        writer.write("    \"averageNormalizedFastRewriteCanonicalDistance\": "
                 + number(summary.averageNormalizedLegacyCanonicalDistance()) + ",\n");
         writer.write("    \"correctCanonicalZeroRawAstNonzero\": "
                 + summary.correctCanonicalZeroRawAstNonzero + ",\n");
@@ -825,8 +842,9 @@ public class CanonicalBatchTest {
             writer.write("# Canonical Rewrite Distance Summary\n\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
             writer.write("- Thread count: " + options.threadCount + "\n");
-            writer.write("- Canonical engine: `CanonicalAlloyPipeline` (`"
+            writer.write("- Certificate-Integrated IR engine: `CanonicalAlloyPipeline` (`"
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
+            writer.write("- Fast Rewrite IR engine: `Canonical` / `CanonicalDistance`\n");
             writer.write("- Exact graph: `TypedSlottedPortEGraph`; invariants: `"
                     + TheoryAlloyAdapter.INVARIANT_MODE + "`; certificates: required\n");
             writer.write("- Primary metric: established repair metric over the certified quotient; "
@@ -839,31 +857,31 @@ public class CanonicalBatchTest {
             writer.write("- Successful distances: " + summary.successes + "\n");
             writer.write("- Skipped identical raw AST predicate pairs: " + summary.skipped + "\n");
             writer.write("- Failures: " + summary.failures + "\n");
-            writer.write("- Average certified repair distance: "
+            writer.write("- Average Certificate-Integrated IR repair distance: "
                     + number(summary.averageDistance()) + "\n");
             writer.write("- Average canonical representative TED baseline: "
                     + number(summary.averageCanonicalRepresentativeTreeDistance()) + "\n");
-            writer.write("- Average direct reference-metric distance: "
+            writer.write("- Average Fast Rewrite IR distance: "
                     + number(summary.averageLegacyCanonicalDistance()) + "\n");
             writer.write("- Average predicate-body Levenshtein distance: "
                     + number(summary.averageLevenshteinDistance()) + "\n");
             writer.write("- Average raw AST tree distance: " + number(summary.averageRawAstTreeDistance()) + "\n");
             writer.write("- Average raw AST size: " + number(summary.averageRawAstSize()) + "\n");
-            writer.write("- Average repair observation size: "
+            writer.write("- Average Certificate-Integrated IR repair observation size: "
                     + number(summary.averageCanonicalFormSize()) + "\n");
             writer.write("- Average canonical representative tree size: "
                     + number(summary.averageCanonicalRepresentativeTreeSize()) + "\n");
-            writer.write("- Average reference NormalForm metric size: "
+            writer.write("- Average Fast Rewrite IR NormalForm size: "
                     + number(summary.averageLegacyCanonicalFormSize()) + "\n");
             writer.write("- Average normalized predicate-body Levenshtein distance: "
                     + number(summary.averageNormalizedLevenshteinDistance()) + "\n");
             writer.write("- Average normalized raw AST distance: "
                     + number(summary.averageNormalizedRawAstDistance()) + "\n");
-            writer.write("- Average normalized certified repair distance: "
+            writer.write("- Average normalized Certificate-Integrated IR distance: "
                     + number(summary.averageNormalizedCanonicalDistance()) + "\n");
             writer.write("- Average normalized canonical representative TED: "
                     + number(summary.averageNormalizedCanonicalRepresentativeTreeDistance()) + "\n");
-            writer.write("- Average normalized direct reference-metric distance: "
+            writer.write("- Average normalized Fast Rewrite IR distance: "
                     + number(summary.averageNormalizedLegacyCanonicalDistance()) + "\n");
             writer.write("- CORRECT models with canonical distance 0 and raw AST distance > 0: "
                     + summary.correctCanonicalZeroRawAstNonzero + "\n");
@@ -896,8 +914,8 @@ public class CanonicalBatchTest {
                     + "raw AST nodes for AST distance, and canonical-form size for canonical distance. Identical "
                     + "raw-AST pairs skipped by the test are excluded.\n\n");
             writer.write("| Problem class | Semantic correctness class | Comparisons | "
-                    + "Avg Levenshtein | Avg raw AST | Avg direct reference metric | Avg representative TED | Avg certified repair metric | "
-                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative direct reference metric | Avg relative representative TED | Avg relative certified repair metric |\n");
+                    + "Avg Levenshtein | Avg raw AST | Avg Fast Rewrite IR | Avg representative TED | Avg Certificate-Integrated IR | "
+                    + "Avg relative Levenshtein | Avg relative raw AST | Avg relative Fast Rewrite IR | Avg relative representative TED | Avg relative Certificate-Integrated IR |\n");
             writer.write("| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
             writer.write("| **All problem classes** | **All statuses** | **" + summary.successes + "** | **"
                     + number(summary.averageLevenshteinDistance()) + "** | **"
@@ -935,11 +953,11 @@ public class CanonicalBatchTest {
             writer.write("- Average reward gap: " + number(summary.averageRewardGap()) + "\n");
             writer.write("- Pearson correlation sample: non-CORRECT rewarded predicates ("
                     + summary.distanceRewardSamples + " files)\n");
-            writer.write("- Pearson correlation, certified repair distance vs candidate reward: "
+            writer.write("- Pearson correlation, Certificate-Integrated IR distance vs candidate reward: "
                     + number(summary.distanceRewardCorrelation()) + "\n\n");
             writer.write("- Pearson correlation, canonical representative TED vs candidate reward: "
                     + number(summary.representativeRewardCorrelation()) + "\n");
-            writer.write("- Pearson correlation, direct reference-metric distance vs candidate reward: "
+            writer.write("- Pearson correlation, Fast Rewrite IR distance vs candidate reward: "
                     + number(summary.legacyRewardCorrelation()) + "\n");
             writer.write("- Pearson correlation, Levenshtein vs candidate reward: "
                     + number(summary.levenshteinRewardCorrelation()) + "\n");
@@ -947,11 +965,11 @@ public class CanonicalBatchTest {
                     + number(summary.rawAstRewardCorrelation()) + "\n\n");
             writer.write("- Pearson correlation, normalized raw AST distance vs candidate reward: "
                     + number(summary.normalizedRawAstRewardCorrelation()) + "\n");
-            writer.write("- Pearson correlation, normalized canonical distance vs candidate reward: "
+            writer.write("- Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: "
                     + number(summary.normalizedCanonicalRewardCorrelation()) + "\n\n");
             writer.write("- Pearson correlation, normalized canonical representative TED vs candidate reward: "
                     + number(summary.normalizedRepresentativeRewardCorrelation()) + "\n\n");
-            writer.write("- Pearson correlation, normalized direct reference-metric distance vs candidate reward: "
+            writer.write("- Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: "
                     + number(summary.normalizedLegacyRewardCorrelation()) + "\n\n");
 
             writer.write("## By Problem Class And Status\n\n");

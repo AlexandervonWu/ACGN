@@ -2,8 +2,8 @@
 
 This file is generated from the same manifests and pair CSVs as the combined ablation report.
 
-- Run ID: `eab0aa53-e9a9-4ad5-be79-8837c72fa610`
-- Git SHA: `6d409311a0962d90eb5f97fd1b1ec3d0cd040697`
+- Run ID: `d06fc18f-8d04-4ba3-bebf-af2ddc0aabd7`
+- Git SHA: `fc66da28ebebee3ba73ea9694aa01b5a7bcda958`
 - Dataset SHA-256: `e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0`
 - Canonical-only pairs: 0
 - CORRECT: 0

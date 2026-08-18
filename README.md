@@ -497,6 +497,28 @@ The expected dependency summary is `candis-core.jar -> java.base`.
 Use a fresh output directory for exploratory runs. The named result directories
 below are checked-in snapshots and a full rerun overwrites them.
 
+### Complete serial workflow
+
+Run the complete workflow in strict sequence with:
+
+```bash
+./scripts/run_experiments_serial.sh
+```
+
+The launcher waits for each experiment to finish before starting the next. It
+then validates that `CanonicalBatchTest`, `Alloy4FunAugmenter`, the seven-arm
+ablation, and the capability study each retained both the Fast Rewrite IR and
+Certificate-Integrated IR results. A run-level index is written to
+`experiment_results_summary.md`; the measurements remain in the four detailed
+summaries linked from that file. Use `LIMIT=100` for a bounded smoke run and
+`REWARD_POOL=N` to enable Rewarder for the first two stages. Output roots,
+workers, heap, capability target, seed, and run-summary path are configurable
+through the environment variables listed at the top of the script.
+
+For backward-compatible machine-readable output, `canonical*` fields denote
+the Certificate-Integrated IR and `legacyCanonical*` fields denote the Fast
+Rewrite IR. Every newly generated JSON file records this mapping explicitly.
+
 ### Paired student-oracle distances
 
 ```bash
@@ -531,8 +553,11 @@ pools. On this corpus it fails fast unless the full selection invariant is
 `66,080 - 4,482 = 61,598`.
 
 Principal outputs are `index.json`, `summary.md`, per-question correct pools,
-`correct_ast_diff_canonical_equiv.json`, nearest-repair rankings, AST-identity
-audit CSVs, reward CSVs, and coverage/correlation SVGs.
+`correct_ast_diff_canonical_equiv.json`,
+`correct_ast_diff_fast_rewrite_equiv.json`, nearest-repair rankings,
+AST-identity audit CSVs, reward CSVs, and coverage/correlation SVGs. The summary
+reports nearest-distance, normalized-distance, repair-coverage, reward, and
+correct-pool equivalence statistics for both canonical implementations.
 
 ### Seven-arm ablation
 
@@ -583,12 +608,23 @@ manifests. It also regenerates `canonical_only_vs_slotted.md`,
 ### Web explorer
 
 [`frontend/`](frontend/) is a standalone React/TypeScript client for exploring
-source predicates, pipeline phases, variadic e-classes, slot bindings,
+source predicates and functions, pipeline phases, variadic e-classes, slot bindings,
 certificates, rewrite traces, and diagnostics. Its checked-in mock fixtures make
-the interface usable without a backend; HTTP mode consumes the versioned
-Visualization IR returned by a separately deployed analysis service. The
+the interface usable without a backend. The included Java HTTP adapter parses
+arbitrary submitted Alloy models and exports any selected predicate or function
+as versioned Visualization IR. The
 browser client visualizes results and does not reimplement Alloy parsing,
 canonicalization, certification, or repair distance.
+
+Terminal 1:
+
+```bash
+./scripts/run_visualization_server.sh \
+  --bind 127.0.0.1 --port 8080 \
+  --allow-origin http://localhost:5173
+```
+
+Terminal 2:
 
 ```bash
 cd frontend

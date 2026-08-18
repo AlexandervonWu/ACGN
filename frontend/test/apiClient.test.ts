@@ -43,4 +43,24 @@ describe("live API response boundary", () => {
       kind: "unsupported-version",
     });
   });
+
+  it("sends a function as a typed callable while retaining the legacy name field", async () => {
+    const fetchMock = vi.fn(async (_input: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify(slotsFixture), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { analyzeCallable } = await import("../src/api/client");
+
+    await analyzeCallable("fun neighbors: univ { univ }", {
+      name: "neighbors",
+      kind: "function",
+    });
+
+    const [, init] = fetchMock.mock.calls[0]!;
+    expect(JSON.parse(String(init?.body))).toMatchObject({
+      callable: { name: "neighbors", kind: "function" },
+      predicate: "neighbors",
+    });
+  });
 });

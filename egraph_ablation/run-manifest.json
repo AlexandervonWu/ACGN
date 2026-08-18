@@ -2,222 +2,222 @@
   "outputs": [
     {
       "path": "raw-egraph/pairs.csv",
-      "sha256": "fefe888aa424981596c5c4b8eb7af3e4bad2bf0370132dd1404164877d70447f",
-      "sizeBytes": 11256236
+      "sha256": "514464adf44827eb6150174fef0a7167889f88f256c473f2aefb0106003c92a2",
+      "sizeBytes": 11260088
     },
     {
       "path": "raw-egraph/summary.json",
-      "sha256": "e83cbeaf33ad15dabfc07588ae17ebbc8bade20bfd99479c70735c7d7422bc92",
-      "sizeBytes": 81281
+      "sha256": "d4b2f975b4da01eb6a9d96b7530e46bfc5975aefe43fa926dee2831b7c757cc7",
+      "sizeBytes": 81277
     },
     {
       "path": "raw-egraph/metrics.properties",
-      "sha256": "ec16b7ffaa67b98b8107101c41db174528ae4da06fb3b8b8a6b8b285f1ef3a6f",
-      "sizeBytes": 1477
+      "sha256": "cbfedfa3eab27bbb274b8a411f376193f27e075cb26ce85112d62e2159ed144b",
+      "sizeBytes": 1475
     },
     {
       "path": "raw-egraph/run.log",
-      "sha256": "8851a7c1830b1f8ad84d6c2bdf62e97e9e70389e9553fa6b6d8428f40b691a0e",
+      "sha256": "3e2cd60b4d81b50319fb4365765355279b0e1f45671fdec67147c5cbb7d8f394",
       "sizeBytes": 6535
     },
     {
       "path": "raw-egraph/process.time",
-      "sha256": "318f771081fb267f5403721b48a9c054d6fee688a36730abddc5e791226ed4d4",
-      "sizeBytes": 1296
+      "sha256": "d2c61a1e14d71694e943e7d1c61592f3a59b345124cca9f690f5db3e814b1506",
+      "sizeBytes": 1294
     },
     {
       "path": "raw-egraph/manifest.json",
-      "sha256": "9fec79f9a90d671e427d3e0eb7c374d64c6a4b3e6f066d3e7a0c12814e30342c",
+      "sha256": "b5ba68d995d9fe15461f36b27d5fd286d3bd16278ff005ad652e95640e1aa7e4",
       "sizeBytes": 3538
     },
     {
       "path": "raw-egraph-debruijn/pairs.csv",
-      "sha256": "c1c33e68c98116aafa2668adc8cfd5d15e0bff53f03896c84a9fcf662c7a8324",
-      "sizeBytes": 11261004
+      "sha256": "870da958626d12cb0d710564b2bcc4ba5f98fcff36365843c026655612b0139c",
+      "sizeBytes": 11264130
     },
     {
       "path": "raw-egraph-debruijn/summary.json",
-      "sha256": "7375fbe94a825c0b4ef5da854a7d1a3693d19753862d90a27857972698673862",
-      "sizeBytes": 81257
+      "sha256": "355033f56d8a74a05b88d8b8f5c7cce10c7b57245bb589d28f8cf932edd844f0",
+      "sizeBytes": 81251
     },
     {
       "path": "raw-egraph-debruijn/metrics.properties",
-      "sha256": "203ae6d655dd134488a1ad0cc2bbce3a680b5c6f230a822b23a53e869c1ef253",
+      "sha256": "0d6dfa74704c6a9e61f4d257aa1ef5d7cf313d4096b63e232c52b7949c3edd53",
       "sizeBytes": 1491
     },
     {
       "path": "raw-egraph-debruijn/run.log",
-      "sha256": "7ba8de94b526d2302ada3f12a5705b26c6b72c01586edcc7f21d699f6cc01deb",
+      "sha256": "049d6b7686f38041575b93c997ce1b1027596db482eee670033e5e77f67c4d5c",
       "sizeBytes": 7174
     },
     {
       "path": "raw-egraph-debruijn/process.time",
-      "sha256": "17b638d5c61476e1b9c5862fd0a79baa6088714b397d0b2a55b833c526ba02f8",
+      "sha256": "5918b0999696557dc2f509481e3659a2d8279a6ea111118bd7fdec07455f80c8",
       "sizeBytes": 1312
     },
     {
       "path": "raw-egraph-debruijn/manifest.json",
-      "sha256": "5b8a1985b4230692195c88380d63a2b6c83b4df64114f49c5becb08610b462d3",
+      "sha256": "08662671f1d8377cde6aff8ff1af7258ee8845959ca616535df90b7a3418b14b",
       "sizeBytes": 3565
     },
     {
       "path": "java-egglog/pairs.csv",
-      "sha256": "226cb5ed89762af5c129c99ffca4eda3788940f6e92f07785b96b848aefe99a7",
-      "sizeBytes": 11249198
+      "sha256": "9c867c290a5ec8a64dbd611999744cb3834c4e50ad432f54a79aff7510f12a4f",
+      "sizeBytes": 11250148
     },
     {
       "path": "java-egglog/summary.json",
-      "sha256": "c4fcb90eafe86a380ac7c98ff338623ff80c37a3716be7241c1be38192e91cc3",
-      "sizeBytes": 81206
+      "sha256": "187a186a38be9952728e68dbf248ec1d62d2b72e9d76dc13b45b03368405876f",
+      "sizeBytes": 81205
     },
     {
       "path": "java-egglog/metrics.properties",
-      "sha256": "bd62bd7016b13b20aa034d53045644dca48bf005f87f31c390b18bac0d1d1535",
-      "sizeBytes": 1475
+      "sha256": "55d2f78b61ca191ab3bd56d8ede2bdee9c72c119e8712586de45e9a54cb05782",
+      "sizeBytes": 1476
     },
     {
       "path": "java-egglog/run.log",
-      "sha256": "eb4a9e3cf78415f4a47d3f81988efb3a8ca795c20f2494459a50af85aa2fd5c5",
+      "sha256": "d26cd9fcf588e5f981a9e790e10030fade66656aa87d93dfcf1767eddc3742dd",
       "sizeBytes": 6606
     },
     {
       "path": "java-egglog/process.time",
-      "sha256": "68ee49cabcdb0b6bda2357b4a0c5db3f50b8d27adc0c352c79a7ed1e723eb4a7",
+      "sha256": "4ba688e27b87681a7082b002aed6d2089e754086235035182722fb71efa36b55",
       "sizeBytes": 1296
     },
     {
       "path": "java-egglog/manifest.json",
-      "sha256": "2702f70a06162c7878e4935d5cfef06d8297308ad5da15e097263b782998f357",
+      "sha256": "258186afc691a708f88e346bd1ce4daae04bad06d59e05dd2d0e2e64bfc09c70",
       "sizeBytes": 3541
     },
     {
       "path": "java-egglog-debruijn/pairs.csv",
-      "sha256": "4384cfdf217560762330ff2d6e5f05921156a3936ee01de8b7b91d7e06daa430",
-      "sizeBytes": 11258077
+      "sha256": "0840c11489d45763538c0d01e83267ae8fa51b19489ab048f07c8a0945785b3a",
+      "sizeBytes": 11255012
     },
     {
       "path": "java-egglog-debruijn/summary.json",
-      "sha256": "e7c75f79e810d903888625dd73ba700ad649729d9fbfa6753fbb145770b5d9d3",
-      "sizeBytes": 81249
+      "sha256": "cfc14baeaf796053fba7a20b501681e53f164654dc4c776f35a8fe5017420e54",
+      "sizeBytes": 81226
     },
     {
       "path": "java-egglog-debruijn/metrics.properties",
-      "sha256": "b463c54612f616773cda3949a95b8eeda13c7a3df6152b91a21df6555df64b7f",
+      "sha256": "9f9c5c163b176580952c3a031c57d022879e35a9d4caefac513f01bb725d182b",
       "sizeBytes": 1492
     },
     {
       "path": "java-egglog-debruijn/run.log",
-      "sha256": "346d16613c76723f112f254c44c3d43cc84ad572787e25b0d790696037757fb9",
+      "sha256": "ad40b0b63180294863e99f6138472c1d8ccf6c43b575d8203b988cfba33b370c",
       "sizeBytes": 7245
     },
     {
       "path": "java-egglog-debruijn/process.time",
-      "sha256": "1332ba59530f1f218450c2353f82f014ae6c20b43cc9e891d1a9863a8802b215",
+      "sha256": "33307276362fb582b482c0617e71145e806bbbdc3a8ba20f9183ad560a06cad1",
       "sizeBytes": 1314
     },
     {
       "path": "java-egglog-debruijn/manifest.json",
-      "sha256": "49ac1c100d7a2753c160dd9592aff9e0dde63bdc2b6b5d03600f48a5b7106718",
+      "sha256": "db94d4c85306693353696a34cc77aacde54bfb5f9b8f40b9946efc1c0f1e4d7b",
       "sizeBytes": 3568
     },
     {
       "path": "slotted-egraph/pairs.csv",
-      "sha256": "022edbeb3be9d6a71bfd83c7c31a47bb0178c80c65207cea86343b87794355f7",
-      "sizeBytes": 11467199
+      "sha256": "4df8d0ae32cb3c9108b35c650f961de77c2320be87ed2725d753a665ea4a2969",
+      "sizeBytes": 11467310
     },
     {
       "path": "slotted-egraph/summary.json",
-      "sha256": "6849b0f24bdb475a16df48dca7db48b2a9c570371d8c9ecb8d96906a76e3b530",
-      "sizeBytes": 83731
+      "sha256": "71fee9eab84ac3c01495511aa02fcc62dfe96020288e5b15284028416a80987c",
+      "sizeBytes": 83739
     },
     {
       "path": "slotted-egraph/metrics.properties",
-      "sha256": "24af7387b9d36cd61798aedfa9a269a6976872f4d43c5c7d54a1b2e1e3c162ef",
-      "sizeBytes": 1508
+      "sha256": "9b197d769152d01927f1d1aadcd09c00e22ecd54b5390149ae36d1055519729c",
+      "sizeBytes": 1510
     },
     {
       "path": "slotted-egraph/run.log",
-      "sha256": "6fd3efa0b700de8d8bbad83c9dc65ced42cdec2388169407b1ae029c87eceea0",
+      "sha256": "8cd50762d960b9cf5ae66fb5cc6b2712b5fc2894dea18c1edb452a2bed136c77",
       "sizeBytes": 6819
     },
     {
       "path": "slotted-egraph/process.time",
-      "sha256": "ce67dc58187182c3d0d9df2460cce638bdfb1157b6a7d94deb081e2f8b5bd19c",
+      "sha256": "73ed18097ed20a85d623327e520b4d38a4bb9fe3ba977935dd06c0d2c4ac4012",
       "sizeBytes": 1302
     },
     {
       "path": "slotted-egraph/manifest.json",
-      "sha256": "3a5d80c7cce5910c500b0e350dc7c8aaa614c20e77fc2311ba1e3355fa535279",
+      "sha256": "12e685c78f74d5da4356e1581da291aed1db5d1c0aa5260b03304f396bd26134",
       "sizeBytes": 3550
     },
     {
       "path": "canonical/pairs.csv",
-      "sha256": "0e5fa46ab98200418823f544c997ce464136dd668f16fb46c2bcb9546e497de0",
-      "sizeBytes": 11247301
+      "sha256": "7e9c2c41d5fef0d62c3ad312603ad3bfc4e435a890e99d805431deef4ed75f14",
+      "sizeBytes": 11244972
     },
     {
       "path": "canonical/summary.json",
-      "sha256": "4fe8048889d6ece80ce6e1e7b9deb43ebfcd023c15b3ba201f2849ac25759aff",
-      "sizeBytes": 77040
+      "sha256": "f47a2eb534427c380932354e0fba4c4c89e8890aff6d88079be4aa7e11d0b88c",
+      "sizeBytes": 77060
     },
     {
       "path": "canonical/metrics.properties",
-      "sha256": "86f31c29b70d8b47ee87d30580ea3d943cb8d47461dda9f0203845310794bce7",
-      "sizeBytes": 1482
+      "sha256": "c489f7f767725f421e17b7a941ff8fcf07c540604295e56d6a3bf75c702c863e",
+      "sizeBytes": 1492
     },
     {
       "path": "canonical/run.log",
-      "sha256": "3e4a601673aec5133169f28a08458d0dfec8aa5e34b6e19c378ee54240b851c4",
+      "sha256": "c65091d5caf386563ea0b4964893656b220e9e799567e6cb85a859ebd828be68",
       "sizeBytes": 6464
     },
     {
       "path": "canonical/process.time",
-      "sha256": "eae30b196ec313a73f9bb5925deb9b558e2a9a2af18e945390f10a65fb1a8471",
+      "sha256": "54e1765ecd9b15a48067a58112c2b1e76e1a05b33e5aa84b6166949080f6cc36",
       "sizeBytes": 1293
     },
     {
       "path": "canonical/manifest.json",
-      "sha256": "5fb084672bff6ef64d1b31d2ec6d96acc5fb6a955c91e7bdba03df1b6148aff6",
+      "sha256": "99bbb2e59973ea2da1c42cb5088401b16ecad4c10246fd63b6245bb0b60bc598",
       "sizeBytes": 3535
     },
     {
       "path": "typed-slotted-port-egraph/pairs.csv",
-      "sha256": "946f22fdc5d06695e0c28314bffa9bb960a1cd047a6f2a1823319adb92bf20af",
-      "sizeBytes": 11941863
+      "sha256": "9d3b57de6ce6717cf6458f89f41086222ff3606ad7279880ade0071ddd189b49",
+      "sizeBytes": 11943711
     },
     {
       "path": "typed-slotted-port-egraph/summary.json",
-      "sha256": "acbe2b8178947bfc7da6a513e11b90539c208bb985cc6bab2b516855dfee2517",
-      "sizeBytes": 80834
+      "sha256": "7ab93a43238451f10bdb19dd2883e359c10a52cc4fb7bfe5487cd9bb963f44a6",
+      "sizeBytes": 80847
     },
     {
       "path": "typed-slotted-port-egraph/metrics.properties",
-      "sha256": "ceb85484331648a3796520827d1fb2f92c5a6ca11f78e24cff4600a6b5cfb3c2",
-      "sizeBytes": 1653
+      "sha256": "482cffbcec07f4e06713de3e3f51fd19f2d2f9a9b45c2bbf787a32108f16b5bc",
+      "sizeBytes": 1652
     },
     {
       "path": "typed-slotted-port-egraph/run.log",
-      "sha256": "acfe15d14e48b4b19d2467e5b4d443685cf04d7211967901bc40224e5711967a",
-      "sizeBytes": 12320
+      "sha256": "910bf3604637cc624c81416cc5a65481283dc8f6846177946d32f31f5a6a4deb",
+      "sizeBytes": 12534
     },
     {
       "path": "typed-slotted-port-egraph/process.time",
-      "sha256": "bedddaac577f8f602f2f5c8f9e47dbf63088e06b8539963da9a6fc1a726d6a64",
+      "sha256": "483c8b999726c60a5cfb0982656e37ba7443cc6e42e6c11b869b5cee0eec08a4",
       "sizeBytes": 1334
     },
     {
       "path": "typed-slotted-port-egraph/manifest.json",
-      "sha256": "3c2f51a1b7fac2b04e6dec5d3c0d44b97a6e782e43a0d921dd0db6c6e7e509ac",
+      "sha256": "bb333bc5f438d9f177dff63015805a2e369b34a2865df68a4a06b6cffcb42751",
       "sizeBytes": 3699
     },
     {
       "path": "comparison.json",
-      "sha256": "df4292ffd7ed0e10ee249d9e1e602f35eb785b8e28468f2eb12f32f6f2574718",
-      "sizeBytes": 16587
+      "sha256": "226642d7d0570cbeca0fa7744f642535ee3f21cbba3b9f9e5a3f8c5a739591c8",
+      "sizeBytes": 16597
     },
     {
       "path": "minimum_distances.csv",
-      "sha256": "cec8e217c45bd19412b4a12183f09f94766f52ccfa825b7470f2887d2d408a44",
+      "sha256": "d87c3d9cf2588cb23d5d897b0aa3c3cec9d6923db7fd2911ff20a467d15870a8",
       "sizeBytes": 4830004
     },
     {
@@ -227,20 +227,20 @@
     },
     {
       "path": "canonical_only_vs_slotted.md",
-      "sha256": "b04af772c70cc33090d7ea0c01d92754956ad3140278e7881ce41319053b6004",
+      "sha256": "6af0bc5a96bf93b1f201d3131e2338d0f26bd663e0337924454c2110a2c15473",
       "sizeBytes": 18874
     },
     {
       "path": "summary.md",
-      "sha256": "448ebe0a55becd648182ac65c3ebdec1fc688b6ec228e70123a30990826192a8",
-      "sizeBytes": 11625
+      "sha256": "30ae5f821f31c7a734664a6d83ad5b5c9c0257fe7c4a8e231e3f90eee78e6aae",
+      "sizeBytes": 11624
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T04:11:29.014438836Z",
-  "javaSourceSha256": "0ac96bffbda106f7add1515d1c46951a858902c29bdebd7895ef7d69e3619ddf",
+  "startedAt": "2026-08-18T13:22:15.446562676Z",
+  "javaSourceSha256": "5ea336c31e3ef06262104b939f08f73b3acf58a4ad6f4ee68c9ceb1bddd91fea",
   "logicalProcessors": 32,
   "osVersion": "7.0.0-28-generic",
   "host": "augustus-x870e",
@@ -249,7 +249,7 @@
   "datasetSha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689",
   "heap": "4g",
   "workers": 32,
-  "completedAt": "2026-08-18T12:00:39.809314517Z",
+  "completedAt": "2026-08-18T14:02:33.607679066Z",
   "ruleSetVersion": "canonical-equivalences-v2",
   "outputSchemaVersion": "candis-ablation-output-v5",
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
@@ -258,7 +258,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "6d409311a0962d90eb5f97fd1b1ec3d0cd040697",
+  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -286,5 +286,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "c48a105a-796c-483c-9f75-7e3a35ff1db0"
+  "runId": "b4ab2ed1-792f-4261-a5bb-0039731cf1ef"
 }

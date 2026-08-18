@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { App } from "../src/app/App";
 import { defaultGraphFilters, useUiStore } from "../src/state/uiStore";
 
 describe("mock-backed explorer workflow", () => {
+  afterEach(() => cleanup());
+
   beforeEach(() => {
     window.history.replaceState({}, "", "/?example=slots");
     useUiStore.setState({
@@ -41,5 +43,19 @@ describe("mock-backed explorer workflow", () => {
     await user.click(screen.getByRole("button", { name: /binder · M-u1/i }));
     expect(screen.getByText("N1")).toBeInTheDocument();
     expect(screen.getByText("QuantifierBlock")).toBeInTheDocument();
+  });
+
+  it("discovers and renders a relation-valued Alloy function", async () => {
+    window.history.replaceState({}, "", "/?example=callables");
+    const user = userEvent.setup();
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
+    render(<QueryClientProvider client={client}><App /></QueryClientProvider>);
+
+    const callable = await screen.findByRole("option", { name: /neighbors set User/i }, { timeout: 2500 });
+    await user.click(callable);
+    await user.click(screen.getByRole("button", { name: /^analyze$/i }));
+
+    await waitFor(() => expect(screen.getByTestId("react-flow")).toBeInTheDocument(), { timeout: 2500 });
+    expect(screen.getAllByText("E2").length).toBeGreaterThan(0);
   });
 });
