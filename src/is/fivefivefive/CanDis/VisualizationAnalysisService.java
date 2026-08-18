@@ -58,7 +58,7 @@ import parser.util.AlloyUtil;
 /** Parser and certified-graph boundary used by the web visualization adapter. */
 public final class VisualizationAnalysisService {
     public static final String SCHEMA_VERSION = "1.1";
-    public static final String SERVICE_VERSION = "alloy-egraph-visualization-v1";
+    public static final String SERVICE_VERSION = "alloy-egraph-visualization-v1.1-isolated";
     public static final int MAX_MODEL_CHARS = 2_000_000;
     private static final Object PARSER_LOCK = new Object();
 
@@ -122,13 +122,15 @@ public final class VisualizationAnalysisService {
         long saturationNanos = System.nanoTime() - phaseStarted;
         String originalText = declaration.bodyText();
         String normalizedText = String.join("\n", Canonical.irTemporalFol(fast));
-        String canonicalText = certified.stableForm();
+        String canonicalText = presentationFormula(fast, normalizedText);
+        String certifiedStableForm = certified.stableForm();
         JSONObject callable = callableMetadata(
                 declaration,
                 certified.semanticArtifact().root(),
                 originalText,
                 normalizedText,
-                canonicalText);
+                canonicalText,
+                certifiedStableForm);
 
         JSONObject response = new JSONObject()
                 .put("schemaVersion", SCHEMA_VERSION)
@@ -258,7 +260,10 @@ public final class VisualizationAnalysisService {
                 .put("kind", operand.declaration.kind)
                 .put("originalText", operand.declaration.bodyText())
                 .put("normalizedText", String.join("\n", Canonical.irTemporalFol(operand.fast)))
-                .put("canonicalText", operand.certified.stableForm())
+                .put("canonicalText", presentationFormula(
+                        operand.fast,
+                        String.join("\n", Canonical.irTemporalFol(operand.fast))))
+                .put("certifiedStableForm", operand.certified.stableForm())
                 .put("digest", operand.certified.digest())
                 .put("representationSize", operand.certified.repairObservationSize());
         if (operand.declaration.returnType != null) {
@@ -457,14 +462,16 @@ public final class VisualizationAnalysisService {
             TypedInvocation root,
             String originalText,
             String normalizedText,
-            String canonicalText) {
+            String canonicalText,
+            String certifiedStableForm) {
         JSONObject metadata = new JSONObject()
                 .put("name", declaration.name)
                 .put("kind", declaration.kind)
                 .put("rootEClassId", classId(root))
                 .put("originalText", originalText)
                 .put("normalizedText", normalizedText)
-                .put("canonicalText", canonicalText);
+                .put("canonicalText", canonicalText)
+                .put("certifiedStableForm", certifiedStableForm);
         if (declaration.returnType != null) {
             metadata.put("returnType", declaration.returnType);
         }
@@ -480,7 +487,7 @@ public final class VisualizationAnalysisService {
                 .put(new JSONObject()
                         .put("id", "source")
                         .put("index", 0)
-                        .put("name", "Source callable")
+                        .put("name", "Source")
                         .put("text", original))
                 .put(new JSONObject()
                         .put("id", "fast-rewrite")
@@ -491,7 +498,7 @@ public final class VisualizationAnalysisService {
                 .put(new JSONObject()
                         .put("id", "certificate-integrated")
                         .put("index", 2)
-                        .put("name", "Certificate-Integrated IR")
+                        .put("name", "Certified Canonical")
                         .put("text", canonical)
                         .put("rootEClassId", rootId));
     }
@@ -656,6 +663,14 @@ public final class VisualizationAnalysisService {
             return fallback;
         }
         return message.replace('\n', ' ').replace('\r', ' ').trim();
+    }
+
+    private static String presentationFormula(Canonical.Prepared prepared, String fallback) {
+        try {
+            return CanonicalBacktranslator.formula(prepared.normalizedForms());
+        } catch (RuntimeException unsupportedPresentation) {
+            return fallback;
+        }
     }
 
     private static String sha256(String source) {
@@ -857,6 +872,7 @@ public final class VisualizationAnalysisService {
                 String nodeId,
                 TypedENode node,
                 ShapeWitness witness) {
+            PresentedOperator presented = PresentedOperator.from(node.operator().operator());
             PortCollector collector = new PortCollector();
             for (TypedSlot slot : node.context()) {
                 collector.addSlot(slot, "free");
@@ -866,8 +882,8 @@ public final class VisualizationAnalysisService {
             }
             JSONObject result = new JSONObject()
                     .put("id", nodeId)
-                    .put("kind", node.operator().operator())
-                    .put("displayName", node.operator().operator())
+                    .put("kind", presented.kind)
+                    .put("displayName", presented.displayName)
                     .put("children", collector.children)
                     .put("type", type(node.outputType()))
                     .put("slots", new JSONArray(collector.slots.values()))
@@ -875,6 +891,7 @@ public final class VisualizationAnalysisService {
                             .put("kind", "canonical-shape")
                             .put("summary", "Stored with a certified instantiating witness")))
                     .put("attributes", new JSONObject()
+                            .put("certifiedOperator", node.operator().operator())
                             .put("structuralKey", node.structuralKey().stableString())
                             .put("witness", witness.toString())
                             .put("portSchemas", node.operator().portSchemas().toString()));
@@ -883,6 +900,58 @@ public final class VisualizationAnalysisService {
                 result.put("container", container);
             }
             return result;
+        }
+
+        private static final class PresentedOperator {
+            private final String kind;
+            private final String displayName;
+
+            private PresentedOperator(String kind, String displayName) {
+                this.kind = kind;
+                this.displayName = displayName;
+            }
+
+            private static PresentedOperator from(String certified) {
+                String value = certified.startsWith("ALLOY/")
+                        ? certified.substring("ALLOY/".length()) : certified;
+                if (value.startsWith("GLOBALBINDING/")) {
+                    return new PresentedOperator(
+                            "Signature",
+                            value.substring("GLOBALBINDING/".length()));
+                }
+                if (value.equals("RELATIONAL-VARIABLE") || value.equals("BOOLEAN-VARIABLE")) {
+                    return new PresentedOperator("Variable", "VAR");
+                }
+                if (value.startsWith("CONSTANT/")) {
+                    return new PresentedOperator("Constant", value.substring("CONSTANT/".length()));
+                }
+                int slash = value.lastIndexOf('/');
+                String token = slash >= 0 ? value.substring(slash + 1) : value;
+                String kind = titleCase(token);
+                String display = token.replace('-', '_').toUpperCase(java.util.Locale.ROOT);
+                return new PresentedOperator(kind, display);
+            }
+
+            private static String titleCase(String value) {
+                if (value.isEmpty()) {
+                    return "Operator";
+                }
+                String normalized = value.toLowerCase(java.util.Locale.ROOT).replace('-', '_');
+                StringBuilder result = new StringBuilder(normalized.length());
+                boolean capitalize = true;
+                for (int index = 0; index < normalized.length(); index++) {
+                    char character = normalized.charAt(index);
+                    if (character == '_') {
+                        capitalize = true;
+                    } else if (capitalize) {
+                        result.append(Character.toUpperCase(character));
+                        capitalize = false;
+                    } else {
+                        result.append(character);
+                    }
+                }
+                return result.toString();
+            }
         }
 
         private static JSONObject container(TypedENode node) {

@@ -623,7 +623,8 @@ Terminal 1:
 ```bash
 ./scripts/run_visualization_server.sh \
   --bind 127.0.0.1 --port 8080 \
-  --allow-origin http://localhost:5173
+  --allow-origin http://localhost:5173 \
+  --timeout-seconds 120 --worker-heap 1g
 ```
 
 Terminal 2:
@@ -643,6 +644,12 @@ application. Live same-origin API mode is the default. A deployment can edit
 explicitly enable the bundled mock examples without rebuilding. See the
 [`frontend deployment guide`](frontend/README.md) for endpoint contracts,
 subpath hosting, security headers, and troubleshooting.
+
+Live parsing and analysis use one bounded child JVM per request. Browser
+cancellation destroys that worker, the server enforces a hard timeout, and a
+fresh worker prevents failed analyses from contaminating later bundled or
+uploaded examples. Visible canonical text is kept readable while the exact
+certified serialization remains in the response as `certifiedStableForm`.
 
 ### Inspect and validate
 

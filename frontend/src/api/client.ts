@@ -48,11 +48,38 @@ function requireBaseUrl(): string {
   return analysisApiBaseUrl;
 }
 
+function newRequestId(): string {
+  if (typeof globalThis.crypto?.randomUUID === "function") {
+    return globalThis.crypto.randomUUID();
+  }
+  return `viz-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+function cancelRemoteRequest(requestId: string): void {
+  try {
+    void fetch(`${requireBaseUrl()}/api/v1/jobs/cancel`, {
+      method: "POST",
+      keepalive: true,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ requestId }),
+    }).catch(() => undefined);
+  } catch {
+    // The local abort still succeeds when the backend is already unreachable.
+  }
+}
+
 function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort("timeout"), timeoutMs);
   const abort = () => controller.abort(source?.reason ?? "cancelled");
-  source?.addEventListener("abort", abort, { once: true });
+  if (source?.aborted) {
+    abort();
+  } else {
+    source?.addEventListener("abort", abort, { once: true });
+  }
   return {
     signal: controller.signal,
     cleanup: () => {
@@ -70,6 +97,7 @@ function classifyStatus(status: number, body: unknown): ApiErrorKind {
   if (code.includes("type")) return "type";
   if (code.includes("callable") || code.includes("function")) return "callable-not-found";
   if (code.includes("predicate")) return "predicate-not-found";
+  if (status === 499 || code.includes("cancel")) return "cancelled";
   if (status === 408 || status === 504) return "timeout";
   return status >= 500 ? "analysis" : "backend";
 }
@@ -122,8 +150,11 @@ async function request<TSchema extends ZodTypeAny>(
   init: RequestInit,
   sourceSignal?: AbortSignal,
   timeoutMs = 120_000,
+  requestId?: string,
 ): Promise<TypeOf<TSchema>> {
   const timer = timedSignal(sourceSignal, timeoutMs);
+  const cancelWorker = requestId ? () => cancelRemoteRequest(requestId) : undefined;
+  cancelWorker && timer.signal.addEventListener("abort", cancelWorker, { once: true });
   try {
     const response = await fetch(`${requireBaseUrl()}${path}`, {
       ...init,
@@ -149,6 +180,7 @@ async function request<TSchema extends ZodTypeAny>(
       error instanceof Error ? error.message : "The analysis backend is unreachable.",
     );
   } finally {
+    cancelWorker && timer.signal.removeEventListener("abort", cancelWorker);
     timer.cleanup();
   }
 }
@@ -169,12 +201,14 @@ export async function inspectModel(
   signal?: AbortSignal,
 ): Promise<ModelInspection> {
   if (useMockApi) return mockInspectModel(model, signal);
+  const requestId = newRequestId();
   return request(
     "/api/v1/model/inspect",
     ModelInspectionSchema,
-    { method: "POST", body: JSON.stringify({ model }) },
+    { method: "POST", body: JSON.stringify({ requestId, model }) },
     signal,
     30_000,
+    requestId,
   );
 }
 
@@ -215,12 +249,14 @@ export async function analyzeCallable(
       );
     }
   } else {
+    const requestId = newRequestId();
     analysis = await request(
         "/api/v1/egraph/analyze",
         EGraphAnalysisSchema,
         {
           method: "POST",
           body: JSON.stringify({
+            requestId,
             model,
             callable,
             predicate: callable.name,
@@ -228,6 +264,8 @@ export async function analyzeCallable(
           }),
         },
         signal,
+        120_000,
+        requestId,
       );
   }
   return requireSupportedSchema(analysis);
@@ -258,14 +296,17 @@ export async function compareCallables(
       );
     }
   } else {
+    const requestId = newRequestId();
     comparison = await request(
       "/api/v1/egraph/compare",
       CallableComparisonSchema,
       {
         method: "POST",
-        body: JSON.stringify({ model, leftCallable, rightCallable }),
+        body: JSON.stringify({ requestId, model, leftCallable, rightCallable }),
       },
       signal,
+      120_000,
+      requestId,
     );
   }
   const major = Number.parseInt(comparison.schemaVersion.split(".")[0] ?? "", 10);

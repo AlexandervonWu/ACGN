@@ -11,6 +11,12 @@ param(
     [ValidateRange(1, 65535)]
     [int]$Workers = [Math]::Max(2, [Math]::Min(8, [Environment]::ProcessorCount)),
 
+    [ValidateRange(1, 65535)]
+    [int]$TimeoutSeconds = 120,
+
+    [ValidatePattern('^[1-9][0-9]*[kKmMgG]$')]
+    [string]$WorkerHeap = "1g",
+
     [string]$BuildDirectory,
 
     [switch]$CompileOnly
@@ -128,11 +134,14 @@ $ServerArguments = @(
     "--bind", $BindAddress,
     "--port", $Port.ToString([Globalization.CultureInfo]::InvariantCulture),
     "--allow-origin", $AllowOrigin,
-    "--workers", $Workers.ToString([Globalization.CultureInfo]::InvariantCulture)
+    "--workers", $Workers.ToString([Globalization.CultureInfo]::InvariantCulture),
+    "--timeout-seconds", $TimeoutSeconds.ToString([Globalization.CultureInfo]::InvariantCulture),
+    "--worker-heap", $WorkerHeap
 )
 
 Write-Host "Starting the visualization API at http://${BindAddress}:${Port}/api/v1/"
 Write-Host "Allowed browser origin: $AllowOrigin"
+Write-Host "Analysis workers: $Workers; timeout: ${TimeoutSeconds}s; heap per worker: $WorkerHeap"
 & $Java @ServerArguments
 if ($LASTEXITCODE -ne 0) {
     throw "VisualizationServer exited with code $LASTEXITCODE"

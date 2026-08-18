@@ -51,6 +51,10 @@ public final class VisualizationAnalysisServiceTest {
         if (!name.equals(callable.getString("name")) || !kind.equals(callable.getString("kind"))) {
             throw new AssertionError("Unexpected callable metadata: " + callable);
         }
+        if (callable.getString("canonicalText").contains("canonical-alloy-form")
+                || !callable.has("certifiedStableForm")) {
+            throw new AssertionError("Certified machine form leaked into presentation text: " + callable);
+        }
         JSONObject graph = analysis.getJSONObject("graph");
         JSONArray classes = graph.getJSONArray("eclasses");
         if (classes.length() == 0) {
@@ -58,7 +62,18 @@ public final class VisualizationAnalysisServiceTest {
         }
         String root = graph.getString("rootEClassId");
         for (int index = 0; index < classes.length(); index++) {
-            if (root.equals(classes.getJSONObject(index).getString("id"))) {
+            JSONObject eclass = classes.getJSONObject(index);
+            JSONArray nodes = eclass.getJSONArray("nodes");
+            for (int nodeIndex = 0; nodeIndex < nodes.length(); nodeIndex++) {
+                JSONObject node = nodes.getJSONObject(nodeIndex);
+                if (node.getString("displayName").startsWith("ALLOY/")) {
+                    throw new AssertionError("Certified operator leaked into graph label: " + node);
+                }
+                if (!node.getJSONObject("attributes").has("certifiedOperator")) {
+                    throw new AssertionError("Graph presentation discarded certified operator: " + node);
+                }
+            }
+            if (root.equals(eclass.getString("id"))) {
                 return;
             }
         }
@@ -69,6 +84,11 @@ public final class VisualizationAnalysisServiceTest {
         if (!comparison.getJSONObject("left").has("canonicalText")
                 || !comparison.getJSONObject("right").has("canonicalText")) {
             throw new AssertionError("Comparison omitted callable representations: " + comparison);
+        }
+        if (!comparison.getJSONObject("left").has("certifiedStableForm")
+                || comparison.getJSONObject("left").getString("canonicalText")
+                        .contains("canonical-alloy-form")) {
+            throw new AssertionError("Comparison representation is not presentation-safe: " + comparison);
         }
         JSONObject distance = comparison.getJSONObject("distance");
         int total = distance.getInt("total");

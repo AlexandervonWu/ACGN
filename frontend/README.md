@@ -34,7 +34,8 @@ Graph construction is bounded before React Flow receives any nodes. The default 
 ```bash
 ./scripts/run_visualization_server.sh \
   --bind 127.0.0.1 --port 8080 \
-  --allow-origin http://localhost:5173
+  --allow-origin http://localhost:5173 \
+  --timeout-seconds 120 --worker-heap 1g
 ```
 
 In a second terminal:
@@ -97,7 +98,7 @@ The `slots` fixture contains the `inv7` acceptance model. Opening an example pop
 
 ## HTTP API
 
-All requests send and accept `application/json`. Lines and columns in source ranges are **1-based**, including end positions. Entity identifiers are opaque strings.
+All requests send and accept `application/json`. Lines and columns in source ranges are **1-based**, including end positions. Entity identifiers are opaque strings. The client adds a unique `requestId` to every inspect, analysis, and comparison request.
 
 ### Health
 
@@ -122,6 +123,7 @@ Content-Type: application/json
 
 ```json
 {
+  "requestId": "66c3c1bf-93e8-4d58-b4ca-862a199cd176",
   "model": "sig User {} pred inv1 { some User }"
 }
 ```
@@ -159,6 +161,7 @@ Content-Type: application/json
 
 ```json
 {
+  "requestId": "10fbb796-f4e3-4980-963d-c6a23759a67e",
   "model": "sig User {} pred inv1 { some User }",
   "callable": { "name": "inv1", "kind": "predicate" },
   "predicate": "inv1",
@@ -191,7 +194,7 @@ statistics?
 
 The detailed executable contract is in [`src/api/schema.ts`](src/api/schema.ts). Optional diagnostic fields may be omitted. Every successful response is validated before it enters React state. Invalid JSON, malformed IR, and unsupported schema major versions produce developer-oriented error messages while retaining the last successful graph.
 
-The included Java analysis service translates typed e-classes, typed ports, slots, and sequence/bag/set container laws into this IR. The frontend does not accept serialized Java objects and does not infer Alloy semantics.
+The included Java analysis service translates typed e-classes, typed ports, slots, and sequence/bag/set container laws into this IR. Human-readable `canonicalText` and graph labels are presentation fields; the exact certified serialization remains available as `certifiedStableForm`. The frontend does not accept serialized Java objects and does not infer Alloy semantics.
 
 ### Compare callables
 
@@ -202,6 +205,7 @@ Content-Type: application/json
 
 ```json
 {
+  "requestId": "99d55edb-b733-4f8a-bcb8-7b9c06a6325f",
   "model": "sig User {} pred p { some User } pred q { no User }",
   "leftCallable": { "name": "p", "kind": "predicate" },
   "rightCallable": { "name": "q", "kind": "predicate" }
@@ -211,6 +215,19 @@ Content-Type: application/json
 The response contains both canonical operands, the total repair distance, temporal/quantifier/matrix components, and an ordered `operations` array. Every operation has a component, kind, path, cost, and readable summary; unit operations may also include explicit `source` and `target` terms. Operation costs must sum to the total distance. When the certified minimum and the readable Fast Rewrite edit decomposition agree, the service emits unit operations. Otherwise it emits a component-cost aggregate rather than presenting an uncertified edit path. The `exactForStoredOrbits` field distinguishes exact stored-orbit search from a bounded orbit search.
 
 The executable response contract is `CallableComparisonSchema` in [`src/api/schema.ts`](src/api/schema.ts). It also enforces that certified equality is exactly the zero-distance kernel.
+
+### Cancel a job
+
+```http
+POST /api/v1/jobs/cancel
+Content-Type: application/json
+```
+
+```json
+{ "requestId": "10fbb796-f4e3-4980-963d-c6a23759a67e" }
+```
+
+All parser and analysis jobs run in isolated child JVMs. Browser cancellation asks the server to destroy that JVM, and `--timeout-seconds` forcibly terminates it if the browser disconnects without sending cancellation. The server keeps separate HTTP capacity for health and cancellation requests, so a saturated analysis pool cannot block its own stop path.
 
 ## CORS
 
@@ -372,7 +389,9 @@ On Linux, the repository helper compiles and starts the service:
   --bind 127.0.0.1 \
   --port 8080 \
   --allow-origin https://egraph.example.org \
-  --workers 8
+  --workers 8 \
+  --timeout-seconds 120 \
+  --worker-heap 1g
 ```
 
 On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../scripts/run_visualization_server.ps1) launcher from the repository root. It locates the repository from its own path, validates the JDK, recursively resolves every JAR under the repository-root `lib` directory into an explicit Windows classpath, creates a UTF-8 response file, invokes `javac` with `-encoding UTF-8`, and starts the server with the same resolved dependencies:
@@ -382,7 +401,9 @@ On Windows PowerShell, run the checked-in [`run_visualization_server.ps1`](../sc
   -BindAddress 127.0.0.1 `
   -Port 8080 `
   -AllowOrigin https://egraph.example.org `
-  -Workers 8
+  -Workers 8 `
+  -TimeoutSeconds 120 `
+  -WorkerHeap 1g
 ```
 
 Run a compile-only check before configuring a service. Add `-Verbose` to print the fully resolved dependency classpath:
@@ -397,7 +418,7 @@ The script accepts an optional `-BuildDirectory`. Relative build paths are resol
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-Run the Java command under a Windows service wrapper or another supervised service mechanism for production. Capture standard output and error for diagnostics, configure automatic restart, and use an account with read access to the compiled classes and `lib` directory. Keep `--bind 127.0.0.1` when IIS proxies locally. If the API is on another host, place it behind HTTPS and restrict its listening port with the firewall.
+Run the Java command under a Windows service wrapper or another supervised service mechanism for production. Capture standard output and error for diagnostics, configure automatic restart, and use an account with read access to the compiled classes and `lib` directory. Each active analysis can use up to `-WorkerHeap`, so choose `-Workers` with the host's physical memory in mind. Keep `--bind 127.0.0.1` when IIS proxies locally. If the API is on another host, place it behind HTTPS and restrict its listening port with the firewall.
 
 `--allow-origin` accepts one exact browser origin, including scheme and non-default port but no path or trailing slash. For example, `https://egraph.example.org` and `http://egraph.example.org` are different origins.
 
@@ -468,7 +489,7 @@ Finally, open the site in a browser:
 4. Select a target and click **Analyze**.
 5. Confirm that the graph root, e-classes, normalization stages, and inspector appear.
 
-Browser developer tools should show successful requests to all three `/api/v1` endpoints and no CORS, mixed-content, or schema errors.
+Browser developer tools should show successful requests to the `/api/v1` endpoints and no CORS, mixed-content, or schema errors. Cancelling a run should additionally show a request to `/api/v1/jobs/cancel`.
 
 ### 10. Troubleshooting
 
@@ -484,6 +505,8 @@ Browser developer tools should show successful requests to all three `/api/v1` e
 | Blank page or asset 404s | Incorrect copy layout or missing `assets` directory | Copy the contents of `dist` together and keep `index.html` above `assets`. |
 | Monaco worker blocked | A custom CSP excludes same-origin workers/scripts | Permit the site's own scripts, styles, and worker sources; include the API in `connect-src`. |
 | Uploaded model cannot resolve `open localModule` | Browser upload supplied only one source file | Make the model self-contained; bundled modules such as `util/ordering` remain supported. |
+| Analysis remains **Running** after Cancel | Old Java API or stale browser bundle lacks job cancellation | Redeploy both layers, verify `/api/v1/health`, and confirm a POST to `/api/v1/jobs/cancel` in the browser Network panel. |
+| HTTP 504 `analysis_timeout` | The isolated worker exceeded `--timeout-seconds` | Inspect the model, then raise the timeout only when the longer run is intentional. The failed worker has already been terminated. |
 
 IIS access logs describe static/proxy status codes. Java standard error contains parser, type-checking, and analysis failures. Correlate both with the failing request in the browser Network panel.
 

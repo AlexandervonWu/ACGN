@@ -247,6 +247,7 @@ export const PredicateMetadataSchema = z.object({
   originalText: z.string().optional(),
   normalizedText: z.string().optional(),
   canonicalText: z.string().optional(),
+  certifiedStableForm: z.string().optional(),
 }).passthrough();
 
 export const CallableMetadataSchema = PredicateMetadataSchema.extend({
@@ -399,6 +400,7 @@ export const ComparisonCallableSchema = z.object({
   originalText: z.string(),
   normalizedText: z.string(),
   canonicalText: z.string(),
+  certifiedStableForm: z.string().optional(),
   digest: id,
   representationSize: z.number().int().nonnegative(),
 });

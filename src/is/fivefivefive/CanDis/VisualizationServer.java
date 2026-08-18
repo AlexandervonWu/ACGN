@@ -7,8 +7,10 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,16 +24,21 @@ import com.sun.net.httpserver.HttpServer;
 public final class VisualizationServer {
     private static final int DEFAULT_PORT = 8080;
     private static final int MAX_REQUEST_BYTES = VisualizationAnalysisService.MAX_MODEL_CHARS * 4 + 65_536;
+    private static final Pattern REQUEST_ID = Pattern.compile("[A-Za-z0-9._:-]{1,128}");
 
     private VisualizationServer() {
     }
 
     public static void main(String[] args) throws IOException {
         Configuration configuration = Configuration.parse(args);
-        VisualizationAnalysisService service = new VisualizationAnalysisService();
+        VisualizationProcessRunner runner = new VisualizationProcessRunner(
+                configuration.workers,
+                configuration.timeoutSeconds * 1_000L,
+                configuration.workerHeap);
         HttpServer server = HttpServer.create(
                 new InetSocketAddress(configuration.bindAddress, configuration.port), 32);
-        ExecutorService executor = Executors.newFixedThreadPool(configuration.workers);
+        // Analysis slots wait on child processes. Keep control threads free for health and cancellation.
+        ExecutorService executor = Executors.newFixedThreadPool(configuration.workers + 2);
         server.setExecutor(executor);
         server.createContext("/api/v1/health", new Endpoint(configuration, exchange -> {
             requireMethod(exchange, "GET");
@@ -40,33 +47,41 @@ public final class VisualizationServer {
                     .put("version", VisualizationAnalysisService.SERVICE_VERSION)
                     .put("visualizationSchemaVersion", VisualizationAnalysisService.SCHEMA_VERSION)
                     .put("serviceVersion", VisualizationAnalysisService.SERVICE_VERSION)
-                    .put("schemaVersion", VisualizationAnalysisService.SCHEMA_VERSION));
+                    .put("schemaVersion", VisualizationAnalysisService.SCHEMA_VERSION)
+                    .put("activeJobs", runner.activeJobCount())
+                    .put("maxJobs", configuration.workers)
+                    .put("timeoutSeconds", configuration.timeoutSeconds));
         }));
         server.createContext("/api/v1/model/inspect", new Endpoint(configuration, exchange -> {
             requireMethod(exchange, "POST");
             JSONObject request = requestJson(exchange);
-            return new Response(200, service.inspect(request.optString("model", "")));
+            return response(runner.execute(requestId(request), "inspect", request));
         }));
         server.createContext("/api/v1/egraph/analyze", new Endpoint(configuration, exchange -> {
             requireMethod(exchange, "POST");
             JSONObject request = requestJson(exchange);
-            CallableRequest callable = CallableRequest.from(request);
-            return new Response(200, service.analyze(
-                    request.optString("model", ""), callable.name, callable.kind));
+            CallableRequest.from(request);
+            return response(runner.execute(requestId(request), "analyze", request));
         }));
         server.createContext("/api/v1/egraph/compare", new Endpoint(configuration, exchange -> {
             requireMethod(exchange, "POST");
             JSONObject request = requestJson(exchange);
-            CallableRequest left = CallableRequest.from(request, "leftCallable");
-            CallableRequest right = CallableRequest.from(request, "rightCallable");
-            return new Response(200, service.compare(
-                    request.optString("model", ""),
-                    left.name,
-                    left.kind,
-                    right.name,
-                    right.kind));
+            CallableRequest.from(request, "leftCallable");
+            CallableRequest.from(request, "rightCallable");
+            return response(runner.execute(requestId(request), "compare", request));
+        }));
+        server.createContext("/api/v1/jobs/cancel", new Endpoint(configuration, exchange -> {
+            requireMethod(exchange, "POST");
+            JSONObject request = requestJson(exchange);
+            String id = requiredRequestId(request);
+            boolean cancelled = runner.cancel(id);
+            return new Response(200, new JSONObject()
+                    .put("requestId", id)
+                    .put("cancelled", cancelled)
+                    .put("status", cancelled ? "cancelling" : "not-running"));
         }));
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            runner.close();
             server.stop(1);
             executor.shutdownNow();
         }, "visualization-server-shutdown"));
@@ -76,6 +91,33 @@ public final class VisualizationServer {
                 "Alloy e-graph visualization API listening at http://%s:%d/api/v1/%n",
                 configuration.bindAddress,
                 configuration.port);
+    }
+
+    private static Response response(VisualizationProcessRunner.ExecutionResult result) {
+        return new Response(result.status(), result.body());
+    }
+
+    private static String requestId(JSONObject request) {
+        String value = request.optString("requestId", "").trim();
+        return value.isEmpty() ? UUID.randomUUID().toString() : validateRequestId(value);
+    }
+
+    private static String requiredRequestId(JSONObject request) {
+        String value = request.optString("requestId", "").trim();
+        if (value.isEmpty()) {
+            throw new HttpFailure(400, "request_id_required", "requestId is required.");
+        }
+        return validateRequestId(value);
+    }
+
+    private static String validateRequestId(String value) {
+        if (!REQUEST_ID.matcher(value).matches()) {
+            throw new HttpFailure(
+                    400,
+                    "invalid_request_id",
+                    "requestId must contain 1-128 letters, digits, dots, colons, underscores, or hyphens.");
+        }
+        return value;
     }
 
     private static JSONObject requestJson(HttpExchange exchange) throws IOException {
@@ -246,12 +288,22 @@ public final class VisualizationServer {
         private final int port;
         private final String allowOrigin;
         private final int workers;
+        private final int timeoutSeconds;
+        private final String workerHeap;
 
-        private Configuration(String bindAddress, int port, String allowOrigin, int workers) {
+        private Configuration(
+                String bindAddress,
+                int port,
+                String allowOrigin,
+                int workers,
+                int timeoutSeconds,
+                String workerHeap) {
             this.bindAddress = bindAddress;
             this.port = port;
             this.allowOrigin = allowOrigin;
             this.workers = workers;
+            this.timeoutSeconds = timeoutSeconds;
+            this.workerHeap = workerHeap;
         }
 
         private static Configuration parse(String[] args) {
@@ -259,6 +311,8 @@ public final class VisualizationServer {
             int port = DEFAULT_PORT;
             String origin = "http://localhost:5173";
             int workers = Math.max(2, Math.min(8, Runtime.getRuntime().availableProcessors()));
+            int timeoutSeconds = 120;
+            String workerHeap = "1g";
             for (int index = 0; index < args.length; index++) {
                 String argument = args[index];
                 if ("--bind".equals(argument)) {
@@ -269,15 +323,20 @@ public final class VisualizationServer {
                     origin = value(args, ++index, argument);
                 } else if ("--workers".equals(argument)) {
                     workers = positiveInt(value(args, ++index, argument), argument);
+                } else if ("--timeout-seconds".equals(argument)) {
+                    timeoutSeconds = positiveInt(value(args, ++index, argument), argument);
+                } else if ("--worker-heap".equals(argument)) {
+                    workerHeap = heapSize(value(args, ++index, argument), argument);
                 } else if ("--help".equals(argument) || "-h".equals(argument)) {
                     System.out.println("Usage: VisualizationServer [--bind HOST] [--port PORT]"
-                            + " [--allow-origin ORIGIN] [--workers N]");
+                            + " [--allow-origin ORIGIN] [--workers N]"
+                            + " [--timeout-seconds N] [--worker-heap SIZE]");
                     System.exit(0);
                 } else {
                     throw new IllegalArgumentException("Unknown argument: " + argument);
                 }
             }
-            return new Configuration(bind, port, origin, workers);
+            return new Configuration(bind, port, origin, workers, timeoutSeconds, workerHeap);
         }
 
         private static String value(String[] args, int index, String flag) {
@@ -297,6 +356,14 @@ public final class VisualizationServer {
                 // Report a uniform command-line error below.
             }
             throw new IllegalArgumentException(flag + " requires a positive integer up to 65535");
+        }
+
+        private static String heapSize(String value, String flag) {
+            String normalized = value.trim().toLowerCase(Locale.ROOT);
+            if (normalized.matches("[1-9][0-9]*[kmg]")) {
+                return normalized;
+            }
+            throw new IllegalArgumentException(flag + " requires a JVM heap size such as 512m or 2g");
         }
     }
 }

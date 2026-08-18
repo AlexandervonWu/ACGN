@@ -6,7 +6,7 @@ BUILD_DIR="$(mktemp -d /tmp/acgn-visualization-server.XXXXXX)"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 
 mapfile -d '' SOURCES < <(find "$ROOT/src" -name '*.java' -type f -print0)
-javac --release 17 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${SOURCES[@]}"
+javac -encoding UTF-8 --release 17 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${SOURCES[@]}"
 
 cd "$ROOT"
 java --add-modules jdk.httpserver \

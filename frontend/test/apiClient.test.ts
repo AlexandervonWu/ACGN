@@ -108,4 +108,38 @@ describe("live API response boundary", () => {
       rightCallable: { name: "connected", kind: "predicate" },
     });
   });
+
+  it("asks the backend to terminate an aborted analysis worker", async () => {
+    const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).endsWith("/api/v1/jobs/cancel")) {
+        return Promise.resolve(new Response(JSON.stringify({ status: "cancelling", cancelled: true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }));
+      }
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener("abort", () => {
+          reject(new DOMException("aborted", "AbortError"));
+        }, { once: true });
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const { analyzeCallable } = await import("../src/api/client");
+    const controller = new AbortController();
+
+    const pending = analyzeCallable(
+      "sig Item {} pred simple { some Item }",
+      { name: "simple", kind: "predicate" },
+      undefined,
+      controller.signal,
+    );
+    await Promise.resolve();
+    controller.abort();
+
+    await expect(pending).rejects.toMatchObject({ kind: "cancelled" });
+    const analysisBody = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body));
+    const cancelCall = fetchMock.mock.calls.find(([url]) => String(url).endsWith("/api/v1/jobs/cancel"));
+    expect(cancelCall).toBeDefined();
+    expect(JSON.parse(String(cancelCall?.[1]?.body))).toEqual({ requestId: analysisBody.requestId });
+  });
 });
