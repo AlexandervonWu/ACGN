@@ -535,6 +535,7 @@ JavaScript must be permitted by the site's content-security policy. Monaco creat
 - Click a slot chip to retain cross-panel slot highlighting; use the clear-slot control to remove it.
 - Click mapped Alloy source to focus associated graph objects. Ambiguous spans expose every mapping.
 - Use graph depth and collapse controls before expanding large neighborhoods.
+- The graph opens as a rooted representative tree. Enable **Show shared cross-links** in graph filters when the additional DAG references are relevant.
 - Search by class/node ID, kind, type, slot, source identifier, or trace rule.
 - Export the validated IR as JSON, the currently bounded graph as SVG, or copy the backend-provided canonical representation.
 

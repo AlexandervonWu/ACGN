@@ -59,10 +59,25 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
     return selected ? [...visible.eclasses, selected] : visible.eclasses;
   }, [analysis.graph.eclasses, selectedEClassId, visible.eclasses]);
 
-  const positioned = useMemo(
-    () => layoutEClasses(displayClasses, visible.depthByEClass),
-    [displayClasses, visible.depthByEClass],
+  const estimatedHeights = useMemo(() => new Map(displayClasses.map((eclass) => {
+    const collapsed = shouldCollapseEClass(eclass, graphFilters, expandedClasses);
+    const supportHeight = (eclass.support?.length ?? 0) > 0
+      || (eclass.effectiveSupport?.length ?? 0) > 0 ? 48 : 0;
+    const contentHeight = collapsed ? 32 : Math.min(178, 16 + eclass.nodes.length * 72);
+    return [eclass.id, 51 + supportHeight + contentHeight];
+  })), [displayClasses, expandedClasses, graphFilters]);
+
+  const hierarchy = useMemo(
+    () => layoutEClasses(
+      displayClasses,
+      visible.depthByEClass,
+      visible.edges,
+      analysis.graph.rootEClassId,
+      estimatedHeights,
+    ),
+    [analysis.graph.rootEClassId, displayClasses, estimatedHeights, visible.depthByEClass, visible.edges],
   );
+  const positioned = hierarchy.positioned;
 
   const nextNodes = useMemo<EClassFlowNode[]>(() => positioned.map(({ eclass, position }) => ({
     id: eclass.id,
@@ -104,23 +119,29 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
   const [nodes, setNodes, onNodesChange] = useNodesState<EClassFlowNode>(nextNodes);
 
   useEffect(() => {
-    setNodes((current) => nextNodes.map((node) => {
-      const prior = current.find((candidate) => candidate.id === node.id);
-      return prior ? { ...node, position: prior.position } : node;
-    }));
+    setNodes(nextNodes);
   }, [nextNodes, setNodes]);
 
-  const edges = useMemo<Edge[]>(() => visible.edges.map((edge, index) => ({
-    id: edge.id ?? `${edge.sourceEClassId}-${edge.targetEClassId}-${index}`,
-    source: edge.sourceEClassId,
-    target: edge.targetEClassId,
-    label: edge.role,
-    type: "smoothstep",
-    markerEnd: { type: MarkerType.ArrowClosed, width: 14, height: 14 },
-    animated: false,
-    className: highlightedEntityIds.includes(edge.sourceEClassId)
-      || highlightedEntityIds.includes(edge.targetEClassId) ? "is-highlighted" : "",
-  })), [highlightedEntityIds, visible.edges]);
+  const edges = useMemo<Edge[]>(() => visible.edges.flatMap((edge, index) => {
+    const primary = hierarchy.parentByEClass.get(edge.targetEClassId) === edge.sourceEClassId;
+    if (!primary && !graphFilters.showCrossLinks) return [];
+    const highlighted = highlightedEntityIds.includes(edge.sourceEClassId)
+      || highlightedEntityIds.includes(edge.targetEClassId);
+    return [{
+      id: edge.id ?? `${edge.sourceEClassId}-${edge.targetEClassId}-${index}`,
+      source: edge.sourceEClassId,
+      target: edge.targetEClassId,
+      label: primary ? edge.role : undefined,
+      type: primary ? "smoothstep" : "bezier",
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        width: primary ? 14 : 10,
+        height: primary ? 14 : 10,
+      },
+      animated: false,
+      className: `${primary ? "tree-edge" : "cross-edge"} ${highlighted ? "is-highlighted" : ""}`,
+    }];
+  }), [graphFilters.showCrossLinks, hierarchy.parentByEClass, highlightedEntityIds, visible.edges]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -172,6 +193,7 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
         </div>
       )}
       <ReactFlow<EClassFlowNode, Edge>
+        className="hierarchy-flow"
         nodes={nodes}
         edges={edges}
         nodeTypes={nodeTypes}
@@ -180,8 +202,8 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
         minZoom={0.12}
         maxZoom={1.8}
         fitView
-        fitViewOptions={{ padding: 0.2, maxZoom: 1.05 }}
-        defaultEdgeOptions={{ style: { stroke: "#78838e", strokeWidth: 1.4 } }}
+        fitViewOptions={{ padding: 0.24, maxZoom: 1.05 }}
+        defaultEdgeOptions={{ style: { stroke: "#687781", strokeWidth: 1.5 } }}
         proOptions={{ hideAttribution: true }}
       >
         <Background variant={BackgroundVariant.Dots} gap={18} size={1} color="#cfd6dc" />
@@ -198,6 +220,8 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
       </ReactFlow>
       <div className="graph-legend" aria-label="Graph legend">
         <span><i className="legend-eclass" /> e-class</span>
+        <span><i className="legend-tree-edge" /> tree edge</span>
+        {graphFilters.showCrossLinks && <span><i className="legend-cross-edge" /> shared</span>}
         <span><i className="legend-canonical">★</i> canonical</span>
         <span><i className="legend-aci" /> ACI</span>
       </div>

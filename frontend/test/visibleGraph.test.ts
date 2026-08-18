@@ -57,5 +57,30 @@ describe("visible graph extraction", () => {
     expect(shouldCollapseEClass(large, defaultGraphFilters, new Set())).toBe(true);
     expect(shouldCollapseEClass(large, defaultGraphFilters, new Set(["EL"]))).toBe(false);
   });
-});
 
+  it("does not draw edges owned by hidden e-node alternatives", () => {
+    const graph: EGraph = {
+      rootEClassId: "E0",
+      eclasses: [
+        {
+          id: "E0",
+          canonicalNodeId: "N0",
+          nodes: [
+            { id: "N0", kind: "And", children: [{ eclassId: "E1" }] },
+            { id: "N-alt", kind: "Or", children: [{ eclassId: "E2" }] },
+          ],
+        },
+        { id: "E1", nodes: [{ id: "N1", kind: "Left", children: [] }] },
+        { id: "E2", nodes: [{ id: "N2", kind: "Right", children: [] }] },
+      ],
+      edges: [
+        { sourceEClassId: "E0", targetEClassId: "E1", enodeId: "N0" },
+        { sourceEClassId: "E0", targetEClassId: "E2", enodeId: "N-alt" },
+      ],
+    };
+    const visible = buildVisibleGraph(graph, defaultGraphFilters, new Set());
+    expect(visible.edges).toEqual([
+      { sourceEClassId: "E0", targetEClassId: "E1", enodeId: "N0" },
+    ]);
+  });
+});

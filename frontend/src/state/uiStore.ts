@@ -8,6 +8,7 @@ export interface GraphFilters {
   collapseSingleton: boolean;
   collapseLarge: boolean;
   showAllAlternatives: boolean;
+  showCrossLinks: boolean;
   showHistorical: boolean;
   showRebuildDetails: boolean;
   depth: GraphDepth;
@@ -58,6 +59,7 @@ export const defaultGraphFilters: GraphFilters = {
   collapseSingleton: true,
   collapseLarge: true,
   showAllAlternatives: false,
+  showCrossLinks: false,
   showHistorical: false,
   showRebuildDetails: false,
   depth: 5,

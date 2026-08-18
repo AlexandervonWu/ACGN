@@ -122,6 +122,9 @@ export function EClassNode({ data }: NodeProps<EClassFlowNode>) {
   const canonical = eclass.nodes.find((node) => node.id === eclass.canonicalNodeId)
     ?? eclass.nodes.find((node) => node.id === eclass.representativeNodeId)
     ?? eclass.nodes[0];
+  const canonicalLabel = canonical?.displayName ?? canonical?.kind ?? "empty";
+  const hasSupport = (eclass.support?.length ?? 0) > 0
+    || (eclass.effectiveSupport?.length ?? 0) > 0;
   return (
     <div
       className={`eclass-node ${data.root ? "is-root" : ""} ${data.selectedEClassId === eclass.id ? "is-selected" : ""} ${data.highlighted ? "is-highlighted" : ""}`}
@@ -129,39 +132,48 @@ export function EClassNode({ data }: NodeProps<EClassFlowNode>) {
     >
       <Handle type="target" position={Position.Top} className="eclass-handle" />
       <div className="eclass-header">
-        <div className="eclass-name">
-          <strong>{eclass.id}</strong>
-          {data.root && <span className="root-badge">root</span>}
+        <div className="eclass-title">
+          <div className="eclass-name">
+            <code>{canonicalLabel}</code>
+            {data.root && <span className="root-badge">root</span>}
+          </div>
+          <div className="eclass-meta">
+            <strong>{eclass.id}</strong>
+            <span>{formatType(eclass.type)}</span>
+          </div>
         </div>
-        <span className="type-label">{formatType(eclass.type)}</span>
       </div>
-      <div className="eclass-support">
-        <span>support</span>
-        <div>
-          {eclass.support?.length
-            ? eclass.support.map((slot) => <SlotChip key={slot.id} id={slot.id} type={slot.type} label={slot.displayName} />)
-            : <span className="empty-set">∅</span>}
+      {hasSupport && (
+        <div className="eclass-support">
+          <span>support</span>
+          <div>
+            {eclass.support?.length
+              ? eclass.support.map((slot) => <SlotChip key={slot.id} id={slot.id} type={slot.type} label={slot.displayName} />)
+              : <span className="empty-set">∅</span>}
+          </div>
+          {eclass.effectiveSupport && (
+            <>
+              <span>effective</span>
+              <div>
+                {eclass.effectiveSupport.length
+                  ? eclass.effectiveSupport.map((slot) => <SlotChip key={slot.id} id={slot.id} type={slot.type} label={slot.displayName} />)
+                  : <span className="empty-set">∅</span>}
+              </div>
+            </>
+          )}
         </div>
-        {eclass.effectiveSupport && (
-          <>
-            <span>effective</span>
-            <div>
-              {eclass.effectiveSupport.length
-                ? eclass.effectiveSupport.map((slot) => <SlotChip key={slot.id} id={slot.id} type={slot.type} label={slot.displayName} />)
-                : <span className="empty-set">∅</span>}
-            </div>
-          </>
-        )}
-      </div>
+      )}
       {data.collapsed ? (
         <button
           type="button"
           className="collapsed-enode"
+          title={`Expand ${eclass.id}`}
+          aria-label={`Expand ${eclass.id}`}
           onClick={(event) => { event.stopPropagation(); data.onToggle(eclass.id); }}
         >
           <ChevronRight size={14} />
-          <span>{eclass.nodes.length} node{eclass.nodes.length === 1 ? "" : "s"}</span>
-          <code>{canonical?.displayName ?? canonical?.kind ?? "empty"}</code>
+          <span>{eclass.nodes.length} e-node{eclass.nodes.length === 1 ? "" : "s"}</span>
+          <code>{canonical?.children.length ?? 0} child{canonical?.children.length === 1 ? "" : "ren"}</code>
         </button>
       ) : (
         <div className="enode-list">
@@ -192,4 +204,3 @@ export function EClassNode({ data }: NodeProps<EClassFlowNode>) {
     </div>
   );
 }
-

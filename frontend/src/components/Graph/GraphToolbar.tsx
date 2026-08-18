@@ -145,6 +145,7 @@ export function GraphToolbar({
             <label><input type="checkbox" checked={filters.collapseSingleton} onChange={(event) => onFilterChange("collapseSingleton", event.target.checked)} />Collapse singleton classes</label>
             <label><input type="checkbox" checked={filters.collapseLarge} onChange={(event) => onFilterChange("collapseLarge", event.target.checked)} />Collapse large e-classes</label>
             <label><input type="checkbox" checked={filters.showAllAlternatives} onChange={(event) => onFilterChange("showAllAlternatives", event.target.checked)} />Show all e-node alternatives</label>
+            <label><input type="checkbox" checked={filters.showCrossLinks} onChange={(event) => onFilterChange("showCrossLinks", event.target.checked)} />Show shared cross-links</label>
             <label><input type="checkbox" checked={filters.showHistorical} onChange={(event) => onFilterChange("showHistorical", event.target.checked)} />Show historical nodes</label>
             <label><input type="checkbox" checked={filters.showRebuildDetails} onChange={(event) => onFilterChange("showRebuildDetails", event.target.checked)} />Show rebuild details</label>
             <fieldset>

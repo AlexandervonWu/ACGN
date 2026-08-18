@@ -38,28 +38,39 @@ export function exportVisibleGraphSvg(
   expandedClasses: Set<string>,
 ): void {
   const visible = buildVisibleGraph(analysis.graph, filters, expandedClasses);
-  const positioned = layoutEClasses(visible.eclasses, visible.depthByEClass);
+  const hierarchy = layoutEClasses(
+    visible.eclasses,
+    visible.depthByEClass,
+    visible.edges,
+    analysis.graph.rootEClassId,
+  );
+  const positioned = hierarchy.positioned;
   const offsetX = positioned.length
-    ? 180 - Math.min(...positioned.map((item) => item.position.x))
+    ? 40 - Math.min(...positioned.map((item) => item.position.x))
     : 0;
   const width = positioned.length
-    ? Math.max(...positioned.map((item) => item.position.x + offsetX)) + 180
+    ? Math.max(...positioned.map((item) => item.position.x + offsetX + 270)) + 40
     : 480;
   const height = positioned.length
-    ? Math.max(...positioned.map((item) => item.position.y)) + 160
+    ? Math.max(...positioned.map((item) => item.position.y)) + 150
     : 320;
   const centers = new Map(positioned.map((item) => [
     item.eclass.id,
-    { x: item.position.x + offsetX, y: item.position.y + 55 },
+    { x: item.position.x + offsetX + 135, y: item.position.y + 55 },
   ]));
-  const lines = visible.edges.map((edge) => {
+  const lines = visible.edges.flatMap((edge) => {
+    const primary = hierarchy.parentByEClass.get(edge.targetEClassId) === edge.sourceEClassId;
+    if (!primary && !filters.showCrossLinks) return [];
     const source = centers.get(edge.sourceEClassId);
     const target = centers.get(edge.targetEClassId);
-    if (!source || !target) return "";
-    return `<line x1="${source.x}" y1="${source.y + 45}" x2="${target.x}" y2="${target.y - 45}" stroke="#6f7884" stroke-width="1.5" marker-end="url(#arrow)" />`;
+    if (!source || !target) return [];
+    const style = primary
+      ? 'stroke="#687781" stroke-width="1.5"'
+      : 'stroke="#a7b0b7" stroke-width="1" stroke-dasharray="5 5"';
+    return [`<line x1="${source.x}" y1="${source.y + 55}" x2="${target.x}" y2="${target.y - 55}" ${style} marker-end="url(#arrow)" />`];
   }).join("");
   const nodes = positioned.map(({ eclass, position }) => {
-    const x = position.x + offsetX - 135;
+    const x = position.x + offsetX;
     const y = position.y;
     const label = eclass.nodes.find((node) => node.id === eclass.canonicalNodeId)
       ?.displayName ?? eclass.nodes[0]?.displayName ?? eclass.nodes[0]?.kind ?? "empty";

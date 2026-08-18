@@ -25,11 +25,15 @@ function displayNodes(eclass: EClass, filters: GraphFilters, expanded: boolean):
   return [eligible.find((node) => node.id === preferred) ?? eligible[0]].filter(Boolean);
 }
 
-function adjacency(graph: EGraph): Map<string, Set<string>> {
+function adjacency(
+  graph: EGraph,
+  filters: GraphFilters,
+  expandedClasses: Set<string>,
+): Map<string, Set<string>> {
   const result = new Map<string, Set<string>>();
   for (const eclass of graph.eclasses) {
     const children = result.get(eclass.id) ?? new Set<string>();
-    for (const node of eclass.nodes) {
+    for (const node of displayNodes(eclass, filters, expandedClasses.has(eclass.id))) {
       for (const child of node.children) children.add(child.eclassId);
     }
     result.set(eclass.id, children);
@@ -37,8 +41,12 @@ function adjacency(graph: EGraph): Map<string, Set<string>> {
   return result;
 }
 
-function rootDistances(graph: EGraph): Map<string, number> {
-  const links = adjacency(graph);
+function rootDistances(
+  graph: EGraph,
+  filters: GraphFilters,
+  expandedClasses: Set<string>,
+): Map<string, number> {
+  const links = adjacency(graph, filters, expandedClasses);
   const depths = new Map<string, number>([[graph.rootEClassId, 0]]);
   const queue = [graph.rootEClassId];
   for (let cursor = 0; cursor < queue.length; cursor += 1) {
@@ -93,7 +101,7 @@ export function buildVisibleGraph(
   expandedClasses: Set<string>,
   maxRendered = MAX_RENDERED_ECLASSES,
 ): VisibleGraph {
-  const depths = rootDistances(graph);
+  const depths = rootDistances(graph, filters, expandedClasses);
   const requestedDepth = filters.depth === "all" ? Number.POSITIVE_INFINITY : filters.depth;
   const forceBounded = graph.eclasses.length > LARGE_GRAPH_THRESHOLD;
   const candidates = graph.eclasses.filter((eclass) => {
@@ -108,19 +116,27 @@ export function buildVisibleGraph(
   });
   const visibleClasses = candidates.slice(0, maxRendered);
   const visibleIds = new Set(visibleClasses.map((eclass) => eclass.id));
+  const visibleNodeIds = new Set(visibleClasses.flatMap((eclass) => displayNodes(
+    eclass,
+    filters,
+    expandedClasses.has(eclass.id),
+  ).map((node) => node.id)));
 
   const edges = (graph.edges
     ? graph.edges
     : inferredEdges(visibleClasses, filters, expandedClasses))
-    .filter((edge) => visibleIds.has(edge.sourceEClassId) && visibleIds.has(edge.targetEClassId));
+    .filter((edge) => visibleIds.has(edge.sourceEClassId)
+      && visibleIds.has(edge.targetEClassId)
+      && (!edge.enodeId || visibleNodeIds.has(edge.enodeId)));
 
   return {
     eclasses: visibleClasses,
     edges,
     depthByEClass: depths,
     reachableCount: depths.size,
-    restricted: forceBounded || candidates.length > maxRendered,
+    restricted: forceBounded
+      || candidates.length > maxRendered
+      || visibleClasses.length < graph.eclasses.length,
     omittedCount: graph.eclasses.length - visibleClasses.length,
   };
 }
-
