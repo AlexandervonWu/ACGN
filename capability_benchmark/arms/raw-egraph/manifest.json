@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "1c90c8fe2f11d755504e95eacf15211fb06112e9d1f0a55a0a42b45b7555e89e",
-      "sizeBytes": 1074262
+      "sha256": "5b94e2859de6b354064079086169d6081d22dea4b8700aa73189113e4c0e8f89",
+      "sizeBytes": 1075023
     },
     {
       "path": "summary.json",
-      "sha256": "1128f12f5f5a7b83bb5bbce5b1973a88e11d0c7a93116eaee54635c179fb6e26",
-      "sizeBytes": 14211
+      "sha256": "3a6a2c7941e7cc3f37cf0e8e5ca7a4133bf4ec0b2bef0b5247c4e3abcf4f6fc7",
+      "sizeBytes": 14205
     },
     {
       "path": "metrics.properties",
-      "sha256": "4d09a177010cc6b3f7c0482d25aa817c5a5a8d2f55704f7f2f68660025620de0",
+      "sha256": "75874f792fe7db36158d9e2cbd7410c3c64d81fbcf06f1355891bee18030190f",
       "sizeBytes": 1478
     },
     {
       "path": "run.log",
-      "sha256": "177b393b213ad61fc25acf3c5b97e9db12bf4083b3f6dd1c7c7971b6b936d230",
+      "sha256": "eb9e0ad911d52b926315a86388c2032614bfeb2609958f6f8c43ffd419056668",
       "sizeBytes": 2124
     },
     {
       "path": "process.time",
-      "sha256": "b7ea68a5df185265d0cc4c0c87ecffa0ff6e0cf00ed62ca30e3592d26ed03883",
+      "sha256": "4c8ef7c1ca4e5d3963da2e58658f2f88330ef5f20676827bed90b7d0ac67b077",
       "sizeBytes": 1316
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-17T23:27:19.964886047Z",
-  "javaSourceSha256": "7920d45f549768fb4531c6a985727bb34525b1fb73bb66f67900dc528ef841bf",
+  "startedAt": "2026-08-18T04:51:08.482595784Z",
+  "javaSourceSha256": "0ac96bffbda106f7add1515d1c46951a858902c29bdebd7895ef7d69e3619ddf",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -65,7 +65,7 @@
   "limit": 0,
   "datasetFileCount": 5500,
   "datasetSha256": "e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0",
-  "heap": "3g",
+  "heap": "4g",
   "workers": 32,
   "arm": "raw-egraph",
   "ruleSetVersion": "canonical-equivalences-v2",
@@ -76,7 +76,7 @@
   "dirtyTree": true,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
-  "gitSha": "cc53042333fa3a1c820eb5715aa3b124e03d0ff1",
+  "gitSha": "6d409311a0962d90eb5f97fd1b1ec3d0cd040697",
   "datasetByteCount": 5312721,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "dfd614b7-661d-4be6-8b46-6459e00809ad"
+  "runId": "eab0aa53-e9a9-4ad5-be79-8837c72fa610"
 }

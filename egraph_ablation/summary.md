@@ -1,8 +1,8 @@
 # Alloy E-Graph Ablation
 
-- Generated at: `2026-08-17T23:26:01.507238382Z`
-- Run ID: `cfe55f5d-daf6-4ae1-808e-3eaa863015a8`
-- Git SHA: `cc53042333fa3a1c820eb5715aa3b124e03d0ff1` (dirty: true)
+- Generated at: `2026-08-18T04:50:58.199814165Z`
+- Run ID: `c48a105a-796c-483c-9f75-7e3a35ff1db0`
+- Git SHA: `6d409311a0962d90eb5f97fd1b1ec3d0cd040697` (dirty: true)
 - Dataset SHA-256: `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`
 - Input root: `/home/augustus/ACGN/classified-data`
 - Predicate-pair limit: full corpus
@@ -10,7 +10,7 @@
 - Worker threads per arm: 32
 - Logical processors: 32
 - Thread policy: `min(requested, logical processors, 32)`
-- JVM heap cap per arm: `3g`
+- JVM heap cap per arm: `4g`
 - Java: `17.0.19`
 
 ## Arms
@@ -33,13 +33,13 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 
 | Arm | Successful / eligible | AST-same skipped | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Process CPU s | Engine CPU s | Aggregate task s | Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 61598 / 61598 | 4482 | 823 | 18.260 | 17.827 | 3455.354 | 188.420 | 4.517 | 5.017 | 0.081 | 0.050 | 0.172 | 448.983 | 933.320 | 9.353 |
-| raw-egraph-debruijn | 61598 / 61598 | 4482 | 2163 | 16.580 | 16.160 | 3811.698 | 183.210 | 5.289 | 5.846 | 0.095 | 0.055 | 0.207 | 405.418 | 864.070 | 9.303 |
-| java-egglog | 61598 / 61598 | 4482 | 823 | 16.400 | 15.974 | 3856.057 | 180.340 | 4.094 | 4.623 | 0.075 | 0.046 | 0.140 | 413.062 | 874.352 | 9.125 |
-| java-egglog-debruijn | 61598 / 61598 | 4482 | 2163 | 16.630 | 16.208 | 3800.371 | 185.490 | 4.997 | 5.644 | 0.092 | 0.055 | 0.183 | 435.580 | 915.074 | 9.074 |
-| slotted-egraph | 61598 / 61598 | 4482 | 2162 | 17.390 | 16.947 | 3634.738 | 202.220 | 14.642 | 16.324 | 0.265 | 0.118 | 0.970 | 450.074 | 936.621 | 14.017 |
-| canonical | 61598 / 61598 | 4482 | 2316 | 18.470 | 17.844 | 3452.098 | 246.510 | 13.255 | 15.842 | 0.257 | 0.168 | 0.491 | 2853.299 | 3529.023 | 1.865 |
-| typed-slotted-port-egraph | 61598 / 61598 | 4482 | 2317 | 2303.890 | 2303.327 | 26.743 | 62827.700 | 47451.149 | 73225.507 | 1188.764 | 555.391 | 4394.306 | 3063.953 | 3603.680 | 3.743 |
+| raw-egraph | 61598 / 61598 | 4482 | 823 | 16.390 | 15.969 | 3857.347 | 181.760 | 4.510 | 5.072 | 0.082 | 0.049 | 0.169 | 490.842 | 1016.941 | 9.353 |
+| raw-egraph-debruijn | 61598 / 61598 | 4482 | 2163 | 16.830 | 16.424 | 3750.574 | 185.250 | 5.363 | 6.006 | 0.098 | 0.055 | 0.205 | 579.966 | 1166.605 | 9.303 |
+| java-egglog | 61598 / 61598 | 4482 | 823 | 16.600 | 16.159 | 3811.880 | 181.280 | 4.107 | 4.606 | 0.075 | 0.046 | 0.141 | 538.066 | 1093.113 | 9.125 |
+| java-egglog-debruijn | 61598 / 61598 | 4482 | 2163 | 17.050 | 16.618 | 3706.790 | 187.840 | 5.077 | 5.653 | 0.092 | 0.056 | 0.188 | 492.710 | 1007.789 | 9.074 |
+| slotted-egraph | 61598 / 61598 | 4482 | 2162 | 17.010 | 16.589 | 3713.094 | 198.890 | 14.504 | 16.361 | 0.266 | 0.115 | 0.952 | 531.365 | 1090.402 | 14.017 |
+| canonical | 61598 / 61598 | 4482 | 2316 | 18.360 | 17.835 | 3453.811 | 230.820 | 13.107 | 15.992 | 0.260 | 0.165 | 0.475 | 3173.017 | 3989.914 | 1.865 |
+| typed-slotted-port-egraph | 61598 / 61598 | 4482 | 2317 | 2265.990 | 2265.466 | 27.190 | 64841.260 | 52088.164 | 72008.635 | 1169.009 | 543.022 | 4351.800 | 3911.482 | 4671.211 | 3.743 |
 
 ## Observations
 
@@ -50,7 +50,7 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 - Slot-aware shapes add 2 pairs over the De Bruijn egglog arm, with 3 losses.
 - The legacy canonical arm adds 154 zeroes over slotted storage and loses 0.
 - The exact `CanonicalAlloyPipeline` adds 1 zeroes over the legacy canonical arm and loses 0. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
-- Relative to the full method, the slotted arm uses 0.031% of engine CPU time and 25.991% of maximum RSS. End-to-end wall time is parser-dominated.
+- Relative to the full method, the slotted arm uses 0.028% of engine CPU time and 23.343% of maximum RSS. End-to-end wall time is parser-dominated.
 
 ## Agreement With Dataset Labels
 
@@ -72,13 +72,13 @@ A found semantic equivalent is a zero-distance pair carrying the dataset's SAT-v
 
 | Arm | Found equivalents | CORRECT coverage | Found / wall s | Found / process CPU s | Found / engine CPU s | Found / GiB max RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 823 | 4.284% | 45.071 | 4.368 | 182.182 | 902.961 |
-| raw-egraph-debruijn | 2163 | 11.259% | 130.458 | 11.806 | 408.970 | 2563.347 |
-| java-egglog | 823 | 4.284% | 50.183 | 4.564 | 201.003 | 963.859 |
-| java-egglog-debruijn | 2163 | 11.259% | 130.066 | 11.661 | 432.854 | 2420.473 |
-| slotted-egraph | 2162 | 11.253% | 124.324 | 10.691 | 147.655 | 2363.696 |
-| canonical | 2316 | 12.055% | 125.393 | 9.395 | 174.729 | 672.023 |
-| typed-slotted-port-egraph | 2317 | 12.060% | 1.006 | 0.037 | 0.049 | 658.385 |
+| raw-egraph | 823 | 4.284% | 50.214 | 4.528 | 182.487 | 828.712 |
+| raw-egraph-debruijn | 2163 | 11.259% | 128.520 | 11.676 | 403.325 | 1898.596 |
+| java-egglog | 823 | 4.284% | 49.578 | 4.540 | 200.390 | 770.965 |
+| java-egglog-debruijn | 2163 | 11.259% | 126.862 | 11.515 | 425.999 | 2197.793 |
+| slotted-egraph | 2162 | 11.253% | 127.102 | 10.870 | 149.060 | 2030.340 |
+| canonical | 2316 | 12.055% | 126.144 | 10.034 | 176.700 | 594.395 |
+| typed-slotted-port-egraph | 2317 | 12.060% | 1.023 | 0.036 | 0.044 | 507.921 |
 
 ## Minimum Edit Distance
 
@@ -100,12 +100,12 @@ Ratios below use engine CPU time and maximum RSS; values below 1 use less than t
 
 | Arm | Engine CPU ratio | Max RSS ratio | Representation-unit ratio |
 | --- | ---: | ---: | ---: |
-| raw-egraph | 0.000 | 0.259 | 1.950 |
-| raw-egraph-debruijn | 0.000 | 0.240 | 1.940 |
-| java-egglog | 0.000 | 0.243 | 1.902 |
-| java-egglog-debruijn | 0.000 | 0.254 | 1.891 |
-| slotted-egraph | 0.000 | 0.260 | 1.775 |
-| canonical | 0.000 | 0.979 | 1.000 |
+| raw-egraph | 0.000 | 0.218 | 1.950 |
+| raw-egraph-debruijn | 0.000 | 0.250 | 1.940 |
+| java-egglog | 0.000 | 0.234 | 1.902 |
+| java-egglog-debruijn | 0.000 | 0.216 | 1.891 |
+| slotted-egraph | 0.000 | 0.233 | 1.775 |
+| canonical | 0.000 | 0.854 | 1.000 |
 | typed-slotted-port-egraph | 1.000 | 1.000 | 1.000 |
 
 ## Pair-Level Transitions
@@ -139,7 +139,7 @@ The structural byte count is an implementation-level estimate for graph objects;
 ## Reproduce
 
 ```bash
-./scripts/run_egraph_ablation.sh --input /home/augustus/ACGN/classified-data --output /home/augustus/ACGN/egraph_ablation --threads 32 --max-heap 3g
+./scripts/run_egraph_ablation.sh --input /home/augustus/ACGN/classified-data --output /home/augustus/ACGN/egraph_ablation --threads 32 --max-heap 4g
 ```
 
 Use `--limit N` for a smoke run. Use `--report-only` to regenerate the combined JSON, disagreement CSV, and Markdown from retained per-arm files without rerunning the engines.

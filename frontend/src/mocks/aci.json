@@ -1,0 +1,150 @@
+{
+  "schemaVersion": "1.0",
+  "model": { "name": "aci.als", "sourceLength": 135 },
+  "predicate": {
+    "name": "aci",
+    "sourceRange": { "start": { "line": 5, "column": 1 }, "end": { "line": 11, "column": 2 } },
+    "rootEClassId": "E0",
+    "originalText": "some u : User | u in User and u in User and u.follows in User",
+    "normalizedText": "some #0 : User | AND{#0 in User, #0.follows in User}",
+    "canonicalText": "SOME[#0:User](AND{IN(#0,User),IN(JOIN(#0,follows),User)})"
+  },
+  "stages": [
+    { "id": "source", "index": 0, "name": "Source", "text": "u in User and u in User and u.follows in User" },
+    { "id": "logical", "index": 1, "name": "Logical Normalization", "text": "AND(u in User, u in User, u.follows in User)" },
+    { "id": "binder", "index": 2, "name": "Binder Normalization", "text": "AND(#0 in User, #0 in User, #0.follows in User)" },
+    { "id": "kernel", "index": 3, "name": "Kernel", "text": "AND{#0 in User, #0.follows in User}", "rootEClassId": "E0" },
+    { "id": "saturated", "index": 4, "name": "Saturated", "rootEClassId": "E0" },
+    { "id": "canonical", "index": 5, "name": "Canonical", "text": "SOME[#0:User](AND{IN(#0,User),IN(JOIN(#0,follows),User)})", "rootEClassId": "E0" }
+  ],
+  "graph": {
+    "rootEClassId": "E0",
+    "eclasses": [
+      {
+        "id": "E0",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N0",
+        "nodes": [
+          { "id": "N0", "kind": "Quantifier", "displayName": "SOME #0 : User", "children": [{ "role": "body", "eclassId": "E1" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u" }] }
+        ]
+      },
+      {
+        "id": "E1",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N1",
+        "nodes": [
+          {
+            "id": "N1",
+            "kind": "AndContainer",
+            "displayName": "AND",
+            "children": [{ "eclassId": "E2" }, { "eclassId": "E3" }],
+            "type": { "kind": "formula" },
+            "slots": [{ "slotId": "#0", "role": "free", "type": "User" }],
+            "container": { "kind": "ACI", "operator": "AND", "duplicateElimination": true, "orderInsensitive": true, "flattened": true },
+            "certificateIds": ["C-aci"]
+          },
+          {
+            "id": "N1-alt",
+            "kind": "AndBinary",
+            "displayName": "AND",
+            "children": [{ "role": "left", "eclassId": "E2" }, { "role": "right", "eclassId": "E3" }],
+            "type": { "kind": "formula" },
+            "slots": [{ "slotId": "#0", "role": "free", "type": "User" }],
+            "certificateIds": ["C-aci"]
+          }
+        ],
+        "invariantStatus": [
+          { "id": "I0", "name": "well typed", "status": "pass" },
+          { "id": "I1", "name": "coherent support", "status": "pass" },
+          { "id": "I2", "name": "ACI duplicate elimination", "status": "pass" }
+        ]
+      },
+      {
+        "id": "E2",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N2",
+        "nodes": [
+          { "id": "N2", "kind": "Membership", "displayName": "IN", "children": [{ "role": "element", "eclassId": "E4" }, { "role": "set", "eclassId": "E5" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "element", "type": "User" }] }
+        ]
+      },
+      {
+        "id": "E3",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N3",
+        "nodes": [
+          { "id": "N3", "kind": "Membership", "displayName": "IN", "children": [{ "role": "element", "eclassId": "E6" }, { "role": "set", "eclassId": "E5" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "join source", "type": "User" }] }
+        ]
+      },
+      {
+        "id": "E4",
+        "type": { "kind": "atom", "signature": "User" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N4",
+        "nodes": [{ "id": "N4", "kind": "Slot", "displayName": "#0", "children": [], "type": { "kind": "atom", "signature": "User" }, "slots": [{ "slotId": "#0", "role": "value", "type": "User" }] }]
+      },
+      {
+        "id": "E5",
+        "type": { "kind": "relation", "columns": ["User"] },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N5",
+        "nodes": [{ "id": "N5", "kind": "Signature", "displayName": "User", "children": [], "type": { "kind": "relation", "columns": ["User"] } }]
+      },
+      {
+        "id": "E6",
+        "type": { "kind": "relation", "columns": ["User"] },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N6",
+        "nodes": [{ "id": "N6", "kind": "Join", "displayName": "JOIN #0 follows", "children": [{ "role": "left", "eclassId": "E4" }], "type": { "kind": "relation", "columns": ["User"] }, "slots": [{ "slotId": "#0", "role": "left", "type": "User" }] }]
+      }
+    ],
+    "saturation": {
+      "saturated": true,
+      "stopReason": "fixed point",
+      "rounds": [
+        { "index": 0, "eclassCount": 7, "enodeCount": 7, "merges": 0 },
+        { "index": 1, "eclassCount": 7, "enodeCount": 8, "merges": 1, "rebuilds": 1 },
+        { "index": 2, "eclassCount": 7, "enodeCount": 8, "merges": 0, "rebuilds": 0 }
+      ]
+    }
+  },
+  "sourceMappings": [
+    { "id": "M-root", "sourceRange": { "start": { "line": 6, "column": 3 }, "end": { "line": 10, "column": 26 } }, "eclassIds": ["E0", "E1"], "enodeIds": ["N0", "N1"], "kind": "origin" },
+    { "id": "M-slot", "sourceRange": { "start": { "line": 6, "column": 8 }, "end": { "line": 6, "column": 9 } }, "eclassIds": ["E0", "E4"], "enodeIds": ["N0", "N4"], "stageId": "binder", "kind": "binder" },
+    { "id": "M-aci", "sourceRange": { "start": { "line": 7, "column": 5 }, "end": { "line": 10, "column": 26 } }, "eclassIds": ["E1"], "enodeIds": ["N1", "N1-alt"], "stageId": "kernel", "kind": "normalized-from" }
+  ],
+  "trace": [
+    { "id": "T0", "index": 0, "kind": "slot-map", "rule": "alpha-normalize", "summary": "Map u to slot #0", "afterEClassIds": ["E0", "E4"], "stageId": "binder" },
+    { "id": "T1", "index": 1, "kind": "normalize", "rule": "flatten-AND", "summary": "Flatten nested conjunction", "afterEClassIds": ["E1"], "afterENodeIds": ["N1"], "certificateIds": ["C-aci"], "stageId": "kernel" },
+    { "id": "T2", "index": 2, "kind": "rewrite", "rule": "idempotence", "summary": "Remove duplicate membership operand", "beforeEClassIds": ["E1"], "afterEClassIds": ["E1"], "certificateIds": ["C-aci"], "stageId": "kernel" },
+    { "id": "T3", "index": 3, "kind": "merge", "summary": "Merge binary and variadic conjunction members", "afterEClassIds": ["E1"], "afterENodeIds": ["N1", "N1-alt"], "certificateIds": ["C-aci"], "stageId": "saturated" },
+    { "id": "T4", "index": 4, "kind": "rebuild", "summary": "Rebuild congruence indexes", "afterEClassIds": ["E1"], "stageId": "saturated" },
+    { "id": "T5", "index": 5, "kind": "canonicalize", "summary": "Select the minimum ACI representative", "afterEClassIds": ["E1"], "afterENodeIds": ["N1"], "stageId": "canonical" }
+  ],
+  "certificates": [
+    {
+      "id": "C-aci",
+      "kind": "ACI-normalization",
+      "title": "AND container normalization",
+      "summary": "The backend flattened, quotiented, sorted for observation, and deduplicated this ACI container.",
+      "premises": [{ "text": "AND(a,a,b)", "entityIds": ["N1-alt"] }],
+      "conclusion": { "text": "AND{a,b}", "entityIds": ["N1"] },
+      "steps": [
+        { "index": 1, "rule": "associativity", "summary": "Flatten nested AND" },
+        { "index": 2, "rule": "commutativity", "summary": "Enter unordered container" },
+        { "index": 3, "rule": "idempotence", "summary": "Remove the duplicate operand" }
+      ]
+    }
+  ],
+  "statistics": { "parseMs": 0.8, "normalizationMs": 2.3, "saturationMs": 1.2, "totalMs": 4.3, "eclassCount": 7, "enodeCount": 8, "mergeCount": 1, "saturationRounds": 3, "rootReachableEClassCount": 7 }
+}

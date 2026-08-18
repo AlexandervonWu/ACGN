@@ -1,0 +1,77 @@
+{
+  "schemaVersion": "1.0",
+  "model": { "name": "simple.als", "sourceLength": 42 },
+  "predicate": {
+    "name": "simple",
+    "sourceRange": { "start": { "line": 3, "column": 1 }, "end": { "line": 5, "column": 2 } },
+    "rootEClassId": "E0",
+    "originalText": "some Item",
+    "normalizedText": "SOME(Item)",
+    "canonicalText": "SOME(Item)"
+  },
+  "stages": [
+    { "id": "source", "index": 0, "name": "Source", "text": "some Item" },
+    { "id": "kernel", "index": 1, "name": "Kernel", "text": "SOME(Item)", "rootEClassId": "E0" },
+    { "id": "canonical", "index": 2, "name": "Canonical", "text": "SOME(Item)", "rootEClassId": "E0" }
+  ],
+  "graph": {
+    "rootEClassId": "E0",
+    "eclasses": [
+      {
+        "id": "E0",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N0",
+        "nodes": [
+          {
+            "id": "N0",
+            "kind": "Some",
+            "displayName": "SOME",
+            "children": [{ "role": "expression", "eclassId": "E1" }],
+            "type": { "kind": "formula" },
+            "sourceRange": { "start": { "line": 4, "column": 3 }, "end": { "line": 4, "column": 12 } },
+            "certificateIds": ["C0"]
+          }
+        ],
+        "invariantStatus": [
+          { "id": "I0", "name": "well typed", "status": "pass" },
+          { "id": "I1", "name": "coherent support", "status": "pass" }
+        ]
+      },
+      {
+        "id": "E1",
+        "type": { "kind": "relation", "columns": ["Item"] },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N1",
+        "nodes": [
+          { "id": "N1", "kind": "Signature", "displayName": "Item", "children": [], "type": { "kind": "relation", "columns": ["Item"] } }
+        ]
+      }
+    ],
+    "saturation": {
+      "saturated": true,
+      "rounds": [
+        { "index": 0, "eclassCount": 2, "enodeCount": 2, "merges": 0 }
+      ]
+    }
+  },
+  "sourceMappings": [
+    {
+      "id": "M0",
+      "sourceRange": { "start": { "line": 4, "column": 3 }, "end": { "line": 4, "column": 12 } },
+      "eclassIds": ["E0"],
+      "enodeIds": ["N0"],
+      "stageId": "source",
+      "kind": "origin"
+    }
+  ],
+  "trace": [
+    { "id": "T0", "index": 0, "kind": "normalize", "summary": "Resolve unary multiplicity", "afterEClassIds": ["E0"], "stageId": "kernel" }
+  ],
+  "certificates": [
+    { "id": "C0", "kind": "source-to-kernel", "title": "Source to kernel", "summary": "The source term already has exact support." }
+  ],
+  "statistics": { "parseMs": 0.4, "normalizationMs": 0.7, "saturationMs": 0.1, "totalMs": 1.2, "eclassCount": 2, "enodeCount": 2, "mergeCount": 0, "saturationRounds": 1, "rootReachableEClassCount": 2 }
+}

@@ -1,8 +1,8 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-08-17T22:41:43.574271633Z`
-- Input root: `classified-data`
-- Output root: `alloy4fun-augmented`
+- Generated at: `2026-08-18T04:11:25.816010138Z`
+- Input root: `/home/augustus/ACGN/classified-data`
+- Output root: `/home/augustus/ACGN/alloy4fun-augmented`
 - Source Alloy files: 66080
 - AST-identical student/oracle files excluded before pools: 4482
 - Alloy files considered and used: 61598
@@ -16,7 +16,7 @@
 
 - Reward pool size: 100
 
-- Rewards enabled: true
+- Rewards enabled: false
 
 ## Corpus
 
@@ -31,10 +31,10 @@
 - Incorrect models skipped because every truth was AST-identical: 0
 - Incorrect models without references: 0
 
-- Reward successes: 42386
+- Reward successes: 0
 - Reward failures: 0
-- Average candidate reward: 0.352766
-- Average reward error `(1 - reward)`: 0.647234
+- Average candidate reward: 0.000000
+- Average reward error `(1 - reward)`: 0.000000
 
 ## Correct Truth Pools
 
@@ -345,13 +345,13 @@ Absolute radii use edit-distance units. Relative radii use distance divided by t
 
 ## Reward Error Correlations
 
-- Rewarded incorrect predicates: 42386
+- Rewarded incorrect predicates: 0
 
 | Metric | Pearson distance vs raw `1 - reward` | Pearson distance vs `log10(1 - reward)` | Pearson relative distance vs raw `1 - reward` | Pearson relative distance vs `log10(1 - reward)` |
 | --- | ---: | ---: | ---: | ---: |
-| Levenshtein | 0.141856 | 0.108031 | 0.108203 | 0.088552 |
-| Raw AST | 0.123954 | 0.088380 | 0.098133 | 0.062154 |
-| Canonical | 0.056805 | 0.041299 | 0.051486 | 0.039895 |
+| Levenshtein | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
+| Raw AST | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
+| Canonical | 0.000000 | 0.000000 | 0.000000 | 0.000000 |
 
 - Raw plot: `canonical_distance_vs_reward_error_raw.svg`
 - Log plot: `canonical_distance_vs_reward_error_log.svg`

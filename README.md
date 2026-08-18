@@ -5,8 +5,8 @@ repair analysis. Its current evaluation stack, **CanDis**, converts Alloy
 predicates into temporal prenex normal forms backed by slotted, variadic
 e-graphs. It now separates certified semantic legality, deterministic canonical
 equality, and the established repair metric on the certified quotient instead
-of treating tree edit
-distance between canonical representatives as the repair metric.
+of treating tree edit distance between canonical representatives as the repair
+metric.
 
 The repository contains:
 
@@ -18,6 +18,8 @@ The repository contains:
   ablations plus the exact typed-slotted-port arm;
 - the 66,080-file classified Alloy corpus and an augmented nearest-repair
   dataset;
+- a standalone React/TypeScript explorer for inspecting the canonicalization
+  pipeline, e-classes, certificates, traces, and diagnostics in a browser;
 - generated tables, plots, manifests, bounded semantic checks, and memory
   attribution reports.
 
@@ -28,7 +30,7 @@ separate semantic evidence.
 
 ## Headline Results
 
-The checked-in experimental snapshot was regenerated on August 17, 2026. It
+The checked-in experimental snapshot was regenerated on August 18, 2026. It
 contains all seven ablation arms over the same 61,598 nontrivial corpus pairs,
 a 5,500-pair capability matrix, the paired student-oracle evaluation, and the
 augmented nearest-correct evaluation. Per-problem and per-status tables are in
@@ -68,17 +70,17 @@ truth-pool construction.
 | Eligible incorrect pairs | 42,386 |
 | Mean predicate-body Levenshtein distance | 39.261064 |
 | Mean raw-AST Zhang-Shasha distance | 22.841358 |
-| Mean certified repair / direct reference distance | 14.014010 / 14.029027 |
-| Mean canonical-representative TED baseline | 37.119306 |
-| Mean normalized Levenshtein / AST / certified repair distance | 0.547644 / 0.811451 / 0.716590 |
+| Mean certified repair / direct reference distance | 14.041998 / 14.029027 |
+| Mean canonical-representative TED baseline | 37.119533 |
+| Mean normalized Levenshtein / AST / certified repair distance | 0.547644 / 0.811451 / 0.717861 |
 | Mean raw-AST / repair-observation size | 26.787315 / 18.117812 |
 | Compression from the ratio of those means | 32.364% |
 | AST-different `CORRECT` pairs at certified distance zero | 2,317 |
 | Incorrect zero-distance merges | 0 |
 | Certified repair distance range | 0 to 139 |
 
-This paired snapshot uses `canonical-alloy-pipeline-v9-three-layer` and
-`certified-legacy-repair-distance-v4`. Normalization divides by the larger
+This paired snapshot uses `canonical-alloy-pipeline-v10-three-layer` and
+`certified-legacy-repair-distance-v5`. Normalization divides by the larger
 corresponding representation of the student-oracle pair. The directly executed
 legacy metric remains a differential oracle, and representative TED is a
 separate baseline rather than the repair metric.
@@ -125,8 +127,9 @@ size, the coverage is:
 | 50% | 30,080 (71.0%) | 18,668 (44.0%) | 18,263 (43.1%) |
 
 This augmented snapshot uses `canonical-alloy-pipeline-v10-three-layer` and
-`certified-legacy-repair-distance-v5`. Its pool-100 Rewarder pass completed all
-42,386 incorrect predicates without a reward failure.
+`certified-legacy-repair-distance-v5`. This structural run used
+`--skip-rewards`: all 42,386 incorrect predicates were ranked, but reward
+values were deliberately not recomputed.
 
 ### Seven-arm e-graph ablation
 
@@ -137,13 +140,13 @@ a full textual-language-compatible port of external egglog.
 
 | Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 18.260 | 4.517 | 933.320 | 58.184 |
-| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.580 | 5.289 | 864.070 | 57.865 |
-| Java egglog-like variadic | 823 | 4.284% | 17.996 | 16.400 | 4.094 | 874.352 | 56.740 |
-| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 16.630 | 4.997 | 915.074 | 56.410 |
-| Slotted e-graph | 2,162 | 11.253% | 17.694 | 17.390 | 14.642 | 936.621 | 52.952 |
-| Legacy canonical | 2,316 | 12.055% | 14.029 | 18.470 | 13.255 | 3,529.023 | 29.843 |
-| Typed slotted-port exact | 2,317 | 12.060% | 14.042 | 2,303.890 | 47,451.149 | 3,603.680 | 29.830 |
+| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 16.390 | 4.510 | 1,016.941 | 58.184 |
+| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.830 | 5.363 | 1,166.605 | 57.865 |
+| Java egglog-like variadic | 823 | 4.284% | 17.996 | 16.600 | 4.107 | 1,093.113 | 56.740 |
+| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 17.050 | 5.077 | 1,007.789 | 56.410 |
+| Slotted e-graph | 2,162 | 11.253% | 17.694 | 17.010 | 14.504 | 1,090.402 | 52.952 |
+| Legacy canonical | 2,316 | 12.055% | 14.029 | 18.360 | 13.107 | 3,989.914 | 29.843 |
+| Typed slotted-port exact | 2,317 | 12.060% | 14.042 | 2,265.990 | 52,088.164 | 4,671.211 | 29.830 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -225,10 +228,13 @@ conclusive evidence. See
 [`semantic_soundness.md`](egraph_ablation/semantic_soundness.md) and
 [`capability_benchmark/SOUNDNESS.md`](capability_benchmark/SOUNDNESS.md).
 
-### Reward observations
+### Retained reward observations
 
 Rewarder results depend on finite sampled instance pools and should not be read
-as semantic equivalence proofs.
+as semantic equivalence proofs. The August 18 structural runs used
+`--skip-rewards`; the following values are retained from earlier rewarded runs
+over the same 61,598-pair selection and are not part of the current run
+manifests.
 
 | Protocol | Pool | Predicates | Mean candidate reward | Headline Pearson result |
 | --- | ---: | ---: | ---: | ---: |
@@ -243,17 +249,17 @@ augmented nearest-correct run, their correlations with raw reward error were
 
 ### Runtime and memory interpretation
 
-The legacy canonical arm completed the 61,598-pair corpus in 18.470 seconds on
-a 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 3 GiB heap cap. Its
+The legacy canonical arm completed the 61,598-pair corpus in 18.360 seconds on
+a 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 4 GiB heap cap. Its
 representation averaged 29.843 units, 25.022 reachable e-classes, and 25.173
-reachable e-nodes, with 3,529.023 MiB maximum RSS.
+reachable e-nodes, with 3,989.914 MiB maximum RSS.
 
-The exact typed slotted-port arm completed the same pairs in 2,303.890 seconds
-(26.743 pairs/s). It used 47,451.149 engine CPU seconds, with per-pair engine
-latency p50 555.391 ms and p95 4,394.306 ms. Its normalized observations were
+The exact typed slotted-port arm completed the same pairs in 2,265.990 seconds
+(27.190 pairs/s). It used 52,088.164 engine CPU seconds, with per-pair engine
+latency p50 543.022 ms and p95 4,351.800 ms. Its normalized observations were
 slightly smaller at 29.830 units, 20.935 reachable e-classes, and 18.059
-reachable e-nodes, while maximum RSS was similar at 3,603.680 MiB. The roughly
-125x wall-time increase is therefore not representation growth: it comes from
+reachable e-nodes, while maximum RSS was 4,671.211 MiB. The roughly 123x
+wall-time increase is therefore not representation growth: it comes from
 certificate validation, exact renaming-orbit enumeration, immutable graph
 transactions, strict invariant checks, rebuild-to-quiescence, and complete
 finite unfolding. The established repair metric itself is not the dominant
@@ -388,6 +394,7 @@ alloy4fun-augmented/                       correct pools and nearest-repair rank
 egraph_ablation/                           current seven-arm natural-corpus evaluation
 capability_benchmark/                      current seven-arm transformation benchmark
 canonical_memory/                          worker-scaling and phase attribution
+frontend/                                  React/TypeScript e-graph web explorer and IIS assets
 documentation/                             CanDis and rewrite-system references
 scripts/                                   build and evaluation launchers
 lib/                                       Alloy/parser and utility JARs
@@ -402,6 +409,8 @@ The reusable `CanDis.core` and `CanDis.core.egraph` packages depend only on
 - Bash and standard Linux utilities for the supplied scripts.
 - GNU `/usr/bin/time` for process-level ablation timing.
 - Python 3 and Matplotlib only when regenerating plots.
+- Node.js 18 or newer and npm only when developing or building the optional
+  web explorer; the deployed frontend is static and does not require Node.js.
 - Dependency JARs under repository-root `lib/`; there is no Maven or Gradle
   build file.
 
@@ -489,7 +498,7 @@ audit CSVs, reward CSVs, and coverage/correlation SVGs.
 ./scripts/run_egraph_ablation.sh \
   --input classified-data \
   --output egraph_ablation \
-  --threads 32 --max-heap 3g
+  --threads 32 --max-heap 4g
 ```
 
 The suite runs all seven arms sequentially in fresh JVMs. The seventh is
@@ -521,13 +530,39 @@ manifests. It also regenerates `canonical_only_vs_slotted.md`,
   --output capability_benchmark \
   --natural egraph_ablation \
   --target 500 --seed 55520260811 \
-  --threads 32 --max-heap 3g
+  --threads 32 --max-heap 4g
 
 ./scripts/run_canonical_memory_attribution.sh \
   --input classified-data \
   --output canonical_memory \
   --limit 2000 --seed 55520260811
 ```
+
+### Web explorer
+
+[`frontend/`](frontend/) is a standalone React/TypeScript client for exploring
+source predicates, pipeline phases, variadic e-classes, slot bindings,
+certificates, rewrite traces, and diagnostics. Its checked-in mock fixtures make
+the interface usable without a backend; HTTP mode consumes the versioned
+Visualization IR returned by a separately deployed analysis service. The
+browser client visualizes results and does not reimplement Alloy parsing,
+canonicalization, certification, or repair distance.
+
+```bash
+cd frontend
+cp .env.example .env
+npm install
+npm test
+npm run build
+```
+
+The production output is `frontend/dist/`. It includes an IIS 10-compatible
+`web.config` for SPA routing and can be copied directly into an IIS site or
+application. Set `VITE_USE_MOCK_API=false` and
+`VITE_ANALYSIS_API_BASE_URL=https://analysis.example.org` before building to
+connect it to the Java analysis API. See the
+[`frontend deployment guide`](frontend/README.md) for endpoint contracts,
+subpath hosting, security headers, and troubleshooting.
 
 ### Inspect and validate
 
@@ -578,17 +613,17 @@ from every current distance and ablation run.
 
 The checked-in seven-arm natural-corpus snapshot records:
 
-- run ID `cfe55f5d-daf6-4ae1-808e-3eaa863015a8`;
-- source SHA `cc53042333fa3a1c820eb5715aa3b124e03d0ff1` with a dirty worktree;
+- run ID `c48a105a-796c-483c-9f75-7e3a35ff1db0`;
+- source SHA `6d409311a0962d90eb5f97fd1b1ec3d0cd040697` with a dirty worktree;
 - dataset SHA-256
   `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
-- Java 17.0.19, 32 workers, a 3 GiB heap cap, rule set
+- Java 17.0.19, 32 workers, a 4 GiB heap cap, rule set
   `canonical-equivalences-v2`, host/CPU metadata, schema versions, timestamps,
   and hashes of every generated arm and combined output.
 
 The checked-in capability snapshot uses run ID
-`dfd614b7-661d-4be6-8b46-6459e00809ad`, source SHA
-`cc53042333fa3a1c820eb5715aa3b124e03d0ff1`, generated-dataset SHA-256
+`eab0aa53-e9a9-4ad5-be79-8837c72fa610`, source SHA
+`6d409311a0962d90eb5f97fd1b1ec3d0cd040697`, generated-dataset SHA-256
 `e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0`,
 and the same v2 rule set. Its arm manifests and generated-report hashes are
 anchored by the capability
@@ -628,6 +663,7 @@ to the repository's current `HEAD`.
 - [Current seven-arm ablation report](egraph_ablation/summary.md)
 - [Targeted capability benchmark](capability_benchmark/REPORT.md)
 - [Canonical memory attribution](canonical_memory/REPORT.md)
+- [Web explorer development, API, and IIS deployment guide](frontend/README.md)
 
 ## License
 

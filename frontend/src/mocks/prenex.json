@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "1.0",
+  "model": { "name": "prenex.als", "sourceLength": 137 },
+  "predicate": {
+    "name": "prenex",
+    "sourceRange": { "start": { "line": 5, "column": 1 }, "end": { "line": 10, "column": 2 } },
+    "rootEClassId": "E0",
+    "originalText": "(some x : User | x in User) implies (all y : User | y in User)",
+    "normalizedText": "all #0 : User | all #1 : User | (#0 not in User or #1 in User)",
+    "canonicalText": "ALL[#0:User,#1:User](OR{NOT(IN(#0,User)),IN(#1,User)})"
+  },
+  "stages": [
+    { "id": "source", "index": 0, "name": "Source", "text": "(some x : User | x in User) implies (all y : User | y in User)" },
+    { "id": "logical", "index": 1, "name": "Logical Normalization", "text": "not (some x : User | x in User) or (all y : User | y in User)" },
+    { "id": "nnf", "index": 2, "name": "NNF", "text": "(all x : User | x not in User) or (all y : User | y in User)" },
+    { "id": "prenex", "index": 3, "name": "Prenex", "text": "all x,y : User | x not in User or y in User" },
+    { "id": "binder", "index": 4, "name": "Binder Normalization", "text": "all #0,#1 : User | #0 not in User or #1 in User", "rootEClassId": "E0" },
+    { "id": "canonical", "index": 5, "name": "Canonical", "text": "ALL[#0:User,#1:User](OR{NOT(IN(#0,User)),IN(#1,User)})", "rootEClassId": "E0" }
+  ],
+  "graph": {
+    "rootEClassId": "E0",
+    "eclasses": [
+      {
+        "id": "E0",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N0",
+        "nodes": [{ "id": "N0", "kind": "QuantifierBlock", "displayName": "ALL #0, #1 : User", "children": [{ "role": "body", "eclassId": "E1" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "x" }, { "slotId": "#1", "role": "binder", "type": "User", "sourceBinder": "y" }], "certificateIds": ["C-prenex"] }]
+      },
+      {
+        "id": "E1",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }],
+        "canonicalNodeId": "N1",
+        "nodes": [{ "id": "N1", "kind": "OrContainer", "displayName": "OR", "children": [{ "eclassId": "E2" }, { "eclassId": "E3" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "type": "User" }, { "slotId": "#1", "type": "User" }], "container": { "kind": "ACI", "operator": "OR", "duplicateElimination": true, "orderInsensitive": true, "flattened": true } }]
+      },
+      {
+        "id": "E2",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N2",
+        "nodes": [{ "id": "N2", "kind": "NotMembership", "displayName": "#0 NOT IN User", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "element", "type": "User" }] }]
+      },
+      {
+        "id": "E3",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#1", "type": "User" }],
+        "effectiveSupport": [{ "id": "#1", "type": "User" }],
+        "canonicalNodeId": "N3",
+        "nodes": [{ "id": "N3", "kind": "Membership", "displayName": "#1 IN User", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#1", "role": "element", "type": "User" }] }]
+      }
+    ],
+    "saturation": { "saturated": true, "rounds": [{ "index": 0, "eclassCount": 4, "enodeCount": 4, "merges": 0 }] }
+  },
+  "sourceMappings": [
+    { "id": "M-source", "sourceRange": { "start": { "line": 6, "column": 3 }, "end": { "line": 9, "column": 35 } }, "eclassIds": ["E0", "E1"], "enodeIds": ["N0", "N1"], "kind": "origin" },
+    { "id": "M-x", "sourceRange": { "start": { "line": 6, "column": 9 }, "end": { "line": 6, "column": 10 } }, "eclassIds": ["E0", "E2"], "enodeIds": ["N0", "N2"], "stageId": "binder", "kind": "binder" },
+    { "id": "M-y", "sourceRange": { "start": { "line": 9, "column": 8 }, "end": { "line": 9, "column": 9 } }, "eclassIds": ["E0", "E3"], "enodeIds": ["N0", "N3"], "stageId": "binder", "kind": "binder" }
+  ],
+  "trace": [
+    { "id": "T0", "index": 0, "kind": "rewrite", "rule": "implies-elimination", "summary": "Rewrite implication to disjunction", "afterEClassIds": ["E1"], "stageId": "logical" },
+    { "id": "T1", "index": 1, "kind": "rewrite", "rule": "quantifier-negation", "summary": "Flip SOME under negation to ALL", "afterEClassIds": ["E0"], "stageId": "nnf" },
+    { "id": "T2", "index": 2, "kind": "normalize", "rule": "prenex", "summary": "Move both safe quantifiers to the phase prefix", "afterEClassIds": ["E0"], "certificateIds": ["C-prenex"], "stageId": "prenex" },
+    { "id": "T3", "index": 3, "kind": "slot-map", "summary": "Map x and y to #0 and #1", "afterEClassIds": ["E0"], "stageId": "binder" }
+  ],
+  "certificates": [
+    { "id": "C-prenex", "kind": "source-to-kernel", "title": "Safe prenex movement", "summary": "The backend records the branch rewrite before moving the quantified binders.", "conclusion": { "text": "ALL[#0,#1](OR(...))", "entityIds": ["E0", "N0"], "slotIds": ["#0", "#1"] } }
+  ],
+  "statistics": { "parseMs": 0.7, "normalizationMs": 1.9, "saturationMs": 0.3, "totalMs": 2.9, "eclassCount": 4, "enodeCount": 4, "mergeCount": 0, "saturationRounds": 1, "rootReachableEClassCount": 4 }
+}

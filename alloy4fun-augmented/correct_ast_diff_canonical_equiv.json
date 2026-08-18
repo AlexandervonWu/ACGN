@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-17T22:20:49.116741008Z",
-  "inputRoot": "classified-data",
-  "outputRoot": "alloy4fun-augmented",
+  "generatedAt": "2026-08-18T03:54:38.434447194Z",
+  "inputRoot": "/home/augustus/ACGN/classified-data",
+  "outputRoot": "/home/augustus/ACGN/alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and CanonicalAlloyPipeline distance is zero.",
   "pairCount": 10257,
   "pairs": [

@@ -1,20 +1,20 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx3g -cp /tmp/acgn-capability-benchmark.5Nu6yF:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/ACGN/capability_benchmark/models --output /home/augustus/ACGN/capability_benchmark/arms/slotted-egraph --engine slotted-egraph --threads 32"
-	User time (seconds): 37.78
-	System time (seconds): 0.95
-	Percent of CPU this job got: 1689%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.29
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx4g -cp /tmp/acgn-capability-benchmark.hJf1Nu:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/ACGN/capability_benchmark/models --output /home/augustus/ACGN/capability_benchmark/arms/slotted-egraph --engine slotted-egraph --threads 32"
+	User time (seconds): 38.85
+	System time (seconds): 1.04
+	Percent of CPU this job got: 1701%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.34
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 862460
+	Maximum resident set size (kbytes): 985752
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 244635
-	Voluntary context switches: 240524
-	Involuntary context switches: 7493
+	Minor (reclaiming a frame) page faults: 279289
+	Voluntary context switches: 269511
+	Involuntary context switches: 6712
 	Swaps: 0
-	File system inputs: 8
+	File system inputs: 0
 	File system outputs: 2232
 	Socket messages sent: 0
 	Socket messages received: 0

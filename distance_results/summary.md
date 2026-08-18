@@ -1,6 +1,6 @@
 # Canonical Rewrite Distance Summary
 
-- Input root: `classified-data`
+- Input root: `/home/augustus/ACGN/classified-data`
 - Thread count: 32
 - Canonical engine: `CanonicalAlloyPipeline` (`canonical-alloy-pipeline-v10-three-layer`)
 - Exact graph: `TypedSlottedPortEGraph`; invariants: `strict-every-transition`; certificates: required
@@ -28,8 +28,8 @@
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 2317
 - Incorrect zero-distance merges: 0
 - Inexact alpha searches: 0
-- Average certified repair metric time: 0.098521 ms
-- Average canonical representative TED time: 0.461731 ms
+- Average certified repair metric time: 0.104502 ms
+- Average canonical representative TED time: 0.498176 ms
 - Min distance: 0
 - Max distance: 139
 
@@ -186,97 +186,97 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 
 ## Reward Comparison
 
-- Rewarded files: 61598
+- Rewarded files: 0
 - Reward failures: 0
 - Reward pool size: 10
-- Rewards enabled: true
-- Average candidate reward: 0.567082
-- Average ground-truth self reward: 1.000000
-- Average reward gap: 0.432918
-- Pearson correlation sample: non-CORRECT rewarded predicates (42386 files)
-- Pearson correlation, certified repair distance vs candidate reward: -0.040665
+- Rewards enabled: false
+- Average candidate reward: 0.000000
+- Average ground-truth self reward: 0.000000
+- Average reward gap: 0.000000
+- Pearson correlation sample: non-CORRECT rewarded predicates (0 files)
+- Pearson correlation, certified repair distance vs candidate reward: 0.000000
 
-- Pearson correlation, canonical representative TED vs candidate reward: -0.033975
-- Pearson correlation, direct reference-metric distance vs candidate reward: -0.039779
-- Pearson correlation, Levenshtein vs candidate reward: -0.089408
-- Pearson correlation, raw AST tree distance vs candidate reward: -0.073326
+- Pearson correlation, canonical representative TED vs candidate reward: 0.000000
+- Pearson correlation, direct reference-metric distance vs candidate reward: 0.000000
+- Pearson correlation, Levenshtein vs candidate reward: 0.000000
+- Pearson correlation, raw AST tree distance vs candidate reward: 0.000000
 
-- Pearson correlation, normalized raw AST distance vs candidate reward: -0.050632
-- Pearson correlation, normalized canonical distance vs candidate reward: -0.046095
+- Pearson correlation, normalized raw AST distance vs candidate reward: 0.000000
+- Pearson correlation, normalized canonical distance vs candidate reward: 0.000000
 
-- Pearson correlation, normalized canonical representative TED vs candidate reward: -0.038137
+- Pearson correlation, normalized canonical representative TED vs candidate reward: 0.000000
 
-- Pearson correlation, normalized direct reference-metric distance vs candidate reward: -0.044853
+- Pearson correlation, normalized direct reference-metric distance vs candidate reward: 0.000000
 
 ## By Problem Class And Status
 
 | Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1696 | 1696 | 0 | 0 | 17.323703 | 0.244291 | -0.144087 | 1 | 56 |
-| classroom_fol | CORRECT | 1884 | 1613 | 271 | 0 | 9.973342 | 1.000000 | 0.000000 | 0 | 61 |
-| classroom_fol | OVERCONSTRAINED | 383 | 383 | 0 | 0 | 13.553525 | 0.413947 | 0.075216 | 1 | 68 |
-| classroom_fol | UNDERCONSTRAINED | 311 | 311 | 0 | 0 | 16.270096 | 0.204409 | 0.302112 | 1 | 43 |
-| classroom_rl | BOTH | 1219 | 1219 | 0 | 0 | 11.299426 | 0.280459 | -0.031873 | 1 | 61 |
-| classroom_rl | CORRECT | 1764 | 1118 | 646 | 0 | 6.120751 | 1.000000 | 0.000000 | 0 | 31 |
-| classroom_rl | OVERCONSTRAINED | 547 | 547 | 0 | 0 | 8.864717 | 0.428192 | 0.095996 | 1 | 50 |
-| classroom_rl | UNDERCONSTRAINED | 499 | 499 | 0 | 0 | 9.635271 | 0.156198 | 0.270821 | 1 | 31 |
-| coursesNew | BOTH | 1803 | 1803 | 0 | 0 | 19.249584 | 0.204531 | -0.258559 | 1 | 55 |
-| coursesNew | CORRECT | 1371 | 1338 | 33 | 0 | 10.850523 | 1.000000 | 0.000000 | 0 | 44 |
-| coursesNew | OVERCONSTRAINED | 327 | 327 | 0 | 0 | 12.547401 | 0.660952 | -0.120924 | 1 | 44 |
-| coursesNew | UNDERCONSTRAINED | 1453 | 1453 | 0 | 0 | 17.814866 | 0.540435 | -0.073848 | 1 | 46 |
-| coursesOld | BOTH | 4001 | 4001 | 0 | 0 | 20.104224 | 0.158800 | -0.163154 | 1 | 126 |
-| coursesOld | CORRECT | 2284 | 2148 | 136 | 0 | 10.442272 | 1.000000 | 0.000000 | 0 | 38 |
-| coursesOld | OVERCONSTRAINED | 763 | 763 | 0 | 0 | 14.314548 | 0.523328 | -0.201107 | 1 | 58 |
-| coursesOld | UNDERCONSTRAINED | 2576 | 2576 | 0 | 0 | 17.495730 | 0.492757 | -0.048950 | 1 | 47 |
-| cv_v1 | BOTH | 258 | 258 | 0 | 0 | 21.492248 | 0.216721 | -0.170810 | 4 | 44 |
-| cv_v1 | CORRECT | 155 | 106 | 49 | 0 | 10.905660 | 1.000000 | 0.000000 | 0 | 43 |
-| cv_v1 | OVERCONSTRAINED | 225 | 225 | 0 | 0 | 16.853333 | 0.185523 | 0.019084 | 1 | 43 |
-| cv_v1 | UNDERCONSTRAINED | 219 | 219 | 0 | 0 | 14.894977 | 0.202292 | 0.255056 | 2 | 35 |
-| cv_v2 | BOTH | 71 | 71 | 0 | 0 | 35.957746 | 0.582386 | 0.135261 | 3 | 91 |
-| cv_v2 | CORRECT | 64 | 57 | 7 | 0 | 15.894737 | 1.000000 | 0.000000 | 0 | 43 |
-| cv_v2 | OVERCONSTRAINED | 105 | 105 | 0 | 0 | 30.647619 | 0.513380 | 0.270697 | 1 | 92 |
-| cv_v2 | UNDERCONSTRAINED | 40 | 40 | 0 | 0 | 31.325000 | 0.451040 | 0.566510 | 1 | 89 |
-| graphs | BOTH | 361 | 361 | 0 | 0 | 10.202216 | 0.382271 | 0.124865 | 1 | 40 |
-| graphs | CORRECT | 1058 | 820 | 238 | 0 | 8.503659 | 0.999988 | 0.000000 | 0 | 67 |
-| graphs | OVERCONSTRAINED | 645 | 645 | 0 | 0 | 8.762791 | 0.571766 | 0.057317 | 1 | 35 |
-| graphs | UNDERCONSTRAINED | 326 | 326 | 0 | 0 | 9.340491 | 0.485396 | 0.059321 | 1 | 29 |
-| lts | BOTH | 555 | 555 | 0 | 0 | 21.277477 | 0.214955 | 0.259244 | 1 | 67 |
-| lts | CORRECT | 577 | 249 | 328 | 0 | 9.939759 | 1.000000 | 0.000000 | 0 | 42 |
-| lts | OVERCONSTRAINED | 458 | 458 | 0 | 0 | 19.877729 | 0.340648 | 0.181789 | 1 | 84 |
-| lts | UNDERCONSTRAINED | 254 | 254 | 0 | 0 | 16.464567 | 0.143861 | 0.272027 | 1 | 67 |
-| productionLineNew | BOTH | 656 | 656 | 0 | 0 | 15.914634 | 0.320085 | -0.157244 | 1 | 69 |
-| productionLineNew | CORRECT | 818 | 693 | 125 | 0 | 11.408369 | 1.000000 | 0.000000 | 0 | 75 |
-| productionLineNew | OVERCONSTRAINED | 320 | 320 | 0 | 0 | 14.246875 | 0.309684 | -0.160354 | 1 | 52 |
-| productionLineNew | UNDERCONSTRAINED | 557 | 557 | 0 | 0 | 16.357271 | 0.557468 | -0.161398 | 2 | 70 |
-| productionLine_v1 | BOTH | 107 | 107 | 0 | 0 | 11.429907 | 0.135144 | 0.487386 | 1 | 34 |
-| productionLine_v1 | CORRECT | 239 | 145 | 94 | 0 | 9.020690 | 1.000000 | 0.000000 | 0 | 32 |
-| productionLine_v1 | OVERCONSTRAINED | 100 | 100 | 0 | 0 | 12.440000 | 0.059505 | 0.199138 | 1 | 28 |
-| productionLine_v1 | UNDERCONSTRAINED | 153 | 153 | 0 | 0 | 7.241830 | 0.436317 | -0.133474 | 2 | 30 |
-| productionLine_v2 | BOTH | 870 | 870 | 0 | 0 | 15.766667 | 0.304322 | -0.039507 | 1 | 80 |
-| productionLine_v2 | CORRECT | 1326 | 1124 | 202 | 0 | 13.283808 | 1.000000 | 0.000000 | 0 | 73 |
-| productionLine_v2 | OVERCONSTRAINED | 638 | 638 | 0 | 0 | 15.838558 | 0.327335 | -0.292822 | 1 | 72 |
-| productionLine_v2 | UNDERCONSTRAINED | 737 | 737 | 0 | 0 | 15.721845 | 0.696852 | -0.006101 | 1 | 71 |
-| socialMedia | BOTH | 4982 | 4982 | 0 | 0 | 18.381373 | 0.244656 | 0.156410 | 1 | 100 |
-| socialMedia | CORRECT | 4945 | 4550 | 395 | 0 | 10.478681 | 0.999560 | 0.000000 | 0 | 139 |
-| socialMedia | OVERCONSTRAINED | 1597 | 1597 | 0 | 0 | 18.714465 | 0.179442 | 0.002318 | 1 | 100 |
-| socialMedia | UNDERCONSTRAINED | 2871 | 2871 | 0 | 0 | 17.137931 | 0.633007 | 0.244117 | 1 | 75 |
-| trainStationNew | BOTH | 2325 | 2325 | 0 | 0 | 17.332903 | 0.390174 | 0.023386 | 1 | 78 |
-| trainStationNew | CORRECT | 1953 | 1601 | 352 | 0 | 7.663960 | 1.000000 | 0.000000 | 0 | 101 |
-| trainStationNew | OVERCONSTRAINED | 689 | 689 | 0 | 0 | 10.341074 | 0.791448 | -0.160991 | 1 | 53 |
-| trainStationNew | UNDERCONSTRAINED | 1302 | 1302 | 0 | 0 | 16.041475 | 0.609301 | -0.040998 | 1 | 52 |
-| trainStationOld | BOTH | 357 | 357 | 0 | 0 | 28.333333 | 0.308898 | 0.112487 | 2 | 101 |
-| trainStationOld | CORRECT | 185 | 111 | 74 | 0 | 9.342342 | 0.999643 | 0.000000 | 0 | 33 |
-| trainStationOld | OVERCONSTRAINED | 201 | 201 | 0 | 0 | 15.502488 | 0.605095 | -0.029773 | 1 | 58 |
-| trainStationOld | UNDERCONSTRAINED | 207 | 207 | 0 | 0 | 19.130435 | 0.383461 | -0.241124 | 1 | 77 |
-| trash_fol | BOTH | 377 | 377 | 0 | 0 | 8.564987 | 0.303636 | 0.160785 | 1 | 36 |
-| trash_fol | CORRECT | 1982 | 1667 | 315 | 0 | 6.886623 | 1.000000 | 0.000000 | 0 | 17 |
-| trash_fol | OVERCONSTRAINED | 217 | 217 | 0 | 0 | 9.737327 | 0.333002 | 0.128191 | 1 | 24 |
-| trash_fol | UNDERCONSTRAINED | 104 | 104 | 0 | 0 | 11.346154 | 0.499429 | 0.089618 | 1 | 26 |
-| trash_ltl | BOTH | 1486 | 1486 | 0 | 0 | 11.536339 | 0.360539 | 0.235268 | 1 | 34 |
-| trash_ltl | CORRECT | 1440 | 863 | 577 | 0 | 7.195829 | 1.000000 | 0.000000 | 0 | 20 |
-| trash_ltl | OVERCONSTRAINED | 546 | 546 | 0 | 0 | 7.456044 | 0.602689 | -0.030005 | 1 | 22 |
-| trash_ltl | UNDERCONSTRAINED | 835 | 835 | 0 | 0 | 11.431138 | 0.519010 | 0.085600 | 1 | 30 |
-| trash_rl | BOTH | 591 | 591 | 0 | 0 | 6.607445 | 0.362760 | 0.019370 | 1 | 51 |
-| trash_rl | CORRECT | 1649 | 1009 | 640 | 0 | 5.616452 | 1.000000 | 0.000000 | 0 | 37 |
-| trash_rl | OVERCONSTRAINED | 334 | 334 | 0 | 0 | 6.577844 | 0.450972 | -0.075868 | 1 | 34 |
-| trash_rl | UNDERCONSTRAINED | 132 | 132 | 0 | 0 | 8.757576 | 0.368872 | -0.195351 | 1 | 23 |
+| classroom_fol | BOTH | 1696 | 1696 | 0 | 0 | 17.323703 | 0.000000 | 0.000000 | 1 | 56 |
+| classroom_fol | CORRECT | 1884 | 1613 | 271 | 0 | 9.973342 | 0.000000 | 0.000000 | 0 | 61 |
+| classroom_fol | OVERCONSTRAINED | 383 | 383 | 0 | 0 | 13.553525 | 0.000000 | 0.000000 | 1 | 68 |
+| classroom_fol | UNDERCONSTRAINED | 311 | 311 | 0 | 0 | 16.270096 | 0.000000 | 0.000000 | 1 | 43 |
+| classroom_rl | BOTH | 1219 | 1219 | 0 | 0 | 11.299426 | 0.000000 | 0.000000 | 1 | 61 |
+| classroom_rl | CORRECT | 1764 | 1118 | 646 | 0 | 6.120751 | 0.000000 | 0.000000 | 0 | 31 |
+| classroom_rl | OVERCONSTRAINED | 547 | 547 | 0 | 0 | 8.864717 | 0.000000 | 0.000000 | 1 | 50 |
+| classroom_rl | UNDERCONSTRAINED | 499 | 499 | 0 | 0 | 9.635271 | 0.000000 | 0.000000 | 1 | 31 |
+| coursesNew | BOTH | 1803 | 1803 | 0 | 0 | 19.249584 | 0.000000 | 0.000000 | 1 | 55 |
+| coursesNew | CORRECT | 1371 | 1338 | 33 | 0 | 10.850523 | 0.000000 | 0.000000 | 0 | 44 |
+| coursesNew | OVERCONSTRAINED | 327 | 327 | 0 | 0 | 12.547401 | 0.000000 | 0.000000 | 1 | 44 |
+| coursesNew | UNDERCONSTRAINED | 1453 | 1453 | 0 | 0 | 17.814866 | 0.000000 | 0.000000 | 1 | 46 |
+| coursesOld | BOTH | 4001 | 4001 | 0 | 0 | 20.104224 | 0.000000 | 0.000000 | 1 | 126 |
+| coursesOld | CORRECT | 2284 | 2148 | 136 | 0 | 10.442272 | 0.000000 | 0.000000 | 0 | 38 |
+| coursesOld | OVERCONSTRAINED | 763 | 763 | 0 | 0 | 14.314548 | 0.000000 | 0.000000 | 1 | 58 |
+| coursesOld | UNDERCONSTRAINED | 2576 | 2576 | 0 | 0 | 17.495730 | 0.000000 | 0.000000 | 1 | 47 |
+| cv_v1 | BOTH | 258 | 258 | 0 | 0 | 21.492248 | 0.000000 | 0.000000 | 4 | 44 |
+| cv_v1 | CORRECT | 155 | 106 | 49 | 0 | 10.905660 | 0.000000 | 0.000000 | 0 | 43 |
+| cv_v1 | OVERCONSTRAINED | 225 | 225 | 0 | 0 | 16.853333 | 0.000000 | 0.000000 | 1 | 43 |
+| cv_v1 | UNDERCONSTRAINED | 219 | 219 | 0 | 0 | 14.894977 | 0.000000 | 0.000000 | 2 | 35 |
+| cv_v2 | BOTH | 71 | 71 | 0 | 0 | 35.957746 | 0.000000 | 0.000000 | 3 | 91 |
+| cv_v2 | CORRECT | 64 | 57 | 7 | 0 | 15.894737 | 0.000000 | 0.000000 | 0 | 43 |
+| cv_v2 | OVERCONSTRAINED | 105 | 105 | 0 | 0 | 30.647619 | 0.000000 | 0.000000 | 1 | 92 |
+| cv_v2 | UNDERCONSTRAINED | 40 | 40 | 0 | 0 | 31.325000 | 0.000000 | 0.000000 | 1 | 89 |
+| graphs | BOTH | 361 | 361 | 0 | 0 | 10.202216 | 0.000000 | 0.000000 | 1 | 40 |
+| graphs | CORRECT | 1058 | 820 | 238 | 0 | 8.503659 | 0.000000 | 0.000000 | 0 | 67 |
+| graphs | OVERCONSTRAINED | 645 | 645 | 0 | 0 | 8.762791 | 0.000000 | 0.000000 | 1 | 35 |
+| graphs | UNDERCONSTRAINED | 326 | 326 | 0 | 0 | 9.340491 | 0.000000 | 0.000000 | 1 | 29 |
+| lts | BOTH | 555 | 555 | 0 | 0 | 21.277477 | 0.000000 | 0.000000 | 1 | 67 |
+| lts | CORRECT | 577 | 249 | 328 | 0 | 9.939759 | 0.000000 | 0.000000 | 0 | 42 |
+| lts | OVERCONSTRAINED | 458 | 458 | 0 | 0 | 19.877729 | 0.000000 | 0.000000 | 1 | 84 |
+| lts | UNDERCONSTRAINED | 254 | 254 | 0 | 0 | 16.464567 | 0.000000 | 0.000000 | 1 | 67 |
+| productionLineNew | BOTH | 656 | 656 | 0 | 0 | 15.914634 | 0.000000 | 0.000000 | 1 | 69 |
+| productionLineNew | CORRECT | 818 | 693 | 125 | 0 | 11.408369 | 0.000000 | 0.000000 | 0 | 75 |
+| productionLineNew | OVERCONSTRAINED | 320 | 320 | 0 | 0 | 14.246875 | 0.000000 | 0.000000 | 1 | 52 |
+| productionLineNew | UNDERCONSTRAINED | 557 | 557 | 0 | 0 | 16.357271 | 0.000000 | 0.000000 | 2 | 70 |
+| productionLine_v1 | BOTH | 107 | 107 | 0 | 0 | 11.429907 | 0.000000 | 0.000000 | 1 | 34 |
+| productionLine_v1 | CORRECT | 239 | 145 | 94 | 0 | 9.020690 | 0.000000 | 0.000000 | 0 | 32 |
+| productionLine_v1 | OVERCONSTRAINED | 100 | 100 | 0 | 0 | 12.440000 | 0.000000 | 0.000000 | 1 | 28 |
+| productionLine_v1 | UNDERCONSTRAINED | 153 | 153 | 0 | 0 | 7.241830 | 0.000000 | 0.000000 | 2 | 30 |
+| productionLine_v2 | BOTH | 870 | 870 | 0 | 0 | 15.766667 | 0.000000 | 0.000000 | 1 | 80 |
+| productionLine_v2 | CORRECT | 1326 | 1124 | 202 | 0 | 13.283808 | 0.000000 | 0.000000 | 0 | 73 |
+| productionLine_v2 | OVERCONSTRAINED | 638 | 638 | 0 | 0 | 15.838558 | 0.000000 | 0.000000 | 1 | 72 |
+| productionLine_v2 | UNDERCONSTRAINED | 737 | 737 | 0 | 0 | 15.721845 | 0.000000 | 0.000000 | 1 | 71 |
+| socialMedia | BOTH | 4982 | 4982 | 0 | 0 | 18.381373 | 0.000000 | 0.000000 | 1 | 100 |
+| socialMedia | CORRECT | 4945 | 4550 | 395 | 0 | 10.478681 | 0.000000 | 0.000000 | 0 | 139 |
+| socialMedia | OVERCONSTRAINED | 1597 | 1597 | 0 | 0 | 18.714465 | 0.000000 | 0.000000 | 1 | 100 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 2871 | 0 | 0 | 17.137931 | 0.000000 | 0.000000 | 1 | 75 |
+| trainStationNew | BOTH | 2325 | 2325 | 0 | 0 | 17.332903 | 0.000000 | 0.000000 | 1 | 78 |
+| trainStationNew | CORRECT | 1953 | 1601 | 352 | 0 | 7.663960 | 0.000000 | 0.000000 | 0 | 101 |
+| trainStationNew | OVERCONSTRAINED | 689 | 689 | 0 | 0 | 10.341074 | 0.000000 | 0.000000 | 1 | 53 |
+| trainStationNew | UNDERCONSTRAINED | 1302 | 1302 | 0 | 0 | 16.041475 | 0.000000 | 0.000000 | 1 | 52 |
+| trainStationOld | BOTH | 357 | 357 | 0 | 0 | 28.333333 | 0.000000 | 0.000000 | 2 | 101 |
+| trainStationOld | CORRECT | 185 | 111 | 74 | 0 | 9.342342 | 0.000000 | 0.000000 | 0 | 33 |
+| trainStationOld | OVERCONSTRAINED | 201 | 201 | 0 | 0 | 15.502488 | 0.000000 | 0.000000 | 1 | 58 |
+| trainStationOld | UNDERCONSTRAINED | 207 | 207 | 0 | 0 | 19.130435 | 0.000000 | 0.000000 | 1 | 77 |
+| trash_fol | BOTH | 377 | 377 | 0 | 0 | 8.564987 | 0.000000 | 0.000000 | 1 | 36 |
+| trash_fol | CORRECT | 1982 | 1667 | 315 | 0 | 6.886623 | 0.000000 | 0.000000 | 0 | 17 |
+| trash_fol | OVERCONSTRAINED | 217 | 217 | 0 | 0 | 9.737327 | 0.000000 | 0.000000 | 1 | 24 |
+| trash_fol | UNDERCONSTRAINED | 104 | 104 | 0 | 0 | 11.346154 | 0.000000 | 0.000000 | 1 | 26 |
+| trash_ltl | BOTH | 1486 | 1486 | 0 | 0 | 11.536339 | 0.000000 | 0.000000 | 1 | 34 |
+| trash_ltl | CORRECT | 1440 | 863 | 577 | 0 | 7.195829 | 0.000000 | 0.000000 | 0 | 20 |
+| trash_ltl | OVERCONSTRAINED | 546 | 546 | 0 | 0 | 7.456044 | 0.000000 | 0.000000 | 1 | 22 |
+| trash_ltl | UNDERCONSTRAINED | 835 | 835 | 0 | 0 | 11.431138 | 0.000000 | 0.000000 | 1 | 30 |
+| trash_rl | BOTH | 591 | 591 | 0 | 0 | 6.607445 | 0.000000 | 0.000000 | 1 | 51 |
+| trash_rl | CORRECT | 1649 | 1009 | 640 | 0 | 5.616452 | 0.000000 | 0.000000 | 0 | 37 |
+| trash_rl | OVERCONSTRAINED | 334 | 334 | 0 | 0 | 6.577844 | 0.000000 | 0.000000 | 1 | 34 |
+| trash_rl | UNDERCONSTRAINED | 132 | 132 | 0 | 0 | 8.757576 | 0.000000 | 0.000000 | 1 | 23 |

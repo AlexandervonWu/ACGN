@@ -1,0 +1,235 @@
+{
+  "schemaVersion": "1.0",
+  "model": { "name": "slots.als", "sourceLength": 705, "digest": "mock-slots-v1" },
+  "predicate": {
+    "name": "inv7",
+    "sourceRange": { "start": { "line": 8, "column": 1 }, "end": { "line": 31, "column": 2 } },
+    "rootEClassId": "E0",
+    "originalText": "Five quantified constraints over follows and suggested",
+    "normalizedText": "AND{Q0,Q1,Q2,Q3,Q4}",
+    "canonicalText": "AND{ALL[#0,#1,#2:User](Q0),ALL[#0:User](Q1),ALL[#0,#1:User](Q2),ALL[#0:User](Q3),ALL[#0:User,#1:Influencer](Q4)}"
+  },
+  "stages": [
+    { "id": "source", "index": 0, "name": "Source", "text": "inv7 { five quantified source constraints }" },
+    { "id": "parsed", "index": 1, "name": "Parsed", "description": "Typed Alloy AST" },
+    { "id": "invocations", "index": 2, "name": "Invocation Resolution", "description": "Predicate and field references resolved" },
+    { "id": "ports", "index": 3, "name": "Port Normalization", "text": "AND(Q0,Q1,Q2,Q3,Q4)" },
+    { "id": "logical", "index": 4, "name": "Logical Normalization", "text": "AND{OR{NOT A0,B0}, NOT A1, OR{NOT A2,B2}, OR{NOT A3,B3}, NOT A4}" },
+    { "id": "nnf", "index": 5, "name": "NNF", "text": "Negations occur only at atomic formulae" },
+    { "id": "prenex", "index": 6, "name": "Prenex", "text": "Each temporal phase retains its safe quantifier prefix" },
+    { "id": "binders", "index": 7, "name": "Binder Normalization", "text": "u1,u2,u3 -> #0,#1,#2" },
+    { "id": "kernel", "index": 8, "name": "Kernel", "text": "AND{Q0[#0,#1,#2],Q1[#0],Q2[#0,#1],Q3[#0],Q4[#0,#1]}", "rootEClassId": "E0" },
+    { "id": "egraph", "index": 9, "name": "E-Graph", "rootEClassId": "E0" },
+    { "id": "saturated", "index": 10, "name": "Saturated", "rootEClassId": "E0" },
+    { "id": "canonical", "index": 11, "name": "Canonical", "text": "AND{ALL[#0,#1,#2:User](Q0),ALL[#0:User](Q1),ALL[#0,#1:User](Q2),ALL[#0:User](Q3),ALL[#0:User,#1:Influencer](Q4)}", "rootEClassId": "E0" }
+  ],
+  "graph": {
+    "rootEClassId": "E0",
+    "eclasses": [
+      {
+        "id": "E0",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N0",
+        "representativeNodeId": "N0",
+        "nodes": [
+          {
+            "id": "N0",
+            "kind": "AndContainer",
+            "displayName": "AND",
+            "children": [{ "eclassId": "E1" }, { "eclassId": "E2" }, { "eclassId": "E3" }, { "eclassId": "E4" }, { "eclassId": "E5" }],
+            "type": { "kind": "formula" },
+            "container": { "kind": "ACI", "operator": "AND", "duplicateElimination": true, "orderInsensitive": true, "flattened": true },
+            "sourceRange": { "start": { "line": 9, "column": 5 }, "end": { "line": 30, "column": 35 } },
+            "provenance": [{ "id": "P0", "kind": "normalization", "label": "paragraph conjunction" }],
+            "certificateIds": ["C-aci-root"]
+          },
+          {
+            "id": "N0-source",
+            "kind": "ParagraphSequence",
+            "displayName": "PARAGRAPHS",
+            "children": [{ "role": "0", "eclassId": "E1" }, { "role": "1", "eclassId": "E2" }, { "role": "2", "eclassId": "E3" }, { "role": "3", "eclassId": "E4" }, { "role": "4", "eclassId": "E5" }],
+            "type": { "kind": "formula" },
+            "certificateIds": ["C-aci-root"]
+          }
+        ],
+        "provenance": [{ "id": "T5", "kind": "canonicalize", "label": "ACI root" }],
+        "invariantStatus": [
+          { "id": "I-root-typed", "name": "well typed", "status": "pass" },
+          { "id": "I-root-support", "name": "coherent support", "status": "pass" },
+          { "id": "I-root-slots", "name": "canonical slot ordering", "status": "pass" }
+        ],
+        "statistics": { "nodeCount": 2, "incomingCount": 0, "outgoingCount": 5 }
+      },
+      {
+        "id": "E1",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N1",
+        "nodes": [{ "id": "N1", "kind": "QuantifierBlock", "displayName": "ALL #0, #1, #2 : User", "children": [{ "role": "body", "eclassId": "E6" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u1" }, { "slotId": "#1", "role": "binder", "type": "User", "sourceBinder": "u2" }, { "slotId": "#2", "role": "binder", "type": "User", "sourceBinder": "u3" }], "sourceRange": { "start": { "line": 9, "column": 5 }, "end": { "line": 13, "column": 38 } }, "certificateIds": ["C-slots"] }],
+        "invariantStatus": [{ "id": "I1", "name": "binder scope", "status": "pass" }]
+      },
+      {
+        "id": "E2",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N2",
+        "nodes": [{ "id": "N2", "kind": "QuantifierBlock", "displayName": "ALL #0 : User", "children": [{ "role": "body", "eclassId": "E7" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u" }], "sourceRange": { "start": { "line": 15, "column": 5 }, "end": { "line": 16, "column": 29 } }, "certificateIds": ["C-slots"] }]
+      },
+      {
+        "id": "E3",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N3",
+        "nodes": [{ "id": "N3", "kind": "QuantifierBlock", "displayName": "ALL #0, #1 : User", "children": [{ "role": "body", "eclassId": "E8" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u1" }, { "slotId": "#1", "role": "binder", "type": "User", "sourceBinder": "u2" }], "sourceRange": { "start": { "line": 18, "column": 5 }, "end": { "line": 20, "column": 42 } }, "certificateIds": ["C-slots"] }]
+      },
+      {
+        "id": "E4",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N4",
+        "nodes": [{ "id": "N4", "kind": "QuantifierBlock", "displayName": "ALL #0 : User", "children": [{ "role": "body", "eclassId": "E9" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u" }], "sourceRange": { "start": { "line": 22, "column": 5 }, "end": { "line": 24, "column": 36 } }, "certificateIds": ["C-slots"] }]
+      },
+      {
+        "id": "E5",
+        "type": { "kind": "formula" },
+        "support": [],
+        "effectiveSupport": [],
+        "canonicalNodeId": "N5",
+        "nodes": [{ "id": "N5", "kind": "QuantifierBlock", "displayName": "ALL #0 : User, #1 : Influencer", "children": [{ "role": "body", "eclassId": "E10" }], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "binder", "type": "User", "sourceBinder": "u" }, { "slotId": "#1", "role": "binder", "type": "Influencer", "sourceBinder": "i" }], "sourceRange": { "start": { "line": 26, "column": 5 }, "end": { "line": 29, "column": 35 } }, "certificateIds": ["C-slots"] }]
+      },
+      {
+        "id": "E6",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }, { "id": "#2", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }, { "id": "#2", "type": "User" }],
+        "canonicalNodeId": "N6",
+        "nodes": [
+          { "id": "N6", "kind": "OrContainer", "displayName": "OR", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "follows source", "type": "User" }, { "slotId": "#1", "role": "suggested target", "type": "User" }, { "slotId": "#2", "role": "path witness", "type": "User" }], "container": { "kind": "ACI", "operator": "OR", "duplicateElimination": true, "orderInsensitive": true, "flattened": true }, "displayText": "NOT antecedent OR #1 in #0.suggested", "certificateIds": ["C-implies"] },
+          { "id": "N6-source", "kind": "Implies", "displayName": "IMPLIES", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "type": "User" }, { "slotId": "#1", "type": "User" }, { "slotId": "#2", "type": "User" }], "certificateIds": ["C-implies"] }
+        ],
+        "invariantStatus": [{ "id": "I6", "name": "implicit negation eliminated", "status": "pass" }]
+      },
+      {
+        "id": "E7",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N7",
+        "nodes": [{ "id": "N7", "kind": "NotMembership", "displayName": "#0 NOT IN #0.suggested", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "source and target", "type": "User" }] }]
+      },
+      {
+        "id": "E8",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "User" }],
+        "canonicalNodeId": "N8",
+        "nodes": [{ "id": "N8", "kind": "OrContainer", "displayName": "OR", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "follows source", "type": "User" }, { "slotId": "#1", "role": "follows target", "type": "User" }], "container": { "kind": "ACI", "operator": "OR", "duplicateElimination": true, "orderInsensitive": true, "flattened": true }, "certificateIds": ["C-implies"] }],
+        "invariantStatus": [{ "id": "I8", "name": "certificate completeness", "status": "unknown", "message": "The mock fixture omits low-level congruence premises." }]
+      },
+      {
+        "id": "E9",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }],
+        "canonicalNodeId": "N9",
+        "nodes": [{ "id": "N9", "kind": "OrContainer", "displayName": "OR cardinalities", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "cardinality owner", "type": "User" }], "container": { "kind": "ACI", "operator": "OR", "duplicateElimination": true, "orderInsensitive": true, "flattened": true }, "certificateIds": ["C-implies"] }]
+      },
+      {
+        "id": "E10",
+        "type": { "kind": "formula" },
+        "support": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "Influencer" }],
+        "effectiveSupport": [{ "id": "#0", "type": "User" }, { "id": "#1", "type": "Influencer" }],
+        "canonicalNodeId": "N10",
+        "nodes": [{ "id": "N10", "kind": "NotMembership", "displayName": "#1 NOT IN #0.suggested", "children": [], "type": { "kind": "formula" }, "slots": [{ "slotId": "#0", "role": "suggested source", "type": "User" }, { "slotId": "#1", "role": "candidate", "type": "Influencer" }] }]
+      }
+    ],
+    "saturation": {
+      "saturated": true,
+      "stopReason": "fixed point",
+      "rounds": [
+        { "index": 0, "eclassCount": 11, "enodeCount": 11, "merges": 0 },
+        { "index": 1, "eclassCount": 11, "enodeCount": 13, "merges": 2, "rebuilds": 1 },
+        { "index": 2, "eclassCount": 11, "enodeCount": 13, "merges": 0, "rebuilds": 0 }
+      ]
+    }
+  },
+  "sourceMappings": [
+    { "id": "M-root", "sourceRange": { "start": { "line": 9, "column": 5 }, "end": { "line": 29, "column": 35 } }, "eclassIds": ["E0"], "enodeIds": ["N0", "N0-source"], "stageId": "source", "kind": "origin" },
+    { "id": "M-q0", "sourceRange": { "start": { "line": 9, "column": 5 }, "end": { "line": 13, "column": 38 } }, "eclassIds": ["E1", "E6"], "enodeIds": ["N1", "N6", "N6-source"], "kind": "origin" },
+    { "id": "M-u1", "sourceRange": { "start": { "line": 9, "column": 9 }, "end": { "line": 9, "column": 11 } }, "eclassIds": ["E1", "E6"], "enodeIds": ["N1", "N6"], "stageId": "binders", "kind": "binder" },
+    { "id": "M-u2", "sourceRange": { "start": { "line": 9, "column": 13 }, "end": { "line": 9, "column": 15 } }, "eclassIds": ["E1", "E6"], "enodeIds": ["N1", "N6"], "stageId": "binders", "kind": "binder" },
+    { "id": "M-u3", "sourceRange": { "start": { "line": 9, "column": 17 }, "end": { "line": 9, "column": 19 } }, "eclassIds": ["E1", "E6"], "enodeIds": ["N1", "N6"], "stageId": "binders", "kind": "binder" },
+    { "id": "M-q1", "sourceRange": { "start": { "line": 15, "column": 5 }, "end": { "line": 16, "column": 29 } }, "eclassIds": ["E2", "E7"], "enodeIds": ["N2", "N7"], "kind": "origin" },
+    { "id": "M-q2", "sourceRange": { "start": { "line": 18, "column": 5 }, "end": { "line": 20, "column": 42 } }, "eclassIds": ["E3", "E8"], "enodeIds": ["N3", "N8"], "kind": "origin" },
+    { "id": "M-q3", "sourceRange": { "start": { "line": 22, "column": 5 }, "end": { "line": 24, "column": 36 } }, "eclassIds": ["E4", "E9"], "enodeIds": ["N4", "N9"], "kind": "origin" },
+    { "id": "M-q4", "sourceRange": { "start": { "line": 26, "column": 5 }, "end": { "line": 29, "column": 35 } }, "eclassIds": ["E5", "E10"], "enodeIds": ["N5", "N10"], "kind": "origin" },
+    { "id": "M-influencer", "sourceRange": { "start": { "line": 28, "column": 13 }, "end": { "line": 28, "column": 23 } }, "eclassIds": ["E5", "E10"], "enodeIds": ["N5", "N10"], "stageId": "binders", "kind": "binder" }
+  ],
+  "trace": [
+    { "id": "T0", "index": 0, "kind": "normalize", "summary": "Resolve field and predicate invocations", "afterEClassIds": ["E0"], "stageId": "invocations" },
+    { "id": "T1", "index": 1, "kind": "normalize", "rule": "port-schema", "summary": "Normalize relation and formula ports", "afterEClassIds": ["E0", "E1", "E2", "E3", "E4", "E5"], "stageId": "ports" },
+    { "id": "T2", "index": 2, "kind": "rewrite", "rule": "implies-elimination", "summary": "Rewrite the first implication", "beforeENodeIds": ["N6-source"], "afterENodeIds": ["N6"], "afterEClassIds": ["E6"], "certificateIds": ["C-implies"], "stageId": "logical" },
+    { "id": "T3", "index": 3, "kind": "rewrite", "rule": "implies-elimination", "summary": "Rewrite remaining implication branches", "afterEClassIds": ["E8", "E9"], "certificateIds": ["C-implies"], "stageId": "logical" },
+    { "id": "T4", "index": 4, "kind": "normalize", "rule": "NNF", "summary": "Push explicit and implicit negations to atoms", "afterEClassIds": ["E6", "E8", "E9"], "stageId": "nnf" },
+    { "id": "T5", "index": 5, "kind": "slot-map", "rule": "alpha-normalize", "summary": "Map u1, u2, u3 to #0, #1, #2", "afterEClassIds": ["E1", "E6"], "certificateIds": ["C-slots"], "stageId": "binders" },
+    { "id": "T6", "index": 6, "kind": "slot-map", "rule": "alpha-normalize", "summary": "Normalize each local quantified scope", "afterEClassIds": ["E2", "E3", "E4", "E5"], "certificateIds": ["C-slots"], "stageId": "binders" },
+    { "id": "T7", "index": 7, "kind": "normalize", "rule": "effective-support", "summary": "Remove redundant quantified coordinates", "afterEClassIds": ["E1", "E2", "E3", "E4", "E5"], "certificateIds": ["C-kernel"], "stageId": "kernel" },
+    { "id": "T8", "index": 8, "kind": "canonicalize", "rule": "ACI", "summary": "Canonicalize root conjunction as an ACI set", "afterEClassIds": ["E0"], "afterENodeIds": ["N0"], "certificateIds": ["C-aci-root"], "stageId": "canonical" },
+    { "id": "T9", "index": 9, "kind": "merge", "summary": "Merge source and normalized root members", "afterEClassIds": ["E0"], "afterENodeIds": ["N0", "N0-source"], "certificateIds": ["C-aci-root"], "stageId": "egraph" },
+    { "id": "T10", "index": 10, "kind": "rebuild", "summary": "Rebuild parent congruence records", "afterEClassIds": ["E0", "E1"], "stageId": "saturated" },
+    { "id": "T11", "index": 11, "kind": "canonicalize", "summary": "Select canonical node N0", "afterEClassIds": ["E0"], "afterENodeIds": ["N0"], "stageId": "canonical" }
+  ],
+  "certificates": [
+    {
+      "id": "C-aci-root",
+      "kind": "ACI-normalization",
+      "title": "Root conjunction normalization",
+      "summary": "The paragraph conjunction is represented by an associative, commutative, idempotent container.",
+      "premises": [{ "text": "PARAGRAPHS(Q0,Q1,Q2,Q3,Q4)", "entityIds": ["N0-source"] }],
+      "conclusion": { "text": "AND{Q0,Q1,Q2,Q3,Q4}", "entityIds": ["N0"] },
+      "steps": [
+        { "index": 1, "rule": "flatten", "summary": "Flatten conjunction operands" },
+        { "index": 2, "rule": "quotient", "summary": "Quotient each operand" },
+        { "index": 3, "rule": "deduplicate", "summary": "Remove duplicate operand classes" }
+      ]
+    },
+    {
+      "id": "C-slots",
+      "kind": "slot-bijection",
+      "title": "Quantified slot assignment",
+      "summary": "One global descriptor-compatible action assigns readable slots within each binder scope.",
+      "conclusion": { "text": "u1,u2,u3 -> #0,#1,#2", "entityIds": ["E1", "N1"], "slotIds": ["#0", "#1", "#2"] },
+      "steps": [{ "index": 1, "rule": "typed-bijection", "summary": "Apply a type-preserving binder permutation", "entityIds": ["N1"] }]
+    },
+    {
+      "id": "C-implies",
+      "kind": "rewrite",
+      "title": "Implication elimination",
+      "summary": "The backend rewrites the branch connective before prenex movement.",
+      "premises": [{ "text": "A implies B", "entityIds": ["N6-source"] }],
+      "conclusion": { "text": "not A or B", "entityIds": ["N6"] },
+      "steps": [{ "index": 1, "rule": "implies-elimination", "summary": "Replace implication by disjunction with the left branch negated" }]
+    },
+    {
+      "id": "C-kernel",
+      "kind": "source-to-kernel",
+      "title": "Effective support kernel",
+      "summary": "The backend certifies each exact-context kernel and support inclusion.",
+      "conclusion": { "text": "source = iota(sigma(kernel))", "entityIds": ["E0"] }
+    },
+    {
+      "id": "C-custom",
+      "kind": "future-proof-kind",
+      "summary": "Unknown certificate kinds remain available as generic structured evidence.",
+      "metadata": { "producer": "mock", "opaqueField": 17 }
+    }
+  ],
+  "diagnostics": [],
+  "statistics": { "parseMs": 1.8, "normalizationMs": 4.2, "saturationMs": 3.7, "totalMs": 10.4, "eclassCount": 11, "enodeCount": 13, "mergeCount": 2, "saturationRounds": 3, "rootReachableEClassCount": 11 }
+}
