@@ -282,6 +282,8 @@ export const EGraphAnalysisSchema = z.object({
 }).passthrough().superRefine((analysis, context) => {
   const eclassIds = new Set<string>();
   const enodeIds = new Set<string>();
+  const enodeOwners = new Map<string, string>();
+  const enodeTargets = new Map<string, Set<string>>();
 
   analysis.graph.eclasses.forEach((eclass, classIndex) => {
     if (eclassIds.has(eclass.id)) {
@@ -304,6 +306,8 @@ export const EGraphAnalysisSchema = z.object({
       }
       enodeIds.add(enode.id);
       memberIds.add(enode.id);
+      enodeOwners.set(enode.id, eclass.id);
+      enodeTargets.set(enode.id, new Set(enode.children.map((child) => child.eclassId)));
     });
 
     for (const [field, value] of [
@@ -369,6 +373,22 @@ export const EGraphAnalysisSchema = z.object({
         path: ["graph", "edges", edgeIndex, "enodeId"],
         message: `Edge e-node ${edge.enodeId} does not reference an e-node.`,
       });
+    } else if (edge.enodeId) {
+      const owner = enodeOwners.get(edge.enodeId);
+      if (owner !== edge.sourceEClassId) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["graph", "edges", edgeIndex, "sourceEClassId"],
+          message: `Edge e-node ${edge.enodeId} belongs to ${owner}, not ${edge.sourceEClassId}.`,
+        });
+      }
+      if (!enodeTargets.get(edge.enodeId)?.has(edge.targetEClassId)) {
+        context.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["graph", "edges", edgeIndex, "targetEClassId"],
+          message: `Edge target ${edge.targetEClassId} is not a child of e-node ${edge.enodeId}.`,
+        });
+      }
     }
   });
 });
@@ -400,7 +420,10 @@ export const ComparisonCallableSchema = z.object({
   originalText: z.string(),
   normalizedText: z.string(),
   canonicalText: z.string(),
-  certifiedStableForm: z.string().min(1),
+  certifiedStableForm: z.string().refine(
+    (value) => value.trim().length > 0,
+    "certifiedStableForm must contain non-whitespace evidence text.",
+  ),
   digest: id,
   representationSize: z.number().int().nonnegative(),
 });

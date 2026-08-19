@@ -146,7 +146,10 @@ describe("live API response boundary", () => {
     const cancelCall = cancelCalls[0];
     expect(cancelCalls).toHaveLength(1);
     expect(cancelCall).toBeDefined();
-    expect(JSON.parse(String(cancelCall?.[1]?.body))).toEqual({ requestId: analysisBody.requestId });
+    expect(JSON.parse(String(cancelCall?.[1]?.body))).toEqual({
+      requestId: analysisBody.requestId,
+      cause: "cancelled",
+    });
   });
 
   it("preserves cancellation when the caller aborts just before timeout", async () => {
@@ -180,8 +183,10 @@ describe("live API response boundary", () => {
     await vi.advanceTimersByTimeAsync(2);
 
     await rejection;
-    expect(fetchMock.mock.calls.filter(([url]) =>
-      String(url).endsWith("/api/v1/jobs/cancel"))).toHaveLength(1);
+    const cancelCalls = fetchMock.mock.calls.filter(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"));
+    expect(cancelCalls).toHaveLength(1);
+    expect(JSON.parse(String(cancelCalls[0]?.[1]?.body))).toMatchObject({ cause: "cancelled" });
   });
 
   it("preserves timeout classification when the caller aborts afterward", async () => {
@@ -215,7 +220,9 @@ describe("live API response boundary", () => {
     await vi.advanceTimersByTimeAsync(2);
 
     await rejection;
-    expect(fetchMock.mock.calls.filter(([url]) =>
-      String(url).endsWith("/api/v1/jobs/cancel"))).toHaveLength(1);
+    const cancelCalls = fetchMock.mock.calls.filter(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"));
+    expect(cancelCalls).toHaveLength(1);
+    expect(JSON.parse(String(cancelCalls[0]?.[1]?.body))).toMatchObject({ cause: "timeout" });
   });
 });

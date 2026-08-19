@@ -1,5 +1,8 @@
 package is.fivefivefive.CanDis;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -11,6 +14,8 @@ import is.fivefivefive.CanDis.metric.RepairProjection;
 import is.fivefivefive.CanDis.metric.RepairView;
 import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
 import is.fivefivefive.CanDis.theory.CertificateExportSession;
+import is.fivefivefive.CanDis.theory.CertificateProvenance;
+import is.fivefivefive.CanDis.theory.CertificateTheoryManifest;
 import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
 
 /**
@@ -45,17 +50,54 @@ public final class CanonicalAlloyPipeline {
      * {@link Prepared#compactForComparison()}.
      */
     public static Prepared prepareForVerification(Multigraph graph) {
-        return prepareForVerification(Canonical.prepare(graph));
+        Canonical.Prepared normalized = Canonical.prepare(graph);
+        byte[] normalizedInput = String.join(
+                "\n", Canonical.irTemporalFol(normalized))
+                .getBytes(StandardCharsets.UTF_8);
+        return prepareForVerification(
+                normalized,
+                "canonical-normalized-ir",
+                normalizedInput);
     }
 
     public static Prepared prepareForVerification(Canonical.Prepared normalized) {
+        byte[] normalizedInput = String.join(
+                "\n", Canonical.irTemporalFol(normalized))
+                .getBytes(StandardCharsets.UTF_8);
+        return prepareForVerification(
+                normalized,
+                "canonical-normalized-ir",
+                normalizedInput);
+    }
+
+    /** Proof-retaining preparation bound to the exact source artifact. */
+    public static Prepared prepareForVerification(
+            Multigraph graph,
+            String inputIdentifier,
+            byte[] inputContent) {
+        return prepareForVerification(
+                Canonical.prepare(graph), inputIdentifier, inputContent);
+    }
+
+    private static Prepared prepareForVerification(
+            Canonical.Prepared normalized,
+            String inputIdentifier,
+            byte[] inputContent) {
         Objects.requireNonNull(normalized, "normalized");
+        Objects.requireNonNull(inputContent, "inputContent");
         RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
-        String commit = System.getProperty("acgn.producer.commit", "unrecorded");
-        boolean dirty = Boolean.parseBoolean(
-                System.getProperty("acgn.producer.dirty", "true"));
+        CertificateProvenance provenance;
+        try {
+            provenance = CertificateProvenance.capture(
+                    inputIdentifier,
+                    inputContent,
+                    PIPELINE_VERSION + ";" + CertificateTheoryManifest.VERSION);
+        } catch (IOException exception) {
+            throw new UncheckedIOException(
+                    "Certificate provenance could not be recorded", exception);
+        }
         TheoryAlloyAdapter.Result result = TheoryAlloyAdapter.adaptForVerification(
-                normalized.normalizedForms(), sink, commit, dirty);
+                normalized.normalizedForms(), sink, provenance);
         return new Prepared(normalized, result);
     }
 

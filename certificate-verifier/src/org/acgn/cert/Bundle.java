@@ -1,5 +1,8 @@
 package org.acgn.cert;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -9,7 +12,11 @@ import java.util.Objects;
 
 /** Strict structural view of one decoded certificate bundle. */
 public final class Bundle {
-    public static final String SCHEMA_VERSION = "acgncert-schema-v1";
+    public static final String SCHEMA_VERSION = "acgncert-schema-v2";
+    public static final String THEORY_ID = "acgn-exact-alloy-theory-v2";
+    public static final String RULE_SET = "phase-j-proof-kernel-v3";
+    public static final String VOCABULARY_POLICY =
+            "typed-content-addressed-uninterpreted-vocabulary-v1";
     private static final List<String> SECTION_TAGS = List.of(
             "metadata",
             "manifest",
@@ -28,6 +35,8 @@ public final class Bundle {
     private final Metadata metadata;
     private final Wire.Node theory;
     private final String theoryDigest;
+    private final Wire.Node vocabulary;
+    private final String vocabularyDigest;
     private final Map<String, Wire.Node> contexts;
     private final Map<String, Wire.Node> embeddings;
     private final Map<String, Wire.Node> terms;
@@ -51,22 +60,56 @@ public final class Bundle {
             root.child(index).requireTag(SECTION_TAGS.get(index));
         }
 
-        Wire.Node metadataNode = root.child(0).requireShape("metadata", 6, 0);
+        Wire.Node metadataNode = root.child(0).requireShape("metadata", 18, 0);
         metadata = new Metadata(
                 metadataNode.scalar(0),
                 parseBoolean(metadataNode.scalar(1), "dirty flag"),
                 metadataNode.scalar(2),
                 metadataNode.scalar(3),
                 metadataNode.scalar(4),
-                metadataNode.scalar(5));
+                metadataNode.scalar(5),
+                metadataNode.scalar(6),
+                metadataNode.scalar(7),
+                metadataNode.scalar(8),
+                metadataNode.scalar(9),
+                metadataNode.scalar(10),
+                metadataNode.scalar(11),
+                metadataNode.scalar(12),
+                metadataNode.scalar(13),
+                metadataNode.scalar(14),
+                metadataNode.scalar(15),
+                metadataNode.scalar(16),
+                metadataNode.scalar(17));
 
-        Wire.Node manifest = root.child(1).requireShape("manifest", 1, 1);
-        theory = manifest.child(0).requireTag("theory");
+        Wire.Node manifest = root.child(1).requireShape("manifest", 2, 2);
+        theory = manifest.child(0).requireShape("theory", 3, 1);
+        if (!List.of(THEORY_ID, RULE_SET, VOCABULARY_POLICY)
+                .equals(theory.scalars())) {
+            throw new FormatException(
+                    FailureCode.THEORY_MISMATCH,
+                    "Bundle does not declare the reviewed schema-v2 theory");
+        }
+        theory.child(0).requireTag("axioms");
         theoryDigest = Wire.contentId(theory);
         if (!theoryDigest.equals(manifest.scalar(0))) {
             throw new FormatException(
                     FailureCode.DIGEST_MISMATCH,
                     "Theory manifest digest does not match its complete content");
+        }
+        vocabulary = manifest.child(1).requireShape("vocabulary", 1, 3);
+        if (!VOCABULARY_POLICY.equals(vocabulary.scalar(0))) {
+            throw new FormatException(
+                    FailureCode.THEORY_MISMATCH,
+                    "Bundle vocabulary does not use the reviewed declaration policy");
+        }
+        vocabulary.child(0).requireTag("schemas");
+        vocabulary.child(1).requireTag("operators");
+        vocabulary.child(2).requireTag("binders");
+        vocabularyDigest = Wire.contentId(vocabulary);
+        if (!vocabularyDigest.equals(manifest.scalar(1))) {
+            throw new FormatException(
+                    FailureCode.DIGEST_MISMATCH,
+                    "Vocabulary digest does not match its complete content");
         }
 
         contexts = indexedTable(root.child(2), "contexts", "context", true);
@@ -233,6 +276,14 @@ public final class Bundle {
         return theoryDigest;
     }
 
+    public Wire.Node vocabulary() {
+        return vocabulary;
+    }
+
+    public String vocabularyDigest() {
+        return vocabularyDigest;
+    }
+
     public Map<String, Wire.Node> contexts() {
         return contexts;
     }
@@ -279,13 +330,88 @@ public final class Bundle {
             String producerVersion,
             String componentVersions,
             String runId,
-            String createdAt) {
+            String createdAt,
+            String mode,
+            String javaSourceSha256,
+            String producerJarSha256,
+            String dependencyHashes,
+            String inputIdentifier,
+            String inputSha256,
+            String exporterSourceSha256,
+            String verifierVersion,
+            String verifierSourceSha256,
+            String verifierJarSha256,
+            String configuration,
+            String configurationSha256) {
         public Metadata {
-            Objects.requireNonNull(producerCommit, "producerCommit");
-            Objects.requireNonNull(producerVersion, "producerVersion");
-            Objects.requireNonNull(componentVersions, "componentVersions");
-            Objects.requireNonNull(runId, "runId");
-            Objects.requireNonNull(createdAt, "createdAt");
+            requireMetadataText(producerCommit, "producer commit");
+            requireMetadataText(producerVersion, "producer version");
+            requireMetadataText(componentVersions, "component versions");
+            requireMetadataText(runId, "run ID");
+            requireMetadataText(createdAt, "creation time");
+            requireMetadataText(mode, "provenance mode");
+            requireDigest(javaSourceSha256, "Java source hash");
+            requireDigest(producerJarSha256, "producer JAR hash");
+            requireMetadataText(dependencyHashes, "dependency hashes");
+            requireMetadataText(inputIdentifier, "input identifier");
+            requireDigest(inputSha256, "input hash");
+            requireDigest(exporterSourceSha256, "exporter source hash");
+            requireMetadataText(verifierVersion, "verifier version");
+            requireDigest(verifierSourceSha256, "verifier source hash");
+            requireDigest(verifierJarSha256, "verifier JAR hash");
+            requireMetadataText(configuration, "configuration");
+            requireDigest(configurationSha256, "configuration hash");
+            if (!configurationSha256.equals(sha256(configuration))) {
+                throw new FormatException(
+                        FailureCode.DIGEST_MISMATCH,
+                        "Configuration provenance hash is stale");
+            }
+            if (!mode.equals("PUBLICATION") && !mode.equals("TEST_ONLY")) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Unknown provenance mode " + mode);
+            }
+            if (mode.equals("PUBLICATION") && dirty) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Publication provenance cannot describe a dirty worktree");
+            }
+        }
+    }
+
+    private static String requireMetadataText(String value, String label) {
+        if (value == null || value.isEmpty()) {
+            throw new FormatException(
+                    FailureCode.INVALID_RECORD_SHAPE, label + " must be nonempty");
+        }
+        return value;
+    }
+
+    private static void requireDigest(String value, String label) {
+        requireMetadataText(value, label);
+        if (value.length() != 64) {
+            throw new FormatException(
+                    FailureCode.INVALID_RECORD_SHAPE,
+                    label + " must be a SHA-256 digest");
+        }
+        for (int index = 0; index < value.length(); index++) {
+            char character = value.charAt(index);
+            if (!((character >= '0' && character <= '9')
+                    || (character >= 'a' && character <= 'f'))) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        label + " must be lowercase hexadecimal");
+            }
+        }
+    }
+
+    private static String sha256(String value) {
+        try {
+            return java.util.HexFormat.of().formatHex(
+                    MessageDigest.getInstance("SHA-256").digest(
+                            value.getBytes(StandardCharsets.UTF_8)));
+        } catch (NoSuchAlgorithmException exception) {
+            throw new AssertionError("JDK 17 must provide SHA-256", exception);
         }
     }
 }

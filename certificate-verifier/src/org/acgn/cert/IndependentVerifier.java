@@ -1,7 +1,10 @@
 package org.acgn.cert;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /** Public fail-closed entry point; no producer object crosses this boundary. */
 public final class IndependentVerifier {
@@ -66,6 +69,11 @@ public final class IndependentVerifier {
                         FailureCode.MISSING_PAIR_DERIVATION,
                         "Verified bundles do not expose a compatible common canonical kernel");
             }
+            requireCompatibleVocabulary(
+                    leftEndpoint.representative,
+                    left.model,
+                    rightEndpoint.representative,
+                    right.model);
             if (!leftEndpoint.replay.right().id().equals(leftEndpoint.orbit.left().id())
                     || !rightEndpoint.replay.right().id().equals(
                             rightEndpoint.orbit.left().id())) {
@@ -172,6 +180,81 @@ public final class IndependentVerifier {
                 "Published root has no source-to-common-kernel derivation");
     }
 
+    /** Prevents equal local IDs from disguising different per-bundle declarations. */
+    private static void requireCompatibleVocabulary(
+            KernelModel.Term left,
+            KernelModel leftModel,
+            KernelModel.Term right,
+            KernelModel rightModel) {
+        ArrayDeque<TermPair> work = new ArrayDeque<>();
+        Set<String> visited = new HashSet<>();
+        work.add(new TermPair(left, right));
+        while (!work.isEmpty()) {
+            TermPair pair = work.removeFirst();
+            String visitKey = pair.left.id() + "\u0000" + pair.right.id();
+            if (!visited.add(visitKey)) {
+                continue;
+            }
+            if (pair.left.kind() != pair.right.kind()
+                    || !pair.left.symbol().equals(pair.right.symbol())
+                    || pair.left.children().size() != pair.right.children().size()) {
+                throw new FormatException(
+                        FailureCode.THEORY_MISMATCH,
+                        "Common representative has incompatible term declarations");
+            }
+            switch (pair.left.kind()) {
+                case APP -> requireEqualDeclaration(
+                        leftModel.operator(pair.left.symbol()),
+                        rightModel.operator(pair.right.symbol()),
+                        "operator " + pair.left.symbol());
+                case ONE_SLOT, ONE_TERM, SEQ, BAG, SET, BIND, BIND_BLOCK -> {
+                    KernelModel.Schema leftSchema = leftModel.schema(pair.left.symbol());
+                    KernelModel.Schema rightSchema = rightModel.schema(pair.right.symbol());
+                    requireEqualDeclaration(
+                            leftSchema, rightSchema, "schema " + pair.left.symbol());
+                    if (pair.left.kind() == KernelModel.TermKind.BIND_BLOCK) {
+                        requireEqualDeclaration(
+                                leftModel.binder(leftSchema.value()),
+                                rightModel.binder(rightSchema.value()),
+                                "binder " + leftSchema.value());
+                    }
+                }
+                case INVOKE -> {
+                    KernelModel.Witness leftWitness = leftModel.witness(pair.left.symbol());
+                    KernelModel.Witness rightWitness = rightModel.witness(pair.right.symbol());
+                    if (!leftWitness.context().equals(rightWitness.context())
+                            || !leftWitness.type().equals(rightWitness.type())) {
+                        throw new FormatException(
+                                FailureCode.THEORY_MISMATCH,
+                                "Witness " + pair.left.symbol()
+                                        + " has incompatible declarations");
+                    }
+                    work.add(new TermPair(
+                            leftWitness.definition(), rightWitness.definition()));
+                }
+                default -> {
+                    // SLOT, BOUND, and META carry no local declaration records.
+                }
+            }
+            for (int index = 0; index < pair.left.children().size(); index++) {
+                work.add(new TermPair(
+                        leftModel.term(pair.left.children().get(index)),
+                        rightModel.term(pair.right.children().get(index))));
+            }
+        }
+    }
+
+    private static void requireEqualDeclaration(
+            Object left,
+            Object right,
+            String label) {
+        if (!left.equals(right)) {
+            throw new FormatException(
+                    FailureCode.THEORY_MISMATCH,
+                    "Common representative uses incompatible " + label);
+        }
+    }
+
     private record Session(
             Bundle bundle,
             KernelModel model,
@@ -184,5 +267,8 @@ public final class IndependentVerifier {
             KernelVerifier.Judgment orbit,
             KernelModel.Term representative,
             Wire.Node representativeKey) {
+    }
+
+    private record TermPair(KernelModel.Term left, KernelModel.Term right) {
     }
 }

@@ -74,9 +74,11 @@ public final class VisualizationServer {
             requireMethod(exchange, "POST");
             JSONObject request = requestJson(exchange);
             String id = requiredRequestId(request);
-            boolean cancelled = runner.cancel(id);
+            VisualizationProcessRunner.TerminalCause cause = cancellationCause(request);
+            boolean cancelled = runner.cancel(id, cause);
             return new Response(200, new JSONObject()
                     .put("requestId", id)
+                    .put("cause", request.getString("cause"))
                     .put("cancelled", cancelled)
                     .put("status", cancelled ? "cancelling" : "not-running"));
         }));
@@ -108,6 +110,23 @@ public final class VisualizationServer {
             throw new HttpFailure(400, "request_id_required", "requestId is required.");
         }
         return validateRequestId(value);
+    }
+
+    static VisualizationProcessRunner.TerminalCause cancellationCause(
+            JSONObject request) {
+        Object raw = request.opt("cause");
+        if (!(raw instanceof String)) {
+            throw new HttpFailure(
+                    400, "cancellation_cause_required",
+                    "cause must be 'cancelled' or 'timeout'.");
+        }
+        return switch ((String) raw) {
+            case "cancelled" -> VisualizationProcessRunner.TerminalCause.CANCELLED;
+            case "timeout" -> VisualizationProcessRunner.TerminalCause.TIMED_OUT;
+            default -> throw new HttpFailure(
+                    400, "invalid_cancellation_cause",
+                    "cause must be 'cancelled' or 'timeout'.");
+        };
     }
 
     private static String validateRequestId(String value) {
@@ -272,7 +291,7 @@ public final class VisualizationServer {
         }
     }
 
-    private static final class HttpFailure extends RuntimeException {
+    static final class HttpFailure extends RuntimeException {
         private final int status;
         private final String code;
 

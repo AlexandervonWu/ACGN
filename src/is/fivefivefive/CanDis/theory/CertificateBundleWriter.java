@@ -24,7 +24,7 @@ import java.util.TreeMap;
 
 /** Deterministic producer bridge into the standalone {@code .acgncert} schema. */
 public final class CertificateBundleWriter {
-    private static final String SCHEMA_VERSION = "acgncert-schema-v1";
+    private static final String SCHEMA_VERSION = "acgncert-schema-v2";
     private static final int FORMAT_VERSION = 1;
     private static final byte[] MAGIC = new byte[] {
             'A', 'C', 'G', 'N', 'C', 'E', 'R', 'T'
@@ -37,8 +37,8 @@ public final class CertificateBundleWriter {
     public static void write(CertificateExportSession session, Path output)
             throws IOException {
         Objects.requireNonNull(output, "output");
-        Slice slice = requireSupportedSlice(
-                Objects.requireNonNull(session, "session"));
+        Objects.requireNonNull(session, "session").provenance().requirePublishable();
+        Slice slice = requireSupportedSlice(session);
         byte[] encoded = encode(new Assembler(session, slice).build());
         replaceAtomically(output.toAbsolutePath(), encoded);
     }
@@ -498,30 +498,34 @@ public final class CertificateBundleWriter {
             Node unfolding = buildUnfolding(finalSnapshot);
             Node theory = theory();
             String theoryDigest = contentId(theory);
+            Node vocabulary = vocabulary();
+            String vocabularyDigest = contentId(vocabulary);
             Node publication = publication(
                     finalSnapshot, unfolding, theoryDigest);
+            List<String> runIdentity = new ArrayList<>(
+                    session.provenance().identityScalars());
+            runIdentity.add(session.componentVersions());
+            runIdentity.add(session.finalSnapshot().stateKey().stableString());
+            runIdentity.add(session.canonicalObservation().stableString());
+            runIdentity.add(theoryDigest);
+            runIdentity.add(vocabularyDigest);
             String runId = contentId(node(
                     "producer-run",
-                    List.of(
-                            session.producerCommit(),
-                            Boolean.toString(session.producerDirty()),
-                            session.componentVersions(),
-                            session.finalSnapshot().stateKey().stableString(),
-                            session.canonicalObservation().stableString()),
+                    runIdentity,
                     List.of()));
             return node(
                     "acgncert-bundle",
                     List.of(SCHEMA_VERSION),
                     List.of(
-                            leaf(
+                            node(
                                     "metadata",
-                                    session.producerCommit(),
-                                    Boolean.toString(session.producerDirty()),
-                                    "phase-j-producer-export-v2",
-                                    session.componentVersions(),
-                                    runId,
-                                    "1970-01-01T00:00:00Z"),
-                            node("manifest", List.of(theoryDigest), List.of(theory)),
+                                    session.provenance().metadataScalars(
+                                            session.componentVersions(), runId),
+                                    List.of()),
+                            node(
+                                    "manifest",
+                                    List.of(theoryDigest, vocabularyDigest),
+                                    List.of(theory, vocabulary)),
                             tables.section("contexts", tables.contexts),
                             tables.section("embeddings", tables.embeddings),
                             tables.section("terms", tables.terms),
@@ -1156,12 +1160,18 @@ public final class CertificateBundleWriter {
         private Node theory() {
             return node(
                     "theory",
-                    List.of("acgn-exact-alloy-theory-v1", "phase-j-one-parent-rules-v2"),
+                    CertificateTheoryManifest.scalars(),
+                    List.of(node("axioms", new ArrayList<>(axioms.values()))));
+        }
+
+        private Node vocabulary() {
+            return node(
+                    "vocabulary",
+                    List.of(CertificateTheoryManifest.VOCABULARY_POLICY),
                     List.of(
                             node("schemas", new ArrayList<>(schemas.values())),
                             node("operators", new ArrayList<>(operators.values())),
-                            node("binders", List.of()),
-                            node("axioms", new ArrayList<>(axioms.values()))));
+                            node("binders", List.of())));
         }
 
         private Node context(TypedSlotContext context) throws IOException {

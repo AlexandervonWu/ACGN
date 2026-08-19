@@ -98,6 +98,62 @@ describe("graph structural references", () => {
     expect(svg).toContain(">right operand</text>");
   });
 
+  it("keeps loop, back, reciprocal, and parallel routes inside the SVG view box", () => {
+    const graph: EGraph = {
+      rootEClassId: "E0",
+      eclasses: [
+        {
+          id: "E0",
+          canonicalNodeId: "N0",
+          nodes: [{
+            id: "N0",
+            kind: "Root",
+            children: [
+              { eclassId: "E0", role: "loop" },
+              { eclassId: "E1", role: "down-one" },
+              { eclassId: "E1", role: "down-two" },
+            ],
+          }],
+        },
+        {
+          id: "E1",
+          canonicalNodeId: "N1",
+          nodes: [{
+            id: "N1",
+            kind: "Child",
+            children: [{ eclassId: "E0", role: "back" }],
+          }],
+        },
+      ],
+      edges: [
+        { id: "loop", sourceEClassId: "E0", targetEClassId: "E0", enodeId: "N0", role: "loop" },
+        { id: "down-one", sourceEClassId: "E0", targetEClassId: "E1", enodeId: "N0", role: "down-one" },
+        { id: "down-two", sourceEClassId: "E0", targetEClassId: "E1", enodeId: "N0", role: "down-two" },
+        { id: "back", sourceEClassId: "E1", targetEClassId: "E0", enodeId: "N1", role: "back" },
+      ],
+    };
+    const svg = buildVisibleGraphSvg(
+      analysisFor(graph),
+      { ...defaultGraphFilters, showCrossLinks: true, depth: "all" },
+      new Set(),
+    );
+    const viewBox = svg.match(/viewBox="([^"]+)"/)?.[1]?.split(" ").map(Number);
+    expect(viewBox).toHaveLength(4);
+    const [x = 0, y = 0, width = 0, height = 0] = viewBox ?? [];
+    const routeData = [...svg.matchAll(/<path d="M ([^"]+)" fill="none"/g)];
+    expect(routeData).toHaveLength(4);
+    expect(routeData.some((match) => match[1]?.includes(" C "))).toBe(true);
+    for (const match of routeData) {
+      const coordinates = match[1]?.match(/-?\d+(?:\.\d+)?/g)?.map(Number) ?? [];
+      for (let index = 0; index + 1 < coordinates.length; index += 2) {
+        expect(coordinates[index]).toBeGreaterThanOrEqual(x);
+        expect(coordinates[index]).toBeLessThanOrEqual(x + width);
+        expect(coordinates[index + 1]).toBeGreaterThanOrEqual(y);
+        expect(coordinates[index + 1]).toBeLessThanOrEqual(y + height);
+      }
+    }
+  });
+
   it("reveals a hidden historical branch, its role, and its reachable target", async () => {
     const graph: EGraph = {
       rootEClassId: "E0",

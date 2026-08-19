@@ -1,9 +1,15 @@
 package org.acgn.cert;
 
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.util.Comparator;
+import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /** Strict parsed-bundle checks over producer-generated bridge fixtures. */
 public final class ProducerBundleInspectionTest {
@@ -13,11 +19,13 @@ public final class ProducerBundleInspectionTest {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 6) {
+        if (args.length != 12) {
             throw new IllegalArgumentException(
                     "usage: ProducerBundleInspectionTest "
                             + "<nullary-a> <nullary-b> <slot-a> <slot-b> "
-                            + "<parent-a> <parent-b>");
+                            + "<parent-a> <parent-b> <equivalent-left> "
+                            + "<equivalent-right> <non-equivalent> "
+                            + "<repo-root> <producer-jar> <verifier-jar>");
         }
         byte[] nullaryA = Files.readAllBytes(Path.of(args[0]));
         byte[] nullaryB = Files.readAllBytes(Path.of(args[1]));
@@ -25,6 +33,9 @@ public final class ProducerBundleInspectionTest {
         byte[] slotB = Files.readAllBytes(Path.of(args[3]));
         byte[] parentA = Files.readAllBytes(Path.of(args[4]));
         byte[] parentB = Files.readAllBytes(Path.of(args[5]));
+        byte[] equivalentLeft = Files.readAllBytes(Path.of(args[6]));
+        byte[] equivalentRight = Files.readAllBytes(Path.of(args[7]));
+        byte[] nonEquivalent = Files.readAllBytes(Path.of(args[8]));
         check(java.util.Arrays.equals(nullaryA, nullaryB),
                 "nullary export is byte deterministic");
         check(java.util.Arrays.equals(slotA, slotB),
@@ -45,10 +56,76 @@ public final class ProducerBundleInspectionTest {
         assertVerified(verifier.verify(
                 parentA, Profile.FULL,
                 VerificationPolicy.trust(parent.theoryDigest())), "parent FULL");
+        Bundle equivalentLeftBundle = decode(equivalentLeft);
+        Bundle equivalentRightBundle = decode(equivalentRight);
+        Path repo = Path.of(args[9]).toAbsolutePath().normalize();
+        String expectedCommit = command(repo, "git", "rev-parse", "HEAD");
+        boolean expectedDirty = !command(
+                repo, "git", "status", "--porcelain", "--untracked-files=all").isEmpty();
+        String sourceHash = fingerprint(repo.resolve("src"), ".java");
+        String producerJarHash = sha256(Path.of(args[10]));
+        String verifierJarHash = sha256(Path.of(args[11]));
+        String dependencyHashes = dependencyHashes(repo.resolve("lib"));
+        for (Bundle bundle : List.of(
+                nullary, slot, parent, equivalentLeftBundle, equivalentRightBundle)) {
+            Bundle.Metadata metadata = bundle.metadata();
+            check(metadata.producerCommit().equals(expectedCommit),
+                    "producer provenance uses the current Git commit");
+            check(metadata.dirty() == expectedDirty,
+                    "producer provenance uses the current Git cleanliness");
+            check(metadata.mode().equals("TEST_ONLY"),
+                    "fixture provenance is visibly test-only");
+            check(metadata.javaSourceSha256().equals(sourceHash),
+                    "producer provenance binds current Java sources");
+            check(metadata.producerJarSha256().equals(producerJarHash),
+                    "producer provenance binds the compiled producer JAR");
+            check(metadata.verifierJarSha256().equals(verifierJarHash),
+                    "producer provenance binds the standalone verifier JAR");
+            check(metadata.dependencyHashes().equals(dependencyHashes),
+                    "producer provenance binds every dependency JAR");
+        }
+        check(!java.util.Arrays.equals(equivalentLeft, equivalentRight),
+                "principal PAIR inputs have distinct source-bound bytes");
+        check(!equivalentLeftBundle.metadata().inputIdentifier().equals(
+                        equivalentRightBundle.metadata().inputIdentifier()),
+                "principal PAIR inputs retain distinct source identities");
+        check(equivalentLeftBundle.metadata().inputSha256().equals(
+                        sha256("pred left { pair_equivalent }")),
+                "left PAIR input hash is exact");
+        check(equivalentRightBundle.metadata().inputSha256().equals(
+                        sha256("pred right { pair_equivalent }")),
+                "right PAIR input hash is exact");
+        check(equivalentLeftBundle.theoryDigest().equals(
+                        equivalentRightBundle.theoryDigest()),
+                "principal PAIR inputs share the reviewed theory");
         assertVerified(verifier.verifyPair(
-                nullaryA,
-                nullaryB,
-                VerificationPolicy.trust(nullary.theoryDigest())), "nullary PAIR");
+                equivalentLeft,
+                equivalentRight,
+                VerificationPolicy.trust(equivalentLeftBundle.theoryDigest())),
+                "distinct equivalent PAIR");
+
+        VerificationResult nonEquivalentResult = verifier.verifyPair(
+                equivalentLeft,
+                nonEquivalent,
+                VerificationPolicy.trust(equivalentLeftBundle.theoryDigest()));
+        check(nonEquivalentResult.outcome() == Outcome.UNCHECKABLE
+                        && nonEquivalentResult.code()
+                                == FailureCode.MISSING_PAIR_DERIVATION,
+                "distinct non-equivalent PAIR has the justified non-success status");
+
+        byte[] incompatible = withIncompatibleTheory(equivalentRight);
+        UncheckedTheoryBundle incompatibleBundle = decodeUncheckedTheory(incompatible);
+        VerificationResult incompatibleResult = verifier.verifyPair(
+                equivalentLeft,
+                incompatible,
+                new VerificationPolicy(
+                        Set.of(
+                                equivalentLeftBundle.theoryDigest(),
+                                incompatibleBundle.theoryDigest()),
+                        Limits.defaults()));
+        check(incompatibleResult.outcome() == Outcome.REJECTED
+                        && incompatibleResult.code() == FailureCode.THEORY_MISMATCH,
+                "incompatible theory metadata cannot verify");
 
         check(slot.contexts().values().stream()
                         .anyMatch(context -> context.children().size() == 1),
@@ -57,7 +134,7 @@ public final class ProducerBundleInspectionTest {
                         .anyMatch(term -> "ONE_SLOT".equals(term.scalar(1))),
                 "slot fixture contains ONE_SLOT");
 
-        Wire.Node schemaSection = parent.theory().child(0);
+        Wire.Node schemaSection = parent.vocabulary().child(0);
         check(schemaSection.children().stream().anyMatch(schema ->
                         "ONE".equals(schema.scalar(1))
                                 && ("T".equals(schema.scalar(2))
@@ -66,7 +143,7 @@ public final class ProducerBundleInspectionTest {
         java.util.Map<String, String> schemaTypes = schemaSection.children().stream()
                 .collect(java.util.stream.Collectors.toMap(
                         schema -> schema.scalar(0), schema -> schema.scalar(2)));
-        Wire.Node operatorSection = parent.theory().child(1);
+        Wire.Node operatorSection = parent.vocabulary().child(1);
         check(operatorSection.children().size() == 3,
                 "parent fixture declares left, right, and wrap operators");
         List<String> operatorInputTypes = operatorSection.children().stream()
@@ -75,7 +152,7 @@ public final class ProducerBundleInspectionTest {
                 .toList();
         check(operatorInputTypes.equals(List.of("Bool", "T", "T")),
                 "operator references are exactly One(Bool), One(T), One(T)");
-        check(parent.theory().child(3).children().size() == 1,
+        check(parent.theory().child(0).children().size() == 1,
                 "parent fixture registers exactly one ground axiom");
         Set<String> termKinds = parent.terms().values().stream()
                 .map(term -> term.scalar(1)).collect(java.util.stream.Collectors.toSet());
@@ -133,6 +210,104 @@ public final class ProducerBundleInspectionTest {
 
     private static Bundle decode(byte[] bytes) {
         return Bundle.parse(Codec.decode(bytes, Limits.defaults()));
+    }
+
+    private static UncheckedTheoryBundle decodeUncheckedTheory(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node manifest = root.child(1);
+        return new UncheckedTheoryBundle(manifest.scalar(0));
+    }
+
+    private static byte[] withIncompatibleTheory(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node manifest = root.child(1);
+        Wire.Node incompatibleTheory = Wire.node(
+                "theory",
+                List.of("incompatible-test-theory", Bundle.RULE_SET,
+                        Bundle.VOCABULARY_POLICY),
+                List.of(manifest.child(0).child(0)));
+        String digest = Wire.contentId(incompatibleTheory);
+        Wire.Node replacement = Wire.node(
+                "manifest",
+                List.of(digest, manifest.scalar(1)),
+                List.of(incompatibleTheory, manifest.child(1)));
+        List<Wire.Node> children = new java.util.ArrayList<>(root.children());
+        children.set(1, replacement);
+        return Codec.encode(Wire.node(root.tag(), root.scalars(), children));
+    }
+
+    private static String command(Path directory, String... command) throws Exception {
+        Process process = new ProcessBuilder(command)
+                .directory(directory.toFile())
+                .redirectErrorStream(true)
+                .start();
+        String output = new String(
+                process.getInputStream().readAllBytes(), StandardCharsets.UTF_8).trim();
+        if (process.waitFor() != 0) {
+            throw new AssertionError("provenance command failed: " + output);
+        }
+        return output;
+    }
+
+    private static String dependencyHashes(Path directory) throws Exception {
+        List<Path> jars;
+        try (Stream<Path> stream = Files.walk(directory)) {
+            jars = stream.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().endsWith(".jar"))
+                    .sorted(Comparator.comparing(path -> directory.relativize(path).toString()))
+                    .toList();
+        }
+        List<String> entries = new java.util.ArrayList<>();
+        for (Path jar : jars) {
+            entries.add(directory.relativize(jar).toString().replace('\\', '/')
+                    + "=" + sha256(jar));
+        }
+        return String.join(";", entries);
+    }
+
+    private static String fingerprint(Path root, String suffix) throws Exception {
+        List<Path> files;
+        try (Stream<Path> stream = Files.walk(root)) {
+            files = stream.filter(Files::isRegularFile)
+                    .filter(path -> path.getFileName().toString().endsWith(suffix))
+                    .sorted(Comparator.comparing(path -> root.relativize(path).toString()))
+                    .toList();
+        }
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        for (Path file : files) {
+            digest.update(root.relativize(file).toString().replace('\\', '/')
+                    .getBytes(StandardCharsets.UTF_8));
+            digest.update((byte) 0);
+            update(digest, file);
+            digest.update((byte) 0xff);
+        }
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static String sha256(Path path) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        update(digest, path);
+        return HexFormat.of().formatHex(digest.digest());
+    }
+
+    private static String sha256(String value) throws Exception {
+        return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
+                .digest(value.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    private static void update(MessageDigest digest, Path path) throws Exception {
+        byte[] buffer = new byte[64 * 1024];
+        try (InputStream input = Files.newInputStream(path)) {
+            int read;
+            while ((read = input.read(buffer)) >= 0) {
+                if (read > 0) {
+                    digest.update(buffer, 0, read);
+                }
+            }
+        }
+    }
+
+    private record UncheckedTheoryBundle(String theoryDigest) {
     }
 
     private static void assertVerified(VerificationResult result, String label) {

@@ -55,7 +55,9 @@ function newRequestId(): string {
   return `viz-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
-function cancelRemoteRequest(requestId: string): void {
+type RequestTerminalCause = "cancelled" | "timeout";
+
+function cancelRemoteRequest(requestId: string, cause: RequestTerminalCause): void {
   try {
     void fetch(`${requireBaseUrl()}/api/v1/jobs/cancel`, {
       method: "POST",
@@ -64,14 +66,12 @@ function cancelRemoteRequest(requestId: string): void {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ requestId }),
+      body: JSON.stringify({ requestId, cause }),
     }).catch(() => undefined);
   } catch {
     // The local abort still succeeds when the backend is already unreachable.
   }
 }
-
-type RequestTerminalCause = "cancelled" | "timeout";
 
 function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   const controller = new AbortController();
@@ -170,8 +170,10 @@ async function request<TSchema extends ZodTypeAny>(
   let workerCancellationSent = false;
   const cancelWorker = requestId ? () => {
     if (workerCancellationSent) return;
+    const cause = timer.terminalCause();
+    if (!cause) return;
     workerCancellationSent = true;
-    cancelRemoteRequest(requestId);
+    cancelRemoteRequest(requestId, cause);
   } : undefined;
   if (cancelWorker) {
     if (timer.signal.aborted) cancelWorker();

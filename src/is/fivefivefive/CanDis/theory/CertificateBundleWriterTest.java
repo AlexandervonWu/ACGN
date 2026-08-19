@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -27,9 +28,24 @@ public final class CertificateBundleWriterTest {
         CertificateExportSession nullary = singleFresh(constant("nullary"));
         CertificateExportSession slot = singleFresh(slotLeaf("slot-only"));
         CertificateExportSession parent = parentPathFixture();
+        CertificateExportSession equivalentLeft = singleFresh(
+                constant("pair-equivalent"),
+                "fixture/pair-equivalent-left.als",
+                "pred left { pair_equivalent }");
+        CertificateExportSession equivalentRight = singleFresh(
+                constant("pair-equivalent"),
+                "fixture/pair-equivalent-right.als",
+                "pred right { pair_equivalent }");
+        CertificateExportSession nonEquivalent = singleFresh(
+                constant("pair-non-equivalent"),
+                "fixture/pair-non-equivalent.als",
+                "pred right { pair_non_equivalent }");
         exportTwice(nullary, output, "nullary");
         exportTwice(slot, output, "slot-only");
         exportTwice(parent, output, "parent-path");
+        exportOnce(equivalentLeft, output, "pair-equivalent-left");
+        exportOnce(equivalentRight, output, "pair-equivalent-right");
+        exportOnce(nonEquivalent, output, "pair-non-equivalent");
 
         assertUnsupportedPreservesTarget(
                 repeatedSameTypeFixture(), output.resolve("unsupported-repeated-slot.acgncert"));
@@ -78,6 +94,16 @@ public final class CertificateBundleWriterTest {
     }
 
     private static CertificateExportSession singleFresh(TypedENode source) {
+        return singleFresh(
+                source,
+                "fixture/" + source.operator().structuralKey().stableString(),
+                source.structuralKey().stableString());
+    }
+
+    private static CertificateExportSession singleFresh(
+            TypedENode source,
+            String inputIdentifier,
+            String inputContent) {
         FreshFixture fixture = freshFixture(source);
         return session(
                 fixture.sink(),
@@ -85,7 +111,9 @@ public final class CertificateBundleWriterTest {
                 fixture.insertion().returnedInvocation(),
                 fixture.family(),
                 List.of(fixture.unfolding()),
-                Map.of());
+                Map.of(),
+                inputIdentifier,
+                inputContent);
     }
 
     private static FreshFixture freshFixture(TypedENode source) {
@@ -182,7 +210,9 @@ public final class CertificateBundleWriterTest {
                 wrapped.returnedInvocation(),
                 family,
                 List.of(selected),
-                Map.of());
+                Map.of(),
+                "fixture/parent-path",
+                "parent-path-fixture");
     }
 
     private static CertificateExportSession repeatedSameTypeFixture() {
@@ -210,7 +240,9 @@ public final class CertificateBundleWriterTest {
                 fixture.insertion().returnedInvocation(),
                 fixture.family(),
                 List.of(fixture.unfolding(), fixture.unfolding()),
-                Map.of());
+                Map.of(),
+                "fixture/multiple-unfoldings",
+                "multiple-unfoldings-fixture");
     }
 
     private static CertificateExportSession insertionCollisionFixture() {
@@ -232,7 +264,9 @@ public final class CertificateBundleWriterTest {
                 collision.returnedInvocation(),
                 family,
                 List.of(tree),
-                Map.of());
+                Map.of(),
+                "fixture/insertion-collision",
+                "insertion-collision-fixture");
     }
 
     private static CertificateExportSession containerRegistryFixture(
@@ -250,7 +284,9 @@ public final class CertificateBundleWriterTest {
                 fixture.insertion().returnedInvocation(),
                 fixture.family(),
                 List.of(fixture.unfolding()),
-                Map.of(kind.name(), List.of(declaration)));
+                Map.of(kind.name(), List.of(declaration)),
+                "fixture/container-" + kind.name(),
+                "container-" + kind.name());
     }
 
     private static CertificateExportSession unsupportedEventFixture(
@@ -269,7 +305,9 @@ public final class CertificateBundleWriterTest {
                 fixture.insertion().returnedInvocation(),
                 fixture.family(),
                 List.of(fixture.unfolding()),
-                Map.of());
+                Map.of(),
+                "fixture/event-" + kind.name(),
+                "event-" + kind.name());
     }
 
     private static CertificateExportSession session(
@@ -278,22 +316,31 @@ public final class CertificateBundleWriterTest {
             TypedInvocation root,
             CoherentWitnessFamily family,
             List<? extends FiniteUnfoldingTree> unfoldings,
-            Map<String, ? extends List<ContainerLawDeclaration>> containerLaws) {
+            Map<String, ? extends List<ContainerLawDeclaration>> containerLaws,
+            String inputIdentifier,
+            String inputContent) {
         CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
                 root,
                 graph.classes(),
                 family,
                 unfoldings,
                 Map.of());
-        return new CertificateExportSession(
-                sink,
-                graph,
-                artifact,
-                unfoldings.get(0).normalizedTermKey(),
-                containerLaws,
-                "e0e4320766518c110ab0b8c37fe772e02eb04249",
-                false,
-                "certificate-writer-fixture-v2");
+        try {
+            return new CertificateExportSession(
+                    sink,
+                    graph,
+                    artifact,
+                    unfoldings.get(0).normalizedTermKey(),
+                    containerLaws,
+                    CertificateProvenance.capture(
+                            inputIdentifier,
+                            inputContent.getBytes(StandardCharsets.UTF_8),
+                            "certificate-writer-fixture-v3;"
+                                    + CertificateTheoryManifest.VERSION),
+                    "certificate-writer-fixture-v3");
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
     }
 
     private static TypedENode constant(String name) {
@@ -395,6 +442,13 @@ public final class CertificateBundleWriterTest {
                 name + " exports are byte deterministic");
     }
 
+    private static void exportOnce(
+            CertificateExportSession session,
+            Path output,
+            String name) throws IOException {
+        session.write(output.resolve(name + ".acgncert"));
+    }
+
     private static void assertUnsupportedPreservesTarget(
             CertificateExportSession unsupported,
             Path target) throws IOException {
@@ -409,6 +463,7 @@ public final class CertificateBundleWriterTest {
         }
         check(java.util.Arrays.equals(sentinel, Files.readAllBytes(target)),
                 "unsupported export leaves a pre-existing target unchanged");
+        Files.delete(target);
     }
 
     private static void check(boolean condition, String message) {

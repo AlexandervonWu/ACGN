@@ -109,8 +109,48 @@ describe("Visualization IR schema", () => {
     }
   });
 
+  it("rejects explicit edges with the wrong e-node owner or child target", () => {
+    type ExplicitEdgeFixture = typeof simple & {
+      graph: typeof simple.graph & {
+        edges?: Array<{
+          sourceEClassId: string;
+          targetEClassId: string;
+          enodeId: string;
+        }>;
+      };
+    };
+
+    const wrongOwner = structuredClone(simple) as ExplicitEdgeFixture;
+    wrongOwner.graph.edges = [{
+      sourceEClassId: "E1",
+      targetEClassId: "E1",
+      enodeId: "N0",
+    }];
+    expect(EGraphAnalysisSchema.safeParse(wrongOwner).success).toBe(false);
+
+    const wrongTarget = structuredClone(simple) as ExplicitEdgeFixture;
+    wrongTarget.graph.edges = [{
+      sourceEClassId: "E0",
+      targetEClassId: "E0",
+      enodeId: "N0",
+    }];
+    expect(EGraphAnalysisSchema.safeParse(wrongTarget).success).toBe(false);
+  });
+
   it("validates a certified callable comparison", () => {
     expect(CallableComparisonSchema.safeParse(zeroComparison).success).toBe(true);
+  });
+
+  it("rejects blank stable forms without rewriting valid evidence text", () => {
+    const blank = structuredClone(zeroComparison);
+    blank.left.certifiedStableForm = " \t\n ";
+    expect(CallableComparisonSchema.safeParse(blank).success).toBe(false);
+
+    const spaced = structuredClone(zeroComparison);
+    spaced.left.certifiedStableForm = " certified-A ";
+    spaced.right.certifiedStableForm = " certified-A ";
+    const parsed = CallableComparisonSchema.parse(spaced);
+    expect(parsed.left.certifiedStableForm).toBe(" certified-A ");
   });
 
   it("rejects comparison operations that do not witness the distance", () => {

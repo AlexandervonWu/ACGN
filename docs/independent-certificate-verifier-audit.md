@@ -22,7 +22,7 @@ The independent trusted base is limited to:
 4. explicitly named, independently replayed algorithms for support,
    containers, binder automorphisms, graph transitions, orbit enumeration,
    and finite unfolding;
-5. the exact signature and theory manifest whose digest is carried by the
+5. the exact pinned theory (including admitted axioms) whose digest is carried by the
    bundle and selected by the verifier.
 
 Producer structural keys, endpoint claims, hashes, canonical observations,
@@ -176,7 +176,7 @@ Every redundant ambient coordinate must receive a typed fresh value distinct
 from retained coordinates, and every selected shape must be justified by the
 current EC/SC family.
 
-Pair mode first verifies both full bundles against the same manifest digest,
+Pair mode first verifies both full bundles against the same pinned-theory digest,
 then independently recomputes both kernels, constructs compatible common
 context embeddings, and synthesizes source-left-to-source-right equality by
 symmetry/transitivity through that common kernel. Equal observation bytes or
@@ -207,7 +207,7 @@ falsehood and does not permit producer-only validation to fill the gap.
 ## Implementation Status (2026-08-17)
 
 The standalone `certificate-verifier/` module now implements the closed
-`acgncert-schema-v1` decoder, dependent equality kernel, all dedicated replay
+`acgncert-schema-v2` decoder, dependent equality kernel, all dedicated replay
 variants, checkpoint/event verifier, exhaustive canonical profile, explicit
 finite-unfolding profile, and two-bundle pair profile. It compiles separately
 with JDK 17 and `java.base` only. Proof endpoint fields are comparison-only

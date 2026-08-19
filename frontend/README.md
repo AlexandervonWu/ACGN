@@ -192,7 +192,7 @@ diagnostics?
 statistics?
 ```
 
-The detailed executable contract is in [`src/api/schema.ts`](src/api/schema.ts). Optional diagnostic fields may be omitted. Every successful response is validated before it enters React state. Invalid JSON, malformed IR, and unsupported schema major versions produce developer-oriented error messages while retaining the last successful graph.
+The detailed executable contract is in [`src/api/schema.ts`](src/api/schema.ts). Optional diagnostic fields may be omitted. Every successful response is validated before it enters React state. Explicit edges must name their actual owning e-node and one of that node's child e-classes; ownerless explicit structural edges may supply reachability directly. Invalid JSON, malformed IR, and unsupported schema major versions produce developer-oriented error messages while retaining the last successful graph.
 
 The included Java analysis service translates typed e-classes, typed ports, slots, and sequence/bag/set container laws into this IR. Human-readable `canonicalText` and graph labels are presentation fields; the exact certified serialization remains available as `certifiedStableForm`. The frontend does not accept serialized Java objects and does not infer Alloy semantics.
 
@@ -224,10 +224,21 @@ Content-Type: application/json
 ```
 
 ```json
-{ "requestId": "10fbb796-f4e3-4980-963d-c6a23759a67e" }
+{
+  "requestId": "10fbb796-f4e3-4980-963d-c6a23759a67e",
+  "cause": "cancelled"
+}
 ```
 
-All parser and analysis jobs run in isolated child JVMs. Browser cancellation asks the server to destroy that JVM, and `--timeout-seconds` forcibly terminates it if the browser disconnects without sending cancellation. The server keeps separate HTTP capacity for health and cancellation requests, so a saturated analysis pool cannot block its own stop path.
+`cause` is the closed enum `cancelled | timeout`; the client sends the first
+terminal cause it observed. The server preserves that cause even when the
+request reaches cancellation before worker registration. All parser and
+analysis jobs run in isolated child JVMs. Browser cancellation asks the server
+to destroy that JVM, and `--timeout-seconds` forcibly terminates it if the
+browser disconnects without sending cancellation. Start/close registration is
+ordered under one lock, and each job issues at most one process-kill request.
+The server keeps separate HTTP capacity for health and cancellation requests,
+so a saturated analysis pool cannot block its own stop path.
 
 ## CORS
 

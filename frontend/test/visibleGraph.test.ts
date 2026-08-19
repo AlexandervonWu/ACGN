@@ -28,6 +28,21 @@ describe("visible graph extraction", () => {
     expect(visible.reachableCount).toBe(4);
   });
 
+  it("uses ownerless explicit structural edges for reachability", () => {
+    const graph: EGraph = {
+      rootEClassId: "E0",
+      eclasses: [
+        { id: "E0", nodes: [{ id: "N0", kind: "Root", children: [] }] },
+        { id: "E1", nodes: [{ id: "N1", kind: "Target", children: [] }] },
+      ],
+      edges: [{ sourceEClassId: "E0", targetEClassId: "E1", role: "explicit" }],
+    };
+    const visible = buildVisibleGraph(graph, defaultGraphFilters, new Set());
+    expect(visible.eclasses.map((eclass) => eclass.id)).toEqual(["E0", "E1"]);
+    expect(visible.reachableCount).toBe(2);
+    expect(visible.edges).toHaveLength(1);
+  });
+
   it("applies depth before sending nodes to the renderer", () => {
     const visible = buildVisibleGraph(
       chainGraph(8),

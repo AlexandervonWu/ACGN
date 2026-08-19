@@ -2,8 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_DIR="$(mktemp -d /tmp/acgn-capability-benchmark.XXXXXX)"
-trap 'rm -rf "$BUILD_DIR"' EXIT
+BUILD_DIR=""
 
 DATASET="$ROOT/classified-data"
 OUTPUT="$ROOT/capability_benchmark"
@@ -29,19 +28,34 @@ while [[ $# -gt 0 ]]; do
 done
 
 mkdir -p "$OUTPUT"
-javac -cp "$ROOT/lib/*" -d "$BUILD_DIR" $(find "$ROOT/src" -name '*.java')
+if [[ -n "${ACGN_EXPERIMENT_JAR:-}" ]]; then
+  [[ -f "$ACGN_EXPERIMENT_JAR" ]] \
+    || { printf 'ACGN_EXPERIMENT_JAR is missing: %s\n' "$ACGN_EXPERIMENT_JAR" >&2; exit 2; }
+  classpath="$ACGN_EXPERIMENT_JAR:$ROOT/lib/*"
+else
+  BUILD_DIR="$(mktemp -d /tmp/acgn-capability-benchmark.XXXXXX)"
+  trap 'rm -rf "$BUILD_DIR"' EXIT
+  mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
+  javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
+    -d "$BUILD_DIR" "${sources[@]}"
+  classpath="$BUILD_DIR:$ROOT/lib/*"
+fi
 
 cd "$ROOT"
-java -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.CapabilityBenchmark \
+java -Xmx"$MAX_HEAP" -XX:+ExitOnOutOfMemoryError -cp "$classpath" \
+  is.fivefivefive.CanDis.CapabilityBenchmark \
   --generate --dataset "$DATASET" --output "$OUTPUT" --target "$TARGET" --seed "$SEED"
 
-java -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.CapabilitySoundnessCheck \
+java -Xmx"$MAX_HEAP" -XX:+ExitOnOutOfMemoryError -cp "$classpath" \
+  is.fivefivefive.CanDis.CapabilitySoundnessCheck \
   --root "$OUTPUT" --per-subtype "$SOUNDNESS_PER_SUBTYPE"
 
-java -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.EGraphAblationSuite \
+java -Xmx"$MAX_HEAP" -XX:+ExitOnOutOfMemoryError -cp "$classpath" \
+  is.fivefivefive.CanDis.EGraphAblationSuite \
   --input "$OUTPUT/models" --output "$OUTPUT/arms" --threads "$THREADS" \
   --max-heap "$MAX_HEAP" --seed "$SEED"
 
-java -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.CapabilityBenchmark \
+java -Xmx"$MAX_HEAP" -XX:+ExitOnOutOfMemoryError -cp "$classpath" \
+  is.fivefivefive.CanDis.CapabilityBenchmark \
   --report --dataset "$DATASET" --output "$OUTPUT" --natural "$NATURAL" \
   --target "$TARGET" --seed "$SEED"

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/** Strictly decodes a bundle and prints its untrusted manifest digest. */
+/** Strictly decodes a bundle and prints its untrusted pinned-theory digest. */
 public final class ManifestInspector {
     private ManifestInspector() {
     }

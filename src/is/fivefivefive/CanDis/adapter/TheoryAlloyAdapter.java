@@ -36,6 +36,7 @@ import is.fivefivefive.CanDis.theory.CertificateOrigin;
 import is.fivefivefive.CanDis.theory.CertifiedInsertionResult;
 import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
 import is.fivefivefive.CanDis.theory.CertificateExportSession;
+import is.fivefivefive.CanDis.theory.CertificateProvenance;
 import is.fivefivefive.CanDis.theory.CertificateTraceSink;
 import is.fivefivefive.CanDis.theory.CoherentWitnessFamily;
 import is.fivefivefive.CanDis.theory.ContainerEmptiness;
@@ -85,21 +86,18 @@ public final class TheoryAlloyAdapter {
         return new Builder(
                 normalForms,
                 NoOpCertificateTraceSink.instance(),
-                "not-recorded",
-                true).build();
+                null).build();
     }
 
     /** Exact proof-retaining path used only by Phase J export. */
     public static Result adaptForVerification(
             List<NormalForm> normalForms,
             RecordingCertificateTraceSink sink,
-            String producerCommit,
-            boolean producerDirty) {
+            CertificateProvenance provenance) {
         return new Builder(
                 normalForms,
                 Objects.requireNonNull(sink, "sink"),
-                Objects.requireNonNull(producerCommit, "producerCommit"),
-                producerDirty).build();
+                Objects.requireNonNull(provenance, "provenance")).build();
     }
 
     public static final class Result {
@@ -257,8 +255,7 @@ public final class TheoryAlloyAdapter {
                 new IdentityHashMap<>();
         private final TypedSlottedPortEGraph graph;
         private final RecordingCertificateTraceSink recordingSink;
-        private final String producerCommit;
-        private final boolean producerDirty;
+        private final CertificateProvenance provenance;
         private final Map<InvocationKey, TypedInvocation> memo = new HashMap<>();
         private final Map<OnePort, TypedInvocation> relationalCoercions = new HashMap<>();
         private final Map<String, List<ContainerLawDeclaration>> certifiedContainerLaws =
@@ -269,15 +266,13 @@ public final class TheoryAlloyAdapter {
         private Builder(
                 List<NormalForm> normalForms,
                 CertificateTraceSink traceSink,
-                String producerCommit,
-                boolean producerDirty) {
+                CertificateProvenance provenance) {
             Objects.requireNonNull(normalForms, "normalForms");
             this.graph = new TypedSlottedPortEGraph(
                     Objects.requireNonNull(traceSink, "traceSink"));
             this.recordingSink = traceSink instanceof RecordingCertificateTraceSink
                     ? (RecordingCertificateTraceSink) traceSink : null;
-            this.producerCommit = producerCommit;
-            this.producerDirty = producerDirty;
+            this.provenance = provenance;
             this.normalForms = Collections.unmodifiableList(new ArrayList<>(normalForms));
             this.declaredForms = Collections.newSetFromMap(new IdentityHashMap<>());
             this.declaredForms.addAll(normalForms);
@@ -366,8 +361,7 @@ public final class TheoryAlloyAdapter {
                             semanticArtifact,
                             key,
                             certifiedContainerLaws,
-                            producerCommit,
-                            producerDirty,
+                            provenance,
                             ADAPTER_VERSION + ";"
                                     + SIGNATURE_VERSION + ";"
                                     + graph.canonicalizerVersion() + ";"

@@ -12,8 +12,7 @@ set -euo pipefail
 # stages; the default is the faster reward-free run.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BUILD_DIR="$(mktemp -d /tmp/acgn-serial-experiments.XXXXXX)"
-trap 'rm -rf "$BUILD_DIR"' EXIT
+BUILD_DIR=""
 
 DATASET="${DATASET:-$ROOT/classified-data}"
 DISTANCE_OUTPUT="${DISTANCE_OUTPUT:-$ROOT/distance_results}"
@@ -152,10 +151,20 @@ write_serial_summary() {
   } > "$SERIAL_SUMMARY"
 }
 
-stage "Compiling experiment classes"
-mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
-javac --release 17 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
-classpath="$BUILD_DIR:$ROOT/lib/*"
+if [[ -n "${ACGN_EXPERIMENT_JAR:-}" ]]; then
+  [[ -f "$ACGN_EXPERIMENT_JAR" ]] \
+    || fail "ACGN_EXPERIMENT_JAR is missing: $ACGN_EXPERIMENT_JAR"
+  stage "Using frozen experiment JAR $ACGN_EXPERIMENT_JAR"
+  classpath="$ACGN_EXPERIMENT_JAR:$ROOT/lib/*"
+else
+  BUILD_DIR="$(mktemp -d /tmp/acgn-serial-experiments.XXXXXX)"
+  trap 'rm -rf "$BUILD_DIR"' EXIT
+  stage "Compiling experiment classes"
+  mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
+  javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
+    -d "$BUILD_DIR" "${sources[@]}"
+  classpath="$BUILD_DIR:$ROOT/lib/*"
+fi
 
 stage "1/4 CanonicalBatchTest"
 java -Xmx"$MAX_HEAP" -XX:+ExitOnOutOfMemoryError -cp "$classpath" \

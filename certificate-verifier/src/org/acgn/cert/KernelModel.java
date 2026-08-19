@@ -254,11 +254,11 @@ final class KernelModel {
     KernelModel(Bundle bundle) {
         this.bundle = Objects.requireNonNull(bundle, "bundle");
         contexts = parseContexts(bundle.contexts());
-        Theory theory = parseTheory(bundle.theory());
-        schemas = theory.schemas;
-        operators = theory.operators;
-        binders = theory.binders;
-        axioms = theory.axioms;
+        Theory vocabulary = parseVocabulary(bundle.vocabulary(), bundle.theory());
+        schemas = vocabulary.schemas;
+        operators = vocabulary.operators;
+        binders = vocabulary.binders;
+        axioms = vocabulary.axioms;
         embeddings = parseEmbeddings(bundle.embeddings());
         terms = parseTerms(bundle.terms());
         witnesses = parseWitnesses(bundle.witnesses());
@@ -384,12 +384,13 @@ final class KernelModel {
         return Collections.unmodifiableMap(result);
     }
 
-    private Theory parseTheory(Wire.Node theory) {
-        theory.requireShape("theory", 2, 4);
-        Wire.Node schemaSection = theory.child(0).requireTag("schemas");
-        Wire.Node operatorSection = theory.child(1).requireTag("operators");
-        Wire.Node binderSection = theory.child(2).requireTag("binders");
-        Wire.Node axiomSection = theory.child(3).requireTag("axioms");
+    private Theory parseVocabulary(Wire.Node vocabulary, Wire.Node theory) {
+        vocabulary.requireShape("vocabulary", 1, 3);
+        theory.requireShape("theory", 3, 1);
+        Wire.Node schemaSection = vocabulary.child(0).requireTag("schemas");
+        Wire.Node operatorSection = vocabulary.child(1).requireTag("operators");
+        Wire.Node binderSection = vocabulary.child(2).requireTag("binders");
+        Wire.Node axiomSection = theory.child(0).requireTag("axioms");
         Map<String, Schema> parsedSchemas = parseSchemas(schemaSection);
         Map<String, Operator> parsedOperators = parseOperators(
                 operatorSection, parsedSchemas);

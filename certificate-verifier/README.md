@@ -26,7 +26,7 @@ From the repository root:
 scripts/build_certificate_verifier.sh
 scripts/run_certificate_verifier_tests.sh
 scripts/run_certificate_bundle_writer_tests.sh
-scripts/run_certificate_verifier_smoke.sh 100 /tmp/acgn-cert-smoke
+scripts/run_certificate_verifier_smoke.sh /tmp/acgn-cert-smoke
 ```
 
 The jar is written to
@@ -51,7 +51,7 @@ java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
 Exit codes are `0` for `VERIFIED`, `2` for `REJECTED`, `3` for
 `UNCHECKABLE`, and `64` for command-line misuse.
 
-Inspect a bundle's untrusted manifest digest before selecting an out-of-band
+Inspect a bundle's untrusted theory digest before selecting an out-of-band
 pin:
 
 ```bash
@@ -76,8 +76,10 @@ produce `VERIFIED`.
 The test scripts compile explicitly as UTF-8 with `--release 17`; the
 standalone module additionally uses `-Xlint:all -Werror`, rejects
 imports from producer packages, and checks `jdeps -summary` for the sole
-dependency `java.base`. The smoke exports every preparation twice, checks
-byte identity, verifies every bundle under `full`, and exercises `pair`.
+dependency `java.base`. The producer harness starts from an empty temporary
+build, launches the writer twice in separate JVMs and directories, compares
+every expected byte and SHA-256 digest, rejects unexpected files, verifies
+the supported bundles under `full`, and exercises distinct-input PAIR cases.
 
 ## Producer Export Status
 
@@ -86,8 +88,8 @@ recording path. Ordinary preparation uses `NoOpCertificateTraceSink`, so
 existing experiments retain no trace. Export must occur before
 `compactForComparison()`.
 
-The writer uses `phase-j-producer-export-v2` with the manifest rule set
-`phase-j-one-parent-rules-v2`. It builds and validates the entire bundle in
+The writer uses `phase-j-producer-export-v3` with the pinned rule set
+`phase-j-proof-kernel-v3`. It builds and validates the entire bundle in
 memory, writes a sibling temporary file, and atomically replaces the target
 only after successful encoding. Unsupported state throws
 `IOException("UNCHECKABLE: ...")`; a pre-existing target remains unchanged.
@@ -103,7 +105,10 @@ The writer still refuses insertion collisions, symmetry/restriction/rebuild
 record/path-compression events, nonidentity alpha maps, repeated same-type
 free slots, support contraction, Seq/Bag/Set/Bind/BindBlock ports, indirect
 parent derivations, cyclic or multiple root unfoldings, and any retained
-history outside the exact one-event or five-event slices. These remain
+history outside the exact one-event or five-event slices. The representative
+source census currently verifies its nullary predicate and classifies its
+slot-bearing and compound predicates as `UNCHECKABLE` because flexible
+container-law export is outside this bridge. These remain
 `UNCHECKABLE`; they are not silently omitted or approximated.
 
 See [FORMAT.md](FORMAT.md), [TRUST.md](TRUST.md), and

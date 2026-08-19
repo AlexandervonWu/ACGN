@@ -37,6 +37,21 @@ public final class VerifierTest {
         check(java.util.Arrays.equals(fixture.bytes(), fullFixture().bytes()),
                 "identical fixture runs must be byte-identical");
 
+        assertCode(
+                FailureCode.DIGEST_MISMATCH,
+                verify(
+                        verifier,
+                        withMetadataScalar(fixture, 16, "stale-test-configuration"),
+                        Profile.KERNEL),
+                "stale configuration provenance");
+        assertCode(
+                FailureCode.INVALID_RECORD_SHAPE,
+                verify(
+                        verifier,
+                        withMetadataScalar(fixture, 6, "PUBLICATION"),
+                        Profile.KERNEL),
+                "dirty publication provenance");
+
         byte[] badDigest = fixture.bytes().clone();
         badDigest[badDigest.length - 1] ^= 1;
         assertOutcome(
@@ -1157,6 +1172,21 @@ public final class VerifierTest {
                             Wire.leaf("pc", "edge-1-0", edge10.scalar(0)),
                             Wire.leaf("pc", "edge-2-0", edge20.scalar(0)))));
         });
+    }
+
+    private static TestBundleBuilder.Encoded withMetadataScalar(
+            TestBundleBuilder.Encoded source,
+            int index,
+            String replacement) {
+        Wire.Node metadata = source.root().child(0);
+        List<String> scalars = new ArrayList<>(metadata.scalars());
+        scalars.set(index, replacement);
+        List<Wire.Node> children = new ArrayList<>(source.root().children());
+        children.set(0, Wire.node("metadata", scalars, List.of()));
+        Wire.Node root = Wire.node(
+                source.root().tag(), source.root().scalars(), children);
+        return new TestBundleBuilder.Encoded(
+                Codec.encode(root), root, source.theoryDigest());
     }
 
     private static TestBundleBuilder.Encoded illTypedSubstitutionFixture() {

@@ -519,6 +519,23 @@ For backward-compatible machine-readable output, `canonical*` fields denote
 the Certificate-Integrated IR and `legacyCanonical*` fields denote the Fast
 Rewrite IR. Every newly generated JSON file records this mapping explicitly.
 
+For an archival run, use a new directory outside the Git worktree:
+
+```bash
+./scripts/run_publication_experiments.sh \
+  --run-root /absolute/path/to/acgn-publication-run \
+  --dataset "$PWD/classified-data" \
+  --threads 32 --max-heap 4g
+```
+
+This entry point refuses a dirty tree, compiles one JAR once, prevents the
+ablation/capability launchers from recompiling, and rechecks commit, source,
+JAR, dependencies, dataset, command plan, and configuration after every
+stage. Its top-level `run-manifest.json` binds every generated file, the
+semantic checker to the exact pair files/build/dataset, and each Markdown
+report to its machine-readable sources. `--limit 100` is the bounded preflight;
+omit it only for the later archival corpus run.
+
 ### Paired student-oracle distances
 
 ```bash
@@ -697,6 +714,24 @@ as evaluated pairs: 4,482 trivial raw-AST matches are deliberately excluded
 from every current distance and ablation run.
 
 ## Reproducibility
+
+Bounded artifact gates are available without touching historical result
+directories:
+
+```bash
+./scripts/run_bounded_ci_java_tests.sh
+./scripts/run_certificate_bundle_writer_tests.sh /tmp/acgn-certificate-check
+./scripts/run_publication_manifest_tests.sh
+```
+
+The certificate runner includes a separate-JVM byte-determinism check,
+distinct-input PAIR cases, a verified parent-path fixture, and a real-source
+coverage census. The publication-manifest test deliberately mutates a bound
+report and requires the drift check to fail.
+
+The closure rationale, defect map, bounded test record, and remaining
+proof-export boundary are recorded in
+[`docs/artifact-closure-audit-2026-08-19.md`](docs/artifact-closure-audit-2026-08-19.md).
 
 The checked-in seven-arm natural-corpus snapshot records:
 

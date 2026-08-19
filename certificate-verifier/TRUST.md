@@ -12,7 +12,8 @@ The verifier trusts only:
 4. the explicitly implemented replay algorithms for restriction, container
    semantics, alpha action, full-interface symmetry, source-to-kernel replay,
    graph transitions, finite orbit enumeration, and finite unfolding;
-5. a theory digest pinned out of band by the caller.
+5. a complete theory digest, including every admitted axiom, pinned out of
+   band by the caller.
 
 The JDK 17 runtime, operating system bytes supplied for the selected files,
 and the caller's choice of resource limits and theory pin are environmental
@@ -37,9 +38,12 @@ only `java.base`.
 ## Theory Pinning
 
 Self-hashing is integrity, not authority. Verification requires
-`--theory-digest`, and the complete decoded manifest must hash to that pinned
-value. Deployment should keep reviewed digest files under `trusted/` or in an
-external release manifest. A bundle-selected digest is not a trust decision.
+`--theory-digest`, and the complete decoded theory, including its ground
+axioms, must hash to that pinned value. Typed schemas, operators, and binders
+live in a separately hashed vocabulary; PAIR additionally checks exact
+compatibility for declarations used by the common representative. Deployment
+should keep reviewed digest files under `trusted/` or in an external release
+manifest. A bundle-selected digest is not a trust decision.
 
 ## Fail-Closed Policy
 
@@ -65,8 +69,16 @@ The independent checker implements the complete closed schema documented in
 The second history permits one free slot of each type. That restriction makes
 the complete free-renaming orbit identity; the writer emits that orbit rather
 than asking the verifier to assume it. Every parent-path occurrence and edge
-is explicit. The ground axiom is part of the manifest, but successful checking
-still requires the caller to pin the manifest digest independently.
+is explicit. The ground axiom is part of the pinned theory, while
+input-specific typed symbol declarations are integrity-checked vocabulary.
+Successful checking still requires an independently selected theory pin.
+
+Publication provenance records Git cleanliness, source, producer/verifier
+builds, dependencies, exact input identity, and configuration. The standalone
+verifier validates the closed metadata shape and checkable internal hashes;
+the release harness compares external source, build, dependency, dataset, and
+input identities. Fixtures are visibly marked `TEST_ONLY` and cannot claim
+dirty publication provenance.
 
 The writer constructs all content-addressed tables before touching the target
 and publishes through atomic sibling replacement. Unsupported histories are

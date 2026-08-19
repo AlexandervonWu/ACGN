@@ -13,8 +13,7 @@ public final class CertificateExportSession {
     private final CertifiedSemanticArtifact artifact;
     private final StructuralKey canonicalObservation;
     private final Map<String, List<ContainerLawDeclaration>> containerLaws;
-    private final String producerCommit;
-    private final boolean producerDirty;
+    private final CertificateProvenance provenance;
     private final String componentVersions;
 
     public CertificateExportSession(
@@ -23,8 +22,7 @@ public final class CertificateExportSession {
             CertifiedSemanticArtifact artifact,
             StructuralKey canonicalObservation,
             Map<String, ? extends List<ContainerLawDeclaration>> containerLaws,
-            String producerCommit,
-            boolean producerDirty,
+            CertificateProvenance provenance,
             String componentVersions) {
         this.events = Objects.requireNonNull(sink, "sink").events();
         this.finalSnapshot = Objects.requireNonNull(
@@ -39,8 +37,7 @@ public final class CertificateExportSession {
             copies.put(entry.getKey(), List.copyOf(entry.getValue()));
         }
         this.containerLaws = java.util.Collections.unmodifiableMap(copies);
-        this.producerCommit = Objects.requireNonNull(producerCommit, "producerCommit");
-        this.producerDirty = producerDirty;
+        this.provenance = Objects.requireNonNull(provenance, "provenance");
         this.componentVersions = Objects.requireNonNull(
                 componentVersions, "componentVersions");
         if (events.isEmpty()) {
@@ -74,12 +71,8 @@ public final class CertificateExportSession {
         return containerLaws;
     }
 
-    public String producerCommit() {
-        return producerCommit;
-    }
-
-    public boolean producerDirty() {
-        return producerDirty;
+    public CertificateProvenance provenance() {
+        return provenance;
     }
 
     public String componentVersions() {

@@ -1,6 +1,6 @@
 # `.acgncert` Format
 
-This document specifies `acgncert-schema-v1`, the closed input language of
+This document specifies `acgncert-schema-v2`, the closed input language of
 the independent verifier. Brackets below list scalar fields in order; braces
 list child nodes in order. A trailing `*` means zero or more children.
 
@@ -45,7 +45,7 @@ referenced record is decoded, type-checked, and structurally compared.
 The root has exactly this shape and child order:
 
 ```text
-acgncert-bundle["acgncert-schema-v1"] {
+acgncert-bundle["acgncert-schema-v2"] {
   metadata manifest contexts embeddings terms proofs witnesses snapshots
   events canonical-records unfoldings publication
 }
@@ -53,20 +53,35 @@ acgncert-bundle["acgncert-schema-v1"] {
 
 ```text
 metadata[
-  producerCommit, dirty, producerVersion, componentVersions, runId, createdAt
+  producerCommit, dirty, producerVersion, componentVersions, runId, createdAt,
+  PUBLICATION|TEST_ONLY, javaSourceSha256, producerJarSha256, dependencyHashes,
+  inputIdentifier, inputSha256, exporterSourceSha256, verifierVersion,
+  verifierSourceSha256, verifierJarSha256, configuration, configurationSha256
 ]
 
-manifest[theoryDigest] { theory }
+manifest[theoryDigest,vocabularyDigest] { theory vocabulary }
 ```
 
 `theoryDigest` is the content ID of the complete `theory` child. Integrity is
 not authority: the verifier caller must independently supply the same digest
-as a trust pin.
+as a trust pin. `vocabularyDigest` integrity-checks input-specific typed
+declarations but is not an authority boundary. `PUBLICATION` metadata is
+rejected when its dirty flag is true; `TEST_ONLY` is an explicit fixture mode.
+The configuration hash is recomputed by the verifier. External release
+provenance checks the recorded source, build, dependency, and input hashes.
 
-## Theory Manifest
+## Pinned Theory And Typed Vocabulary
 
 ```text
-theory[theoryId, ruleSetVersion] { schemas operators binders axioms }
+theory[
+  "acgn-exact-alloy-theory-v2",
+  "phase-j-proof-kernel-v3",
+  "typed-content-addressed-uninterpreted-vocabulary-v1"
+] { axioms }
+
+vocabulary["typed-content-addressed-uninterpreted-vocabulary-v1"] {
+  schemas operators binders
+}
 
 schemas { schema* }
 schema[id, kind, value] { schema-ref[childSchema]? }
@@ -88,6 +103,12 @@ type-variables[typeVariable*]
 term-variables { term-variable[name, sortKind, sortValue]* }
 side-conditions { side-condition[kind, argument*]* }
 ```
+
+Schemas, operators, and binders are typed uninterpreted declarations whose
+complete vocabulary is independently hashed. In PAIR mode, declarations used
+by the common representative must agree exactly across both bundles. Axioms
+remain inside the externally pinned theory digest: an untrusted producer
+cannot add a ground equality assumption under an unchanged pin.
 
 Schema kinds are exactly `ONE`, `ONE_SLOT`, `ONE_TERM`, `SEQ`, `BAG`, `SET`,
 `BIND`, and `BIND_BLOCK`. Binder generators must be total
@@ -297,20 +318,22 @@ never verify.
 
 ## Current Producer Subset
 
-The wire schema and format version remain `acgncert-schema-v1` and `1`.
+The wire schema and binary envelope versions are `acgncert-schema-v2` and `1`.
 `CertificateBundleWriter` currently identifies its bridge as
-`phase-j-producer-export-v2` and emits rule-set version
-`phase-j-one-parent-rules-v2`.
+`phase-j-producer-export-v3` and emits rule-set version
+`phase-j-proof-kernel-v3`.
 
 That producer subset admits `ONE`, `ONE_SLOT`, and `ONE_TERM`; APP and INVOKE
 terms; identity typed embeddings; AXIOM, SYM, PARENT_EDGE, CONGRUENCE, TRANS,
 KERNEL_REPLAY, CANONICAL_ORBIT, and FRESH_WITNESS proofs; and either one fresh
 event or the exact five-event parent-path history described in `README.md`.
 All tables are content-interned, collision-checked, and emitted in canonical
-ID order. Recursive term keys include kind, context, sort, symbol, ordered
+ID order. Per-input axioms stay under the theory pin; typed symbol declarations
+are carried by the separately hashed vocabulary. Recursive term keys include
+kind, context, sort, symbol, ordered
 attributes, and recursively keyed children.
 
 This subsection limits only the current producer. It does not remove any
 closed verifier record above, nor does it authorize a verifier to infer
-missing evidence. The manifest digest remains an untrusted bundle field until
+missing evidence. The theory digest remains an untrusted bundle field until
 the caller supplies the same digest out of band.

@@ -34,8 +34,16 @@ function adjacency(
   const result = new Map<string, Set<string>>();
   for (const eclass of graph.eclasses) {
     const children = result.get(eclass.id) ?? new Set<string>();
-    for (const node of displayNodes(eclass, filters, expandedClasses.has(eclass.id))) {
+    const displayed = displayNodes(eclass, filters, expandedClasses.has(eclass.id));
+    const displayedIds = new Set(displayed.map((node) => node.id));
+    for (const node of displayed) {
       for (const child of node.children) children.add(child.eclassId);
+    }
+    for (const edge of graph.edges ?? []) {
+      if (edge.sourceEClassId === eclass.id
+        && (!edge.enodeId || displayedIds.has(edge.enodeId))) {
+        children.add(edge.targetEClassId);
+      }
     }
     result.set(eclass.id, children);
   }

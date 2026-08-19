@@ -1,8 +1,11 @@
 package is.fivefivefive.CanDis;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.json.JSONObject;
 
@@ -17,7 +20,11 @@ public final class VisualizationProcessRunnerTest {
         timeoutKillsWorker();
         cancellationKillsWorker();
         cancellationBeforeRegistrationPreventsWorkerStart();
+        timeoutBeforeRegistrationPreservesCause();
+        firstPreRegistrationCauseWins();
+        executeCloseRaceCannotStartAfterClosure();
         firstTerminalCauseDeterminesResponse();
+        serverCancellationCauseIsClosed();
         System.out.println("VisualizationProcessRunnerTest passed");
     }
 
@@ -80,7 +87,9 @@ public final class VisualizationProcessRunnerTest {
                 while (runner.activeJobCount() == 0 && System.nanoTime() < deadline) {
                     Thread.sleep(10L);
                 }
-                if (!runner.cancel("cancel-test")) {
+                if (!runner.cancel(
+                        "cancel-test",
+                        VisualizationProcessRunner.TerminalCause.CANCELLED)) {
                     throw new AssertionError("Running worker could not be cancelled");
                 }
                 VisualizationProcessRunner.ExecutionResult result = pending.get();
@@ -96,7 +105,9 @@ public final class VisualizationProcessRunnerTest {
 
     private static void cancellationBeforeRegistrationPreventsWorkerStart() throws Exception {
         try (VisualizationProcessRunner runner = new VisualizationProcessRunner(1, 30_000L, "128m")) {
-            if (!runner.cancel("cancel-before-start")) {
+            if (!runner.cancel(
+                    "cancel-before-start",
+                    VisualizationProcessRunner.TerminalCause.CANCELLED)) {
                 throw new AssertionError("Cancellation was not recorded");
             }
 
@@ -109,6 +120,90 @@ public final class VisualizationProcessRunnerTest {
             }
 
             assertSuccessfulFollowUp(runner, "after-pre-registration-cancel");
+        }
+    }
+
+    private static void timeoutBeforeRegistrationPreservesCause() throws Exception {
+        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(
+                1, 30_000L, "128m")) {
+            runner.cancel(
+                    "timeout-before-start",
+                    VisualizationProcessRunner.TerminalCause.TIMED_OUT);
+            VisualizationProcessRunner.ExecutionResult result = runner.execute(
+                    "timeout-before-start",
+                    "test-sleep",
+                    new JSONObject().put("milliseconds", 30_000L));
+            if (result.status() != 504
+                    || !"analysis_timeout".equals(result.body().getString("code"))) {
+                throw new AssertionError(
+                        "Pre-registration timeout was reclassified: " + result.body());
+            }
+            assertSuccessfulFollowUp(runner, "after-pre-registration-timeout");
+        }
+    }
+
+    private static void firstPreRegistrationCauseWins() throws Exception {
+        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(
+                1, 30_000L, "128m")) {
+            runner.cancel(
+                    "pending-first-cause",
+                    VisualizationProcessRunner.TerminalCause.CANCELLED);
+            runner.cancel(
+                    "pending-first-cause",
+                    VisualizationProcessRunner.TerminalCause.TIMED_OUT);
+            VisualizationProcessRunner.ExecutionResult result = runner.execute(
+                    "pending-first-cause",
+                    "test-sleep",
+                    new JSONObject().put("milliseconds", 30_000L));
+            if (result.status() != 499
+                    || !"request_cancelled".equals(result.body().getString("code"))) {
+                throw new AssertionError(
+                        "Later pre-registration cause replaced the first: " + result.body());
+            }
+        }
+    }
+
+    private static void executeCloseRaceCannotStartAfterClosure() throws Exception {
+        CountDownLatch reachedGate = new CountDownLatch(1);
+        CountDownLatch releaseGate = new CountDownLatch(1);
+        AtomicInteger starts = new AtomicInteger();
+        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(
+                1,
+                30_000L,
+                "128m",
+                builder -> {
+                    starts.incrementAndGet();
+                    return builder.start();
+                },
+                ignored -> {
+                    reachedGate.countDown();
+                    releaseGate.await();
+                })) {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            try {
+                Future<VisualizationProcessRunner.ExecutionResult> pending =
+                        executor.submit(() -> runner.execute(
+                                "close-race",
+                                "test-sleep",
+                                new JSONObject().put("milliseconds", 30_000L)));
+                if (!reachedGate.await(5, TimeUnit.SECONDS)) {
+                    throw new AssertionError("Execution did not reach the deterministic start barrier");
+                }
+                runner.close();
+                releaseGate.countDown();
+                VisualizationProcessRunner.ExecutionResult result = pending.get(
+                        5, TimeUnit.SECONDS);
+                if (result.status() != 499
+                        || starts.get() != 0
+                        || runner.activeJobCount() != 0
+                        || runner.availableCapacity() != 1) {
+                    throw new AssertionError(
+                            "Close/start ordering leaked a process or capacity: " + result.body());
+                }
+            } finally {
+                releaseGate.countDown();
+                executor.shutdownNow();
+            }
         }
     }
 
@@ -145,6 +240,26 @@ public final class VisualizationProcessRunnerTest {
         if (timedOut.status() != 504
                 || !"analysis_timeout".equals(timedOut.body().getString("code"))) {
             throw new AssertionError("Timeout-first race did not map to HTTP 504");
+        }
+    }
+
+    private static void serverCancellationCauseIsClosed() {
+        assertCause(
+                VisualizationServer.cancellationCause(
+                        new JSONObject().put("cause", "cancelled")),
+                VisualizationProcessRunner.TerminalCause.CANCELLED,
+                "Server did not parse cancellation");
+        assertCause(
+                VisualizationServer.cancellationCause(
+                        new JSONObject().put("cause", "timeout")),
+                VisualizationProcessRunner.TerminalCause.TIMED_OUT,
+                "Server did not parse timeout");
+        try {
+            VisualizationServer.cancellationCause(
+                    new JSONObject().put("cause", " timed_out "));
+            throw new AssertionError("Server accepted an open cancellation cause");
+        } catch (VisualizationServer.HttpFailure expected) {
+            // Closed enum rejects aliases and whitespace changes.
         }
     }
 

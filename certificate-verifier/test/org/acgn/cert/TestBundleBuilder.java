@@ -8,6 +8,8 @@ import java.util.Map;
 
 /** Direct DTO/byte builder used only by adversarial verifier tests. */
 final class TestBundleBuilder {
+    private static final String ZERO_SHA256 = "0".repeat(64);
+    private static final String ONE_SHA256 = "1".repeat(64);
     private final List<Wire.Node> contexts = new ArrayList<>();
     private final List<Wire.Node> embeddings = new ArrayList<>();
     private final List<Wire.Node> terms = new ArrayList<>();
@@ -254,6 +256,10 @@ final class TestBundleBuilder {
     }
 
     Encoded build() {
+        return buildWithTheory(Bundle.THEORY_ID);
+    }
+
+    Encoded buildWithTheory(String theoryId) {
         if (publication == null) {
             throw new IllegalStateException("Fixture has no publication");
         }
@@ -263,21 +269,45 @@ final class TestBundleBuilder {
         sortManifest(axioms);
         Wire.Node theory = Wire.node(
                 "theory",
-                List.of("test-alloy-theory", "test-rules-v1"),
+                List.of(theoryId, Bundle.RULE_SET, Bundle.VOCABULARY_POLICY),
+                List.of(Wire.node("axioms", axioms)));
+        Wire.Node vocabulary = Wire.node(
+                "vocabulary",
+                List.of(Bundle.VOCABULARY_POLICY),
                 List.of(
                         Wire.node("schemas", schemas),
                         Wire.node("operators", operators),
-                        Wire.node("binders", binders),
-                        Wire.node("axioms", axioms)));
+                        Wire.node("binders", binders)));
         String digest = Wire.contentId(theory);
+        String vocabularyDigest = Wire.contentId(vocabulary);
         Wire.Node root = Wire.node(
                 "acgncert-bundle",
                 List.of(Bundle.SCHEMA_VERSION),
                 List.of(
-                        Wire.leaf("metadata", "test-commit", "false",
-                                "test-producer-v1", "test-components-v1",
-                                "test-run", "2026-08-17T00:00:00Z"),
-                        Wire.node("manifest", List.of(digest), List.of(theory)),
+                        Wire.leaf(
+                                "metadata",
+                                "TEST_ONLY-NO-GIT-COMMIT",
+                                "true",
+                                "test-producer-v2",
+                                "test-components-v2",
+                                "test-run",
+                                "1970-01-01T00:00:00Z",
+                                "TEST_ONLY",
+                                ZERO_SHA256,
+                                ZERO_SHA256,
+                                "TEST_ONLY:none=" + ZERO_SHA256,
+                                "test-fixture",
+                                ONE_SHA256,
+                                ZERO_SHA256,
+                                "test-verifier-v2",
+                                ZERO_SHA256,
+                                ZERO_SHA256,
+                                "test-only=true",
+                                sha256("test-only=true")),
+                        Wire.node(
+                                "manifest",
+                                List.of(digest, vocabularyDigest),
+                                List.of(theory, vocabulary)),
                         sortedSection("contexts", contexts),
                         sortedSection("embeddings", embeddings),
                         sortedSection("terms", terms),
@@ -313,6 +343,16 @@ final class TestBundleBuilder {
             }
         }
         records.add(record);
+    }
+
+    private static String sha256(String value) {
+        try {
+            return java.util.HexFormat.of().formatHex(
+                    java.security.MessageDigest.getInstance("SHA-256").digest(
+                            value.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+        } catch (java.security.NoSuchAlgorithmException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     record Encoded(byte[] bytes, Wire.Node root, String theoryDigest) {
