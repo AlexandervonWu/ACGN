@@ -1,5 +1,11 @@
 # Phase DA Leader-Kernel Extraction Report
 
+> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> run identities below are retained as historical phase provenance. The current
+> authoritative empirical snapshot is clean publication run
+> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> by `scripts/verify_imported_publication_snapshot.sh`.
+
 > **Later status (2026-08-16):** Phase E now consumes this result, accepts
 > strict support contraction and `BindBlock`, applies local quotient-first
 > normalization, and returns `(K,p,sigma,iota,omega,xi)`. See

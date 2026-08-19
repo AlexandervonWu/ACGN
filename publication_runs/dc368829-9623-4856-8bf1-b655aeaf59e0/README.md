@@ -19,22 +19,22 @@ The four manifest-bound stage trees are mirrored exactly at:
 - `capability_benchmark/`
 
 `run-manifest.json`, `planned-commands.txt`, and `original-summary.md` are exact
-copies from `/home/augustus/acgn-publication-run`. The manifest retains the
-absolute paths of the originating run; its content hashes remain the authority
-for the imported files.
+copies from `/home/augustus/acgn-publication-run`. Absolute paths in the
+manifest are provenance records from the originating host; they are not needed
+to verify this import. The manifest's relative artifact paths and SHA-256
+values identify the repository snapshot portably.
 
-To verify the imported stage artifacts from the repository root:
+Materialize the two Git LFS payloads and verify the imported stage artifacts
+from the repository root:
 
 ```bash
-jq -r --arg root "$PWD" '
-  .artifacts[]
-  | select(.path | test("^(distance_results|alloy4fun-augmented|egraph_ablation|capability_benchmark)/"))
-  | "\(.sha256)  \($root)/\(.path)"
-' publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/run-manifest.json \
-  > /tmp/acgn-imported-publication.sha256
-sha256sum --quiet -c /tmp/acgn-imported-publication.sha256
+git lfs install
+git lfs pull
+./scripts/verify_imported_publication_snapshot.sh
 ```
 
 The originating experiment JAR is identified in the manifest by SHA-256
 `2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f`;
-the binary itself is not duplicated in this data snapshot.
+that exact binary is staged as
+`release-assets/acgn-experiments.jar` with a sibling `SHA256SUMS` file. It is a
+release-asset candidate, not a substitute rebuilt from a later source tree.

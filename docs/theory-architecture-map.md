@@ -1,5 +1,11 @@
 # Theory-to-Artifact Architecture Map
 
+> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> run identities below are retained as historical phase provenance. The current
+> authoritative empirical snapshot is clean publication run
+> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> by `scripts/verify_imported_publication_snapshot.sh`.
+
 This document began as the Phase A architecture audit for commit
 `a9261da4c096f6ba5fcb1a34bcac93cb1b1df23d`. The current normative source is
 `E_Graphs_Draft_LNCS-3.pdf` with SHA-256

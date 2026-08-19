@@ -19,13 +19,14 @@ public final class ProducerBundleInspectionTest {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 12) {
+        if (args.length != 14) {
             throw new IllegalArgumentException(
                     "usage: ProducerBundleInspectionTest "
                             + "<nullary-a> <nullary-b> <slot-a> <slot-b> "
                             + "<parent-a> <parent-b> <equivalent-left> "
                             + "<equivalent-right> <non-equivalent> "
-                            + "<repo-root> <producer-jar> <verifier-jar>");
+                            + "<repo-root> <producer-jar> <verifier-jar> "
+                            + "<empty-theory-digest> <parent-theory-digest>");
         }
         byte[] nullaryA = Files.readAllBytes(Path.of(args[0]));
         byte[] nullaryB = Files.readAllBytes(Path.of(args[1]));
@@ -47,17 +48,24 @@ public final class ProducerBundleInspectionTest {
         Bundle nullary = decode(nullaryA);
         Bundle slot = decode(slotA);
         Bundle parent = decode(parentA);
+        String emptyTheoryDigest = args[12];
+        String parentTheoryDigest = args[13];
+        check(nullary.theoryDigest().equals(emptyTheoryDigest)
+                        && slot.theoryDigest().equals(emptyTheoryDigest),
+                "nullary and slot fixtures match the external empty-theory pin");
+        check(parent.theoryDigest().equals(parentTheoryDigest),
+                "parent fixture matches its external input-specific pin");
         assertVerified(verifier.verify(
                 nullaryA, Profile.FULL,
-                VerificationPolicy.trust(nullary.theoryDigest())), "nullary FULL");
+                VerificationPolicy.trust(emptyTheoryDigest)), "nullary FULL");
         assertVerified(verifier.verify(
                 slotA, Profile.FULL,
-                VerificationPolicy.trust(slot.theoryDigest())), "slot FULL");
+                VerificationPolicy.trust(emptyTheoryDigest)), "slot FULL");
         assertVerified(verifier.verify(
                 parentA, Profile.FULL,
-                VerificationPolicy.trust(parent.theoryDigest())), "parent FULL");
-        Bundle equivalentLeftBundle = decode(equivalentLeft);
-        Bundle equivalentRightBundle = decode(equivalentRight);
+                VerificationPolicy.trust(parentTheoryDigest)), "parent FULL");
+        Bundle bundlePairLeft = decode(equivalentLeft);
+        Bundle bundlePairRight = decode(equivalentRight);
         Path repo = Path.of(args[9]).toAbsolutePath().normalize();
         String expectedCommit = command(repo, "git", "rev-parse", "HEAD");
         boolean expectedDirty = !command(
@@ -67,7 +75,7 @@ public final class ProducerBundleInspectionTest {
         String verifierJarHash = sha256(Path.of(args[11]));
         String dependencyHashes = dependencyHashes(repo.resolve("lib"));
         for (Bundle bundle : List.of(
-                nullary, slot, parent, equivalentLeftBundle, equivalentRightBundle)) {
+                nullary, slot, parent, bundlePairLeft, bundlePairRight)) {
             Bundle.Metadata metadata = bundle.metadata();
             check(metadata.producerCommit().equals(expectedCommit),
                     "producer provenance uses the current Git commit");
@@ -85,47 +93,42 @@ public final class ProducerBundleInspectionTest {
                     "producer provenance binds every dependency JAR");
         }
         check(!java.util.Arrays.equals(equivalentLeft, equivalentRight),
-                "principal PAIR inputs have distinct source-bound bytes");
-        check(!equivalentLeftBundle.metadata().inputIdentifier().equals(
-                        equivalentRightBundle.metadata().inputIdentifier()),
-                "principal PAIR inputs retain distinct source identities");
-        check(equivalentLeftBundle.metadata().inputSha256().equals(
+                "bundle-level PAIR fixtures have distinct encoded bytes");
+        check(!bundlePairLeft.metadata().inputIdentifier().equals(
+                        bundlePairRight.metadata().inputIdentifier()),
+                "bundle-level PAIR fixtures retain distinct metadata identities");
+        check(bundlePairLeft.metadata().inputSha256().equals(
                         sha256("pred left { pair_equivalent }")),
-                "left PAIR input hash is exact");
-        check(equivalentRightBundle.metadata().inputSha256().equals(
+                "bundle-level left metadata hash is exact");
+        check(bundlePairRight.metadata().inputSha256().equals(
                         sha256("pred right { pair_equivalent }")),
-                "right PAIR input hash is exact");
-        check(equivalentLeftBundle.theoryDigest().equals(
-                        equivalentRightBundle.theoryDigest()),
-                "principal PAIR inputs share the reviewed theory");
+                "bundle-level right metadata hash is exact");
+        check(bundlePairLeft.theoryDigest().equals(emptyTheoryDigest)
+                        && bundlePairRight.theoryDigest().equals(emptyTheoryDigest),
+                "bundle-level PAIR fixtures match the external empty-theory pin");
         assertVerified(verifier.verifyPair(
                 equivalentLeft,
                 equivalentRight,
-                VerificationPolicy.trust(equivalentLeftBundle.theoryDigest())),
-                "distinct equivalent PAIR");
+                VerificationPolicy.trust(emptyTheoryDigest)),
+                "manually constructed bundle-level equivalent PAIR");
 
         VerificationResult nonEquivalentResult = verifier.verifyPair(
                 equivalentLeft,
                 nonEquivalent,
-                VerificationPolicy.trust(equivalentLeftBundle.theoryDigest()));
+                VerificationPolicy.trust(emptyTheoryDigest));
         check(nonEquivalentResult.outcome() == Outcome.UNCHECKABLE
                         && nonEquivalentResult.code()
                                 == FailureCode.MISSING_PAIR_DERIVATION,
                 "distinct non-equivalent PAIR has the justified non-success status");
 
         byte[] incompatible = withIncompatibleTheory(equivalentRight);
-        UncheckedTheoryBundle incompatibleBundle = decodeUncheckedTheory(incompatible);
         VerificationResult incompatibleResult = verifier.verifyPair(
                 equivalentLeft,
                 incompatible,
-                new VerificationPolicy(
-                        Set.of(
-                                equivalentLeftBundle.theoryDigest(),
-                                incompatibleBundle.theoryDigest()),
-                        Limits.defaults()));
+                VerificationPolicy.trust(emptyTheoryDigest));
         check(incompatibleResult.outcome() == Outcome.REJECTED
                         && incompatibleResult.code() == FailureCode.THEORY_MISMATCH,
-                "incompatible theory metadata cannot verify");
+                "an incompatible producer theory is rejected before trust elevation");
 
         check(slot.contexts().values().stream()
                         .anyMatch(context -> context.children().size() == 1),
@@ -210,12 +213,6 @@ public final class ProducerBundleInspectionTest {
 
     private static Bundle decode(byte[] bytes) {
         return Bundle.parse(Codec.decode(bytes, Limits.defaults()));
-    }
-
-    private static UncheckedTheoryBundle decodeUncheckedTheory(byte[] bytes) {
-        Wire.Node root = Codec.decode(bytes, Limits.defaults());
-        Wire.Node manifest = root.child(1);
-        return new UncheckedTheoryBundle(manifest.scalar(0));
     }
 
     private static byte[] withIncompatibleTheory(byte[] bytes) {
@@ -305,9 +302,6 @@ public final class ProducerBundleInspectionTest {
                 }
             }
         }
-    }
-
-    private record UncheckedTheoryBundle(String theoryDigest) {
     }
 
     private static void assertVerified(VerificationResult result, String label) {

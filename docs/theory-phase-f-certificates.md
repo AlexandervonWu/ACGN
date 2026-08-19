@@ -1,5 +1,11 @@
 # Phase F Typed Certificates
 
+> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> run identities below are retained as historical phase provenance. The current
+> authoritative empirical snapshot is clean publication run
+> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> by `scripts/verify_imported_publication_snapshot.sh`.
+
 > Historical gate report. The PF3 replay blockers recorded here were resolved
 > after the Figure 4 repair; see
 > [`theory-pre-phase-h-unblocked.md`](theory-pre-phase-h-unblocked.md).

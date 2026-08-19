@@ -453,9 +453,24 @@ The reusable `CanDis.core` and `CanDis.core.egraph` packages depend only on
   web explorer; the deployed frontend is static and does not require Node.js.
 - Dependency JARs under repository-root `lib/`; there is no Maven or Gradle
   build file.
+- Git LFS for the publication `distances.json` and augmented `index.json`
+  payloads.
 
 Commands below assume a Unix classpath separator and run from the repository
 root.
+
+After cloning, materialize and verify the publication snapshot before using
+its pair-level JSON data:
+
+```bash
+git lfs install
+git lfs pull
+./scripts/verify_imported_publication_snapshot.sh
+```
+
+The verifier reports exactly 5,804 manifest-bound stage files. If an LFS
+pointer is present instead of its object, it stops with the corresponding
+`git lfs pull` instruction.
 
 ## Build and Test
 
@@ -543,13 +558,18 @@ java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
 ```
 
 Use `--limit N` for a smoke run. The runner writes `distances.json` and
-`summary.md`. Remove `--skip-rewards` and add `--reward-pool 10` for the
-rewarded run. Regenerate its plotting
-CSV, SVG/PNG figures, and paper tables with:
+`summary.md`. Remove `--skip-rewards` and add `--reward-pool 10` for a
+separately rewarded run. Generate paper-table extracts outside the frozen
+snapshot with:
 
 ```bash
-./scripts/regenerate_distance_artifacts.sh distance_results
+./scripts/regenerate_distance_artifacts.sh \
+  distance_results /tmp/acgn-paper-artifacts
 ```
+
+The current publication run is reward-disabled, so reward figures are skipped.
+For a rewarded result tree that retains its plotting script and inputs, the
+same command writes those figures to the selected derived-output directory.
 
 ### Augmented truth pools and nearest repairs
 
@@ -720,12 +740,18 @@ directories:
 ./scripts/run_bounded_ci_java_tests.sh
 ./scripts/run_certificate_bundle_writer_tests.sh /tmp/acgn-certificate-check
 ./scripts/run_publication_manifest_tests.sh
+./scripts/regenerate_distance_artifacts.sh \
+  distance_results /tmp/acgn-paper-artifacts
+./scripts/verify_imported_publication_snapshot.sh
+git lfs fsck
 ```
 
 The certificate runner includes a separate-JVM byte-determinism check,
-distinct-input PAIR cases, a verified parent-path fixture, and a real-source
-coverage census. The publication-manifest test deliberately mutates a bound
-report and requires the drift check to fail.
+an independently parsed two-source PAIR, a static test-only trust-pin ledger, a
+verified parent-path fixture, and an exact real-source coverage census. The
+publication-manifest test deliberately mutates a bound report and requires the
+drift check to fail. Derived paper tables are written outside the frozen result
+trees, whose 5,804 files are checked against relative manifest paths and hashes.
 
 The closure rationale, defect map, bounded test record, and remaining
 proof-export boundary are recorded in
@@ -752,6 +778,9 @@ anchored by the capability
 
 See [`run-manifest.json`](egraph_ablation/run-manifest.json) and the archived
 [publication-run provenance](publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md).
+The archived run also stages the exact original experiment JAR as a release
+asset candidate; its SHA-256 is
+`2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f`.
 
 ## Interpretation and Limits
 

@@ -59,6 +59,13 @@ java -cp certificate-verifier/build/acgn-certificate-verifier.jar \
   org.acgn.cert.ManifestInspector artifact.acgncert
 ```
 
+The bounded producer harness does not use that output as authority. It selects
+named digests from [`trusted/theory-pins.tsv`](trusted/theory-pins.tsv), checks
+that generated bundles match the prior selection, and exercises a wrong-pin
+`REJECTED / UNTRUSTED_THEORY` case. The complete test-only theory ledger is in
+[`trusted/THEORY_REVIEW.md`](trusted/THEORY_REVIEW.md); its entries remain
+`PENDING_AUTHOR_REVIEW` and are not release approvals.
+
 ## Profiles
 
 | Profile | Independently checks |
@@ -79,7 +86,10 @@ imports from producer packages, and checks `jdeps -summary` for the sole
 dependency `java.base`. The producer harness starts from an empty temporary
 build, launches the writer twice in separate JVMs and directories, compares
 every expected byte and SHA-256 digest, rejects unexpected files, verifies
-the supported bundles under `full`, and exercises distinct-input PAIR cases.
+the supported bundles under `full`, and exercises both a manually constructed
+bundle-level PAIR and a real two-file parser -> MASG -> adapter -> writer PAIR.
+The latter asserts distinct source identities and content hashes before the
+standalone verifier accepts the pair under the static empty-theory pin.
 
 ## Producer Export Status
 
@@ -109,7 +119,13 @@ history outside the exact one-event or five-event slices. The representative
 source census currently verifies its nullary predicate and classifies its
 slot-bearing and compound predicates as `UNCHECKABLE` because flexible
 container-law export is outside this bridge. These remain
-`UNCHECKABLE`; they are not silently omitted or approximated.
+`UNCHECKABLE`; they are not silently omitted or approximated. The harness
+requires the exact stable-code census `nullary=VERIFIED/NONE`,
+`slotBearing=UNCHECKABLE/EXPORT_UNSUPPORTED`,
+`deliberatelyUnsupported=UNCHECKABLE/EXPORT_UNSUPPORTED`, and zero rejected
+cases. Parsed nonempty typed contexts and parent histories remain outside the
+production source bridge even though deterministic bundle-level fixtures cover
+those verifier slices.
 
 See [FORMAT.md](FORMAT.md), [TRUST.md](TRUST.md), and
 [FAILURE_CODES.md](FAILURE_CODES.md).

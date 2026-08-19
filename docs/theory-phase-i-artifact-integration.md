@@ -1,5 +1,11 @@
 # Phase I Artifact Integration
 
+> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> run identities below are retained as historical phase provenance. The current
+> authoritative empirical snapshot is clean publication run
+> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> by `scripts/verify_imported_publication_snapshot.sh`.
+
 ## Scope
 
 Phase I connects the Alloy experiment layer to the Certificate-Integrated IR

@@ -1,5 +1,29 @@
 # Artifact Closure Audit (2026-08-19)
 
+## Publication Closure Addendum
+
+The clean publication snapshot now supersedes the pending-run language later
+in this historical audit. Run `dc368829-9623-4856-8bf1-b655aeaf59e0` binds
+5,804 imported stage files from clean source commit `f1bb1607`.
+
+The final closure pass repaired four remaining artifact boundaries without
+changing any bound result:
+
+- the producer harness selects separate empty and parent-path theory digests
+  from `certificate-verifier/trusted/theory-pins.tsv`, never from bundle output;
+- the parent pin is input-specific and test-only, with its complete ground
+  axiom origin and endpoints exposed for author review;
+- PAIR coverage now includes two separately parsed Alloy files with distinct
+  source identities and SHA-256 hashes through the real export path;
+- v11 table regeneration writes outside the snapshot, and a portable verifier
+  checks the exact 5,804-file relative inventory with a clear Git LFS failure.
+
+The exact original experiment JAR, SHA-256
+`2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f`, is
+staged under the archived run's `release-assets/` directory. The remaining
+release gate is author review of the test-only theory ledger followed by the
+intentional immutable tag/release operation.
+
 ## Scope And Baseline
 
 The requested baseline was commit `44debafda1aa9a86a301780cd1bc2ca873ec3531` on

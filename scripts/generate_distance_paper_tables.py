@@ -1,58 +1,89 @@
 #!/usr/bin/env python3
 import hashlib
 import json
+import os
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 
-HEADLINE_KEYS = [
-    "Total files",
-    "Successful distances",
-    "Skipped identical raw AST predicate pairs",
-    "Failures",
-    "Average certified repair distance",
-    "Average canonical representative TED baseline",
-    "Average direct reference-metric distance",
-    "Average predicate-body Levenshtein distance",
-    "Average raw AST tree distance",
-    "Average raw AST size",
-    "Average repair observation size",
-    "Average canonical representative tree size",
-    "Average reference NormalForm metric size",
-    "Average normalized predicate-body Levenshtein distance",
-    "Average normalized raw AST distance",
-    "Average normalized certified repair distance",
-    "Average normalized canonical representative TED",
-    "Average normalized direct reference-metric distance",
-    "CORRECT models with canonical distance 0 and raw AST distance > 0",
-    "Incorrect zero-distance merges",
-    "Inexact alpha searches",
-    "Average certified repair metric time",
-    "Average canonical representative TED time",
-    "Min distance",
-    "Max distance",
-    "Pearson correlation, certified repair distance vs candidate reward",
-    "Pearson correlation, canonical representative TED vs candidate reward",
-    "Pearson correlation, direct reference-metric distance vs candidate reward",
-    "Pearson correlation, Levenshtein vs candidate reward",
-    "Pearson correlation, raw AST tree distance vs candidate reward",
-    "Pearson correlation, normalized raw AST distance vs candidate reward",
-    "Pearson correlation, normalized canonical distance vs candidate reward",
-    "Pearson correlation, normalized canonical representative TED vs candidate reward",
-    "Pearson correlation, normalized direct reference-metric distance vs candidate reward",
+HEADLINE_METRICS = [
+    ("Total files", ("Total files",), True),
+    ("Successful distances", ("Successful distances",), True),
+    ("Skipped identical raw AST predicate pairs",
+     ("Skipped identical raw AST predicate pairs",), True),
+    ("Failures", ("Failures",), True),
+    ("Average Certificate-Integrated IR repair distance",
+     ("Average Certificate-Integrated IR repair distance",
+      "Average certified repair distance"), True),
+    ("Average canonical representative TED baseline",
+     ("Average canonical representative TED baseline",), True),
+    ("Average Fast Rewrite IR distance",
+     ("Average Fast Rewrite IR distance",
+      "Average direct reference-metric distance"), True),
+    ("Average predicate-body Levenshtein distance",
+     ("Average predicate-body Levenshtein distance",), True),
+    ("Average raw AST tree distance", ("Average raw AST tree distance",), True),
+    ("Average raw AST size", ("Average raw AST size",), True),
+    ("Average Certificate-Integrated IR repair observation size",
+     ("Average Certificate-Integrated IR repair observation size",
+      "Average repair observation size"), True),
+    ("Average canonical representative tree size",
+     ("Average canonical representative tree size",), True),
+    ("Average Fast Rewrite IR NormalForm size",
+     ("Average Fast Rewrite IR NormalForm size",
+      "Average reference NormalForm metric size"), True),
+    ("Average normalized predicate-body Levenshtein distance",
+     ("Average normalized predicate-body Levenshtein distance",), True),
+    ("Average normalized raw AST distance",
+     ("Average normalized raw AST distance",), True),
+    ("Average normalized Certificate-Integrated IR distance",
+     ("Average normalized Certificate-Integrated IR distance",
+      "Average normalized certified repair distance"), True),
+    ("Average normalized canonical representative TED",
+     ("Average normalized canonical representative TED",), True),
+    ("Average normalized Fast Rewrite IR distance",
+     ("Average normalized Fast Rewrite IR distance",
+      "Average normalized direct reference-metric distance"), True),
+    ("CORRECT models with canonical distance 0 and raw AST distance > 0",
+     ("CORRECT models with canonical distance 0 and raw AST distance > 0",), True),
+    ("Incorrect zero-distance merges", ("Incorrect zero-distance merges",), True),
+    ("Inexact alpha searches", ("Inexact alpha searches",), True),
+    ("Average certified repair metric time",
+     ("Average certified repair metric time",), True),
+    ("Average canonical representative TED time",
+     ("Average canonical representative TED time",), True),
+    ("Min distance", ("Min distance",), True),
+    ("Max distance", ("Max distance",), True),
+    ("Pearson correlation, certified repair distance vs candidate reward",
+     ("Pearson correlation, certified repair distance vs candidate reward",), False),
+    ("Pearson correlation, canonical representative TED vs candidate reward",
+     ("Pearson correlation, canonical representative TED vs candidate reward",), False),
+    ("Pearson correlation, direct reference-metric distance vs candidate reward",
+     ("Pearson correlation, direct reference-metric distance vs candidate reward",), False),
+    ("Pearson correlation, Levenshtein vs candidate reward",
+     ("Pearson correlation, Levenshtein vs candidate reward",), False),
+    ("Pearson correlation, raw AST tree distance vs candidate reward",
+     ("Pearson correlation, raw AST tree distance vs candidate reward",), False),
 ]
 
 
 def parse_metrics(lines):
-    metrics = {}
+    parsed = {}
     pattern = re.compile(r"^- ([^:]+):\s*(.+)$")
     for line in lines:
         match = pattern.match(line)
         if match:
-            metrics[match.group(1)] = match.group(2)
-    missing = [key for key in HEADLINE_KEYS if key not in metrics]
+            parsed[match.group(1)] = match.group(2)
+    metrics = {}
+    missing = []
+    for key, aliases, required in HEADLINE_METRICS:
+        value = next((parsed[alias] for alias in aliases if alias in parsed), None)
+        if value is not None:
+            metrics[key] = value
+        elif required:
+            missing.append(key)
     if missing:
         raise ValueError("Missing summary metrics: " + ", ".join(missing))
     return metrics
@@ -79,8 +110,11 @@ def parse_tables(lines):
 
 def main():
     summary = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("distance_results/summary.md")
-    output = Path(sys.argv[2]) if len(sys.argv) > 2 else summary.with_name("paper_tables.md")
+    output = (Path(sys.argv[2]) if len(sys.argv) > 2 else
+              Path(os.environ.get("TMPDIR", "/tmp")) /
+              "acgn-distance-paper-artifacts" / "paper_tables.md")
     metrics_output = output.with_name("paper_metrics.json")
+    output.parent.mkdir(parents=True, exist_ok=True)
     raw = summary.read_bytes()
     lines = raw.decode("utf-8").splitlines()
     metrics = parse_metrics(lines)
@@ -101,7 +135,9 @@ def main():
         "| Metric | Current value |",
         "| --- | ---: |",
     ]
-    for key in HEADLINE_KEYS:
+    for key, _, _ in HEADLINE_METRICS:
+        if key not in metrics:
+            continue
         markdown.append(f"| {key} | {metrics[key]} |")
     for heading, table in tables:
         markdown.extend(["", f"## {heading}", ""])
@@ -113,7 +149,7 @@ def main():
         "generatedAt": generated_at,
         "source": str(summary),
         "summarySha256": summary_hash,
-        "metrics": {key: metrics[key] for key in HEADLINE_KEYS},
+        "metrics": metrics,
         "tableCount": len(tables),
     }
     metrics_output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

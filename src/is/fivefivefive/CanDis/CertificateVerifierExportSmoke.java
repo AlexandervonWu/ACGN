@@ -29,18 +29,33 @@ public final class CertificateVerifierExportSmoke {
               (x = y or x != y) and (y = x or y != x)
             }
             """;
+    private static final String PAIR_LEFT_SOURCE = """
+            module parsed_pair_left
+
+            pred left {}
+            """;
+    private static final String PAIR_RIGHT_SOURCE = """
+            module parsed_pair_right
+
+            pred right {}
+            """;
 
     private CertificateVerifierExportSmoke() {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 1) {
+        if (args.length != 2) {
             throw new IllegalArgumentException(
-                    "usage: CertificateVerifierExportSmoke <output-dir>");
+                    "usage: CertificateVerifierExportSmoke "
+                            + "<output-dir> <trusted-theory-digest>");
         }
         Path output = Path.of(args[0]).toAbsolutePath();
         Files.createDirectories(output);
         Path verifierJar = configuredVerifierJar();
+        String trustedTheoryDigest = args[1];
+        if (!trustedTheoryDigest.matches("[0-9a-f]{64}")) {
+            throw new IllegalArgumentException("trusted theory digest must be SHA-256");
+        }
         Parsed parsed = parseRepresentativeModel();
         List<Case> cases = List.of(
                 new Case("nullary", "nullary construction"),
@@ -48,9 +63,12 @@ public final class CertificateVerifierExportSmoke {
                 new Case("deliberatelyUnsupported", "deliberately unsupported construction"));
         List<Result> results = new ArrayList<>();
         for (Case testCase : cases) {
-            results.add(export(parsed, testCase, output, verifierJar));
+            results.add(export(
+                    parsed, testCase, output, verifierJar, trustedTheoryDigest));
         }
+        assertExactCensus(results);
         writeCensus(output.resolve("coverage-census.tsv"), results);
+        exportParsedSourcePair(output, verifierJar, trustedTheoryDigest);
         long verified = results.stream().filter(value -> value.status.equals("VERIFIED")).count();
         long uncheckable = results.stream().filter(
                 value -> value.status.equals("UNCHECKABLE")).count();
@@ -60,7 +78,8 @@ public final class CertificateVerifierExportSmoke {
                 + " UNCHECKABLE=" + uncheckable
                 + " REJECTED=" + rejected);
         for (Result result : results) {
-            System.out.println(result.name + "\t" + result.status + "\t" + result.reason);
+            System.out.println(result.name + "\t" + result.status + "\t"
+                    + result.code + "\t" + result.reason);
         }
         if (rejected != 0) {
             throw new IllegalStateException("Representative export census contains REJECTED cases");
@@ -71,13 +90,14 @@ public final class CertificateVerifierExportSmoke {
             Parsed parsed,
             Case testCase,
             Path output,
-            Path verifierJar) {
+            Path verifierJar,
+            String trustedTheoryDigest) {
         Integer graphId = parsed.visitor.getForestId(testCase.name);
         DoubleMap<Integer, Multigraph> forest = parsed.visitor.getForest();
         Multigraph graph = graphId == null ? null : forest.get(graphId);
         if (graph == null) {
             return new Result(testCase.name, testCase.coverage, "REJECTED",
-                    "MASG did not produce the selected predicate", "");
+                    "MISSING_MASG", "MASG did not produce the selected predicate", "");
         }
         Path bundle = output.resolve(testCase.name + ".acgncert");
         try {
@@ -87,27 +107,79 @@ public final class CertificateVerifierExportSmoke {
                             "certificate-smoke.als#" + testCase.name,
                             SOURCE.getBytes(StandardCharsets.UTF_8));
             prepared.certificateExportSession().write(bundle);
-            ProcessResult verification = verify(verifierJar, bundle);
+            ProcessResult verification = verify(
+                    verifierJar, bundle, trustedTheoryDigest);
             return new Result(
                     testCase.name,
                     testCase.coverage,
-                    verification.exitCode == 0 ? "VERIFIED"
-                            : verification.exitCode == 3 ? "UNCHECKABLE" : "REJECTED",
+                    verification.outcome,
+                    verification.code,
                     compact(verification.output),
                     bundle.getFileName().toString());
         } catch (UncheckedIOException exception) {
             return new Result(testCase.name, testCase.coverage, "REJECTED",
-                    compact(exception.getMessage()), "");
+                    "EXPORT_IO_FAILURE", compact(exception.getMessage()), "");
         } catch (IOException exception) {
             String message = compact(exception.getMessage());
             String status = message.startsWith("UNCHECKABLE:")
                     ? "UNCHECKABLE" : "REJECTED";
-            return new Result(testCase.name, testCase.coverage, status, message, "");
+            String code = status.equals("UNCHECKABLE")
+                    ? "EXPORT_UNSUPPORTED" : "EXPORT_IO_FAILURE";
+            return new Result(testCase.name, testCase.coverage, status, code, message, "");
         } catch (RuntimeException exception) {
             return new Result(testCase.name, testCase.coverage, "REJECTED",
+                    "EXPORT_RUNTIME_FAILURE",
                     compact(exception.getClass().getSimpleName() + ": "
                             + exception.getMessage()), "");
         }
+    }
+
+    private static void exportParsedSourcePair(
+            Path output,
+            Path verifierJar,
+            String trustedTheoryDigest) throws Exception {
+        Path leftSource = output.resolve("parsed-pair-left.als");
+        Path rightSource = output.resolve("parsed-pair-right.als");
+        Files.writeString(leftSource, PAIR_LEFT_SOURCE, StandardCharsets.UTF_8);
+        Files.writeString(rightSource, PAIR_RIGHT_SOURCE, StandardCharsets.UTF_8);
+        Path leftBundle = output.resolve("parsed-pair-left.acgncert");
+        Path rightBundle = output.resolve("parsed-pair-right.acgncert");
+        exportParsedSource(
+                parseSource(leftSource),
+                "left",
+                "fixture/parsed-pair-left.als#left",
+                Files.readAllBytes(leftSource),
+                leftBundle);
+        exportParsedSource(
+                parseSource(rightSource),
+                "right",
+                "fixture/parsed-pair-right.als#right",
+                Files.readAllBytes(rightSource),
+                rightBundle);
+        ProcessResult result = verifyPair(
+                verifierJar, leftBundle, rightBundle, trustedTheoryDigest);
+        if (result.exitCode != 0
+                || !result.outcome.equals("VERIFIED")
+                || !result.code.equals("NONE")) {
+            throw new IllegalStateException(
+                    "parsed source PAIR did not verify: " + compact(result.output));
+        }
+    }
+
+    private static void exportParsedSource(
+            Parsed parsed,
+            String predicate,
+            String inputIdentifier,
+            byte[] source,
+            Path output) throws IOException {
+        Integer graphId = parsed.visitor.getForestId(predicate);
+        Multigraph graph = graphId == null
+                ? null : parsed.visitor.getForest().get(graphId);
+        if (graph == null) {
+            throw new IOException("parsed source fixture lacks predicate " + predicate);
+        }
+        CanonicalAlloyPipeline.prepareForVerification(
+                graph, inputIdentifier, source).certificateExportSession().write(output);
     }
 
     private static Parsed parseRepresentativeModel() throws Exception {
@@ -115,18 +187,22 @@ public final class CertificateVerifierExportSmoke {
         Path source = directory.resolve("certificate-smoke.als");
         try {
             Files.writeString(source, SOURCE, StandardCharsets.UTF_8);
-            CompModule module = AlloyUtil.compileAlloyModule(source.toString());
-            if (module == null) {
-                throw new IllegalStateException("Alloy rejected the representative smoke model");
-            }
-            ModelUnit model = new ModelUnit(null, module);
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
-            visitor.visit(model, null);
-            return new Parsed(visitor);
+            return parseSource(source);
         } finally {
             Files.deleteIfExists(source);
             Files.deleteIfExists(directory);
         }
+    }
+
+    private static Parsed parseSource(Path source) throws Exception {
+        CompModule module = AlloyUtil.compileAlloyModule(source.toString());
+        if (module == null) {
+            throw new IllegalStateException("Alloy rejected source fixture " + source);
+        }
+        ModelUnit model = new ModelUnit(null, module);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        visitor.visit(model, null);
+        return new Parsed(visitor);
     }
 
     private static Path configuredVerifierJar() {
@@ -142,41 +218,56 @@ public final class CertificateVerifierExportSmoke {
         return path;
     }
 
-    private static ProcessResult verify(Path verifierJar, Path bundle) throws IOException {
-        Process digestProcess = new ProcessBuilder(
-                javaExecutable(), "-cp", verifierJar.toString(),
-                "org.acgn.cert.ManifestInspector", bundle.toString())
-                .redirectErrorStream(true)
-                .start();
-        String digest = readProcess(digestProcess, "manifest inspection").trim();
-        Process verifyProcess = new ProcessBuilder(
+    private static ProcessResult verify(
+            Path verifierJar,
+            Path bundle,
+            String trustedTheoryDigest) throws IOException {
+        return runVerifier(new ProcessBuilder(
                 javaExecutable(), "-jar", verifierJar.toString(),
-                "--profile", "full", "--theory-digest", digest, bundle.toString())
-                .redirectErrorStream(true)
-                .start();
+                "--profile", "full", "--theory-digest", trustedTheoryDigest,
+                bundle.toString()));
+    }
+
+    private static ProcessResult verifyPair(
+            Path verifierJar,
+            Path left,
+            Path right,
+            String trustedTheoryDigest) throws IOException {
+        return runVerifier(new ProcessBuilder(
+                javaExecutable(), "-jar", verifierJar.toString(),
+                "--profile", "pair", "--theory-digest", trustedTheoryDigest,
+                left.toString(), right.toString()));
+    }
+
+    private static ProcessResult runVerifier(ProcessBuilder builder) throws IOException {
+        Process verifyProcess = builder.redirectErrorStream(true).start();
         try {
             String output = new String(
                     verifyProcess.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            return new ProcessResult(verifyProcess.waitFor(), output);
+            int exitCode = verifyProcess.waitFor();
+            return new ProcessResult(
+                    exitCode,
+                    jsonField(output, "outcome"),
+                    jsonField(output, "code"),
+                    output);
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             throw new IOException("Verifier smoke was interrupted", exception);
         }
     }
 
-    private static String readProcess(Process process, String label) throws IOException {
-        try {
-            String output = new String(
-                    process.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-            int status = process.waitFor();
-            if (status != 0) {
-                throw new IOException(label + " failed: " + compact(output));
-            }
-            return output;
-        } catch (InterruptedException exception) {
-            Thread.currentThread().interrupt();
-            throw new IOException(label + " was interrupted", exception);
+    private static String jsonField(String json, String name) throws IOException {
+        String marker = "\"" + name + "\":\"";
+        int start = json.indexOf(marker);
+        if (start < 0) {
+            throw new IOException("verifier output lacks " + name + ": " + compact(json));
         }
+        start += marker.length();
+        int end = json.indexOf('"', start);
+        if (end < 0) {
+            throw new IOException("verifier output has malformed " + name);
+        }
+        return json.substring(start, end);
     }
 
     private static String javaExecutable() {
@@ -184,15 +275,36 @@ public final class CertificateVerifierExportSmoke {
     }
 
     private static void writeCensus(Path output, List<Result> results) throws IOException {
-        StringBuilder text = new StringBuilder("predicate\tcoverage\tstatus\treason\tbundle\n");
+        StringBuilder text = new StringBuilder(
+                "predicate\tcoverage\tstatus\tcode\treason\tbundle\n");
         for (Result result : results) {
             text.append(result.name).append('\t')
                     .append(result.coverage).append('\t')
                     .append(result.status).append('\t')
+                    .append(result.code).append('\t')
                     .append(result.reason.replace('\t', ' ')).append('\t')
                     .append(result.bundle).append('\n');
         }
         Files.writeString(output, text, StandardCharsets.UTF_8);
+    }
+
+    private static void assertExactCensus(List<Result> results) {
+        java.util.Map<String, String> expected = java.util.Map.of(
+                "nullary", "VERIFIED\tNONE",
+                "slotBearing", "UNCHECKABLE\tEXPORT_UNSUPPORTED",
+                "deliberatelyUnsupported", "UNCHECKABLE\tEXPORT_UNSUPPORTED");
+        if (results.size() != expected.size()) {
+            throw new IllegalStateException("certificate census size changed");
+        }
+        for (Result result : results) {
+            String actual = result.status + "\t" + result.code;
+            if (!actual.equals(expected.get(result.name))) {
+                throw new IllegalStateException(
+                        "certificate census changed for " + result.name
+                                + ": expected=" + expected.get(result.name)
+                                + " actual=" + actual);
+            }
+        }
     }
 
     private static String compact(String value) {
@@ -212,10 +324,15 @@ public final class CertificateVerifierExportSmoke {
             String name,
             String coverage,
             String status,
+            String code,
             String reason,
             String bundle) {
     }
 
-    private record ProcessResult(int exitCode, String output) {
+    private record ProcessResult(
+            int exitCode,
+            String outcome,
+            String code,
+            String output) {
     }
 }

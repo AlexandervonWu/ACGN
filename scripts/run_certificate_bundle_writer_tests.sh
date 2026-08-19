@@ -11,6 +11,23 @@ verifier_jar="$work/acgn-certificate-verifier.jar"
 run_a="$work/writer-run-a"
 run_b="$work/writer-run-b"
 smoke="$work/export-smoke"
+pins="$repo_root/certificate-verifier/trusted/theory-pins.tsv"
+
+pin_digest() {
+  local pin_id="$1"
+  local digest
+  digest="$(awk -F '\t' -v pin_id="$pin_id" \
+    'NR > 1 && $1 == pin_id { print $8 }' "$pins")"
+  if [[ ! "$digest" =~ ^[0-9a-f]{64}$ ]]; then
+    printf 'missing or malformed static theory pin %s in %s\n' \
+      "$pin_id" "$pins" >&2
+    exit 1
+  fi
+  printf '%s' "$digest"
+}
+
+empty_theory_digest="$(pin_digest fixture-empty-theory-v1)"
+parent_theory_digest="$(pin_digest fixture-parent-path-theory-v1)"
 
 rm -rf "$work"
 mkdir -p \
@@ -100,32 +117,45 @@ java -ea -cp "$verifier_classes:$verifier_tests" \
   "$run_a/pair-equivalent-left.acgncert" \
   "$run_b/pair-equivalent-right.acgncert" \
   "$run_b/pair-non-equivalent.acgncert" \
-  "$repo_root" "$producer_jar" "$verifier_jar"
+  "$repo_root" "$producer_jar" "$verifier_jar" \
+  "$empty_theory_digest" "$parent_theory_digest"
 
-theory_digest="$(
-  java -cp "$verifier_jar" org.acgn.cert.ManifestInspector \
-    "$run_a/nullary-a.acgncert"
-)"
+java -ea -cp "$verifier_classes:$verifier_tests" \
+  org.acgn.cert.TrustedTheoryPinsTest \
+  "$pins" \
+  "$run_a/nullary-a.acgncert" \
+  "$run_a/slot-only-a.acgncert" \
+  "$run_a/parent-path-a.acgncert"
+
 for name in "${expected[@]}"; do
+  selected_digest="$empty_theory_digest"
+  if [[ "$name" == parent-path-* ]]; then
+    selected_digest="$parent_theory_digest"
+  fi
   artifact_digest="$(
     java -cp "$verifier_jar" org.acgn.cert.ManifestInspector "$run_a/$name"
   )"
+  if [[ "$artifact_digest" != "$selected_digest" ]]; then
+    printf 'bundle %s has theory %s but static pin selects %s\n' \
+      "$name" "$artifact_digest" "$selected_digest" >&2
+    exit 1
+  fi
   java -jar "$verifier_jar" \
     --profile full \
-    --theory-digest "$artifact_digest" \
+    --theory-digest "$selected_digest" \
     "$run_a/$name" >/dev/null
 done
 
 java -jar "$verifier_jar" \
   --profile pair \
-  --theory-digest "$theory_digest" \
+  --theory-digest "$empty_theory_digest" \
   "$run_a/pair-equivalent-left.acgncert" \
   "$run_b/pair-equivalent-right.acgncert" >/dev/null
 
 set +e
 java -jar "$verifier_jar" \
   --profile pair \
-  --theory-digest "$theory_digest" \
+  --theory-digest "$empty_theory_digest" \
   "$run_a/pair-equivalent-left.acgncert" \
   "$run_b/pair-non-equivalent.acgncert" >/dev/null
 non_equivalent_status=$?
@@ -136,17 +166,65 @@ if [[ "$non_equivalent_status" -ne 3 ]]; then
   exit 1
 fi
 
+set +e
+wrong_pin_output="$(java -jar "$verifier_jar" \
+  --profile full \
+  --theory-digest "$parent_theory_digest" \
+  "$run_a/nullary-a.acgncert")"
+wrong_pin_status=$?
+set -e
+if [[ "$wrong_pin_status" -ne 2 \
+    || "$wrong_pin_output" != *'"outcome":"REJECTED"'* \
+    || "$wrong_pin_output" != *'"code":"UNTRUSTED_THEORY"'* ]]; then
+  printf 'wrong static pin did not yield REJECTED / UNTRUSTED_THEORY: %s\n' \
+    "$wrong_pin_output" >&2
+  exit 1
+fi
+
 java -ea "${provenance_options[@]}" -cp "$producer_cp" \
-  is.fivefivefive.CanDis.CertificateVerifierExportSmoke "$smoke"
+  is.fivefivefive.CanDis.CertificateVerifierExportSmoke \
+  "$smoke" "$empty_theory_digest"
 
 mapfile -t smoke_files < <(
   find "$smoke" -mindepth 1 -maxdepth 1 -type f -printf '%f\n' | sort
 )
-expected_smoke=(coverage-census.tsv nullary.acgncert)
+expected_smoke=(
+  coverage-census.tsv
+  nullary.acgncert
+  parsed-pair-left.acgncert
+  parsed-pair-left.als
+  parsed-pair-right.acgncert
+  parsed-pair-right.als
+)
 if [[ "${smoke_files[*]}" != "${expected_smoke[*]}" ]]; then
   printf 'unexpected export-smoke files: %s\n' "${smoke_files[*]}" >&2
   exit 1
 fi
 
-printf 'certificate producer/verifier harness passed; work=%s theory=%s\n' \
-  "$work" "$theory_digest"
+awk -F '\t' '
+  NR == 1 {
+    if ($1 != "predicate" || $3 != "status" || $4 != "code") exit 10
+    next
+  }
+  $1 == "nullary" && $3 == "VERIFIED" && $4 == "NONE" { nullary++ }
+  $1 == "slotBearing" && $3 == "UNCHECKABLE" \
+      && $4 == "EXPORT_UNSUPPORTED" { slot++ }
+  $1 == "deliberatelyUnsupported" && $3 == "UNCHECKABLE" \
+      && $4 == "EXPORT_UNSUPPORTED" { unsupported++ }
+  $3 == "REJECTED" { rejected++ }
+  END {
+    if (NR != 4 || nullary != 1 || slot != 1 || unsupported != 1 \
+        || rejected != 0) exit 11
+  }
+' "$smoke/coverage-census.tsv"
+
+java -ea -cp "$verifier_classes:$verifier_tests" \
+  org.acgn.cert.ParsedSourcePairInspectionTest \
+  "$smoke/parsed-pair-left.acgncert" \
+  "$smoke/parsed-pair-right.acgncert" \
+  "$smoke/parsed-pair-left.als" \
+  "$smoke/parsed-pair-right.als" \
+  "$empty_theory_digest"
+
+printf 'certificate producer/verifier harness passed; work=%s empty=%s parent=%s\n' \
+  "$work" "$empty_theory_digest" "$parent_theory_digest"

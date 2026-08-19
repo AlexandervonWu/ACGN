@@ -1,5 +1,11 @@
 # Theory to Artifact Obligation Matrix
 
+> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> run identities below are retained as historical phase provenance. The current
+> authoritative empirical snapshot is clean publication run
+> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> by `scripts/verify_imported_publication_snapshot.sh`.
+
 This matrix began as the Phase A audit gate for the Certificate-Integrated IR at
 commit `a9261da4c096f6ba5fcb1a34bcac93cb1b1df23d`. Its current review target is
 HEAD `5f88982788c0070eddb0471c036d8b4ad53f596d` in a dirty worktree, against the

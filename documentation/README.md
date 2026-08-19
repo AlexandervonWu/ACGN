@@ -452,6 +452,14 @@ preserved.
 The repository currently uses direct `javac` commands and the JARs in `lib/`.
 Java 17 is the tested runtime.
 
+The two largest publication JSON files use Git LFS. After cloning, run:
+
+```bash
+git lfs install
+git lfs pull
+./scripts/verify_imported_publication_snapshot.sh
+```
+
 ### Full project
 
 ```bash
@@ -755,11 +763,12 @@ The August 19 structural snapshot used `--skip-rewards`; reward CSVs, plots,
 correlations, and paper-table extracts from earlier rewarded runs are not part
 of this publication output.
 
-For a separately rewarded result tree, regenerate its plotting data and
-paper-table extracts with:
+Generate paper-table extracts, and optional rewarded plots when their inputs
+exist, in a directory outside the frozen snapshot:
 
 ```bash
-./scripts/regenerate_distance_artifacts.sh distance_results
+./scripts/regenerate_distance_artifacts.sh \
+  distance_results /tmp/acgn-paper-artifacts
 ```
 
 ### `alloy4fun-augmented/`

@@ -37,3 +37,6 @@ for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"
   java -ea -Xmx1g -cp "$classes:$ROOT/lib/*" "$test_class"
 done
+
+"$ROOT/scripts/run_distance_artifact_regeneration_tests.sh" \
+  "$work/distance-paper-artifacts"
