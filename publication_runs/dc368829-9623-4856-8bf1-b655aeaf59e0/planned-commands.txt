@@ -1,0 +1,5 @@
+CanonicalBatchTest dataset=/home/augustus/ACGN/classified-data output=/absolute/path/to/acgn-publication-run/distance_results threads=32 heap=4g rewardPool=0 limit=0
+Alloy4FunAugmenter dataset=/home/augustus/ACGN/classified-data output=/absolute/path/to/acgn-publication-run/alloy4fun-augmented threads=32 heap=4g rewardPool=0 limit=0
+EGraphAblationSuite dataset=/home/augustus/ACGN/classified-data output=/absolute/path/to/acgn-publication-run/egraph_ablation threads=32 heap=4g seed=55520260811 limit=0
+EGraphSemanticSoundnessCheck dataset=/home/augustus/ACGN/classified-data results=/absolute/path/to/acgn-publication-run/egraph_ablation threads=32
+CapabilityBenchmark dataset=/home/augustus/ACGN/classified-data output=/absolute/path/to/acgn-publication-run/capability_benchmark natural=/absolute/path/to/acgn-publication-run/egraph_ablation target=500 threads=32 heap=4g seed=55520260811

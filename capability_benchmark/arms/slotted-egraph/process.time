@@ -1,21 +1,21 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx4g -cp /tmp/acgn-capability-benchmark.n1JfCz:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/ACGN/capability_benchmark/models --output /home/augustus/ACGN/capability_benchmark/arms/slotted-egraph --engine slotted-egraph --threads 32"
-	User time (seconds): 39.34
-	System time (seconds): 1.04
-	Percent of CPU this job got: 1624%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.48
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx4g -cp /absolute/path/to/acgn-publication-run/build/acgn-experiments.jar:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /absolute/path/to/acgn-publication-run/capability_benchmark/models --output /absolute/path/to/acgn-publication-run/capability_benchmark/arms/slotted-egraph --engine slotted-egraph --threads 32"
+	User time (seconds): 39.67
+	System time (seconds): 0.99
+	Percent of CPU this job got: 1616%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.51
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 907384
+	Maximum resident set size (kbytes): 914412
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 245038
-	Voluntary context switches: 288798
-	Involuntary context switches: 8299
+	Minor (reclaiming a frame) page faults: 245425
+	Voluntary context switches: 287118
+	Involuntary context switches: 10991
 	Swaps: 0
 	File system inputs: 0
-	File system outputs: 2264
+	File system outputs: 2232
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

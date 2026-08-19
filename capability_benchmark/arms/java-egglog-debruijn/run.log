@@ -1,24 +1,24 @@
 EGraphAblationStudy/java-egglog-debruijn: processing 5,500 files with 32 workers.
-EGraphAblationStudy/java-egglog-debruijn: 275/5,500 complete (5.0%), 824.79 files/s, ETA 0m 06s.
-EGraphAblationStudy/java-egglog-debruijn: 550/5,500 complete (10.0%), 1134.10 files/s, ETA 0m 04s.
-EGraphAblationStudy/java-egglog-debruijn: 825/5,500 complete (15.0%), 1412.15 files/s, ETA 0m 03s.
-EGraphAblationStudy/java-egglog-debruijn: 1,100/5,500 complete (20.0%), 1610.16 files/s, ETA 0m 03s.
-EGraphAblationStudy/java-egglog-debruijn: 1,375/5,500 complete (25.0%), 1752.35 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog-debruijn: 1,650/5,500 complete (30.0%), 1862.97 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog-debruijn: 1,925/5,500 complete (35.0%), 1926.56 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog-debruijn: 2,200/5,500 complete (40.0%), 1999.61 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog-debruijn: 2,475/5,500 complete (45.0%), 2060.40 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 2,750/5,500 complete (50.0%), 2122.25 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 3,025/5,500 complete (55.0%), 2185.33 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 3,300/5,500 complete (60.0%), 2234.69 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 3,575/5,500 complete (65.0%), 2277.61 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 3,850/5,500 complete (70.0%), 2312.68 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 4,125/5,500 complete (75.0%), 2335.71 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog-debruijn: 4,400/5,500 complete (80.0%), 2348.26 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog-debruijn: 4,675/5,500 complete (85.0%), 2372.41 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog-debruijn: 4,950/5,500 complete (90.0%), 2396.27 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog-debruijn: 5,225/5,500 complete (95.0%), 2425.68 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog-debruijn: 5,500/5,500 complete (100.0%), 2451.97 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog-debruijn: 275/5,500 complete (5.0%), 790.54 files/s, ETA 0m 07s.
+EGraphAblationStudy/java-egglog-debruijn: 550/5,500 complete (10.0%), 1166.49 files/s, ETA 0m 04s.
+EGraphAblationStudy/java-egglog-debruijn: 825/5,500 complete (15.0%), 1427.21 files/s, ETA 0m 03s.
+EGraphAblationStudy/java-egglog-debruijn: 1,100/5,500 complete (20.0%), 1627.38 files/s, ETA 0m 03s.
+EGraphAblationStudy/java-egglog-debruijn: 1,375/5,500 complete (25.0%), 1775.74 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog-debruijn: 1,650/5,500 complete (30.0%), 1879.37 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog-debruijn: 1,925/5,500 complete (35.0%), 1960.40 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog-debruijn: 2,200/5,500 complete (40.0%), 2036.16 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog-debruijn: 2,475/5,500 complete (45.0%), 2086.36 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 2,750/5,500 complete (50.0%), 2141.18 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 3,025/5,500 complete (55.0%), 2200.63 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 3,300/5,500 complete (60.0%), 2241.02 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 3,575/5,500 complete (65.0%), 2281.14 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 3,850/5,500 complete (70.0%), 2309.98 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 4,125/5,500 complete (75.0%), 2333.29 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog-debruijn: 4,400/5,500 complete (80.0%), 2340.68 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog-debruijn: 4,675/5,500 complete (85.0%), 2362.06 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog-debruijn: 4,950/5,500 complete (90.0%), 2383.53 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog-debruijn: 5,225/5,500 complete (95.0%), 2413.86 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog-debruijn: 5,500/5,500 complete (100.0%), 2443.32 files/s, ETA 0m 00s.
 EGraphAblationStudy/java-egglog-debruijn/retry: processing 0 files.
 EGraphAblationStudy/java-egglog-debruijn/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed java-egglog-debruijn on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.255 s.
+Completed java-egglog-debruijn on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.264 s.

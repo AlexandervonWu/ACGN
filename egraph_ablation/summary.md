@@ -1,8 +1,8 @@
 # Alloy E-Graph Ablation
 
-- Generated at: `2026-08-18T14:02:33.554830238Z`
-- Run ID: `b4ab2ed1-792f-4261-a5bb-0039731cf1ef`
-- Git SHA: `fc66da28ebebee3ba73ea9694aa01b5a7bcda958` (dirty: true)
+- Generated at: `2026-08-19T18:09:04.103709030Z`
+- Run ID: `eb6b6e64-a929-44c4-9871-21c60de041b9`
+- Git SHA: `f1bb1607911a4e5a7a0b8527be65148f66cf72d8` (dirty: false)
 - Dataset SHA-256: `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`
 - Input root: `/home/augustus/ACGN/classified-data`
 - Predicate-pair limit: full corpus
@@ -33,13 +33,13 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 
 | Arm | Successful / eligible | AST-same skipped | Equivalent pairs | Process wall s | Dataset wall s | Pairs/s | Process CPU s | Engine CPU s | Aggregate task s | Avg engine ms | P50 ms | P95 ms | Peak heap MiB | Max RSS MiB | Avg structural KiB |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 61598 / 61598 | 4482 | 823 | 18.370 | 17.968 | 3428.237 | 189.650 | 4.271 | 4.814 | 0.078 | 0.048 | 0.162 | 488.652 | 987.148 | 9.353 |
-| raw-egraph-debruijn | 61598 / 61598 | 4482 | 2163 | 16.840 | 16.431 | 3749.002 | 187.570 | 5.425 | 6.115 | 0.099 | 0.057 | 0.211 | 501.638 | 1065.969 | 9.303 |
-| java-egglog | 61598 / 61598 | 4482 | 823 | 16.850 | 16.423 | 3750.700 | 185.190 | 4.273 | 4.772 | 0.077 | 0.047 | 0.147 | 529.504 | 1088.031 | 9.125 |
-| java-egglog-debruijn | 61598 / 61598 | 4482 | 2163 | 16.630 | 16.192 | 3804.283 | 184.910 | 5.134 | 5.672 | 0.092 | 0.055 | 0.181 | 582.213 | 1212.688 | 9.074 |
-| slotted-egraph | 61598 / 61598 | 4482 | 2162 | 17.550 | 17.108 | 3600.528 | 204.780 | 14.638 | 16.390 | 0.266 | 0.114 | 0.961 | 569.982 | 1172.520 | 14.017 |
-| canonical | 61598 / 61598 | 4482 | 2316 | 18.330 | 17.826 | 3455.449 | 230.370 | 13.182 | 15.845 | 0.257 | 0.164 | 0.468 | 3170.947 | 4070.129 | 1.865 |
-| typed-slotted-port-egraph | 61598 / 61598 | 4482 | 2317 | 2312.580 | 2312.066 | 26.642 | 65126.800 | 52243.802 | 73492.152 | 1193.093 | 556.331 | 4418.617 | 3860.216 | 4694.352 | 3.743 |
+| raw-egraph | 61598 / 61598 | 4482 | 823 | 17.310 | 16.906 | 3643.607 | 187.250 | 4.482 | 4.982 | 0.081 | 0.049 | 0.169 | 537.453 | 1087.395 | 9.353 |
+| raw-egraph-debruijn | 61598 / 61598 | 4482 | 2163 | 16.950 | 16.532 | 3725.925 | 188.350 | 5.641 | 6.297 | 0.102 | 0.059 | 0.217 | 560.467 | 1149.645 | 9.303 |
+| java-egglog | 61598 / 61598 | 4482 | 823 | 17.000 | 16.570 | 3717.340 | 184.880 | 4.269 | 4.723 | 0.077 | 0.048 | 0.148 | 571.480 | 1147.535 | 9.125 |
+| java-egglog-debruijn | 61598 / 61598 | 4482 | 2163 | 19.270 | 18.867 | 3264.940 | 198.130 | 4.945 | 5.533 | 0.090 | 0.054 | 0.180 | 465.950 | 973.191 | 9.074 |
+| slotted-egraph | 61598 / 61598 | 4482 | 2162 | 17.380 | 16.939 | 3636.559 | 201.360 | 14.974 | 16.721 | 0.271 | 0.113 | 0.998 | 602.129 | 1203.305 | 14.017 |
+| canonical | 61598 / 61598 | 4482 | 2316 | 19.830 | 19.349 | 3183.480 | 236.270 | 13.234 | 16.122 | 0.262 | 0.167 | 0.479 | 3079.782 | 3926.012 | 1.865 |
+| typed-slotted-port-egraph | 61598 / 61598 | 4482 | 2317 | 2373.970 | 2373.359 | 25.954 | 64671.720 | 51529.981 | 75420.895 | 1224.405 | 566.026 | 4523.886 | 3822.156 | 4672.453 | 3.743 |
 
 ## Observations
 
@@ -50,13 +50,13 @@ Each arm ran in a fresh JVM. Wall time, process CPU, and maximum RSS come from `
 - Slot-aware shapes add 2 pairs over the De Bruijn egglog arm, with 3 losses.
 - The Fast Rewrite IR adds 154 zeroes over slotted storage and loses 0.
 - The Certificate-Integrated IR adds 1 zeroes over the Fast Rewrite IR and loses 0. Its zero set contains 0 predicates labeled incorrect; the slotted arm contains 0.
-- Relative to the full method, the slotted arm uses 0.028% of engine CPU time and 24.977% of maximum RSS. End-to-end wall time is parser-dominated.
+- Relative to the full method, the slotted arm uses 0.029% of engine CPU time and 25.753% of maximum RSS. End-to-end wall time is parser-dominated.
 
 ## Implementation Tradeoff
 
 The Fast Rewrite IR directly executes the repaired temporal/prenex rewrite system and established metric for high-throughput corpus analysis. The Certificate-Integrated IR checks typed ports, law provenance, binder automorphisms, congruence quiescence, and graph invariants before accepting equality. It therefore provides a stronger fail-closed semantic-assurance boundary while preserving the same repair objective.
 
-On this run, certificate integration costs 126.164x wall time and 3963.200x engine CPU, with 1.153x maximum RSS. The Fast Rewrite IR remains an active artifact path for broad experiments; the Certificate-Integrated IR is the audit path when certified admissibility matters more than throughput. Dataset labels and bounded solver checks are empirical evidence, not an unbounded semantic proof.
+On this run, certificate integration costs 119.716x wall time and 3893.642x engine CPU, with 1.190x maximum RSS. The Fast Rewrite IR remains an active artifact path for broad experiments; the Certificate-Integrated IR is the audit path when certified admissibility matters more than throughput. Dataset labels and bounded solver checks are empirical evidence, not an unbounded semantic proof.
 
 ## Agreement With Dataset Labels
 
@@ -78,13 +78,13 @@ A found semantic equivalent is a zero-distance pair carrying the dataset's SAT-v
 
 | Arm | Found equivalents | CORRECT coverage | Found / wall s | Found / process CPU s | Found / engine CPU s | Found / GiB max RSS |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 823 | 4.284% | 44.801 | 4.340 | 192.691 | 853.724 |
-| raw-egraph-debruijn | 2163 | 11.259% | 128.444 | 11.532 | 398.720 | 2077.840 |
-| java-egglog | 823 | 4.284% | 48.843 | 4.444 | 192.621 | 774.566 |
-| java-egglog-debruijn | 2163 | 11.259% | 130.066 | 11.698 | 421.331 | 1826.449 |
-| slotted-egraph | 2162 | 11.253% | 123.191 | 10.558 | 147.701 | 1888.146 |
-| canonical | 2316 | 12.055% | 126.350 | 10.053 | 175.691 | 582.680 |
-| typed-slotted-port-egraph | 2317 | 12.060% | 1.002 | 0.036 | 0.044 | 505.418 |
+| raw-egraph | 823 | 4.284% | 47.545 | 4.395 | 183.632 | 775.020 |
+| raw-egraph-debruijn | 2163 | 11.259% | 127.611 | 11.484 | 383.418 | 1926.606 |
+| java-egglog | 823 | 4.284% | 48.412 | 4.452 | 192.795 | 734.402 |
+| java-egglog-debruijn | 2163 | 11.259% | 112.247 | 10.917 | 437.368 | 2275.926 |
+| slotted-egraph | 2162 | 11.253% | 124.396 | 10.737 | 144.383 | 1839.840 |
+| canonical | 2316 | 12.055% | 116.793 | 9.802 | 174.999 | 604.070 |
+| typed-slotted-port-egraph | 2317 | 12.060% | 0.976 | 0.036 | 0.045 | 507.786 |
 
 ## Minimum Edit Distance
 
@@ -106,12 +106,12 @@ Ratios below use engine CPU time and maximum RSS; values below 1 use less than t
 
 | Arm | Engine CPU ratio | Max RSS ratio | Representation-unit ratio |
 | --- | ---: | ---: | ---: |
-| raw-egraph | 0.000 | 0.210 | 1.950 |
-| raw-egraph-debruijn | 0.000 | 0.227 | 1.940 |
-| java-egglog | 0.000 | 0.232 | 1.902 |
-| java-egglog-debruijn | 0.000 | 0.258 | 1.891 |
-| slotted-egraph | 0.000 | 0.250 | 1.775 |
-| canonical | 0.000 | 0.867 | 1.000 |
+| raw-egraph | 0.000 | 0.233 | 1.950 |
+| raw-egraph-debruijn | 0.000 | 0.246 | 1.940 |
+| java-egglog | 0.000 | 0.246 | 1.902 |
+| java-egglog-debruijn | 0.000 | 0.208 | 1.891 |
+| slotted-egraph | 0.000 | 0.258 | 1.775 |
+| canonical | 0.000 | 0.840 | 1.000 |
 | typed-slotted-port-egraph | 1.000 | 1.000 | 1.000 |
 
 ## Pair-Level Transitions
@@ -145,7 +145,7 @@ The structural byte count is an implementation-level estimate for graph objects;
 ## Reproduce
 
 ```bash
-./scripts/run_egraph_ablation.sh --input /home/augustus/ACGN/classified-data --output /home/augustus/ACGN/egraph_ablation --threads 32 --max-heap 4g
+./scripts/run_egraph_ablation.sh --input /home/augustus/ACGN/classified-data --output /absolute/path/to/acgn-publication-run/egraph_ablation --threads 32 --max-heap 4g
 ```
 
 Use `--limit N` for a smoke run. Use `--report-only` to regenerate the combined JSON, disagreement CSV, and Markdown from retained per-arm files without rerunning the engines.

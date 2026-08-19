@@ -48,22 +48,22 @@ complete theorem prover for arbitrary Alloy semantics.
 
 ## Current Experimental Snapshot
 
-The August 17, 2026 snapshot uses 66,080 source files. Every runner excludes
+The August 19, 2026 snapshot uses 66,080 source files. Every runner excludes
 4,482 student-oracle pairs with identical parser ASTs before pool construction,
 leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 
 | Evaluation | Headline result |
 | --- | --- |
-| Paired student-oracle (`pipeline-v9`, metric v4) | 61,598 successes, 0 failures; mean certified repair distance 14.014010; 2,317 `CORRECT` zeroes; 0 incorrect zeroes |
-| Nearest correct pool (`pipeline-v10`, metric v5) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 10.865050 |
+| Paired student-oracle (`pipeline-v11`, metric v5) | 61,598 successes, 0 failures; mean certified repair distance 14.042096; 2,317 `CORRECT` zeroes; 0 incorrect zeroes |
+| Nearest correct pool (`pipeline-v11`, metric v5) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 10.865569 |
 | Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,318 canonical components, 10,257 AST-different zero-distance truth pairs |
 | Seven-arm natural corpus | Certificate-Integrated IR retained 2,316 Fast Rewrite IR zeroes and added 1; both canonical paths had 0 incorrect zeroes |
 | Generated capability matrix | slotted, Fast Rewrite IR, and Certificate-Integrated IR arms recovered 5,500/5,500 pairs; all 11 expected capability boundaries matched |
 
 The certificate-integrated arm averaged 29.830 representation units, 20.935
-reachable e-classes, and 18.059 reachable e-nodes, but required 2,303.890
-seconds wall time versus 18.470 seconds for the Fast Rewrite IR arm. Maximum RSS was 3,603.680 versus
-3,529.023 MiB. Its cost is dominated by certificate-bearing construction,
+reachable e-classes, and 18.059 reachable e-nodes, but required 2,373.970
+seconds wall time versus 19.830 seconds for the Fast Rewrite IR arm. Maximum
+RSS was 4,672.453 versus 3,926.012 MiB. Its cost is dominated by certificate-bearing construction,
 renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
 not by larger output terms or the final repair-distance recurrence.
 
@@ -75,10 +75,10 @@ scope, law, provenance, or quiescence evidence is missing. The latter provides
 a stronger semantic-assurance boundary at substantial runtime cost; neither
 the bounded checks nor the dataset labels constitute an unbounded Alloy proof.
 
-The ablation and capability manifests record a dirty source tree at Git SHA
-`cc53042333fa3a1c820eb5715aa3b124e03d0ff1`. Their source, dataset, and output
-hashes are the exact provenance for these results; a clean tagged rerun remains
-a release task.
+The publication, ablation, and capability manifests record a clean source tree
+at Git SHA `f1bb1607911a4e5a7a0b8527be65148f66cf72d8`. Their source, dataset, and
+output hashes are the exact provenance for these results; a tagged archival
+release remains a release task.
 
 ## Architecture
 
@@ -748,14 +748,15 @@ substitute for an object-layout profiler.
 
 ### `distance_results/`
 
-- `distances.json`: pair-level distances, sizes, formulas, edits, and reward data
-- `summary.md`: aggregate raw/relative distances, compression, repair radii, and
-  correlations
-- CSV/SVG artifacts: plotting inputs and generated visualizations
-- `paper_tables.md` and `paper_metrics.json`: reproducible paper-table extracts
-  pinned to the source summary hash
+- `distances.json`: pair-level distances, sizes, formulas, and edits
+- `summary.md`: aggregate raw/relative distances, compression, and repair radii
 
-Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
+The August 19 structural snapshot used `--skip-rewards`; reward CSVs, plots,
+correlations, and paper-table extracts from earlier rewarded runs are not part
+of this publication output.
+
+For a separately rewarded result tree, regenerate its plotting data and
+paper-table extracts with:
 
 ```bash
 ./scripts/regenerate_distance_artifacts.sh distance_results
@@ -768,12 +769,12 @@ Regenerate all plotting data, PNG/SVG figures, and paper-table extracts with:
 - `correct/<problem>/<invariant>.als`: AST-distinct correct pools including the
   oracle
 - `summary.md`: corpus, reference diversity, minimum-distance, repair-radius,
-  reward, and compression statistics
+  and compression statistics
 - `correct_ast_diff_canonical_equiv.json`: AST-different correct references at
   zero Certificate-Integrated IR distance
 - `correct_ast_diff_fast_rewrite_equiv.json`: AST-different correct references
   at zero Fast Rewrite IR distance
-- CSV/SVG artifacts: reward and repair-coverage analyses
+- CSV artifacts: AST-identity diagnostics for pool construction
 
 ### `egraph_ablation/`
 

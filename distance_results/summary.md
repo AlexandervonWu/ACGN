@@ -29,8 +29,8 @@
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 2317
 - Incorrect zero-distance merges: 0
 - Inexact alpha searches: 0
-- Average certified repair metric time: 0.098837 ms
-- Average canonical representative TED time: 0.507042 ms
+- Average certified repair metric time: 0.110786 ms
+- Average canonical representative TED time: 0.562312 ms
 - Min distance: 0
 - Max distance: 139
 

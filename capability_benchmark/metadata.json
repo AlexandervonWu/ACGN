@@ -5,7 +5,7 @@
   "schemaVersion": "candis-capability-benchmark-v1",
   "targetPerFamily": 500,
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "generatedAt": "2026-08-18T14:02:42.988179255Z",
+  "generatedAt": "2026-08-19T18:09:34.568112681Z",
   "realSeedPredicates": 256,
   "generatedPairs": 5500,
   "pairs": [

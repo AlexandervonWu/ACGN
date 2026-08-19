@@ -1,10 +1,10 @@
 # E-Graph Semantic Soundness Check
 
-- Generated at: `2026-08-18T11:41:03.298178703Z`
+- Generated at: `2026-08-19T18:09:21.400347922Z`
 - Checked unique predicate pairs: 2320
 - Mode: union of all equivalence claims
 - Threads: 32
-- Claim-source run: `c48a105a-796c-483c-9f75-7e3a35ff1db0`
+- Claim-source run: `eb6b6e64-a929-44c4-9871-21c60de041b9`
 - Exact checker: `canonical-alloy-pipeline-v11-three-layer` / `typed-alloy-normal-form-adapter-v8` / `canonical-alloy-signature-v7`
 
 This is a bounded semantic check using each model's own `check correct` command. An Alloy counterexample disproves a merge; absence of a counterexample is evidence only within that command's scope and temporal bounds.

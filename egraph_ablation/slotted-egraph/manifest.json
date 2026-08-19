@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "4df8d0ae32cb3c9108b35c650f961de77c2320be87ed2725d753a665ea4a2969",
-      "sizeBytes": 11467310
+      "sha256": "5cab587d44efbee49b66477cd72e8de0fcb68c667688084f67a3e1e704bfd5bf",
+      "sizeBytes": 11466231
     },
     {
       "path": "summary.json",
-      "sha256": "71fee9eab84ac3c01495511aa02fcc62dfe96020288e5b15284028416a80987c",
-      "sizeBytes": 83739
+      "sha256": "6a28ad787f576bbeb07aa9aeb46d66c26527db2a1d91cfe59f5b102a32899668",
+      "sizeBytes": 83723
     },
     {
       "path": "metrics.properties",
-      "sha256": "9b197d769152d01927f1d1aadcd09c00e22ecd54b5390149ae36d1055519729c",
+      "sha256": "a90e545452ebdd5903d00795771bb4937f5cab089c095346aa461252affc9881",
       "sizeBytes": 1510
     },
     {
       "path": "run.log",
-      "sha256": "8cd50762d960b9cf5ae66fb5cc6b2712b5fc2894dea18c1edb452a2bed136c77",
+      "sha256": "823b7b8a86fe30c6ec2b451e0fa5ea08ae2ff19bf0fa1120f55595202f1c835c",
       "sizeBytes": 6819
     },
     {
       "path": "process.time",
-      "sha256": "73ed18097ed20a85d623327e520b4d38a4bb9fe3ba977935dd06c0d2c4ac4012",
-      "sizeBytes": 1302
+      "sha256": "03ed498e7591e58c4d055026f81a9fe78342c7b387e98e523e086e7ecef06f45",
+      "sizeBytes": 1354
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T13:22:15.446562676Z",
-  "javaSourceSha256": "5ea336c31e3ef06262104b939f08f73b3acf58a4ad6f4ee68c9ceb1bddd91fea",
+  "startedAt": "2026-08-19T17:27:41.382159656Z",
+  "javaSourceSha256": "f16d10a5bbb1b1089e6e78ccedd4675b6c3599f1c7b4372fb9d6eefa90eb72b4",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -73,10 +73,10 @@
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
   "osName": "Linux",
-  "dirtyTree": true,
+  "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
+  "gitSha": "f1bb1607911a4e5a7a0b8527be65148f66cf72d8",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "b4ab2ed1-792f-4261-a5bb-0039731cf1ef"
+  "runId": "eb6b6e64-a929-44c4-9871-21c60de041b9"
 }

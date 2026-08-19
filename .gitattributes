@@ -1,0 +1,2 @@
+/distance_results/distances.json filter=lfs diff=lfs merge=lfs -text
+/alloy4fun-augmented/index.json filter=lfs diff=lfs merge=lfs -text

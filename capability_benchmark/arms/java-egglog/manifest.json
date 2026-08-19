@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "e0462fb9d3182b3d63d3bee4a3691590c3b24bb41c3636c5dbbf915244279b2f",
-      "sizeBytes": 1072657
+      "sha256": "7ed84566a3fcb546b58e48a2dc3ff224447a29487fc8f22fd1ee044ee48246a2",
+      "sizeBytes": 1072199
     },
     {
       "path": "summary.json",
-      "sha256": "4a5dcfc99fd98db65f97314aee9292876157d93f5cc0741f0deb399e4c310c06",
-      "sizeBytes": 14162
+      "sha256": "78461dac913bb05950be904081f37f61a87afae2cd1e786b6a7f4c9405d228eb",
+      "sizeBytes": 14184
     },
     {
       "path": "metrics.properties",
-      "sha256": "92cf83138a0f898cbccd274fde75903d9b54aa884d039b447f17a9b0c45c4b5d",
-      "sizeBytes": 1478
+      "sha256": "81a1c68cb8873209a77f03b79c9fffbfe755d093322d3931fe04c037bef02200",
+      "sizeBytes": 1496
     },
     {
       "path": "run.log",
-      "sha256": "e4dcc0358cfc6bed937f1d3a728cf037f8a31605e886f3716d823e2fc549d689",
+      "sha256": "2404f91dc9076f09541daf450d092328f143d53724b264b9b7e28668147e7538",
       "sizeBytes": 2148
     },
     {
       "path": "process.time",
-      "sha256": "70eeeee0fffd9479e43148ea3c34bdb4c98f749cef384a63870943b1e4d35a1d",
-      "sizeBytes": 1318
+      "sha256": "824f5eb18f120da4961a2de352c142978d070f127e1d1feb027441effe86ec77",
+      "sizeBytes": 1385
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T14:02:44.041321454Z",
-  "javaSourceSha256": "5438d2dade7502a2e0906ff80cf12e61d39ff5dd3e8013c335e297c95b3247aa",
+  "startedAt": "2026-08-19T18:09:35.607761024Z",
+  "javaSourceSha256": "f16d10a5bbb1b1089e6e78ccedd4675b6c3599f1c7b4372fb9d6eefa90eb72b4",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -73,10 +73,10 @@
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
   "osName": "Linux",
-  "dirtyTree": true,
+  "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
-  "datasetRoot": "/home/augustus/ACGN/capability_benchmark/models",
-  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
+  "datasetRoot": "/absolute/path/to/acgn-publication-run/capability_benchmark/models",
+  "gitSha": "f1bb1607911a4e5a7a0b8527be65148f66cf72d8",
   "datasetByteCount": 5312721,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "d06fc18f-8d04-4ba3-bebf-af2ddc0aabd7"
+  "runId": "cdf14cb3-6481-4512-8022-7c5e0e5929ec"
 }

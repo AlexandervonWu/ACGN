@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "9d3b57de6ce6717cf6458f89f41086222ff3606ad7279880ade0071ddd189b49",
-      "sizeBytes": 11943711
+      "sha256": "bcc87805ac2928b57d7f8a0e52c2721350e853cd4566183be0bab712139ebc23",
+      "sizeBytes": 11946480
     },
     {
       "path": "summary.json",
-      "sha256": "7ab93a43238451f10bdb19dd2883e359c10a52cc4fb7bfe5487cd9bb963f44a6",
-      "sizeBytes": 80847
+      "sha256": "7fb965c8205e4bdd9734cd8a2743b48e468b7a5a4cd22616ffea7bb263d069bd",
+      "sizeBytes": 80846
     },
     {
       "path": "metrics.properties",
-      "sha256": "482cffbcec07f4e06713de3e3f51fd19f2d2f9a9b45c2bbf787a32108f16b5bc",
-      "sizeBytes": 1652
+      "sha256": "5e9dd9f47bacaa19a0706448fad4244cc9909343ab98b92f2c34123c575cac67",
+      "sizeBytes": 1653
     },
     {
       "path": "run.log",
-      "sha256": "910bf3604637cc624c81416cc5a65481283dc8f6846177946d32f31f5a6a4deb",
-      "sizeBytes": 12534
+      "sha256": "5fd9a8e1e10c4df8e77d2202bff05e7bf81387e0eb8d306b6b4fdb98cedf40f0",
+      "sizeBytes": 12642
     },
     {
       "path": "process.time",
-      "sha256": "483c8b999726c60a5cfb0982656e37ba7443cc6e42e6c11b869b5cee0eec08a4",
-      "sizeBytes": 1334
+      "sha256": "017d620b87a9ccb0311656dcca67a5d6d4b1b19601fc97e65fa412a43cad233b",
+      "sizeBytes": 1386
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.19",
   "osArch": "amd64",
-  "startedAt": "2026-08-18T13:22:15.446562676Z",
-  "javaSourceSha256": "5ea336c31e3ef06262104b939f08f73b3acf58a4ad6f4ee68c9ceb1bddd91fea",
+  "startedAt": "2026-08-19T17:27:41.382159656Z",
+  "javaSourceSha256": "f16d10a5bbb1b1089e6e78ccedd4675b6c3599f1c7b4372fb9d6eefa90eb72b4",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -73,10 +73,10 @@
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
   "osName": "Linux",
-  "dirtyTree": true,
+  "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "fc66da28ebebee3ba73ea9694aa01b5a7bcda958",
+  "gitSha": "f1bb1607911a4e5a7a0b8527be65148f66cf72d8",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "b4ab2ed1-792f-4261-a5bb-0039731cf1ef"
+  "runId": "eb6b6e64-a929-44c4-9871-21c60de041b9"
 }
