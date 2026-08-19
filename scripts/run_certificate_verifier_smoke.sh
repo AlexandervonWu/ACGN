@@ -14,7 +14,7 @@ mkdir -p "$producer_classes" "$run_a" "$run_b"
 "$repo_root/scripts/run_certificate_verifier_tests.sh"
 
 mapfile -t producer_sources < <(find "$repo_root/src" -name '*.java' -type f | sort)
-javac --release 17 -cp "$repo_root/lib/*" \
+javac --release 17 -encoding UTF-8 -cp "$repo_root/lib/*" \
   -d "$producer_classes" "${producer_sources[@]}"
 
 java -cp "$producer_classes:$repo_root/lib/*" \

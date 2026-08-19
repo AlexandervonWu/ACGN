@@ -1,216 +1,182 @@
-# Independent Certificate Verifier: Phase J Handoff
+# Independent Certificate Verifier: Parent-Path Export Handoff
 
-Date: 2026-08-17  
-Branch: `aislop`  
-Audited and implemented HEAD: `d2239b53783d874c6ce45f75f9c452b45acd214e`  
-Worktree at entry: dirty, with unrelated user/generated files preserved
+Date: 2026-08-19
+
+Branch: `aislop`
+
+Resolved baseline: `e0e4320766518c110ab0b8c37fe772e02eb04249`
+
+Tracked worktree at entry: clean; unrelated untracked files were preserved
 
 ## Result
 
-Phase J establishes a standalone, fail-closed verifier for the closed
-`acgncert-schema-v1` language. It builds on JDK 17 with `java.base` only and
-does not load the producer, canonicalizer, pipeline, or repair metric.
+`CertificateBundleWriter` now exports and the standalone verifier accepts the
+smallest retained parent-path slice requested after Phase J. The existing
+nullary export remains supported. The extension adds a rigid nonempty typed
+context, `ONE_SLOT`, recursive `ONE_TERM`, one direct certified parent edge,
+the exact five-event trace, and one complete height-two unfolding.
 
-The verifier implementation covers every schema proof/event/profile. The
-producer exporter does not yet cover every producer transition. It exports
-and independently verifies one exact vertical slice only: a nullary source,
-one fresh insertion at empty effective support, one canonical orbit member,
-and one complete height-one unfolding. Richer traces fail before output with
-`UNCHECKABLE`. The producer-to-verifier system must not yet be described as
-complete.
+This remains a finite vertical slice. It is not a claim that every producer
+history can be certified.
 
-## Changed Files
+## Supported Producer Histories
 
-Standalone module (29 files):
-
-```text
-certificate-verifier/.gitignore
-certificate-verifier/README.md
-certificate-verifier/FORMAT.md
-certificate-verifier/TRUST.md
-certificate-verifier/FAILURE_CODES.md
-certificate-verifier/trusted/README.md
-certificate-verifier/src/org/acgn/cert/{Bundle,CanonicalProfileVerifier,
-  CheckpointVerifier,Codec,FailureCode,FormatException,IndependentVerifier,
-  KernelModel,KernelVerifier,Limits,Main,ManifestInspector,Outcome,Profile,
-  SourceToKernelVerifier,TermOps,UncheckableException,VerificationPolicy,
-  VerificationResult,Wire}.java
-certificate-verifier/test/org/acgn/cert/{TestBundleBuilder,VerifierTest}.java
-```
-
-Producer bridge and trace retention:
-
-```text
-src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java
-src/is/fivefivefive/CanDis/adapter/TheoryAlloyAdapter.java
-src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java
-src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java
-src/is/fivefivefive/CanDis/theory/CertificateExportSession.java
-src/is/fivefivefive/CanDis/theory/CertificateTraceEvent.java
-src/is/fivefivefive/CanDis/theory/CertificateTracePayload.java
-src/is/fivefivefive/CanDis/theory/CertificateTraceSink.java
-src/is/fivefivefive/CanDis/theory/CertificateTraceSnapshot.java
-src/is/fivefivefive/CanDis/theory/NoOpCertificateTraceSink.java
-src/is/fivefivefive/CanDis/theory/RecordingCertificateTraceSink.java
-src/is/fivefivefive/CanDis/CertificateVerifierExportSmoke.java
-```
-
-Audit, handoff, and entry points:
-
-```text
-docs/independent-certificate-verifier-audit.md
-docs/independent-certificate-verifier-handoff.md
-scripts/build_certificate_verifier.sh
-scripts/run_certificate_verifier_tests.sh
-scripts/run_certificate_verifier_smoke.sh
-```
-
-Phase J changes 46 files: 10,632 inserted lines and 9 deleted lines (10,417
-lines in new files, plus a tracked-file diff of 215 insertions/9 deletions).
-Generated classes/jars remain ignored under `certificate-verifier/build/`.
-
-## Exact Trust Boundary
-
-Trusted:
-
-1. canonical Wire decoding/encoding and SHA-256 from `java.base`;
-2. finite typed contexts, source terms, typed injection checking, and
-   capture-avoiding action implemented in the standalone module;
-3. reflexivity, symmetry, exact-middle transitivity, typed transport,
-   checked registered-axiom instantiation, and forward congruence;
-4. the named finite replay algorithms for restriction, parent edges,
-   containers, alpha action, source-to-kernel replay, graph transitions,
-   canonical orbits, and finite unfolding; and
-5. the theory digest selected out of band by the caller.
-
-Untrusted: all producer objects and code, `verifyLocal()`, every serialized
-endpoint/type/hash/state/revision/orbit/observation claim, the adapter,
-canonicalizer, pipeline, repair projection, and distance metric. Equal hashes
-or observations never prove equality.
-
-## Proof Coverage
-
-| Variant | Independently synthesized result | Required evidence |
-| --- | --- | --- |
-| `REFL`, `SYM`, `TRANS` | dependent equality, with exact middle for transitivity | term or exact premise judgments |
-| `TRANSPORT` | capture-avoiding action on both endpoints | typed injection; bijection only when onto |
-| `AXIOM` | instantiated registered equation | pinned axiom, total typed substitutions, side evidence |
-| `CONGRUENCE` | forward source-constructor equality | one proof for every changed direct child |
-| `RESTRICT` | old witness equals widened new witness | versioned witnesses and literal inclusion |
-| `PARENT_EDGE` | exact child invocation equals embedded parent invocation | child/parent witnesses and embedding |
-| `CONTAINER_NORMALIZE` | Seq/Bag/Set normalization | ordered occurrence-to-premise map |
-| `STRUCTURAL_ALPHA` | one global capture-avoiding structural action | explicit left/right syntax |
-| `FULL_INTERFACE_SYMMETRY` | witness fixed by full typed bijection | descriptor-compatible permutation |
-| `KERNEL_REPLAY` | source equals `iota(sigma(K))` in `Gamma0` | complete paths, port proofs, support, maps, structural proof |
-| `FRESH_WITNESS` | fresh definition exactly `K` at `Delta` | matching replay, witness, and `iota` |
-| `CANONICAL_ORBIT` | source equals global minimum representative | complete free/leader/binder orbit |
-| `COLLISION` | equality through two replay sides and one complete key | both replay proofs and identical keys |
-| `REBUILD_CONGRUENCE` | checked reconstructed rebuild equality | named reconstructed premise |
-
-There is no generic proof or inverse congruence variant. Supplied false
-evidence is `REJECTED`; missing premises needed for an exhaustive replay are
-`UNCHECKABLE`.
-
-## Transition Coverage
-
-| Event/profile | Independent check |
+| History | Exact support |
 | --- | --- |
-| Fresh insertion | exact `Delta` allocation, replay/orbit/fresh proofs, state delta |
-| Collision | fresh replay plus both collision sides, parent equation, state delta |
-| Union | checked parent edge, deterministic state mutation and dirtiness |
-| Symmetry | independently checked full-interface symmetry, no parent mutation |
-| Restriction | strict typed contraction, versioned witness, complete changed evidence |
-| Rebuild record/completion | rebuilt congruence/collision, bounded delta, exact quiescence |
-| Path compression | original current edge IDs, composed proof, unchanged semantics |
-| Publication | final quiescent revision and complete EC/PC/SC/reference families |
-| Canonical | exhaustive finite free/leader/binder orbit and global minimum |
-| Unfold | explicit finite `Rep` tree, ambient extension, fresh assignments |
-| Pair | both full bundles, same pin, composable replays and one structural kernel |
+| Single fresh | One nullary or slot-only source; identity maps; one height-one root unfolding |
+| Parent path | Two `ONE_SLOT` leaves, one direct ground union from the second to the first, unchanged `REBUILD_COMPLETE`, one fresh `ONE_TERM` wrapper, one height-two root unfolding |
 
-## Test Inventory
+The nonempty context has at most one free slot of each type. Its complete
+type-preserving renaming orbit is therefore rigid identity. Source context,
+support, effective support, class interface, inclusion, sigma, omega, and
+shape renaming are equal. No contraction or nontrivial symmetry is inferred.
 
-Positive fixtures cover the nullary full/pair profiles, non-surjective support
-contraction, binder-block permutation, Seq/Bag/Set semantics, fresh insertion,
-collision, distinct-leader union, interface restriction, nonidentity
-full-interface symmetry, rebuild, path compression from a two-edge original
-path, and finite unfolding.
+For the wrapper, the writer emits occurrence path `0/0`, initial and leader
+witnesses, the final leader invocation, and every retained edge in producer
+order. The edge is reconstructed from an origin-derived ground axiom and is
+lifted through `ONE_TERM` and APP with checked `CONGRUENCE` and `TRANS` nodes.
+The `KERNEL_REPLAY` premise order is parent paths in reverse term-path order,
+edges in path order, then container and structural evidence.
 
-Adversarial fixtures cover unregistered axioms and altered pins/digests;
-ill-typed embeddings/substitutions; false bijections; transitivity mismatch;
-inverse child inference; missing congruence/path/replay evidence; pre-find
-support; allocation at `Gamma0`; generic replay substitutes; wrong `omega`;
-per-element free renaming; incomplete/nonminimal orbit; Bag/Set errors;
-automatic symmetry; implicit restriction; one-sided collisions; unsupported
-compression maps; stale revisions; dirty publication; invented unfolding
-cutoffs; hash-only pair claims; resource caps; malformed payload digests; and
-trailing bytes.
+## Trust Boundary
+
+The verifier remains a JDK-17, `java.base`-only module. Producer classes,
+`verifyLocal()`, the canonicalizer, and producer hashes are untrusted. Every
+proof record is synthesized bottom-up. Snapshot parent records must agree
+with the exact witnesses and embedding in their `PARENT_EDGE`; stored shapes
+must equal the right endpoint of their replay proof.
+
+The theory digest inside a bundle is only an integrity field. Successful
+verification requires the caller to supply the same reviewed digest out of
+band. A changed manifest under the old external pin is `REJECTED`.
+
+Missing exhaustive evidence is `UNCHECKABLE`. Supplied malformed, false,
+ill-typed, contradictory, misplaced, duplicate, or noncanonical evidence is
+`REJECTED`. The parent-path classifier treats a strict subset of required
+occurrences as missing evidence and a path naming a nonexistent occurrence as
+malformed evidence.
+
+## Deterministic And Atomic Export
+
+Contexts, embeddings, terms, proofs, snapshots, canonical records, and
+unfoldings use collision-checking intern tables and canonical ID order. Term
+keys recursively include kind, context, sort, symbol, ordered attributes, and
+children. Context slots use verifier order `(type,name)` and embeddings carry
+one typed image for every source slot.
+
+All scope/history checks and all encoding complete in memory before the target
+path is touched. A successful export writes a sibling temporary file and uses
+atomic replacement. Every representable unsupported fixture starts with a
+sentinel target and confirms that `IOException("UNCHECKABLE: ...")` leaves its
+bytes unchanged.
+
+## Positive Fixtures
+
+`CertificateBundleWriterTest` builds:
+
+1. the original nullary fresh insertion;
+2. a nonempty `ONE_SLOT` insertion over `canonicalFree(T,0)`; and
+3. `left`, `right`, their direct ground union, rebuild, and `wrap(ONE_TERM
+   invoke(right))`, retaining one edge and a complete height-two tree.
+
+`ProducerBundleInspectionTest` decodes producer bytes only through the
+standalone codec. It checks byte determinism, FULL and nullary PAIR results,
+typed contexts, exact schemas/operators, one ground axiom, recursive terms,
+proof variants, the sole nonempty `0/0` path, leader resolution, all five
+events and six snapshots, and the exact child of the height-two unfolding.
+
+## Adversarial Matrix
+
+| Mutation | Result |
+| --- | --- |
+| Required path omitted | `UNCHECKABLE / INCOMPLETE_PARENT_PATH` |
+| Wrong occurrence path | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Wrong initial witness | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Wrong leader witness | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Wrong final invocation | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Duplicate path | `REJECTED / NONCANONICAL_ENCODING` |
+| Descending/reordered paths | `REJECTED / NONCANONICAL_ENCODING` |
+| Duplicate/reordered edge evidence | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Non-parent proof used as an edge | `REJECTED / INCOMPLETE_PARENT_PATH` |
+| Ill-typed, missing, duplicate, or false-kind embedding | `REJECTED` |
+| Omitted free renaming/leader coverage | `UNCHECKABLE`, never success |
+| False orbit, term, type, context, proof, transition, or unfolding evidence | `REJECTED` |
+| Mutated axiom/manifest under the retained external pin | `REJECTED` |
+| Unknown or malformed proof evidence | `REJECTED`, never `UNCHECKABLE` |
+
+The standalone suite retains its earlier mutation coverage for proof order,
+composed embeddings, orbit generators, contexts/types, manifests, malformed
+variants, transitions, and finite unfoldings. No verifier rule was added or
+relaxed for producer output.
+
+## Residual `UNCHECKABLE` Producer Matrix
+
+| Producer state | Why it remains outside this patch |
+| --- | --- |
+| `INSERT_COLLISION` | Requires collision replay and collision transition serialization |
+| `ADD_SYMMETRY` | Requires complete nontrivial generator closure and SC history |
+| Interface restriction | Requires contraction transport and versioned interface history |
+| `REBUILD_RECORD` | Requires exact changed-record/collision replay |
+| Path compression | Requires every original edge and composed replacement proof |
+| Support contraction | Requires nonidentity support maps and restricted witnesses |
+| Nonidentity sigma/omega | Requires complete alpha-action/orbit evidence |
+| Repeated same-type free slots | Requires exhaustive type-preserving permutations |
+| Seq/Bag/Set | Requires retained occurrence normalization and certified laws |
+| Bind/BindBlock | Requires binder descriptors, actions, and automorphism evidence |
+| Cyclic unfolding | Not a finite `Rep` witness; rejected by producer constructors/guard |
+| Multiple root unfoldings | Current publication slice requires exactly one complete root |
+| Indirect parent derivation | Current bridge admits only a direct ground equation/rewrite |
+| Any other event/history | Cannot be omitted or invented while preserving exact replay |
 
 ## Commands And Results
 
 ```bash
-scripts/run_certificate_verifier_tests.sh
+scripts/run_certificate_bundle_writer_tests.sh \
+  /tmp/acgn-certificate-bundle-writer-final
 ```
 
-Result: `VerifierTest: 44 checks passed`. The script compiles with
-`--release 17 -Xlint:all -Werror`, runs the dependency/import audit, and
-reports:
+Result: verifier dependency `java.base`; `VerifierTest` 53 checks;
+`CertificateBundleWriterTest` 59 checks; `ProducerBundleInspectionTest` 23
+checks; three producer fixtures `VERIFIED` under FULL; nullary pair
+`VERIFIED`.
+
+```bash
+scripts/run_certificate_verifier_smoke.sh \
+  10 /tmp/acgn-certificate-verifier-followup-smoke
+```
+
+Result: 10 preparations exported twice byte-identically, all FULL verified,
+and PAIR verified. Theory digest:
+`3e74f5c1f1ea3208245671e0669def6a58cf28b953e7f004a1fa025d568ced7c`.
+
+The full repository compiled with:
+
+```bash
+javac --release 17 -encoding UTF-8 -cp 'lib/*' \
+  -d /tmp/acgn-phase-j-followup-build \
+  $(find src -name '*.java' -type f | sort)
+```
+
+Required unchanged theory suites passed:
+
+| Suite | Checks |
+| --- | ---: |
+| `TheoryCertificatesTest` | 251 |
+| `TheoryCoherentInsertionTest` | 18 |
+| `TheoryRebuildTest` | 101 |
+| `TheoryFiniteUnfoldingTest` | 424 |
+
+`scripts/build_certificate_verifier.sh` and both verifier test scripts compile
+with explicit UTF-8. Its `jdeps -summary` result is exactly:
 
 ```text
 acgn-certificate-verifier.jar -> java.base
 ```
 
-```bash
-scripts/run_certificate_verifier_smoke.sh \
-  100 /tmp/acgn-certificate-verifier-smoke-100
-```
+## Remaining Risk
 
-Result: 100 supported preparations exported twice, all corresponding bytes
-identical, all 100 verified under `full`, and pair mode verified. The common
-theory digest was:
-
-```text
-a5d877177882ef5366d01013be52ca9973e8e5e2a9463d2d19d67084df492b8f
-```
-
-The full repository compiled with JDK 17. The unchanged suites passed:
-
-| Suite | Checks |
-| --- | ---: |
-| `TheoryFoundationsTest` | 1,053 |
-| `TheoryPortsTest` | 1,006 |
-| `TheoryStateTest` | 4,204 |
-| `TheoryCanonicalizationTest` | 11,186 |
-| `TheoryLeaderKernelTest` | 233 |
-| `TheoryCertificatesTest` | 251 |
-| `TheoryCoherentInsertionTest` | 18 |
-| `TheoryRebuildTest` | 101 |
-| `TheoryFiniteUnfoldingTest` | 424 |
-| `TheoryDeterminismTest` | 47 |
-| `CanonicalAlloyPipelineTest` | 185 |
-| `QuotientRepairDistanceTest` | 13 |
-
-## Remaining `UNCHECKABLE` Producer Cases
-
-`CertificateBundleWriter` currently refuses, before opening its output:
-
-1. any trace other than exactly one successful fresh insertion from the
-   exact empty graph;
-2. collisions, parent paths, union, symmetry, restriction, rebuild, or path
-   compression;
-3. nonempty source/free contexts, typed ports, nonempty support, support
-   contraction, or nonidentity alpha maps;
-4. nontrivial EC/PC/SC families and multiple classes/transitions;
-5. Seq/Bag/Set law registries and container normalization evidence; and
-6. absent, multiple, recursive, or height-greater-than-one unfoldings.
-
-At verification time, absent proof premises, complete parent paths, orbit
-members/generators, transported evidence, current EC/PC/SC members, pair
-derivations, or complete finite unfolding records are also `UNCHECKABLE`.
-Configured count/depth/orbit/unfold limits are `UNCHECKABLE`, never success.
-
-## Protected Outputs
-
-Phase J did not edit the paper, LaTeX, evaluation prose, metrics, result
-directories, generated tables, or checked-in experiment outputs, and did not
-run the 61,598-pair corpus. `distance_results/summary.md` was already modified
-when this work began and was left untouched.
+The positive parent fixture has one rigid slot and one edge. It does not test
+permutation enumeration, edge chains, contracted support, containers,
+binders, collisions, or history-bearing rebuild records. Extending any of
+those cases requires retained producer evidence and matching independent
+adversarial tests; it must not be approximated from final hashes or snapshots.

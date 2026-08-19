@@ -17,6 +17,7 @@ public final class VisualizationProcessRunnerTest {
         timeoutKillsWorker();
         cancellationKillsWorker();
         cancellationBeforeRegistrationPreventsWorkerStart();
+        firstTerminalCauseDeterminesResponse();
         System.out.println("VisualizationProcessRunnerTest passed");
     }
 
@@ -108,6 +109,51 @@ public final class VisualizationProcessRunnerTest {
             }
 
             assertSuccessfulFollowUp(runner, "after-pre-registration-cancel");
+        }
+    }
+
+    private static void firstTerminalCauseDeterminesResponse() {
+        VisualizationProcessRunner.TerminalCauseLatch cancelledFirst =
+                new VisualizationProcessRunner.TerminalCauseLatch();
+        assertCause(
+                cancelledFirst.cancel(),
+                VisualizationProcessRunner.TerminalCause.CANCELLED,
+                "Cancellation did not win its transition");
+        assertCause(
+                cancelledFirst.timeout(),
+                VisualizationProcessRunner.TerminalCause.CANCELLED,
+                "A later timeout replaced cancellation");
+        VisualizationProcessRunner.ExecutionResult cancelled =
+                VisualizationProcessRunner.terminalResult(cancelledFirst.cause());
+        if (cancelled.status() != 499
+                || !"request_cancelled".equals(cancelled.body().getString("code"))) {
+            throw new AssertionError("Cancellation-first race did not map to HTTP 499");
+        }
+
+        VisualizationProcessRunner.TerminalCauseLatch timedOutFirst =
+                new VisualizationProcessRunner.TerminalCauseLatch();
+        assertCause(
+                timedOutFirst.timeout(),
+                VisualizationProcessRunner.TerminalCause.TIMED_OUT,
+                "Timeout did not win its transition");
+        assertCause(
+                timedOutFirst.cancel(),
+                VisualizationProcessRunner.TerminalCause.TIMED_OUT,
+                "A later cancellation replaced timeout");
+        VisualizationProcessRunner.ExecutionResult timedOut =
+                VisualizationProcessRunner.terminalResult(timedOutFirst.cause());
+        if (timedOut.status() != 504
+                || !"analysis_timeout".equals(timedOut.body().getString("code"))) {
+            throw new AssertionError("Timeout-first race did not map to HTTP 504");
+        }
+    }
+
+    private static void assertCause(
+            VisualizationProcessRunner.TerminalCause actual,
+            VisualizationProcessRunner.TerminalCause expected,
+            String message) {
+        if (actual != expected) {
+            throw new AssertionError(message + ": expected " + expected + ", got " + actual);
         }
     }
 

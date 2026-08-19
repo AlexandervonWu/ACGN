@@ -148,10 +148,16 @@ final class SourceToKernelVerifier {
             prior = path;
             records.put(path, pathRecord);
         }
-        if (!records.keySet().equals(new LinkedHashSet<>(expectedPaths))) {
-            throw new UncheckableException(
+        Set<List<Integer>> expected = new LinkedHashSet<>(expectedPaths);
+        if (!records.keySet().equals(expected)) {
+            if (expected.containsAll(records.keySet())) {
+                throw new UncheckableException(
+                        FailureCode.INCOMPLETE_PARENT_PATH,
+                        "Every invocation occurrence needs a complete current parent path");
+            }
+            throw new FormatException(
                     FailureCode.INCOMPLETE_PARENT_PATH,
-                    "Every invocation occurrence needs a complete current parent path");
+                    "A supplied parent path names no invocation occurrence");
         }
 
         KernelModel.Term result = source;

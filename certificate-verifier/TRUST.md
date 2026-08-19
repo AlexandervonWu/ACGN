@@ -55,14 +55,28 @@ bottom-up derivation.
 ## Producer Boundary Today
 
 The independent checker implements the complete closed schema documented in
-`FORMAT.md`, but the producer writer currently serializes only the exact
-nullary fresh-insertion vertical slice. It rejects richer traces before
-opening an output file. In particular, producer serialization is still
-missing for nonempty typed ports/support, contractions and nonidentity alpha
-actions, collision/union/symmetry/restriction/rebuild/path-compression
-histories, container laws, and recursive or multiple unfoldings.
+`FORMAT.md`. The producer writer serializes only two exact histories:
 
-Those cases have independent DTO-level positive and adversarial fixtures;
-that does not make their producer histories available. Historical artifacts,
-including the checked-in August 17 run, predate the retained trace and cannot
-be retro-certified. Their correct outcome is `UNCHECKABLE`.
+1. one fresh nullary or `ONE_SLOT` insertion with a height-one unfolding; or
+2. two fresh `ONE_SLOT` leaves, one direct certified union, one unchanged
+   `REBUILD_COMPLETE`, and one fresh `ONE_TERM` wrapper with a complete
+   height-two unfolding and one nonempty retained parent path.
+
+The second history permits one free slot of each type. That restriction makes
+the complete free-renaming orbit identity; the writer emits that orbit rather
+than asking the verifier to assume it. Every parent-path occurrence and edge
+is explicit. The ground axiom is part of the manifest, but successful checking
+still requires the caller to pin the manifest digest independently.
+
+The writer constructs all content-addressed tables before touching the target
+and publishes through atomic sibling replacement. Unsupported histories are
+`UNCHECKABLE` and cannot truncate an existing output. Collisions, nontrivial
+symmetry, restriction, rebuild records, path compression, contraction,
+nonidentity sigma/omega, repeated same-type free slots, flexible containers,
+binders, indirect parent derivations, cycles, and multiple root unfoldings
+remain outside the producer bridge.
+
+Standalone DTO fixtures may exercise schema records that the producer cannot
+yet emit. That does not expand the producer boundary. Historical artifacts
+that predate retained proof traces cannot be retro-certified and remain
+`UNCHECKABLE`.

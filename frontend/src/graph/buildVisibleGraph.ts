@@ -15,12 +15,13 @@ export interface VisibleGraph {
 }
 
 export function displayNodes(eclass: EClass, filters: GraphFilters, expanded: boolean): ENode[] {
+  if (expanded) return eclass.nodes;
   const eligible = eclass.nodes.filter((node) => {
     if (!filters.showHistorical && node.attributes?.historical === true) return false;
     if (!filters.showRebuildDetails && node.attributes?.rebuildDetail === true) return false;
     return true;
   });
-  if (filters.showAllAlternatives || expanded) return eligible;
+  if (filters.showAllAlternatives) return eligible;
   const preferred = eclass.canonicalNodeId ?? eclass.representativeNodeId;
   return [eligible.find((node) => node.id === preferred) ?? eligible[0]].filter(Boolean);
 }

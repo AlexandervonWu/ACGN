@@ -10,12 +10,13 @@ language, synthesizes typed equality judgments bottom-up, replays graph
 transitions, exhaustively reconstructs finite canonical orbits, and checks
 explicit finite `Rep` trees.
 
-The checker and its closed schema implement all profiles below. The current
-producer bridge is intentionally narrower: it can export one nullary source
-node, one fresh insertion at empty effective support, and one complete
-height-one unfolding. Any richer retained trace is refused as
-`UNCHECKABLE` before an output file is opened. This module is therefore a
-verified vertical slice, not yet a complete producer-to-verifier pipeline.
+The checker and its closed schema implement all profiles below. The producer
+bridge is intentionally narrower. In addition to the original nullary case,
+it exports a rigid nonempty typed context, `ONE_SLOT` and recursively nested
+`ONE_TERM`, and one exact retained parent edge through a height-two unfolding.
+The parent-path slice has exactly two fresh leaves, one direct ground union,
+one quiescent rebuild completion, and one fresh wrapper insertion. This is a
+verified finite vertical slice, not a general producer-to-verifier pipeline.
 
 ## Build And Test
 
@@ -24,6 +25,7 @@ From the repository root:
 ```bash
 scripts/build_certificate_verifier.sh
 scripts/run_certificate_verifier_tests.sh
+scripts/run_certificate_bundle_writer_tests.sh
 scripts/run_certificate_verifier_smoke.sh 100 /tmp/acgn-cert-smoke
 ```
 
@@ -71,7 +73,8 @@ java -cp certificate-verifier/build/acgn-certificate-verifier.jar \
 Resource exhaustion and absent evidence are `UNCHECKABLE`; neither can
 produce `VERIFIED`.
 
-The test script compiles with `--release 17 -Xlint:all -Werror`, rejects
+The test scripts compile explicitly as UTF-8 with `--release 17`; the
+standalone module additionally uses `-Xlint:all -Werror`, rejects
 imports from producer packages, and checks `jdeps -summary` for the sole
 dependency `java.base`. The smoke exports every preparation twice, checks
 byte identity, verifies every bundle under `full`, and exercises `pair`.
@@ -83,12 +86,25 @@ recording path. Ordinary preparation uses `NoOpCertificateTraceSink`, so
 existing experiments retain no trace. Export must occur before
 `compactForComparison()`.
 
-The writer currently refuses traces containing typed ports, nonempty free
-contexts, support contraction, nonidentity alpha action, collisions, unions,
-symmetries, restrictions, rebuild, path compression, container-law records,
-multiple transitions, or recursive/multiple unfoldings. The verifier has
-independent replay algorithms and direct fixtures for those records; the
-remaining work is exact producer serialization of their retained evidence.
+The writer uses `phase-j-producer-export-v2` with the manifest rule set
+`phase-j-one-parent-rules-v2`. It builds and validates the entire bundle in
+memory, writes a sibling temporary file, and atomically replaces the target
+only after successful encoding. Unsupported state throws
+`IOException("UNCHECKABLE: ...")`; a pre-existing target remains unchanged.
+
+The supported contexts contain at most one free slot of each type, so the
+complete type-preserving free-renaming orbit is rigid identity. Inclusion,
+sigma, omega, and shape witnesses are identity, with no support contraction
+or nontrivial symmetry. A parent edge must be a direct, correctly oriented
+ground input equation or rewrite; its axiom is registered by stable origin,
+then independently replayed through `PARENT_EDGE`, `CONGRUENCE`, and `TRANS`.
+
+The writer still refuses insertion collisions, symmetry/restriction/rebuild
+record/path-compression events, nonidentity alpha maps, repeated same-type
+free slots, support contraction, Seq/Bag/Set/Bind/BindBlock ports, indirect
+parent derivations, cyclic or multiple root unfoldings, and any retained
+history outside the exact one-event or five-event slices. These remain
+`UNCHECKABLE`; they are not silently omitted or approximated.
 
 See [FORMAT.md](FORMAT.md), [TRUST.md](TRUST.md), and
 [FAILURE_CODES.md](FAILURE_CODES.md).

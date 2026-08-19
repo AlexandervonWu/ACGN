@@ -294,6 +294,14 @@ final class CheckpointVerifier {
                         FailureCode.INVALID_UNION,
                         "Parent assignment lacks a parent-edge proof");
             }
+            Wire.Node payload = proof.payload().requireShape("parent-edge", 3, 0);
+            if (!payload.scalar(0).equals(child.witnessId())
+                    || !payload.scalar(1).equals(target.witnessId())
+                    || !payload.scalar(2).equals(parent.embeddingId())) {
+                throw new FormatException(
+                        FailureCode.INVALID_UNION,
+                        "Parent assignment and parent-edge proof disagree");
+            }
             kernel.verify(parent.proofId());
         }
         rejectParentCycles(snapshot.parents());
@@ -308,7 +316,12 @@ final class CheckpointVerifier {
                         FailureCode.INVALID_KERNEL_REPLAY,
                         "Stored shape lacks source-to-kernel/rebuild evidence");
             }
-            kernel.verify(shape.replayProofId());
+            KernelVerifier.Judgment replayed = kernel.verify(shape.replayProofId());
+            if (!replayed.right().id().equals(term.id())) {
+                throw new FormatException(
+                        FailureCode.INVALID_KERNEL_REPLAY,
+                        "Stored shape differs from its replay result");
+            }
             if (!term.sort().kind().equals(KernelModel.SortKind.TERM)) {
                 throw new FormatException(
                         FailureCode.ILL_TYPED_TERM, "Stored shape is not a term");

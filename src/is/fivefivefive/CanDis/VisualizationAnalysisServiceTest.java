@@ -81,15 +81,20 @@ public final class VisualizationAnalysisServiceTest {
     }
 
     private static void assertComparison(JSONObject comparison, boolean equivalent) {
-        if (!comparison.getJSONObject("left").has("canonicalText")
-                || !comparison.getJSONObject("right").has("canonicalText")) {
+        JSONObject left = comparison.getJSONObject("left");
+        JSONObject right = comparison.getJSONObject("right");
+        if (!left.has("canonicalText") || !right.has("canonicalText")) {
             throw new AssertionError("Comparison omitted callable representations: " + comparison);
         }
-        if (!comparison.getJSONObject("left").has("certifiedStableForm")
-                || !comparison.getJSONObject("right").has("certifiedStableForm")
-                || comparison.getJSONObject("left").getString("canonicalText")
-                        .contains("canonical-alloy-form")) {
+        if (!left.has("certifiedStableForm")
+                || !right.has("certifiedStableForm")
+                || left.getString("canonicalText").contains("canonical-alloy-form")) {
             throw new AssertionError("Comparison representation is not presentation-safe: " + comparison);
+        }
+        String leftStable = left.getString("certifiedStableForm");
+        String rightStable = right.getString("certifiedStableForm");
+        if (leftStable.isBlank() || rightStable.isBlank()) {
+            throw new AssertionError("Comparison omitted a nonempty certified stable form: " + comparison);
         }
         JSONObject distance = comparison.getJSONObject("distance");
         if (!distance.getBoolean("exactForStoredOrbits")) {
@@ -109,17 +114,17 @@ public final class VisualizationAnalysisServiceTest {
         if (operationCost != total) {
             throw new AssertionError("Operation costs do not witness the distance: " + comparison);
         }
-        if (comparison.getBoolean("certifiedEquivalent") != equivalent
-                || (total == 0) != equivalent) {
+        boolean certifiedEquivalent = comparison.getBoolean("certifiedEquivalent");
+        boolean stableFormsEqual = leftStable.equals(rightStable);
+        if (certifiedEquivalent != stableFormsEqual) {
+            throw new AssertionError(
+                    "Certified equality did not follow certifiedStableForm: " + comparison);
+        }
+        if (certifiedEquivalent != (total == 0)) {
             throw new AssertionError("Certified zero kernel mismatch: " + comparison);
         }
-        String leftStable = comparison.getJSONObject("left")
-                .getString("certifiedStableForm");
-        String rightStable = comparison.getJSONObject("right")
-                .getString("certifiedStableForm");
-        if (leftStable.equals(rightStable) != equivalent) {
-            throw new AssertionError(
-                    "Equality did not follow certifiedStableForm: " + comparison);
+        if (certifiedEquivalent != equivalent) {
+            throw new AssertionError("Unexpected comparison semantics: " + comparison);
         }
     }
 }

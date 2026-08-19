@@ -149,7 +149,7 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
       id: edge.id ?? `${edge.sourceEClassId}-${edge.targetEClassId}-${index}`,
       source: edge.sourceEClassId,
       target: edge.targetEClassId,
-      label: primary ? edge.role : undefined,
+      label: edge.role,
       type: primary ? "smoothstep" : "bezier",
       markerEnd: {
         type: MarkerType.ArrowClosed,

@@ -294,3 +294,23 @@ Publication must name the final quiescent snapshot, its exact revision, the
 pinned theory, complete current EC/PC/SC families, and every canonical and
 unfolding record. Dirty, stale, incomplete, or cross-theory publication can
 never verify.
+
+## Current Producer Subset
+
+The wire schema and format version remain `acgncert-schema-v1` and `1`.
+`CertificateBundleWriter` currently identifies its bridge as
+`phase-j-producer-export-v2` and emits rule-set version
+`phase-j-one-parent-rules-v2`.
+
+That producer subset admits `ONE`, `ONE_SLOT`, and `ONE_TERM`; APP and INVOKE
+terms; identity typed embeddings; AXIOM, SYM, PARENT_EDGE, CONGRUENCE, TRANS,
+KERNEL_REPLAY, CANONICAL_ORBIT, and FRESH_WITNESS proofs; and either one fresh
+event or the exact five-event parent-path history described in `README.md`.
+All tables are content-interned, collision-checked, and emitted in canonical
+ID order. Recursive term keys include kind, context, sort, symbol, ordered
+attributes, and recursively keyed children.
+
+This subsection limits only the current producer. It does not remove any
+closed verifier record above, nor does it authorize a verifier to infer
+missing evidence. The manifest digest remains an untrusted bundle field until
+the caller supplies the same digest out of band.

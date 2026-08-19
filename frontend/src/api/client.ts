@@ -71,14 +71,23 @@ function cancelRemoteRequest(requestId: string): void {
   }
 }
 
+type RequestTerminalCause = "cancelled" | "timeout";
+
 function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   const controller = new AbortController();
-  let timedOut = false;
-  const timeout = window.setTimeout(() => {
-    timedOut = true;
-    controller.abort("timeout");
-  }, timeoutMs);
-  const abort = () => controller.abort(source?.reason ?? "cancelled");
+  let terminalCause: RequestTerminalCause | undefined;
+  let timeout: number | undefined;
+  const settle = (cause: RequestTerminalCause) => {
+    if (terminalCause) return;
+    terminalCause = cause;
+    if (cause === "cancelled" && timeout !== undefined) {
+      window.clearTimeout(timeout);
+      timeout = undefined;
+    }
+    controller.abort(cause);
+  };
+  const abort = () => settle("cancelled");
+  timeout = window.setTimeout(() => settle("timeout"), timeoutMs);
   if (source?.aborted) {
     abort();
   } else {
@@ -86,9 +95,9 @@ function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   }
   return {
     signal: controller.signal,
-    timedOut: () => timedOut,
+    terminalCause: () => terminalCause,
     cleanup: () => {
-      window.clearTimeout(timeout);
+      if (timeout !== undefined) window.clearTimeout(timeout);
       source?.removeEventListener("abort", abort);
     },
   };
@@ -158,8 +167,16 @@ async function request<TSchema extends ZodTypeAny>(
   requestId?: string,
 ): Promise<TypeOf<TSchema>> {
   const timer = timedSignal(sourceSignal, timeoutMs);
-  const cancelWorker = requestId ? () => cancelRemoteRequest(requestId) : undefined;
-  cancelWorker && timer.signal.addEventListener("abort", cancelWorker, { once: true });
+  let workerCancellationSent = false;
+  const cancelWorker = requestId ? () => {
+    if (workerCancellationSent) return;
+    workerCancellationSent = true;
+    cancelRemoteRequest(requestId);
+  } : undefined;
+  if (cancelWorker) {
+    if (timer.signal.aborted) cancelWorker();
+    else timer.signal.addEventListener("abort", cancelWorker, { once: true });
+  }
   try {
     const response = await fetch(`${requireBaseUrl()}${path}`, {
       ...init,
@@ -172,14 +189,16 @@ async function request<TSchema extends ZodTypeAny>(
     });
     return await decodeResponse(response, schema);
   } catch (error) {
-    if (error instanceof AnalysisApiError) throw error;
-    if (timer.signal.aborted) {
-      const timedOut = timer.timedOut();
+    const terminalCause = timer.terminalCause();
+    if (terminalCause) {
       throw new AnalysisApiError(
-        timedOut ? "timeout" : "cancelled",
-        timedOut ? "The analysis request timed out." : "The analysis request was cancelled.",
+        terminalCause,
+        terminalCause === "timeout"
+          ? "The analysis request timed out."
+          : "The analysis request was cancelled.",
       );
     }
+    if (error instanceof AnalysisApiError) throw error;
     throw new AnalysisApiError(
       "network",
       error instanceof Error ? error.message : "The analysis backend is unreachable.",

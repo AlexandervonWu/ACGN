@@ -88,4 +88,45 @@ describe("visible graph extraction", () => {
     expect(new Set(visible.edges.map((edge) => edge.enodeId))).toEqual(new Set(["N0"]));
     expect(displayed.some((node) => node.id === "N-alt")).toBe(false);
   });
+
+  it("uses explicit expansion as a local override for historical alternatives", () => {
+    const graph: EGraph = {
+      rootEClassId: "E0",
+      eclasses: [
+        {
+          id: "E0",
+          canonicalNodeId: "N0",
+          nodes: [
+            { id: "N0", kind: "Root", children: [] },
+            {
+              id: "N-history",
+              kind: "Historical",
+              attributes: { historical: true },
+              children: [{ eclassId: "E1", role: "historical target" }],
+            },
+          ],
+        },
+        { id: "E1", nodes: [{ id: "N1", kind: "Target", children: [] }] },
+      ],
+    };
+
+    const hidden = buildVisibleGraph(graph, defaultGraphFilters, new Set());
+    expect(hidden.eclasses.map((eclass) => eclass.id)).toEqual(["E0"]);
+    expect(hidden.edges).toEqual([]);
+    expect(displayNodes(graph.eclasses[0]!, {
+      ...defaultGraphFilters,
+      showAllAlternatives: true,
+    }, false).map((node) => node.id)).toEqual(["N0"]);
+
+    const expanded = buildVisibleGraph(graph, defaultGraphFilters, new Set(["E0"]));
+    expect(expanded.eclasses.map((eclass) => eclass.id)).toEqual(["E0", "E1"]);
+    expect(displayNodes(graph.eclasses[0]!, defaultGraphFilters, true)
+      .map((node) => node.id)).toEqual(["N0", "N-history"]);
+    expect(expanded.edges).toMatchObject([{
+      sourceEClassId: "E0",
+      targetEClassId: "E1",
+      enodeId: "N-history",
+      role: "historical target",
+    }]);
+  });
 });

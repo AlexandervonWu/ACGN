@@ -141,21 +141,69 @@ describe("live API response boundary", () => {
 
     await expect(pending).rejects.toMatchObject({ kind: "cancelled" });
     const analysisBody = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body));
-    const cancelCall = fetchMock.mock.calls.find(([url]) => String(url).endsWith("/api/v1/jobs/cancel"));
+    const cancelCalls = fetchMock.mock.calls.filter(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"));
+    const cancelCall = cancelCalls[0];
+    expect(cancelCalls).toHaveLength(1);
     expect(cancelCall).toBeDefined();
     expect(JSON.parse(String(cancelCall?.[1]?.body))).toEqual({ requestId: analysisBody.requestId });
   });
 
-  it("preserves timeout classification when the caller aborts afterward", async () => {
+  it("preserves cancellation when the caller aborts just before timeout", async () => {
     vi.useFakeTimers();
-    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
-      new Promise<Response>((_resolve, reject) => {
+    const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).endsWith("/api/v1/jobs/cancel")) {
+        return Promise.resolve(new Response(JSON.stringify({ cancelled: true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }));
+      }
+      return new Promise<Response>((_resolve, reject) => {
         init?.signal?.addEventListener(
           "abort",
-          () => queueMicrotask(() => reject(new DOMException("aborted", "AbortError"))),
+          () => window.setTimeout(
+            () => reject(new DOMException("aborted", "AbortError")),
+            2,
+          ),
           { once: true },
         );
-      }));
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const { inspectModel } = await import("../src/api/client");
+    const controller = new AbortController();
+    const pending = inspectModel("sig Item {}", controller.signal);
+    const rejection = expect(pending).rejects.toMatchObject({ kind: "cancelled" });
+
+    await vi.advanceTimersByTimeAsync(29_999);
+    controller.abort();
+    await vi.advanceTimersByTimeAsync(2);
+
+    await rejection;
+    expect(fetchMock.mock.calls.filter(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"))).toHaveLength(1);
+  });
+
+  it("preserves timeout classification when the caller aborts afterward", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn((input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input).endsWith("/api/v1/jobs/cancel")) {
+        return Promise.resolve(new Response(JSON.stringify({ cancelled: true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }));
+      }
+      return new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener(
+          "abort",
+          () => window.setTimeout(
+            () => reject(new DOMException("aborted", "AbortError")),
+            2,
+          ),
+          { once: true },
+        );
+      });
+    });
     vi.stubGlobal("fetch", fetchMock);
     const { inspectModel } = await import("../src/api/client");
     const controller = new AbortController();
@@ -164,9 +212,10 @@ describe("live API response boundary", () => {
 
     await vi.advanceTimersByTimeAsync(30_000);
     controller.abort();
+    await vi.advanceTimersByTimeAsync(2);
 
     await rejection;
-    expect(fetchMock.mock.calls.some(([url]) =>
-      String(url).endsWith("/api/v1/jobs/cancel"))).toBe(true);
+    expect(fetchMock.mock.calls.filter(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"))).toHaveLength(1);
   });
 });

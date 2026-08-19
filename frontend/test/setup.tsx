@@ -64,8 +64,9 @@ vi.mock("@monaco-editor/react", () => ({
 
 vi.mock("@xyflow/react", () => ({
   ReactFlowProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  ReactFlow: ({ nodes, nodeTypes, children, onPaneClick }: {
+  ReactFlow: ({ nodes, edges, nodeTypes, children, onPaneClick }: {
     nodes: Array<{ id: string; type: string; data: Record<string, unknown> }>;
+    edges: Array<{ id: string; label?: React.ReactNode; className?: string }>;
     nodeTypes: Record<string, React.ComponentType<{ id: string; data: Record<string, unknown> }>>;
     children?: React.ReactNode;
     onPaneClick?: () => void;
@@ -76,6 +77,16 @@ vi.mock("@xyflow/react", () => ({
         const Component = nodeTypes[node.type];
         return Component ? <Component key={node.id} id={node.id} data={node.data} /> : null;
       })}
+      {edges.map((edge) => (
+        <div
+          key={edge.id}
+          data-testid="flow-edge"
+          data-edge-id={edge.id}
+          className={edge.className}
+        >
+          {edge.label}
+        </div>
+      ))}
       {children}
     </div>
   ),

@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONObject;
 
@@ -81,7 +82,7 @@ final class VisualizationProcessRunner implements AutoCloseable {
         try {
             if (cancelledBeforeRegistration) {
                 job.cancel();
-                return error(499, "request_cancelled", "The analysis request was cancelled.");
+                return terminalResult(job.cause());
             }
             directory = Files.createTempDirectory("acgn-visualization-job-");
             Path input = directory.resolve("request.json");
@@ -96,9 +97,9 @@ final class VisualizationProcessRunner implements AutoCloseable {
             builder.redirectError(ProcessBuilder.Redirect.INHERIT);
             process = builder.start();
             job.attach(process);
-            if (job.cancelled.get()) {
+            if (job.cause() != TerminalCause.RUNNING) {
                 terminate(process);
-                return error(499, "request_cancelled", "The analysis request was cancelled.");
+                return terminalResult(job.cause());
             }
 
             boolean completed;
@@ -106,17 +107,18 @@ final class VisualizationProcessRunner implements AutoCloseable {
                 completed = process.waitFor(timeoutMillis, TimeUnit.MILLISECONDS);
             } catch (InterruptedException exception) {
                 Thread.currentThread().interrupt();
-                job.cancelled.set(true);
+                TerminalCause cause = job.cancel();
                 terminate(process);
-                return error(499, "request_cancelled", "The analysis request was cancelled.");
+                return terminalResult(cause);
             }
             if (!completed) {
+                TerminalCause cause = job.timeout();
                 terminate(process);
-                return error(504, "analysis_timeout",
-                        "The analysis exceeded the server timeout and was terminated.");
+                return terminalResult(cause);
             }
-            if (job.cancelled.get()) {
-                return error(499, "request_cancelled", "The analysis request was cancelled.");
+            TerminalCause cause = job.complete();
+            if (cause != TerminalCause.COMPLETED) {
+                return terminalResult(cause);
             }
             if (!Files.isRegularFile(output)) {
                 return error(500, "worker_failure",
@@ -230,6 +232,17 @@ final class VisualizationProcessRunner implements AutoCloseable {
         return new ExecutionResult(status, new JSONObject().put("code", code).put("message", message));
     }
 
+    static ExecutionResult terminalResult(TerminalCause cause) {
+        if (cause == TerminalCause.CANCELLED) {
+            return error(499, "request_cancelled", "The analysis request was cancelled.");
+        }
+        if (cause == TerminalCause.TIMED_OUT) {
+            return error(504, "analysis_timeout",
+                    "The analysis exceeded the server timeout and was terminated.");
+        }
+        throw new IllegalArgumentException("Not a terminal failure cause: " + cause);
+    }
+
     static final class ExecutionResult {
         private final int status;
         private final JSONObject body;
@@ -248,23 +261,69 @@ final class VisualizationProcessRunner implements AutoCloseable {
         }
     }
 
+    enum TerminalCause {
+        RUNNING,
+        COMPLETED,
+        CANCELLED,
+        TIMED_OUT
+    }
+
+    static final class TerminalCauseLatch {
+        private final AtomicReference<TerminalCause> cause =
+                new AtomicReference<>(TerminalCause.RUNNING);
+
+        TerminalCause complete() {
+            return settle(TerminalCause.COMPLETED);
+        }
+
+        TerminalCause cancel() {
+            return settle(TerminalCause.CANCELLED);
+        }
+
+        TerminalCause timeout() {
+            return settle(TerminalCause.TIMED_OUT);
+        }
+
+        TerminalCause cause() {
+            return cause.get();
+        }
+
+        private TerminalCause settle(TerminalCause next) {
+            cause.compareAndSet(TerminalCause.RUNNING, next);
+            return cause.get();
+        }
+    }
+
     private static final class RunningJob {
-        private final AtomicBoolean cancelled = new AtomicBoolean();
+        private final TerminalCauseLatch terminal = new TerminalCauseLatch();
         private volatile Process process;
 
         private void attach(Process value) {
             process = value;
-            if (cancelled.get()) {
+            if (terminal.cause() != TerminalCause.RUNNING) {
                 terminate(value);
             }
         }
 
-        private void cancel() {
-            cancelled.set(true);
+        private TerminalCause cancel() {
+            TerminalCause cause = terminal.cancel();
             Process value = process;
-            if (value != null) {
+            if (cause == TerminalCause.CANCELLED && value != null) {
                 terminate(value);
             }
+            return cause;
+        }
+
+        private TerminalCause timeout() {
+            return terminal.timeout();
+        }
+
+        private TerminalCause complete() {
+            return terminal.complete();
+        }
+
+        private TerminalCause cause() {
+            return terminal.cause();
         }
     }
 }

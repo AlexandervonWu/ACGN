@@ -10,7 +10,7 @@ test_classes="$build/test-classes"
 mkdir -p "$test_classes"
 
 mapfile -t tests < <(find "$module/test" -name '*.java' -type f | sort)
-javac --release 17 -Xlint:all -Werror \
+javac --release 17 -encoding UTF-8 -Xlint:all -Werror \
   -cp "$build/acgn-certificate-verifier.jar" \
   -d "$test_classes" "${tests[@]}"
 

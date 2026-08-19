@@ -170,6 +170,80 @@ public final class VerifierTest {
                                 ContractionMutation.FRESH_AT_GAMMA),
                         Profile.KERNEL),
                 "fresh class allocated at Gamma_0 instead of Delta");
+        assertResult(
+                Outcome.UNCHECKABLE,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.MISSING_PATH),
+                        Profile.KERNEL),
+                "required parent path removed");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.WRONG_PATH),
+                        Profile.KERNEL),
+                "wrong parent occurrence path");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.WRONG_INITIAL),
+                        Profile.KERNEL),
+                "wrong initial parent witness");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.WRONG_LEADER),
+                        Profile.KERNEL),
+                "wrong leader parent witness");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.WRONG_FINAL),
+                        Profile.KERNEL),
+                "wrong final parent invocation");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.NONCANONICAL_ENCODING,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.DUPLICATE_PATH),
+                        Profile.KERNEL),
+                "duplicate parent path");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.NONCANONICAL_ENCODING,
+                verify(
+                        verifier,
+                        supportContractionFixture(
+                                ContractionMutation.REORDERED_PATHS),
+                        Profile.KERNEL),
+                "reordered parent paths");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(
+                                ContractionMutation.DUPLICATE_EDGE),
+                        Profile.KERNEL),
+                "duplicated parent edge in one path");
+        assertResult(
+                Outcome.REJECTED,
+                FailureCode.INCOMPLETE_PARENT_PATH,
+                verify(
+                        verifier,
+                        supportContractionFixture(ContractionMutation.NON_EDGE_PROOF),
+                        Profile.KERNEL),
+                "non-parent proof in a parent path");
         assertOutcome(
                 Outcome.UNCHECKABLE,
                 verify(verifier, collisionMissingSideFixture(), Profile.KERNEL),
@@ -695,6 +769,49 @@ public final class VerifierTest {
             Wire.Node sigma = fixture.identity();
             Wire.Node omega = mutation == ContractionMutation.WRONG_OMEGA
                     ? fixture.identity() : emptyIntoGamma;
+            String path = mutation == ContractionMutation.WRONG_PATH
+                    ? "1/0" : "0/0";
+            String initial = mutation == ContractionMutation.WRONG_INITIAL
+                    ? "w0@1" : "wc@1";
+            String leader = mutation == ContractionMutation.WRONG_LEADER
+                    ? "wc@1" : "w0@1";
+            Wire.Node finalInvocation = mutation == ContractionMutation.WRONG_FINAL
+                    ? childInvocation : parentInvocation;
+            Wire.Node pathEdge = mutation == ContractionMutation.NON_EDGE_PROOF
+                    ? structural : parentEdge;
+            Wire.Node pathRecord = Wire.node(
+                    "parent-path",
+                    List.of(
+                            path, initial, leader,
+                            finalInvocation.scalar(0)),
+                    List.of(Wire.leaf(
+                            "edge-ref", pathEdge.scalar(0))));
+            List<Wire.Node> pathRecords;
+            if (mutation == ContractionMutation.MISSING_PATH) {
+                pathRecords = List.of();
+            } else if (mutation == ContractionMutation.DUPLICATE_PATH) {
+                pathRecords = List.of(pathRecord, pathRecord);
+            } else if (mutation == ContractionMutation.REORDERED_PATHS) {
+                Wire.Node later = Wire.node(
+                        "parent-path",
+                        List.of(
+                                "1/0", initial, leader,
+                                finalInvocation.scalar(0)),
+                        List.of(Wire.leaf(
+                                "edge-ref", pathEdge.scalar(0))));
+                pathRecords = List.of(later, pathRecord);
+            } else if (mutation == ContractionMutation.DUPLICATE_EDGE) {
+                pathRecords = List.of(Wire.node(
+                        "parent-path",
+                        List.of(
+                                path, initial, leader,
+                                finalInvocation.scalar(0)),
+                        List.of(
+                                Wire.leaf("edge-ref", pathEdge.scalar(0)),
+                                Wire.leaf("edge-ref", pathEdge.scalar(0)))));
+            } else {
+                pathRecords = List.of(pathRecord);
+            }
             Wire.Node replay = builder.proof(
                     "KERNEL_REPLAY", gamma, "TERM", "Bool",
                     source, normalized,
@@ -710,15 +827,7 @@ public final class VerifierTest {
                                     sigma.scalar(0),
                                     omega.scalar(0)),
                             List.of(
-                                    Wire.node("parent-paths", List.of(
-                                            Wire.node(
-                                                    "parent-path",
-                                                    List.of(
-                                                            "0/0", "wc@1", "w0@1",
-                                                            parentInvocation.scalar(0)),
-                                                    List.of(Wire.leaf(
-                                                            "edge-ref",
-                                                            parentEdge.scalar(0)))))),
+                                    Wire.node("parent-paths", pathRecords),
                                     Wire.node("port-normalizations", List.of()),
                                     Wire.leaf(
                                             "structural-proof", structural.scalar(0)),
@@ -2214,6 +2323,16 @@ public final class VerifierTest {
                 label + ": expected " + expected + " but got " + actual);
     }
 
+    private static void assertResult(
+            Outcome expectedOutcome,
+            FailureCode expectedCode,
+            VerificationResult actual,
+            String label) {
+        check(actual.outcome() == expectedOutcome && actual.code() == expectedCode,
+                label + ": expected " + expectedOutcome + "/" + expectedCode
+                        + " but got " + actual);
+    }
+
     private static void check(boolean condition, String message) {
         checks++;
         if (!condition) {
@@ -2317,6 +2436,15 @@ public final class VerifierTest {
         NONE,
         PRE_FIND_SUPPORT,
         WRONG_OMEGA,
-        FRESH_AT_GAMMA
+        FRESH_AT_GAMMA,
+        MISSING_PATH,
+        WRONG_PATH,
+        WRONG_INITIAL,
+        WRONG_LEADER,
+        WRONG_FINAL,
+        DUPLICATE_PATH,
+        REORDERED_PATHS,
+        DUPLICATE_EDGE,
+        NON_EDGE_PROOF
     }
 }
