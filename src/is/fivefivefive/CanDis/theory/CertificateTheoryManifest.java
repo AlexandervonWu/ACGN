@@ -2,7 +2,7 @@ package is.fivefivefive.CanDis.theory;
 
 import java.util.List;
 
-/** Reviewed theory identity; bundle-specific axioms remain under its external pin. */
+/** Declared theory identity; bundle-specific axioms remain under its external pin. */
 public final class CertificateTheoryManifest {
     public static final String THEORY_ID = "acgn-exact-alloy-theory-v2";
     public static final String RULE_SET = "phase-j-proof-kernel-v3";

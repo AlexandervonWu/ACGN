@@ -86,6 +86,8 @@ CORRELATION_METRICS = [
       "Pearson correlation, normalized direct reference-metric distance vs candidate reward")),
 ]
 
+UNAVAILABLE_REWARD_COLUMNS = {"Avg reward", "Corr(distance,reward)"}
+
 
 def parse_bullets(lines):
     parsed = {}
@@ -179,6 +181,36 @@ def parse_tables(lines):
     return tables
 
 
+def markdown_cells(row):
+    stripped = row.strip()
+    if stripped.startswith("|"):
+        stripped = stripped[1:]
+    if stripped.endswith("|"):
+        stripped = stripped[:-1]
+    return [cell.strip() for cell in stripped.split("|")]
+
+
+def hide_unavailable_reward_cells(table):
+    if len(table) < 2:
+        return table
+    headers = markdown_cells(table[0])
+    unavailable = [
+        index for index, header in enumerate(headers)
+        if header in UNAVAILABLE_REWARD_COLUMNS
+    ]
+    if not unavailable:
+        return table
+    result = table[:2]
+    for row in table[2:]:
+        cells = markdown_cells(row)
+        if len(cells) != len(headers):
+            raise ValueError("Malformed Markdown table row: " + row)
+        for index in unavailable:
+            cells[index] = "N/A"
+        result.append("| " + " | ".join(cells) + " |")
+    return result
+
+
 def main():
     summary = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("distance_results/summary.md")
     output = (Path(sys.argv[2]) if len(sys.argv) > 2 else
@@ -222,6 +254,8 @@ def main():
         markdown.append(reward_correlations["reason"])
     for heading, table in tables:
         markdown.extend(["", f"## {heading}", ""])
+        if not reward_correlations["available"]:
+            table = hide_unavailable_reward_cells(table)
         markdown.extend(table)
     markdown.append("")
     output.write_text("\n".join(markdown), encoding="utf-8")

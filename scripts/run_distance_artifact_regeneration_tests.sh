@@ -25,7 +25,7 @@ if [[ "${generated[*]}" != "${expected[*]}" ]]; then
   exit 1
 fi
 
-python3 - "$work/paper_metrics.json" <<'PY'
+python3 - "$work/paper_metrics.json" "$work/paper_tables.md" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -50,6 +50,36 @@ if correlations["sampleSize"] != 0 or correlations["values"]:
     raise SystemExit("zero-sample snapshot retained correlation values")
 if any(key.startswith("Pearson correlation,") for key in metrics):
     raise SystemExit("reward-disabled metrics retained false measured correlations")
+
+lines = Path(sys.argv[2]).read_text(encoding="utf-8").splitlines()
+targets = {"Avg reward", "Corr(distance,reward)"}
+found = set()
+data_rows = None
+index = 0
+while index < len(lines):
+    if not lines[index].startswith("|"):
+        index += 1
+        continue
+    block = []
+    while index < len(lines) and lines[index].startswith("|"):
+        block.append(lines[index])
+        index += 1
+    headers = [cell.strip() for cell in block[0].strip("|").split("|")]
+    columns = [i for i, header in enumerate(headers) if header in targets]
+    if not columns:
+        continue
+    found.update(headers[i] for i in columns)
+    data_rows = len(block) - 2
+    for row in block[2:]:
+        cells = [cell.strip() for cell in row.strip("|").split("|")]
+        for column in columns:
+            if cells[column] != "N/A":
+                raise SystemExit(
+                    f"unavailable {headers[column]} cell is {cells[column]!r}")
+if found != targets:
+    raise SystemExit(f"did not locate unavailable reward columns: {found!r}")
+if data_rows != 68:
+    raise SystemExit(f"expected 68 unavailable reward rows, got {data_rows}")
 PY
 
 if ! grep -Fq \
@@ -64,7 +94,7 @@ mkdir -p "$synthetic"
 python3 "$ROOT/scripts/generate_distance_paper_tables.py" \
   "$ROOT/scripts/testdata/rewarded-summary-v11.md" \
   "$synthetic/paper_tables.md"
-python3 - "$synthetic/paper_metrics.json" <<'PY'
+python3 - "$synthetic/paper_metrics.json" "$synthetic/paper_tables.md" <<'PY'
 import json
 import sys
 from pathlib import Path
@@ -90,6 +120,31 @@ if correlations["values"] != expected:
 for key, value in expected.items():
     if payload["metrics"].get(key) != value:
         raise SystemExit(f"rewarded metric {key}: expected {value}")
+
+lines = Path(sys.argv[2]).read_text(encoding="utf-8").splitlines()
+expected_cells = {
+    "Avg reward": "0.812345",
+    "Corr(distance,reward)": "-0.456789",
+    "Unrelated zero": "0.000000",
+}
+found = False
+for index, line in enumerate(lines):
+    if not line.startswith("| Problem class | Status | Avg reward |"):
+        continue
+    headers = [cell.strip() for cell in line.strip("|").split("|")]
+    cells = [
+        cell.strip()
+        for cell in lines[index + 2].strip("|").split("|")
+    ]
+    row = dict(zip(headers, cells))
+    for key, value in expected_cells.items():
+        if row.get(key) != value:
+            raise SystemExit(
+                f"rewarded table {key}: expected {value}, got {row.get(key)}")
+    found = True
+    break
+if not found:
+    raise SystemExit("synthetic rewarded table was not copied")
 PY
 
 after_snapshot_status="$(git -C "$ROOT" status --porcelain=v1 \

@@ -37,3 +37,9 @@
 - Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: 0.070007
 - Pearson correlation, normalized canonical representative TED vs candidate reward: 0.080008
 - Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: 0.090009
+
+## By Problem Class And Status
+
+| Problem class | Status | Avg reward | Corr(distance,reward) | Unrelated zero |
+| --- | --- | ---: | ---: | ---: |
+| synthetic | BOTH | 0.812345 | -0.456789 | 0.000000 |
