@@ -87,7 +87,7 @@ public final class Bundle {
                 .equals(theory.scalars())) {
             throw new FormatException(
                     FailureCode.THEORY_MISMATCH,
-                    "Bundle does not declare the reviewed schema-v2 theory");
+                    "Bundle does not declare the fixed schema-v2 theory");
         }
         theory.child(0).requireTag("axioms");
         theoryDigest = Wire.contentId(theory);
@@ -100,7 +100,7 @@ public final class Bundle {
         if (!VOCABULARY_POLICY.equals(vocabulary.scalar(0))) {
             throw new FormatException(
                     FailureCode.THEORY_MISMATCH,
-                    "Bundle vocabulary does not use the reviewed declaration policy");
+                    "Bundle vocabulary does not use the fixed declaration policy");
         }
         vocabulary.child(0).requireTag("schemas");
         vocabulary.child(1).requireTag("operators");

@@ -24,6 +24,11 @@ staged under the archived run's `release-assets/` directory. The remaining
 release gate is author review of the test-only theory ledger followed by the
 intentional immutable tag/release operation.
 
+The immutable manifest records `/absolute/path/to/acgn-publication-run`; the
+checked-in snapshot was copied from `/home/augustus/acgn-publication-run`.
+Nothing establishes a filesystem relationship between those strings. The
+relative artifact paths and hashes are the portable identity.
+
 ## Scope And Baseline
 
 The requested baseline was commit `44debafda1aa9a86a301780cd1bc2ca873ec3531` on
@@ -38,7 +43,7 @@ historical evidence and were not regenerated or overwritten.
 | --- | --- | --- |
 | The documented producer runner did not provide a clean, independent, two-JVM build and comparison. | Rebuilt the runner around fresh producer/verifier/test class directories, exact output-set checks, byte and SHA-256 comparisons, verifier execution, PAIR checks, and source export smoke. | `scripts/run_certificate_bundle_writer_tests.sh` |
 | Certificate fixtures could claim hard-coded commit and dirty-state provenance. | Provenance is captured from Git and binds source, producer/verifier JARs, dependencies, input, configuration, and versions. Dirty publication export fails closed; fixtures require the visible `TEST_ONLY` override. | `CertificateProvenanceTest`, `ProducerBundleInspectionTest`, `VerifierTest` |
-| Per-input schemas and operators changed the theory digest, making PAIR compatibility accidental. | The reviewed theory identity and its admitted axioms remain under the external theory pin; content-addressed typed vocabulary is separately integrity-hashed and declarations used by a common PAIR representative must agree exactly. | Distinct producer-backed equivalent, non-equivalent, incompatible-theory, and separate-JVM PAIR cases |
+| Per-input schemas and operators changed the theory digest, making PAIR compatibility accidental. | The declared schema-v2 theory identity and its admitted axioms remain under the external theory pin; content-addressed typed vocabulary is separately integrity-hashed and declarations used by a common PAIR representative must agree exactly. | Distinct producer-backed equivalent, non-equivalent, incompatible-theory, and separate-JVM PAIR cases |
 | Export smoke repeatedly exercised an empty adapter input. | Smoke now parses representative Alloy source and reports a status/reason census for nullary, slot-bearing, and deliberately unsupported predicates. The producer fixture separately verifies a supported parent path. | `CertificateVerifierExportSmoke` |
 | Browser cancellation did not carry whether cancellation or timeout won. | The client sends `{requestId,cause}` with the closed `cancelled | timeout` enum; server and runner preserve the first cause, including pre-registration requests. | `apiClient.test.ts`, `VisualizationProcessRunnerTest` |
 | Runner registration and shutdown could race, and repeated terminal paths could repeat process termination. | Closure and registration share one lock; close snapshots under that lock and cancels afterward; each job has a one-shot kill latch. | Barrier-controlled execute-versus-close regression |

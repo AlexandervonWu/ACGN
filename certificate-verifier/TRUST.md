@@ -42,8 +42,8 @@ Self-hashing is integrity, not authority. Verification requires
 axioms, must hash to that pinned value. Typed schemas, operators, and binders
 live in a separately hashed vocabulary; PAIR additionally checks exact
 compatibility for declarations used by the common representative. Deployment
-should keep reviewed digest files under `trusted/` or in an external release
-manifest. A bundle-selected digest is not a trust decision.
+should keep explicitly approved digest files under `trusted/` or in an
+external release manifest. A bundle-selected digest is not a trust decision.
 
 The checked-in `trusted/theory-pins.tsv` currently contains fixture authorities
 only. Both are marked pending author review. The empty theory authorizes no
@@ -51,6 +51,8 @@ ground equations; the parent-path authority is separately pinned and marked
 `TEST_ONLY_INPUT_SPECIFIC`. Its ledger binds the single ground axiom's stable
 origin to its axiom ID and lists both complete endpoints. It must not be
 generalized into trust for arbitrary producer-supplied input equations.
+Endpoint authority is Base64 of exact canonical `Codec.encodeNode` bytes;
+human-readable renderings are never compared as an encoding.
 
 ## Fail-Closed Policy
 

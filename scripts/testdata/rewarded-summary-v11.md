@@ -1,0 +1,39 @@
+# Synthetic Rewarded v11 Summary
+
+- Total files: 9
+- Successful distances: 9
+- Skipped identical raw AST predicate pairs: 0
+- Failures: 0
+- Rewards enabled: true
+- Rewarded files: 9
+- Pearson correlation sample: synthetic non-CORRECT predicates (9 files)
+- Average Certificate-Integrated IR repair distance: 1.1
+- Average canonical representative TED baseline: 2.2
+- Average Fast Rewrite IR distance: 3.3
+- Average predicate-body Levenshtein distance: 4.4
+- Average raw AST tree distance: 5.5
+- Average raw AST size: 6.6
+- Average Certificate-Integrated IR repair observation size: 7.7
+- Average canonical representative tree size: 8.8
+- Average Fast Rewrite IR NormalForm size: 9.9
+- Average normalized predicate-body Levenshtein distance: 0.11
+- Average normalized raw AST distance: 0.22
+- Average normalized Certificate-Integrated IR distance: 0.33
+- Average normalized canonical representative TED: 0.44
+- Average normalized Fast Rewrite IR distance: 0.55
+- CORRECT models with canonical distance 0 and raw AST distance > 0: 1
+- Incorrect zero-distance merges: 0
+- Inexact alpha searches: 0
+- Average certified repair metric time: 1.0 ms
+- Average canonical representative TED time: 2.0 ms
+- Min distance: 0
+- Max distance: 9
+- Pearson correlation, Certificate-Integrated IR distance vs candidate reward: 0.010001
+- Pearson correlation, canonical representative TED vs candidate reward: 0.020002
+- Pearson correlation, Fast Rewrite IR distance vs candidate reward: 0.030003
+- Pearson correlation, Levenshtein vs candidate reward: 0.040004
+- Pearson correlation, raw AST tree distance vs candidate reward: 0.050005
+- Pearson correlation, normalized raw AST distance vs candidate reward: 0.060006
+- Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: 0.070007
+- Pearson correlation, normalized canonical representative TED vs candidate reward: 0.080008
+- Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: 0.090009

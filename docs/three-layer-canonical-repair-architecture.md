@@ -1,5 +1,11 @@
 # Three-Layer Canonical Repair Architecture
 
+> **Historical measurement note.** The corpus measurements and augmented
+> truth-pool run below were produced on August 17, 2026 and are retained as
+> historical, unmanifested development evidence. The clean publication result
+> is run `dc368829-9623-4856-8bf1-b655aeaf59e0`, documented in
+> [`publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md`](../publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md).
+
 ## Architectural Rule
 
 CanDis now keeps three questions in three dependency-separated layers:

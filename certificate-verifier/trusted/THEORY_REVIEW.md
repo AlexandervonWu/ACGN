@@ -3,7 +3,7 @@
 `theory-pins.tsv` is the source-controlled trust input used by the bounded
 producer/verifier harness. It is not generated from a bundle during a test run.
 Every current pin is explicitly test-only and pending author review; no entry
-is represented as a reviewed release authority.
+is represented as an approved release authority.
 
 ## Shared Theory Identity
 
@@ -37,16 +37,48 @@ section. This pin does not authorize any producer-supplied ground equation.
 | Origin source | `certificate-writer-fixture` |
 | Origin declaration | `right=left` |
 | Origin ordinal | `0` |
-| Left endpoint | `pattern[INVOKE, TERM, Bool, w/e1@2, 5fccd326f9f0e8678a352ade9be9c263bff03682e6bed73553a3360f00d0e5f2][]` |
-| Right endpoint | `pattern[INVOKE, TERM, Bool, w/e0@1, 5fccd326f9f0e8678a352ade9be9c263bff03682e6bed73553a3360f00d0e5f2][]` |
+| Authoritative left endpoint (`Codec.encodeNode`, Base64) | `AAAAB3BhdHRlcm4AAAAFAAAABklOVk9LRQAAAARURVJNAAAABEJvb2wAAAAGdy9lMUAyAAAAQDVmY2NkMzI2ZjlmMGU4Njc4YTM1MmFkZTliZTljMjYzYmZmMDM2ODJlNmJlZDczNTUzYTMzNjBmMDBkMGU1ZjIAAAAA` |
+| Authoritative right endpoint (`Codec.encodeNode`, Base64) | `AAAAB3BhdHRlcm4AAAAFAAAABklOVk9LRQAAAARURVJNAAAABEJvb2wAAAAGdy9lMEAxAAAAQDVmY2NkMzI2ZjlmMGU4Njc4YTM1MmFkZTliZTljMjYzYmZmMDM2ODJlNmJlZDczNTUzYTMzNjBmMDBkMGU1ZjIAAAAA` |
 | Type variables | none |
 | Term variables | none |
 | Side conditions | none |
 
-The harness recomputes the axiom ID from the four origin fields and compares
-the complete encoded endpoints and empty variable/condition sections with the
-bundle. This authority is deliberately input-specific. It does not establish a
-policy under which arbitrary producer-supplied input equations are trusted.
+The Base64 values above are the complete encoded endpoints. The harness
+decodes them and compares their bytes directly with `Codec.encodeNode` of the
+bundle endpoints. `Wire.Node.toString()` is not an authoritative encoding.
+
+For human review only, the same nodes have the following explicit structure.
+The tag, scalar-array length and indexed scalar boundaries, and child-array
+length are all shown; these blocks are not used by the verifier or harness.
+
+```text
+left endpoint (non-authoritative structured rendering)
+tag = "pattern"
+scalars[5] = {
+  [0] = "INVOKE"
+  [1] = "TERM"
+  [2] = "Bool"
+  [3] = "w/e1@2"
+  [4] = "5fccd326f9f0e8678a352ade9be9c263bff03682e6bed73553a3360f00d0e5f2"
+}
+children[0] = {}
+
+right endpoint (non-authoritative structured rendering)
+tag = "pattern"
+scalars[5] = {
+  [0] = "INVOKE"
+  [1] = "TERM"
+  [2] = "Bool"
+  [3] = "w/e0@1"
+  [4] = "5fccd326f9f0e8678a352ade9be9c263bff03682e6bed73553a3360f00d0e5f2"
+}
+children[0] = {}
+```
+
+The harness also recomputes the axiom ID from the four origin fields and
+checks the empty variable and condition sections. This authority is
+deliberately input-specific. It does not establish a policy under which
+arbitrary producer-supplied input equations are trusted.
 
 ## Release Boundary
 

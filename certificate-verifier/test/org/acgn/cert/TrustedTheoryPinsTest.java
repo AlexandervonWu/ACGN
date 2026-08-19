@@ -3,6 +3,8 @@ package org.acgn.cert;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +26,7 @@ public final class TrustedTheoryPinsTest {
         }
         Map<String, Pin> pins = readPins(Path.of(args[0]));
         check(pins.keySet().equals(java.util.Set.of(EMPTY_PIN, PARENT_PIN)),
-                "the fixture authority contains exactly the two reviewed theory shapes");
+                "the fixture authority contains exactly the two declared theory shapes");
 
         Pin empty = pins.get(EMPTY_PIN);
         Pin parent = pins.get(PARENT_PIN);
@@ -33,9 +35,10 @@ public final class TrustedTheoryPinsTest {
                 "both authorities are explicitly test-only");
         check(empty.reviewStatus.equals("PENDING_AUTHOR_REVIEW")
                         && parent.reviewStatus.equals("PENDING_AUTHOR_REVIEW"),
-                "no fixture pin is mislabeled as reviewed");
+                "both fixture pins retain pending author status");
         check(!empty.digest.equals(parent.digest),
                 "the empty and input-specific ground theories have separate pins");
+        assertRenderingCollision();
 
         byte[] nullaryBytes = Files.readAllBytes(Path.of(args[1]));
         byte[] slotBytes = Files.readAllBytes(Path.of(args[2]));
@@ -66,8 +69,8 @@ public final class TrustedTheoryPinsTest {
         if (pin.axiomCount == 0) {
             check(pin.axiomId.equals("-")
                             && pin.originKind.equals("-")
-                            && pin.leftEndpoint.equals("-")
-                            && pin.rightEndpoint.equals("-"),
+                            && pin.leftEndpointCodecBase64.equals("-")
+                            && pin.rightEndpointCodecBase64.equals("-"),
                     label + " empty theory ledger contains no hidden axiom fields");
             return;
         }
@@ -83,9 +86,13 @@ public final class TrustedTheoryPinsTest {
                 List.of()));
         check(originBoundId.equals(pin.axiomId),
                 label + " stable origin cryptographically determines the axiom ID");
-        check(axiom.child(0).toString().equals(pin.leftEndpoint)
-                        && axiom.child(1).toString().equals(pin.rightEndpoint),
-                label + " axiom endpoints match the complete ledger");
+        check(Arrays.equals(
+                        Codec.encodeNode(axiom.child(0)),
+                        decodeEndpoint(pin.leftEndpointCodecBase64, "left"))
+                        && Arrays.equals(
+                        Codec.encodeNode(axiom.child(1)),
+                        decodeEndpoint(pin.rightEndpointCodecBase64, "right")),
+                label + " axiom endpoints match the canonical byte ledger");
         check(axiom.child(2).children().isEmpty()
                         && axiom.child(3).children().isEmpty()
                         && axiom.child(4).children().isEmpty(),
@@ -100,6 +107,26 @@ public final class TrustedTheoryPinsTest {
         return Bundle.parse(Codec.decode(bytes, Limits.defaults()));
     }
 
+    private static byte[] decodeEndpoint(String encoded, String side) {
+        try {
+            return Base64.getDecoder().decode(encoded);
+        } catch (IllegalArgumentException exception) {
+            throw new AssertionError(side + " endpoint is not canonical Base64", exception);
+        }
+    }
+
+    private static void assertRenderingCollision() {
+        Wire.Node oneScalar = Wire.node("collision", List.of("left, right"), List.of());
+        Wire.Node twoScalars = Wire.node("collision", List.of("left", "right"), List.of());
+        check(!oneScalar.equals(twoScalars),
+                "the rendering-collision fixtures are distinct valid nodes");
+        check(oneScalar.toString().equals(twoScalars.toString()),
+                "distinct nodes can share the legacy human rendering");
+        check(!Arrays.equals(
+                        Codec.encodeNode(oneScalar), Codec.encodeNode(twoScalars)),
+                "canonical node encodings preserve scalar-array boundaries");
+    }
+
     private static Map<String, Pin> readPins(Path path) throws Exception {
         List<String> lines = Files.readAllLines(path, StandardCharsets.UTF_8);
         check(!lines.isEmpty(), "the static theory-pin manifest is nonempty");
@@ -107,11 +134,12 @@ public final class TrustedTheoryPinsTest {
                 "pin_id", "authority", "review_status", "fixture_scope",
                 "theory_id", "rule_set", "vocabulary_policy", "theory_digest",
                 "axiom_count", "axiom_id", "origin_kind", "origin_source",
-                "origin_declaration", "origin_ordinal", "left_endpoint",
-                "right_endpoint", "type_variables", "term_variables",
+                "origin_declaration", "origin_ordinal",
+                "left_endpoint_codec_base64", "right_endpoint_codec_base64",
+                "type_variables", "term_variables",
                 "side_conditions"));
         check(lines.get(0).equals(expectedHeader),
-                "the static theory-pin manifest has the exact review schema");
+                "the static theory-pin manifest has the exact ledger schema");
         Map<String, Pin> result = new LinkedHashMap<>();
         for (int index = 1; index < lines.size(); index++) {
             if (lines.get(index).isBlank()) {
@@ -153,8 +181,8 @@ public final class TrustedTheoryPinsTest {
             String originSource,
             String originDeclaration,
             String originOrdinal,
-            String leftEndpoint,
-            String rightEndpoint,
+            String leftEndpointCodecBase64,
+            String rightEndpointCodecBase64,
             String typeVariables,
             String termVariables,
             String sideConditions) {

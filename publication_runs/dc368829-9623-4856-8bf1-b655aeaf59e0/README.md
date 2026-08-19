@@ -18,11 +18,16 @@ The four manifest-bound stage trees are mirrored exactly at:
 - `egraph_ablation/`
 - `capability_benchmark/`
 
-`run-manifest.json`, `planned-commands.txt`, and `original-summary.md` are exact
-copies from `/home/augustus/acgn-publication-run`. Absolute paths in the
-manifest are provenance records from the originating host; they are not needed
-to verify this import. The manifest's relative artifact paths and SHA-256
-values identify the repository snapshot portably.
+The verified path facts are deliberately narrow:
+
+- the immutable manifest records `/absolute/path/to/acgn-publication-run`;
+- the checked-in snapshot was copied from
+  `/home/augustus/acgn-publication-run`; and
+- relative artifact paths and SHA-256 hashes, rather than either absolute
+  path, establish the portable snapshot identity.
+
+No filesystem relationship between those two absolute strings is inferred.
+The archived manifest is retained byte-for-byte.
 
 Materialize the two Git LFS payloads and verify the imported stage artifacts
 from the repository root:

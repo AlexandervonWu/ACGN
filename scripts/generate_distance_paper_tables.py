@@ -14,6 +14,9 @@ HEADLINE_METRICS = [
     ("Skipped identical raw AST predicate pairs",
      ("Skipped identical raw AST predicate pairs",), True),
     ("Failures", ("Failures",), True),
+    ("Rewards enabled", ("Rewards enabled",), True),
+    ("Rewarded files", ("Rewarded files",), True),
+    ("Pearson correlation sample", ("Pearson correlation sample",), True),
     ("Average Certificate-Integrated IR repair distance",
      ("Average Certificate-Integrated IR repair distance",
       "Average certified repair distance"), True),
@@ -56,26 +59,45 @@ HEADLINE_METRICS = [
      ("Average canonical representative TED time",), True),
     ("Min distance", ("Min distance",), True),
     ("Max distance", ("Max distance",), True),
-    ("Pearson correlation, certified repair distance vs candidate reward",
-     ("Pearson correlation, certified repair distance vs candidate reward",), False),
+]
+
+CORRELATION_METRICS = [
+    ("Pearson correlation, Certificate-Integrated IR distance vs candidate reward",
+     ("Pearson correlation, Certificate-Integrated IR distance vs candidate reward",
+      "Pearson correlation, certified repair distance vs candidate reward")),
     ("Pearson correlation, canonical representative TED vs candidate reward",
-     ("Pearson correlation, canonical representative TED vs candidate reward",), False),
-    ("Pearson correlation, direct reference-metric distance vs candidate reward",
-     ("Pearson correlation, direct reference-metric distance vs candidate reward",), False),
+     ("Pearson correlation, canonical representative TED vs candidate reward",)),
+    ("Pearson correlation, Fast Rewrite IR distance vs candidate reward",
+     ("Pearson correlation, Fast Rewrite IR distance vs candidate reward",
+      "Pearson correlation, direct reference-metric distance vs candidate reward")),
     ("Pearson correlation, Levenshtein vs candidate reward",
-     ("Pearson correlation, Levenshtein vs candidate reward",), False),
+     ("Pearson correlation, Levenshtein vs candidate reward",)),
     ("Pearson correlation, raw AST tree distance vs candidate reward",
-     ("Pearson correlation, raw AST tree distance vs candidate reward",), False),
+     ("Pearson correlation, raw AST tree distance vs candidate reward",)),
+    ("Pearson correlation, normalized raw AST distance vs candidate reward",
+     ("Pearson correlation, normalized raw AST distance vs candidate reward",)),
+    ("Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward",
+     ("Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward",
+      "Pearson correlation, normalized certified repair distance vs candidate reward")),
+    ("Pearson correlation, normalized canonical representative TED vs candidate reward",
+     ("Pearson correlation, normalized canonical representative TED vs candidate reward",)),
+    ("Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward",
+     ("Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward",
+      "Pearson correlation, normalized direct reference-metric distance vs candidate reward")),
 ]
 
 
-def parse_metrics(lines):
+def parse_bullets(lines):
     parsed = {}
     pattern = re.compile(r"^- ([^:]+):\s*(.+)$")
     for line in lines:
         match = pattern.match(line)
         if match:
             parsed[match.group(1)] = match.group(2)
+    return parsed
+
+
+def parse_metrics(parsed):
     metrics = {}
     missing = []
     for key, aliases, required in HEADLINE_METRICS:
@@ -87,6 +109,55 @@ def parse_metrics(lines):
     if missing:
         raise ValueError("Missing summary metrics: " + ", ".join(missing))
     return metrics
+
+
+def parse_reward_correlations(parsed):
+    enabled_text = parsed["Rewards enabled"].strip().lower()
+    if enabled_text not in {"true", "false"}:
+        raise ValueError("Rewards enabled must be true or false")
+    rewards_enabled = enabled_text == "true"
+    try:
+        rewarded_files = int(parsed["Rewarded files"].replace(",", ""))
+    except ValueError as exception:
+        raise ValueError("Rewarded files must be an integer") from exception
+    sample = parsed["Pearson correlation sample"]
+    match = re.search(r"\(([0-9,]+)\s+files?\)", sample)
+    if match is None:
+        raise ValueError("Pearson correlation sample must state its file count")
+    sample_size = int(match.group(1).replace(",", ""))
+
+    available = rewards_enabled and rewarded_files > 0 and sample_size > 0
+    values = {}
+    if available:
+        missing = []
+        for key, aliases in CORRELATION_METRICS:
+            value = next((parsed[alias] for alias in aliases if alias in parsed), None)
+            if value is None:
+                missing.append(key)
+            else:
+                values[key] = value
+        if missing:
+            raise ValueError("Missing reward correlations: " + ", ".join(missing))
+
+    if not rewards_enabled and sample_size == 0:
+        reason = ("Reward correlations are unavailable because rewards were "
+                  "disabled and the Pearson correlation sample size is zero files.")
+    elif not rewards_enabled:
+        reason = "Reward correlations are unavailable because rewards were disabled."
+    elif rewarded_files == 0 or sample_size == 0:
+        reason = ("Reward correlations are unavailable because the Pearson "
+                  "correlation sample size is zero files.")
+    else:
+        reason = None
+    return {
+        "available": available,
+        "reason": reason,
+        "rewardsEnabled": rewards_enabled,
+        "rewardedFiles": rewarded_files,
+        "sample": sample,
+        "sampleSize": sample_size,
+        "values": values,
+    }
 
 
 def parse_tables(lines):
@@ -117,7 +188,10 @@ def main():
     output.parent.mkdir(parents=True, exist_ok=True)
     raw = summary.read_bytes()
     lines = raw.decode("utf-8").splitlines()
-    metrics = parse_metrics(lines)
+    parsed = parse_bullets(lines)
+    metrics = parse_metrics(parsed)
+    reward_correlations = parse_reward_correlations(parsed)
+    metrics.update(reward_correlations["values"])
     tables = parse_tables(lines)
     generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     summary_hash = hashlib.sha256(raw).hexdigest()
@@ -139,6 +213,13 @@ def main():
         if key not in metrics:
             continue
         markdown.append(f"| {key} | {metrics[key]} |")
+    markdown.extend(["", "## Reward Correlations", ""])
+    if reward_correlations["available"]:
+        markdown.extend(["| Metric | Pearson correlation |", "| --- | ---: |"])
+        for key, _ in CORRELATION_METRICS:
+            markdown.append(f"| {key} | {reward_correlations['values'][key]} |")
+    else:
+        markdown.append(reward_correlations["reason"])
     for heading, table in tables:
         markdown.extend(["", f"## {heading}", ""])
         markdown.extend(table)
@@ -150,6 +231,7 @@ def main():
         "source": str(summary),
         "summarySha256": summary_hash,
         "metrics": metrics,
+        "rewardCorrelations": reward_correlations,
         "tableCount": len(tables),
     }
     metrics_output.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")

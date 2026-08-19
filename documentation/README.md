@@ -590,9 +590,10 @@ The progress line reports both values; for example, `--threads 32` under
 at 16 and reduced further when the configured maximum heap is smaller.
 
 Strict-kernel failures report the incorrect source, truth reference, both
-canonical digests, and temporal/quantifier/matrix components. The current
-pool-100 rewarded full-corpus run completes all 61,598 eligible models and
-42,386 incorrect rankings with no parse, strict-kernel, or reward failure.
+canonical digests, and temporal/quantifier/matrix components. A historical,
+unmanifested pool-100 rewarded full-corpus run completed all 61,598 eligible
+models and 42,386 incorrect rankings with no parse, strict-kernel, or reward
+failure. The current clean publication snapshot is reward-disabled.
 
 The runners skip raw-AST-identical predicate pairs where configured. Dataset
 labels are read from the problem-class and correctness directories. Correctness

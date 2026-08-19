@@ -47,8 +47,9 @@ with the exact witnesses and embedding in their `PARENT_EDGE`; stored shapes
 must equal the right endpoint of their replay proof.
 
 The theory digest inside a bundle is only an integrity field. Successful
-verification requires the caller to supply the same reviewed digest out of
-band. A changed manifest under the old external pin is `REJECTED`.
+verification requires the caller to supply the same externally declared
+digest out of band. A changed manifest under the old external pin is
+`REJECTED`.
 
 Missing exhaustive evidence is `UNCHECKABLE`. Supplied malformed, false,
 ill-typed, contradictory, misplaced, duplicate, or noncanonical evidence is
