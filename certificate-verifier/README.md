@@ -64,7 +64,8 @@ named digests from [`trusted/theory-pins.tsv`](trusted/theory-pins.tsv), checks
 that generated bundles match the prior selection, and exercises a wrong-pin
 `REJECTED / UNTRUSTED_THEORY` case. The complete test-only theory ledger is in
 [`trusted/THEORY_REVIEW.md`](trusted/THEORY_REVIEW.md); its entries remain
-`PENDING_AUTHOR_REVIEW` and are not release approvals.
+author-approved only under their declared `TEST_ONLY` and
+`TEST_ONLY_INPUT_SPECIFIC` fixture scopes.
 
 ## Profiles
 

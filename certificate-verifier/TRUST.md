@@ -46,11 +46,12 @@ should keep explicitly approved digest files under `trusted/` or in an
 external release manifest. A bundle-selected digest is not a trust decision.
 
 The checked-in `trusted/theory-pins.tsv` currently contains fixture authorities
-only. Both are marked pending author review. The empty theory authorizes no
-ground equations; the parent-path authority is separately pinned and marked
-`TEST_ONLY_INPUT_SPECIFIC`. Its ledger binds the single ground axiom's stable
-origin to its axiom ID and lists both complete endpoints. It must not be
-generalized into trust for arbitrary producer-supplied input equations.
+only. Both are author-approved only for their declared test scopes. The empty
+theory authorizes no ground equations; the parent-path authority is separately
+pinned and remains `TEST_ONLY_INPUT_SPECIFIC`. Its ledger binds the single
+ground axiom's stable origin to its axiom ID and lists both complete endpoints.
+It does not authorize arbitrary producer equations, corpus-wide certification,
+or production claims.
 Endpoint authority is Base64 of exact canonical `Codec.encodeNode` bytes;
 human-readable renderings are never compared as an encoding.
 

@@ -2,8 +2,8 @@
 
 `theory-pins.tsv` is the source-controlled trust input used by the bounded
 producer/verifier harness. It is not generated from a bundle during a test run.
-Every current pin is explicitly test-only and pending author review; no entry
-is represented as an approved release authority.
+Every current pin is author-approved only for its declared test scope. Approval
+does not elevate either authority or make either pin a production theory.
 
 ## Shared Theory Identity
 
@@ -14,7 +14,7 @@ is represented as an approved release authority.
 ## `fixture-empty-theory-v1`
 
 - Authority: `TEST_ONLY`
-- Review status: `PENDING_AUTHOR_REVIEW`
+- Review status: `AUTHOR_APPROVED_FOR_DECLARED_TEST_SCOPE`
 - Digest: `9acf2f195da2b489ddf1537bc42c933b569f35390e248682802240a713334f6c`
 - Scope: nullary, slot-only, bundle-level PAIR, and parsed-source PAIR fixtures
 - Complete admitted axiom set: empty
@@ -25,7 +25,7 @@ section. This pin does not authorize any producer-supplied ground equation.
 ## `fixture-parent-path-theory-v1`
 
 - Authority: `TEST_ONLY_INPUT_SPECIFIC`
-- Review status: `PENDING_AUTHOR_REVIEW`
+- Review status: `AUTHOR_APPROVED_FOR_DECLARED_TEST_SCOPE`
 - Digest: `0901e1ee21d8f82c128ebc93f0e5f1e0b421f7a6833ec16cf5473df3b222b147`
 - Scope: deterministic `parent-path` fixture only
 - Complete admitted axiom set: the single entry below
@@ -80,9 +80,10 @@ checks the empty variable and condition sections. This authority is
 deliberately input-specific. It does not establish a policy under which
 arbitrary producer-supplied input equations are trusted.
 
-## Release Boundary
+## Approval Boundary
 
-Before an immutable release tag, an author must review this complete ledger and
-either approve a release authority explicitly or retain the narrower fixture-
-only claim. Copying a digest from a generated bundle is not review and is never
-used by the harness as a trust decision.
+The author approved both entries only under the authority and fixture scope
+shown above. The parent entry admits exactly the listed `right=left` ground
+equation for the deterministic fixture. It does not authorize arbitrary
+producer equations, corpus-wide certification, or production claims. Copying
+a digest from a generated bundle remains outside the trust decision.

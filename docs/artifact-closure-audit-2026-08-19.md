@@ -11,8 +11,8 @@ changing any bound result:
 
 - the producer harness selects separate empty and parent-path theory digests
   from `certificate-verifier/trusted/theory-pins.tsv`, never from bundle output;
-- the parent pin is input-specific and test-only, with its complete ground
-  axiom origin and endpoints exposed for author review;
+- the parent pin is author-approved only as input-specific and test-only, with
+  its complete ground axiom origin and endpoints exposed in the ledger;
 - PAIR coverage now includes two separately parsed Alloy files with distinct
   source identities and SHA-256 hashes through the real export path;
 - v11 table regeneration writes outside the snapshot, and a portable verifier
@@ -20,9 +20,9 @@ changing any bound result:
 
 The exact original experiment JAR, SHA-256
 `2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f`, is
-staged under the archived run's `release-assets/` directory. The remaining
-release gate is author review of the test-only theory ledger followed by the
-intentional immutable tag/release operation.
+staged under the archived run's `release-assets/` directory. The author has
+approved both ledger entries only for their declared test scopes; the remaining
+gate is the intentional immutable tag/release operation.
 
 The immutable manifest records `/absolute/path/to/acgn-publication-run`; the
 checked-in snapshot was copied from `/home/augustus/acgn-publication-run`.

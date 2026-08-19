@@ -13,6 +13,8 @@ import java.util.Map;
 public final class TrustedTheoryPinsTest {
     private static final String EMPTY_PIN = "fixture-empty-theory-v1";
     private static final String PARENT_PIN = "fixture-parent-path-theory-v1";
+    private static final String APPROVED =
+            "AUTHOR_APPROVED_FOR_DECLARED_TEST_SCOPE";
     private static final int FIELD_COUNT = 19;
     private static int checks;
 
@@ -30,12 +32,15 @@ public final class TrustedTheoryPinsTest {
 
         Pin empty = pins.get(EMPTY_PIN);
         Pin parent = pins.get(PARENT_PIN);
-        check(empty.authority.equals("TEST_ONLY")
-                        && parent.authority.equals("TEST_ONLY_INPUT_SPECIFIC"),
-                "both authorities are explicitly test-only");
-        check(empty.reviewStatus.equals("PENDING_AUTHOR_REVIEW")
-                        && parent.reviewStatus.equals("PENDING_AUTHOR_REVIEW"),
-                "both fixture pins retain pending author status");
+        check(empty.reviewStatus.equals(APPROVED)
+                        && empty.authority.equals("TEST_ONLY")
+                        && empty.fixtureScope.equals(
+                        "nullary,slot-only,bundle-level-pair,parsed-source-pair"),
+                "empty-theory approval is confined to its declared test scope");
+        check(parent.reviewStatus.equals(APPROVED)
+                        && parent.authority.equals("TEST_ONLY_INPUT_SPECIFIC")
+                        && parent.fixtureScope.equals("parent-path"),
+                "parent-theory approval is confined to its input-specific fixture");
         check(!empty.digest.equals(parent.digest),
                 "the empty and input-specific ground theories have separate pins");
         assertRenderingCollision();
