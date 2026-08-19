@@ -1,7 +1,7 @@
 import type { EGraphAnalysis } from "../api/types";
 import { analysisCallable } from "../api/callables";
 import { buildVisibleGraph } from "../graph/buildVisibleGraph";
-import { layoutEClasses } from "../graph/layout";
+import { graphEdgeKey, layoutEClasses } from "../graph/layout";
 import type { GraphFilters } from "../state/uiStore";
 import { formatType } from "./formatters";
 
@@ -58,8 +58,8 @@ export function exportVisibleGraphSvg(
     item.eclass.id,
     { x: item.position.x + offsetX + 135, y: item.position.y + 55 },
   ]));
-  const lines = visible.edges.flatMap((edge) => {
-    const primary = hierarchy.parentByEClass.get(edge.targetEClassId) === edge.sourceEClassId;
+  const lines = visible.edges.flatMap((edge, index) => {
+    const primary = hierarchy.treeEdgeIds.has(graphEdgeKey(edge, index));
     if (!primary && !filters.showCrossLinks) return [];
     const source = centers.get(edge.sourceEClassId);
     const target = centers.get(edge.targetEClassId);

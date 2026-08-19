@@ -61,7 +61,7 @@ describe("mock-backed explorer workflow", () => {
     expect(screen.getAllByText("E2").length).toBeGreaterThan(0);
   });
 
-  it("compares two selected callable positions and visualizes a certified edit path", async () => {
+  it("does not manufacture certified comparisons in mock mode", async () => {
     const user = userEvent.setup();
     const client = new QueryClient({ defaultOptions: { queries: { retry: false }, mutations: { retry: false } } });
     render(<QueryClientProvider client={client}><App /></QueryClientProvider>);
@@ -77,8 +77,8 @@ describe("mock-backed explorer workflow", () => {
     );
     await user.click(screen.getByRole("button", { name: "Compare callables" }));
 
-    expect(await screen.findByRole("region", { name: "Edit distance comparison" }, { timeout: 2500 })).toBeInTheDocument();
-    expect(screen.getByText("Certified equivalent")).toBeInTheDocument();
-    expect(screen.getByText("Certified semantic equality; no repair is required.")).toBeInTheDocument();
+    expect(await screen.findByRole("alert", {}, { timeout: 2500 })).toHaveTextContent(
+      "Certified callable comparison is unavailable in mock mode",
+    );
   });
 });

@@ -9,6 +9,7 @@ describe("live API response boundary", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
   });
@@ -70,11 +71,13 @@ describe("live API response boundary", () => {
       model: { name: "submitted.als" },
       left: {
         name: "neighbors", kind: "function", originalText: "User", normalizedText: "User",
-        canonicalText: "User", digest: "left", representationSize: 1,
+        canonicalText: "User", certifiedStableForm: "certified-A",
+        digest: "left", representationSize: 1,
       },
       right: {
         name: "connected", kind: "predicate", originalText: "some User", normalizedText: "some User",
-        canonicalText: "SOME(User)", digest: "right", representationSize: 2,
+        canonicalText: "SOME(User)", certifiedStableForm: "certified-B",
+        digest: "right", representationSize: 2,
       },
       metricVersion: "certified-repair-v1",
       certifiedEquivalent: false,
@@ -141,5 +144,29 @@ describe("live API response boundary", () => {
     const cancelCall = fetchMock.mock.calls.find(([url]) => String(url).endsWith("/api/v1/jobs/cancel"));
     expect(cancelCall).toBeDefined();
     expect(JSON.parse(String(cancelCall?.[1]?.body))).toEqual({ requestId: analysisBody.requestId });
+  });
+
+  it("preserves timeout classification when the caller aborts afterward", async () => {
+    vi.useFakeTimers();
+    const fetchMock = vi.fn((_input: RequestInfo | URL, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener(
+          "abort",
+          () => queueMicrotask(() => reject(new DOMException("aborted", "AbortError"))),
+          { once: true },
+        );
+      }));
+    vi.stubGlobal("fetch", fetchMock);
+    const { inspectModel } = await import("../src/api/client");
+    const controller = new AbortController();
+    const pending = inspectModel("sig Item {}", controller.signal);
+    const rejection = expect(pending).rejects.toMatchObject({ kind: "timeout" });
+
+    await vi.advanceTimersByTimeAsync(30_000);
+    controller.abort();
+
+    await rejection;
+    expect(fetchMock.mock.calls.some(([url]) =>
+      String(url).endsWith("/api/v1/jobs/cancel"))).toBe(true);
   });
 });

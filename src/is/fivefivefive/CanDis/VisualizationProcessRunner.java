@@ -5,7 +5,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,11 +22,23 @@ import org.json.JSONObject;
 final class VisualizationProcessRunner implements AutoCloseable {
     private static final String WORKER_CLASS = "is.fivefivefive.CanDis.VisualizationWorker";
     private static final long TERMINATION_GRACE_MILLIS = 2_000L;
+    private static final long PENDING_CANCEL_TTL_MILLIS = 30_000L;
+    private static final int MAX_PENDING_CANCELLATIONS = 4_096;
 
     private final long timeoutMillis;
     private final String workerHeap;
     private final Semaphore capacity;
     private final ConcurrentMap<String, RunningJob> jobs = new ConcurrentHashMap<>();
+    private final Object registrationLock = new Object();
+    private final Map<String, Long> pendingCancellations = Collections.synchronizedMap(
+            new LinkedHashMap<String, Long>(128, 0.75f, true) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected boolean removeEldestEntry(Map.Entry<String, Long> eldest) {
+                    return size() > MAX_PENDING_CANCELLATIONS;
+                }
+            });
     private final AtomicBoolean closed = new AtomicBoolean();
 
     VisualizationProcessRunner(int workers, long timeoutMillis, String workerHeap) {
@@ -50,7 +65,13 @@ final class VisualizationProcessRunner implements AutoCloseable {
         }
 
         RunningJob job = new RunningJob();
-        if (jobs.putIfAbsent(requestId, job) != null) {
+        boolean duplicate;
+        boolean cancelledBeforeRegistration;
+        synchronized (registrationLock) {
+            duplicate = jobs.putIfAbsent(requestId, job) != null;
+            cancelledBeforeRegistration = !duplicate && consumePendingCancellation(requestId);
+        }
+        if (duplicate) {
             capacity.release();
             return error(409, "duplicate_request", "The request ID is already running.");
         }
@@ -58,6 +79,10 @@ final class VisualizationProcessRunner implements AutoCloseable {
         Path directory = null;
         Process process = null;
         try {
+            if (cancelledBeforeRegistration) {
+                job.cancel();
+                return error(499, "request_cancelled", "The analysis request was cancelled.");
+            }
             directory = Files.createTempDirectory("acgn-visualization-job-");
             Path input = directory.resolve("request.json");
             Path output = directory.resolve("response.json");
@@ -115,12 +140,27 @@ final class VisualizationProcessRunner implements AutoCloseable {
     }
 
     boolean cancel(String requestId) {
-        RunningJob job = jobs.get(requestId);
-        if (job == null) {
-            return false;
+        RunningJob job;
+        synchronized (registrationLock) {
+            job = jobs.get(requestId);
+            if (job == null) {
+                synchronized (pendingCancellations) {
+                    pendingCancellations.put(
+                            requestId,
+                            System.currentTimeMillis() + PENDING_CANCEL_TTL_MILLIS);
+                }
+                return true;
+            }
         }
         job.cancel();
         return true;
+    }
+
+    private boolean consumePendingCancellation(String requestId) {
+        synchronized (pendingCancellations) {
+            Long deadline = pendingCancellations.remove(requestId);
+            return deadline != null && deadline >= System.currentTimeMillis();
+        }
     }
 
     int activeJobCount() {
@@ -135,6 +175,7 @@ final class VisualizationProcessRunner implements AutoCloseable {
         for (RunningJob job : jobs.values()) {
             job.cancel();
         }
+        pendingCancellations.clear();
     }
 
     private List<String> command(Path input, Path output) {

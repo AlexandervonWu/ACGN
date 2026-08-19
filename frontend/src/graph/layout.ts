@@ -8,6 +8,7 @@ export interface PositionedEClass {
 export interface HierarchicalLayout {
   positioned: PositionedEClass[];
   parentByEClass: Map<string, string>;
+  treeEdgeIds: Set<string>;
 }
 
 const NODE_WIDTH = 286;
@@ -19,7 +20,13 @@ const ROW_GAP = 72;
 interface LayoutTree {
   childrenById: Map<string, string[]>;
   parentById: Map<string, string>;
+  treeEdgeIds: Set<string>;
   roots: string[];
+}
+
+export function graphEdgeKey(edge: GraphEdge, index: number): string {
+  return edge.id
+    ?? `${edge.sourceEClassId}:${edge.targetEClassId}:${edge.enodeId ?? ""}:${edge.role ?? ""}:${index}`;
 }
 
 function depthOf(id: string, depths: Map<string, number>, fallback: number): number {
@@ -34,7 +41,7 @@ function primaryTree(
 ): LayoutTree {
   const visibleIds = new Set(eclasses.map((eclass) => eclass.id));
   const fallbackDepth = Math.max(0, ...depths.values()) + 1;
-  const incoming = new Map<string, Array<{ source: string; order: number }>>();
+  const incoming = new Map<string, Array<{ source: string; order: number; edgeId: string }>>();
 
   edges.forEach((edge, order) => {
     if (!visibleIds.has(edge.sourceEClassId) || !visibleIds.has(edge.targetEClassId)) return;
@@ -42,13 +49,16 @@ function primaryTree(
     const targetDepth = depthOf(edge.targetEClassId, depths, fallbackDepth);
     if (sourceDepth >= targetDepth) return;
     const candidates = incoming.get(edge.targetEClassId) ?? [];
-    if (!candidates.some((candidate) => candidate.source === edge.sourceEClassId)) {
-      candidates.push({ source: edge.sourceEClassId, order });
-      incoming.set(edge.targetEClassId, candidates);
-    }
+    candidates.push({
+      source: edge.sourceEClassId,
+      order,
+      edgeId: graphEdgeKey(edge, order),
+    });
+    incoming.set(edge.targetEClassId, candidates);
   });
 
   const parentById = new Map<string, string>();
+  const treeEdgeIds = new Set<string>();
   for (const eclass of eclasses) {
     if (eclass.id === rootId) continue;
     const candidates = incoming.get(eclass.id) ?? [];
@@ -57,8 +67,11 @@ function primaryTree(
         - depthOf(left.source, depths, fallbackDepth);
       return depthDelta || left.order - right.order || left.source.localeCompare(right.source);
     });
-    const parent = candidates[0]?.source;
-    if (parent) parentById.set(eclass.id, parent);
+    const parent = candidates[0];
+    if (parent) {
+      parentById.set(eclass.id, parent.source);
+      treeEdgeIds.add(parent.edgeId);
+    }
   }
 
   const childrenById = new Map<string, string[]>();
@@ -78,7 +91,7 @@ function primaryTree(
       const depthDelta = depthOf(left, depths, fallbackDepth) - depthOf(right, depths, fallbackDepth);
       return depthDelta || left.localeCompare(right);
     });
-  return { childrenById, parentById, roots };
+  return { childrenById, parentById, treeEdgeIds, roots };
 }
 
 export function layoutEClasses(
@@ -89,7 +102,7 @@ export function layoutEClasses(
   estimatedHeightByEClass: Map<string, number> = new Map(),
 ): HierarchicalLayout {
   if (eclasses.length === 0) {
-    return { positioned: [], parentByEClass: new Map() };
+    return { positioned: [], parentByEClass: new Map(), treeEdgeIds: new Set() };
   }
 
   const tree = primaryTree(eclasses, depthByEClass, edges, rootEClassId);
@@ -154,5 +167,9 @@ export function layoutEClasses(
     };
   });
 
-  return { positioned, parentByEClass: tree.parentById };
+  return {
+    positioned,
+    parentByEClass: tree.parentById,
+    treeEdgeIds: tree.treeEdgeIds,
+  };
 }

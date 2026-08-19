@@ -400,7 +400,7 @@ export const ComparisonCallableSchema = z.object({
   originalText: z.string(),
   normalizedText: z.string(),
   canonicalText: z.string(),
-  certifiedStableForm: z.string().optional(),
+  certifiedStableForm: z.string().min(1),
   digest: id,
   representationSize: z.number().int().nonnegative(),
 });
@@ -410,7 +410,7 @@ export const DistanceBreakdownSchema = z.object({
   temporal: z.number().int().nonnegative(),
   quantifier: z.number().int().nonnegative(),
   matrix: z.number().int().nonnegative(),
-  exactForStoredOrbits: z.boolean(),
+  exactForStoredOrbits: z.literal(true),
   binderAlignments: z.number().int().nonnegative(),
 });
 
@@ -433,6 +433,17 @@ export const CallableComparisonSchema = z.object({
   operations: z.array(DistanceOperationSchema),
   statistics: DistanceStatisticsSchema.optional(),
 }).superRefine((comparison, context) => {
+  const stableEquivalent = comparison.left.certifiedStableForm
+    === comparison.right.certifiedStableForm;
+
+  if (comparison.certifiedEquivalent !== stableEquivalent) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["certifiedEquivalent"],
+      message: "Certified equality must be determined by certifiedStableForm.",
+    });
+  }
+
   const componentTotal = comparison.distance.temporal
     + comparison.distance.quantifier
     + comparison.distance.matrix;

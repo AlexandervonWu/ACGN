@@ -21,6 +21,7 @@ describe("Visualization IR schema", () => {
       originalText: "some univ",
       normalizedText: "some univ",
       canonicalText: "SOME(univ)",
+      certifiedStableForm: "certified-A",
       digest: "left-digest",
       representationSize: 2,
     },
@@ -30,6 +31,7 @@ describe("Visualization IR schema", () => {
       originalText: "some univ",
       normalizedText: "some univ",
       canonicalText: "SOME(univ)",
+      certifiedStableForm: "certified-A",
       digest: "right-digest",
       representationSize: 2,
     },
@@ -54,7 +56,7 @@ describe("Visualization IR schema", () => {
       cost: 0,
       detail: "unit",
     }],
-  } as const;
+  };
 
   it("accepts mixed predicates and functions during model inspection", () => {
     const parsed = ModelInspectionSchema.parse({
@@ -119,5 +121,44 @@ describe("Visualization IR schema", () => {
       matrix: 1,
     };
     expect(CallableComparisonSchema.safeParse(corrupt).success).toBe(false);
+  });
+
+  it("derives certified equality from certified stable forms", () => {
+    const nonEquivalent = structuredClone(zeroComparison);
+    nonEquivalent.left.canonicalText = "same readable text";
+    nonEquivalent.right.canonicalText = "same readable text";
+    nonEquivalent.left.certifiedStableForm = "certified-A";
+    nonEquivalent.right.certifiedStableForm = "certified-B";
+    nonEquivalent.certifiedEquivalent = false;
+    nonEquivalent.distance = {
+      ...nonEquivalent.distance,
+      total: 1,
+      matrix: 1,
+    };
+    nonEquivalent.operations = [{
+      id: "op-0",
+      index: 0,
+      component: "matrix",
+      kind: "aggregate",
+      path: "matrix",
+      summary: "Certified matrix repair",
+      cost: 1,
+      detail: "aggregate",
+    }];
+
+    expect(CallableComparisonSchema.safeParse(nonEquivalent).success).toBe(true);
+
+    const falseEquality = structuredClone(nonEquivalent);
+    falseEquality.certifiedEquivalent = true;
+    falseEquality.distance.total = 0;
+    falseEquality.distance.matrix = 0;
+    falseEquality.operations[0]!.cost = 0;
+    expect(CallableComparisonSchema.safeParse(falseEquality).success).toBe(false);
+  });
+
+  it("rejects a bounded orbit result at the certified comparison boundary", () => {
+    const bounded = structuredClone(zeroComparison);
+    bounded.distance.exactForStoredOrbits = false;
+    expect(CallableComparisonSchema.safeParse(bounded).success).toBe(false);
   });
 });

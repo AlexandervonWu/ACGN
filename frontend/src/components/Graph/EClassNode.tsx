@@ -11,6 +11,8 @@ import { SlotChip } from "../Common/SlotChip";
 
 export interface EClassNodeData extends Record<string, unknown> {
   eclass: EClass;
+  displayedNodes: ENode[];
+  hiddenAlternativeCount: number;
   collapsed: boolean;
   root: boolean;
   highlighted: boolean;
@@ -186,7 +188,7 @@ export function EClassNode({ data }: NodeProps<EClassFlowNode>) {
           >
             <ChevronDown size={14} />
           </button>
-          {eclass.nodes.map((node) => (
+          {data.displayedNodes.map((node) => (
             <NodeSummary
               key={node.id}
               node={node}
@@ -198,6 +200,19 @@ export function EClassNode({ data }: NodeProps<EClassFlowNode>) {
               onSelectChild={data.onSelectChild}
             />
           ))}
+          {data.hiddenAlternativeCount > 0 && (
+            <button
+              type="button"
+              className="hidden-alternatives-control"
+              onClick={(event) => {
+                event.stopPropagation();
+                data.onToggle(eclass.id);
+              }}
+            >
+              Show {data.hiddenAlternativeCount} hidden alternative
+              {data.hiddenAlternativeCount === 1 ? "" : "s"}
+            </button>
+          )}
         </div>
       )}
       <Handle type="source" position={Position.Bottom} className="eclass-handle" />

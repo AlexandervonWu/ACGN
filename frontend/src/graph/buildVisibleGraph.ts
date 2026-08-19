@@ -14,7 +14,7 @@ export interface VisibleGraph {
   omittedCount: number;
 }
 
-function displayNodes(eclass: EClass, filters: GraphFilters, expanded: boolean): ENode[] {
+export function displayNodes(eclass: EClass, filters: GraphFilters, expanded: boolean): ENode[] {
   const eligible = eclass.nodes.filter((node) => {
     if (!filters.showHistorical && node.attributes?.historical === true) return false;
     if (!filters.showRebuildDetails && node.attributes?.rebuildDetail === true) return false;

@@ -16,6 +16,7 @@ public final class VisualizationProcessRunnerTest {
         standardExampleIsStableAcrossWorkers();
         timeoutKillsWorker();
         cancellationKillsWorker();
+        cancellationBeforeRegistrationPreventsWorkerStart();
         System.out.println("VisualizationProcessRunnerTest passed");
     }
 
@@ -54,7 +55,7 @@ public final class VisualizationProcessRunnerTest {
     }
 
     private static void timeoutKillsWorker() throws Exception {
-        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(1, 100L, "128m")) {
+        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(1, 500L, "128m")) {
             VisualizationProcessRunner.ExecutionResult result = runner.execute(
                     "timeout-test",
                     "test-sleep",
@@ -62,6 +63,7 @@ public final class VisualizationProcessRunnerTest {
             if (result.status() != 504 || runner.activeJobCount() != 0) {
                 throw new AssertionError("Timed-out worker was not reclaimed: " + result.body());
             }
+            assertSuccessfulFollowUp(runner, "after-timeout");
         }
     }
 
@@ -84,9 +86,40 @@ public final class VisualizationProcessRunnerTest {
                 if (result.status() != 499 || runner.activeJobCount() != 0) {
                     throw new AssertionError("Cancelled worker was not reclaimed: " + result.body());
                 }
+                assertSuccessfulFollowUp(runner, "after-running-cancel");
             } finally {
                 executor.shutdownNow();
             }
+        }
+    }
+
+    private static void cancellationBeforeRegistrationPreventsWorkerStart() throws Exception {
+        try (VisualizationProcessRunner runner = new VisualizationProcessRunner(1, 30_000L, "128m")) {
+            if (!runner.cancel("cancel-before-start")) {
+                throw new AssertionError("Cancellation was not recorded");
+            }
+
+            VisualizationProcessRunner.ExecutionResult cancelled = runner.execute(
+                    "cancel-before-start",
+                    "test-sleep",
+                    new JSONObject().put("milliseconds", 30_000L));
+            if (cancelled.status() != 499 || runner.activeJobCount() != 0) {
+                throw new AssertionError("Pre-registration cancellation was lost");
+            }
+
+            assertSuccessfulFollowUp(runner, "after-pre-registration-cancel");
+        }
+    }
+
+    private static void assertSuccessfulFollowUp(
+            VisualizationProcessRunner runner,
+            String requestId) throws Exception {
+        VisualizationProcessRunner.ExecutionResult next = runner.execute(
+                requestId,
+                "test-sleep",
+                new JSONObject().put("milliseconds", 0L));
+        if (next.status() != 200 || runner.activeJobCount() != 0) {
+            throw new AssertionError("Worker capacity was not reusable: " + next.body());
         }
     }
 }

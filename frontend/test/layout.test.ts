@@ -34,4 +34,23 @@ describe("hierarchical e-class layout", () => {
     const layout = layoutEClasses(eclasses, depths, edges, "root");
     expect(layout.parentByEClass.get("b")).toBe("left");
   });
+
+  it("selects exactly one tree edge among parallel structural references", () => {
+    const parallel: GraphEdge[] = [
+      { id: "left", sourceEClassId: "root", targetEClassId: "child", role: "left" },
+      { id: "right", sourceEClassId: "root", targetEClassId: "child", role: "right" },
+    ];
+    const layout = layoutEClasses(
+      [
+        { id: "root", nodes: [{ id: "nr", kind: "Pair", children: [] }] },
+        { id: "child", nodes: [{ id: "nc", kind: "Leaf", children: [] }] },
+      ],
+      new Map([["root", 0], ["child", 1]]),
+      parallel,
+      "root",
+    );
+
+    expect([...layout.treeEdgeIds]).toHaveLength(1);
+    expect(["left", "right"]).toContain([...layout.treeEdgeIds][0]);
+  });
 });

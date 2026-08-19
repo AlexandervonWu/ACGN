@@ -73,7 +73,11 @@ function cancelRemoteRequest(requestId: string): void {
 
 function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   const controller = new AbortController();
-  const timeout = window.setTimeout(() => controller.abort("timeout"), timeoutMs);
+  let timedOut = false;
+  const timeout = window.setTimeout(() => {
+    timedOut = true;
+    controller.abort("timeout");
+  }, timeoutMs);
   const abort = () => controller.abort(source?.reason ?? "cancelled");
   if (source?.aborted) {
     abort();
@@ -82,6 +86,7 @@ function timedSignal(source: AbortSignal | undefined, timeoutMs: number) {
   }
   return {
     signal: controller.signal,
+    timedOut: () => timedOut,
     cleanup: () => {
       window.clearTimeout(timeout);
       source?.removeEventListener("abort", abort);
@@ -169,7 +174,7 @@ async function request<TSchema extends ZodTypeAny>(
   } catch (error) {
     if (error instanceof AnalysisApiError) throw error;
     if (timer.signal.aborted) {
-      const timedOut = !sourceSignal?.aborted;
+      const timedOut = timer.timedOut();
       throw new AnalysisApiError(
         timedOut ? "timeout" : "cancelled",
         timedOut ? "The analysis request timed out." : "The analysis request was cancelled.",

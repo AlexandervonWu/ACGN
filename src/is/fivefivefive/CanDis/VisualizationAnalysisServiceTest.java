@@ -86,11 +86,15 @@ public final class VisualizationAnalysisServiceTest {
             throw new AssertionError("Comparison omitted callable representations: " + comparison);
         }
         if (!comparison.getJSONObject("left").has("certifiedStableForm")
+                || !comparison.getJSONObject("right").has("certifiedStableForm")
                 || comparison.getJSONObject("left").getString("canonicalText")
                         .contains("canonical-alloy-form")) {
             throw new AssertionError("Comparison representation is not presentation-safe: " + comparison);
         }
         JSONObject distance = comparison.getJSONObject("distance");
+        if (!distance.getBoolean("exactForStoredOrbits")) {
+            throw new AssertionError("Comparison exposed a bounded result as certified: " + comparison);
+        }
         int total = distance.getInt("total");
         if (total != distance.getInt("temporal")
                         + distance.getInt("quantifier")
@@ -108,6 +112,14 @@ public final class VisualizationAnalysisServiceTest {
         if (comparison.getBoolean("certifiedEquivalent") != equivalent
                 || (total == 0) != equivalent) {
             throw new AssertionError("Certified zero kernel mismatch: " + comparison);
+        }
+        String leftStable = comparison.getJSONObject("left")
+                .getString("certifiedStableForm");
+        String rightStable = comparison.getJSONObject("right")
+                .getString("certifiedStableForm");
+        if (leftStable.equals(rightStable) != equivalent) {
+            throw new AssertionError(
+                    "Equality did not follow certifiedStableForm: " + comparison);
         }
     }
 }

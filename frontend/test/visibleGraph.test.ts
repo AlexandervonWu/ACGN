@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { EClass, EGraph } from "../src/api/types";
 import {
   buildVisibleGraph,
+  displayNodes,
   shouldCollapseEClass,
 } from "../src/graph/buildVisibleGraph";
 import { defaultGraphFilters } from "../src/state/uiStore";
@@ -82,5 +83,9 @@ describe("visible graph extraction", () => {
     expect(visible.edges).toEqual([
       { sourceEClassId: "E0", targetEClassId: "E1", enodeId: "N0" },
     ]);
+    const displayed = displayNodes(graph.eclasses[0]!, defaultGraphFilters, false);
+    expect(displayed.map((node) => node.id)).toEqual(["N0"]);
+    expect(new Set(visible.edges.map((edge) => edge.enodeId))).toEqual(new Set(["N0"]));
+    expect(displayed.some((node) => node.id === "N-alt")).toBe(false);
   });
 });

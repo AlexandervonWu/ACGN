@@ -328,6 +328,8 @@ code, pre { font-family: "Cascadia Code", "JetBrains Mono", Consolas, monospace;
 .collapsed-enode > span { color: var(--muted); white-space: nowrap; }
 .collapsed-enode code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #52616c; font-size: 9px; }
 .enode-list { position: relative; max-height: 172px; overflow-y: auto; padding: 3px; }
+.hidden-alternatives-control { width: 100%; min-height: 25px; border: 0; border-top: 1px solid #e4e8eb; background: #f7f9fa; color: #4c616e; cursor: pointer; font-size: 9px; text-align: center; }
+.hidden-alternatives-control:hover { background: #edf3f4; color: var(--teal); }
 .collapse-control { position: absolute; top: -29px; right: 3px; width: 24px; height: 24px; display: grid; place-items: center; border: 0; background: transparent; cursor: pointer; }
 .enode-row { margin: 0; padding: 6px; border-bottom: 1px solid #e4e8eb; cursor: pointer; }
 .enode-row:last-child { border-bottom: 0; }

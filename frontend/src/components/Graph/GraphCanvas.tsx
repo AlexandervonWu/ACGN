@@ -15,9 +15,10 @@ import "@xyflow/react/dist/style.css";
 import type { EGraphAnalysis } from "../../api/types";
 import {
   buildVisibleGraph,
+  displayNodes,
   shouldCollapseEClass,
 } from "../../graph/buildVisibleGraph";
-import { layoutEClasses } from "../../graph/layout";
+import { graphEdgeKey, layoutEClasses } from "../../graph/layout";
 import { useUiStore } from "../../state/uiStore";
 import { PanelHeader } from "../Common/PanelHeader";
 import { StatisticsStrip } from "../Statistics/StatisticsStrip";
@@ -61,9 +62,17 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
 
   const estimatedHeights = useMemo(() => new Map(displayClasses.map((eclass) => {
     const collapsed = shouldCollapseEClass(eclass, graphFilters, expandedClasses);
+    const displayedNodeCount = displayNodes(
+      eclass,
+      graphFilters,
+      expandedClasses.has(eclass.id),
+    ).length;
     const supportHeight = (eclass.support?.length ?? 0) > 0
       || (eclass.effectiveSupport?.length ?? 0) > 0 ? 48 : 0;
-    const contentHeight = collapsed ? 32 : Math.min(178, 16 + eclass.nodes.length * 72);
+    const hiddenAlternativeCount = eclass.nodes.length - displayedNodeCount;
+    const contentHeight = collapsed
+      ? 32
+      : Math.min(178, 16 + displayedNodeCount * 72 + (hiddenAlternativeCount > 0 ? 27 : 0));
     return [eclass.id, 51 + supportHeight + contentHeight];
   })), [displayClasses, expandedClasses, graphFilters]);
 
@@ -79,30 +88,39 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
   );
   const positioned = hierarchy.positioned;
 
-  const nextNodes = useMemo<EClassFlowNode[]>(() => positioned.map(({ eclass, position }) => ({
-    id: eclass.id,
-    type: "eclass",
-    position,
-    selected: selectedEClassId === eclass.id,
-    data: {
+  const nextNodes = useMemo<EClassFlowNode[]>(() => positioned.map(({ eclass, position }) => {
+    const displayedNodes = displayNodes(
       eclass,
-      collapsed: shouldCollapseEClass(eclass, graphFilters, expandedClasses),
-      root: eclass.id === analysis.graph.rootEClassId,
-      highlighted: highlightedEntityIds.includes(eclass.id),
-      selectedEClassId,
-      selectedENodeId,
-      highlightedEntityIds,
-      onSelectEClass: (id) => {
-        selectEClass(id);
+      graphFilters,
+      expandedClasses.has(eclass.id),
+    );
+    return {
+      id: eclass.id,
+      type: "eclass",
+      position,
+      selected: selectedEClassId === eclass.id,
+      data: {
+        eclass,
+        displayedNodes,
+        hiddenAlternativeCount: eclass.nodes.length - displayedNodes.length,
+        collapsed: shouldCollapseEClass(eclass, graphFilters, expandedClasses),
+        root: eclass.id === analysis.graph.rootEClassId,
+        highlighted: highlightedEntityIds.includes(eclass.id),
+        selectedEClassId,
+        selectedENodeId,
+        highlightedEntityIds,
+        onSelectEClass: (id) => {
+          selectEClass(id);
+        },
+        onSelectENode: selectENode,
+        onToggle: toggleExpandedClass,
+        onSelectChild: (id) => {
+          selectEClass(id);
+          requestFocus();
+        },
       },
-      onSelectENode: selectENode,
-      onToggle: toggleExpandedClass,
-      onSelectChild: (id) => {
-        selectEClass(id);
-        requestFocus();
-      },
-    },
-  })), [
+    };
+  }), [
     analysis.graph.rootEClassId,
     expandedClasses,
     graphFilters,
@@ -123,7 +141,7 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
   }, [nextNodes, setNodes]);
 
   const edges = useMemo<Edge[]>(() => visible.edges.flatMap((edge, index) => {
-    const primary = hierarchy.parentByEClass.get(edge.targetEClassId) === edge.sourceEClassId;
+    const primary = hierarchy.treeEdgeIds.has(graphEdgeKey(edge, index));
     if (!primary && !graphFilters.showCrossLinks) return [];
     const highlighted = highlightedEntityIds.includes(edge.sourceEClassId)
       || highlightedEntityIds.includes(edge.targetEClassId);
@@ -141,7 +159,13 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
       animated: false,
       className: `${primary ? "tree-edge" : "cross-edge"} ${highlighted ? "is-highlighted" : ""}`,
     }];
-  }), [graphFilters.showCrossLinks, hierarchy.parentByEClass, highlightedEntityIds, visible.edges]);
+  }), [graphFilters.showCrossLinks, hierarchy.treeEdgeIds, highlightedEntityIds, visible.edges]);
+
+  const nonTreeReferenceCount = useMemo(() => visible.edges.reduce(
+    (count, edge, index) => count
+      + (hierarchy.treeEdgeIds.has(graphEdgeKey(edge, index)) ? 0 : 1),
+    0,
+  ), [hierarchy.treeEdgeIds, visible.edges]);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -221,7 +245,11 @@ function CanvasInner({ analysis }: { analysis: EGraphAnalysis }) {
       <div className="graph-legend" aria-label="Graph legend">
         <span><i className="legend-eclass" /> e-class</span>
         <span><i className="legend-tree-edge" /> tree edge</span>
-        {graphFilters.showCrossLinks && <span><i className="legend-cross-edge" /> shared</span>}
+        <span>
+          <i className="legend-cross-edge" />
+          {nonTreeReferenceCount} structural link{nonTreeReferenceCount === 1 ? "" : "s"}
+          {graphFilters.showCrossLinks ? " shown" : " hidden"}
+        </span>
         <span><i className="legend-canonical">★</i> canonical</span>
         <span><i className="legend-aci" /> ACI</span>
       </div>

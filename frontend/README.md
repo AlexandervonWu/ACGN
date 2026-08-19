@@ -535,7 +535,7 @@ JavaScript must be permitted by the site's content-security policy. Monaco creat
 - Click a slot chip to retain cross-panel slot highlighting; use the clear-slot control to remove it.
 - Click mapped Alloy source to focus associated graph objects. Ambiguous spans expose every mapping.
 - Use graph depth and collapse controls before expanding large neighborhoods.
-- The graph opens as a rooted representative tree. Enable **Show shared cross-links** in graph filters when the additional DAG references are relevant.
+- The graph opens with one explicitly identified spanning-tree edge per visible e-class. The graph legend reports the number of hidden non-tree references; enable **Show structural cross-links** to render all visible roles, shared-child edges, back-edges, and parallel references.
 - Search by class/node ID, kind, type, slot, source identifier, or trace rule.
 - Export the validated IR as JSON, the currently bounded graph as SVG, or copy the backend-provided canonical representation.
 
@@ -551,7 +551,7 @@ Certificate `kind` values are intentionally open. Unknown certificates render as
 npm test
 ```
 
-The suite covers schema fixtures and corrupt data, comparison-cost invariants, distance-operation rendering, root reachability, depth bounding, class collapsing, source-range conversion, persistent slot selection, unknown certificate fallback, and complete mock workflows for graph analysis and callable comparison.
+The suite covers schema fixtures and corrupt data, comparison-certificate and cost invariants, distance-operation rendering, root reachability, depth bounding, class collapsing, source-range conversion, persistent slot selection, unknown certificate fallback, and mock workflows for graph analysis. Certified callable comparison is intentionally rejected in mock mode.
 
 ```bash
 npm run build
@@ -568,5 +568,6 @@ The build runs TypeScript project checking before Vite emits production assets.
 - Pane resizing and callable-to-callable comparison are deferred. The responsive layout uses tabs below desktop width.
 - Search only uses information explicitly present in the IR. It does not derive semantic aliases, support, proofs, or equivalence.
 - The mock inspector recognizes the bundled examples. It is a deterministic demo service, not an Alloy parser.
+- Mock fixtures do not carry production-certified stable forms, so mock mode does not claim callable equivalence or repair distance. Use the Java analysis API for comparisons.
 
 These limits preserve the boundary that all Alloy semantics and evidence originate from the analysis backend.
