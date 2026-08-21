@@ -1,6 +1,7 @@
 package is.fivefivefive.CanDis.theory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,7 @@ public final class TheoryCanonicalizationTest {
 
     public static void main(String[] args) {
         testBoundedTypedRenamingEnumeration();
+        testProductionCandidateWitnessTieAndRetention();
         testStructuralAlphaGroupoidAndBinders();
         testGraphRelativeRelationDistinctions();
         testContainerCanonicalizationAndGlobalSetRenaming();
@@ -37,6 +39,43 @@ public final class TheoryCanonicalizationTest {
         testCanonicalizerBoundary();
         System.out.println("TheoryCanonicalizationTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
+    }
+
+    private static void testProductionCandidateWitnessTieAndRetention() {
+        TypedSlot first = TypedSlot.canonicalFree(USER, 0);
+        TypedSlot second = TypedSlot.canonicalFree(USER, 1);
+        TypedSlotContext context = TypedSlotContext.of(first, second);
+        SeqPortSchema schema = new SeqPortSchema(new OnePortSchema(USER));
+        InstantiatedOperator operator = operator(
+                "producer-witness-tie", List.of(schema), GraphType.BOOL);
+        CanonicalShape shape = CanonicalShape.of(sequenceNode(
+                operator, schema, context, List.of(first, second)));
+        TypedRenaming identity = TypedRenaming.identity(context);
+        TypedRenaming swap = TypedRenaming.of(
+                context, context, mapOf(first, second, second, first));
+        check(ProductionGraphCanonicalizer.compareCandidatePairForTesting(
+                        shape, identity, shape, swap) < 0,
+                "Production equal-shape candidates use the canonical witness tie-break");
+        check(ProductionGraphCanonicalizer.compareCandidatePairForTesting(
+                        shape, swap, shape, identity) > 0,
+                "Production witness tie ordering is antisymmetric");
+
+        Class<?> bestCandidate = Arrays.stream(
+                        ProductionGraphCanonicalizer.class.getDeclaredClasses())
+                .filter(type -> "BestCandidate".equals(type.getSimpleName()))
+                .findFirst().orElseThrow();
+        List<Field> retainedState = Arrays.stream(bestCandidate.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+        check(retainedState.size() == 1
+                        && retainedState.get(0).getType() == LeastOption.class,
+                "Production BestCandidate retains only one explicit minimum option");
+        for (Field field : ProductionGraphCanonicalizer.class.getDeclaredFields()) {
+            check(!java.util.Collection.class.isAssignableFrom(field.getType())
+                            && !java.util.Map.class.isAssignableFrom(field.getType()),
+                    "Production canonicalizer has no persistent candidate collection field");
+        }
     }
 
     private static void testBoundedTypedRenamingEnumeration() {
@@ -800,6 +839,19 @@ public final class TheoryCanonicalizationTest {
                     "Stabilizer traversal count equals its unique emitted action count");
             check(observed.equals(expected),
                     "Stabilizer traversal equals the bounded materialized subgroup oracle");
+            java.util.Set<StructuralKey> searched = new java.util.TreeSet<>();
+            check(!FinitePermutationTraversal.anyMatch(
+                            context,
+                            generators,
+                            TheoryKeys::embedding,
+                            permutation -> {
+                                check(searched.add(TheoryKeys.embedding(permutation)),
+                                        "Any-match traversal must visit each action at most once");
+                                return false;
+                            }),
+                    "An all-false subgroup search reports no match");
+            check(searched.equals(expected),
+                    "Any-match traversal visits the same complete subgroup once");
             FinitePermutationTraversal.TraversalMetrics metrics =
                     FinitePermutationTraversal.metrics(
                             context, generators, TheoryKeys::embedding);
@@ -809,6 +861,38 @@ public final class TheoryCanonicalizationTest {
                             && metrics.maximumOrbitWidth() <= context.size(),
                     "Every retained stabilizer level is bounded by the slot context");
         }
+
+        List<TypedSlot> sevenSlots = new ArrayList<>();
+        for (int index = 0; index < 7; index++) {
+            sevenSlots.add(TypedSlot.source(USER, 900 + index));
+        }
+        TypedSlotContext sevenContext = TypedSlotContext.of(sevenSlots);
+        List<TypedPermutation> adjacentSwaps = new ArrayList<>();
+        for (int index = 0; index + 1 < sevenSlots.size(); index++) {
+            Map<TypedSlot, TypedSlot> mapping = new LinkedHashMap<>();
+            for (TypedSlot slot : sevenSlots) {
+                mapping.put(slot, slot);
+            }
+            TypedSlot left = sevenSlots.get(index);
+            TypedSlot right = sevenSlots.get(index + 1);
+            mapping.put(left, right);
+            mapping.put(right, left);
+            adjacentSwaps.add(TypedPermutation.of(sevenContext, mapping));
+        }
+        FinitePermutationTraversal.TraversalMetrics sevenMetrics =
+                FinitePermutationTraversal.metrics(
+                        sevenContext, adjacentSwaps, TheoryKeys::embedding);
+        check(sevenMetrics.groupOrder() == 5_040L,
+                "Adjacent swaps generate the complete streamed S7 group");
+        check(sevenMetrics.maximumOrbitWidth() == 7
+                        && sevenMetrics.levelCount() == 6,
+                "S7 stabilizer state is bounded by seven orbit images and six levels");
+        check(sevenMetrics.retainedTransversals() < sevenMetrics.groupOrder(),
+                "S7 traversal does not retain one visited object per orbit candidate");
+        check(FinitePermutationTraversal.forEach(
+                        sevenContext, adjacentSwaps, TheoryKeys::embedding,
+                        ignored -> { }) == 5_040L,
+                "S7 stabilizer traversal streams every element exactly once");
     }
 
     private static java.util.Set<StructuralKey> referencePermutationClosure(

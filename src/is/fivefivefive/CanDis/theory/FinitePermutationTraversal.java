@@ -75,8 +75,13 @@ final class FinitePermutationTraversal {
             return true;
         }
         TraversalPlan plan = TraversalPlan.create(context, generators, key);
-        long[] count = {0L};
+        long[] count = {1L};
+        boolean[] skippedIdentity = {false};
         return !traverse(plan.root, plan.identity, candidate -> {
+            if (!skippedIdentity[0] && candidate.equals(identity)) {
+                skippedIdentity[0] = true;
+                return true;
+            }
             count[0] = Math.addExact(count[0], 1L);
             if (count[0] > plan.maximumElements) {
                 throw new CanonicalizationDomainException(

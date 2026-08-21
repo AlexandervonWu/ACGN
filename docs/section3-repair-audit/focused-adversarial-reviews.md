@@ -139,3 +139,123 @@ only the reproduced counterexample; it does not convert either review into a
 - The failed verdict remains in force. A fresh independent replacement review
   is running, and the generated claim catalog must be refreshed after the
   matrix stabilizes.
+
+## Phase 5 Scope-Shadowing Fresh Replacement Review
+
+- Verdict: `PASS-for-explicitly-bounded-Phase-5-scope`; not a phase ballot or
+  whole-artifact closure.
+- Temporary report:
+  `/tmp/acgn-phase5-shadow-replacement-review-20260821.md`.
+- Report SHA-256:
+  `28f1003f59a5a1d367d86c4ad0a11f5d33c1c2db11a54a8c67f3836993184c1d`.
+- Passed boundary: clean Java 17/UTF-8 compilation of 296 sources; 332
+  source-rule checks; 182 instrumented saturation assertions; 264 ablation
+  assertions; and 79 relevant Lean declarations.
+- Independent falsification: 11 scope-shadowing variants at four Alloy scopes
+  produced 44 UNSAT source-versus-normalized checks and 60 passing projection
+  checks. Four mutants were killed, including restored raw-alias authority,
+  source-first same-type capture, and incorrect implication/IFF polarity.
+- Explicit limits: malformed hand-built IR, exhaustive Alloy scopes, universal
+  JVM refinement, corpus reruns, and artifact closure were not authorized.
+
+## Phase 6 Evidence-Mapping Review
+
+- Verdict: `FAIL`; the reviewed snapshot was not closed.
+- Temporary report: `/tmp/acgn-phase6-evidence-map-20260821.md`.
+- Report SHA-256:
+  `bb593ede990ae71deaa6125a1ade5d26def049e41f4db6598ed319293f2191b6`.
+- Decisive findings: producer/verifier paths retained complete orbit state
+  despite streaming claims, and P6-11 contained malformed evidence mappings.
+- Moving-byte repair: production local traversal now uses a stabilizer chain,
+  verifier replay retains one running minimum, and all P6 rows resolve to one
+  real Lean file and real declarations. This failed review remains provenance;
+  a fresh replacement review is required.
+
+## Global And Metric Evidence-Mapping Review
+
+- Verdict: `FAIL / NOT CLOSED`; not an integrated ballot.
+- Temporary report: `/tmp/acgn-global-metric-evidence-map-20260821.md`.
+- Report SHA-256:
+  `31572a16b86bdb6601aa079c9865564af842335a507c632b5847d54e4a09b952`.
+- Snapshot SHA-256:
+  `e401b87f4725876caa7e769b9c92b191ae3c4d28a570d716c25668d81a76ce58`.
+- Bounded execution: 17,666 numbered Java checks and 18 Lean files passed;
+  the certificate census remained `1/2/0`.
+- Findings at that snapshot: 13 global claims were partial, five literal
+  global claims were contradicted, and all eight metric claims were partial.
+  The stale current-facing diagnostic count in this directory has since been
+  removed, but incomplete CI registration, closed-world coverage, authority
+  surfaces, empirical manifests, and metric refinements remain open.
+
+## Phase 6 Fresh Replacement Review
+
+- Verdict: `FAIL / NOT CLOSED`; not a phase ballot.
+- Temporary report:
+  `/tmp/acgn-phase6-streaming-replacement-review-20260821.md`.
+- Report SHA-256:
+  `4a9574907deddff0bb086df63aa8abcae369874de463bd6124fd80944a7f7132`.
+- Passed boundary: an independently reconstructed oracle checked 1,218 finite
+  groups and 201,958 traversal assertions, including full `S7`; the focused
+  producer/verifier, mutation, schema, Lean, and certificate-census controls
+  also passed on the frozen reviewed snapshot.
+- Decisive findings: the former P6-10 wording falsely included complete
+  certificate/verifier witness ledgers in a no-retention claim; removal of the
+  equal-shape witness tie-break survived permanent tests; and a first-candidate
+  verifier required a temporary six-bundle `S3` sweep to expose it.
+- Moving-byte repair: P6-10 is narrowed to candidate-term retention, with
+  proof/completeness ledgers explicitly outside that claim; the six `S3`
+  bundles and a direct equal-shape/different-witness comparator probe are now
+  permanent. P6-03, P6-12, and P6-13 remain partial pending complete
+  producer/verifier refinement and PAIR substitution evidence.
+
+## Repair Metric Maximum-Adversarial Review
+
+- Verdict: `FAIL / NOT CLOSED`; not an integrated ballot.
+- Temporary report: `/tmp/acgn-metric-max-review-20260821.md`.
+- Report SHA-256:
+  `fc8569ebc5a1d267de3b4c3d508db5025da2928c53d878102b379c3ba250a4b0`.
+- Bounded execution: 45,334 adversarial checks, 75 then-current metric checks,
+  453 pipeline checks, 76 Lean/Java vectors, and four compiled Lean files.
+- Decisive findings: a same-coordinate fallback erased parameter type edits
+  and produced 210 typed-alpha mismatches; Hungarian arithmetic returned `-2`
+  for an exact cost of `4,294,967,294`; the literal matrix-node deletion claim
+  conflicted with the established whole-operand recurrence; and exact alpha
+  search had no operational bound.
+- Moving-byte repair: minimum quantifier/parameter edit plans now carry every
+  paid modified-binding correspondence, the coordinate fallback is deleted,
+  parameters are charged once, scope products stream, exact searches have
+  fail-closed bounds, and Hungarian/DP arithmetic is checked. The matrix claim
+  now states the existing Fast Rewrite subtree-operand unit. Fresh independent
+  typed differentials and full Java-to-Lean refinement are still required.
+
+## Phase 6 Post-Repair Mutation Review
+
+- Verdict: `FAIL / INCOMPLETE`; not a phase ballot.
+- Temporary report: `/tmp/acgn-phase6-postrepair-review-20260821.md`.
+- Report SHA-256:
+  `1d7a29ad873a3e44db2fecb038b83de544adc437709b4f9f2d97dcb0f12d8871`.
+- Bounded execution: 70,188 Java checks and the Phase 6 Lean model passed on
+  the frozen review snapshot; four of seven controlled source variants were
+  detected.
+- Surviving variants: producer witness-tie removal, standalone verifier
+  first-candidate selection, and a complete candidate list retained beside
+  the streaming minimum.
+- Moving-byte repair: direct producer comparator checks, real verifier-minimum
+  order checks, and a structural retained-state assertion now target those
+  exact variants. Candidate-set refinement and general PAIR ownership remain
+  partial, and a new review is mandatory.
+
+## Repair Metric Post-Repair Mutation Review
+
+- Verdict: `FAIL / INCOMPLETE`; not an integrated ballot.
+- Temporary report: `/tmp/acgn-metric-postrepair-review-20260821.md`.
+- Report SHA-256:
+  `620a4c718f316ccb8348f2a7f2ecd8504587337f89e8594a2cf15c06ccb9e57b`.
+- Decisive counterexample: `[T] -> [S,T]` retained the same logical `T`
+  parameter but returned quantifier-plus-matrix cost `1+1` because the
+  zero-cost shifted diagonal was discarded.
+- Moving-byte repair: positional-parameter diagonals are now explicit selected
+  correspondences. A separate oracle checks 1,156 sequence/reference cases;
+  injectivity, subtree, resource, checked-total, assignment-overflow, and
+  bound/free-direction branches have permanent tests. A fresh review remains
+  required because all of these are later bytes.

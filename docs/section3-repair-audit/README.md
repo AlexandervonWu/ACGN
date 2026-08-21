@@ -37,16 +37,18 @@ claim. The current assurance state is `INCOMPLETE`.
 - [Source-command semantic profiles](semantic-profile-proof-process.md)
 - [Quiescent collision buckets](collision-bucket-proof-process.md)
 - [Prenex ACI scheduling](prenex-aci-scheduling-proof-process.md)
+- [Repair metric assurance record](repair-metric-assurance.md)
+- [Phase 6 streaming and occurrence audit](phase-6-streaming-occurrences.md)
 - [Formal Lean sources](formal/)
 
 ## Current Machine State
 
-The latest generated catalog contains 154 claims, zero fully ready rows, and
-1,154 open diagnostics. Development run D executed 42 bounded steps with zero
-executable failures but therefore terminated `INCOMPLETE`, not `PASS`. The
-additional diagnostic is intentional: independent review showed that P4-01's
-compiled static Lean model did not prove the exact determinism/transition
-claim, so its formal status was corrected from `PROVED` to `REFUTED`.
+The generated catalog records its own claim, ready-row, and diagnostic counts.
+Those values are valid only for the exact source matrix from which that catalog
+was generated; this overview deliberately does not duplicate them. Run
+`Section3AssuranceTraceability` or the bounded assurance entry point to obtain
+the current values and an input-bound report. Any nonzero diagnostic count
+means `INCOMPLETE`, never `PASS`.
 
 The protected historical empirical result trees and protected reproduction
 scripts are outside this repair directory and were not modified by this

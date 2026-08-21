@@ -25,7 +25,8 @@ if [[ ! -x "$LEAN_BIN" ]]; then
 fi
 
 mkdir -p "$OUTPUT/logs" "$OUTPUT/classes" "$OUTPUT/verifier-classes" \
-  "$OUTPUT/verifier-test-classes" "$OUTPUT/certificate-fixtures"
+  "$OUTPUT/verifier-test-classes" "$OUTPUT/certificate-fixtures" \
+  "$OUTPUT/phase6-semantic-order"
 
 failures=0
 steps=0
@@ -151,6 +152,8 @@ java_tests=(
   is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
   is.fivefivefive.CanDis.SemanticProfileSourceCommandTest
   is.fivefivefive.CanDis.CallExtractionRegressionTest
+  is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
+  is.fivefivefive.CanDis.DependentDeclarationExtractionRegressionTest
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.EGraphSaturationTest
@@ -194,19 +197,34 @@ run_step producer-certificate-fixtures "$JAVA_TIMEOUT" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.theory.CertificateBundleWriterTest \
   "$OUTPUT/certificate-fixtures"
+run_step producer-Phase6SemanticOrderProducerRegressionTest "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
+  -cp "$OUTPUT/classes:$ROOT/lib/*" \
+  is.fivefivefive.CanDis.theory.Phase6SemanticOrderProducerRegressionTest \
+  "$OUTPUT/phase6-semantic-order"
 run_step verifier-ProducerSemanticEvidenceMutationTest "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" \
   -cp "$OUTPUT/verifier-classes:$OUTPUT/verifier-test-classes" \
   org.acgn.cert.ProducerSemanticEvidenceMutationTest \
-  "$OUTPUT/certificate-fixtures/flat-and-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/flat-and-alt-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/container-equals-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/bind-block-symmetric-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/bind-block-dual-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/bind-block-nested-same-descriptor-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/relation-columns-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/call-occurrence-a.acgncert" \
-  "$OUTPUT/certificate-fixtures/repeated-same-type-slot-a.acgncert"
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/flat-and-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/flat-and-alt-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/container-equals-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/bind-block-symmetric-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/bind-block-dual-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/bind-block-nested-same-descriptor-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/relation-columns-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/call-occurrence-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/schema-v8-coverage/repeated-same-type-slot-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/parent-path-a.acgncert"
+run_step verifier-Phase6SemanticOrderVerifierRegressionTest "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" \
+  -cp "$OUTPUT/verifier-classes:$OUTPUT/verifier-test-classes" \
+  org.acgn.cert.Phase6SemanticOrderVerifierRegressionTest \
+  "$OUTPUT/phase6-semantic-order/canonical.acgncert" \
+  "$OUTPUT/phase6-semantic-order/reversed.acgncert" \
+  "$OUTPUT/phase6-semantic-order/polymorphic.acgncert" \
+  "$OUTPUT/phase6-semantic-order/monomorphic.acgncert" \
+  "$OUTPUT/phase6-semantic-order"
 
 mapfile -t mapped_lean_files < <(
   awk -F '\t' 'NR > 1 && $3 != "" && $3 != "MISSING" { print $3 }' \
@@ -229,6 +247,15 @@ for relative_lean_file in "${mapped_lean_files[@]}"; do
   name="$(basename "$lean_file" .lean)"
   run_step "lean-$name" "$LEAN_TIMEOUT" "$LEAN_BIN" "$lean_file"
 done
+
+run_step lean-ConcreteRepairMetric-vectors "$LEAN_TIMEOUT" \
+  "$LEAN_BIN" --run \
+  "$ROOT/docs/section3-repair-audit/formal/ConcreteRepairMetric.lean" \
+  "$OUTPUT/concrete-repair-metric.tsv"
+run_step java-ConcreteRepairMetricRefinementTest "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \
+  is.fivefivefive.CanDis.metric.ConcreteRepairMetricRefinementTest \
+  "$OUTPUT/concrete-repair-metric.tsv"
 
 run_step lean-forbidden-token-scan "$LEAN_TIMEOUT" \
   bash -c '! rg -n '\''\b(sorry|admit|axiom|unsafe)\b'\'' "$1" --glob '\''*.lean'\''' \

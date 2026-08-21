@@ -3,7 +3,10 @@ package is.fivefivefive.CanDis.metric;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.core.EGraphNode;
@@ -80,9 +83,111 @@ public final class QuotientRepairDistanceTest {
 
         Declaration all = declaration("ALL", 0);
         Declaration some = declaration("SOME", 0);
-        check(distance(view(List.of(all), Collections.emptyList(), a),
-                view(List.of(some), Collections.emptyList(), a)) == 1,
+        check(distance(view(List.of(all), List.of(binding(all, "all", 0)), a),
+                view(List.of(some), List.of(binding(some, "some", 0)), a)) == 1,
                 "one quantifier tuple modification costs one");
+
+        Declaration parameterS = typedDeclaration("PARAMETER", "S", 0);
+        Declaration parameterT = typedDeclaration("PARAMETER", "T", 0);
+        Binding sourceParameter = parameter(parameterS, 0);
+        Binding targetParameter = parameter(parameterT, 0);
+        QuotientRepairDistance.Result parameterTypeComponents =
+                QuotientRepairDistance.evaluateUncheckedForTesting(
+                view(Collections.emptyList(), List.of(sourceParameter),
+                        node("SOME", ContainerKind.ONE, variable("x", 0))),
+                view(Collections.emptyList(), List.of(targetParameter),
+                        node("SOME", ContainerKind.ONE, variable("renamed", 0))));
+        check(parameterTypeComponents.distance() == 1
+                        && parameterTypeComponents.quantifierDistance() == 1
+                        && parameterTypeComponents.matrixDistance() == 0,
+                "one positional parameter-type modification is charged once and carries identity");
+        check(distance(
+                view(Collections.emptyList(), List.of(sourceParameter),
+                        node("SOME", ContainerKind.ONE, variable("x", 0))),
+                view(Collections.emptyList(), List.of(targetParameter),
+                        node("NO", ContainerKind.ONE, variable("renamed", 0)))) == 2,
+                "a parameter-type modification cannot disappear from a positive matrix repair");
+        Binding insertedParameter = parameter(parameterT, 0);
+        Binding shiftedParameter = parameter(parameterS, 1);
+        RepairView oneParameter = view(
+                Collections.emptyList(),
+                List.of(sourceParameter),
+                node("SOME", ContainerKind.ONE, variable("x", 0)));
+        RepairView prefixedParameter = view(
+                Collections.emptyList(),
+                List.of(insertedParameter, shiftedParameter),
+                node("SOME", ContainerKind.ONE, variable("shifted-x", 1)));
+        check(distance(oneParameter, prefixedParameter) == 1,
+                "one inserted positional parameter shifts an unchanged binding without a matrix edit");
+        check(distance(prefixedParameter, oneParameter) == 1,
+                "one deleted positional parameter shifts an unchanged binding without a matrix edit");
+        RepairView unboundSameSpelling = view(
+                node("SOME", ContainerKind.ONE, variable("x", -1)));
+        QuotientRepairDistance.Result boundToUnbound =
+                QuotientRepairDistance.evaluateUncheckedForTesting(
+                        oneParameter, unboundSameSpelling);
+        QuotientRepairDistance.Result unboundToBound =
+                QuotientRepairDistance.evaluateUncheckedForTesting(
+                        unboundSameSpelling, oneParameter);
+        check(boundToUnbound.distance() == 2
+                        && boundToUnbound.quantifierDistance() == 1
+                        && boundToUnbound.matrixDistance() == 1,
+                "a bound variable cannot become a same-spelled free variable for zero matrix cost");
+        check(unboundToBound.distance() == boundToUnbound.distance()
+                        && unboundToBound.matrixDistance()
+                                == boundToUnbound.matrixDistance(),
+                "bound/free variable identity edits are symmetric");
+
+        List<List<String>> boundedParameterTypes = parameterTypeSequences(3);
+        for (List<String> leftTypes : boundedParameterTypes) {
+            for (List<String> rightTypes : boundedParameterTypes) {
+                for (int leftReference = 0;
+                        leftReference < leftTypes.size(); leftReference++) {
+                    for (int rightReference = 0;
+                            rightReference < rightTypes.size(); rightReference++) {
+                        int[] expected = exhaustiveParameterDistance(
+                                leftTypes, rightTypes, leftReference, rightReference);
+                        QuotientRepairDistance.Result actual =
+                                QuotientRepairDistance.evaluateUncheckedForTesting(
+                                        parameterView(leftTypes, leftReference),
+                                        parameterView(rightTypes, rightReference));
+                        check(actual.quantifierDistance() == expected[0]
+                                        && actual.matrixDistance() == expected[1]
+                                        && actual.distance() == expected[0] + expected[1],
+                                "parameter edit plans must equal the independent bounded oracle"
+                                        + " (left=" + leftTypes + "/" + leftReference
+                                        + ", right=" + rightTypes + "/" + rightReference
+                                        + ", expected=" + Arrays.toString(expected)
+                                        + ", actual=" + actual.quantifierDistance()
+                                        + "+" + actual.matrixDistance() + ")");
+                    }
+                }
+            }
+        }
+
+        Declaration leftS0 = typedDeclaration("ALL", "S", 0);
+        Declaration leftT = typedDeclaration("ALL", "T", 0);
+        Declaration leftS2 = typedDeclaration("ALL", "S", 0);
+        Declaration rightT = typedDeclaration("ALL", "T", 0);
+        Declaration rightS1 = typedDeclaration("ALL", "S", 0);
+        Declaration rightS2 = typedDeclaration("ALL", "S", 0);
+        List<Integer> typedOrbit = List.of(0, 1, 2);
+        check(distance(
+                view(
+                        List.of(leftS0, leftT, leftS2),
+                        List.of(
+                                binding(leftS0, "typed", 0, typedOrbit),
+                                binding(leftT, "typed", 1, typedOrbit),
+                                binding(leftS2, "typed", 2, typedOrbit)),
+                        variable("left-S", 0)),
+                view(
+                        List.of(rightT, rightS1, rightS2),
+                        List.of(
+                                binding(rightT, "typed", 0, typedOrbit),
+                                binding(rightS1, "typed", 1, typedOrbit),
+                                binding(rightS2, "typed", 2, typedOrbit)),
+                        variable("right-T", 0))) == 1,
+                "typed alpha alignment cannot use a same-coordinate incompatible fallback");
 
         Binding x = binding(all, "root", 0);
         Binding y = binding(all, "root", 0);
@@ -183,6 +288,18 @@ public final class QuotientRepairDistanceTest {
                         view(certifiedAtom("same", "identity=same;type=Rel(AlloySig:S)")),
                         view(certifiedAtom("same", "identity=same;type=Rel(AlloySig:T)"))) == 1,
                 "one exact atom-type change must remain one matrix-node edit");
+        check(distance(
+                        view(node("A", ContainerKind.SEQUENCE, atom("X"))),
+                        view(atom("X"))) == 2,
+                "matrix insertion and deletion operate on complete operand subtrees");
+        check(distance(
+                        view(node("A", ContainerKind.SEQUENCE, atom("X"))),
+                        view((Node) null)) == 2,
+                "deleting a complete matrix operand charges its complete subtree size");
+        check(distance(
+                        view((Node) null),
+                        view(node("A", ContainerKind.SEQUENCE, atom("X")))) == 2,
+                "inserting a complete matrix operand charges its complete subtree size");
 
         RepairView after = new RepairView(
                 new TemporalNode("NONE", List.of(new TemporalNode("AFTER", List.of()))),
@@ -229,8 +346,8 @@ public final class QuotientRepairDistanceTest {
 
         QuotientRepairDistance.Result components =
                 QuotientRepairDistance.evaluateUncheckedForTesting(
-                view(List.of(all), Collections.emptyList(), a),
-                view(List.of(some), Collections.emptyList(), c));
+                view(List.of(all), List.of(binding(all, "all", 0)), a),
+                view(List.of(some), List.of(binding(some, "some", 0)), c));
         check(components.distance() == components.temporalDistance()
                         + components.quantifierDistance() + components.matrixDistance(),
                 "reported temporal, quantifier, and matrix components sum exactly");
@@ -259,6 +376,91 @@ public final class QuotientRepairDistanceTest {
         expectThrows(IllegalArgumentException.class, () ->
                 QuotientRepairDistance.evaluate(semantic, modular));
 
+        expectThrows(IllegalArgumentException.class, () ->
+                QuotientRepairDistance.minimumAssignmentCost(
+                        new int[][] {{0, 1}, {2}}));
+        expectThrows(IllegalArgumentException.class, () ->
+                QuotientRepairDistance.minimumAssignmentCost(
+                        new int[][] {{-1}}));
+        expectThrows(ArithmeticException.class, () ->
+                QuotientRepairDistance.minimumAssignmentCost(new int[][] {
+                        {Integer.MAX_VALUE, Integer.MAX_VALUE},
+                        {Integer.MAX_VALUE, Integer.MAX_VALUE}}));
+        expectThrows(ArithmeticException.class, () ->
+                QuotientRepairDistance.checkedTotal(Integer.MAX_VALUE, 1, 0));
+        expectThrows(IllegalArgumentException.class, () ->
+                QuotientRepairDistance.checkedTotal(-1, 0, 0));
+        Map<Integer, Integer> correspondence = new LinkedHashMap<>();
+        check(QuotientRepairDistance.addInjectiveCorrespondence(
+                        correspondence, 0, 1),
+                "the first quantifier correspondence is inserted");
+        check(!QuotientRepairDistance.addInjectiveCorrespondence(
+                        correspondence, 0, 1),
+                "repeating the exact quantifier correspondence is idempotent");
+        expectThrows(IllegalStateException.class, () ->
+                QuotientRepairDistance.addInjectiveCorrespondence(
+                        correspondence, 0, 2));
+        expectThrows(IllegalStateException.class, () ->
+                QuotientRepairDistance.addInjectiveCorrespondence(
+                        correspondence, 2, 1));
+        Random assignmentRandom = new Random(0x5eedc0deL);
+        for (int size = 0; size <= 6; size++) {
+            for (int sample = 0; sample < 30; sample++) {
+                int[][] costs = new int[size][size];
+                for (int row = 0; row < size; row++) {
+                    for (int column = 0; column < size; column++) {
+                        costs[row][column] = assignmentRandom.nextInt(21);
+                    }
+                }
+                int expected = exhaustiveAssignmentCost(costs);
+                int actual = QuotientRepairDistance.minimumAssignmentCost(costs);
+                check(actual == expected,
+                        "Hungarian assignment must equal bounded exhaustive permutation");
+            }
+        }
+
+        Binding duplicateParameter0 = parameter(parameterS, 0);
+        Binding duplicateParameter1 = parameter(parameterS, 1);
+        RepairView duplicateParameters = view(
+                Collections.emptyList(),
+                List.of(duplicateParameter0, duplicateParameter1),
+                node("SOME", ContainerKind.ONE, variable("duplicate", 1)));
+        withSystemProperty("acgn.metric.maxQuantifierAlignments", "1", () ->
+                expectThrows(
+                        QuotientRepairDistance.ResourceLimitException.class,
+                        () -> distance(oneParameter, duplicateParameters)));
+
+        RepairView twoScopeBlocks = view(
+                List.of(blockZero, blockOne),
+                List.of(leftZero, leftOne),
+                node("PAIR", ContainerKind.SEQUENCE,
+                        variable("scope-0", 0), variable("scope-1", 1)));
+        withSystemProperty("acgn.metric.maxScopeAlignments", "1", () ->
+                expectThrows(
+                        QuotientRepairDistance.ResourceLimitException.class,
+                        () -> distance(twoScopeBlocks, twoScopeBlocks)));
+
+        withSystemProperty("acgn.metric.maxAlphaAlignments", "1", () ->
+                expectThrows(
+                        QuotientRepairDistance.ResourceLimitException.class,
+                        () -> distance(
+                                view(
+                                        List.of(all, all),
+                                        List.of(
+                                                binding(all, "bounded", 0, List.of(0, 1)),
+                                                binding(all, "bounded", 1, List.of(0, 1))),
+                                        node("ROOT", ContainerKind.SEQUENCE,
+                                                variable("a0", 0), variable("a1", 1),
+                                                atom("A"))),
+                                view(
+                                        List.of(all, all),
+                                        List.of(
+                                                binding(all, "bounded", 0, List.of(0, 1)),
+                                                binding(all, "bounded", 1, List.of(0, 1))),
+                                        node("ROOT", ContainerKind.SEQUENCE,
+                                                variable("b0", 0), variable("b1", 1),
+                                                atom("B"))))));
+
         System.out.println("QuotientRepairDistanceTest passed: " + checks + " checks");
     }
 
@@ -280,6 +482,166 @@ public final class QuotientRepairDistanceTest {
                 StructuralKey.leaf("test-certified-observation", "right-temporal"));
         return QuotientRepairDistance.evaluateUncheckedForTesting(
                 leftView, rightView).temporalDistance();
+    }
+
+    private static int exhaustiveAssignmentCost(int[][] costs) {
+        int[] best = {Integer.MAX_VALUE};
+        exhaustiveAssignmentCost(costs, 0, new boolean[costs.length], 0, best);
+        return costs.length == 0 ? 0 : best[0];
+    }
+
+    private static List<List<String>> parameterTypeSequences(int maximumLength) {
+        List<List<String>> result = new ArrayList<>();
+        for (int length = 1; length <= maximumLength; length++) {
+            enumerateParameterTypeSequences(length, new ArrayList<>(), result);
+        }
+        return List.copyOf(result);
+    }
+
+    private static void enumerateParameterTypeSequences(
+            int remaining,
+            List<String> prefix,
+            List<List<String>> result) {
+        if (remaining == 0) {
+            result.add(List.copyOf(prefix));
+            return;
+        }
+        for (String type : List.of("S", "T")) {
+            prefix.add(type);
+            enumerateParameterTypeSequences(remaining - 1, prefix, result);
+            prefix.remove(prefix.size() - 1);
+        }
+    }
+
+    private static RepairView parameterView(List<String> types, int reference) {
+        List<Binding> bindings = new ArrayList<>();
+        for (int ordinal = 0; ordinal < types.size(); ordinal++) {
+            bindings.add(parameter(
+                    typedDeclaration("PARAMETER", types.get(ordinal), 0), ordinal));
+        }
+        return view(
+                Collections.emptyList(),
+                bindings,
+                node("USE", ContainerKind.ONE,
+                        variable("parameter-" + reference, reference)));
+    }
+
+    /** Returns exact [declaration edit cost, selected-reference matrix cost]. */
+    private static int[] exhaustiveParameterDistance(
+            List<String> left,
+            List<String> right,
+            int leftReference,
+            int rightReference) {
+        int[][] distance = new int[left.size() + 1][right.size() + 1];
+        for (int row = 1; row <= left.size(); row++) {
+            distance[row][0] = row;
+        }
+        for (int column = 1; column <= right.size(); column++) {
+            distance[0][column] = column;
+        }
+        for (int row = 1; row <= left.size(); row++) {
+            for (int column = 1; column <= right.size(); column++) {
+                int diagonal = distance[row - 1][column - 1]
+                        + (left.get(row - 1).equals(right.get(column - 1)) ? 0 : 1);
+                distance[row][column] = Math.min(
+                        diagonal,
+                        Math.min(
+                                distance[row - 1][column] + 1,
+                                distance[row][column - 1] + 1));
+            }
+        }
+        int[] mapping = new int[left.size()];
+        Arrays.fill(mapping, -1);
+        boolean[] usedRight = new boolean[right.size()];
+        int matrix = exhaustiveParameterMatrixCost(
+                left,
+                right,
+                leftReference,
+                rightReference,
+                distance,
+                left.size(),
+                right.size(),
+                mapping,
+                usedRight,
+                1);
+        return new int[] {distance[left.size()][right.size()], matrix};
+    }
+
+    private static int exhaustiveParameterMatrixCost(
+            List<String> left,
+            List<String> right,
+            int leftReference,
+            int rightReference,
+            int[][] distance,
+            int row,
+            int column,
+            int[] mapping,
+            boolean[] usedRight,
+            int best) {
+        if (row == 0 && column == 0) {
+            int mapped = mapping[leftReference];
+            if (mapped < 0
+                    && !usedRight[rightReference]
+                    && leftReference == rightReference
+                    && left.get(leftReference).equals(right.get(rightReference))) {
+                mapped = rightReference;
+            }
+            return Math.min(best, mapped == rightReference ? 0 : 1);
+        }
+        if (row > 0 && column > 0) {
+            int update = left.get(row - 1).equals(right.get(column - 1)) ? 0 : 1;
+            if (distance[row][column] == distance[row - 1][column - 1] + update) {
+                mapping[row - 1] = column - 1;
+                usedRight[column - 1] = true;
+                best = exhaustiveParameterMatrixCost(
+                        left, right, leftReference, rightReference,
+                        distance, row - 1, column - 1, mapping, usedRight, best);
+                mapping[row - 1] = -1;
+                usedRight[column - 1] = false;
+            }
+        }
+        if (best == 0) {
+            return 0;
+        }
+        if (row > 0 && distance[row][column] == distance[row - 1][column] + 1) {
+            best = exhaustiveParameterMatrixCost(
+                    left, right, leftReference, rightReference,
+                    distance, row - 1, column, mapping, usedRight, best);
+        }
+        if (best == 0) {
+            return 0;
+        }
+        if (column > 0
+                && distance[row][column] == distance[row][column - 1] + 1) {
+            best = exhaustiveParameterMatrixCost(
+                    left, right, leftReference, rightReference,
+                    distance, row, column - 1, mapping, usedRight, best);
+        }
+        return best;
+    }
+
+    private static void exhaustiveAssignmentCost(
+            int[][] costs,
+            int row,
+            boolean[] usedColumns,
+            int cost,
+            int[] best) {
+        if (row == costs.length) {
+            best[0] = Math.min(best[0], cost);
+            return;
+        }
+        for (int column = 0; column < costs.length; column++) {
+            if (usedColumns[column]) {
+                continue;
+            }
+            int next = Math.addExact(cost, costs[row][column]);
+            if (next >= best[0]) {
+                continue;
+            }
+            usedColumns[column] = true;
+            exhaustiveAssignmentCost(costs, row + 1, usedColumns, next, best);
+            usedColumns[column] = false;
+        }
     }
 
     private static TemporalNode temporal(String label, TemporalNode... children) {
@@ -430,13 +792,31 @@ public final class QuotientRepairDistanceTest {
     }
 
     private static Declaration declaration(String quantifier, int exchangeClass) {
+        return typedDeclaration(quantifier, "S", exchangeClass);
+    }
+
+    private static Declaration typedDeclaration(
+            String quantifier,
+            String type,
+            int exchangeClass) {
         return new Declaration(
                 quantifier,
-                "S",
+                type,
                 "ONE",
                 0,
-                "S",
+                type,
                 exchangeClass,
+                Collections.emptyList());
+    }
+
+    private static Binding parameter(Declaration declaration, int ordinal) {
+        return new Binding(
+                BindingRole.PARAMETER,
+                ordinal,
+                -1,
+                -1,
+                declaration,
+                "parameter/" + ordinal,
                 Collections.emptyList());
     }
 
@@ -526,5 +906,22 @@ public final class QuotientRepairDistanceTest {
                     "Expected " + expected.getSimpleName() + " but got " + failure, failure);
         }
         throw new AssertionError("Expected " + expected.getSimpleName());
+    }
+
+    private static void withSystemProperty(
+            String name,
+            String value,
+            Runnable action) {
+        String previous = System.getProperty(name);
+        try {
+            System.setProperty(name, value);
+            action.run();
+        } finally {
+            if (previous == null) {
+                System.clearProperty(name);
+            } else {
+                System.setProperty(name, previous);
+            }
+        }
     }
 }

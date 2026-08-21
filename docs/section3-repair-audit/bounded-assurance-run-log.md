@@ -120,3 +120,31 @@ The run remains development evidence over a dirty worktree at
 the exact tested bytes. It is not an immutable ballot, does not close the P3-16
 or P4-01 review findings, and does not establish DO-178C certification or
 compliance.
+
+## Development Run E
+
+Run E exercises the repaired Phase 6 order fixtures and the certified Fast
+Rewrite repair metric, including all mapped Lean files and executable-vector
+refinement.
+
+- Evidence directory: `/tmp/acgn-section3-assurance-final-20260821`
+- Outcome: `INCOMPLETE`
+- Executed steps: 57
+- Failed executable steps: 0
+- Open traceability diagnostics: 168
+- Input-manifest SHA-256:
+  `c674dc73318e76104a8dacf1c605cb9908d2b6152b04ab84ec051ce1575572fe`
+- Output-manifest SHA-256:
+  `660a2a2e865158e41fcce93c762d2b52aa01571e5ca029f9c28e7721c40138f4`
+- Step-results SHA-256:
+  `3f6432480535fbe0b1bd5434bf16f916171124ccfc76e721281a56b11c846a20`
+- Summary SHA-256:
+  `6244641e0bc33a3d2ff107665edb4cd8880cc26577251b55200fe5e5295a5b5a`
+
+Every compile, Java, standalone-verifier, Lean, forbidden-token, generated
+catalog, concrete-vector, and input-stability step reported `PASS`. The run is
+still development evidence over a dirty worktree at
+`bc256c5b5821a5a6e2c7f423579bdda94ba22b02`; its input manifest identifies the
+tested bytes. Structural coverage, complete Java/formal refinement, immutable
+provenance, and independent integrated review remain open, so the runner
+correctly returned exit status 3 rather than a false PASS.

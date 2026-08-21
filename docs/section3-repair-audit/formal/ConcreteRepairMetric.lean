@@ -475,6 +475,10 @@ theorem setUsesMinimumAssignmentAfterDeduplication :
     containerDistance .set [.a, .b] [.b, .c] = 1 := by
   native_decide
 
+theorem matrixOperandDeletionRemovesTheWholeSubtree :
+    matrixDistance (.container 99 .sequence [.a]) (.atom .a) = (2, 1) := by
+  native_decide
+
 theorem alphaUsesAllMaximumCardinalityMappings :
     alphaDistance 3 1
       [{ predicate := .p, coordinate := 0 },

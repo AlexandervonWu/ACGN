@@ -171,6 +171,12 @@ public final class CanonicalAlloyPipelineTest {
                     prepare(visitor, "parameterJoinLeft");
             CanonicalAlloyPipeline.Prepared parameterJoinRight =
                     prepare(visitor, "parameterJoinRight");
+            CanonicalAlloyPipeline.Prepared parameterTypeS =
+                    prepare(visitor, "parameterTypeS");
+            CanonicalAlloyPipeline.Prepared parameterTypeT =
+                    prepare(visitor, "parameterTypeT");
+            CanonicalAlloyPipeline.Prepared parameterTypeTNo =
+                    prepare(visitor, "parameterTypeTNo");
 
             SemanticProfile modularProfile = SemanticProfile.alloyModular();
             CanonicalAlloyPipeline.Prepared modularAlpha =
@@ -327,6 +333,20 @@ public final class CanonicalAlloyPipelineTest {
                     "independently sorted ACI representatives must not define repair geometry");
             check(CanonicalAlloyPipeline.distance(binderAll, binderSome) == 1,
                     "one quantifier declaration change must cost one repair");
+            QuotientRepairDistance.Result parameterTypeRepair =
+                    CanonicalAlloyPipeline.distanceEvaluation(
+                            parameterTypeS, parameterTypeT);
+            check(parameterTypeRepair.quantifierDistance() == 1
+                            && parameterTypeRepair.matrixDistance() == 0
+                            && parameterTypeRepair.distance() == 1,
+                    "a positional parameter-type edit is explicit and preserves body identity");
+            QuotientRepairDistance.Result parameterAndBodyRepair =
+                    CanonicalAlloyPipeline.distanceEvaluation(
+                            parameterTypeS, parameterTypeTNo);
+            check(parameterAndBodyRepair.quantifierDistance() == 1
+                            && parameterAndBodyRepair.matrixDistance() == 1
+                            && parameterAndBodyRepair.distance() == 2,
+                    "a parameter-type edit cannot hide an independent body repair");
             check(nestedSubtypeLeft.equivalentTo(nestedSubtypeRight),
                     "binder permutations must re-normalize ACI operands after acting");
             check(CanonicalAlloyPipeline.distance(
@@ -1374,6 +1394,9 @@ public final class CanonicalAlloyPipelineTest {
                 + "pred joinAssocRight { some (State.(trans.State)) }\n"
                 + "pred parameterJoinLeft[x:S] { some ((x.r).r) }\n"
                 + "pred parameterJoinRight[x:S] { some (x.(r.r)) }\n"
+                + "pred parameterTypeS[x:S] { some x }\n"
+                + "pred parameterTypeT[x:T] { some x }\n"
+                + "pred parameterTypeTNo[x:T] { no x }\n"
                 + "pred localGroupingLeft {\n"
                 + "  let t = { x: State, y: State | some e: Event | x->e->y in trans } |\n"
                 + "  all s: State | some i: Init | s in i.^t\n"

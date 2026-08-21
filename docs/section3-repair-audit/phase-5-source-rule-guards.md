@@ -94,6 +94,18 @@ theorems compile; a new independent replacement review is required before any
 bounded PASS can be recorded. The generated assurance catalog must also be
 regenerated only after the traceability matrix stabilizes.
 
+The fresh scope-shadow replacement review subsequently returned **PASS for the
+explicitly exercised bounded Phase 5 scope**. Its report is
+`/tmp/acgn-phase5-shadow-replacement-review-20260821.md`, SHA-256
+`28f1003f59a5a1d367d86c4ad0a11f5d33c1c2db11a54a8c67f3836993184c1d`.
+It compiled 296 producer sources, passed the 332-check source suite, 182
+instrumented saturation assertions, and 264 ablation assertions. An independent
+matrix covered 11 shadowing forms at scopes 1 through 4 with 44 UNSAT
+source-versus-normalized checks and 60 projection checks. Four mutants were
+killed, including source-first same-carrier capture and incorrect implication
+and IFF polarity. The review explicitly excludes universal JVM refinement,
+malformed internal IR, exhaustive scopes, corpus reruns, and artifact closure.
+
 The independent semantic core is recorded in
 `formal/Phase5SourceRules.lean`. It proves the finite relation, multiplicity,
 empty-domain, subset, duality, compound-empty, and authority rules without

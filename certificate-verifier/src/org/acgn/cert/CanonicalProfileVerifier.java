@@ -163,6 +163,26 @@ final class CanonicalProfileVerifier {
                 : compareWitnesses(left.witness(), right.witness());
     }
 
+    int compareCandidatePairForTesting(
+            KernelModel.Term leftTerm,
+            KernelModel.Embedding leftWitness,
+            KernelModel.Term rightTerm,
+            KernelModel.Embedding rightWitness) {
+        return compareCandidates(
+                new OrbitCandidate(leftTerm, leftWitness),
+                new OrbitCandidate(rightTerm, rightWitness));
+    }
+
+    String minimumWitnessForTesting(
+            KernelModel.Term term,
+            List<KernelModel.Embedding> witnesses) {
+        OrbitMinimum minimum = new OrbitMinimum();
+        for (KernelModel.Embedding witness : witnesses) {
+            minimum.consider(term, witness);
+        }
+        return minimum.orElseThrow().witness().id();
+    }
+
     private static int compareWitnesses(
             KernelModel.Embedding left,
             KernelModel.Embedding right) {

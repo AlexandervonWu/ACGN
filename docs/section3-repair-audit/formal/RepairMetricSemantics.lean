@@ -74,6 +74,102 @@ theorem every_quantifier_edit_is_one_unit (edit : QuantifierEdit) :
     quantifierEditCost edit = 1 := by
   cases edit <;> rfl
 
+/- A matrix binding may follow a changed declaration only when a selected
+   minimum edit plan contains that exact diagonal modification. A positional
+   parameter may also follow an explicit zero-cost diagonal in that plan.
+   Coordinates alone are never evidence. -/
+structure QuantifierEditAlignment where
+  paired : List (Nat × Nat)
+  modified : List (Nat × Nat)
+  positionalParameters : List (Nat × Nat)
+  modifiedIsPaired : ∀ pair ∈ modified, pair ∈ paired
+  positionalParametersArePaired :
+    ∀ pair ∈ positionalParameters, pair ∈ paired
+  leftInjective : (paired.map Prod.fst).Nodup
+  rightInjective : (paired.map Prod.snd).Nodup
+
+def QuantifierEditAlignment.authorizesBinding
+    (alignment : QuantifierEditAlignment)
+    (left right : Nat) : Prop :=
+  (left, right) ∈ alignment.modified ∨
+    (left, right) ∈ alignment.positionalParameters
+
+def emptyQuantifierAlignment : QuantifierEditAlignment := {
+  paired := []
+  modified := []
+  positionalParameters := []
+  modifiedIsPaired := by simp
+  positionalParametersArePaired := by simp
+  leftInjective := by simp
+  rightInjective := by simp
+}
+
+def oneModifiedQuantifierAlignment : QuantifierEditAlignment := {
+  paired := [(0, 0)]
+  modified := [(0, 0)]
+  positionalParameters := []
+  modifiedIsPaired := by simp
+  positionalParametersArePaired := by simp
+  leftInjective := by simp
+  rightInjective := by simp
+}
+
+def shiftedPositionalParameterAlignment : QuantifierEditAlignment := {
+  paired := [(0, 1)]
+  modified := []
+  positionalParameters := [(0, 1)]
+  modifiedIsPaired := by simp
+  positionalParametersArePaired := by simp
+  leftInjective := by simp
+  rightInjective := by simp
+}
+
+theorem same_coordinate_without_paid_edit_is_not_authorized :
+    Not (emptyQuantifierAlignment.authorizesBinding 0 0) := by
+  simp [QuantifierEditAlignment.authorizesBinding,
+    emptyQuantifierAlignment]
+
+theorem paid_parameter_modification_authorizes_its_exact_pair :
+    oneModifiedQuantifierAlignment.authorizesBinding 0 0 := by
+  simp [QuantifierEditAlignment.authorizesBinding,
+    oneModifiedQuantifierAlignment]
+
+theorem selected_positional_parameter_diagonal_authorizes_its_exact_pair :
+    shiftedPositionalParameterAlignment.authorizesBinding 0 1 := by
+  simp [QuantifierEditAlignment.authorizesBinding,
+    shiftedPositionalParameterAlignment]
+
+theorem selected_positional_parameter_diagonal_does_not_authorize_coordinate :
+    Not (shiftedPositionalParameterAlignment.authorizesBinding 0 0) := by
+  simp [QuantifierEditAlignment.authorizesBinding,
+    shiftedPositionalParameterAlignment]
+
+inductive VariableIdentity where
+  | free (name : String)
+  | bound (coordinate : Nat)
+  deriving DecidableEq, Repr
+
+def variableIdentityUpdateCost
+    (left right : VariableIdentity) : Nat :=
+  if left = right then 0 else 1
+
+theorem bound_and_same_spelled_free_variables_cost_one_both_directions
+    (coordinate : Nat)
+    (name : String) :
+    variableIdentityUpdateCost (.bound coordinate) (.free name) = 1 /\
+      variableIdentityUpdateCost (.free name) (.bound coordinate) = 1 := by
+  simp [variableIdentityUpdateCost]
+
+theorem paid_correspondence_has_no_duplicate_left
+    (alignment : QuantifierEditAlignment) :
+    (alignment.paired.map Prod.fst).Nodup :=
+  alignment.leftInjective
+
+theorem paid_correspondence_has_no_duplicate_right
+    (alignment : QuantifierEditAlignment) :
+    (alignment.paired.map Prod.snd).Nodup :=
+  alignment.rightInjective
+
 def exactMinimum (costs : List Nat) : Option Nat := costs.min?
 
 theorem exact_minimum_specification (costs : List Nat) (minimum : Nat) :
@@ -261,6 +357,19 @@ theorem assignment_minimization_can_choose_crossed_pairs :
     aciDistance problem cost (fun _ => 1) (fun _ => 1)
       [certifiedDirect, certifiedCrossed] = some 2 := by
   native_decide
+
+def javaIntMax : Nat := 2147483647
+
+theorem two_maximum_java_int_costs_do_not_fit_java_int :
+    javaIntMax + javaIntMax > javaIntMax := by
+  native_decide
+
+theorem checked_assignment_boundary_must_reject_two_maximum_costs
+    (result : Nat)
+    (exact : result = javaIntMax + javaIntMax) :
+    result > javaIntMax := by
+  rw [exact]
+  exact two_maximum_java_int_costs_do_not_fit_java_int
 
 def singletonAlignmentProblem : AlignmentProblem := {
   leftTypes := [7]

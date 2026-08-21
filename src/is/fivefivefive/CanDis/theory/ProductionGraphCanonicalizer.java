@@ -301,6 +301,16 @@ public final class ProductionGraphCanonicalizer implements TypedGraphCanonicaliz
         return VERSION;
     }
 
+    static int compareCandidatePairForTesting(
+            CanonicalShape leftShape,
+            TypedRenaming leftWitness,
+            CanonicalShape rightShape,
+            TypedRenaming rightWitness) {
+        return Candidate.compare(
+                new Candidate(leftShape, leftWitness),
+                new Candidate(rightShape, rightWitness));
+    }
+
     private static final class BestCandidate {
         private final LeastOption<Candidate> minimum = new LeastOption<>(
                 Candidate::compare);

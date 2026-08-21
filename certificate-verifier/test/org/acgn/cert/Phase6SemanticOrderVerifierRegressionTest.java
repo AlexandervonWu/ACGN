@@ -18,10 +18,11 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
     }
 
     public static void main(String[] args) throws Exception {
-        if (args.length != 4) {
+        if (args.length != 5) {
             throw new IllegalArgumentException(
                     "usage: Phase6SemanticOrderVerifierRegressionTest "
-                            + "<canonical> <reversed> <polymorphic> <monomorphic>");
+                            + "<canonical> <reversed> <polymorphic> <monomorphic> "
+                            + "<order-directory>");
         }
         byte[] canonical = Files.readAllBytes(Path.of(args[0]));
         byte[] reversed = Files.readAllBytes(Path.of(args[1]));
@@ -42,6 +43,12 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
                 "monomorphic declaration");
         assertVerified(verifier.verifyPair(canonical, reversed, policy),
                 "alpha-equivalent source pair");
+        for (int index = 0; index < 6; index++) {
+            byte[] order = Files.readAllBytes(
+                    Path.of(args[4]).resolve("order-" + index + ".acgncert"));
+            assertVerified(verifier.verify(order, Profile.FULL, policy),
+                    "three-slot order " + index);
+        }
 
         VerificationResult distinctDeclarations = verifier.verifyPair(
                 polymorphic, monomorphic, policy);
@@ -63,9 +70,54 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
                         && wrongWitness.code()
                                 == FailureCode.NONMINIMAL_CANONICAL_REPRESENTATIVE,
                 "equal canonical shapes cannot hide a different selected permutation");
+        assertWitnessTieOrder(canonical);
 
         System.out.println("Phase6SemanticOrderVerifierRegressionTest: "
                 + checks + " checks passed");
+    }
+
+    private static void assertWitnessTieOrder(byte[] encoded) {
+        Bundle bundle = decode(encoded);
+        KernelModel model = new KernelModel(bundle, Limits.defaults());
+        SemanticEvidenceVerifier.Authorization authorization =
+                new SemanticEvidenceVerifier(bundle, model, Limits.defaults()).verify();
+        KernelVerifier kernel = new KernelVerifier(
+                model, Limits.defaults(), authorization);
+        KernelModel.Term term = model.term(onlyCanonicalRecord(bundle).scalar(2));
+        List<KernelModel.Embedding> candidates = model.embeddings().values().stream()
+                .filter(embedding -> embedding.kind()
+                        == KernelModel.EmbeddingKind.BIJECTION)
+                .filter(embedding -> embedding.source().equals(term.context())
+                        && embedding.target().equals(term.context()))
+                .toList();
+        KernelModel.Embedding identity = candidates.stream()
+                .filter(Phase6SemanticOrderVerifierRegressionTest::isIdentity)
+                .findFirst().orElseThrow();
+        KernelModel.Embedding nonidentity = candidates.stream()
+                .filter(embedding -> !isIdentity(embedding))
+                .findFirst().orElseThrow();
+        CanonicalProfileVerifier profile = new CanonicalProfileVerifier(
+                model, kernel, Limits.defaults());
+        check(profile.compareCandidatePairForTesting(
+                        term, identity, term, nonidentity) < 0,
+                "equal shapes are ordered by the complete canonical witness key");
+        check(profile.compareCandidatePairForTesting(
+                        term, nonidentity, term, identity) > 0,
+                "witness tie ordering is antisymmetric on a nonidentity permutation");
+        check(profile.minimumWitnessForTesting(
+                        term, List.of(nonidentity, identity)).equals(identity.id()),
+                "standalone orbit minimum replaces a larger first witness");
+        check(profile.minimumWitnessForTesting(
+                        term, List.of(identity, nonidentity)).equals(identity.id()),
+                "standalone orbit minimum is independent of candidate order");
+    }
+
+    private static boolean isIdentity(KernelModel.Embedding embedding) {
+        if (!embedding.source().equals(embedding.target())) {
+            return false;
+        }
+        return embedding.source().slots().stream().allMatch(
+                slot -> slot.name().equals(embedding.apply(slot.name())));
     }
 
     private static String representativeKey(byte[] encoded) {

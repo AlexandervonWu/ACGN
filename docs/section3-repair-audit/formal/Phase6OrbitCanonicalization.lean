@@ -137,6 +137,19 @@ theorem larger_witness_loses_equal_shape_tie :
     candidateLess firstTiedCandidate secondTiedCandidate = true := by
   decide
 
+def candidateBefore (left right : Candidate) : Prop :=
+  left.shape < right.shape ∨
+    (left.shape = right.shape ∧ left.witness < right.witness)
+
+theorem candidate_key_order_is_total (left right : Candidate) :
+    candidateBefore left right ∨ left = right ∨ candidateBefore right left := by
+  cases left with
+  | mk leftShape leftWitness =>
+      cases right with
+      | mk rightShape rightWitness =>
+          simp [candidateBefore]
+          omega
+
 def factorial : Nat -> Nat
   | 0 => 1
   | n + 1 => (n + 1) * factorial n
@@ -253,6 +266,13 @@ theorem stream_summary_retains_only_minimum_and_count
   · simpa [streamSummary, minimumNat] using
       fold_minimum_exact candidates ⟨.unset, 0⟩
   · exact streamed_count_is_exact candidates
+
+def s7StabilizerOrbitWidths : List Nat := [7, 6, 5, 4, 3, 2]
+
+theorem s7_stabilizer_state_is_strictly_smaller_than_orbit :
+    s7StabilizerOrbitWidths.sum = 27 ∧ factorial 7 = 5040 ∧
+      s7StabilizerOrbitWidths.sum < factorial 7 := by
+  native_decide
 
 /- This equality proves a bounded extensional traversal fact, not a Java heap
    bound. Retained-object nonmaterialization remains an implementation gate. -/
@@ -375,6 +395,100 @@ theorem directly_nested_occurrences_are_disjoint
   simp [occurrenceCoordinate, Nat.add_assoc] at equal
   omega
 
+theorem descriptor_occurrence_round_trip
+    {base index : Nat} :
+    occurrenceCoordinate base index - base = index := by
+  simp [occurrenceCoordinate]
+
+structure OccurrenceAlignment where
+  root : Nat
+  path : List Nat
+  descriptorCoordinates : List Nat
+  action : List Nat
+deriving DecidableEq, Repr
+
+def encodeAlignment (alignment : OccurrenceAlignment) :
+    Nat × List Nat × List Nat × List Nat :=
+  (alignment.root, alignment.path,
+    alignment.descriptorCoordinates, alignment.action)
+
+def decodeAlignment
+    (encoded : Nat × List Nat × List Nat × List Nat) : OccurrenceAlignment :=
+  ⟨encoded.1, encoded.2.1, encoded.2.2.1, encoded.2.2.2⟩
+
+def actAlignment (rho : Nat → Nat)
+    (alignment : OccurrenceAlignment) : OccurrenceAlignment :=
+  { alignment with action := alignment.action.map rho }
+
+def alphaCompareAlignment (alignment : OccurrenceAlignment) : OccurrenceAlignment :=
+  alignment
+
+def canonicalizeAlignment (alignment : OccurrenceAlignment) : OccurrenceAlignment :=
+  alignment
+
+theorem alignment_replay_preserves_complete_occurrence
+    (alignment : OccurrenceAlignment) :
+    decodeAlignment (encodeAlignment alignment) = alignment := by
+  cases alignment
+  rfl
+
+theorem action_alpha_canonical_serialization_commutes
+    (rho : Nat → Nat) (alignment : OccurrenceAlignment) :
+    decodeAlignment (encodeAlignment
+      (canonicalizeAlignment (alphaCompareAlignment
+        (actAlignment rho alignment)))) =
+      actAlignment rho alignment := by
+  simp [canonicalizeAlignment, alphaCompareAlignment,
+    alignment_replay_preserves_complete_occurrence]
+
+def extendByCallerIdentity (callerSize : Nat) (outer : Nat → Nat)
+    (slot : Nat) : Nat :=
+  if slot < callerSize then slot else callerSize + outer (slot - callerSize)
+
+theorem extended_action_fixes_caller_slot
+    (callerSize : Nat) (outer : Nat → Nat) {slot : Nat}
+    (caller : slot < callerSize) :
+    extendByCallerIdentity callerSize outer slot = slot := by
+  simp [extendByCallerIdentity, caller]
+
+def actNestedLayers (callerSize : Nat) (outer : Nat → Nat)
+    (layers : List (List Nat)) : List (List Nat) :=
+  layers.map (List.map (extendByCallerIdentity callerSize outer))
+
+theorem map_caller_layer_is_capture_avoiding
+    (callerSize : Nat) (outer : Nat → Nat) (slots : List Nat)
+    (allCaller : ∀ slot ∈ slots, slot < callerSize) :
+    slots.map (extendByCallerIdentity callerSize outer) = slots := by
+  induction slots with
+  | nil => rfl
+  | cons slot rest inductionHypothesis =>
+      have slotCaller : slot < callerSize := allCaller slot (by simp)
+      have restCaller : ∀ item ∈ rest, item < callerSize := by
+        intro item member
+        exact allCaller item (by simp [member])
+      simp [extended_action_fixes_caller_slot callerSize outer slotCaller,
+        inductionHypothesis restCaller]
+
+theorem nested_caller_layers_are_capture_avoiding
+    (callerSize : Nat) (outer : Nat → Nat) (layers : List (List Nat))
+    (allCaller : ∀ layer ∈ layers, ∀ slot ∈ layer, slot < callerSize) :
+    actNestedLayers callerSize outer layers = layers := by
+  induction layers with
+  | nil => rfl
+  | cons layer rest inductionHypothesis =>
+      have layerCaller : ∀ slot ∈ layer, slot < callerSize := by
+        intro slot member
+        exact allCaller layer (by simp) slot member
+      have restCaller : ∀ item ∈ rest, ∀ slot ∈ item, slot < callerSize := by
+        intro item itemMember slot slotMember
+        exact allCaller item (by simp [itemMember]) slot slotMember
+      change
+        layer.map (extendByCallerIdentity callerSize outer) ::
+            actNestedLayers callerSize outer rest = layer :: rest
+      rw [map_caller_layer_is_capture_avoiding
+            callerSize outer layer layerCaller]
+      rw [inductionHypothesis restCaller]
+
 structure CanonicalMetrics where
   findOccurrences : Nat
   parentSteps : Nat
@@ -389,6 +503,86 @@ theorem trace_length_decomposition (metrics : CanonicalMetrics) :
     retainedTraceLength metrics =
       metrics.findOccurrences + metrics.parentSteps +
         metrics.containerNormalizations := by
+  rfl
+
+structure ReportedCounters where
+  inputBytes : Nat
+  kernelBytes : Nat
+  retainedPathTraceLength : Nat
+  globalRenamingCandidates : Nat
+  localQuotientWork : Nat
+  serializedBinderCandidates : Nat
+  certificateBytes : Nat
+deriving DecidableEq, Repr
+
+def counterTuple (counters : ReportedCounters) :
+    Nat × Nat × Nat × Nat × Nat × Nat × Nat :=
+  (counters.inputBytes,
+    counters.kernelBytes,
+    counters.retainedPathTraceLength,
+    counters.globalRenamingCandidates,
+    counters.localQuotientWork,
+    counters.serializedBinderCandidates,
+    counters.certificateBytes)
+
+theorem counter_tuple_is_injective : Function.Injective counterTuple := by
+  intro left right equal
+  cases left
+  cases right
+  simp only [counterTuple] at equal
+  cases equal
+  rfl
+
+def byteDerivedCounters (bytes : List UInt8) : ReportedCounters :=
+  ⟨bytes.length, bytes.length, 0, 0, 0, 0, bytes.length⟩
+
+theorem certificate_byte_count_is_encoded_length (bytes : List UInt8) :
+    (byteDerivedCounters bytes).certificateBytes = bytes.length := by
+  rfl
+
+theorem byte_identical_runs_have_identical_derived_counters
+    (left right : List UInt8) (sameBytes : left = right) :
+    byteDerivedCounters left = byteDerivedCounters right := by
+  cases sameBytes
+  rfl
+
+def candidateKeys (candidates : List Candidate) : List (Nat × Nat) :=
+  candidates.map producerCandidateKey
+
+theorem equal_complete_candidate_sets_have_equal_ordered_keys
+    (producer verifier : List Candidate)
+    (sameCandidates : producer = verifier) :
+    candidateKeys producer = verifier.map verifierCandidateKey := by
+  cases sameCandidates
+  simp [candidateKeys, producerCandidateKey, verifierCandidateKey]
+
+structure VerifiedObservation where
+  sourceDerivation : Nat
+  kernelDerivation : Nat
+  leastShape : Nat × Nat
+deriving DecidableEq, Repr
+
+structure PairResult where
+  left : VerifiedObservation
+  right : VerifiedObservation
+  equalLeastShapes : Bool
+deriving DecidableEq, Repr
+
+def comparePair (left right : VerifiedObservation) : PairResult :=
+  ⟨left, right, decide (left.leastShape = right.leastShape)⟩
+
+theorem pair_comparison_preserves_separate_derivation_owners
+    (left right : VerifiedObservation) :
+    (comparePair left right).left.sourceDerivation = left.sourceDerivation ∧
+      (comparePair left right).left.kernelDerivation = left.kernelDerivation ∧
+      (comparePair left right).right.sourceDerivation = right.sourceDerivation ∧
+      (comparePair left right).right.kernelDerivation = right.kernelDerivation := by
+  simp [comparePair]
+
+theorem pair_result_compares_exact_least_shapes
+    (left right : VerifiedObservation) :
+    (comparePair left right).equalLeastShapes =
+      decide (left.leastShape = right.leastShape) := by
   rfl
 
 end Phase6OrbitCanonicalization

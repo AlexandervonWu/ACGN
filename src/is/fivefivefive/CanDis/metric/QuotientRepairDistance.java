@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import is.fivefivefive.CanDis.core.OrderedTreeEditDistance;
 import is.fivefivefive.CanDis.metric.RepairView.Binding;
@@ -26,7 +27,10 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * itself grant independent certificate authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v6";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v8";
+    private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
+    private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
+    private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
 
     private QuotientRepairDistance() {
     }
@@ -74,16 +78,27 @@ public final class QuotientRepairDistance {
         Objects.requireNonNull(right, "right");
         MutableStats stats = new MutableStats();
         int temporal = temporalDistance(left.temporalRoot(), right.temporalRoot());
-        int quantifiers = quantificationDistance(left.phases(), right.phases());
-        int matrix = matrixDistance(left.phases(), right.phases(), stats);
+        QuantificationAlignmentSpace quantification =
+                QuantificationAlignmentSpace.create(left.phases(), right.phases());
+        int quantifiers = quantification.cost;
+        int matrix = matrixDistance(
+                left.phases(), right.phases(), quantification, stats);
         return new Result(
-                Math.addExact(temporal, Math.addExact(quantifiers, matrix)),
+                checkedTotal(temporal, quantifiers, matrix),
                 temporal,
                 quantifiers,
                 matrix,
                 true,
                 KernelAuthority.IN_PROCESS_PRODUCER_CONSISTENCY,
                 stats.alphaAlignments);
+    }
+
+    static int checkedTotal(int temporal, int quantifiers, int matrix) {
+        if (temporal < 0 || quantifiers < 0 || matrix < 0) {
+            throw new IllegalArgumentException(
+                    "Repair-distance components must be non-negative");
+        }
+        return Math.addExact(temporal, Math.addExact(quantifiers, matrix));
     }
 
     public enum KernelAuthority {
@@ -151,59 +166,20 @@ public final class QuotientRepairDistance {
         return OrderedTreeEditDistance.distance(left, right, TEMPORAL_ADAPTER);
     }
 
-    private static int quantificationDistance(List<Phase> left, List<Phase> right) {
-        int count = Math.max(left.size(), right.size());
-        int result = 0;
-        for (int index = 0; index < count; index++) {
-            if (index >= left.size()) {
-                result = Math.addExact(result, right.get(index).quantifiers().size());
-            } else if (index >= right.size()) {
-                result = Math.addExact(result, left.get(index).quantifiers().size());
-            } else {
-                result = Math.addExact(result, bindingListDistance(
-                        left.get(index).quantifiers(), right.get(index).quantifiers()));
-            }
-        }
-        return result;
-    }
-
-    private static int bindingListDistance(
-            List<Declaration> leftSource,
-            List<Declaration> rightSource) {
-        List<Declaration> left = canonicalQuantifierOrder(leftSource);
-        List<Declaration> right = canonicalQuantifierOrder(rightSource);
-        int[] previous = new int[right.size() + 1];
-        int[] current = new int[right.size() + 1];
-        for (int j = 1; j <= right.size(); j++) {
-            previous[j] = previous[j - 1] + 1;
-        }
-        for (int i = 1; i <= left.size(); i++) {
-            current[0] = previous[0] + 1;
-            for (int j = 1; j <= right.size(); j++) {
-                int delete = previous[j] + 1;
-                int insert = current[j - 1] + 1;
-                int update = previous[j - 1]
-                        + (left.get(i - 1).sameRepairTuple(right.get(j - 1)) ? 0 : 1);
-                current[j] = Math.min(update, Math.min(delete, insert));
-            }
-            int[] swap = previous;
-            previous = current;
-            current = swap;
-        }
-        return previous[right.size()];
-    }
-
-    private static List<Declaration> canonicalQuantifierOrder(List<Declaration> source) {
-        List<Declaration> result = new ArrayList<>(source);
+    private static List<IndexedDeclaration> canonicalQuantifierOrder(
+            List<IndexedDeclaration> source) {
+        List<IndexedDeclaration> result = new ArrayList<>(source);
         for (int start = 0; start < result.size();) {
-            String quantifier = result.get(start).quantifier();
+            String quantifier = result.get(start).declaration.quantifier();
             int end = start + 1;
             if ("ALL".equals(quantifier) || "SOME".equals(quantifier)) {
                 while (end < result.size()
-                        && quantifier.equals(result.get(end).quantifier())) {
+                        && quantifier.equals(
+                                result.get(end).declaration.quantifier())) {
                     end++;
                 }
-                result.subList(start, end).sort(QuotientRepairDistance::compareTuple);
+                result.subList(start, end).sort((left, right) ->
+                        compareTuple(left.declaration, right.declaration));
             }
             start = end;
         }
@@ -222,9 +198,332 @@ public final class QuotientRepairDistance {
         return Integer.compare(left.disjointnessClass(), right.disjointnessClass());
     }
 
+    /**
+     * Minimum declaration edits and their binding correspondences. Matrix
+     * alignment may use a paid tuple modification or an explicit positional
+     * parameter diagonal selected by the edit plan, but never a coincident
+     * coordinate invented after that plan has been chosen.
+     */
+    private static final class QuantificationAlignmentSpace {
+        private final int cost;
+        private final List<QuantifierEditComponent> components;
+
+        private QuantificationAlignmentSpace(
+                int cost,
+                List<QuantifierEditComponent> components) {
+            this.cost = cost;
+            this.components = List.copyOf(components);
+        }
+
+        private static QuantificationAlignmentSpace create(
+                List<Phase> left,
+                List<Phase> right) {
+            List<QuantifierEditComponent> components = new ArrayList<>();
+            int cost = 0;
+
+            QuantifierEditComponent parameters = QuantifierEditComponent.create(
+                    parameterDeclarations(left), parameterDeclarations(right), false);
+            components.add(parameters);
+            cost = Math.addExact(cost, parameters.cost());
+
+            int aligned = Math.min(left.size(), right.size());
+            for (int phase = 0; phase < aligned; phase++) {
+                QuantifierEditComponent component = QuantifierEditComponent.create(
+                        quantifiedDeclarations(left.get(phase), phase),
+                        quantifiedDeclarations(right.get(phase), phase),
+                        true);
+                components.add(component);
+                cost = Math.addExact(cost, component.cost());
+            }
+            for (int phase = aligned; phase < left.size(); phase++) {
+                cost = Math.addExact(cost, left.get(phase).quantifiers().size());
+            }
+            for (int phase = aligned; phase < right.size(); phase++) {
+                cost = Math.addExact(cost, right.get(phase).quantifiers().size());
+            }
+            return new QuantificationAlignmentSpace(cost, components);
+        }
+
+        private void forEachEditAlignment(
+                GlobalBindingIndex left,
+                GlobalBindingIndex right,
+                Consumer<Map<Integer, Integer>> consumer,
+                MutableStats stats) {
+            enumerateComponents(
+                    left,
+                    right,
+                    consumer,
+                    stats,
+                    0,
+                    new LinkedHashMap<>());
+        }
+
+        private void enumerateComponents(
+                GlobalBindingIndex left,
+                GlobalBindingIndex right,
+                Consumer<Map<Integer, Integer>> consumer,
+                MutableStats stats,
+                int componentIndex,
+                Map<Integer, Integer> correspondence) {
+            if (componentIndex == components.size()) {
+                stats.consumeQuantifierAlignment();
+                consumer.accept(Map.copyOf(correspondence));
+                return;
+            }
+            components.get(componentIndex).forEachMinimumAlignment(
+                    pairs -> {
+                List<Integer> insertedLeft = new ArrayList<>();
+                List<Integer> insertedRight = new ArrayList<>();
+                for (EditCorrespondence pair : pairs) {
+                    Integer leftIndex = left.indices.get(pair.left.identity);
+                    Integer rightIndex = right.indices.get(pair.right.identity);
+                    if (leftIndex == null || rightIndex == null) {
+                        throw new IllegalStateException(
+                                "A minimum quantifier correspondence lacks a projected binding");
+                    }
+                    boolean inserted = addInjectiveCorrespondence(
+                            correspondence, leftIndex, rightIndex);
+                    if (inserted) {
+                        insertedLeft.add(leftIndex);
+                        insertedRight.add(rightIndex);
+                    }
+                }
+                enumerateComponents(
+                        left,
+                        right,
+                        consumer,
+                        stats,
+                        componentIndex + 1,
+                        correspondence);
+                for (int index = insertedLeft.size() - 1; index >= 0; index--) {
+                    Integer removed = correspondence.remove(insertedLeft.get(index));
+                    if (removed == null
+                            || removed.intValue()
+                                    != insertedRight.get(index).intValue()) {
+                        throw new IllegalStateException(
+                                "Quantifier correspondence backtracking lost identity");
+                    }
+                }
+            });
+        }
+
+        private static List<IndexedDeclaration> parameterDeclarations(
+                List<Phase> phases) {
+            if (phases.isEmpty()) {
+                return List.of();
+            }
+            List<IndexedDeclaration> result = new ArrayList<>();
+            for (Binding binding : phases.get(0).bindings()) {
+                if (binding.role() == BindingRole.PARAMETER) {
+                    result.add(new IndexedDeclaration(
+                            binding.declaration(),
+                            GlobalBindingIdentity.from(binding),
+                            binding.ordinal()));
+                }
+            }
+            result.sort((left, right) -> Integer.compare(left.ordinal, right.ordinal));
+            return List.copyOf(result);
+        }
+
+        private static List<IndexedDeclaration> quantifiedDeclarations(
+                Phase phase,
+                int phaseIndex) {
+            List<IndexedDeclaration> result = new ArrayList<>();
+            for (int ordinal = 0; ordinal < phase.quantifiers().size(); ordinal++) {
+                Binding binding = matrixBinding(phase, phaseIndex, ordinal);
+                Declaration declaration = phase.quantifiers().get(ordinal);
+                if (binding.declaration() != declaration
+                        && !binding.declaration().sameCertifiedPayload(declaration)) {
+                    throw new IllegalStateException(
+                            "Quantifier and projected binding declarations disagree");
+                }
+                result.add(new IndexedDeclaration(
+                        declaration,
+                        GlobalBindingIdentity.from(binding),
+                        ordinal));
+            }
+            return List.copyOf(result);
+        }
+
+        private static Binding matrixBinding(
+                Phase phase,
+                int phaseIndex,
+                int ordinal) {
+            for (Binding binding : phase.bindings()) {
+                if (binding.role() == BindingRole.MATRIX
+                        && binding.ownerPhase() == phaseIndex
+                        && binding.ordinal() == ordinal) {
+                    return binding;
+                }
+            }
+            throw new IllegalStateException(
+                    "Quantifier " + ordinal + " in phase " + phaseIndex
+                            + " lacks its certified matrix binding");
+        }
+    }
+
+    static boolean addInjectiveCorrespondence(
+            Map<Integer, Integer> correspondence,
+            int leftIndex,
+            int rightIndex) {
+        Objects.requireNonNull(correspondence, "correspondence");
+        for (Map.Entry<Integer, Integer> existing : correspondence.entrySet()) {
+            if (existing.getValue().intValue() == rightIndex
+                    && existing.getKey().intValue() != leftIndex) {
+                throw new IllegalStateException(
+                        "Two left bindings share one quantifier correspondence");
+            }
+        }
+        Integer priorRight = correspondence.putIfAbsent(leftIndex, rightIndex);
+        if (priorRight != null && priorRight.intValue() != rightIndex) {
+            throw new IllegalStateException(
+                    "One left binding has two quantifier correspondences");
+        }
+        return priorRight == null;
+    }
+
+    private static final class QuantifierEditComponent {
+        private final List<IndexedDeclaration> left;
+        private final List<IndexedDeclaration> right;
+        private final int[][] distance;
+
+        private QuantifierEditComponent(
+                List<IndexedDeclaration> left,
+                List<IndexedDeclaration> right,
+                int[][] distance) {
+            this.left = left;
+            this.right = right;
+            this.distance = distance;
+        }
+
+        private static QuantifierEditComponent create(
+                List<IndexedDeclaration> leftSource,
+                List<IndexedDeclaration> rightSource,
+                boolean canonicalizeExchangeRuns) {
+            List<IndexedDeclaration> left = canonicalizeExchangeRuns
+                    ? canonicalQuantifierOrder(leftSource)
+                    : List.copyOf(leftSource);
+            List<IndexedDeclaration> right = canonicalizeExchangeRuns
+                    ? canonicalQuantifierOrder(rightSource)
+                    : List.copyOf(rightSource);
+            int[][] distance = new int[Math.addExact(left.size(), 1)]
+                    [Math.addExact(right.size(), 1)];
+            for (int row = 1; row <= left.size(); row++) {
+                distance[row][0] = Math.addExact(distance[row - 1][0], 1);
+            }
+            for (int column = 1; column <= right.size(); column++) {
+                distance[0][column] = Math.addExact(distance[0][column - 1], 1);
+            }
+            for (int row = 1; row <= left.size(); row++) {
+                for (int column = 1; column <= right.size(); column++) {
+                    int update = Math.addExact(
+                            distance[row - 1][column - 1],
+                            tupleUpdateCost(
+                                    left.get(row - 1), right.get(column - 1)));
+                    int delete = Math.addExact(distance[row - 1][column], 1);
+                    int insert = Math.addExact(distance[row][column - 1], 1);
+                    distance[row][column] = Math.min(
+                            update, Math.min(delete, insert));
+                }
+            }
+            return new QuantifierEditComponent(left, right, distance);
+        }
+
+        private int cost() {
+            return distance[left.size()][right.size()];
+        }
+
+        private void forEachMinimumAlignment(
+                Consumer<List<EditCorrespondence>> consumer) {
+            enumerateMinimumAlignments(
+                    left.size(),
+                    right.size(),
+                    new ArrayList<>(),
+                    consumer);
+        }
+
+        private void enumerateMinimumAlignments(
+                int row,
+                int column,
+                List<EditCorrespondence> reversed,
+                Consumer<List<EditCorrespondence>> consumer) {
+            if (row == 0 && column == 0) {
+                List<EditCorrespondence> result = new ArrayList<>(reversed);
+                java.util.Collections.reverse(result);
+                consumer.accept(List.copyOf(result));
+                return;
+            }
+            if (row > 0 && column > 0) {
+                IndexedDeclaration leftValue = left.get(row - 1);
+                IndexedDeclaration rightValue = right.get(column - 1);
+                int updateCost = tupleUpdateCost(leftValue, rightValue);
+                if (distance[row][column] == Math.addExact(
+                        distance[row - 1][column - 1], updateCost)) {
+                    boolean carriesBinding = updateCost != 0
+                            || leftValue.identity.parameter;
+                    if (carriesBinding) {
+                        reversed.add(new EditCorrespondence(
+                                leftValue, rightValue));
+                    }
+                    enumerateMinimumAlignments(
+                            row - 1, column - 1, reversed, consumer);
+                    if (carriesBinding) {
+                        reversed.remove(reversed.size() - 1);
+                    }
+                }
+            }
+            if (row > 0
+                    && distance[row][column]
+                            == Math.addExact(distance[row - 1][column], 1)) {
+                enumerateMinimumAlignments(
+                        row - 1, column, reversed, consumer);
+            }
+            if (column > 0
+                    && distance[row][column]
+                            == Math.addExact(distance[row][column - 1], 1)) {
+                enumerateMinimumAlignments(
+                        row, column - 1, reversed, consumer);
+            }
+        }
+
+        private static int tupleUpdateCost(
+                IndexedDeclaration left,
+                IndexedDeclaration right) {
+            return left.declaration.sameRepairTuple(right.declaration) ? 0 : 1;
+        }
+    }
+
+    private static final class IndexedDeclaration {
+        private final Declaration declaration;
+        private final GlobalBindingIdentity identity;
+        private final int ordinal;
+
+        private IndexedDeclaration(
+                Declaration declaration,
+                GlobalBindingIdentity identity,
+                int ordinal) {
+            this.declaration = Objects.requireNonNull(declaration, "declaration");
+            this.identity = Objects.requireNonNull(identity, "binding identity");
+            this.ordinal = ordinal;
+        }
+    }
+
+    private static final class EditCorrespondence {
+        private final IndexedDeclaration left;
+        private final IndexedDeclaration right;
+
+        private EditCorrespondence(
+                IndexedDeclaration left,
+                IndexedDeclaration right) {
+            this.left = left;
+            this.right = right;
+        }
+    }
+
     private static int matrixDistance(
             List<Phase> left,
             List<Phase> right,
+            QuantificationAlignmentSpace quantification,
             MutableStats stats) {
         // One owner-coordinate mapping must govern its matrix and every temporal heir.
         int aligned = Math.min(left.size(), right.size());
@@ -235,50 +534,88 @@ public final class QuotientRepairDistance {
         for (int index = aligned; index < right.size(); index++) {
             result = Math.addExact(result, nodeSize(right.get(index).matrix()));
         }
+        GlobalBindingIndex leftBindings = GlobalBindingIndex.create(left, aligned);
+        GlobalBindingIndex rightBindings = GlobalBindingIndex.create(right, aligned);
         if (aligned == 0) {
             return result;
         }
 
-        GlobalBindingIndex leftBindings = GlobalBindingIndex.create(left, aligned);
-        GlobalBindingIndex rightBindings = GlobalBindingIndex.create(right, aligned);
+        int fixedUnalignedCost = result;
+        int[] best = {Integer.MAX_VALUE};
+        quantification.forEachEditAlignment(
+                leftBindings, rightBindings, correspondence -> {
+            int candidate = matrixDistanceForAlignment(
+                    leftBindings, rightBindings, correspondence, stats);
+            best[0] = Math.min(best[0], candidate);
+        }, stats);
+        if (best[0] == Integer.MAX_VALUE) {
+            throw new IllegalStateException(
+                    "No minimum-cost quantifier alignment was evaluated");
+        }
+        return Math.addExact(fixedUnalignedCost, best[0]);
+    }
+
+    private static int matrixDistanceForAlignment(
+            GlobalBindingIndex leftBindings,
+            GlobalBindingIndex rightBindings,
+            Map<Integer, Integer> editCorrespondence,
+            MutableStats stats) {
         int maximumMatches = -1;
         int best = Integer.MAX_VALUE;
-        for (ScopeAlignment scope : globalScopeAlignments(leftBindings, rightBindings)) {
+        int[] mapping = new int[leftBindings.bindings.size()];
+        Arrays.fill(mapping, -1);
+        boolean[] usedRight = new boolean[rightBindings.bindings.size()];
+        for (Map.Entry<Integer, Integer> entry : editCorrespondence.entrySet()) {
+            int leftIndex = entry.getKey();
+            int rightIndex = entry.getValue();
+            if (mapping[leftIndex] >= 0 || usedRight[rightIndex]) {
+                throw new IllegalStateException(
+                        "A quantifier edit correspondence is not one-to-one");
+            }
+            mapping[leftIndex] = rightIndex;
+            usedRight[rightIndex] = true;
+        }
+
+        int[] maximum = {-1};
+        int[] minimum = {Integer.MAX_VALUE};
+        forEachGlobalScopeAlignment(leftBindings, rightBindings, scope -> {
+            stats.consumeScopeAlignment();
             List<Integer> leftOrder = new ArrayList<>(leftBindings.used);
+            leftOrder.removeIf(index -> mapping[index] >= 0);
             leftOrder.sort((first, second) -> Integer.compare(
                     globalCandidateCount(
-                            leftBindings.binding(first), rightBindings, scope),
+                            leftBindings.binding(first), rightBindings, scope, usedRight),
                     globalCandidateCount(
-                            leftBindings.binding(second), rightBindings, scope)));
+                            leftBindings.binding(second), rightBindings, scope, usedRight)));
             int requiredMatches = maximumGlobalCompatibleMatches(
-                    leftBindings, rightBindings, leftOrder, scope);
-            if (requiredMatches < maximumMatches) {
-                continue;
+                    leftBindings, rightBindings, leftOrder, scope, usedRight);
+            if (requiredMatches < maximum[0]) {
+                return;
             }
-            if (requiredMatches > maximumMatches) {
-                maximumMatches = requiredMatches;
-                best = Integer.MAX_VALUE;
+            if (requiredMatches > maximum[0]) {
+                maximum[0] = requiredMatches;
+                minimum[0] = Integer.MAX_VALUE;
             }
-            int[] mapping = new int[leftBindings.bindings.size()];
-            Arrays.fill(mapping, -1);
-            best = searchGlobalMappings(
+            minimum[0] = searchGlobalMappings(
                     leftBindings,
                     rightBindings,
                     leftOrder,
                     scope,
                     mapping,
-                    new boolean[rightBindings.bindings.size()],
+                    usedRight,
                     0,
                     0,
                     requiredMatches,
-                    best,
+                    minimum[0],
                     stats);
-        }
-        if (best == Integer.MAX_VALUE) {
+        });
+        maximumMatches = maximum[0];
+        best = minimum[0];
+        if (maximumMatches < 0 || best == Integer.MAX_VALUE) {
             throw new IllegalStateException(
                     "No certified global alpha alignment was evaluated");
         }
-        return Math.addExact(result, best);
+        return best;
     }
 
     private static int searchGlobalMappings(
@@ -297,7 +634,7 @@ public final class QuotientRepairDistance {
             if (matched != requiredMatches) {
                 return best;
             }
-            stats.alphaAlignments++;
+            stats.consumeAlphaAlignment();
             return Math.min(best, globallyMappedMatrixDistance(left, right, mapping));
         }
         int leftIndex = leftOrder.get(index);
@@ -352,12 +689,6 @@ public final class QuotientRepairDistance {
             GlobalBindingIndex right,
             int[] globalMapping) {
         int result = 0;
-        boolean[] explicitlyMappedRight = new boolean[right.bindings.size()];
-        for (int mapped : globalMapping) {
-            if (mapped >= 0) {
-                explicitlyMappedRight[mapped] = true;
-            }
-        }
         for (int phaseIndex = 0; phaseIndex < left.phaseCount; phaseIndex++) {
             Phase leftPhase = left.phases.get(phaseIndex);
             Phase rightPhase = right.phases.get(phaseIndex);
@@ -367,15 +698,6 @@ public final class QuotientRepairDistance {
             for (int local = 0; local < localToGlobal.length; local++) {
                 int leftGlobal = localToGlobal[local];
                 int rightGlobal = globalMapping[leftGlobal];
-                if (rightGlobal < 0) {
-                    // A tuple modification is already charged by D_quantifiers.
-                    Integer sameCoordinate = right.indices.get(
-                            left.binding(leftGlobal).identity);
-                    if (sameCoordinate != null
-                            && !explicitlyMappedRight[sameCoordinate]) {
-                        rightGlobal = sameCoordinate;
-                    }
-                }
                 if (rightGlobal >= 0) {
                     Integer rightLocal = right.usedLocalByGlobal
                             .get(phaseIndex).get(rightGlobal);
@@ -395,10 +717,12 @@ public final class QuotientRepairDistance {
     private static int globalCandidateCount(
             GlobalBinding left,
             GlobalBindingIndex right,
-            ScopeAlignment scope) {
+            ScopeAlignment scope,
+            boolean[] unavailableRight) {
         int result = 0;
         for (int rightIndex : right.used) {
-            if (globalCompatible(left, right.binding(rightIndex), scope)) {
+            if (!unavailableRight[rightIndex]
+                    && globalCompatible(left, right.binding(rightIndex), scope)) {
                 result++;
             }
         }
@@ -409,7 +733,8 @@ public final class QuotientRepairDistance {
             GlobalBindingIndex left,
             GlobalBindingIndex right,
             List<Integer> leftOrder,
-            ScopeAlignment scope) {
+            ScopeAlignment scope,
+            boolean[] unavailableRight) {
         int[] matchedLeftByRight = new int[right.bindings.size()];
         Arrays.fill(matchedLeftByRight, -1);
         int result = 0;
@@ -420,7 +745,8 @@ public final class QuotientRepairDistance {
                     right,
                     scope,
                     matchedLeftByRight,
-                    new boolean[right.bindings.size()])) {
+                    new boolean[right.bindings.size()],
+                    unavailableRight)) {
                 result++;
             }
         }
@@ -433,9 +759,11 @@ public final class QuotientRepairDistance {
             GlobalBindingIndex right,
             ScopeAlignment scope,
             int[] matchedLeftByRight,
-            boolean[] visitedRight) {
+            boolean[] visitedRight,
+            boolean[] unavailableRight) {
         for (int rightIndex : right.used) {
-            if (visitedRight[rightIndex]
+            if (unavailableRight[rightIndex]
+                    || visitedRight[rightIndex]
                     || !globalCompatible(
                             left.binding(leftIndex), right.binding(rightIndex), scope)) {
                 continue;
@@ -448,7 +776,8 @@ public final class QuotientRepairDistance {
                             right,
                             scope,
                             matchedLeftByRight,
-                            visitedRight)) {
+                            visitedRight,
+                            unavailableRight)) {
                 matchedLeftByRight[rightIndex] = leftIndex;
                 return true;
             }
@@ -494,32 +823,55 @@ public final class QuotientRepairDistance {
         return left.binding.bindingPath().equals(right.binding.bindingPath());
     }
 
-    private static List<ScopeAlignment> globalScopeAlignments(
+    private static void forEachGlobalScopeAlignment(
             GlobalBindingIndex left,
-            GlobalBindingIndex right) {
+            GlobalBindingIndex right,
+            Consumer<ScopeAlignment> consumer) {
         Map<ScopeOwner, Map<Integer, List<Integer>>> leftBlocks =
                 globalScopeBlocks(left);
         Map<ScopeOwner, Map<Integer, List<Integer>>> rightBlocks =
                 globalScopeBlocks(right);
         List<ScopeOwner> owners = new ArrayList<>(leftBlocks.keySet());
         owners.sort(ScopeOwner::compareTo);
-        List<ScopeAlignment> result = new ArrayList<>();
-        result.add(ScopeAlignment.EMPTY);
-        for (ScopeOwner owner : owners) {
-            List<Map<Integer, Integer>> blockMappings = enumerateGlobalBlockMappings(
-                    left,
-                    right,
-                    leftBlocks.get(owner),
-                    rightBlocks.getOrDefault(owner, java.util.Collections.emptyMap()));
-            List<ScopeAlignment> expanded = new ArrayList<>();
-            for (ScopeAlignment prefix : result) {
-                for (Map<Integer, Integer> mapping : blockMappings) {
-                    expanded.add(prefix.extend(owner, mapping));
-                }
-            }
-            result = expanded;
+        forEachGlobalScopeAlignment(
+                left,
+                right,
+                leftBlocks,
+                rightBlocks,
+                owners,
+                0,
+                ScopeAlignment.EMPTY,
+                consumer);
+    }
+
+    private static void forEachGlobalScopeAlignment(
+            GlobalBindingIndex left,
+            GlobalBindingIndex right,
+            Map<ScopeOwner, Map<Integer, List<Integer>>> leftBlocks,
+            Map<ScopeOwner, Map<Integer, List<Integer>>> rightBlocks,
+            List<ScopeOwner> owners,
+            int ownerIndex,
+            ScopeAlignment prefix,
+            Consumer<ScopeAlignment> consumer) {
+        if (ownerIndex == owners.size()) {
+            consumer.accept(prefix);
+            return;
         }
-        return result;
+        ScopeOwner owner = owners.get(ownerIndex);
+        forEachGlobalBlockMapping(
+                left,
+                right,
+                leftBlocks.get(owner),
+                rightBlocks.getOrDefault(owner, java.util.Collections.emptyMap()),
+                mapping -> forEachGlobalScopeAlignment(
+                        left,
+                        right,
+                        leftBlocks,
+                        rightBlocks,
+                        owners,
+                        ownerIndex + 1,
+                        prefix.extend(owner, mapping),
+                        consumer));
     }
 
     private static Map<ScopeOwner, Map<Integer, List<Integer>>> globalScopeBlocks(
@@ -544,16 +896,16 @@ public final class QuotientRepairDistance {
         return new ScopeOwner(BindingRole.MATRIX, binding.identity.ownerPhase);
     }
 
-    private static List<Map<Integer, Integer>> enumerateGlobalBlockMappings(
+    private static void forEachGlobalBlockMapping(
             GlobalBindingIndex left,
             GlobalBindingIndex right,
             Map<Integer, List<Integer>> leftBlocks,
-            Map<Integer, List<Integer>> rightBlocks) {
+            Map<Integer, List<Integer>> rightBlocks,
+            Consumer<Map<Integer, Integer>> consumer) {
         List<Integer> leftClasses = new ArrayList<>(leftBlocks.keySet());
         List<Integer> rightClasses = new ArrayList<>(rightBlocks.keySet());
         leftClasses.sort(Integer::compareTo);
         rightClasses.sort(Integer::compareTo);
-        List<Map<Integer, Integer>> result = new ArrayList<>();
         enumerateGlobalBlockMappings(
                 left,
                 right,
@@ -564,8 +916,7 @@ public final class QuotientRepairDistance {
                 0,
                 0,
                 new LinkedHashMap<>(),
-                result);
-        return result;
+                consumer);
     }
 
     private static void enumerateGlobalBlockMappings(
@@ -578,9 +929,9 @@ public final class QuotientRepairDistance {
             int leftPosition,
             int minimumRightPosition,
             Map<Integer, Integer> current,
-            List<Map<Integer, Integer>> output) {
+            Consumer<Map<Integer, Integer>> consumer) {
         if (leftPosition == leftClasses.size()) {
-            output.add(new LinkedHashMap<>(current));
+            consumer.accept(Map.copyOf(current));
             return;
         }
         int leftClass = leftClasses.get(leftPosition);
@@ -594,7 +945,7 @@ public final class QuotientRepairDistance {
                 leftPosition + 1,
                 minimumRightPosition,
                 current,
-                output);
+                consumer);
         for (int rightPosition = minimumRightPosition;
                 rightPosition < rightClasses.size(); rightPosition++) {
             int rightClass = rightClasses.get(rightPosition);
@@ -616,7 +967,7 @@ public final class QuotientRepairDistance {
                     leftPosition + 1,
                     rightPosition + 1,
                     current,
-                    output);
+                    consumer);
             current.remove(leftClass);
         }
     }
@@ -716,7 +1067,12 @@ public final class QuotientRepairDistance {
                 return 1;
             }
             if (left.isVariable()) {
-                if (left.bindingIndex() >= 0) {
+                boolean leftBound = left.bindingIndex() >= 0;
+                boolean rightBound = right.bindingIndex() >= 0;
+                if (leftBound != rightBound) {
+                    return 1;
+                }
+                if (leftBound) {
                     int mapped = mapping[left.bindingIndex()];
                     return mapped >= 0 && mapped == right.bindingIndex() ? 0 : 1;
                 }
@@ -731,18 +1087,23 @@ public final class QuotientRepairDistance {
             if (left.size() == 1 && right.size() == 1) {
                 return distance(left.get(0), right.get(0));
             }
-            int[] previous = new int[right.size() + 1];
-            int[] current = new int[right.size() + 1];
+            int[] previous = new int[Math.addExact(right.size(), 1)];
+            int[] current = new int[Math.addExact(right.size(), 1)];
             for (int j = 1; j <= right.size(); j++) {
-                previous[j] = previous[j - 1] + right.get(j - 1).size();
+                previous[j] = Math.addExact(
+                        previous[j - 1], right.get(j - 1).size());
             }
             for (int i = 1; i <= left.size(); i++) {
-                current[0] = previous[0] + left.get(i - 1).size();
+                current[0] = Math.addExact(
+                        previous[0], left.get(i - 1).size());
                 for (int j = 1; j <= right.size(); j++) {
-                    int delete = previous[j] + left.get(i - 1).size();
-                    int insert = current[j - 1] + right.get(j - 1).size();
-                    int update = previous[j - 1]
-                            + distance(left.get(i - 1), right.get(j - 1));
+                    int delete = Math.addExact(
+                            previous[j], left.get(i - 1).size());
+                    int insert = Math.addExact(
+                            current[j - 1], right.get(j - 1).size());
+                    int update = Math.addExact(
+                            previous[j - 1],
+                            distance(left.get(i - 1), right.get(j - 1)));
                     current[j] = Math.min(update, Math.min(delete, insert));
                 }
                 int[] swap = previous;
@@ -756,7 +1117,7 @@ public final class QuotientRepairDistance {
             if (left.isEmpty() || right.isEmpty()) {
                 return sequenceDistance(left, right);
             }
-            int dimension = left.size() + right.size();
+            int dimension = Math.addExact(left.size(), right.size());
             int[][] costs = new int[dimension][dimension];
             for (int i = 0; i < dimension; i++) {
                 for (int j = 0; j < dimension; j++) {
@@ -773,29 +1134,45 @@ public final class QuotientRepairDistance {
         }
     }
 
-    private static int minimumAssignmentCost(int[][] costs) {
+    static int minimumAssignmentCost(int[][] costs) {
+        Objects.requireNonNull(costs, "costs");
         int size = costs.length;
-        int[] rowPotential = new int[size + 1];
-        int[] columnPotential = new int[size + 1];
-        int[] columnMatch = new int[size + 1];
-        int[] predecessor = new int[size + 1];
+        for (int row = 0; row < size; row++) {
+            if (costs[row] == null || costs[row].length != size) {
+                throw new IllegalArgumentException(
+                        "Assignment cost matrix must be square");
+            }
+            for (int cost : costs[row]) {
+                if (cost < 0) {
+                    throw new IllegalArgumentException(
+                            "Assignment costs must be non-negative");
+                }
+            }
+        }
+        long[] rowPotential = new long[Math.addExact(size, 1)];
+        long[] columnPotential = new long[Math.addExact(size, 1)];
+        int[] columnMatch = new int[Math.addExact(size, 1)];
+        int[] predecessor = new int[Math.addExact(size, 1)];
         for (int row = 1; row <= size; row++) {
             columnMatch[0] = row;
             int column = 0;
-            int[] minimum = new int[size + 1];
-            Arrays.fill(minimum, Integer.MAX_VALUE);
+            long[] minimum = new long[size + 1];
+            Arrays.fill(minimum, Long.MAX_VALUE);
             boolean[] used = new boolean[size + 1];
             do {
                 used[column] = true;
                 int matchedRow = columnMatch[column];
-                int delta = Integer.MAX_VALUE;
+                long delta = Long.MAX_VALUE;
                 int nextColumn = 0;
                 for (int candidate = 1; candidate <= size; candidate++) {
                     if (used[candidate]) {
                         continue;
                     }
-                    int reduced = costs[matchedRow - 1][candidate - 1]
-                            - rowPotential[matchedRow] - columnPotential[candidate];
+                    long reduced = Math.subtractExact(
+                            Math.subtractExact(
+                                    (long) costs[matchedRow - 1][candidate - 1],
+                                    rowPotential[matchedRow]),
+                            columnPotential[candidate]);
                     if (reduced < minimum[candidate]) {
                         minimum[candidate] = reduced;
                         predecessor[candidate] = column;
@@ -807,10 +1184,13 @@ public final class QuotientRepairDistance {
                 }
                 for (int candidate = 0; candidate <= size; candidate++) {
                     if (used[candidate]) {
-                        rowPotential[columnMatch[candidate]] += delta;
-                        columnPotential[candidate] -= delta;
-                    } else {
-                        minimum[candidate] -= delta;
+                        rowPotential[columnMatch[candidate]] = Math.addExact(
+                                rowPotential[columnMatch[candidate]], delta);
+                        columnPotential[candidate] = Math.subtractExact(
+                                columnPotential[candidate], delta);
+                    } else if (minimum[candidate] != Long.MAX_VALUE) {
+                        minimum[candidate] = Math.subtractExact(
+                                minimum[candidate], delta);
                     }
                 }
                 column = nextColumn;
@@ -821,7 +1201,7 @@ public final class QuotientRepairDistance {
                 column = previous;
             } while (column != 0);
         }
-        return -columnPotential[0];
+        return Math.toIntExact(Math.negateExact(columnPotential[0]));
     }
 
     private static final class ScopeOwner implements Comparable<ScopeOwner> {
@@ -1047,6 +1427,56 @@ public final class QuotientRepairDistance {
 
     private static final class MutableStats {
         private long alphaAlignments;
+        private long quantifierAlignments;
+        private long scopeAlignments;
+
+        private void consumeAlphaAlignment() {
+            alphaAlignments = boundedIncrement(
+                    alphaAlignments,
+                    "acgn.metric.maxAlphaAlignments",
+                    DEFAULT_MAX_ALPHA_ALIGNMENTS,
+                    "alpha alignments");
+        }
+
+        private void consumeQuantifierAlignment() {
+            quantifierAlignments = boundedIncrement(
+                    quantifierAlignments,
+                    "acgn.metric.maxQuantifierAlignments",
+                    DEFAULT_MAX_QUANTIFIER_ALIGNMENTS,
+                    "minimum quantifier alignments");
+        }
+
+        private void consumeScopeAlignment() {
+            scopeAlignments = boundedIncrement(
+                    scopeAlignments,
+                    "acgn.metric.maxScopeAlignments",
+                    DEFAULT_MAX_SCOPE_ALIGNMENTS,
+                    "scope alignments");
+        }
+
+        private static long boundedIncrement(
+                long current,
+                String property,
+                long defaultMaximum,
+                String label) {
+            long maximum = Long.getLong(property, defaultMaximum);
+            if (maximum <= 0) {
+                throw new IllegalStateException(property + " must be positive");
+            }
+            long next = Math.incrementExact(current);
+            if (next > maximum) {
+                throw new ResourceLimitException(
+                        label + " exceed configured exact-search bound " + maximum);
+            }
+            return next;
+        }
+    }
+
+    /** Exact evaluation stopped before a minimum was certified. */
+    public static final class ResourceLimitException extends RuntimeException {
+        private ResourceLimitException(String message) {
+            super(message);
+        }
     }
 
     private static final class NodePair {

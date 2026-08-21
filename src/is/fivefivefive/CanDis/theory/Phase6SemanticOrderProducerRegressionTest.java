@@ -40,6 +40,14 @@ public final class Phase6SemanticOrderProducerRegressionTest {
         reversed.session().write(output.resolve("reversed.acgncert"));
         polymorphic(true).write(output.resolve("polymorphic.acgncert"));
         polymorphic(false).write(output.resolve("monomorphic.acgncert"));
+        int[][] permutations = {
+                {0, 1, 2}, {0, 2, 1}, {1, 0, 2},
+                {1, 2, 0}, {2, 0, 1}, {2, 1, 0}
+        };
+        for (int index = 0; index < permutations.length; index++) {
+            orderedTriple(permutations[index], "order-" + index)
+                    .session().write(output.resolve("order-" + index + ".acgncert"));
+        }
 
         System.out.println("Phase6SemanticOrderProducerRegressionTest: "
                 + checks + " checks passed; fixtures=" + output);
@@ -90,6 +98,31 @@ public final class Phase6SemanticOrderProducerRegressionTest {
                 "fixture/phase6-" + (generic ? "polymorphic" : "monomorphic")
                         + ".als",
                 "pred p { phase6_polymorphic }").session();
+    }
+
+    private static Fixture orderedTriple(int[] order, String label)
+            throws Exception {
+        TypedSlot first = TypedSlot.canonicalFree(T, 0);
+        TypedSlot second = TypedSlot.canonicalFree(T, 1);
+        TypedSlot third = TypedSlot.canonicalFree(T, 2);
+        List<TypedSlot> slots = List.of(first, second, third);
+        TypedSlotContext context = TypedSlotContext.of(first, second, third);
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                "phase6-ordered-triple",
+                List.of(new OnePortSchema(T), new OnePortSchema(T), new OnePortSchema(T)),
+                GraphType.BOOL,
+                Map.of(),
+                null).instantiateMonomorphic();
+        return fixture(
+                TypedENode.construct(
+                        operator,
+                        context,
+                        List.of(
+                                OnePort.slot(context, slots.get(order[0])),
+                                OnePort.slot(context, slots.get(order[1])),
+                                OnePort.slot(context, slots.get(order[2])))),
+                "fixture/phase6-" + label + ".als",
+                "pred " + label.replace('-', '_') + " { phase6_ordered_triple }");
     }
 
     private static Fixture fixture(

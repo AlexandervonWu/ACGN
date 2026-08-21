@@ -225,19 +225,25 @@ public final class ConcreteRepairMetricRefinementTest {
                 Declaration all = declaration("ALL", "S", "ONE", 0, 0);
                 Declaration some = declaration("SOME", "S", "ONE", 0, 0);
                 return pair(
-                        view(defaultProfile(), temporal("NONE"), List.of(all), List.of(),
+                        view(defaultProfile(), temporal("NONE"), List.of(all),
+                                List.of(binding(all, 0, List.of(0))),
                                 atom("A"), 0),
                         view(defaultProfile(), temporal("NONE", temporal("AFTER")),
-                                List.of(some), List.of(), atom("C"), 1));
+                                List.of(some),
+                                List.of(binding(some, 0, List.of(0))),
+                                atom("C"), 1));
             }
-            case "quantifier_full_tuple_modify":
+            case "quantifier_full_tuple_modify": {
+                Declaration left = declaration("ALL", "S", "ONE", 0, 0);
+                Declaration right = declaration("NO", "T", "SET", 7, 0);
                 return pair(
                         view(defaultProfile(), temporal("NONE"),
-                                List.of(declaration("ALL", "S", "ONE", 0, 0)),
-                                List.of(), atom("A"), 0),
+                                List.of(left),
+                                List.of(binding(left, 0, List.of(0))), atom("A"), 0),
                         view(defaultProfile(), temporal("NONE"),
-                                List.of(declaration("NO", "T", "SET", 7, 0)),
-                                List.of(), atom("A"), 1));
+                                List.of(right),
+                                List.of(binding(right, 0, List.of(0))), atom("A"), 1));
+            }
             case "ordered_sequence_swap":
                 return pair(
                         matrixView(container("SEQ", ContainerKind.SEQUENCE,

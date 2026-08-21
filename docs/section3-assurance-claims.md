@@ -6,8 +6,8 @@
 
 - Scoped claims: 154
 - Matrix rows: 154
-- Fully ready rows: 0
-- Open diagnostics: 1162
+- Fully ready rows: 41
+- Open diagnostics: 168
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -32,12 +32,12 @@ Every claim follows the same bounded process:
 - Ledger line: 47
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_requirements_decomposed`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Lean gate projection proved; HLR-to-atomic-LLR implementation mapping remains absent
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The checker binds the complete ordered scope to one matrix row per claim; independent review of atomic decomposition remains open
 - Current proof state: `INCOMPLETE`
 
 ### A-02
@@ -66,8 +66,8 @@ Every claim follows the same bounded process:
 - Ledger line: 49
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_three_test_classes`
-- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#lacks`
-- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#lacks ROBUSTNESS`
+- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#splitSet`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#mutateAndExpect`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
@@ -84,7 +84,7 @@ Every claim follows the same bounded process:
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_formal_evidence;missing_formal_evidence_blocks`
 - Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validateFormal`
-- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#contains banned token`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#mutateAndExpect`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
@@ -100,8 +100,8 @@ Every claim follows the same bounded process:
 - Ledger line: 51
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_direct_conformance`
-- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#conformance_status`
-- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#conformance_status is PARTIAL`
+- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#mutateAndExpect`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
@@ -117,12 +117,12 @@ Every claim follows the same bounded process:
 - Ledger line: 52
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_coverage_or_disposition`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `docs/section3-repair-audit/structural-coverage-dispositions.tsv;scripts/run_section3_assurance.sh`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main;src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Structural coverage and disposition ledger not implemented
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: The disposition ledger exists but scoped class-byte statement, decision, and MC/DC measurements are not implemented; PASS is prohibited
 - Current proof state: `INCOMPLETE`
 
 ### A-07
@@ -134,12 +134,12 @@ Every claim follows the same bounded process:
 - Ledger line: 53
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_coupling_evidence`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verify;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;certificate-verifier/test/org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Coupling evidence matrix not implemented
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Positive and one-field mutations cover named producer-verifier couplings; no complete coupling matrix over every scoped boundary exists
 - Current proof state: `INCOMPLETE`
 
 ### A-08
@@ -151,12 +151,12 @@ Every claim follows the same bounded process:
 - Ledger line: 54
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_resource_bounds`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `scripts/run_section3_assurance.sh;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testStabilizerTraversalDifferential;src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Bounded runner and exhaustion classification not implemented
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The assurance runner has time and heap bounds and traversal has work bounds; complete input-size/combinatorial inventory and exhaustion classification remain open
 - Current proof state: `INCOMPLETE`
 
 ### A-09
@@ -168,12 +168,12 @@ Every claim follows the same bounded process:
 - Ledger line: 55
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_determinism_evidence`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;scripts/run_section3_assurance.sh`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDeterminismTest.java#main;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#exportTwice`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Fresh-process deterministic evidence not implemented
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Fresh-process and double-export checks pass for bounded fixtures; every scoped output/configuration pair is not yet covered
 - Current proof state: `INCOMPLETE`
 
 ### A-10
@@ -185,12 +185,12 @@ Every claim follows the same bounded process:
 - Ledger line: 56
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_manifest_complete`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `scripts/run_section3_assurance.sh;src/is/fivefivefive/CanDis/AblationRunManifest.java#capture`
+- Bounded test references: `scripts/run_publication_manifest_tests.sh;src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Canonical assurance manifest not implemented
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The bounded runner hashes governed inputs and outputs, but review identities, coverage bytes, all environment options, and immutable final evidence are incomplete
 - Current proof state: `INCOMPLETE`
 
 ### A-11
@@ -202,12 +202,12 @@ Every claim follows the same bounded process:
 - Ledger line: 57
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_no_open_faults;open_fault_blocks`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `docs/section3-repair-audit/global-fault-register.md;src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#assess`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main;docs/section3-repair-audit/focused-adversarial-reviews.md`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Machine-readable fault-state checker not implemented
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: The durable register records open faults, but its state is not machine-parsed into the gate and open scoped findings remain
 - Current proof state: `INCOMPLETE`
 
 ### A-12
@@ -219,12 +219,12 @@ Every claim follows the same bounded process:
 - Ledger line: 58
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_independent_reviews`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
+- Implementation references: `docs/section3-repair-audit/adversarial-review-protocol.md;docs/section3-repair-audit/focused-adversarial-reviews.md`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main;docs/section3-repair-audit/focused-adversarial-reviews.md`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: Manifest-bound independent review records not implemented
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: Bounded independent reports exist on moving snapshots, but no complete phase set and integrated review share one immutable manifest digest
 - Current proof state: `INCOMPLETE`
 
 ### G-01
@@ -234,14 +234,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `a97b31d693fcb38477f7887840306155f1ebdc55a5839f06e08eaced4d36ebdb`
 - Ledger line: 64
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `policy_fields_are_independently_observable`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#admits;src/is/fivefivefive/CanDis/theory/SiblingQuotient.java#commutative;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled;src/is/fivefivefive/CanDis/theory/UnitLicense.java#UnitLicense`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract policy projections and bounded constructor probes are mapped; complete accidental-implication and Java refinement coverage remains open
 - Current proof state: `INCOMPLETE`
 
 ### G-02
@@ -251,14 +251,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `bcd536d62d0dae60396eb0c2ba10b180af81a0dc89ee2608f11d22a5da6914b5`
 - Ledger line: 65
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/TrustBoundary.lean`
+- Lean declarations: `bundle_selected_digest_is_not_authority;digest_disagreement_rejects;parent_pin_cannot_authorize_publication;empty_fixture_pin_authorizes_no_ground_equation`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateTheoryManifest.java#scalars;src/is/fivefivefive/CanDis/theory/IndependentCertificateVerifier.java#verify;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/TrustedTheoryPinsTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Fixture authority separation is modeled; approved pins remain TEST_ONLY or TEST_ONLY_INPUT_SPECIFIC and no production theory authority is claimed
 - Current proof state: `INCOMPLETE`
 
 ### G-03
@@ -268,14 +268,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `e7ea005566ea59d1721fc250b73de0b155db435a02d9fb2591778cb7830f4057`
 - Ledger line: 66
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `accepted_at_retains_the_complete_index;any_index_mutation_rejects_replay`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;src/is/fivefivefive/CanDis/theory/ContainerLawDeclaration.java#validateEvidenceFor;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyLawRecord`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The complete abstract index and bounded one-field mutations are mapped; no Java-to-Lean/wire refinement proves completeness for every certificate family
 - Current proof state: `INCOMPLETE`
 
 ### G-04
@@ -285,14 +285,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `cd94e7bfc46d71a32d8f8566931d2e20aaa63f66ffc679571df09445a44f4b92`
 - Ledger line: 67
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `any_index_mutation_rejects_replay;wrong_theory_digest_rejects;wrong_source_endpoint_rejects;wrong_target_endpoint_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#appliesTo;src/is/fivefivefive/CanDis/theory/ContainerLawDeclaration.java#validateEvidenceFor;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Strong bounded fail-closed mutations pass, but no exhaustive evidence-family and field product or complete verifier refinement exists
 - Current proof state: `INCOMPLETE`
 
 ### G-05
@@ -302,14 +302,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `c2715fb63547d1602f5ed57a5c6fc3c456d489870808878d059061211fe7a633`
 - Ledger line: 68
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/TemporalAciPhasePresentation.lean`
+- Lean declarations: `same_order_has_same_coherent_presentation;pair_permutation_has_one_presentation;triple_permutations_have_one_presentation;bounded_certified_aci_pair_has_zero_projection_distance;bounded_certified_aci_triple_has_zero_projection_distance`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#CanonicalPhaseProjection`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkTemporalAciSemanticRegression`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Two- and three-sibling temporal ACI permutations have one bounded phase/binder/matrix presentation and zero guarded Java distance; general certified-equality kernel refinement and immutable review remain open
 - Current proof state: `INCOMPLETE`
 
 ### G-06
@@ -319,14 +319,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `de4b776d7d42767f5796d41bcd1d1201905145807cb9fa955f22d3d3cbea9d47`
 - Ledger line: 69
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `zero_distance_has_certified_equality;uncertified_zero_disagreement_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluationWithStandaloneReplay`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract guarded kernel and bounded standalone PAIR slice reject disagreement; default producer observation and the supported Java zero set lack complete independent certification
 - Current proof state: `INCOMPLETE`
 
 ### G-07
@@ -336,14 +336,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `a000debcc2bee801aeed70d648ed615c822c199c59be0ee05685a249532edf66`
 - Ledger line: 70
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `alpha_distance_is_exact_pairwise_minimum;aci_distance_is_exact_minimum_cost_assignment;nonmaximum_empty_alignment_is_not_admissible`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#minimumAssignmentCost`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Exact minima are specified over certified candidates and bounded parity vectors pass; all-and-only candidate generation and algorithm refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### G-08
@@ -353,14 +353,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `cbb5463a905bc30a1f410de31a1c22accca867e38ca185545b8e547d22ac7f10`
 - Ledger line: 71
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `accepted_binding_preserves_exact_occurrence;occurrence_substitution_rejects;lineage_substitution_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#recordDependentChain;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyConstructionReference`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Family-specific ownership and mutation evidence is mapped; no end-to-end occurrence refinement covers every parser, IR, evidence, transfer, and replay form
 - Current proof state: `INCOMPLETE`
 
 ### G-09
@@ -370,14 +370,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `f5f81ea6b991eafb08c0094155fdd92a5367e59d297f1bfc01df16294b2f3e11`
 - Ledger line: 72
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
+- Lean declarations: `unsupported_cases_cannot_receive_law_authority`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFixedBinaryTypedChainOperator;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The bounded dependent-chain unsupported partition falls back structurally without law authority; the complete operator/profile partition and Java refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### G-10
@@ -387,14 +387,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `3a56ce0a24935ae13c95f3625cb74f90d41b7372e4cbc3bd4133f7e6234f0505`
 - Ledger line: 73
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `absent_type_does_not_invent_univ;explicit_univ_is_retained;explicit_univ_has_no_chain_typing_authority;explicit_polymorphism_receives_no_flat_certificate`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#outputType;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#relationViewFromStoredType;src/is/fivefivefive/CanDis/metric/RepairProjection.java#requireExactResultType`
+- Bounded test references: `src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Missing and explicit-univ boundaries are modeled and directly probed; whole parser-to-wire absence of every fabricated-univ path is not proved
 - Current proof state: `INCOMPLETE`
 
 ### G-11
@@ -404,14 +404,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `0d69c4a80cc9fd76cfcc51125d35922b3e2e02ef9ab5b3b81d2df9b2c7813040`
 - Ledger line: 74
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `candidate_key_order_is_total;schema_v8_admits_complete_contract;only_schema_v8_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;certificate_byte_count_is_encoded_length;byte_identical_runs_have_identical_derived_counters`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;certificate-verifier/src/org/acgn/cert/Codec.java#encode;certificate-verifier/src/org/acgn/cert/Bundle.java#parse`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDeterminismTest.java#main;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/TrustedTheoryPinsTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Schema-v8 exclusivity and fresh-process deterministic bytes pass bounded checks; universal Java codec uniqueness and platform refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### G-12
@@ -421,14 +421,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `c2f3490370daf9b8652340f423149e63830113081eb8b6951fa23772fa079b38`
 - Ledger line: 75
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/GuardedPrenex.lean`
+- Lean declarations: `guarded_lift_requires_inhabited_carrier;empty_carrier_blocks_unconditional_guarded_lift`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitRelDecl;src/is/fivefivefive/CanDis/core/NormalForm.java#hasScopedInhabitedCarrierWitness`
+- Bounded test references: `src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Dependent declaration and empty-carrier guard boundaries are mapped; end-to-end information preservation for every later proof remains open
 - Current proof state: `INCOMPLETE`
 
 ### G-13
@@ -438,14 +438,14 @@ Every claim follows the same bounded process:
 - Class: `E/P`
 - Claim SHA-256: `ccc9f0db05c2bc47bc4b511a1afb1ddfe2c884bf86bc20e8364064474084413d`
 - Ledger line: 76
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
+- Lean declarations: `pass_implies_manifest_complete`
+- Implementation references: `src/is/fivefivefive/CanDis/AblationRunManifest.java#capture;src/is/fivefivefive/CanDis/CanonicalBatchTest.java#writeJsonHeader;src/is/fivefivefive/CanDis/Alloy4FunAugmenter.java#writeJson`
+- Bounded test references: `scripts/run_publication_manifest_tests.sh;scripts/verify_imported_publication_snapshot.sh`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: One historical snapshot is hash-bound, but the literal every-empirical-claim assertion is false for the moving repair snapshot and no new immutable run exists
 - Current proof state: `INCOMPLETE`
 
 ### G-14
@@ -455,14 +455,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `42c8f6980168678c345681de6892e77a892b789e2a57839233f46fd3a3f20789`
 - Ledger line: 77
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
+- Lean declarations: `pass_implies_manifest_complete`
+- Implementation references: `scripts/verify_imported_publication_snapshot.sh;scripts/run_publication_manifest_tests.sh`
+- Bounded test references: `scripts/verify_imported_publication_snapshot.sh;scripts/run_publication_manifest_tests.sh`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The enumerated protected paths are unchanged from 8ec25613 and the imported 5804-file snapshot verifies; this is bounded path-set evidence, not universal external-asset identity
 - Current proof state: `INCOMPLETE`
 
 ### G-15
@@ -472,14 +472,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `cf235ca02c21f5465c106049a488084319dff2177cdfa8c8980428e7ecdc3dbf`
 - Ledger line: 78
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
+- Lean declarations: `pass_implies_three_test_classes;pass_implies_direct_conformance`
+- Implementation references: `scripts/run_section3_assurance.sh;.github/workflows/bounded-ci.yml`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main;scripts/run_bounded_ci_java_tests.sh`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: The protected bounded-CI entry point omits required policy suites and CI does not execute the richer assurance entry point; no protected script was changed
 - Current proof state: `INCOMPLETE`
 
 ### G-16
@@ -489,14 +489,14 @@ Every claim follows the same bounded process:
 - Class: `I/P/E`
 - Claim SHA-256: `55d8f25a9b45ee3deace85550ff016e29558225d04bad00336f778f07a7c4aa5`
 - Ledger line: 79
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
+- Lean declarations: `pass_implies_requirements_decomposed;missing_formal_evidence_blocks;open_fault_blocks`
+- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#assess;src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: Row-count and mapping checks exist, but there is no independently fixed closed-world statement census and the current matrix has open diagnostics
 - Current proof state: `INCOMPLETE`
 
 ### G-17
@@ -506,14 +506,14 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `0083fe6d6b89d25df2fde7924f753fc9be00dfd283a458a9e458792bd0a44fd2`
 - Ledger line: 80
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/TrustBoundary.lean`
+- Lean declarations: `bundle_selected_digest_is_not_authority;parent_pin_cannot_authorize_publication`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#kernelAuthority;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluationWithStandaloneReplay;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/TrustedTheoryPinsTest.java#main;src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: Fixture authority is bounded, but no repository-wide surface authority checker exists and stale evidence assertions have exceeded executable authority
 - Current proof state: `INCOMPLETE`
 
 ### G-18
@@ -523,14 +523,14 @@ Every claim follows the same bounded process:
 - Class: `E/P`
 - Claim SHA-256: `0e41d0c95dfc56c17619392d376b857ada14efaef1b4247191d64c09b7f18ebc`
 - Ledger line: 81
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
+- Lean declarations: `pass_implies_manifest_complete`
+- Implementation references: `src/is/fivefivefive/CanDis/AblationRunManifest.java#loadCompatibleArms;src/is/fivefivefive/CanDis/AblationRunManifest.java#verifyOutputs;src/is/fivefivefive/CanDis/CanonicalBatchTest.java#writeMarkdown;src/is/fivefivefive/CanDis/Alloy4FunAugmenter.java#writeMarkdown`
+- Bounded test references: `scripts/run_publication_manifest_tests.sh;src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `REFUTED`
+- Claim-specific process/limits: Manifest compatibility mechanisms exist, but no complete statement-to-manifest registry establishes every nonhistorical numeric or comparative statement
 - Current proof state: `INCOMPLETE`
 
 ### P1-01
@@ -540,14 +540,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `f4486d01f21e8d3c36616c00ec59a4a1a8ae77a0f3cbf1f3766a64c28537f8f3`
 - Ledger line: 87
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_creation_capture_is_immediate_and_stable`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#updateTimeOfVisit`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The immediate stable-capture contract is explicit in Lean and directly probed in Java; parser-to-MASG transition refinement and structural coverage remain open
 - Current proof state: `INCOMPLETE`
 
 ### P1-02
@@ -557,15 +557,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `a2ae0c29fc467113d5b4e73472be65ee06ab23fd3edec8a8f1a6c3bf8064a22a`
 - Ledger line: 88
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_visit_callee_belongs_to_occurrence;valid_visit_arguments_belong_to_occurrence;valid_visit_owns_exact_terminator;valid_visit_has_exact_callee_argument_end_order`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The abstract ownership theorem and cross-visit Java mutations cover callee, arguments, and END; a mechanized MASGEdge refinement is not claimed
+- Current proof state: `READY`
 
 ### P1-03
 
@@ -574,15 +574,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `da23c175799de61eaa74dfdf356927a22977fa424f6e1ace08e79acaca4cdf05`
 - Ledger line: 89
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_visit_has_one_callee;valid_visit_has_exact_callee_identity`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#matchesTarget`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Exact one-callee identity follows formally; missing, duplicate, and forged qualified callee mutations reject at the Java boundary
+- Current proof state: `READY`
 
 ### P1-04
 
@@ -591,15 +591,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `3f21609e7836b9d982bb677409d16207a9715eed342a8a9eaba8a558cf3d37b4`
 - Ledger line: 90
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_visit_has_contiguous_ordered_roles;valid_visit_has_exact_callee_argument_end_order;noncontiguous_roles_reject`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Contiguous source-ordered roles and the full edge layout are proved abstractly and attacked at the Java boundary
+- Current proof state: `READY`
 
 ### P1-05
 
@@ -608,14 +608,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `3177b459222015bc1a67e108ca3b636dda3df1fdfe2147121d681cbab6349615`
 - Ledger line: 91
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `call_term_equality_preserves_argument_order;swapped_arguments_are_distinct;capture_preserves_parser_key_and_argument_order`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/ACGN/codegen/Generator.java#toCode`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The source-record capture model preserves order and Java tests distinguish h[a,b] from h[b,a] across boundaries; parser-object refinement is not mechanized
 - Current proof state: `INCOMPLETE`
 
 ### P1-06
@@ -625,14 +625,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `30fb21fcb2a524cc57aa6a240c4380ce349da552b012527be9e41ff988e810f9`
 - Ledger line: 92
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_visit_uses_declared_arity;observed_arity_cannot_replace_declared_arity`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Declared arity controls validity and Java rejects truncated, extended, and corrupted arities; declaration and ledger provenance are outside the Lean model
 - Current proof state: `INCOMPLETE`
 
 ### P1-07
@@ -642,15 +642,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d3acdcf133d537dd9ff91a096485f330dbf53cda8c9f223a6bf25f4b156c08f5`
 - Ledger line: 93
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `valid_visit_owns_exact_terminator;valid_visit_has_exact_callee_argument_end_order;missing_end_rejects;foreign_end_rejects;end_before_arguments_rejects`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/codegen/Generator.java#validatedCallEdges`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The exact owned END and its final position are proved and malformed END layouts reject in the bounded Java matrix
+- Current proof state: `READY`
 
 ### P1-08
 
@@ -659,14 +659,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d1d676e2e8137b650615102be2d892e26467ddae8c44476f99905f8f21590d7d`
 - Ledger line: 94
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `accepted_visit_is_complete_and_has_no_fallback;missing_end_rejects;foreign_end_rejects;noncontiguous_roles_reject;foreign_callee_visit_rejects;foreign_argument_visit_rejects;wrong_callee_identity_rejects;end_before_arguments_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#downlinksFor;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The formal accepted interface carries ValidVisit and the bounded Java malformed matrix reaches the CALL-specific fail-closed path; complete search-algorithm refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P1-09
@@ -676,14 +676,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `88fab51f179dd66df7b0703a9e3d93dac32ffde6432e699709e6ce3ab9bb02d3`
 - Ledger line: 95
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `occurrence_ledger_prevents_reuse;duplicated_occurrence_is_rejected`
+- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#downlinksFor;src/is/fivefivefive/CanDis/ir/IRAgent.java#nextTov;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getOccurrenceId`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Uniqueness implies nonreuse in the model and reused nested occurrences reject in Java; establishment of the model premise is not mechanized
 - Current proof state: `INCOMPLETE`
 
 ### P1-10
@@ -693,14 +693,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `9de7836312c59f4bd84f6ab35bb9539dc0c9d377e380ac7c69c76a7f000db478`
 - Ledger line: 96
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `zero_argument_call_is_valid;valid_visit_has_one_callee;valid_visit_owns_exact_terminator`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: A concrete zero-argument witness retains callee, arity zero, and END; local and imported Java fixtures exercise the general implementation
 - Current proof state: `INCOMPLETE`
 
 ### P1-11
@@ -710,15 +710,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `e52d1a052740761f20b94567a969bce9088fe742f06f3b03b3c181c887edf190`
 - Ledger line: 97
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `equal_call_keys_preserve_kind`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getKind;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#semanticHead`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Call-key equality preserves kind and Java distinguishes predicate and function calls sharing a spelling
+- Current proof state: `READY`
 
 ### P1-12
 
@@ -727,15 +727,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `81aa5d98c9d4ac4f3bb10fd959dce626bd82faf45a4928bd8ce5c6df93c17dbe`
 - Ledger line: 98
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `equal_call_keys_preserve_qualified_identity;same_spelling_wrong_qualified_target_rejects;exact_complete_callee_target_accepts`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#registerCallable;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getCallee;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Qualified target identity is retained and same-spelling wrong-module substitutions reject in extraction and generation
+- Current proof state: `READY`
 
 ### P1-13
 
@@ -744,15 +744,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d88e29bde4aece1145e4645041756e8963b6e5ccd5f8d4e2d98334e00b6c5b2a`
 - Ledger line: 99
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `equal_call_keys_preserve_declared_arity`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getDeclaredArity;src/is/fivefivefive/CanDis/core/CallMetadata.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Call-key equality retains declared arity and direct Java arity mutations reject
+- Current proof state: `READY`
 
 ### P1-14
 
@@ -761,15 +761,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `44aad69520fd6a108714673bed03eba03f8fa776999470c575e7d718dc196506`
 - Ledger line: 100
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `equal_call_keys_preserve_authority`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getArityAuthority;src/is/fivefivefive/CanDis/core/CallMetadata.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Call-key equality retains the authority field and Java distinguishes local declaration, pinned library, and rejected unknown authority
+- Current proof state: `READY`
 
 ### P1-15
 
@@ -778,14 +778,14 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381`
 - Ledger line: 101
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `accepted_import_is_exact_fixed_ledger_member;unlisted_import_is_rejected`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#signatures;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The formal admission model accepts exact fixed-ledger membership only and Java rejects unpinned or corrupted members; authenticity against upstream Alloy libraries remains external
 - Current proof state: `INCOMPLETE`
 
 ### P1-16
@@ -795,14 +795,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `2ff9bdd7b3b7112086c0a821d74da9c49a16620a39e6ab62f8b348e4a8d6e052`
 - Ledger line: 102
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `call_policy_is_ordered_nonflat_noncommutative_nonidempotent`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/core/EGraphNode.java#appendSortKey;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#main;src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The exact CALL policy tuple is modeled and Java policy plus nested argument probes retain sequence order and multiplicity; full policy-to-observation refinement is open
 - Current proof state: `INCOMPLETE`
 
 ### P1-17
@@ -812,15 +812,15 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `ed22045e9aa67456e2d4eb2f334d80c1e3c1524cb099bb1e9d8a3d7dea864db3`
 - Ledger line: 103
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `generation_preserves_source_order;generation_preserves_exact_identity_and_source_order;generation_rejects_same_spelling_wrong_qualified_target`
+- Implementation references: `src/is/fivefivefive/ACGN/codegen/Generator.java#toCode;src/is/fivefivefive/ACGN/codegen/Generator.java#validatedCallEdges`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Generation preserves the complete modeled key and argument order; the repaired Java boundary now rejects same-spelling wrong-qualified targets
+- Current proof state: `READY`
 
 ### P1-18
 
@@ -829,15 +829,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `37cd24df073638b2e92c29e185e99320e45d7b721554cdfb92b97549130e9123`
 - Ledger line: 104
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `nested_call_differs_from_single;nested_call_returns_input`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#prepare`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The two-cycle finite model proves the semantic distinction and an independent Alloy instance fixture corroborates it
+- Current proof state: `READY`
 
 ### P1-19
 
@@ -846,14 +846,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `fc135df69d2642ebac2bb48cee47019d8e89cf71cde69dd6da898916a11876bb`
 - Ledger line: 105
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `nested_mixed_call_preserves_both_callees_and_ownership;nested_mixed_call_occurrences_are_distinct`
+- Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#create`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The recursive formal tree retains both callees and distinct occurrences and Java checks MASG/IR nesting; standalone wire ownership coverage remains incomplete
 - Current proof state: `INCOMPLETE`
 
 ### P1-20
@@ -863,15 +863,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `4a8f0bb7a7706476d0b43b26e04226c1883239eeeff6df765dbaddd4bb56b217`
 - Ledger line: 106
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
+- Lean declarations: `equal_wire_evidence_preserves_every_serialized_field;valid_wire_evidence_has_exact_roles_and_ordered_endpoint_count;wire_field_projection_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#requireExactBinding;src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#buildStructuralKey;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#callOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyCallOccurrences`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The parallel wire record is field-injective and scalar, endpoint, role, and order mutations reject; no Java-byte-to-Lean refinement theorem is claimed
+- Current proof state: `READY`
 
 ### A2-01
 
@@ -880,14 +880,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `38ac6b152f7e2176d15f7391a88879242d420feb897662b37ac0aafde3cecd32`
 - Ledger line: 112
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `arrow_order_is_observable;join_order_is_observable`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite ARROW and JOIN sequence witnesses observe swaps and producer/verifier role-order attacks reject; Java-to-Lean Seq refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-02
@@ -897,14 +897,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `5f8748b76ed20d27dc874462c96ae6215e4357216997ea072ea4de0c3f8a98b5`
 - Ledger line: 113
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `arrow_duplicate_is_preserved;join_duplicate_is_preserved`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Both formal sequence carriers retain duplicates; direct ARROW and same-leaf JOIN fixtures plus wire substitution attacks preserve multiplicity, while a whole-implementation refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-03
@@ -914,15 +914,15 @@ Every claim follows the same bounded process:
 - Class: `U`
 - Claim SHA-256: `b7f78a96d5c0dee917d3af6e52f2ae7c0d926eaee7670bf9d74f760b63822479`
 - Ledger line: 114
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `arrow_reassociation`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainKind.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainKind.java#fold`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Ordered column concatenation is associative in Lean and parsed Java association pairs have one certified result
+- Current proof state: `READY`
 
 ### A2-04
 
@@ -931,14 +931,14 @@ Every claim follows the same bounded process:
 - Class: `U`
 - Claim SHA-256: `e5ed1e70cefbc417e2046ae878201b4c371f9e2223ed11f91e371d4658541e3d`
 - Ledger line: 115
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `guarded_join_tuple_reassociation;guarded_join_relation_reassociation;binary_interior_join_has_flat_license`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireSoundDependentFlattening`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The ternary guarded relation theorem and Java arbitrary-chain guard support licensed reassociation; a mechanized arbitrary-length refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-05
@@ -948,15 +948,15 @@ Every claim follows the same bounded process:
 - Class: `U`
 - Claim SHA-256: `dd47dbf983c253f843c8b7583869cfa5df16a117f8517fa03a2553938ba7071f`
 - Ledger line: 116
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `unguarded_join_left_value;unguarded_join_right_value;unguarded_join_is_not_associative`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: An exact finite unary-interior counterexample proves unsoundness and Java retains the unlicensed binary association
+- Current proof state: `READY`
 
 ### A2-06
 
@@ -965,14 +965,14 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `75921bb49ad69c617dfbccf8e31dfd7ed23bf3eb83daf5523811f7cf4a6f10c4`
 - Ledger line: 117
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `unary_interior_join_has_no_flat_license;binary_interior_join_has_flat_license`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireSoundDependentFlattening`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Concrete unary and binary guards agree with direct producer and verifier probes; complete loop refinement is open
 - Current proof state: `INCOMPLETE`
 
 ### A2-07
@@ -982,32 +982,32 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `1f73b67ab4d51c8aa6cea982b564d710f2a6711852633153eedd075026a87f6e`
 - Ledger line: 118
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `exact_relation_leaf;primitive_int_leaf;primitive_carrier_leaf`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireLeafTypeProof;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#leafTypeProof;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireLeafTypeRule`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The two admitted relation-view families are formalized and Java checks independent leaf proofs; every leaf wire field is not yet mutated independently
 - Current proof state: `INCOMPLETE`
 
 ### A2-08
 
-**Claim.** Only exact relation, primitive singleton, and authenticated `ParameterN` singleton rules are admitted.
+**Claim.** Only exact relation and primitive singleton stored-type-to-relation-view rules are admitted; source spelling such as `ParameterN` has no independent typing authority.
 
 - Class: `U/I`
-- Claim SHA-256: `008e9d4b677a1541e1df8afc09a6f2ccfeb6863a3bb86bdc0c21c32efb8d5c6a`
+- Claim SHA-256: `bf6c4d114a718433a47d86edd7f729e2225f1fedbbcfef8663076f8783aa579f`
 - Ledger line: 119
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `successful_relation_view_has_only_two_rule_families;parameter_spelling_has_no_independent_authority`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireLeafTypeProof;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireLeafTypeRule`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The v4 policy admits exact relation views and primitive INT/carrier singleton views only; forged ParameterN spelling and unsupported constructors fail closed
+- Current proof state: `READY`
 
 ### A2-09
 
@@ -1016,15 +1016,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `b38e626545011035bf8ce43e0b067f937b4e3289e48fe5b351a4ecc55fb93c04`
 - Ledger line: 120
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `unsupported_leaf_has_no_proof;absent_type_does_not_invent_univ;explicit_univ_has_no_chain_typing_authority;explicit_polymorphism_receives_no_flat_certificate`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#relationViewFromStoredType;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentChainInput;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireTypeName`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Missing, unsupported, and explicitly polymorphic views receive no flattening authority; explicit univ remains source data rather than fabricated proof
+- Current proof state: `READY`
 
 ### A2-10
 
@@ -1033,14 +1033,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `0734e82d9e37317a007a714d0f63bd4de34a02954dbd8ae825aeae326b3a76eb`
 - Ledger line: 121
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `valid_dependent_fold_rechecks_every_step_and_exact_result;dependent_fold_result_is_unique`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainKind.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainKind.java#fold;src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#createProduction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireChainCombination`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The formal accepted fold has a unique exact result and Java rechecks every combination boundary; a whole-method refinement theorem remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-11
@@ -1050,14 +1050,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `3ee189c33a3fe52f46c38ae54927c5e4e40a6ebdc68856196121a8c8f3a93a32`
 - Ledger line: 122
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `equal_complete_chain_indices_bind_every_field;complete_chain_index_fields_are_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#createProduction;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainConstruction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The complete abstract index is field-injective and many producer/verifier mutations reject; profile, target, version, digest, and every type encoding are not each independently mutated
 - Current proof state: `INCOMPLETE`
 
 ### A2-12
@@ -1067,14 +1067,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `7238742b9ecea6ad607bbb6fc152d0226175bb229caa2ed5a69352dd5f5aafae`
 - Ledger line: 123
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `accepted_binding_has_exact_path_and_content;same_typed_source_swap_rejects;post_certificate_content_mutation_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#indexSourceOccurrencePaths;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sourceOccurrenceCommitment;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireMatches;src/is/fivefivefive/CanDis/core/EGraphNode.java#dependentChainSourceContentCommitment`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Path and content equality plus swap and post-certificate mutation rejection are modeled; Java path-generation determinism and independent reconstruction of the Fast Rewrite content scalar remain open
 - Current proof state: `INCOMPLETE`
 
 ### A2-13
@@ -1084,15 +1084,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `ae517f5c70c038ebfbf71a9fec589ca0fdcc1df55870e1946c463c875072e326`
 - Ledger line: 124
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `accepted_binding_certificate_commits_to_source;typed_source_substitution_rejects;certificate_source_substitution_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sourceOccurrenceCommitment;src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#sourceOccurrenceCommitment;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireDependentChainSourceOccurrenceCommitment`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The certificate source equals the accepted typed source and typed-source or certificate-source substitutions reject
+- Current proof state: `READY`
 
 ### A2-14
 
@@ -1101,14 +1101,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `155ae3d4bcacf2992bc8fe1294c8ee5f6f5a550e0f246617a3a284c6e66c39c3`
 - Ledger line: 125
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `lineage_transfer_is_functional;one_certificate_cannot_replay_over_two_roots`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#transferTo;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireLineage;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireMatches;src/is/fivefivefive/CanDis/metric/RepairProjection.java#from`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Functional lineage and injective replay are proved under explicit premises and duplicate-root transfer attacks exercise the Java implementation; premise establishment is not mechanized
 - Current proof state: `INCOMPLETE`
 
 ### A2-15
@@ -1118,14 +1118,14 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `b862e84d7ff5369124ec35570dd1c4eec6878b31c213210ffd13fb553e75b81c`
 - Ledger line: 126
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `admitted_construction_has_concrete_recorded_source_application;unrecorded_construction_is_not_admitted`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#recordDependentChain;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The abstract admission theorem requires exact ledger membership and coordinated omission, extra, cross-replay, and source-owner mutations reject in Java; parser-to-ledger refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-16
@@ -1135,14 +1135,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `71a9d475059d53bdac10e484990b7e089460598f1f8ad9ceb043117f8b06e968`
 - Ledger line: 127
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `unsupported_chain_falls_back_to_exact_fixed_binary;unsupported_chain_fallback_has_no_equality_authority;explicit_polymorphism_receives_no_flat_certificate;concrete_result_mismatch_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentChainApplication;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The formal fallback is exact fixed-binary with no authority and selected unsupported Java constructors follow it; exhaustive constructor nonadmission remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-17
@@ -1152,14 +1152,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `1424fff8c9cd0a2b823fe7b322e13dee255ff94422964be6992567a63b6b842b`
 - Ledger line: 128
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `accepted_projection_rechecks_occurrence_and_every_bound_index;accepted_binding_has_exact_lineage;accepted_binding_has_exact_path_and_content`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#from;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain;src/is/fivefivefive/CanDis/metric/RepairProjection.java#collectDependentChainLeaves;src/is/fivefivefive/CanDis/metric/RepairProjection.java#dependentLeafType`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Accepted projection rechecks immutable binding and exact index in the formal model, and Java rechecks artifact membership, injective use, occurrence, kind, result, order, and types
 - Current proof state: `INCOMPLETE`
 
 ### A2-18
@@ -1169,15 +1169,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `8f67707d24cb3df11432cbf0529468db4ee503c5db4dcdac1ab41f1df9de0e3a`
 - Ledger line: 129
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `readable_spelling_is_not_an_edit;exact_type_change_is_one_edit`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#repairPayload;src/is/fivefivefive/CanDis/metric/RepairProjection.java#repairSemanticPayload;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The abstract atom metric and direct Java probes assign zero to spelling-only changes and one to exact semantic type changes
+- Current proof state: `READY`
 
 ### A2-19
 
@@ -1186,14 +1186,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `214964f7934381d1d1a1c8e2cabef223ad3b949e3cd49e16df671163e3ba157b`
 - Ledger line: 130
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `licensed_reassociation_is_certified_equal_and_zero_distance;unlicensed_reassociation_is_not_certified_and_remains_nonzero`
+- Implementation references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluation;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The bounded metric-kernel model and parsed fixtures give zero only to licensed JOIN or ARROW reassociation and nonzero to the unary-interior counterexample; universal cross-phase refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### A2-20
@@ -1203,14 +1203,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `60b734fe91a547e3ffbb05dd4bf6f1a87c1e4150fc692ad92767d443767371c8`
 - Ledger line: 131
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `accepted_chain_wire_replay_reconstructs_every_committed_field;any_chain_wire_field_difference_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainConstruction;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainInput;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#dependentChainInput;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireLeafTypeRule;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireChainCombination;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract wire replay is field-exact and the bounded mutation suite attacks many scalars and trees; complete one-field mutation coverage and Java-byte refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### P2-01
@@ -1220,15 +1220,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `fac798f7c348cf4447dab6e756eed31855f2d049d4a111f93d8f9436cf283cf6`
 - Ledger line: 137
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `ordinary_seq_plus_has_no_associativity_license;ordinary_seq_plus_is_valid;flat_seq_plus_without_associativity_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testContainerLawSeparation`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: A valid flexible Seq without A is the finite countermodel to flexible-arity-implies-associativity, while a flat Seq without A rejects at the implementation boundary
+- Current proof state: `READY`
 
 ### P2-02
 
@@ -1237,14 +1237,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `c5ca655e734ee107312eb1f23afcd324739b4c8dfdbd3e89176d31462970c74b`
 - Ledger line: 138
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `policy_fields_jointly_determine_policy`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#arityPolicy;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#siblingQuotient;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#flatLicense;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testContainerLawSeparation`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The formal product and Java value object retain distinct policy coordinates; the finite model represents flat and unit authority as fields rather than Java nominal types
 - Current proof state: `INCOMPLETE`
 
 ### P2-03
@@ -1254,15 +1254,15 @@ Every claim follows the same bounded process:
 - Class: `U`
 - Claim SHA-256: `b88c887a749ff0e6eeae1d4c8fa25815daca7ca7633d857a8cb32440ef4dfeaa`
 - Ledger line: 139
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `invalid_set_downward_closure_rejects;valid_set_requires_positive_downward_closure`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requirePositiveDownwardClosure;src/is/fivefivefive/CanDis/theory/SetPortSchema.java#arityPolicy`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testArityClosureAndEmptyStorage`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Every valid modeled Set requires positive downward closure and the Java constructor rejects the minimal [1,3] violation
+- Current proof state: `READY`
 
 ### P2-04
 
@@ -1271,15 +1271,15 @@ Every claim follows the same bounded process:
 - Class: `U`
 - Claim SHA-256: `91f2da39d8b90aa362920d49a580ce4e9266bea034c9ffef4aca843880d1fd3a`
 - Ledger line: 140
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `invalid_flat_splice_closure_rejects;valid_flat_requires_splice_closure`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requireFlatSpliceClosure;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testArityClosureAndEmptyStorage`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Every valid modeled flat policy requires k+l-1 closure and Java rejects the minimal [1,2] finite violation
+- Current proof state: `READY`
 
 ### P2-05
 
@@ -1288,14 +1288,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `b114200dc3396e59e67239676d4d7fce5ceac56b6e9ff6799b889097c9d9339a`
 - Ledger line: 141
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `valid_flat_requires_one_root_container`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/FlatLicense.java#atRootPort;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite valid-policy theorem and direct multi-port/path attacks enforce one declared root path; complete Java refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P2-06
@@ -1305,14 +1305,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `2c839b74126cb1fffa416e6b93e58418d51d20025a4a2e7563dcf973734fcfec`
 - Ledger line: 142
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `valid_flat_requires_homogeneous_element_and_result_types`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The exact finite policy premise and Java registry reject cross-result and cross-element type reuse; a mechanized Java type-bridge refinement is absent
 - Current proof state: `INCOMPLETE`
 
 ### P2-07
@@ -1322,15 +1322,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `b708325769a359fe30bff6af5db19a53351beb8f8234089a125954b2c3206a7e`
 - Ledger line: 143
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `ordinary_zero_arity_needs_no_unit;flat_zero_arity_without_A_and_U_rejects;flat_zero_arity_with_A_and_U_is_valid;valid_zero_admitting_flat_requires_A_and_U`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense;src/is/fivefivefive/CanDis/theory/ArityPolicy.java#admitsZero`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testContainerLawSeparation;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testTypedNodeConstructionAndUnits`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The model proves the general flat-zero implication and ordinary K0 countercase; Java constructor and replay matrices exercise both boundaries
+- Current proof state: `READY`
 
 ### P2-08
 
@@ -1339,15 +1339,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `afe3fc840f072921629394f4d7019b4c9c24a02a6b3f0361a2c7941d572cde9a`
 - Ledger line: 144
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `nonempty_variadic_rejects_empty_storage;positive_at_least_policy_rejects_zero`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requireAdmitted`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testArityClosureAndEmptyStorage`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Positive at-least arity rejects zero in Lean and the Java stored-container boundary
+- Current proof state: `READY`
 
 ### P2-09
 
@@ -1356,15 +1356,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `1b09f2b05d0a34faa0905f9a65479aa22dd62a44670b64890dfcd54a0faab1d9`
 - Ledger line: 145
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `flat_set_plus_is_ACI_without_unit;alloy_flat_whitelist_is_exact`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFlatSetOperator;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testExactAlloyPolicy`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Closed Opcode enumeration and registry tests admit exactly AND/OR/UNION/INTERSECTION as nonempty flat Set ACI without unit
+- Current proof state: `READY`
 
 ### P2-10
 
@@ -1373,15 +1373,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `7f50ea1852ffdf87e97206d78956e41ebd29722213bd795a426463e965356d72`
 - Ledger line: 146
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `flat_bag_plus_requires_exactly_A_and_C_here;integer_flattening_is_profile_bounded`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isIntegerAcOperator;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testOverflowProfile`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Closed profile/opcode enumeration and direct registry probes admit flat AC Bag integer ADD/MUL only under modular overflow
+- Current proof state: `READY`
 
 ### P2-11
 
@@ -1390,15 +1390,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `84f0e523ab22515d09625fd39b8a51d85d1343fd3b08073d0155422cd6d50208`
 - Ledger line: 147
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `four_bit_left_association_overflows;four_bit_right_association_succeeds;no_overflow_addition_reassociation_is_unsound`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testOverflowProfile`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The exact 4-bit 7+1-1 countermodel separates associations and Java refuses A under overflow-forbidding profiles
+- Current proof state: `READY`
 
 ### P2-12
 
@@ -1407,15 +1407,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `0083271a3f13bcbda49097a05889538db1bb3c9f8fc748645886f99ceeef705f`
 - Ledger line: 148
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `calls_joins_arrows_lists_binders_and_decls_are_not_flat`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFixedBinaryTypedChainOperator;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testExactAlloyPolicy;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkUnaryInteriorJoinDoesNotFlatten`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Homogeneous policy keeps JOIN/ARROW fixed binary; dependent A2 construction is separately indexed and unary-interior flattening rejects
+- Current proof state: `READY`
 
 ### P2-13
 
@@ -1424,15 +1424,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `045cfe4c36afdadece97e8bd66627907558813a515c99e3d60900c8c2165ed04`
 - Ledger line: 149
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `nonflat_bag_two_is_commutative_only;equality_inequality_and_iff_are_C_not_A_or_I`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testFixedCommutativeAndRoleSensitiveForms`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite policy and direct association/flatten attacks retain exactly C over Bag=2 for equality, inequality, and pre-elimination IFF
+- Current proof state: `READY`
 
 ### P2-14
 
@@ -1441,15 +1441,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `90580fa8213530641731da222122de6b2857dac50b6d3b49f79241baae89d36e`
 - Ledger line: 150
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `disjoint_is_nonflat_bag;bag_retains_duplicate_occurrences;semantic_disjoint_and_structural_disjoint_list_are_distinct`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#requireApplicableLaws`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testFixedCommutativeAndRoleSensitiveForms;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testBagMultiplicityPreservedUntilExplicitRewrite`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Semantic DISJOINT is nonflat C Bag and retains duplicates; structural DISJOINT_LIST remains a distinct ordered identity
+- Current proof state: `READY`
 
 ### P2-15
 
@@ -1458,15 +1458,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `2987ffb5b4c7996dc25a09fa65e2b799709a45c8ef3338b67046ff90e368bf2b`
 - Ledger line: 151
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `calls_joins_arrows_lists_binders_and_decls_are_not_flat;semantic_disjoint_and_structural_disjoint_list_are_distinct;role_sensitive_sequence_observes_swap`
+- Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#schemaAt`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testFixedCommutativeAndRoleSensitiveForms;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testStructuralOrderLaws`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Closed policy enumeration and ordered-container tests keep CALL, lists, binders, declarations, and role-sensitive forms nonflat and positional
+- Current proof state: `READY`
 
 ### P2-16
 
@@ -1475,14 +1475,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `ae04f7e0f12a960156f639a69db652e044fdc8c2aa39cecf35b7d3132d53ef60`
 - Ledger line: 152
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `boolean_empty_collapses_by_smart_constructor;boolean_singleton_collapses_by_smart_constructor;stored_boolean_carrier_is_nonempty_and_has_no_unit`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testConstructionBoundary`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite AND smart-constructor model and Java AND/OR tests collapse empty/singleton cases before storage; stored Boolean carriers remain nonempty with no U
 - Current proof state: `INCOMPLETE`
 
 ### P2-17
@@ -1492,15 +1492,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `653ed8713894b7003dd496fec5d9f34049bf2e2b4089a176324ee75e7424e527`
 - Ledger line: 153
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `bag_retains_duplicate_occurrences;set_observation_is_idempotent;role_sensitive_sequence_observes_swap`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#requireApplicableLaws`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testSeqBagSetSemantics;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#testConcreteContainerConstructionReplay`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite observations and concrete certificate replay distinguish Seq order, Bag multiplicity, and Set idempotence
+- Current proof state: `READY`
 
 ### P2-18
 
@@ -1509,14 +1509,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `4dff4190a5709dd2253c47a941bd934e2b276bd595b7d9a4a581fd647b772735`
 - Ledger line: 154
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `commutativity_witness_index_is_injective;idempotence_witness_index_is_injective;associativity_witness_index_is_injective;unit_witness_index_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#appliesTo`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#testContainerLawProvenance;src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testTrustedLawAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite witness-index payloads are injective and one-field Java mutations reject; a complete wire/JVM refinement theorem remains open
 - Current proof state: `INCOMPLETE`
 
 ### P2-19
@@ -1526,14 +1526,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `19ae22028dc1c50a3f7b92d54a236e8696c1b389ef204e6c5ae764cdab60a354`
 - Ledger line: 155
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `issued_associativity_requires_exact_registry_entry`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#accepts`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testTrustedLawAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite authority predicate requires exact opcode/profile equality and the Java registry also binds path, type, schema, law parameter, endpoints, version, and digest; full refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P2-20
@@ -1543,14 +1543,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `96b8ce07afc0aad611a36396786a36cd235e5c553f40611962d168721e70b936`
 - Ledger line: 156
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
+- Lean declarations: `recursive_flatten_iff_same_head_and_typed_A_evidence`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand;src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#create`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkUncertifiedSourceUnionRejected`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The formal decision is iff same-head typed A evidence; positive and negative Java recursive fixtures exercise that boundary, without a whole-method refinement theorem
 - Current proof state: `INCOMPLETE`
 
 ### P3-01
@@ -1560,14 +1560,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `38ae43263de3ae5c80fe60c492bf66afdb85c4f434aaf55d4fa98b7eb1fba686`
 - Ledger line: 162
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: claim repaired after empty-relation counterexample; fresh formal and conformance mapping required
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `exact_relation_arity_is_retained;ordered_columns_are_observable;relation_is_not_generic_unary;missing_type_fails_closed`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#stableString;src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Exact positive relation columns and fail-closed missing types are modeled; erased empty columns remain governed separately by P3-15 and complete parser refinement is open
 - Current proof state: `INCOMPLETE`
 
 ### P3-02
@@ -1577,15 +1577,15 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `121d9cc65d7d9cecfdb855d72dc9a8bb35a7739a1774a5e7e161a9524a49ef1c`
 - Ledger line: 163
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `missing_type_fails_closed;missing_type_does_not_invent_relation`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType;src/is/fivefivefive/CanDis/metric/RepairProjection.java#requireExactResultType`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Missing relational and binding types are rejected by the adapter/projection boundary; no textual or generic relation fallback is admitted
+- Current proof state: `READY`
 
 ### P3-03
 
@@ -1594,14 +1594,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `c5733bd96ae6281cc4f3f9fe6d51e66261c20b0b0bf4b3aa426aaa210c7b0fca`
 - Ledger line: 164
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `profile_payload_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/SemanticProfile.java#structuralKey;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyAuthorizedProfile`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The five semantic fields and recomputed fingerprint are mutation-tested; no mathematical injectivity claim is made for SHA-256 or Java serialization
 - Current proof state: `INCOMPLETE`
 
 ### P3-04
@@ -1611,14 +1611,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `3991aa4c4db10ffcd0bcc1bc0197fda0b30377e422d4804b44dd05fd89bdab89`
 - Ledger line: 165
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `complete_law_index_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyLawRecord`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Every modeled law-index field and endpoint is independently replayed and mutation-tested; cryptographic encoding refinement remains outside the Lean model
 - Current proof state: `INCOMPLETE`
 
 ### P3-05
@@ -1628,14 +1628,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `55424471ff9ad348d3c3603257809bba4b768fcf53a389c5cb7c799e490ab620`
 - Ledger line: 166
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `exact_flat_replay_accepts;flat_replay_payload_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#splices;src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyFlat`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Visible source tree, derived splice ledger, ordered leaves, independently normalized trace, endpoints, and coverage survive omission/substitution/reorder attacks; the Lean model is an abstract bounded contract
 - Current proof state: `INCOMPLETE`
 
 ### P3-06
@@ -1645,14 +1645,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `fa0ab4cd0e16850dd0ec8bdb39c2043837ae3c20ead8ea771b5daafe002a1c67`
 - Ledger line: 167
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `exact_container_replay_accepts;container_replay_payload_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#inputOccurrences;src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyContainer`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Ordered source occurrences, independently normalized outputs, multiplicity/order, and exact quotient fibers are reconstructed and mutation-tested; Java decoding refinement is not proved in Lean
 - Current proof state: `INCOMPLETE`
 
 ### P3-07
@@ -1662,15 +1662,15 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `169eb123f570225f3866ce215ce9558385ef374a795d3849c584282fb840cf91`
 - Ledger line: 168
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `alpha_is_not_nonidentity_automorphism`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/TypedAlphaEquivalence.java#blocksRelated`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Fresh-name alpha allocation is a separate action and identity descriptor permutations are rejected as occurrence automorphism certificates
+- Current proof state: `READY`
 
 ### P3-08
 
@@ -1679,14 +1679,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `b3b677e2bbd27f23dd74d92e0010a5db42677ed3443ceb21c68908a9caa0a6e1`
 - Ledger line: 169
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `complete_binder_index_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#appliesTo;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Descriptor, occurrence embedding, automorphism, conjugation, enclosing root, source path, context, source/target, and endpoints are reconstructed; structural-key cryptographic refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P3-09
@@ -1696,14 +1696,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `680aa55c804d4816f24eebe8bbc5aeff08dd9ba573e589c5fda51f5740fc942f`
 - Ledger line: 170
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `exact_binder_closure_and_conjugations_accept;missing_swap_from_generated_closure_rejects;missing_occurrence_conjugation_rejects`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#binderView;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#permutationClosure;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireConjugate;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#collectBinderObligations`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The standalone verifier derives descriptor generators, bounded finite closure, derivations, occurrence conjugations, and root/path-qualified obligations; Lean proves an executable S2 instance rather than arbitrary finite groups
 - Current proof state: `INCOMPLETE`
 
 ### P3-10
@@ -1713,14 +1713,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `413413515277fe133dc56fc4d80e10585618bf045eccafe5ffdd45349fb56ba2`
 - Ledger line: 171
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `exact_source_obligation_accepts`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Exact obligations are derived from decoded replay/orbit sources; paired record-plus-reference omissions and cross-replay substitutions reject, but whole-program source-decoder refinement is not formalized
 - Current proof state: `INCOMPLETE`
 
 ### P3-11
@@ -1730,14 +1730,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `cb07e2c401b005826f599ccaebea150beb922179ed7f8773e678d07c773bcbaf`
 - Ledger line: 172
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `stale_owner_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#flatSources;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#constructionSourceOwners`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Replay-owned source identities and construction endpoints reject stale-owner, cross-owner, and complete cross-source substitutions within the bounded wire harness
 - Current proof state: `INCOMPLETE`
 
 ### P3-12
@@ -1747,14 +1747,14 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `981e681a6eac0f86c48a4aa9a4c95d01b6dafea2492683b66f22eb05f7fe0313`
 - Ledger line: 173
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `canonical_wire_payload_is_injective;exact_wire_claim_accepts;reordered_wire_children_reject`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#indexedTable;certificate-verifier/src/org/acgn/cert/Bundle.java#contentId;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#sortedSection`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Content-addressed tables recompute IDs and require canonical order; arbitrary duplicate, content, grammar, and reorder mutations reject, without asserting SHA-256 collision impossibility
 - Current proof state: `INCOMPLETE`
 
 ### P3-13
@@ -1764,14 +1764,14 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `e5f35d45c5799f10455454071df3c72cc22b76b1a6893073126fcfc3f9382ced`
 - Ledger line: 174
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `retained_artifact_payload_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#binderOccurrenceCertificates;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#constructionSources`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The immutable artifact retains profile, classes, witnesses, unfoldings, laws, source ledger, constructions, CALLs, and binder evidence with exact coverage; universal Layer-3 consumer completeness remains unproved
 - Current proof state: `INCOMPLETE`
 
 ### P3-14
@@ -1781,14 +1781,14 @@ Every claim follows the same bounded process:
 - Class: `I/P`
 - Claim SHA-256: `d5fc74313d3b13382e223a4b64dd36ed2b4ef0c1ea7eeebb8acad34a58731b0c`
 - Ledger line: 175
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
+- Lean declarations: `certified_source_mutation_rejects;exact_projection_source_accepts;stale_projection_source_rejects;forged_projection_digest_rejects`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireRepairProjectionSources;src/is/fivefivefive/CanDis/metric/RepairProjection.java#project`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Projection requires the exact identity-owned frozen NormalForms and consumes the adapter-derived canonical key; foreign, post-certification, and concurrent mutations reject, while an end-to-end Java refinement theorem is absent
 - Current proof state: `INCOMPLETE`
 
 ### P3-15
@@ -1798,14 +1798,14 @@ Every claim follows the same bounded process:
 - Class: `U/I/P`
 - Claim SHA-256: `80da7da76d5f854388a5a5fab6002b0cb2e00160851be975948c14df8545e22c`
 - Ledger line: 176
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase3EmptyRelations.lean`
+- Lean declarations: `parser_retains_arity;no_decoder_recovers_both_parent_column_orders;arityless_empty_fails_closed;empty_graph_arity_is_injective;empty_arities_are_distinct`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#emptyRelation;src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#emptyRelationArity`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The empty-relation information boundary is modeled; full MASG/IR/metric/writer/verifier/visualization refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P3-16
@@ -1849,15 +1849,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `084ce45f894a4e20927c30843e8aa7851fada2f4385639bd2e3b23a0d3bff5c5`
 - Ledger line: 184
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `failed_collision_preserves_both_owners`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testIncomparableCollisionBucket`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite collision model proves nonimplication and the implementation fixture preserves two leaders after an uninhabited equal-shape proposal; this is bounded conformance, not a Java refinement theorem
+- Current proof state: `READY`
 
 ### P4-03
 
@@ -1866,15 +1866,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `462917090ce0f6a7af44e4d63883a8fcf34de77d8d03d56372cc2a17c885a4a2`
 - Ledger line: 185
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `second_orientation_is_considered;evaluation_records_both_directed_attempts`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testCertifiedCollisionRebuild`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The abstract evaluator records both directed attempts and the implementation counter verifies two attempts for a compatible collision; completeness is bounded to exercised collision construction
+- Current proof state: `READY`
 
 ### P4-04
 
@@ -1883,14 +1883,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `ab47c5a21bf9acba434c49c0796b183d63d1a40b8d08fb61c120d67e948d4624`
 - Ledger line: 186
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `admission_requires_an_orientation`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdgeOriented;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#unionCertified`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testRestrictionObligationIsNotInferred;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite model proves orientation admission and Java verifies typed collision and parent-edge certificates with wrong or missing proof rejection; an end-to-end Java refinement theorem remains open
 - Current proof state: `INCOMPLETE`
 
 ### P4-05
@@ -1900,15 +1900,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `331b981e2d59da0d84483d84d8c8cc19d07c4ce73ca89bfde8aaf0f6bfdb3c54`
 - Ledger line: 187
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase4WireConservation.lean`
+- Lean declarations: `incomparable_decision_preserves_coexistence`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testIncomparableCollisionBucket`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The bounded model and typed Int/Bool fixture preserve both leaders in one exact-shape bucket when neither direction is inhabited
+- Current proof state: `READY`
 
 ### P4-06
 
@@ -1917,14 +1917,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `f2cfca69464ef3a1113b9efa31d2eaa5d82f65d4221e5ea1c920cb2c17791f2a`
 - Ledger line: 188
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4WireConservation.lean`
+- Lean declarations: `union_partition_count;valid_union_has_no_silent_source_loss;valid_union_result_is_exact;valid_union_retirement_ledger_is_exact;valid_rebuild_replaces_or_retires_exactly;valid_union_frame_is_the_exact_effect;valid_rebuild_base_frame_is_the_exact_effect;valid_rebuild_record_frame_is_the_exact_effect`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateTraceSnapshot.java#verifyConservationTo;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#unionCertifiedInternal;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testDirectUnionRehomeEvidence;src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testRebuildDuplicateRetirementEvidence;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite conservation and exact-frame models are paired with producer mutation tests and independent schema-v8 transition replay; universal JVM refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P4-07
@@ -1934,14 +1934,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `0bd822921ae2c9f39329fd0cc21480548965c0e02e22a6470e479b1d93ed0a99`
 - Ledger line: 189
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `canonical_preimage_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#parentUsesSnapshot`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryStateTest.java#testGraphOwnershipAndQuiescence;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Owner and canonical shape form the modeled injective preimage and Java reverse-use keys are owner-qualified; cryptographic identifier injectivity is not claimed and malformed wire identities fail closed
 - Current proof state: `INCOMPLETE`
 
 ### P4-08
@@ -1951,14 +1951,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `9e9ffde2a03d7ad605388bba45460064d6106d4be38dbbafeff2fc2a049af8fe`
 - Ledger line: 190
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `initial_graph_is_quiescent_exact;supported_operation_preserves_quiescent_exact;supported_run_preserves_quiescent_exact;supported_quiescent_public_observation_is_exact`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuildHashConsExactly;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#requireHashBucketsExact;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#hashIndexRebuildCount`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testCertifiedInterfaceRestriction;src/is/fivefivefive/CanDis/theory/TheoryStateTest.java#testGraphOwnershipAndQuiescence`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite supported-operation model preserves exact public buckets; Java validates the incoming index, clears and reconstructs it from live records, and validates exact buckets afterward; fresh counter-only and empty-body mutants die in full and isolated interface-change tests, while a whole-program refinement theorem remains open
 - Current proof state: `INCOMPLETE`
 
 ### P4-09
@@ -1968,15 +1968,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `0a39e5dd9a5342d92f97ea8567bd2ab76a4d4753c6e12d8d9cbe475509782321`
 - Ledger line: 191
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `revision_only_memo_is_unsound;changed_record_is_reconsidered`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#invalidateCollisionMemo;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testSameRevisionWitnessChangeInvalidatesCollisionMemo;src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testUnexpectedCollisionErrorDoesNotPoisonMemo`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The stale revision-only counterexample is formalized and the implementation regressions force reconsideration after same-revision witness change while preventing unexpected errors from poisoning the memo
+- Current proof state: `READY`
 
 ### P4-10
 
@@ -1985,14 +1985,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `4a8255c26148e3ecd590fe0346fcfa764a892d9800d2883c65c9bf2eaa9682e0`
 - Ledger line: 192
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `admitted_merge_strictly_decreases_positive_leaders`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuild`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testGeneratedLegalMutationTraces;src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java#testDirtyOrderIndependence`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The Lean theorem covers only the admitted-merge leader measure and generated finite Java traces terminate; no complete termination measure covers every dirty-record and interface-change transition
 - Current proof state: `INCOMPLETE`
 
 ### P4-11
@@ -2002,31 +2002,31 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6`
 - Ledger line: 193
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `canonical_preimage_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java#testSnapshotRejectsMalformedParentTopology`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The owner-plus-term preimage is injective in the finite model and producer/verifier reject inconsistent identifiers and topology; no mathematical SHA-256 injectivity is assumed or proved
 - Current proof state: `INCOMPLETE`
 
 ### P4-12
 
-**Claim.** Legacy ambiguous graph/certificate versions reject or use one explicit tested migration; no silent reinterpretation.
+**Claim.** Historical ambiguous graph/certificate versions reject or use one explicit tested migration; no silent reinterpretation.
 
 - Class: `P`
-- Claim SHA-256: `50781100f50c1aec090024fcf5610c8d57539717381b18a574b0b71647bf665f`
+- Claim SHA-256: `ff4b8bf192cab83740fe77850b109b4de517715ed1447ab81c700aa3385380ff`
 - Ledger line: 194
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
+- Lean declarations: `schema_v8_is_accepted;historical_and_future_schema_versions_reject`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The finite version predicate admits exactly schema v8 and the parser rejects otherwise-valid v5, v6, and v7 relabelings; this is bounded direct evidence rather than a universal parser-refinement proof
 - Current proof state: `INCOMPLETE`
 
 ### P5-01
@@ -2036,15 +2036,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `1058e7eb242b149f09c6fcd68fc12ed5b9d39375479e803ec7024ebde55e692b`
 - Ledger line: 200
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `set_none_exactly_one_binding;some_set_none_equal_none;all_set_none_false_is_false`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite relation semantics and parser-backed normalization retain the unique empty relation binding for set none; universal parser-to-Lean refinement is not claimed
+- Current proof state: `READY`
 
 ### P5-02
 
@@ -2053,15 +2053,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `4f67c3bf1336bf18d475a910b2bd81df88a81ec31e1c395c60458a637c766d87`
 - Ledger line: 201
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `lone_none_exactly_one_binding;some_lone_none_equal_none;all_lone_none_false_is_false`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Finite relation semantics and parser-backed normalization retain the unique empty relation binding for lone none; universal parser-to-Lean refinement is not claimed
+- Current proof state: `READY`
 
 ### P5-03
 
@@ -2070,15 +2070,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `3ffdb7ee391b9a646efc73e75a12d77f50fad794b7033c7e289749b4aa7a158f`
 - Ledger line: 202
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `bare_declaration_defaults_to_one;explicit_declaration_overrides_default`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#prenexRelDecl`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The finite multiplicity model and parser-backed QuantiVar checks distinguish bare ONE from explicit SET/LONE/SOME/ONE/EXACTLY declarations
+- Current proof state: `READY`
 
 ### P5-04
 
@@ -2087,15 +2087,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `8fbb71041b3a429e177e279f94d18f3269ccaeb4d28d5fc05ae951c8e93ca7b1`
 - Ledger line: 203
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `none_subset;none_in_none`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Alloy/Kodkod, the finite subset model, Fast Rewrite, certified observation, and ablation regressions agree that none is a subset of none
+- Current proof state: `READY`
 
 ### P5-05
 
@@ -2104,31 +2104,31 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `4252bf755653e6ab1d7954ae66372c23a5df58520d532a0dfef38b7d46ec0652`
 - Ledger line: 204
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `arbitrary_in_none_is_not_false_without_evidence;nonempty_in_none_is_false;in_unknown_none_stays_guarded;in_proven_nonempty_none_folds_false`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkGenericLabelCannotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The semantic guard and direct positive/nullable/synthetic-label attacks pass; complete alias and De Bruijn refinement remains part of P5-14
 - Current proof state: `INCOMPLETE`
 
 ### P5-06
 
-**Claim.** Only binding tuples with `ONE`, `SOME`, or positive `EXACTLY`, plus the actual `univ` constant, authorize that nonemptiness rule.
+**Claim.** Only authenticated ONE or SOME binding tuples authorize static nonemptiness; EXACTLY-of, univ without a separate inhabitant witness, and synthetic opcode labels do not.
 
 - Class: `U/I`
-- Claim SHA-256: `ad5973dfe49b70337e0077ac7890241513d336b1cac917ea9e6fb087a91dfb24`
+- Claim SHA-256: `44498c99ed4894a86433afcd0d0262fe25e136bb0da4574bebf4a2a4fd4ab25e`
 - Ledger line: 205
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `univ_requires_an_inhabitant_for_nonemptiness;empty_universe_is_not_nonempty;some_binding_proves_nonempty;one_binding_proves_nonempty;exactly_none_has_the_none_binding;exactly_binding_does_not_prove_nonempty;univ_without_inhabitant_witness_does_not_prove_nonempty;synthetic_label_never_proves_nonempty`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkExactlyOfDoesNotMintNonemptiness;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Lean reconstructs Alloy EXACTLY-of as relation equality, proves that univ is nonempty only with an inhabitant, and limits guard authority to ONE/SOME; 253 source-rule checks include direct Fast Rewrite and five-arm EXACTLY-of attacks, while complete Java refinement and frozen review remain open
 - Current proof state: `INCOMPLETE`
 
 ### P5-07
@@ -2138,14 +2138,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `da74ebe0acd1ce6b63daadf6b3b6d1abd901208b31d3e9381134dc2b5130be83`
 - Ledger line: 206
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `none_not_in_none_is_false;nonempty_not_in_none_is_true;no_relation_not_in_univ;not_in_unknown_none_stays_guarded;not_in_proven_nonempty_none_folds_true`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The exact relational duals share ONE/SOME authority and retain univ-in-none guards without an inhabitant witness; complete alias refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P5-08
@@ -2155,14 +2155,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `7b2c8c1094ecd7448db125f0a836fbd21a155b902aee0750477deb109113262f`
 - Ledger line: 207
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `empty_domain_all;empty_domain_not_some;empty_domain_no;empty_domain_not_one;empty_domain_lone;empty_domain_not_not_lone;some_none_has_no_binding;one_none_has_no_binding;exactly_none_has_the_none_binding`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteQuantifier`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The finite quantifier truth table covers empty positive domains and nullable or EXACTLY controls; the Java static-empty recognizer is a documented finite proof family rather than a complete semantic decision procedure
 - Current proof state: `INCOMPLETE`
 
 ### P5-09
@@ -2172,14 +2172,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `a783f4e5b721db166f6236966d15ee0bb748825dea1f8afa963b46a94dfd59c4`
 - Ledger line: 208
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `snapshot_after_guard_agrees`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalize;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Java applies guarded normalization and closes exposed negation before cloning the certificate-facing matrix; the Lean snapshot theorem models the ordering contract but not the complete mutable traversal
 - Current proof state: `INCOMPLETE`
 
 ### P5-10
@@ -2189,15 +2189,15 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `fe6e99245458df62856a377aa4b006ea615e6c389fdf31d08fc6abdb045795d1`
 - Ledger line: 209
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
-- Current proof state: `INCOMPLETE`
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `translated_sat_has_solver_authority;translated_unsat_has_solver_authority;unsupported_has_only_parser_type_lowering_authority;every_command_has_exactly_one_authority_record`
+- Implementation references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#CommandAuthorityRecord;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkHigherOrderCommandAuthorities`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkHigherOrderCommandAuthorities`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: A source-ordered 12-command ledger emits exactly one checked record per command: eight solver-backed SAT/UNSAT results and four exact higher-order-skolemization limitations with parser/type/lowering-only authority; unrelated translation errors propagate
+- Current proof state: `READY`
 
 ### P5-11
 
@@ -2206,14 +2206,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d47927aa3fbf53685a9009de72bf8e38a3aa860736c74f22d75ebea29e9e7050`
 - Ledger line: 210
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `ablation_mirror_counterexample_for_one_binding;ablation_mirror_counterexample_for_some_binding`
+- Implementation references: `src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteScopedTree`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAblationBindingGuards;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: Five engines pass scoped bare/ONE/SOME versus SET/LONE, nested shadowing, and synthetic-label attacks; the Lean counterexamples establish why erasing binding context is wrong but do not refine every engine implementation
 - Current proof state: `INCOMPLETE`
 
 ### P5-12
@@ -2225,8 +2225,8 @@ Every claim follows the same bounded process:
 - Ledger line: 211
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `none_intersection_is_none;positive_one_over_none_intersection_has_no_binding;relation_difference_itself_is_none;positive_one_over_self_difference_has_no_binding`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyEmptySet;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameSemanticInvocation;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#REL/MINUS`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#compoundDifferenceEmpty;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#R - R must collapse`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyEmptySet;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameSemanticInvocation;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteOnce`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
@@ -2240,31 +2240,31 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `e47c5dc600c156f5a2bc38faf25a1b6f2494a480722e97c2eb56436f4de315b7`
 - Ledger line: 212
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `existing_trace_kind_cannot_record_source_rewrite`
+- Implementation references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#prepareForVerification;src/is/fivefivefive/CanDis/theory/CertificateProvenance.java#capture`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerBundleInspectionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: The API and schema state that raw input identity is provenance while certified derivation begins at normalized typed IR; the finite trace-kind theorem and writer inspection support that boundary but do not certify raw source normalization
 - Current proof state: `INCOMPLETE`
 
 ### P5-14
 
-**Claim.** Alias/De-Bruijn resolution, positive `EXACTLY`, and the full guarded quantifier truth table refine the finite relation semantics under nested shadowing.
+**Claim.** Alias/De-Bruijn resolution, EXACTLY-of domain equality, and the full guarded quantifier truth table refine the finite relation semantics under nested shadowing.
 
 - Class: `U/I`
-- Claim SHA-256: `7c28ad27379b20279a8180eb1d575904cd510add065521c30c638d41c59425a3`
+- Claim SHA-256: `99fcfbd81695b38d365749fcceda4328aa3b05d885b0abe2e0bc666d90101be4`
 - Ledger line: 213
 - Lean file: `docs/section3-repair-audit/formal/PrenexAciScheduling.lean`
-- Lean declarations: `some_before_all_and;all_before_some_or;schedule_preserves_membership;schedule_preserves_length`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#flattenBooleanAssociationForPrenex;src/is/fivefivefive/CanDis/core/NormalForm.java#prenexChildOrder;src/is/fivefivefive/CanDis/core/NormalForm.java#reachesBooleanBoundary`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAdversarialPrenexRegressions`
+- Lean declarations: `some_before_all_and;all_before_some_or;schedule_preserves_membership;schedule_preserves_length;exactly_none_retains_one_empty_binding;exactly_none_binding_count;different_scope_paths_separate_shadowed_bindings;same_spelling_does_not_override_scope_identity`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#flattenBooleanAssociationForPrenex;src/is/fivefivefive/CanDis/core/NormalForm.java#prenexChildOrder;src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet;src/is/fivefivefive/CanDis/metric/RepairProjection.java#addBinding;src/is/fivefivefive/CanDis/metric/RepairProjection.java#registerAliasType`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkAdversarialPrenexRegressions;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkExactlyOfDoesNotMintNonemptiness`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `PARTIAL`
-- Claim-specific process/limits: Same-carrier ACI-region scheduling is formally modeled and boundedly checked; alias resolution, full De Bruijn refinement, positive EXACTLY, cross-carrier cases, and the complete guarded truth table remain open
+- Claim-specific process/limits: Same-carrier scheduling, one-empty-binding EXACTLY-none, and scope-path separation from colliding source spellings are formally modeled; four parser-backed implication/IFF shadowing controls now prepare and remain source-equivalent through scope 3 within a 332-check suite, while complete alias/De Bruijn, cross-carrier, guarded truth-table, and Java-refinement obligations remain open
 - Current proof state: `INCOMPLETE`
 
 ### P5-15
@@ -2276,8 +2276,8 @@ Every claim follows the same bounded process:
 - Ledger line: 214
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `exact_none_spelling_is_builtin;exact_univ_spelling_is_builtin;capitalized_none_is_a_user_signature;capitalized_univ_is_a_user_signature;every_nonreserved_name_is_a_user_signature;none_and_univ_are_distinct_on_bool`
-- Implementation references: `src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java#"none".equals(name);src/is/fivefivefive/ACGN/alloy/SigSymbol.java#getSemanticIdentity;src/is/fivefivefive/CanDis/ir/IRAgent.java#setSemanticIdentity;src/is/fivefivefive/CanDis/core/EGraphNode.java#isSetConstant;src/is/fivefivefive/CanDis/core/NormalForm.java#isNone`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#userNoneSome;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#user signature named None;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#CONST`
+- Implementation references: `src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java#fromAst;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#getSemanticIdentity;src/is/fivefivefive/CanDis/ir/IRAgent.java#attachSourceMetadata;src/is/fivefivefive/CanDis/core/EGraphNode.java#isSetConstant;src/is/fivefivefive/CanDis/core/NormalForm.java#isNone`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
@@ -2291,31 +2291,31 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `e625a3fff5e8782c07ad6244c747ac604a4d7d38a8d00826deeab4a69fd8da4f`
 - Ledger line: 220
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `empty_minimum_is_unset;bottom_is_an_ordinary_minimum;first_candidate_is_present`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/LeastOption.java#consider;src/is/fivefivefive/CanDis/theory/LeastOption.java#orElseThrow;src/is/fivefivefive/CanDis/theory/LeastOption.java#isPresent`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testBooleanBottomAndMetrics`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The option-minimum model and Boolean-bottom differential agree on the named finite cases; generic comparator and CanonicalShape refinement remain bounded rather than universal
 - Current proof state: `INCOMPLETE`
 
 ### P6-02
 
-**Claim.** Orbit candidates are streamed and only the least `(shape,witness)` under one declared order is retained.
+**Claim.** Production canonicalization and certificate export stream orbit candidates, and verifier minimum selection retains only the least `(shape,witness)` under one declared order; bounded verifier group ledgers and the exhaustive differential oracle are outside the candidate-retention claim.
 
 - Class: `U/I`
-- Claim SHA-256: `a70a23757edbad6b6df818bf52d73b4512b2ad72b43cb1839140f6d28d315c7b`
+- Claim SHA-256: `142c38ccfab12180e1ded0709fd6b76e62d31ba3024ec6525001f9ee71abefb0`
 - Ledger line: 221
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `fold_minimum_exact;stream_summary_retains_only_minimum_and_count;streamed_cartesian_count_is_exact;s7_stabilizer_state_is_strictly_smaller_than_orbit`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyRigidProducerOrbit`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testStabilizerTraversalDifferential;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Production and export retain one running candidate minimum and local subgroups stream through a stabilizer chain; bounded verifier group ledgers are explicitly outside the production workspace claim; Java heap/refinement proof remains open
 - Current proof state: `INCOMPLETE`
 
 ### P6-03
@@ -2325,14 +2325,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `45f999c757b05feda276c39aefd8c3cd7a5941e1516d0d1ef3377bc0e54a4c92`
 - Ledger line: 222
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `candidate_key_order_is_total;producer_and_verifier_candidate_orders_are_identical;shared_candidate_key_is_injective;complete_permutation_action_key_is_injective;larger_witness_loses_equal_shape_tie`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/Phase6SemanticOrderProducerRegressionTest.java#main;certificate-verifier/test/org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract pair key is total and injective and bounded producer/verifier order probes pass; equality of every Java candidate execution set and comparator refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### P6-04
@@ -2342,14 +2342,14 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `7b0dee34e7f1ce3e1774ef70661ff0249a5f8cb0ac81f3a0b6c96860099f471d`
 - Ledger line: 223
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `occurrence_coordinate_injective;directly_nested_occurrences_are_disjoint;descriptor_occurrence_round_trip`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderBlockDescriptor.java#freshOccurrenceRenaming;src/is/fivefivefive/CanDis/theory/BindBlockPort.java#descriptorToOccurrence;src/is/fivefivefive/CanDis/theory/BinderOccurrenceProofs.java#collect`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testNestedBinderBlocks;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Finite coordinate freshness and round-trip laws plus direct nested fixtures pass; arbitrary mixed syntax and unbounded nesting refinement remain open
 - Current proof state: `INCOMPLETE`
 
 ### P6-05
@@ -2359,14 +2359,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `b34e6b29a65b25d7df3172e4cbe2616823eddba0802a3fb025b956d81d5cbee9`
 - Ledger line: 224
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `alignment_replay_preserves_complete_occurrence;action_alpha_canonical_serialization_commutes`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#appliesTo;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#quotientBlock;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedBinderBlockQuotient;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract occurrence tuple commutes through action and replay and selected path/context/action mutations reject; no universal stage-to-stage Java refinement is claimed
 - Current proof state: `INCOMPLETE`
 
 ### P6-06
@@ -2376,14 +2376,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `27a44c285ef9c3d94f0192e868dbdef31b75f30b437c4302d01f45855bf948fb`
 - Ledger line: 225
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `extended_action_fixes_caller_slot;map_caller_layer_is_capture_avoiding;nested_caller_layers_are_capture_avoiding`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#build;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#binderBodyAction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#actedPortKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testCaptureAvoidingBinderAction;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testNestedBinderBlocks;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The finite nested-layer model fixes caller coordinates and the named recursive Java probes pass; induction over the complete Java port grammar remains open
 - Current proof state: `INCOMPLETE`
 
 ### P6-07
@@ -2393,14 +2393,14 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `ae07e21c44f6e74f8dba90cf18facc04a64364d71692260af160b77098267802`
 - Ledger line: 226
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `trace_length_decomposition;counter_tuple_is_injective;certificate_byte_count_is_encoded_length`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalizationMetrics.java#retainedTraceLength;src/is/fivefivefive/CanDis/theory/CertificateWriteMetrics.java#CertificateWriteMetrics;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#serializedCanonicalOrbitCandidates`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testBooleanBottomAndMetrics;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Every modeled counter occupies a distinct tuple coordinate and selected production/writer differentials pass; aggregation and overflow refinement for every run remain open
 - Current proof state: `INCOMPLETE`
 
 ### P6-08
@@ -2410,14 +2410,14 @@ Every claim follows the same bounded process:
 - Class: `I`
 - Claim SHA-256: `93da2981342fe07d284f85505347dc6f6eee76234b4fb95cd0d4498ea7c5560f`
 - Ledger line: 227
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `certificate_byte_count_is_encoded_length;byte_identical_runs_have_identical_derived_counters`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#replaceAtomically`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#exportTwice;src/is/fivefivefive/CanDis/theory/TheoryDeterminismTest.java#testFreshJvmReplay;certificate-verifier/test/org/acgn/cert/ProducerBundleInspectionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Two stabilized fresh exports are byte-identical and report certificateBytes equal to file size; platform-wide serialization determinism lacks a universal refinement proof
 - Current proof state: `INCOMPLETE`
 
 ### P6-09
@@ -2427,48 +2427,48 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a`
 - Ledger line: 228
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `distinct_roots_collide_under_rootless_key;rootless_key_is_not_injective;rooted_key_is_injective`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testNestedSameDescriptorOccurrences;src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The rootless collision and rooted injectivity are proved abstractly and dual-root mutations pass; Java StructuralKey/content-ID refinement remains bounded
 - Current proof state: `INCOMPLETE`
 
 ### P6-10
 
-**Claim.** Neither global nor local orbit enumeration retains the orbit merely to claim streaming or linear workspace.
+**Claim.** No production global or local canonicalization traversal retains a complete list of candidate terms; certificate proof ledgers, standalone verifier completeness ledgers, and the exhaustive differential oracle are outside this candidate-term retention claim.
 
 - Class: `U/I`
-- Claim SHA-256: `7c8f4b849013805acf43acea19a5fb3bff577e7307ea9e7306d07a619900a3bb`
+- Claim SHA-256: `27490ad0179b6c1b991380cda7a4a6d698d969eee454f90920862b4c16c64761`
 - Ledger line: 229
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `stream_summary_retains_only_minimum_and_count;s7_stabilizer_state_is_strictly_smaller_than_orbit`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/TypedRenamingEnumerator.java#forEachChecked;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#orbitSummary;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#producerOrbitSummary`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java#testStabilizerTraversalDifferential;src/is/fivefivefive/CanDis/theory/Phase6SemanticOrderProducerRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Production candidate terms are folded online to one minimum and S7 emits 5040 actions from context-bounded stabilizer state; explicit certificate witness ledgers, verifier completeness ledgers, and the exhaustive oracle are outside this precisely bounded retention claim
 - Current proof state: `INCOMPLETE`
 
 ### P6-11
 
-**Claim.** The current rooted-binder and CALL-provenance contract is admitted only under schema v7; schema v5 rootless and schema v6 provenance-incomplete bytes are never reinterpreted.
+**Claim.** The current rooted-binder, CALL-provenance, exact-transition, and witness-unfold contract is admitted only under schema v8; schema v5 rootless, schema v6 provenance-incomplete, and schema v7 transition-incomplete bytes are never reinterpreted.
 
 - Class: `P`
-- Claim SHA-256: `605af5c5660f2ced107e4c01772bcb1016df62f750c6d72cc50b09c8df16c34e`
+- Claim SHA-256: `c2f169cce3d75f03a134ef21ac8f5d715c15512ad663f67403ed09173f37f635`
 - Ledger line: 230
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `schema_v8_admits_complete_contract;only_schema_v8_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;rooted_key_is_injective;witness_unfold_is_definitional`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: One formal module admits the complete rooted/CALL/transition/witness contract only at v8; standalone mutations reject v5/v6/v7 relabeling, while complete Java-parser refinement and immutable review remain open
 - Current proof state: `INCOMPLETE`
 
 ### P6-12
@@ -2478,14 +2478,14 @@ Every claim follows the same bounded process:
 - Class: `U/I/P`
 - Claim SHA-256: `81348c205914caa38cb968d9ae5d8003ee87f20b7ae4540d6b1f8a5b74c21e0b`
 - Ledger line: 231
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `producer_and_verifier_candidate_orders_are_identical;candidate_key_order_is_total;equal_complete_candidate_sets_have_equal_ordered_keys`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/Phase6SemanticOrderProducerRegressionTest.java#main;certificate-verifier/test/org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Equal abstract complete candidate lists use one exact order and focused producer/verifier probes pass; complete free/leader/binder/container candidate-set refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P6-13
@@ -2495,14 +2495,14 @@ Every claim follows the same bounded process:
 - Class: `U/P`
 - Claim SHA-256: `8a84a56322463d2907cad93c9d40a45df948b23fbdb49071c19c3de9a52bb849`
 - Ledger line: 232
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
+- Lean declarations: `pair_comparison_preserves_separate_derivation_owners;pair_result_compares_exact_least_shapes`
+- Implementation references: `certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verifyPair;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#commonKernelEndpoint;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#requireCompatibleVocabulary`
+- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerBundleInspectionTest.java#main;certificate-verifier/test/org/acgn/cert/Phase6SemanticOrderVerifierRegressionTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: The abstract PAIR model preserves separate derivation owners and compares exact least-shape keys; Java tests cover selected positive and substitution cases without universal pair refinement
 - Current proof state: `INCOMPLETE`
 
 ### M-01
@@ -2512,65 +2512,65 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `411f909cf04e36c7cf147a39e439a8ac4e1f125648ac8bc49ff04e7641f52fb0`
 - Ledger line: 238
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `decomposition_is_additive`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Additive abstract decomposition and Java component checks are mapped; complete observation/algorithm refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### M-02
 
-**Claim.** Quantifier insertion, deletion, or modification of the complete `(quantifier,type,cardinality,disjointness-class)` tuple costs one unit.
+**Claim.** Quantifier or positional parameter insertion, deletion, or modification of the complete `(quantifier,type,cardinality,disjointness-class)` tuple costs one unit; every declaration-derived binding forced into matrix alignment comes injectively from a selected minimum-cost edit plan, either as a paid modified diagonal or an explicit positional-parameter diagonal.
 
 - Class: `U/I`
-- Claim SHA-256: `f4368894364f7b37b2b3b977a96546330f6c4c2432787d84c413c1811184865f`
+- Claim SHA-256: `7a030f495ce3d5c53c5a03316e4471ec0ec56136f0dbad8f568610e31259412c`
 - Ledger line: 239
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `equal_quantifier_tuple_costs_zero;unequal_quantifier_tuple_costs_one;every_quantifier_edit_is_one_unit;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;selected_positional_parameter_diagonal_does_not_authorize_coordinate;paid_correspondence_has_no_duplicate_left;paid_correspondence_has_no_duplicate_right`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#sameRepairTuple;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantificationAlignmentSpace;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantifierEditComponent;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Tuple and selected-correspondence obligations are proved; 1,156 positional-parameter reference cases independently enumerate every tied minimum edit plan, while unbounded Java edit-plan refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### M-03
 
-**Claim.** Pairwise alpha alignment is the exact minimum over all and only maximum-cardinality certified compatible mappings.
+**Claim.** Pairwise alpha alignment is the exact minimum over all and only maximum-cardinality certified compatible mappings, pre-seeded only by injective declaration correspondences from a selected minimum quantifier/parameter edit plan.
 
 - Class: `U/I`
-- Claim SHA-256: `7eabb6d6864fe4367cfc9db4c9fdd2e4749ede9e561c2fe9dd0221ec82ebc686`
+- Claim SHA-256: `153d1ab1172fc03481af938c9ec7933e2c021a0e8fa37d1179b351bb7630cb0d`
 - Ledger line: 240
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `alpha_distance_is_exact_pairwise_minimum;singleton_alignment_is_compatible;nonmaximum_empty_alignment_is_not_admissible;same_coordinate_without_paid_edit_is_not_authorized;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;bound_and_same_spelled_free_variables_cost_one_both_directions`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#maximumGlobalCompatibleMatches;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The coordinate fallback is removed; 1,156 minimum-plan parameter cases, typed scope controls, and bound/free symmetry pass, while all-and-only general quantified-scope candidate generation still requires an independent exhaustive refinement differential
 - Current proof state: `INCOMPLETE`
 
 ### M-04
 
-**Claim.** ACI child comparison is exact minimum-cost assignment including insertion/deletion alternatives, not positional sorting.
+**Claim.** ACI child comparison is exact minimum-cost assignment including insertion/deletion alternatives, not positional sorting; unsupported integer totals fail closed rather than wrapping.
 
 - Class: `U/I`
-- Claim SHA-256: `b38dac4132acd08f72c6c8bb80903d27fa13dc94514015864904d3bda0cde941`
+- Claim SHA-256: `daafd9ba0fbc0819031fb1db0713ab6e57f11a2d46b43e65334a707aa5c24620`
 - Ledger line: 241
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `aci_distance_is_exact_minimum_cost_assignment;exact_minimum_does_not_use_positional_choice;assignment_minimization_can_choose_crossed_pairs;two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#minimumAssignmentCost`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Two hundred ten deterministic matrices through dimension six equal exhaustive assignment; malformed/negative matrices reject and the former two-MAX overflow fails closed; universal Hungarian refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### M-05
@@ -2592,19 +2592,19 @@ Every claim follows the same bounded process:
 
 ### M-06
 
-**Claim.** Matrix edit units count node insertions, deletions, and one-unit semantic head updates over certified quotient operands.
+**Claim.** Matrix head updates cost one, while insertion or deletion at a sequence, bag, or set operand boundary inserts or deletes that complete operand subtree; these units are evaluated over certified quotient operands.
 
 - Class: `U/I`
-- Claim SHA-256: `c0555b47a5d5600ac28e70a2404e4363354ddadcbca5548641295a23340d5da0`
+- Claim SHA-256: `78c9f0d452f13eabb45b8498cb31675eae64bc22b1ba03b500ecae11f5626b35`
 - Ledger line: 243
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/ConcreteRepairMetric.lean`
+- Lean declarations: `boundedVectorExpectations;profileMismatchIsFirst;temporalQuantifierMatrixCompositionIsAdditive;matrixOperandDeletionRemovesTheWholeSubtree`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#sequenceDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/RepairView.java#size`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The claim now matches established Fast Rewrite subtree-operand units; Lean and Java fix A(X)-to-X at cost two, while the general matrix recurrence refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### M-07
@@ -2614,30 +2614,30 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `30b8d68cd64575f4f43092267b09821ce508aa0acf5aa17d714ee089dfd1b8bc`
 - Ledger line: 244
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
+- Lean declarations: `readable_spelling_is_not_an_edit;exact_type_change_is_one_edit`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#semanticPayload;src/is/fivefivefive/CanDis/metric/RepairView.java#lexicalVariable;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectNode;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Readable renaming and exact type-change edit units are proved and directly probed; readable fast-IR edit-path rendering is not yet certified against the count
 - Current proof state: `INCOMPLETE`
 
 ### M-08
 
-**Claim.** Search pruning, candidate ordering, and Hungarian implementation preserve the exact minima above.
+**Claim.** Within declared exact-search bounds, pruning, candidate ordering, and checked Hungarian arithmetic preserve the exact minima above; exhausting a bound fails without returning a partial minimum.
 
 - Class: `I`
-- Claim SHA-256: `6cdba895e5c214be033587a85df6f3b54900a71c7730823938a69b550d5871a6`
+- Claim SHA-256: `49ce4ec35da6198f8a0d4d474bb1285a9036dfd0fb679f18e74acc339d701e71`
 - Ledger line: 245
-- Lean file: `MISSING`
-- Lean declarations: `MISSING`
-- Implementation references: `MISSING`
-- Bounded test references: `MISSING`
-- Test classes: `MISSING`
-- Formal status: `MISSING`
-- Conformance status: `MISSING`
-- Claim-specific process/limits: generated skeleton; evidence not yet mapped
+- Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
+- Lean declarations: `two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs;same_coordinate_without_paid_edit_is_not_authorized`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#MutableStats;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#ResourceLimitException`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PARTIAL`
+- Conformance status: `PARTIAL`
+- Claim-specific process/limits: Checked arithmetic and declared exact-search bounds fail closed in Java and bounded counterexamples pass; complete pruning/candidate-generation refinement remains open
 - Current proof state: `INCOMPLETE`
 
