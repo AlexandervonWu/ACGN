@@ -35,7 +35,7 @@ import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
 import parser.etc.Pair;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;

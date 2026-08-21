@@ -8,15 +8,15 @@ import java.util.Objects;
 import java.util.TreeMap;
 
 /** Slow independent specification implementation of quotient-first {@code canon_G}. */
-public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicalizer {
-    public static final String VERSION = "canon-g-exhaustive-v2";
+final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicalizer {
+    public static final String VERSION = "canon-g-exhaustive-v4";
     private static final ExhaustiveGraphCanonicalizer INSTANCE =
             new ExhaustiveGraphCanonicalizer();
 
     private ExhaustiveGraphCanonicalizer() {
     }
 
-    public static ExhaustiveGraphCanonicalizer instance() {
+    static ExhaustiveGraphCanonicalizer instance() {
         return INSTANCE;
     }
 
@@ -36,12 +36,19 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
             TypedENode kernel = leaderKernel.kernel();
             TypedSlotContext canonicalContext = kernel.context().canonicalFreeContext();
             BestCandidate best = new BestCandidate();
+            CandidateCounter localWorkItems = new CandidateCounter();
             TypedRenamingEnumerator.forEach(
                     canonicalContext,
                     kernel.context(),
                     witness -> enumerateFreeCandidate(
-                            graph, kernel, canonicalContext, witness, best));
-            CanonicalizationResult result = best.result(leaderKernel);
+                            graph,
+                            kernel,
+                            canonicalContext,
+                            witness,
+                            best,
+                            localWorkItems));
+            CanonicalizationResult result = best.result(
+                    leaderKernel, localWorkItems.count());
             if (!result.verifyWitness(graph)) {
                 throw new IllegalStateException(
                         "Exhaustive canon_G returned a witness that does not replay");
@@ -56,11 +63,13 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
             TypedENode kernel,
             TypedSlotContext canonicalContext,
             TypedRenaming witness,
-            BestCandidate best) {
+            BestCandidate best,
+            CandidateCounter localWorkItems) {
         TypedRenaming sourceToCanonical = witness.inverse();
         List<PortValue> ports = new ArrayList<>(kernel.ports().size());
         for (PortValue port : kernel.ports()) {
-            ports.add(referenceQuotient(graph, port, sourceToCanonical));
+            ports.add(referenceQuotient(
+                    graph, port, sourceToCanonical, localWorkItems));
         }
         TypedENode candidate = kernel.rebuildCanonicalCandidate(
                 canonicalContext, ports);
@@ -79,38 +88,43 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
     private static PortValue referenceQuotient(
             TypedSlottedPortEGraph graph,
             PortValue port,
-            TypedRenaming renaming) {
+            TypedRenaming renaming,
+            CandidateCounter localWorkItems) {
         if (!port.context().equals(renaming.source())) {
             throw new IllegalArgumentException(
                     "Reference port renaming must start at the port context");
         }
         if (port instanceof OnePort) {
-            return least(enumerateOneOrbit(graph, (OnePort) port, renaming));
+            return least(enumerateOneOrbit(
+                    graph, (OnePort) port, renaming, localWorkItems));
         }
         if (port instanceof SeqPort) {
             SeqPort sequence = (SeqPort) port;
             return new SeqPort(
                     sequence.schema(),
                     renaming.codomain(),
-                    referenceElements(graph, sequence.elements(), renaming));
+                    referenceElements(
+                            graph, sequence.elements(), renaming, localWorkItems));
         }
         if (port instanceof BagPort) {
             BagPort bag = (BagPort) port;
             return new BagPort(
                     bag.schema(),
                     renaming.codomain(),
-                    referenceElements(graph, bag.occurrences(), renaming));
+                    referenceElements(
+                            graph, bag.occurrences(), renaming, localWorkItems));
         }
         if (port instanceof SetPort) {
             SetPort set = (SetPort) port;
             return new SetPort(
                     set.schema(),
                     renaming.codomain(),
-                    referenceElements(graph, set.elements(), renaming));
+                    referenceElements(
+                            graph, set.elements(), renaming, localWorkItems));
         }
         if (port instanceof BindBlockPort) {
             return least(enumerateBlockOrbit(
-                    graph, (BindBlockPort) port, renaming));
+                    graph, (BindBlockPort) port, renaming, localWorkItems));
         }
 
         BindPort binder = (BindPort) port;
@@ -124,16 +138,19 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
                 binder.schema(),
                 renaming.codomain(),
                 canonicalBound,
-                referenceQuotient(graph, binder.body(), bodyRenaming));
+                referenceQuotient(
+                        graph, binder.body(), bodyRenaming, localWorkItems));
     }
 
     private static List<PortValue> referenceElements(
             TypedSlottedPortEGraph graph,
             List<PortValue> source,
-            TypedRenaming renaming) {
+            TypedRenaming renaming,
+            CandidateCounter localWorkItems) {
         List<PortValue> result = new ArrayList<>(source.size());
         for (PortValue value : source) {
-            result.add(referenceQuotient(graph, value, renaming));
+            result.add(referenceQuotient(
+                    graph, value, renaming, localWorkItems));
         }
         return result;
     }
@@ -141,9 +158,11 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
     private static List<PortValue> enumerateOneOrbit(
             TypedSlottedPortEGraph graph,
             OnePort port,
-            TypedRenaming renaming) {
+            TypedRenaming renaming,
+            CandidateCounter localWorkItems) {
         PortLeaf leaf = port.leaf();
         if (leaf instanceof SlotPortLeaf) {
+            localWorkItems.consider();
             return Collections.singletonList(new OnePort(
                     port.schema(),
                     renaming.codomain(),
@@ -159,6 +178,7 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
                 leader.eclass());
         List<PortValue> orbit = new ArrayList<>(group.elements().size());
         for (TypedPermutation permutation : group.elements()) {
+            localWorkItems.consider();
             TypedEmbedding embedding = permutation
                     .andThen(leader.embedding())
                     .andThen(renaming);
@@ -174,7 +194,8 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
     private static List<PortValue> enumerateBlockOrbit(
             TypedSlottedPortEGraph graph,
             BindBlockPort block,
-            TypedRenaming freeRenaming) {
+            TypedRenaming freeRenaming,
+            CandidateCounter localWorkItems) {
         BinderBlockDescriptor descriptor = block.schema().descriptor();
         TypedRenaming targetOccurrence = descriptor.freshOccurrenceRenaming(
                 freeRenaming.codomain());
@@ -182,6 +203,7 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
                 graph.binderGroupForCanonicalization(descriptor);
         List<PortValue> orbit = new ArrayList<>(automorphisms.elements().size());
         for (TypedPermutation permutation : automorphisms.elements()) {
+            localWorkItems.consider();
             TypedRenaming occurrenceRenaming = block.descriptorToOccurrence()
                     .inverse()
                     .andThen(permutation)
@@ -189,7 +211,8 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
             TypedRenaming bodyRenaming = freeRenaming
                     .disjointUnion(occurrenceRenaming)
                     .asRenaming();
-            PortValue body = referenceQuotient(graph, block.body(), bodyRenaming);
+            PortValue body = referenceQuotient(
+                    graph, block.body(), bodyRenaming, localWorkItems);
             orbit.add(new BindBlockPort(
                     block.schema(),
                     freeRenaming.codomain(),
@@ -236,35 +259,53 @@ public final class ExhaustiveGraphCanonicalizer implements TypedGraphCanonicaliz
     }
 
     private static final class BestCandidate {
-        private CanonicalShape shape;
-        private TypedRenaming witness;
+        private final LeastOption<Candidate> minimum = new LeastOption<>(
+                Candidate::compare);
 
         void consider(CanonicalShape candidateShape, TypedRenaming candidateWitness) {
-            if (shape == null) {
-                shape = candidateShape;
-                witness = candidateWitness;
-                return;
-            }
-            int compared = candidateShape.compareTo(shape);
-            if (compared == 0 && !candidateShape.equals(shape)) {
-                throw new IllegalStateException(
-                        "Structural key collision between unequal canonical shapes");
-            }
-            if (compared < 0
-                    || (compared == 0
-                            && TheoryKeys.embedding(candidateWitness)
-                                    .compareTo(TheoryKeys.embedding(witness)) < 0)) {
-                shape = candidateShape;
-                witness = candidateWitness;
-            }
+            minimum.consider(new Candidate(candidateShape, candidateWitness));
         }
 
-        CanonicalizationResult result(LeaderKernelResult leaderKernel) {
-            if (shape == null || witness == null) {
-                throw new IllegalStateException(
-                        "No typed free-slot bijection was available to canon_G");
-            }
-            return new CanonicalizationResult(leaderKernel, shape, witness);
+        CanonicalizationResult result(
+                LeaderKernelResult leaderKernel,
+                long localQuotientWorkItems) {
+            Candidate selected = minimum.orElseThrow(() -> new IllegalStateException(
+                    "No typed free-slot bijection was available to canon_G"));
+            return new CanonicalizationResult(
+                    leaderKernel,
+                    selected.shape(),
+                    selected.witness(),
+                    CanonicalizationMetrics.from(
+                            leaderKernel,
+                            minimum.considered(),
+                            localQuotientWorkItems));
+        }
+    }
+
+    private static final class CandidateCounter {
+        private long count;
+
+        private void consider() {
+            count = Math.addExact(count, 1L);
+        }
+
+        private long count() {
+            return count;
+        }
+    }
+
+    private record Candidate(CanonicalShape shape, TypedRenaming witness) {
+        private Candidate {
+            Objects.requireNonNull(shape, "shape");
+            Objects.requireNonNull(witness, "witness");
+        }
+
+        private static int compare(Candidate left, Candidate right) {
+            int compared = left.shape.compareTo(right.shape);
+            return compared != 0
+                    ? compared
+                    : TheoryKeys.witnessOrder(left.witness)
+                            .compareTo(TheoryKeys.witnessOrder(right.witness));
         }
     }
 }

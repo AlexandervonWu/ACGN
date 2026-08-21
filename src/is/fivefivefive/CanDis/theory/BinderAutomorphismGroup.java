@@ -9,14 +9,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /** Finite typed subgroup declared by one complete binder descriptor. */
 public final class BinderAutomorphismGroup {
     private final TypedSlotContext context;
     private final List<TypedPermutation> generators;
     private final List<BinderAutomorphismCertificate> generatorCertificates;
-    private final List<TypedPermutation> elements;
-    private final StructuralKey structuralKey;
+    private volatile StructuralKey structuralKey;
     // Positive memo only; descriptors and their certificate groups are immutable.
     private final Set<BinderBlockDescriptor> certifiedDescriptors =
             Collections.newSetFromMap(new java.util.IdentityHashMap<>());
@@ -89,45 +90,6 @@ public final class BinderAutomorphismGroup {
                     "A binder certificate does not name a retained nonidentity generator");
         }
         this.generatorCertificates = Collections.unmodifiableList(orderedCertificates);
-        this.elements = close(identity, this.generators);
-
-        List<StructuralKey> children = new ArrayList<>();
-        children.add(TheoryKeys.context(context));
-        for (TypedPermutation element : elements) {
-            children.add(StructuralKey.branch(
-                    "binder-automorphism-element",
-                    Collections.singletonList(actionKey(element))));
-        }
-        this.structuralKey = StructuralKey.branch("binder-automorphism-group", children);
-    }
-
-    private List<TypedPermutation> close(
-            TypedPermutation identity,
-            List<TypedPermutation> sourceGenerators) {
-        Map<StructuralKey, TypedPermutation> closure = new TreeMap<>();
-        Deque<TypedPermutation> pending = new ArrayDeque<>();
-        putUnique(closure, identity);
-        pending.add(identity);
-        List<TypedPermutation> steps = new ArrayList<>(sourceGenerators.size() * 2);
-        for (TypedPermutation generator : sourceGenerators) {
-            steps.add(generator);
-            steps.add(generator.inverse());
-        }
-        while (!pending.isEmpty()) {
-            TypedPermutation current = pending.removeFirst();
-            for (TypedPermutation step : steps) {
-                TypedPermutation candidate = current.andThen(step);
-                StructuralKey key = actionKey(candidate);
-                TypedPermutation prior = closure.putIfAbsent(key, candidate);
-                if (prior == null) {
-                    pending.addLast(candidate);
-                } else if (!prior.equals(candidate)) {
-                    throw new IllegalStateException(
-                            "Structural key collision between unequal binder automorphisms");
-                }
-            }
-        }
-        return Collections.unmodifiableList(new ArrayList<>(closure.values()));
     }
 
     private void requireContext(TypedPermutation permutation) {
@@ -171,10 +133,6 @@ public final class BinderAutomorphismGroup {
             TypedPermutation permutation) {
         Objects.requireNonNull(permutation, "permutation");
         validateCertificates(descriptor);
-        if (!contains(permutation)) {
-            throw new IllegalArgumentException(
-                    "Permutation is outside this binder automorphism group");
-        }
         TypedPermutation identity = TypedPermutation.identity(context);
         TypedCertificateEndpoint identityEndpoint = TypedCertificateEndpoint.binderPattern(
                 descriptor.payloadKey(), context, identity);
@@ -189,8 +147,14 @@ public final class BinderAutomorphismGroup {
         StructuralKey targetKey = actionKey(permutation);
         predecessors.put(identityKey, null);
         pending.add(identity);
+        long visited = 0;
         while (!pending.isEmpty() && !predecessors.containsKey(targetKey)) {
             TypedPermutation current = pending.removeFirst();
+            visited = Math.addExact(visited, 1L);
+            if (visited > FinitePermutationTraversal.maximumElements()) {
+                throw new CanonicalizationDomainException(
+                        "Binder proof search exceeds configured group bound");
+            }
             StructuralKey currentKey = actionKey(current);
             for (CertifiedStep step : steps) {
                 TypedPermutation candidate = current.andThen(step.permutation);
@@ -281,8 +245,28 @@ public final class BinderAutomorphismGroup {
         return steps;
     }
 
+    public void forEachElement(Consumer<TypedPermutation> consumer) {
+        FinitePermutationTraversal.forEach(
+                context, generators, this::actionKey, consumer::accept);
+    }
+
+    <E extends Exception> long forEachElementChecked(
+            FinitePermutationTraversal.CheckedConsumer<E> consumer) throws E {
+        return FinitePermutationTraversal.forEach(
+                context, generators, this::actionKey, consumer);
+    }
+
+    public boolean anyMatch(Predicate<TypedPermutation> predicate) {
+        return FinitePermutationTraversal.anyMatch(
+                context, generators, this::actionKey, predicate);
+    }
+
+    /** Explicit bounded snapshot retained for diagnostics and tests only. */
     public List<TypedPermutation> elements() {
-        return elements;
+        List<TypedPermutation> snapshot = new ArrayList<>();
+        forEachElement(snapshot::add);
+        snapshot.sort(java.util.Comparator.comparing(this::actionKey));
+        return Collections.unmodifiableList(snapshot);
     }
 
     public boolean contains(TypedPermutation permutation) {
@@ -291,17 +275,7 @@ public final class BinderAutomorphismGroup {
                 || !context.equals(permutation.codomain())) {
             return false;
         }
-        StructuralKey key = actionKey(permutation);
-        for (TypedPermutation element : elements) {
-            int comparison = actionKey(element).compareTo(key);
-            if (comparison == 0) {
-                return element.equals(permutation);
-            }
-            if (comparison > 0) {
-                return false;
-            }
-        }
-        return false;
+        return anyMatch(permutation::equals);
     }
 
     private StructuralKey actionKey(TypedPermutation permutation) {
@@ -309,7 +283,27 @@ public final class BinderAutomorphismGroup {
     }
 
     public StructuralKey structuralKey() {
-        return structuralKey;
+        StructuralKey cached = structuralKey;
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (this) {
+            cached = structuralKey;
+            if (cached == null) {
+                List<StructuralKey> children = new ArrayList<>();
+                children.add(TheoryKeys.context(context));
+                for (TypedPermutation generator : CanonicalPermutationPresentation.of(
+                        context, generators, this::actionKey)) {
+                    children.add(StructuralKey.branch(
+                            "binder-automorphism-canonical-generator",
+                            Collections.singletonList(actionKey(generator))));
+                }
+                cached = StructuralKey.branch(
+                        "binder-automorphism-canonical-presentation-v1", children);
+                structuralKey = cached;
+            }
+            return cached;
+        }
     }
 
     @Override
@@ -318,18 +312,17 @@ public final class BinderAutomorphismGroup {
             return false;
         }
         BinderAutomorphismGroup group = (BinderAutomorphismGroup) other;
-        return context.equals(group.context)
-                && elements.equals(group.elements);
+        return structuralKey().equals(group.structuralKey());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(context, elements);
+        return structuralKey().hashCode();
     }
 
     @Override
     public String toString() {
-        return "Aut(" + context + ")=" + elements;
+        return "Aut(" + context + ")=<" + generators + ">";
     }
 
     private static final class CertifiedStep {

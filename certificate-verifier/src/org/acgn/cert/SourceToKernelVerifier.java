@@ -25,7 +25,7 @@ final class SourceToKernelVerifier {
     KernelVerifier.Judgment verify(
             KernelVerifier.ProofRecord proof,
             List<KernelVerifier.Judgment> premises) {
-        Wire.Node payload = proof.payload().requireShape("kernel-replay", 7, 4);
+        Wire.Node payload = proof.payload().requireShape("kernel-replay", 7, 5);
         KernelModel.Term source = model.term(payload.scalar(0));
         KernelModel.Context gamma = model.context(payload.scalar(1));
         KernelModel.Term leaderKernel = model.term(payload.scalar(2));
@@ -68,6 +68,7 @@ final class SourceToKernelVerifier {
                     FailureCode.INVALID_EFFECTIVE_SUPPORT,
                     "Delta differs from post-find effective support");
         }
+        payload.child(4).requireShape("source-construction", 4, 0);
         for (int index = 0; index < delta.slots().size(); index++) {
             KernelModel.Slot deltaSlot = delta.slots().get(index);
             KernelModel.Slot gammaSlot = gamma.slot(deltaSlot.name());

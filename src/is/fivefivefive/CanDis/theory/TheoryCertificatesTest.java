@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+
 /** Deterministic Phase F certificate and certified-transition gate. */
 public final class TheoryCertificatesTest {
     private static final long SEED = 555_202_608_21L;
@@ -27,10 +29,13 @@ public final class TheoryCertificatesTest {
         testCertifiedSymmetryAdmission();
         testForwardCongruenceOnly();
         testContainerLawProvenance();
+        testConcreteContainerConstructionReplay();
         testBinderAutomorphismProvenance();
         testInterfaceRestrictionCertificate();
         testGeneratedCertifiedChains();
+        testRejectedFixedBatchIsPure();
         testMutationBoundary();
+        checks += TheoryDependentChainTest.runAssertions();
         System.out.println("TheoryCertificatesTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
     }
@@ -292,11 +297,11 @@ public final class TheoryCertificatesTest {
         CertificateOrigin origin = CertificateOrigin.containerLaw(
                 "test-signature", "aci-set", 0);
         List<ContainerLawCertificate> certificates = Arrays.asList(
-                new ContainerLawCertificate(
+                ContainerLawCertificate.testFixture(
                         setSchema, ContainerLawCertificate.Law.ASSOCIATIVITY, origin),
-                new ContainerLawCertificate(
+                ContainerLawCertificate.testFixture(
                         setSchema, ContainerLawCertificate.Law.COMMUTATIVITY, origin),
-                new ContainerLawCertificate(
+                ContainerLawCertificate.testFixture(
                         setSchema, ContainerLawCertificate.Law.IDEMPOTENCY, origin));
         ContainerLawDeclaration certified = ContainerLawDeclaration.certified(
                 setSchema, certificates);
@@ -321,8 +326,15 @@ public final class TheoryCertificatesTest {
                 context,
                 Collections.singletonList(set));
         TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
-        check(graph.canonicalize(certifiedNode).shape() != null,
-                "Strict canonicalization accepts certified Set laws");
+        expectThrows(IllegalStateException.class,
+                () -> graph.canonicalize(certifiedNode));
+        expectThrows(IllegalStateException.class,
+                () -> graph.insertNode(
+                        certifiedNode, graph.coherentWitnessFamily()));
+        TypedSlottedPortEGraph fixtureGraph =
+                TypedSlottedPortEGraph.structuralFixture();
+        check(fixtureGraph.canonicalize(certifiedNode).shape() != null,
+                "TEST_ONLY Set laws are confined to an explicit structural fixture graph");
 
         ContainerLawDeclaration raw = ContainerLawDeclaration.of(
                 ContainerLawDeclaration.Kind.SET, true, true, true, false);
@@ -340,18 +352,293 @@ public final class TheoryCertificatesTest {
 
         BagPortSchema bagSchema = new BagPortSchema(
                 ContainerEmptiness.K_PLUS, element);
-        expectThrows(IllegalStateException.class, () -> new ContainerLawCertificate(
+        expectThrows(IllegalStateException.class, () -> ContainerLawCertificate.testFixture(
                 bagSchema,
                 ContainerLawCertificate.Law.IDEMPOTENCY,
                 origin));
         SeqPortSchema emptySequence = new SeqPortSchema(
                 ContainerEmptiness.K_ZERO, element);
-        ContainerLawCertificate sequenceAssociativity = new ContainerLawCertificate(
+        ContainerLawCertificate sequenceAssociativity = ContainerLawCertificate.testFixture(
                 emptySequence,
                 ContainerLawCertificate.Law.ASSOCIATIVITY,
                 origin);
-        expectThrows(IllegalStateException.class, () -> ContainerLawDeclaration.certified(
-                emptySequence, Collections.singletonList(sequenceAssociativity)));
+        ContainerLawDeclaration ordinaryEmptySequence = ContainerLawDeclaration.certified(
+                emptySequence, Collections.singletonList(sequenceAssociativity));
+        check(ordinaryEmptySequence.associative() && !ordinaryEmptySequence.hasUnit(),
+                "An ordinary K0 sequence may carry certified A without fabricating U");
+    }
+
+    private static void testConcreteContainerConstructionReplay() {
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        OnePortSchema booleanElement = new OnePortSchema(GraphType.BOOL);
+        SetPortSchema booleanSet = new SetPortSchema(
+                ArityPolicy.nonemptyVariadic(), booleanElement);
+        List<ContainerLawCertificate> booleanAci = new ArrayList<>();
+        for (ContainerLawCertificate.Law law : Arrays.asList(
+                ContainerLawCertificate.Law.ASSOCIATIVITY,
+                ContainerLawCertificate.Law.COMMUTATIVITY,
+                ContainerLawCertificate.Law.IDEMPOTENCY)) {
+            booleanAci.add(AlloyLawRegistry.issue(
+                    profile,
+                    Opcode.AND,
+                    "ALLOY/AND",
+                    GraphType.BOOL,
+                    PortPath.at(0),
+                    booleanSet,
+                    law));
+        }
+        InstantiatedOperator productionAnd = OperatorDeclaration.monomorphic(
+                "ALLOY/AND",
+                Collections.singletonList(booleanSet),
+                GraphType.BOOL,
+                lawMap(ContainerLawDeclaration.certified(booleanSet, booleanAci)),
+                0).instantiateMonomorphic();
+        TypedSlot booleanSlot = TypedSlot.source(GraphType.BOOL, 599);
+        TypedSlotContext booleanContext = TypedSlotContext.singleton(booleanSlot);
+        OnePort booleanPort = OnePort.slot(booleanContext, booleanSlot);
+        FlatApplication duplicateAnd = new FlatApplication(
+                productionAnd,
+                booleanContext,
+                Arrays.asList(new FlatLeaf(booleanPort), new FlatLeaf(booleanPort)));
+        expectThrows(IllegalArgumentException.class, () -> TypedENode.flatConstruct(
+                duplicateAnd,
+                ignored -> {
+                    throw new AssertionError("A leaf-only application has no sealer");
+                }));
+        CertifiedFlatConstruction certifiedDuplicateAnd =
+                TypedENode.flatConstructCertified(
+                        duplicateAnd,
+                        ignored -> {
+                            throw new AssertionError("A leaf-only application has no sealer");
+                        },
+                        profile);
+        check(certifiedDuplicateAnd.collapsedToSingleton()
+                        && certifiedDuplicateAnd.singleton().equals(booleanPort),
+                "Production ACI construction is certificate-returning and smart-collapses");
+        CertifiedFlatConstruction unaryAnd = TypedENode.flatConstructCertified(
+                new FlatApplication(
+                        productionAnd,
+                        booleanContext,
+                        Collections.singletonList(new FlatLeaf(booleanPort))),
+                ignored -> {
+                    throw new AssertionError("A leaf-only application has no sealer");
+                },
+                profile);
+        check(unaryAnd.collapsedToSingleton()
+                        && unaryAnd.singleton().equals(booleanPort)
+                        && unaryAnd.certificate().premises().stream().noneMatch(
+                                premise -> premise instanceof ContainerLawCertificate
+                                        && ((ContainerLawCertificate) premise).law()
+                                                == ContainerLawCertificate.Law.IDEMPOTENCY),
+                "Unary ACI smart collapse needs no fabricated idempotency step");
+
+        OnePortSchema integer = new OnePortSchema(GraphType.INT);
+        BagPortSchema equalityBag = new BagPortSchema(ArityPolicy.exact(2), integer);
+        ContainerLawCertificate equalityC = AlloyLawRegistry.issue(
+                profile,
+                Opcode.EQUALS,
+                "ALLOY/EQUALS",
+                GraphType.BOOL,
+                PortPath.at(0),
+                equalityBag,
+                ContainerLawCertificate.Law.COMMUTATIVITY);
+        ContainerLawDeclaration equalityLaws = ContainerLawDeclaration.certified(
+                equalityBag, Collections.singletonList(equalityC));
+        InstantiatedOperator equality = OperatorDeclaration.monomorphic(
+                "ALLOY/EQUALS",
+                Collections.singletonList(equalityBag),
+                GraphType.BOOL,
+                lawMap(equalityLaws),
+                null).instantiateMonomorphic();
+
+        TypedSlot x = TypedSlot.source(GraphType.INT, 600);
+        TypedSlot y = TypedSlot.source(GraphType.INT, 601);
+        TypedSlot flag = TypedSlot.source(GraphType.BOOL, 602);
+        TypedSlotContext context = TypedSlotContext.of(x, y, flag);
+        OnePort xPort = OnePort.slot(context, x);
+        OnePort yPort = OnePort.slot(context, y);
+        OnePort flagPort = OnePort.slot(context, flag);
+        CertifiedContainerConstruction xy = TypedENode.constructContainerCertified(
+                equality,
+                PortPath.at(0),
+                context,
+                Arrays.asList(xPort, yPort),
+                profile);
+        CertifiedContainerConstruction yx = TypedENode.constructContainerCertified(
+                equality,
+                PortPath.at(0),
+                context,
+                Arrays.asList(yPort, xPort),
+                profile);
+        check(xy.node().equals(yx.node()),
+                "C-only construction has one normalized bag target");
+        check(!xy.certificate().leftEndpoint().equals(
+                        yx.certificate().leftEndpoint()),
+                "Concrete C certificates retain distinct ordered source endpoints");
+        check(xy.certificate().premises().stream()
+                        .anyMatch(equalityC::equals)
+                        && yx.certificate().premises().stream()
+                                .anyMatch(equalityC::equals),
+                "Every ordered-to-bag quotient cites the exact C theory index");
+        check(xy.certificate().containerTrace().outputFibers().size() == 2
+                        && yx.certificate().containerTrace().outputFibers().size() == 2,
+                "Concrete C certificates retain an exact permutation fiber for each output");
+        TypedSlottedPortEGraph strictConstructionGraph =
+                new TypedSlottedPortEGraph();
+        expectThrows(IllegalStateException.class, () ->
+                strictConstructionGraph.canonicalize(xy.node()));
+        check(strictConstructionGraph.canonicalizeConstructed(xy).shape() != null,
+                "Strict canonicalization requires the ordered-source construction proof");
+        expectThrows(IllegalStateException.class, () ->
+                strictConstructionGraph.insertNode(
+                        xy.node(), strictConstructionGraph.coherentWitnessFamily()));
+        check(strictConstructionGraph.insertNodeConstructed(
+                        xy, strictConstructionGraph.coherentWitnessFamily())
+                        .sourceToReturnedInvocation() != null,
+                "Strict insertion retains concrete nonflat source evidence");
+
+        TypedSlottedPortEGraph fixedBatchGraph = new TypedSlottedPortEGraph();
+        CanonicalizationResult fixedCanonical =
+                fixedBatchGraph.canonicalizeConstructed(xy);
+        TypedEClassInterface fixedOwner = new TypedEClassInterface(
+                EClassId.of(6_050),
+                GraphType.BOOL,
+                fixedCanonical.effectiveSupport());
+        ShapeWitness fixedWitness = new ShapeWitness(
+                fixedCanonical.shape().exactSlots(),
+                fixedCanonical.effectiveSupport(),
+                fixedOwner.exposedSlots(),
+                fixedCanonical.witness());
+        TypedEClassRecord fixedRecord = TypedEClassRecord.of(
+                fixedOwner,
+                Collections.singletonMap(fixedCanonical.shape(), fixedWitness),
+                TypedSymmetryGroup.identity(fixedOwner.exposedSlots()));
+        TypedEmbedding fixedInSource = TypedEmbedding.inclusion(
+                fixedOwner.exposedSlots(), fixedCanonical.source().context());
+        InputEquationCertificate fixedEquation = new InputEquationCertificate(
+                CertificateOrigin.inputEquation(
+                        "certificate-test", "fixed-batch-equality", 0),
+                TypedCertificateEndpoint.node(fixedCanonical.shape().node().act(
+                        fixedCanonical.witness())),
+                TypedCertificateEndpoint.invocation(
+                        new TypedInvocation(fixedOwner, fixedInSource)));
+        Map<CanonicalShape, TypedEqualityCertificate> fixedEquations =
+                Collections.singletonMap(fixedCanonical.shape(), fixedEquation);
+        expectThrows(IllegalArgumentException.class, () ->
+                fixedBatchGraph.admitFixedBatchRecordCertified(
+                        fixedRecord, fixedEquations));
+        fixedBatchGraph.admitFixedBatchRecordCertified(
+                fixedRecord,
+                fixedEquations,
+                Collections.singletonMap(
+                        fixedCanonical.shape(), xy.certificate()));
+        check(fixedBatchGraph.classes().containsKey(fixedOwner.id()),
+                "Fixed-batch law-bearing admission retains exact construction evidence");
+
+        expectThrows(IllegalArgumentException.class, () ->
+                ContainerConstructionCertificate.createProduction(
+                        equality,
+                        PortPath.at(0),
+                        context,
+                        Arrays.asList(xPort, yPort),
+                        xy.node(),
+                        SemanticProfile.alloyModular()));
+        expectThrows(IllegalArgumentException.class, () ->
+                ContainerConstructionCertificate.createProduction(
+                        equality,
+                        PortPath.at(1),
+                        context,
+                        Arrays.asList(xPort, yPort),
+                        xy.node(),
+                        profile));
+        expectThrows(IllegalStateException.class, () ->
+                ContainerConstructionCertificate.createProduction(
+                        equality,
+                        PortPath.at(0),
+                        context,
+                        Collections.singletonList(xPort),
+                        xy.node(),
+                        profile));
+        expectThrows(IllegalArgumentException.class, () ->
+                ContainerConstructionCertificate.createProduction(
+                        equality,
+                        PortPath.at(0),
+                        context,
+                        Arrays.asList(xPort, flagPort),
+                        xy.node(),
+                        profile));
+
+        ContainerLawCertificate inequalityC = AlloyLawRegistry.issue(
+                profile,
+                Opcode.NOT_EQUALS,
+                "ALLOY/NOT_EQUALS",
+                GraphType.BOOL,
+                PortPath.at(0),
+                equalityBag,
+                ContainerLawCertificate.Law.COMMUTATIVITY);
+        ContainerLawDeclaration inequalityLaws = ContainerLawDeclaration.certified(
+                equalityBag, Collections.singletonList(inequalityC));
+        InstantiatedOperator inequality = OperatorDeclaration.monomorphic(
+                "ALLOY/NOT_EQUALS",
+                Collections.singletonList(equalityBag),
+                GraphType.BOOL,
+                lawMap(inequalityLaws),
+                null).instantiateMonomorphic();
+        CertifiedContainerConstruction unequal = TypedENode.constructContainerCertified(
+                inequality,
+                PortPath.at(0),
+                context,
+                Arrays.asList(xPort, yPort),
+                profile);
+        expectThrows(IllegalArgumentException.class, () ->
+                ContainerConstructionCertificate.createProduction(
+                        equality,
+                        PortPath.at(0),
+                        context,
+                        Arrays.asList(xPort, yPort),
+                        unequal.node(),
+                        profile));
+
+        OnePortSchema relation = new OnePortSchema(USER_REL);
+        BagPortSchema disjointBag = new BagPortSchema(
+                ArityPolicy.nonemptyVariadic(), relation);
+        ContainerLawCertificate disjointC = AlloyLawRegistry.issue(
+                profile,
+                Opcode.DISJOINT,
+                "ALLOY/DISJOINT",
+                GraphType.BOOL,
+                PortPath.at(0),
+                disjointBag,
+                ContainerLawCertificate.Law.COMMUTATIVITY);
+        InstantiatedOperator disjoint = OperatorDeclaration.monomorphic(
+                "ALLOY/DISJOINT",
+                Collections.singletonList(disjointBag),
+                GraphType.BOOL,
+                lawMap(ContainerLawDeclaration.certified(
+                        disjointBag, Collections.singletonList(disjointC))),
+                null).instantiateMonomorphic();
+        TypedSlot relationX = TypedSlot.source(USER_REL, 603);
+        TypedSlot relationY = TypedSlot.source(USER_REL, 604);
+        TypedSlotContext relationContext = TypedSlotContext.of(relationX, relationY);
+        OnePort relationXPort = OnePort.slot(relationContext, relationX);
+        OnePort relationYPort = OnePort.slot(relationContext, relationY);
+        CertifiedContainerConstruction duplicateDisjoint =
+                TypedENode.constructContainerCertified(
+                        disjoint,
+                        PortPath.at(0),
+                        relationContext,
+                        Arrays.asList(relationXPort, relationXPort, relationYPort),
+                        profile);
+        check(duplicateDisjoint.certificate().containerTrace()
+                        .inputOccurrences().size() == 3
+                        && duplicateDisjoint.certificate().containerTrace()
+                                .outputOccurrences().size() == 3,
+                "C-only disjoint construction retains duplicate source occurrences");
+        check(duplicateDisjoint.certificate().premises().stream()
+                        .noneMatch(premise -> premise instanceof ContainerLawCertificate
+                                && ((ContainerLawCertificate) premise).law()
+                                        == ContainerLawCertificate.Law.IDEMPOTENCY),
+                "Disjoint construction never cites I evidence");
     }
 
     /** Section 3.6 and Lemma 3: Aut(beta) preserves the complete descriptor. */
@@ -451,6 +738,98 @@ public final class TheoryCertificatesTest {
         TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
         check(graph.canonicalize(certifiedNode).shape() != null,
                 "Strict canonicalization uses a certified Aut(beta)");
+
+        BinderOccurrenceAutomorphismCertificate occurrenceCertificate =
+                BinderOccurrenceAutomorphismCertificate.create(
+                        certifiedNode,
+                        certifiedPort,
+                        Collections.singletonList(0),
+                        swap);
+        CertificateVerifier.verify(occurrenceCertificate);
+        check(occurrenceCertificate.source().equals(certifiedPort)
+                        && occurrenceCertificate.sourcePath().equals(
+                                Collections.singletonList(0)),
+                "Binder evidence is bound to the complete concrete source occurrence and path");
+        check(occurrenceCertificate.occurrencePermutation().apply(
+                        occurrence.apply(x)).equals(occurrence.apply(y))
+                        && occurrenceCertificate.occurrencePermutation().apply(
+                                occurrence.apply(y)).equals(occurrence.apply(x)),
+                "Descriptor automorphism is conjugated into the fresh occurrence coordinates");
+        check(((SlotPortLeaf) ((OnePort) occurrenceCertificate.target().body())
+                        .leaf()).slot().equals(occurrence.apply(y)),
+                "Concrete binder evidence records the exact acted target endpoint");
+        check(!occurrenceCertificate.appliesTo(
+                        certifiedNode,
+                        certifiedPort,
+                        Collections.singletonList(1),
+                        swap),
+                "Binder evidence cannot replay at another source path");
+        expectThrows(IllegalArgumentException.class,
+                () -> BinderOccurrenceAutomorphismCertificate.create(
+                        certifiedNode,
+                        certifiedPort,
+                        Collections.singletonList(0),
+                        TypedPermutation.identity(certified.boundContext())));
+
+        TypedRenaming secondOccurrence = certified.freshOccurrenceRenaming(
+                occurrence.codomain());
+        BindBlockPort secondPort = new BindBlockPort(
+                certifiedSchema,
+                TypedSlotContext.empty(),
+                secondOccurrence,
+                OnePort.slot(secondOccurrence.codomain(), secondOccurrence.apply(x)));
+        OperatorDeclaration twoOccurrenceOperator = OperatorDeclaration.monomorphic(
+                "two-certified-block-occurrences",
+                Arrays.asList(certifiedSchema, certifiedSchema),
+                GraphType.BOOL,
+                Collections.emptyMap(),
+                null);
+        TypedENode twoOccurrences = TypedENode.construct(
+                twoOccurrenceOperator.instantiateMonomorphic(),
+                TypedSlotContext.empty(),
+                Arrays.asList(certifiedPort, secondPort));
+        List<BinderOccurrenceAutomorphismCertificate> occurrenceProofs =
+                BinderOccurrenceProofs.collect(twoOccurrences);
+        check(occurrenceProofs.size() == 2,
+                "Every concrete occurrence of a symmetric descriptor receives evidence");
+        check(occurrenceProofs.get(0).sourcePath().equals(
+                        Collections.singletonList(0))
+                        && occurrenceProofs.get(1).sourcePath().equals(
+                                Collections.singletonList(1)),
+                "Same-descriptor occurrences retain distinct deterministic source paths");
+        check(!occurrenceProofs.get(0).source().descriptorToOccurrence().equals(
+                        occurrenceProofs.get(1).source().descriptorToOccurrence())
+                        && !occurrenceProofs.get(0).leftEndpoint().equals(
+                                occurrenceProofs.get(1).leftEndpoint()),
+                "Same-descriptor occurrences retain distinct fresh contexts and endpoints");
+        check(!occurrenceProofs.get(0).appliesTo(
+                        twoOccurrences,
+                        occurrenceProofs.get(1).source(),
+                        occurrenceProofs.get(1).sourcePath(),
+                        swap),
+                "Binder occurrence evidence cannot replay across fresh occurrence contexts");
+
+        OperatorDeclaration alternateRootOperator = OperatorDeclaration.monomorphic(
+                "certified-block-alternate-root",
+                Collections.singletonList(certifiedSchema),
+                GraphType.BOOL,
+                Collections.emptyMap(),
+                null);
+        TypedENode alternateRoot = TypedENode.construct(
+                alternateRootOperator.instantiateMonomorphic(),
+                TypedSlotContext.empty(),
+                Collections.singletonList(certifiedPort));
+        BinderOccurrenceAutomorphismCertificate alternateRootCertificate =
+                BinderOccurrenceProofs.collect(alternateRoot).get(0);
+        check(!occurrenceCertificate.structuralKey().equals(
+                        alternateRootCertificate.structuralKey()),
+                "Equal local binder paths under distinct roots have distinct evidence keys");
+        check(!occurrenceCertificate.appliesTo(
+                        alternateRoot,
+                        certifiedPort,
+                        Collections.singletonList(0),
+                        swap),
+                "Binder evidence cannot replay under another enclosing root");
 
         BinderBlockDescriptor raw = new BinderBlockDescriptor(
                 compatible, Collections.singletonList(swap));
@@ -604,6 +983,100 @@ public final class TheoryCertificatesTest {
         }
     }
 
+    /** A rejected fixed batch must not path-compress or otherwise mutate the graph. */
+    private static void testRejectedFixedBatchIsPure() {
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        OnePortSchema integer = new OnePortSchema(GraphType.INT);
+        BagPortSchema equalityBag = new BagPortSchema(ArityPolicy.exact(2), integer);
+        ContainerLawCertificate equalityC = AlloyLawRegistry.issue(
+                profile,
+                Opcode.EQUALS,
+                "ALLOY/EQUALS",
+                GraphType.BOOL,
+                PortPath.at(0),
+                equalityBag,
+                ContainerLawCertificate.Law.COMMUTATIVITY);
+        InstantiatedOperator equality = OperatorDeclaration.monomorphic(
+                "ALLOY/EQUALS",
+                Collections.singletonList(equalityBag),
+                GraphType.BOOL,
+                lawMap(ContainerLawDeclaration.certified(
+                        equalityBag, Collections.singletonList(equalityC))),
+                null).instantiateMonomorphic();
+
+        TypedEClassInterface bottom = emptyClass(6_100, GraphType.INT);
+        TypedEClassInterface middle = emptyClass(6_101, GraphType.INT);
+        TypedEClassInterface leader = emptyClass(6_102, GraphType.INT);
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        graph.registerEmptyClassForPhaseF(bottom);
+        graph.registerEmptyClassForPhaseF(middle);
+        graph.registerEmptyClassForPhaseF(leader);
+        TypedInvocation middleInBottom = TypedInvocation.identity(middle);
+        TypedInvocation leaderInMiddle = TypedInvocation.identity(leader);
+        graph.unionCertified(new ParentEdgeCertificate(
+                bottom,
+                middleInBottom,
+                inputEquation(bottom, middleInBottom, "fixed-preflight", 0)));
+        graph.unionCertified(new ParentEdgeCertificate(
+                middle,
+                leaderInMiddle,
+                inputEquation(middle, leaderInMiddle, "fixed-preflight", 1)));
+        graph.rebuild();
+        check(graph.findWithoutCompressionForTesting(TypedInvocation.identity(bottom))
+                        .parentPath().steps().size() == 2,
+                "Fixed-batch purity fixture retains a two-edge parent chain");
+
+        TypedSlotContext empty = TypedSlotContext.empty();
+        CertifiedContainerConstruction construction =
+                TypedENode.constructContainerCertified(
+                        equality,
+                        PortPath.at(0),
+                        empty,
+                        Arrays.asList(
+                                OnePort.invocation(
+                                        empty, TypedInvocation.identity(bottom)),
+                                OnePort.invocation(
+                                        empty, TypedInvocation.identity(leader))),
+                        profile);
+        CanonicalizationResult canonical = ProductionGraphCanonicalizer.instance()
+                .canonicalizeWithoutCompression(
+                        graph, construction.node().inExactSupportContext());
+        TypedEClassInterface owner = new TypedEClassInterface(
+                EClassId.of(6_103),
+                GraphType.BOOL,
+                canonical.effectiveSupport());
+        ShapeWitness witness = new ShapeWitness(
+                canonical.shape().exactSlots(),
+                canonical.effectiveSupport(),
+                owner.exposedSlots(),
+                canonical.witness());
+        TypedEClassRecord record = TypedEClassRecord.of(
+                owner,
+                Collections.singletonMap(canonical.shape(), witness),
+                TypedSymmetryGroup.identity(owner.exposedSlots()));
+        InputEquationCertificate malformedEquation = new InputEquationCertificate(
+                CertificateOrigin.inputEquation(
+                        "certificate-test", "malformed-fixed-batch", 0),
+                TypedCertificateEndpoint.node(construction.node()),
+                TypedCertificateEndpoint.invocation(TypedInvocation.identity(owner)));
+
+        StructuralKey before = graph.stateStructuralKey();
+        expectThrows(IllegalArgumentException.class, () ->
+                graph.admitFixedBatchRecordCertified(
+                        record,
+                        Collections.singletonMap(
+                                canonical.shape(), malformedEquation),
+                        Collections.singletonMap(
+                                canonical.shape(), construction.certificate())));
+        check(before.equals(graph.stateStructuralKey()),
+                "Rejected fixed-batch preflight leaves the complete graph state unchanged");
+        check(graph.findWithoutCompressionForTesting(TypedInvocation.identity(bottom))
+                        .parentPath().steps().size() == 2,
+                "Rejected fixed-batch preflight does not path-compress union-find state");
+        check(!graph.classes().containsKey(owner.id()),
+                "Rejected fixed-batch preflight does not install its proposed owner");
+    }
+
     /** Mission sections 16 and 25: proof algebra and raw mutation paths stay closed. */
     private static void testMutationBoundary() {
         check(TypedEqualityCertificate.class.isSealed(),
@@ -614,14 +1087,41 @@ public final class TheoryCertificatesTest {
         }
         for (Method method : TypedSlottedPortEGraph.class.getDeclaredMethods()) {
             if (method.getName().equals("linkLeadersForPhaseD")
-                    || method.getName().equals("registerRecordForPhaseD")) {
+                    || method.getName().equals("registerRecordForPhaseD")
+                    || method.getName().equals("extractLeaderKernel")
+                    || method.getName().equals("admitFixedBatchRecordCertified")) {
                 check(!Modifier.isPublic(method.getModifiers()),
-                        "Structural setup mutation is not a public graph transition");
+                        "Already-authorized replay is not a public source-admission path");
             }
+        }
+        check(!Modifier.isPublic(LeaderKernelExtractor.class.getModifiers())
+                        && !Modifier.isPublic(
+                                ExhaustiveGraphCanonicalizer.class.getModifiers()),
+                "Internal kernel and reference canonicalizers are package-confined");
+        try {
+            check(!Modifier.isPublic(ProductionGraphCanonicalizer.class
+                            .getDeclaredMethod("instance").getModifiers()),
+                    "The production canonicalizer singleton is available only to the graph facade");
+        } catch (NoSuchMethodException exception) {
+            throw new AssertionError(exception);
         }
         check(new TypedSlottedPortEGraph().certificateMode()
                         == GraphCertificateMode.REQUIRED,
                 "The public graph defaults to certificate-enforcing mode");
+        check(CertifiedSemanticArtifact.class.getConstructors().length == 0,
+                "Public callers cannot mint complete semantic artifacts");
+        try {
+            check(!Modifier.isPublic(ConstructionSourceLedger.class
+                            .getDeclaredMethod(
+                                    "builder", SemanticProfile.class)
+                            .getModifiers())
+                            && !Modifier.isPublic(
+                                    ConstructionSourceLedger.Builder.class
+                                            .getModifiers()),
+                    "Only the package-confined certified adapter can mint source ledgers");
+        } catch (NoSuchMethodException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     private static BinderCoordinateDescriptor coordinate(

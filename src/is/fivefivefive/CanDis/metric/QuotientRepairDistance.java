@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import is.fivefivefive.CanDis.core.OrderedTreeEditDistance;
 import is.fivefivefive.CanDis.metric.RepairView.Binding;
 import is.fivefivefive.CanDis.metric.RepairView.BindingRole;
 import is.fivefivefive.CanDis.metric.RepairView.Declaration;
@@ -19,20 +20,56 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
 
 /**
  * The established {@code CanonicalDistance} repair geometry evaluated over a
- * certificate-backed {@link RepairView}. Its decomposition and edit units are
- * metric semantics, while Layer 1 supplies admissible scope symmetries.
+ * certificate-producing {@link RepairView}. Its decomposition and edit units
+ * are metric semantics, while Layer 1 supplies admissible scope symmetries.
+ * This in-process evaluator checks producer consistency only. It does not by
+ * itself grant independent certificate authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-legacy-repair-distance-v5";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v6";
 
     private QuotientRepairDistance() {
     }
+
+    private static final OrderedTreeEditDistance.Adapter<TemporalNode> TEMPORAL_ADAPTER =
+            new OrderedTreeEditDistance.Adapter<>() {
+                @Override
+                public String label(TemporalNode node) {
+                    return node.label();
+                }
+
+                @Override
+                public List<? extends TemporalNode> children(TemporalNode node) {
+                    return node.children();
+                }
+            };
 
     public static int distance(RepairView left, RepairView right) {
         return evaluate(left, right).distance();
     }
 
     public static Result evaluate(RepairView left, RepairView right) {
+        Objects.requireNonNull(left, "left");
+        Objects.requireNonNull(right, "right");
+        if (!left.semanticProfile().equals(right.semanticProfile())) {
+            throw new IllegalArgumentException(
+                    "Repair views from different semantic profiles cannot be compared");
+        }
+        Result candidate = evaluateUnchecked(left, right);
+        boolean sameProducerObservation = left.hasSameProducerObservation(right);
+        if (sameProducerObservation != (candidate.distance == 0)) {
+            throw new IllegalStateException(sameProducerObservation
+                    ? "Equal producer observations have nonzero repair distance"
+                    : "A zero repair distance lacks producer-observation equality");
+        }
+        return candidate;
+    }
+
+    static Result evaluateUncheckedForTesting(RepairView left, RepairView right) {
+        return evaluateUnchecked(left, right);
+    }
+
+    private static Result evaluateUnchecked(RepairView left, RepairView right) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
         MutableStats stats = new MutableStats();
@@ -45,18 +82,13 @@ public final class QuotientRepairDistance {
                 quantifiers,
                 matrix,
                 true,
+                KernelAuthority.IN_PROCESS_PRODUCER_CONSISTENCY,
                 stats.alphaAlignments);
     }
 
-    /** Certified equality is exactly the zero kernel; mismatches fail closed. */
-    public static Result enforceCertifiedKernel(Result candidate, boolean certifiedEquivalent) {
-        Objects.requireNonNull(candidate, "candidate");
-        if (certifiedEquivalent != (candidate.distance == 0)) {
-            throw new IllegalStateException(certifiedEquivalent
-                    ? "Certified-equivalent observations have nonzero repair distance"
-                    : "A zero repair distance lacks certified semantic equality");
-        }
-        return candidate;
+    public enum KernelAuthority {
+        /** Both sides of the zero-kernel check were produced in one trust domain. */
+        IN_PROCESS_PRODUCER_CONSISTENCY
     }
 
     public static final class Result {
@@ -65,6 +97,7 @@ public final class QuotientRepairDistance {
         private final int quantifierDistance;
         private final int matrixDistance;
         private final boolean exactForStoredOrbits;
+        private final KernelAuthority kernelAuthority;
         private final long binderAlignments;
 
         private Result(
@@ -73,12 +106,15 @@ public final class QuotientRepairDistance {
                 int quantifierDistance,
                 int matrixDistance,
                 boolean exactForStoredOrbits,
+                KernelAuthority kernelAuthority,
                 long binderAlignments) {
             this.distance = distance;
             this.temporalDistance = temporalDistance;
             this.quantifierDistance = quantifierDistance;
             this.matrixDistance = matrixDistance;
             this.exactForStoredOrbits = exactForStoredOrbits;
+            this.kernelAuthority = Objects.requireNonNull(
+                    kernelAuthority, "kernelAuthority");
             this.binderAlignments = binderAlignments;
         }
 
@@ -102,34 +138,17 @@ public final class QuotientRepairDistance {
             return exactForStoredOrbits;
         }
 
+        public KernelAuthority kernelAuthority() {
+            return kernelAuthority;
+        }
+
         public long binderAlignments() {
             return binderAlignments;
         }
     }
 
     private static int temporalDistance(TemporalNode left, TemporalNode right) {
-        int update = left.label().equals(right.label()) ? 0 : 1;
-        List<TemporalNode> leftChildren = left.children();
-        List<TemporalNode> rightChildren = right.children();
-        int[] previous = new int[rightChildren.size() + 1];
-        int[] current = new int[rightChildren.size() + 1];
-        for (int j = 1; j <= rightChildren.size(); j++) {
-            previous[j] = previous[j - 1] + rightChildren.get(j - 1).size();
-        }
-        for (int i = 1; i <= leftChildren.size(); i++) {
-            current[0] = previous[0] + leftChildren.get(i - 1).size();
-            for (int j = 1; j <= rightChildren.size(); j++) {
-                int delete = previous[j] + leftChildren.get(i - 1).size();
-                int insert = current[j - 1] + rightChildren.get(j - 1).size();
-                int replace = previous[j - 1]
-                        + temporalDistance(leftChildren.get(i - 1), rightChildren.get(j - 1));
-                current[j] = Math.min(replace, Math.min(delete, insert));
-            }
-            int[] swap = previous;
-            previous = current;
-            current = swap;
-        }
-        return update + previous[rightChildren.size()];
+        return OrderedTreeEditDistance.distance(left, right, TEMPORAL_ADAPTER);
     }
 
     private static int quantificationDistance(List<Phase> left, List<Phase> right) {
@@ -704,7 +723,8 @@ public final class QuotientRepairDistance {
                 return Objects.equals(
                         left.lexicalVariable(), right.lexicalVariable()) ? 0 : 1;
             }
-            return Objects.equals(left.payload(), right.payload()) ? 0 : 1;
+            return Objects.equals(
+                    left.semanticPayload(), right.semanticPayload()) ? 0 : 1;
         }
 
         private int sequenceDistance(List<Node> left, List<Node> right) {

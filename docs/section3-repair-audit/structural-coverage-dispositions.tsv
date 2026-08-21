@@ -1,0 +1,8 @@
+decision_id	path	symbol	requirement_ids	coverage_kind	status	justification	evidence
+SC-001	src/is/fivefivefive/CanDis/theory/AlloySemanticProfileFactory.java	fromExactlyOne	P3-16	MC/DC	OPEN	Missing, unique, ambiguous, foreign, and null selections are tested; instrumented condition coverage is not yet captured	SemanticProfileSourceCommandTest
+SC-002	src/is/fivefivefive/CanDis/theory/AlloySemanticProfileFactory.java	fromParserOwnedCommand	P3-16	MC/DC	OPEN	Omitted, zero, supported, excessive width, solver, scope, and option branches are tested; instrumented condition coverage is absent	SemanticProfileSourceCommandTest
+SC-003	src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java	requirePrepared	P3-16;M-08	MC/DC	OPEN	Full and compact cross-profile rejection is tested; instrumented condition coverage is absent	CanonicalAlloyPipelineTest
+SC-004	src/is/fivefivefive/CanDis/core/OrderedTreeEditDistance.java	computeForestDistance	M-05	DECISION	OPEN	Bounded differential testing covers 49 pairs, but statement/branch instrumentation is absent	QuotientRepairDistanceTest
+SC-005	src/is/fivefivefive/CanDis/core/NormalForm.java	isStaticallyEmptySet	P5-12	MC/DC	OPEN	Intersection and self-difference boundaries are tested; complete decision instrumentation is absent	AlloySourceRuleRegressionTest
+SC-006	src/is/fivefivefive/CanDis/core/EGraphNode.java	isSetConstant	P5-15	MC/DC	OPEN	Built-in and capitalized-user identities are tested; complete decision instrumentation is absent	AlloySourceRuleRegressionTest
+SC-007	src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java	validate	A-01;A-02;A-03;A-04;A-05	DECISION	OPEN	Mutation tests cover principal rejection classes; complete statement/branch instrumentation is absent	Section3AssuranceTraceabilityTest

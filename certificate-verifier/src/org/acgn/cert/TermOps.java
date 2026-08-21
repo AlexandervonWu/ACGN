@@ -11,14 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /** Capture-avoiding source-term action and independent normal forms. */
 final class TermOps {
     private final KernelModel model;
+    private final Limits limits;
     private final Map<String, KernelModel.Term> known = new HashMap<>();
 
-    TermOps(KernelModel model) {
+    TermOps(KernelModel model, Limits limits) {
         this.model = Objects.requireNonNull(model, "model");
+        this.limits = Objects.requireNonNull(limits, "limits");
         known.putAll(model.terms());
     }
 
@@ -410,16 +413,20 @@ final class TermOps {
             KernelModel.Schema schema = model.schema(source.symbol());
             KernelModel.Binder binder = model.binder(schema.value());
             String minimum = encodeAlpha(source, free, childKeys);
-            for (List<Integer> permutation : closure(
-                    binder.coordinates().size(), binder.generators(), Long.MAX_VALUE)) {
+            String[] least = {minimum};
+            forEachClosure(
+                    binder.coordinates().size(),
+                    binder.generators(),
+                    limits.maxOrbitMembers(),
+                    permutation -> {
                 KernelModel.Term moved = normalizeContainers(
                         permuteBinderBlock(source, permutation));
                 String key = alphaKey(moved, free, depth, false);
-                if (key.compareTo(minimum) < 0) {
-                    minimum = key;
+                if (key.compareTo(least[0]) < 0) {
+                    least[0] = key;
                 }
-            }
-            return minimum;
+                    });
+            return least[0];
         }
         return encodeAlpha(source, free, childKeys);
     }
@@ -568,10 +575,16 @@ final class TermOps {
         return key.toString();
     }
 
-    List<List<Integer>> closure(
+    void forEachClosure(
             int size,
             List<List<Integer>> generators,
-            long limit) {
+            long limit,
+            Consumer<List<Integer>> consumer) {
+        Objects.requireNonNull(generators, "generators");
+        Objects.requireNonNull(consumer, "consumer");
+        if (size < 0 || limit <= 0) {
+            throw new IllegalArgumentException("Closure size and limit must be valid");
+        }
         List<Integer> identity = new ArrayList<>(size);
         for (int index = 0; index < size; index++) {
             identity.add(index);
@@ -582,18 +595,19 @@ final class TermOps {
         queue.add(List.copyOf(identity));
         for (int cursor = 0; cursor < queue.size(); cursor++) {
             List<Integer> current = queue.get(cursor);
+            consumer.accept(current);
             for (List<Integer> generator : generators) {
                 List<Integer> composed = composePermutation(current, generator);
-                if (seen.add(composed)) {
-                    if (seen.size() > limit) {
+                if (!seen.contains(composed)) {
+                    if (seen.size() >= limit) {
                         throw new ResourceLimitException(
                                 "Permutation closure exceeds configured orbit limit");
                     }
+                    seen.add(composed);
                     queue.add(composed);
                 }
             }
         }
-        return List.copyOf(seen);
     }
 
     private static List<Integer> composePermutation(
@@ -626,6 +640,11 @@ final class TermOps {
         KernelModel.Term term = new KernelModel.Term(
                 record.scalar(0), kind, context, sort, symbol,
                 attributes, children.stream().map(KernelModel.Term::id).toList());
+        if (!known.containsKey(term.id())
+                && known.size() >= limits.maxTableEntries()) {
+            throw new ResourceLimitException(
+                    "Synthesized term table exceeds configured entry limit");
+        }
         known.putIfAbsent(term.id(), term);
         return known.get(term.id());
     }

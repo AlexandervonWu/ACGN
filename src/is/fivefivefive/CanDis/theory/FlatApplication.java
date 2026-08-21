@@ -35,6 +35,13 @@ public final class FlatApplication implements FlatInput {
             }
             copied.add(input);
         }
+        PortSchema schema = operator.portSchemas().get(0);
+        ArityPolicy arities = ContainerLawDeclaration.arityPolicy(schema);
+        if (!arities.admits(copied.size())) {
+            throw new IllegalArgumentException(
+                    "Visible flat source arity " + copied.size()
+                            + " is not admitted by " + arities);
+        }
         this.operands = Collections.unmodifiableList(copied);
     }
 

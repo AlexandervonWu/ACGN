@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-/** Deterministic source, build, dependency, and input identity for one export. */
+/**
+ * Deterministic source, build, dependency, and input identity for one export.
+ * Input identity is provenance metadata; it does not prove transformation of
+ * those bytes into the normalized typed term certified by the bundle.
+ */
 public final class CertificateProvenance {
     public static final String EXPORTER_VERSION = "phase-j-producer-export-v3";
     public static final String VERIFIER_VERSION = "independent-certificate-verifier-v2";
@@ -174,6 +178,18 @@ public final class CertificateProvenance {
 
     public boolean testOnly() {
         return mode.equals("TEST_ONLY");
+    }
+
+    public String inputIdentifier() {
+        return inputIdentifier;
+    }
+
+    public String inputSha256() {
+        return inputSha256;
+    }
+
+    public String verifierJarSha256() {
+        return verifierJarSha256;
     }
 
     private static Path repositoryRoot() throws IOException {

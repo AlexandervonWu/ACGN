@@ -39,7 +39,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;

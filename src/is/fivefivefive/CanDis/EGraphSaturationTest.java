@@ -10,6 +10,8 @@ import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.CanDis.core.NormalForm;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 import is.fivefivefive.CanDis.core.QuantiVar;
@@ -17,6 +19,8 @@ import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
 
 public final class EGraphSaturationTest {
+    private static long nextSyntheticCallOccurrence;
+
     private EGraphSaturationTest() {
     }
 
@@ -116,17 +120,20 @@ public final class EGraphSaturationTest {
     }
 
     private static void testAssociativeNoncommutativeJoin() {
-        EGraphNode nested = node(Opcode.JOIN, false, true, variable("b"), variable("c"));
-        EGraphNode join = node(Opcode.JOIN, false, true, variable("a"), nested);
+        EGraphNode nested = node(Opcode.JOIN, false, false, variable("b"), variable("c"));
+        EGraphNode join = node(Opcode.JOIN, false, false, variable("a"), nested);
 
         join.saturate();
 
-        assertTrue(join.isFlexibleArity(), "JOIN must have flexible arity");
-        assertTrue(join.isSequenceFlexibleArity(), "JOIN must use sequence flexible arity");
-        assertEquals(Arrays.asList("a", "b", "c"), variableNames(join.getChildren()),
-                "JOIN must flatten without reordering operands");
-        assertTrue(join.getEClass().getNodes().size() >= 2,
-                "associated JOIN terms must share an e-class");
+        assertTrue(!join.isFlexibleArity(), "JOIN must remain fixed binary");
+        assertTrue(!join.hasFlatLicense(), "JOIN must not receive a homogeneous flat license");
+        assertEquals(2, join.getChildren().size(), "JOIN must preserve its two source roles");
+        assertEquals("a", join.getChildren().get(0).getAlphaName(),
+                "JOIN must preserve its left operand");
+        assertEquals(Opcode.JOIN, join.getChildren().get(1).getOpcode(),
+                "JOIN must retain the nested right-associated term");
+        assertEquals(Arrays.asList("b", "c"), variableNames(join.getChildren().get(1).getChildren()),
+                "JOIN must preserve nested operand order");
     }
 
     private static void testSetOperatorsUseSetFlexibleArity() {
@@ -146,12 +153,14 @@ public final class EGraphSaturationTest {
         assertEquals(Arrays.asList("left", "right", "tail"), variableNames(intersection.getChildren()),
                 "set flexible arity must canonicalize set intersection operands");
 
-        EGraphNode arrow = node(Opcode.ARROW, false, true, variable("a"), node(Opcode.ARROW, false, true, variable("b"), variable("c")));
+        EGraphNode arrow = node(Opcode.ARROW, false, false, variable("a"),
+                node(Opcode.ARROW, false, false, variable("b"), variable("c")));
         arrow.saturate();
 
-        assertTrue(arrow.isSequenceFlexibleArity(), "relational product ARROW must use sequence flexible arity");
-        assertEquals(Arrays.asList("a", "b", "c"), variableNames(arrow.getChildren()),
-                "sequence flexible arity must preserve relational product order");
+        assertTrue(!arrow.isFlexibleArity(), "relational product ARROW must remain fixed binary");
+        assertTrue(!arrow.hasFlatLicense(), "relational product ARROW must not flatten");
+        assertEquals(Opcode.ARROW, arrow.getChildren().get(1).getOpcode(),
+                "relational product must preserve its nested typed chain");
     }
 
     private static void testRenamedIdUnionFind() {
@@ -248,13 +257,42 @@ public final class EGraphSaturationTest {
     private static void testSetIdentitySaturation() {
         EGraphNode inNone = node(Opcode.IN, false, false, variable("inNoneX"), global("none"));
         inNone.saturate();
-        assertEquals(Opcode.CONSTANT, inNone.getOpcode(), "x in none must collapse to false");
-        assertEquals("false", inNone.getSourceName(), "x in none must collapse to false");
+        assertEquals(Opcode.IN, inNone.getOpcode(),
+                "x in none must remain when x has no nonemptiness proof");
+
+        EGraphNode noneInNone = node(
+                Opcode.IN, false, false, global("none"), global("none"));
+        noneInNone.saturate();
+        assertEquals(Opcode.CONSTANT, noneInNone.getOpcode(),
+                "none in none must collapse to true");
+        assertEquals("true", noneInNone.getSourceName(),
+                "none is a subset of none");
+
+        EGraphNode syntheticOneInNone = node(
+                Opcode.IN,
+                false,
+                false,
+                node(Opcode.ONE, false, false, global("S")),
+                global("none"));
+        syntheticOneInNone.saturate();
+        assertEquals(Opcode.IN, syntheticOneInNone.getOpcode(),
+                "a synthetic ONE label is not a nonemptiness certificate");
 
         EGraphNode inUniv = node(Opcode.IN, false, false, variable("inUnivX"), global("univ"));
         inUniv.saturate();
         assertEquals(Opcode.CONSTANT, inUniv.getOpcode(), "x in univ must collapse to true");
         assertEquals("true", inUniv.getSourceName(), "x in univ must collapse to true");
+
+        EGraphNode userNone = node(
+                Opcode.SOME, false, false, global("None"));
+        userNone.saturate();
+        assertEquals(Opcode.SOME, userNone.getOpcode(),
+                "a user signature named None must not become the empty relation");
+        EGraphNode userUniv = node(
+                Opcode.IN, false, false, variable("userUnivX"), global("Univ"));
+        userUniv.saturate();
+        assertEquals(Opcode.IN, userUniv.getOpcode(),
+                "a user signature named Univ must not become the universal relation");
 
         EGraphNode intersectNone = node(Opcode.INTERSECT, true, true, global("R"), global("none"));
         intersectNone.saturate();
@@ -265,6 +303,15 @@ public final class EGraphSaturationTest {
         plusNone.saturate();
         assertEquals(Opcode.GLOBALBINDING, plusNone.getOpcode(), "R + none must collapse to R");
         assertEquals("R", plusNone.getSourceName(), "R + none must collapse to R");
+
+        EGraphNode selfDifference = node(
+                Opcode.MINUS, false, false, global("R"), global("R"));
+        selfDifference.saturate();
+        assertEquals(Opcode.GLOBALBINDING, selfDifference.getOpcode(),
+                "R - R must collapse to the empty relation");
+        assertEquals(SigSymbol.BUILTIN_NONE_IDENTITY,
+                selfDifference.getSemanticIdentity(),
+                "R - R must carry authenticated empty-relation identity");
     }
 
     private static void testImplicationSaturation() {
@@ -390,7 +437,9 @@ public final class EGraphSaturationTest {
                 Opcode.NOT_IN,
                 false,
                 false,
-                node(Opcode.ARROW, false, true, variable("c"), variable("s"), variable("g")),
+                node(Opcode.ARROW, false, false,
+                        node(Opcode.ARROW, false, false, variable("c"), variable("s")),
+                        variable("g")),
                 global("Groups")));
         normalForm.normalize();
 
@@ -454,8 +503,28 @@ public final class EGraphSaturationTest {
                 predicate("P", variable("x"))));
         plainPrimitiveDomain.normalize();
 
-        assertTrue(normalFormDistance(primitiveDomain, plainPrimitiveDomain) > 0,
-                "one Person vs Person binding cardinality must affect quantifier distance");
+        assertEquals(Cardinality.ONE,
+                plainPrimitiveDomain.getMatrixQuantiVars().get(0).getCardinality(),
+                "a bare Alloy declaration domain defaults to one");
+        assertEquals(0, normalFormDistance(primitiveDomain, plainPrimitiveDomain),
+                "one Person and bare Person must have the same binding cardinality");
+
+        NormalForm setPrimitiveDomain = new NormalForm();
+        setPrimitiveDomain.addEClass(node(
+                Opcode.FORALL,
+                false,
+                false,
+                relDeclWithDomain(
+                        node(Opcode.SETOF, false, false, global("Person")),
+                        "Person",
+                        "x"),
+                predicate("P", variable("x"))));
+        setPrimitiveDomain.normalize();
+        assertEquals(Cardinality.SET,
+                setPrimitiveDomain.getMatrixQuantiVars().get(0).getCardinality(),
+                "explicit set Person must retain set cardinality");
+        assertTrue(normalFormDistance(primitiveDomain, setPrimitiveDomain) > 0,
+                "one Person vs set Person binding cardinality must affect distance");
     }
 
     private static void testCommutingPrenexBindingsIgnoreBranchOrder() {
@@ -667,7 +736,12 @@ public final class EGraphSaturationTest {
         EGraphNode duplicate = variable("bagDuplicateX");
         EGraphNode product = node(Opcode.MUL, true, true, duplicate, duplicate);
         product.saturate();
-        assertTrue(product.isBagFlexibleArity(), "MUL must be represented as a bag flexible-arity node");
+        assertTrue(!product.isFlexibleArity(),
+                "overflow-forbidding MUL must remain fixed binary");
+        assertTrue(product.isOrderInsensitive(),
+                "overflow-forbidding MUL retains commutativity");
+        assertTrue(!product.hasFlatLicense(),
+                "overflow-forbidding MUL must not receive associativity");
         assertEquals(2, product.getChildClasses().size(),
                 "non-Boolean bag nodes must retain duplicate e-class invocations until an explicit rewrite removes them");
         assertEquals(1, product.getChildClassCardinalities().size(),
@@ -686,14 +760,12 @@ public final class EGraphSaturationTest {
                 predicate("B")));
         antecedentQuantifier.normalize();
 
-        assertEquals(Quantifier.SOME, antecedentQuantifier.getMatrixQuantiVars().get(0).getQuantifier(),
-                "forall in an implication antecedent must become some after branch rewriting and NNF");
-        assertEquals("S", antecedentQuantifier.getMatrixQuantiVars().get(0).getTypeName(),
-                "unsafe prenexing must retain the primitive alpha-renaming color");
-        assertEquals("univ", antecedentQuantifier.getMatrixQuantiVars().get(0).getCarrierTypeName(),
-                "unsafe existential lift across OR must use a nonempty carrier");
-        assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.IN),
-                "unsafe existential lift across OR must guard the original domain in the matrix");
+        assertEquals(0, antecedentQuantifier.getMatrixQuantiVars().size(),
+                "an empty-domain-sensitive antecedent quantifier must remain locally scoped");
+        assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.EXISTS),
+                "forall in an implication antecedent must become a local existential after NNF");
+        assertTrue(!containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.IN),
+                "a retained primitive local binder must not acquire a synthetic univ guard");
         assertTrue(containsOpcode(antecedentQuantifier.getMatrixEGraph(), Opcode.NOT),
                 "the antecedent matrix must remain negated exactly once after strict prenexing");
 
@@ -743,10 +815,10 @@ public final class EGraphSaturationTest {
                 predicate("Q")));
         iff.normalize();
 
-        assertTrue(hasQuantifier(iff.getMatrixQuantiVars(), Quantifier.ALL),
-                "IFF expansion must account for the implicit negated implication branch");
-        assertTrue(hasQuantifier(iff.getMatrixQuantiVars(), Quantifier.SOME),
-                "IFF expansion must retain the positive implication branch");
+        assertTrue(containsOpcode(iff.getMatrixEGraph(), Opcode.FORALL),
+                "IFF expansion must retain its empty-domain-sensitive local universal branch");
+        assertTrue(containsOpcode(iff.getMatrixEGraph(), Opcode.EXISTS),
+                "IFF expansion must retain its empty-domain-sensitive local existential branch");
         assertTrue(containsOpcode(iff.getMatrixEGraph(), Opcode.NOT),
                 "IFF expansion must account for the implicit negated implication branch");
     }
@@ -824,16 +896,16 @@ public final class EGraphSaturationTest {
         assertNegatedQuantifier(Opcode.NO, Quantifier.SOME, Opcode.CALL,
                 "not no x must become some x without negating the matrix");
 
-        assertAntecedentQuantifierLifted(Opcode.FORALL, Quantifier.SOME, true, "univ",
-                "ALL in an implication antecedent must become SOME with a relativized matrix");
+        assertAntecedentQuantifierLocal(Opcode.FORALL, Opcode.EXISTS, true,
+                "ALL in an implication antecedent must remain local when its domain may be empty");
         assertAntecedentQuantifierLifted(Opcode.EXISTS, Quantifier.ALL, true, "S",
                 "SOME in an implication antecedent may become ALL and cross OR safely");
-        assertAntecedentQuantifierLifted(Opcode.NO, Quantifier.SOME, false, "univ",
-                "NO in an implication antecedent must become SOME with a relativized matrix");
-        assertAntecedentQuantifierLifted(Opcode.ONE, Quantifier.NOTONE, false, "univ",
-                "ONE in an implication antecedent must become NOTONE with a relativized matrix");
-        assertAntecedentQuantifierLifted(Opcode.LONE, Quantifier.NOTLONE, false, "univ",
-                "LONE in an implication antecedent must become NOTLONE with a relativized matrix");
+        assertAntecedentQuantifierLocal(Opcode.NO, Opcode.EXISTS, false,
+                "NO in an implication antecedent must remain local when its domain may be empty");
+        assertAntecedentQuantifierLocal(Opcode.ONE, Opcode.ONE, true,
+                "ONE in an implication antecedent must retain a local negated multiplicity test");
+        assertAntecedentQuantifierLocal(Opcode.LONE, Opcode.LONE, true,
+                "LONE in an implication antecedent must retain a local negated multiplicity test");
     }
 
     private static void assertNegatedQuantifier(
@@ -862,6 +934,20 @@ public final class EGraphSaturationTest {
         assertEquals(expectedQuantifier, normalForm.getMatrixQuantiVars().get(0).getQuantifier(), message);
         assertEquals(expectedCarrierType, normalForm.getMatrixQuantiVars().get(0).getCarrierTypeName(), message);
         assertEquals(expectedMatrixNegation, containsOpcode(normalForm.getMatrixEGraph(), Opcode.NOT), message);
+    }
+
+    private static void assertAntecedentQuantifierLocal(
+            Opcode source,
+            Opcode expectedLocalOpcode,
+            boolean expectedBodyNegation,
+            String message) {
+        NormalForm normalForm = new NormalForm();
+        EGraphNode quantified = node(source, false, false, relDecl("a"), predicate("P", variable("a")));
+        normalForm.addEClass(node(Opcode.IMPLIES, false, false, quantified, predicate("Q")));
+        normalForm.normalize();
+        assertEquals(0, normalForm.getMatrixQuantiVars().size(), message);
+        assertEquals(true, containsOpcode(normalForm.getMatrixEGraph(), expectedLocalOpcode), message);
+        assertEquals(expectedBodyNegation, containsOpcode(normalForm.getMatrixEGraph(), Opcode.NOT), message);
     }
 
     private static boolean containsOpcode(EGraphNode node, Opcode opcode) {
@@ -978,6 +1064,11 @@ public final class EGraphSaturationTest {
                 false, Metatype.SET);
         binding.setSourceName(name);
         binding.setSourceType(name);
+        if ("none".equals(name)) {
+            binding.setSemanticIdentity(SigSymbol.BUILTIN_NONE_IDENTITY);
+        } else if ("univ".equals(name)) {
+            binding.setSemanticIdentity(SigSymbol.BUILTIN_UNIV_IDENTITY);
+        }
         return binding;
     }
 
@@ -1029,6 +1120,7 @@ public final class EGraphSaturationTest {
     private static EGraphNode predicate(String name, EGraphNode... arguments) {
         EGraphNode predicate = node(Opcode.CALL, false, true, arguments);
         predicate.setSourceName(name);
+        predicate.setSemanticIdentity("egraph-test/" + name);
         return predicate;
     }
 
@@ -1037,14 +1129,27 @@ public final class EGraphSaturationTest {
             boolean commutative,
             boolean flexible,
             EGraphNode... children) {
-        return new EGraphNode(
+        boolean call = opcode == Opcode.CALL;
+        EGraphNode node = new EGraphNode(
                 opcode.hashCode(),
                 opcode,
                 new ArrayList<>(Arrays.asList(children)),
-                commutative,
-                flexible ? -1 : children.length,
-                flexible,
+                call ? false : commutative,
+                call || !flexible ? children.length : -1,
+                call ? false : flexible,
                 Metatype.BOOLEAN);
+        if (opcode == Opcode.PLUS || opcode == Opcode.INTERSECT) {
+            node.setSourceType("Rel(Test)");
+        }
+        if (call) {
+            node.setSourceName("call");
+            node.setSemanticIdentity("egraph-test/call");
+            node.setSourceType("call/formula");
+            node.setCallOccurrenceId(nextSyntheticCallOccurrence++);
+            node.setDeclaredArity(children.length);
+            node.setCallArityAuthority(CallSymbol.ArityAuthority.DECLARATION.name());
+        }
+        return node;
     }
 
     private static List<String> variableNames(List<EGraphNode> nodes) {

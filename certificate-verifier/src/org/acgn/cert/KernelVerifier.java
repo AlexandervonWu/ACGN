@@ -25,6 +25,7 @@ final class KernelVerifier {
         CONTAINER_NORMALIZE,
         STRUCTURAL_ALPHA,
         FULL_INTERFACE_SYMMETRY,
+        WITNESS_UNFOLD,
         KERNEL_REPLAY,
         FRESH_WITNESS,
         CANONICAL_ORBIT,
@@ -68,20 +69,43 @@ final class KernelVerifier {
 
     private final KernelModel model;
     private final Limits limits;
+    private final SemanticEvidenceVerifier.Authorization semanticEvidence;
     private final TermOps terms;
     private final Map<String, ProofRecord> records;
     private final Map<String, Judgment> checked = new HashMap<>();
     private final Set<String> active = new HashSet<>();
+    private long canonicalOrbitWork;
 
-    KernelVerifier(KernelModel model, Limits limits) {
+    KernelVerifier(
+            KernelModel model,
+            Limits limits,
+            SemanticEvidenceVerifier.Authorization semanticEvidence) {
         this.model = Objects.requireNonNull(model, "model");
         this.limits = Objects.requireNonNull(limits, "limits");
-        terms = new TermOps(model);
+        this.semanticEvidence = Objects.requireNonNull(
+                semanticEvidence, "semanticEvidence");
+        terms = new TermOps(model, limits);
         records = parseProofs(model.bundle().proofs());
     }
 
     TermOps termOps() {
         return terms;
+    }
+
+    int compareCanonicalTerms(KernelModel.Term left, KernelModel.Term right) {
+        return semanticEvidence.compareCanonicalTerms(left, right, terms);
+    }
+
+    String canonicalTermKey(KernelModel.Term term) {
+        return semanticEvidence.canonicalTermKey(term, terms);
+    }
+
+    void consumeCanonicalOrbitWork() {
+        canonicalOrbitWork = Math.addExact(canonicalOrbitWork, 1L);
+        if (canonicalOrbitWork > limits.maxOrbitMembers()) {
+            throw new TermOps.ResourceLimitException(
+                    "Total canonical-orbit work exceeds the bundle limit");
+        }
     }
 
     ProofRecord proofRecord(String id) {
@@ -139,6 +163,7 @@ final class KernelVerifier {
             case CONTAINER_NORMALIZE -> containerNormalize(proof, premises);
             case STRUCTURAL_ALPHA -> structuralAlpha(proof, premises);
             case FULL_INTERFACE_SYMMETRY -> fullInterfaceSymmetry(proof, premises);
+            case WITNESS_UNFOLD -> witnessUnfold(proof, premises);
             case KERNEL_REPLAY -> kernelReplay(proof, premises);
             case FRESH_WITNESS -> freshWitness(proof, premises);
             case CANONICAL_ORBIT -> canonicalOrbit(proof, premises);
@@ -433,7 +458,7 @@ final class KernelVerifier {
 
     private Judgment containerNormalize(ProofRecord proof, List<Judgment> premises) {
         Wire.Node payload = proof.payload().requireTag("container-normalization");
-        if (payload.scalars().size() != 3) {
+        if (payload.scalars().size() != 5) {
             throw malformed("container normalization");
         }
         KernelModel.Term source = model.term(payload.scalar(1));
@@ -456,6 +481,11 @@ final class KernelVerifier {
                     FailureCode.INVALID_CONTAINER_NORMALIZATION,
                     "Container occurrence evidence is incomplete");
         }
+        semanticEvidence.requireContainerNormalization(
+                payload.scalar(3),
+                payload.scalar(4),
+                source.symbol(),
+                expectedKind);
         List<KernelModel.Term> normalized = new ArrayList<>();
         Set<Integer> seen = new HashSet<>();
         for (int index = 0; index < payload.children().size(); index++) {
@@ -543,6 +573,30 @@ final class KernelVerifier {
         return new SourceToKernelVerifier(model, this, limits).verify(proof, premises);
     }
 
+    private Judgment witnessUnfold(ProofRecord proof, List<Judgment> premises) {
+        requirePremiseCount(proof, premises, 0);
+        Wire.Node payload = proof.payload().requireShape("witness-unfold", 2, 0);
+        KernelModel.Witness witness = model.witness(payload.scalar(0));
+        KernelModel.Embedding embedding = model.embedding(payload.scalar(1));
+        if (!embedding.source().equals(witness.context())
+                || !embedding.target().equals(proof.claimedContext())) {
+            throw new FormatException(
+                    FailureCode.INVALID_UNFOLDING,
+                    "Witness unfolding embedding has the wrong source or target context");
+        }
+        KernelModel.Sort sort = new KernelModel.Sort(
+                KernelModel.SortKind.TERM, witness.type());
+        KernelModel.Term invocation = terms.intern(
+                KernelModel.TermKind.INVOKE,
+                embedding.target(),
+                sort,
+                witness.id(),
+                List.of(embedding.id()),
+                List.of());
+        KernelModel.Term definition = terms.act(witness.definition(), embedding);
+        return equality(invocation, definition);
+    }
+
     private Judgment freshWitness(ProofRecord proof, List<Judgment> premises) {
         requirePremiseCount(proof, premises, 1);
         Wire.Node payload = proof.payload().requireShape("fresh-witness", 4, 0);
@@ -561,7 +615,7 @@ final class KernelVerifier {
                     "Fresh witness premise is not a typed kernel replay");
         }
         Wire.Node replay = replayRecord.payload().requireShape(
-                "kernel-replay", 7, 4);
+                "kernel-replay", 7, 5);
         if (!kernel.id().equals(replay.scalar(2))
                 || !fresh.context().id().equals(replay.scalar(3))
                 || !inclusion.id().equals(replay.scalar(4))) {
@@ -586,7 +640,7 @@ final class KernelVerifier {
                 .verifyOrbitPayload(proof.payload(), proof.claimedLeft(), proof.claimedRight());
         return equality(
                 model.term(proof.payload().scalar(0)),
-                model.term(proof.payload().scalar(2)));
+                model.term(proof.payload().scalar(3)));
     }
 
     private Judgment collision(ProofRecord proof, List<Judgment> premises) {
@@ -616,19 +670,33 @@ final class KernelVerifier {
 
     private Judgment rebuildCongruence(ProofRecord proof, List<Judgment> premises) {
         Wire.Node payload = proof.payload().requireShape("rebuild-congruence", 1, 0);
-        if (premises.isEmpty()) {
-            throw new UncheckableException(
-                    FailureCode.MISSING_EVIDENCE,
-                    "Rebuild congruence has no child/path evidence");
-        }
-        // Rebuild is forward only: the supplied first premise must be exact endpoint
-        // congruence, and the remaining premises are replay/orbit obligations.
-        if (!payload.scalar(0).equals(proof.premises().get(0))) {
+        requirePremiseCount(proof, premises, 1);
+        String premiseId = payload.scalar(0);
+        if (!proof.premises().equals(List.of(premiseId))) {
             throw new FormatException(
                     FailureCode.INVALID_REBUILD,
-                    "Rebuild forward-congruence premise is not identified explicitly");
+                    "Rebuild premise list does not exactly match its payload");
         }
-        return premises.get(0);
+        ProofRecord premiseRecord = proofRecord(premiseId);
+        Judgment premise = premises.get(0);
+        if (premiseRecord.variant() != Variant.REFL
+                && premiseRecord.variant() != Variant.CONGRUENCE) {
+            throw new FormatException(
+                    FailureCode.INVALID_REBUILD,
+                    "Rebuild requires one direct reflexivity or forward-congruence proof");
+        }
+        requireExact(
+                premise,
+                proof.claimedLeft(),
+                proof.claimedRight(),
+                FailureCode.INVALID_REBUILD);
+        if (premiseRecord.variant() == Variant.REFL
+                && !premise.left().id().equals(premise.right().id())) {
+            throw new FormatException(
+                    FailureCode.INVALID_REBUILD,
+                    "Rebuild reflexivity premise does not have identical endpoints");
+        }
+        return equality(premise.left(), premise.right());
     }
 
     private Map<String, ProofRecord> parseProofs(Map<String, Wire.Node> nodes) {

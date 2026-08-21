@@ -27,6 +27,7 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BagPort;
+import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
 import is.fivefivefive.CanDis.theory.BindBlockPort;
 import is.fivefivefive.CanDis.theory.BindPort;
 import is.fivefivefive.CanDis.theory.CanonicalShape;
@@ -1004,6 +1005,14 @@ public final class VisualizationAnalysisService {
                     }
                     return new JSONObject().put("kind", "relation").put("columns", columns);
                 case CONSTRUCTOR:
+                    Integer emptyArity = AlloyTypeBridge.emptyRelationArity(type);
+                    if (emptyArity != null) {
+                        return new JSONObject()
+                                .put("kind", "relation")
+                                .put("empty", true)
+                                .put("arity", emptyArity)
+                                .put("columns", new JSONArray());
+                    }
                     if ("AlloyRel".equals(type.symbol())) {
                         return new JSONObject()
                                 .put("kind", "relation")

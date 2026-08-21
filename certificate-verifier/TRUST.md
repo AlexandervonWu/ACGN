@@ -8,7 +8,7 @@ The verifier trusts only:
 2. finite data-structure and SHA-256 implementations from `java.base`;
 3. the small dependent equality kernel: reflexivity, symmetry, exact-middle
    transitivity, typed injection transport, checked registered axiom
-   instantiation, and forward congruence;
+   instantiation, forward congruence, and definitional witness unfolding;
 4. the explicitly implemented replay algorithms for restriction, container
    semantics, alpha action, full-interface symmetry, source-to-kernel replay,
    graph transitions, finite orbit enumeration, and finite unfolding;
@@ -66,39 +66,61 @@ generic equality, inverse congruence, equal-hash, or equal-observation rule.
 Endpoint fields and content hashes are never accepted in place of a
 bottom-up derivation.
 
+`WITNESS_UNFOLD` does not enlarge the admitted theory. It accepts no premises
+and treats its payload only as references: the verifier checks the embedding's
+exact source and target contexts and synthesizes both sides as
+`INVOKE(witness,embedding)` and `act(witness.definition,embedding)` before the
+normal claimed-judgment comparison.
+
 ## Producer Boundary Today
 
 The independent checker implements the complete closed schema documented in
-`FORMAT.md`. The producer writer serializes only two exact histories:
+`FORMAT.md`. The producer writer serializes two bounded history families:
 
-1. one fresh nullary or `ONE_SLOT` insertion with a height-one unfolding; or
-2. two fresh `ONE_SLOT` leaves, one direct certified union, one unchanged
-   `REBUILD_COMPLETE`, and one fresh `ONE_TERM` wrapper with a complete
-   height-two unfolding and one nonempty retained parent path.
+1. a nonempty, contiguous, bottom-up history containing only fresh insertions,
+   with the final insertion as the published root; or
+2. the exact six-event parent-path history: two fresh `ONE_SLOT` leaves, one
+   direct certified union, one exact no-op `REBUILD_START`, one unchanged
+   `REBUILD_COMPLETE`, and one fresh `ONE_TERM` wrapper.
 
-The second history permits one free slot of each type. That restriction makes
-the complete free-renaming orbit identity; the writer emits that orbit rather
-than asking the verifier to assume it. Every parent-path occurrence and edge
-is explicit. The ground axiom is part of the pinned theory, while
-input-specific typed symbol declarations are integrity-checked vocabulary.
-Successful checking still requires an independently selected theory pin.
-The bounded harness selects that pin from the source-controlled manifest before
-inspecting any bundle; `ManifestInspector` is only a consistency check.
+Both families require a final quiescent snapshot, exactly one complete root
+unfolding, complete retained insertion provenance, and a free-renaming orbit
+within the configured finite bound. Nonidentity free renaming is confined to
+the explicit slot-only slice; graph/support embeddings (`iota`, `sigma`,
+`omega`, fresh return, and shape instantiation) otherwise obey the writer's
+checked support restrictions. Within a supported term, the writer recursively handles `One`,
+homogeneous `Seq`/`Bag`/`Set`, `Bind`, `BindBlock`, and the dedicated ordered
+dependent `Seq` for guarded JOIN and ARROW. Nonidentity binder descriptor and
+occurrence actions are explicit semantic evidence; they are not graph
+interface symmetries. Flat/container/dependent normalization is exported only
+with its concrete source construction and fixed-theory evidence.
+
+In the parent-path family, every parent occurrence and edge is explicit. The
+ground axiom is part of the pinned theory, while input-specific typed symbol
+declarations are integrity-checked vocabulary. Successful checking still
+requires an independently selected theory pin. The bounded harness selects
+that pin from the source-controlled manifest before inspecting any bundle;
+`ManifestInspector` is only a consistency check.
 
 Publication provenance records Git cleanliness, source, producer/verifier
 builds, dependencies, exact input identity, and configuration. The standalone
 verifier validates the closed metadata shape and checkable internal hashes;
 the release harness compares external source, build, dependency, dataset, and
-input identities. Fixtures are visibly marked `TEST_ONLY` and cannot claim
-dirty publication provenance.
+input identities. Those input fields are provenance, not semantic authority:
+certificate replay starts from the decoded normalized typed term and does not
+prove raw-Alloy parsing or normalization. Fixtures are visibly marked
+`TEST_ONLY` and cannot claim dirty publication provenance.
 
 The writer constructs all content-addressed tables before touching the target
 and publishes through atomic sibling replacement. Unsupported histories are
-`UNCHECKABLE` and cannot truncate an existing output. Collisions, nontrivial
-symmetry, restriction, rebuild records, path compression, contraction,
-nonidentity sigma/omega, repeated same-type free slots, flexible containers,
-binders, indirect parent derivations, cycles, and multiple root unfoldings
-remain outside the producer bridge.
+`UNCHECKABLE` and cannot truncate an existing output. Insertion collisions,
+nontrivial graph e-class symmetry, interface restriction, nonempty rebuild
+records, path compression, support contraction, nonidentity graph-level
+`iota`/`sigma`/`omega`, indirect parent derivations, cyclic unfoldings, and
+multiple root unfoldings remain outside the producer bridge. Repeated
+same-type free slots are confined to the bounded slot-only renaming slice.
+Flexible containers and binders are inside the bridge only under the concrete
+evidence restrictions above.
 
 Standalone DTO fixtures may exercise schema records that the producer cannot
 yet emit. That does not expand the producer boundary. Historical artifacts

@@ -5,13 +5,17 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.theory.IndependentCertificateVerifier;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
@@ -102,7 +106,7 @@ public final class CertificateVerifierExportSmoke {
         Path bundle = output.resolve(testCase.name + ".acgncert");
         try {
             CanonicalAlloyPipeline.Prepared prepared =
-                    CanonicalAlloyPipeline.prepareForVerification(
+                    CanonicalAlloyPipeline.prepareCompatibilityForVerification(
                             graph,
                             "certificate-smoke.als#" + testCase.name,
                             SOURCE.getBytes(StandardCharsets.UTF_8));
@@ -144,13 +148,13 @@ public final class CertificateVerifierExportSmoke {
         Files.writeString(rightSource, PAIR_RIGHT_SOURCE, StandardCharsets.UTF_8);
         Path leftBundle = output.resolve("parsed-pair-left.acgncert");
         Path rightBundle = output.resolve("parsed-pair-right.acgncert");
-        exportParsedSource(
+        CanonicalAlloyPipeline.Prepared leftPrepared = exportParsedSource(
                 parseSource(leftSource),
                 "left",
                 "fixture/parsed-pair-left.als#left",
                 Files.readAllBytes(leftSource),
                 leftBundle);
-        exportParsedSource(
+        CanonicalAlloyPipeline.Prepared rightPrepared = exportParsedSource(
                 parseSource(rightSource),
                 "right",
                 "fixture/parsed-pair-right.als#right",
@@ -164,9 +168,55 @@ public final class CertificateVerifierExportSmoke {
             throw new IllegalStateException(
                     "parsed source PAIR did not verify: " + compact(result.output));
         }
+
+        String verifierDigest = sha256(Files.readAllBytes(verifierJar));
+        IndependentCertificateVerifier.Policy policy =
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        verifierDigest,
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        true);
+        CanonicalAlloyPipeline.StandaloneReplayDistance checked =
+                CanonicalAlloyPipeline.distanceEvaluationWithStandaloneReplay(
+                        leftPrepared, rightPrepared, policy);
+        if (checked.metric().distance() != 0
+                || checked.scope()
+                        != CanonicalAlloyPipeline.StandaloneReplayScope
+                                .TEST_ONLY_NORMALIZED_IR_ZERO_KERNEL
+                || !checked.pairResult().verified()) {
+            throw new IllegalStateException(
+                    "independent distance boundary did not certify the parsed zero pair");
+        }
+        expectIndependentFailure(
+                leftPrepared,
+                rightPrepared,
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        verifierDigest,
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        false),
+                "rejects test-only evidence");
+        expectIndependentFailure(
+                leftPrepared,
+                rightPrepared,
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        "0".repeat(64),
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        true),
+                "digest");
     }
 
-    private static void exportParsedSource(
+    private static CanonicalAlloyPipeline.Prepared exportParsedSource(
             Parsed parsed,
             String predicate,
             String inputIdentifier,
@@ -178,8 +228,30 @@ public final class CertificateVerifierExportSmoke {
         if (graph == null) {
             throw new IOException("parsed source fixture lacks predicate " + predicate);
         }
-        CanonicalAlloyPipeline.prepareForVerification(
-                graph, inputIdentifier, source).certificateExportSession().write(output);
+        CanonicalAlloyPipeline.Prepared prepared =
+                CanonicalAlloyPipeline.prepareCompatibilityForVerification(
+                        graph, inputIdentifier, source);
+        prepared.certificateExportSession().write(output);
+        return prepared;
+    }
+
+    private static void expectIndependentFailure(
+            CanonicalAlloyPipeline.Prepared left,
+            CanonicalAlloyPipeline.Prepared right,
+            IndependentCertificateVerifier.Policy policy,
+            String expected) throws Exception {
+        try {
+            CanonicalAlloyPipeline.distanceEvaluationWithStandaloneReplay(
+                    left, right, policy);
+            throw new AssertionError("Expected independent verification failure: " + expected);
+        } catch (IllegalArgumentException | IOException exception) {
+            if (!exception.getMessage().contains(expected)) {
+                throw new AssertionError(
+                        "Expected failure containing '" + expected + "' but found: "
+                                + exception.getMessage(),
+                        exception);
+            }
+        }
     }
 
     private static Parsed parseRepresentativeModel() throws Exception {
@@ -312,6 +384,11 @@ public final class CertificateVerifierExportSmoke {
             return "no detail";
         }
         return value.replace('\n', ' ').replace('\r', ' ').trim();
+    }
+
+    private static String sha256(byte[] value) throws Exception {
+        return HexFormat.of().formatHex(
+                MessageDigest.getInstance("SHA-256").digest(value));
     }
 
     private record Parsed(MASGVisitor visitor) {

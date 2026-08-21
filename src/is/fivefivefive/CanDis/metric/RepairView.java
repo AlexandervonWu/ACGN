@@ -5,8 +5,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import is.fivefivefive.CanDis.canonical.CanonicalObservation;
+import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.theory.StructuralKey;
+
 /**
- * Immutable repair-domain observation of a certified, repaired normal form.
+ * Immutable repair-domain observation projected from the certificate-producing
+ * pipeline. This value is intentionally not an independent verification
+ * authority: independent replay happens outside the producer process.
  * Temporal topology, phase quantifiers, and matrices remain separate because
  * that decomposition is part of the established {@code CanonicalDistance}
  * semantics. Certificate-derived scope data is metadata, never an edit node.
@@ -30,7 +36,7 @@ public final class RepairView {
         private final List<TemporalNode> children;
         private final int size;
 
-        public TemporalNode(String label, List<? extends TemporalNode> children) {
+        TemporalNode(String label, List<? extends TemporalNode> children) {
             this.label = requireText(label, "temporal label");
             this.children = immutable(children, "temporal child");
             int computed = 1;
@@ -63,7 +69,7 @@ public final class RepairView {
         private final int exchangeClass;
         private final List<Integer> dependencies;
 
-        public Declaration(
+        Declaration(
                 String quantifier,
                 String type,
                 String cardinality,
@@ -134,7 +140,7 @@ public final class RepairView {
         private final String bindingPath;
         private final List<Integer> certifiedOrbit;
 
-        public Binding(
+        Binding(
                 BindingRole role,
                 int ordinal,
                 int ownerPhase,
@@ -197,6 +203,7 @@ public final class RepairView {
     public static final class Node {
         private final String operator;
         private final String payload;
+        private final String semanticPayload;
         private final String lexicalVariable;
         private final int bindingIndex;
         private final ContainerKind containerKind;
@@ -205,7 +212,7 @@ public final class RepairView {
         private final List<Node> alphaAlternatives;
         private final int size;
 
-        public Node(
+        Node(
                 String operator,
                 String payload,
                 String lexicalVariable,
@@ -216,6 +223,7 @@ public final class RepairView {
             this(
                     operator,
                     payload,
+                    payload,
                     lexicalVariable,
                     bindingIndex,
                     containerKind,
@@ -224,7 +232,7 @@ public final class RepairView {
                     Collections.emptyList());
         }
 
-        public Node(
+        Node(
                 String operator,
                 String payload,
                 String lexicalVariable,
@@ -233,8 +241,52 @@ public final class RepairView {
                 boolean orderInsensitive,
                 List<? extends Node> children,
                 List<? extends Node> alphaAlternatives) {
+            this(
+                    operator,
+                    payload,
+                    payload,
+                    lexicalVariable,
+                    bindingIndex,
+                    containerKind,
+                    orderInsensitive,
+                    children,
+                    alphaAlternatives);
+        }
+
+        Node(
+                String operator,
+                String payload,
+                String semanticPayload,
+                String lexicalVariable,
+                int bindingIndex,
+                ContainerKind containerKind,
+                boolean orderInsensitive,
+                List<? extends Node> children) {
+            this(
+                    operator,
+                    payload,
+                    semanticPayload,
+                    lexicalVariable,
+                    bindingIndex,
+                    containerKind,
+                    orderInsensitive,
+                    children,
+                    Collections.emptyList());
+        }
+
+        Node(
+                String operator,
+                String payload,
+                String semanticPayload,
+                String lexicalVariable,
+                int bindingIndex,
+                ContainerKind containerKind,
+                boolean orderInsensitive,
+                List<? extends Node> children,
+                List<? extends Node> alphaAlternatives) {
             this.operator = requireText(operator, "operator");
             this.payload = payload;
+            this.semanticPayload = semanticPayload;
             this.lexicalVariable = lexicalVariable;
             this.bindingIndex = bindingIndex;
             this.containerKind = Objects.requireNonNull(containerKind, "containerKind");
@@ -271,6 +323,11 @@ public final class RepairView {
 
         public String payload() {
             return payload;
+        }
+
+        /** Hidden certified identity used for edit equality; payload stays readable. */
+        public String semanticPayload() {
+            return semanticPayload;
         }
 
         public boolean isVariable() {
@@ -312,7 +369,7 @@ public final class RepairView {
         private final List<Binding> bindings;
         private final Node matrix;
 
-        public Phase(
+        Phase(
                 List<? extends Declaration> quantifiers,
                 List<? extends Binding> bindings,
                 Node matrix) {
@@ -336,17 +393,24 @@ public final class RepairView {
 
     private final TemporalNode temporalRoot;
     private final List<Phase> phases;
-    private final String certifiedArtifactDigest;
+    private final SemanticProfile semanticProfile;
+    private final StructuralKey producerObservationKey;
+    private final String producerObservationDigest;
     private final int semanticSize;
 
-    public RepairView(
+    RepairView(
             TemporalNode temporalRoot,
             List<? extends Phase> phases,
-            String certifiedArtifactDigest) {
+            SemanticProfile semanticProfile,
+            StructuralKey producerObservationKey) {
         this.temporalRoot = Objects.requireNonNull(temporalRoot, "temporalRoot");
         this.phases = immutable(phases, "phase");
-        this.certifiedArtifactDigest = requireText(
-                certifiedArtifactDigest, "certifiedArtifactDigest");
+        this.semanticProfile = Objects.requireNonNull(
+                semanticProfile, "semanticProfile");
+        this.producerObservationKey = Objects.requireNonNull(
+                producerObservationKey, "producerObservationKey");
+        this.producerObservationDigest = new CanonicalObservation(
+                this.producerObservationKey).digest();
         int computed = this.phases.size();
         for (Phase phase : this.phases) {
             computed = Math.addExact(computed, phase.quantifiers.size());
@@ -365,8 +429,18 @@ public final class RepairView {
         return phases;
     }
 
-    public String certifiedArtifactDigest() {
-        return certifiedArtifactDigest;
+    public SemanticProfile semanticProfile() {
+        return semanticProfile;
+    }
+
+    public String producerObservationDigest() {
+        return producerObservationDigest;
+    }
+
+    boolean hasSameProducerObservation(RepairView other) {
+        return other != null
+                && semanticProfile.equals(other.semanticProfile)
+                && producerObservationKey.equals(other.producerObservationKey);
     }
 
     /** Exactly the established normal-form representation-size denominator. */

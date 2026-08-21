@@ -11,10 +11,19 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import is.fivefivefive.CanDis.core.RenamedIdUnionFind.RenamedId;
+import is.fivefivefive.CanDis.theory.ArityPolicy;
+import is.fivefivefive.CanDis.theory.FlatLicense;
+import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.theory.SiblingQuotient;
+import is.fivefivefive.CanDis.theory.UnitLicense;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 
 
 /**
@@ -30,6 +39,8 @@ import is.fivefivefive.CanDis.core.RenamedIdUnionFind.RenamedId;
  */
 public class EGraphNode {
     private static final AtomicInteger NEXT_ECLASS_ID = new AtomicInteger();
+    private static final AtomicLong NEXT_SOURCE_OCCURRENCE_LINEAGE =
+            new AtomicLong(1L);
     private static final ThreadLocal<EGraphArena> CURRENT_ARENA = ThreadLocal.withInitial(EGraphArena::new);
 
     private int id;
@@ -43,7 +54,16 @@ public class EGraphNode {
     private boolean flexibleArity; // whether this node has flexible arity, which is determined by the operator of this node, e.g., "and" and "or" have flexible arity, while "implies" and "iff" have fixed arity of 2.
     private String sourceName;
     private String sourceType;
+    private ExactAlloyType exactAlloyType;
     private String alphaName;
+    private String semanticIdentity;
+    /* Transfer-only identity: never participates in semantic keys or serialization. */
+    private long sourceOccurrenceLineage;
+    /* Parser-owned CALL provenance; excluded from semantic keys and repair cost. */
+    private long callOccurrenceId = -1L;
+    private int declaredArity = -1;
+    private String callArityAuthority;
+    private final SemanticProfile semanticProfile;
     public enum Metatype {
         ATOMIC, 
         SET, 
@@ -82,6 +102,7 @@ public class EGraphNode {
         ITE,
         CALL,
         LIST,
+        DISJOINT,
         DISJOINT_LIST,
         TOTALORDER_LIST,
         COMPREHENSION,
@@ -179,11 +200,26 @@ public class EGraphNode {
     }
     private Metatype metatype; // the metatype of this node, which can be used to capture the type of the formula, e.g., atomic formula, set formula, boolean formula, etc.
     public EGraphNode(int id, Opcode opcode, List<EGraphNode> children, boolean isCommutative, int maxArity, boolean flexibleArity, Metatype metatype) {
-        this(id, opcode, children, isCommutative, maxArity, flexibleArity, metatype, true);
+        this(id, opcode, children, isCommutative, maxArity, flexibleArity, metatype,
+                SemanticProfile.alloyOverflowForbidding(), true);
+    }
+
+    public EGraphNode(
+            int id,
+            Opcode opcode,
+            List<EGraphNode> children,
+            boolean isCommutative,
+            int maxArity,
+            boolean flexibleArity,
+            Metatype metatype,
+            SemanticProfile semanticProfile) {
+        this(id, opcode, children, isCommutative, maxArity, flexibleArity, metatype,
+                semanticProfile, true);
     }
 
     private EGraphNode(int id, Opcode opcode, List<EGraphNode> children, boolean isCommutative,
-            int maxArity, boolean flexibleArity, Metatype metatype, boolean createEClass) {
+            int maxArity, boolean flexibleArity, Metatype metatype,
+            SemanticProfile semanticProfile, boolean createEClass) {
         this.id = id;
         this.opcode = opcode;
         this.arena = CURRENT_ARENA.get();
@@ -203,11 +239,15 @@ public class EGraphNode {
         this.maxArity = maxArity;
         this.flexibleArity = flexibleArity;
         this.metatype = metatype;
+        this.semanticProfile = java.util.Objects.requireNonNull(
+                semanticProfile, "semanticProfile");
+        this.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
         if (children != null) {
             for (EGraphNode child : children) {
                 appendChild(child);
             }
         }
+        requireExtensibleChildCount();
         if (createEClass) {
             this.eClass = new EClass(NEXT_ECLASS_ID.getAndIncrement(), this);
         }
@@ -222,31 +262,35 @@ public class EGraphNode {
         return childrenView;
     }
     public void setChildren(List<EGraphNode> children) {
-        childClasses.clear();
-        if (children != null) {
-            for (EGraphNode child : children) {
-                appendChild(child);
+        arena.mutate(this, () -> {
+            childClasses.clear();
+            if (children != null) {
+                for (EGraphNode child : children) {
+                    appendChild(child);
+                }
             }
-        }
-        refreshEClassSlots();
+            requireExtensibleChildCount();
+            refreshEClassSlots();
+        });
     }
     public boolean isCommutative() {
-        return isCommutative;
+        return getSiblingQuotient().commutative();
     }
     public int getMaxArity() {
         return maxArity;
     }
     public boolean isFlexibleArity() {
-        return flexibleArity;
+        return operatorPolicy().isVariadic();
     }
     public FlexibleArityKind getFlexibleArityKind() {
-        if (!flexibleArity) {
+        if (!isFlexibleArity()) {
             return FlexibleArityKind.FIXED;
         }
-        if (isSetFlexibleArityOperator(opcode)) {
+        if (getSiblingQuotient() == SiblingQuotient.COMMUTATIVE_IDEMPOTENT_SET) {
             return FlexibleArityKind.SET;
         }
-        return isCommutative ? FlexibleArityKind.BAG : FlexibleArityKind.SEQUENCE;
+        return getSiblingQuotient() == SiblingQuotient.COMMUTATIVE_BAG
+                ? FlexibleArityKind.BAG : FlexibleArityKind.SEQUENCE;
     }
     public boolean isSetFlexibleArity() {
         return getFlexibleArityKind() == FlexibleArityKind.SET;
@@ -258,20 +302,127 @@ public class EGraphNode {
         return getFlexibleArityKind() == FlexibleArityKind.SEQUENCE;
     }
     public boolean isOrderInsensitive() {
-        return isCommutative;
+        return getSiblingQuotient().commutative();
+    }
+    public ArityPolicy getArityPolicy() {
+        return operatorPolicy().arityPolicy();
+    }
+    public SiblingQuotient getSiblingQuotient() {
+        return operatorPolicy().siblingQuotient();
+    }
+    public FlatLicense getFlatLicense() {
+        return operatorPolicy().flatLicense();
+    }
+    public UnitLicense getUnitLicense() {
+        return operatorPolicy().unitLicense();
+    }
+    public SemanticProfile getSemanticProfile() {
+        return semanticProfile;
+    }
+    public boolean hasFlatLicense() {
+        return getFlatLicense().enabled();
+    }
+    private AlloyOperatorPolicy operatorPolicy() {
+        return AlloyOperatorPolicy.forShape(
+                opcode, maxArity, flexibleArity, semanticProfile);
     }
     public void addChild(EGraphNode child) {
-        if (child == null) {
-            return;
-        }
-        appendChild(child);
-        refreshEClassSlots();
+        arena.mutate(this, () -> {
+            if (child == null) {
+                return;
+            }
+            appendChild(child);
+            requireExtensibleChildCount();
+            refreshEClassSlots();
+        });
+    }
+
+    /** Adds an explicitly renamed child occurrence without discarding its slot map. */
+    public void addChildInvocation(EClassRef child) {
+        arena.mutate(this, () -> {
+            if (child == null) {
+                return;
+            }
+            if (child.eClass.arena != arena) {
+                throw new IllegalArgumentException(
+                        "A child invocation must belong to the same e-graph arena");
+            }
+            childClasses.add(child);
+            requireExtensibleChildCount();
+            refreshEClassSlots();
+        });
     }
 
     private void appendChild(EGraphNode child) {
         if (child != null) {
             childClasses.add(new EClassRef(child.getEClass(), identitySlotMap(child.getEClass())));
         }
+    }
+
+    private void requireExtensibleChildCount() {
+        if (isSourceWrapperWithExternalGrammar(opcode)) {
+            return;
+        }
+        ArityPolicy policy = getArityPolicy();
+        if (!policy.canExtend(childClasses.size())) {
+            throw new IllegalArgumentException(
+                    opcode + " has too many children for " + policy + ": "
+                            + childClasses.size());
+        }
+    }
+
+    /** Validates a completed source/operator occurrence before semantic use. */
+    public void requireAdmittedArity() {
+        if (isSourceWrapperWithExternalGrammar(opcode)) {
+            return;
+        }
+        getArityPolicy().requireAdmitted(childClasses.size(), opcode.toString());
+    }
+
+    private static boolean isSourceWrapperWithExternalGrammar(Opcode opcode) {
+        switch (opcode) {
+            case PREDICATE:
+            case FUNCTION:
+            case ASSERTION:
+            case CHECK:
+            case RUN:
+            case FACT:
+            case MODULEDECL:
+            case OPEN:
+            case PARAMDECL:
+            case SIGDECL:
+            case FIELDDECL:
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    /** Same typed/profile-indexed operator instance required by a flat splice. */
+    public boolean sameFlatOperatorInstance(EGraphNode other) {
+        if (other == null || opcode != other.opcode
+                || !hasFlatLicense() || !other.hasFlatLicense()
+                || !getArityPolicy().equals(other.getArityPolicy())
+                || getSiblingQuotient() != other.getSiblingQuotient()
+                || !getFlatLicense().equals(other.getFlatLicense())
+                || !getUnitLicense().equals(other.getUnitLicense())
+                || !semanticProfile.equals(other.semanticProfile)
+                || metatype != other.metatype) {
+            return false;
+        }
+        if (opcode == Opcode.AND || opcode == Opcode.OR) {
+            return metatype == Metatype.BOOLEAN;
+        }
+        if (exactAlloyType != null || other.exactAlloyType != null) {
+            return exactAlloyType != null && exactAlloyType.equals(other.exactAlloyType);
+        }
+        String leftType = normalizedSourceType(sourceType);
+        String rightType = normalizedSourceType(other.sourceType);
+        return !leftType.isEmpty() && leftType.equals(rightType);
+    }
+
+    private static String normalizedSourceType(String type) {
+        return type == null ? "" : type.replaceAll("\\s+", "").trim();
     }
     public List<EClassRef> getChildClasses() {
         return Collections.unmodifiableList(childClasses);
@@ -287,6 +438,22 @@ public class EGraphNode {
     public EClass getEClass() {
         return eClass;
     }
+    /** Rejects an unproved representative choice at the certification boundary. */
+    public void requirePristineCertificationSource() {
+        if (eClass == null
+                || eClass.getNodes().size() != 1
+                || eClass.getRepresentative() != this) {
+            throw new IllegalStateException(
+                    "A certification source occurrence belongs to a non-singleton e-class");
+        }
+        EClassRef original = getEClassRef();
+        EClassRef canonical = original.canonical();
+        if (canonical.getEClass() != original.getEClass()
+                || !canonical.getSlotMap().equals(original.getSlotMap())) {
+            throw new IllegalStateException(
+                    "A certification source occurrence belongs to an uncertified e-class union");
+        }
+    }
     public EClassRef getEClassRef() {
         return eClass.invoke(identitySlotMap(eClass));
     }
@@ -294,20 +461,31 @@ public class EGraphNode {
         if (left.eClass.arena != right.eClass.arena) {
             throw new IllegalArgumentException("Cannot union e-classes from different e-graphs");
         }
-        EGraphArena arena = left.eClass.arena;
-        EClassRef canonicalLeft = left.canonical();
-        EClassRef canonicalRight = right.canonical();
-        if (canonicalLeft.eClass.id == canonicalRight.eClass.id) {
-            canonicalLeft.eClass.addInvocationEquivalence(
-                    canonicalLeft.slotMap,
-                    canonicalRight.slotMap);
-            return canonicalLeft;
+        SemanticProfile leftProfile = left.eClass.getRepresentative().semanticProfile;
+        SemanticProfile rightProfile = right.eClass.getRepresentative().semanticProfile;
+        left.eClass.getRepresentative().requireAdmittedArity();
+        right.eClass.getRepresentative().requireAdmittedArity();
+        if (!leftProfile.equals(rightProfile)) {
+            throw new IllegalArgumentException(
+                    "Cannot union e-classes from different semantic profiles");
         }
-        canonicalLeft.eClass.ensureRegistered();
-        canonicalRight.eClass.ensureRegistered();
-        RenamedId leader = arena.unionFind.union(left.asRenamedId(), right.asRenamedId());
-        EClass leaderClass = arena.classes.get(leader.getId());
-        return new EClassRef(leaderClass, leader.getRenaming());
+        EGraphArena arena = left.eClass.arena;
+        return arena.mutate(left.eClass, right.eClass, () -> {
+            EClassRef canonicalLeft = left.canonical();
+            EClassRef canonicalRight = right.canonical();
+            if (canonicalLeft.eClass.id == canonicalRight.eClass.id) {
+                canonicalLeft.eClass.addInvocationEquivalence(
+                        canonicalLeft.slotMap,
+                        canonicalRight.slotMap);
+                return canonicalLeft;
+            }
+            canonicalLeft.eClass.ensureRegistered();
+            canonicalRight.eClass.ensureRegistered();
+            RenamedId leader = arena.unionFind.union(
+                    left.asRenamedId(), right.asRenamedId());
+            EClass leaderClass = arena.classes.get(leader.getId());
+            return new EClassRef(leaderClass, leader.getRenaming());
+        });
     }
     public static void beginGraph() {
         CURRENT_ARENA.set(new EGraphArena());
@@ -330,26 +508,28 @@ public class EGraphNode {
         }
         for (Map.Entry<EGraphArena, ArrayDeque<EClass>> entry : pendingByArena.entrySet()) {
             EGraphArena arena = entry.getKey();
-            Set<Integer> reachable = reachableByArena.get(arena);
-            ArrayDeque<EClass> pending = entry.getValue();
-            while (!pending.isEmpty()) {
-                EClass current = pending.removeFirst();
-                if (!reachable.add(current.id)) {
-                    continue;
-                }
-                for (EGraphNode node : current.nodes) {
-                    for (EClassRef child : node.childClasses) {
-                        pending.addLast(child.eClass);
+            arena.mutateGlobally(() -> {
+                Set<Integer> reachable = reachableByArena.get(arena);
+                ArrayDeque<EClass> pending = entry.getValue();
+                while (!pending.isEmpty()) {
+                    EClass current = pending.removeFirst();
+                    if (!reachable.add(current.id)) {
+                        continue;
+                    }
+                    for (EGraphNode node : current.nodes) {
+                        for (EClassRef child : node.childClasses) {
+                            pending.addLast(child.eClass);
+                        }
                     }
                 }
-            }
-            // Registered classes may participate in a union-find path not visible as a child edge.
-            for (EClass eClass : arena.classes.values()) {
-                if (eClass.registered) {
-                    reachable.add(eClass.id);
+                // Registered classes may participate in a union-find path not visible as a child edge.
+                for (EClass eClass : arena.classes.values()) {
+                    if (eClass.registered) {
+                        reachable.add(eClass.id);
+                    }
                 }
-            }
-            arena.classes.keySet().retainAll(reachable);
+                arena.classes.keySet().retainAll(reachable);
+            });
         }
     }
     public static ReachabilityStats countReachable(List<EGraphNode> roots) {
@@ -385,34 +565,184 @@ public class EGraphNode {
         return sourceName;
     }
     public void setSourceName(String sourceName) {
-        this.sourceName = sourceName;
-        if (opcode == Opcode.VARIABLE) {
-            refreshEClassSlots();
-        }
+        arena.mutate(this, () -> {
+            this.sourceName = sourceName;
+            if (opcode == Opcode.VARIABLE) {
+                refreshEClassSlots();
+            }
+        });
     }
     public String getSourceType() {
         return sourceType;
     }
     public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+        arena.mutate(this, () -> this.sourceType = sourceType);
+    }
+    public ExactAlloyType getExactAlloyType() {
+        return exactAlloyType;
+    }
+    public void setExactAlloyType(ExactAlloyType exactAlloyType) {
+        arena.mutate(this, () -> this.exactAlloyType = exactAlloyType);
     }
     public String getAlphaName() {
         return alphaName;
     }
     public void setAlphaName(String alphaName) {
-        this.alphaName = alphaName;
-        refreshEClassSlots();
+        arena.mutate(this, () -> {
+            this.alphaName = alphaName;
+            refreshEClassSlots();
+        });
+    }
+    public String getSemanticIdentity() {
+        return semanticIdentity;
+    }
+    public void setSemanticIdentity(String semanticIdentity) {
+        arena.mutate(this, () -> this.semanticIdentity = semanticIdentity);
+    }
+    public long getSourceOccurrenceLineage() {
+        return sourceOccurrenceLineage;
+    }
+
+    /** Permanently closes semantic mutation of this source e-graph arena. */
+    public void freezeForCertification() {
+        arena.freezeForCertification(this);
+    }
+
+    public boolean isFrozenForCertification() {
+        return arena.isFrozenForCertification(this);
+    }
+
+    /**
+     * Deterministic content commitment for one binary JOIN/ARROW source tree.
+     * Occurrence identity is supplied separately by the adapter's stable source
+     * path; this value deliberately excludes process-local ids and lineages.
+     */
+    public String dependentChainSourceContentCommitment() {
+        if (opcode != Opcode.JOIN && opcode != Opcode.ARROW) {
+            throw new IllegalStateException(
+                    "A dependent-chain source commitment requires JOIN or ARROW");
+        }
+        StringBuilder result = new StringBuilder();
+        appendDependentChainSourceContent(
+                this,
+                opcode,
+                result,
+                Collections.newSetFromMap(new IdentityHashMap<>()));
+        return result.toString();
+    }
+
+    private static void appendDependentChainSourceContent(
+            EGraphNode node,
+            Opcode chainOpcode,
+            StringBuilder output,
+            Set<EGraphNode> active) {
+        if (node.opcode != chainOpcode) {
+            appendLengthEncoded(output, "leaf");
+            appendLengthEncoded(output, node.sortKey());
+            return;
+        }
+        if (!active.add(node)) {
+            throw new IllegalStateException(
+                    "A dependent-chain source commitment encountered a cycle");
+        }
+        try {
+            node.requireAdmittedArity();
+            if (node.childClasses.size() != 2) {
+                throw new IllegalStateException(
+                        "A dependent-chain source commitment requires binary syntax");
+            }
+            appendLengthEncoded(output, "application");
+            appendLengthEncoded(output, chainOpcode.name());
+            appendLengthEncoded(output, node.semanticProfile.fingerprint());
+            appendLengthEncoded(output, node.exactAlloyType == null
+                    ? "" : node.exactAlloyType.stableString());
+            for (EClassRef childRef : node.childClasses) {
+                appendLengthEncoded(
+                        output,
+                        new java.util.TreeMap<>(childRef.getSlotMap()).toString());
+                appendDependentChainSourceContent(
+                        childRef.getEClass().getRepresentative(),
+                        chainOpcode,
+                        output,
+                        active);
+            }
+        } finally {
+            active.remove(node);
+        }
+    }
+
+    private static void appendLengthEncoded(StringBuilder output, String value) {
+        output.append(value.length()).append(':').append(value);
+    }
+
+    void preserveSourceOccurrenceLineageFrom(EGraphNode source) {
+        arena.mutate(this, () -> {
+            if (source == null || source.sourceOccurrenceLineage <= 0L) {
+                throw new IllegalArgumentException(
+                        "A source occurrence lineage must be positive");
+            }
+            sourceOccurrenceLineage = source.sourceOccurrenceLineage;
+        });
+    }
+
+    void reseedSourceOccurrenceLineages() {
+        arena.mutate(this, () -> {
+            Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
+            pending.add(this);
+            while (!pending.isEmpty()) {
+                EGraphNode node = pending.removeFirst();
+                if (!visited.add(node)) {
+                    continue;
+                }
+                node.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
+                pending.addAll(node.getChildren());
+            }
+        });
+    }
+    public int getDeclaredArity() {
+        return declaredArity;
+    }
+    public long getCallOccurrenceId() {
+        return callOccurrenceId;
+    }
+    public void setCallOccurrenceId(long callOccurrenceId) {
+        arena.mutate(this, () -> {
+            if (callOccurrenceId < -1L) {
+                throw new IllegalArgumentException(
+                        "CALL occurrence id must be -1 or nonnegative");
+            }
+            this.callOccurrenceId = callOccurrenceId;
+        });
+    }
+    public void setDeclaredArity(int declaredArity) {
+        arena.mutate(this, () -> {
+            if (declaredArity < -1) {
+                throw new IllegalArgumentException("Declared arity must be -1 or nonnegative");
+            }
+            this.declaredArity = declaredArity;
+        });
+    }
+    public String getCallArityAuthority() {
+        return callArityAuthority;
+    }
+    public void setCallArityAuthority(String callArityAuthority) {
+        arena.mutate(this, () -> this.callArityAuthority = callArityAuthority);
     }
 
     /**
      * Rewrite the e-graph with regard to rewriting rules; canonicalize the formula with equality saturation. 
      */
     public void saturate() {
-        Set<Integer> active = new HashSet<>();
-        saturate(active);
+        arena.mutate(this, () -> {
+            requireAdmittedArity();
+            Set<Integer> active = new HashSet<>();
+            saturate(active);
+        });
     }
 
     private void saturate(Set<Integer> active) {
+        requireAdmittedArity();
         if (!active.add(eClass.getId())) {
             return;
         }
@@ -466,8 +796,10 @@ public class EGraphNode {
         List<EClassRef> rewrittenChildren = new ArrayList<>();
         for (EClassRef childRef : childClasses) {
             EGraphNode child = childRef.getEClass().getRepresentative();
-            if (flexibleArity && isAssociative(opcode) && child.getOpcode() == opcode) {
-                rewrittenChildren.addAll(child.childClasses);
+            if (sameFlatOperatorInstance(child)) {
+                for (EClassRef grandchild : child.childClasses) {
+                    rewrittenChildren.add(composeInvocation(childRef, grandchild));
+                }
             } else {
                 rewrittenChildren.add(childRef);
             }
@@ -476,7 +808,7 @@ public class EGraphNode {
             rewrittenChildren.sort(Comparator.comparing(ref -> ref.getEClass().getRepresentative().sortKey()));
         }
 
-        if (isSetFlexibleArityOperator(opcode)) {
+        if (isSetFlexibleArity()) {
             rewrittenChildren = removeDuplicateInvocations(rewrittenChildren);
         }
 
@@ -494,6 +826,13 @@ public class EGraphNode {
                     opcode == Opcode.AND);
             if (withoutNeutral.size() != rewrittenChildren.size()) {
                 rewrittenChildren = withoutNeutral;
+            }
+            if (rewrittenChildren.isEmpty()) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(opcode == Opcode.AND);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
             }
             if (containsComplement(rewrittenChildren)) {
                 eClass.preserveSnapshot(snapshot());
@@ -544,7 +883,8 @@ public class EGraphNode {
                             false,
                             1,
                             false,
-                            Metatype.BOOLEAN);
+                            Metatype.BOOLEAN,
+                            semanticProfile);
                     negated.addChild(grandchild.getEClass().getRepresentative());
                     negated.saturate();
                     addChild(negated);
@@ -556,14 +896,46 @@ public class EGraphNode {
         }
 
         if (opcode == Opcode.IN && childClasses.size() == 2) {
+            EGraphNode lhs = childClasses.get(0).getEClass().getRepresentative();
             EGraphNode rhs = childClasses.get(1).getEClass().getRepresentative();
-            if (isNone(rhs) || isUniv(rhs)) {
+            Boolean subset = null;
+            if (isNone(rhs) && isNone(lhs)) {
+                subset = true;
+            } else if (isUniv(rhs)) {
+                subset = true;
+            }
+            if (subset != null) {
                 eClass.preserveSnapshot(snapshot());
-                collapseToBooleanConstant(isUniv(rhs));
+                collapseToBooleanConstant(subset);
                 refreshEClassSlots();
                 eClass.recordShape(this);
                 return true;
             }
+        }
+
+        if (opcode == Opcode.NOT_IN && childClasses.size() == 2) {
+            EGraphNode lhs = childClasses.get(0).getEClass().getRepresentative();
+            EGraphNode rhs = childClasses.get(1).getEClass().getRepresentative();
+            Boolean notSubset = null;
+            if ((isNone(rhs) && isNone(lhs)) || isUniv(rhs)) {
+                notSubset = false;
+            }
+            if (notSubset != null) {
+                eClass.preserveSnapshot(snapshot());
+                collapseToBooleanConstant(notSubset);
+                refreshEClassSlots();
+                eClass.recordShape(this);
+                return true;
+            }
+        }
+
+        if (opcode == Opcode.MINUS && childClasses.size() == 2
+                && sameInvocation(childClasses.get(0), childClasses.get(1))) {
+            eClass.preserveSnapshot(snapshot());
+            collapseToSetConstant("none");
+            refreshEClassSlots();
+            eClass.recordShape(this);
+            return true;
         }
 
         if (opcode == Opcode.IMPLIES && childClasses.size() == 2) {
@@ -579,7 +951,8 @@ public class EGraphNode {
                         false,
                         1,
                         false,
-                        Metatype.BOOLEAN);
+                        Metatype.BOOLEAN,
+                        semanticProfile);
                 negatedLeft.addChild(left);
                 opcode = Opcode.OR;
                 childClasses = new ArrayList<>();
@@ -650,7 +1023,28 @@ public class EGraphNode {
         return false;
     }
 
+    private static EClassRef composeInvocation(
+            EClassRef outer,
+            EClassRef inner) {
+        if (inner.slotMap.isEmpty()) {
+            return inner;
+        }
+        Map<String, String> composed = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : inner.slotMap.entrySet()) {
+            String target = outer.slotMap.get(entry.getValue());
+            if (target == null) {
+                throw new IllegalStateException(
+                        "A flat splice cannot compose its child invocation map");
+            }
+            composed.put(entry.getKey(), target);
+        }
+        return new EClassRef(inner.eClass, composed);
+    }
+
     private void adopt(EGraphNode replacement) {
+        if (!semanticProfile.equals(replacement.semanticProfile)) {
+            throw new IllegalStateException("Cannot adopt an e-node from another semantic profile");
+        }
         opcode = replacement.opcode;
         childClasses = new ArrayList<>(replacement.childClasses);
         isCommutative = replacement.isCommutative;
@@ -658,7 +1052,13 @@ public class EGraphNode {
         flexibleArity = replacement.flexibleArity;
         sourceName = replacement.sourceName;
         sourceType = replacement.sourceType;
+        exactAlloyType = replacement.exactAlloyType;
         alphaName = replacement.alphaName;
+        semanticIdentity = replacement.semanticIdentity;
+        sourceOccurrenceLineage = replacement.sourceOccurrenceLineage;
+        callOccurrenceId = replacement.callOccurrenceId;
+        declaredArity = replacement.declaredArity;
+        callArityAuthority = replacement.callArityAuthority;
         metatype = replacement.metatype;
     }
 
@@ -670,7 +1070,12 @@ public class EGraphNode {
         flexibleArity = false;
         sourceName = Boolean.toString(value);
         sourceType = "Bool";
+        exactAlloyType = ExactAlloyType.boolType();
         alphaName = null;
+        semanticIdentity = null;
+        callOccurrenceId = -1L;
+        declaredArity = -1;
+        callArityAuthority = null;
         metatype = Metatype.BOOLEAN;
     }
 
@@ -683,6 +1088,11 @@ public class EGraphNode {
         sourceName = name;
         sourceType = name;
         alphaName = null;
+        semanticIdentity = "none".equals(name)
+                ? SigSymbol.BUILTIN_NONE_IDENTITY
+                : "univ".equals(name) ? SigSymbol.BUILTIN_UNIV_IDENTITY : null;
+        declaredArity = -1;
+        callArityAuthority = null;
         metatype = Metatype.SET;
     }
 
@@ -742,10 +1152,12 @@ public class EGraphNode {
         if (node == null) {
             return false;
         }
-        String source = node.getSourceName();
+        String expectedIdentity = "none".equals(name)
+                ? SigSymbol.BUILTIN_NONE_IDENTITY
+                : "univ".equals(name) ? SigSymbol.BUILTIN_UNIV_IDENTITY : null;
         return (node.getOpcode() == Opcode.GLOBALBINDING || node.getOpcode() == Opcode.CONSTANT)
-                && source != null
-                && name.equalsIgnoreCase(source);
+                && expectedIdentity != null
+                && expectedIdentity.equals(node.getSemanticIdentity());
     }
 
     private static List<EClassRef> removeDuplicateInvocations(List<EClassRef> children) {
@@ -787,7 +1199,9 @@ public class EGraphNode {
         if (left.childClasses.size() != right.childClasses.size()) {
             return false;
         }
-        if (left.sourceName != null ? !left.sourceName.equals(right.sourceName) : right.sourceName != null) {
+        if (left.semanticLabel() != null
+                ? !left.semanticLabel().equals(right.semanticLabel())
+                : right.semanticLabel() != null) {
             return false;
         }
         for (int i = 0; i < left.childClasses.size(); i++) {
@@ -832,20 +1246,22 @@ public class EGraphNode {
         return invocationKey(left).equals(invocationKey(right));
     }
 
+    public static boolean sameSemanticInvocation(EGraphNode left, EGraphNode right) {
+        return left != null && right != null
+                && sameInvocation(left.getEClassRef(), right.getEClassRef());
+    }
+
     private static String invocationKey(EClassRef invocation) {
         EClassRef canonical = invocation.canonical();
         return canonical.getEClass().getRepresentative().sortKey() + canonical.getSlotMap();
     }
 
     private static boolean isAssociative(Opcode opcode) {
-        return opcode == Opcode.AND || opcode == Opcode.OR
-                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
-                || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
+        return AlloyOperatorPolicy.isFlatSetOperator(opcode);
     }
 
     private static boolean isSetFlexibleArityOperator(Opcode opcode) {
-        return opcode == Opcode.AND || opcode == Opcode.OR
-                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS;
+        return AlloyOperatorPolicy.isFlatSetOperator(opcode);
     }
 
     private String sortKey() {
@@ -855,8 +1271,19 @@ public class EGraphNode {
     }
 
     private static void appendSortKey(EGraphNode node, StringBuilder sb) {
-        sb.append(node.opcode).append('{').append(node.getFlexibleArityKind()).append("}:");
-        if (node.alphaName != null) {
+        sb.append(node.opcode).append('{')
+                .append(node.semanticProfile.fingerprint()).append(';')
+                .append(node.exactAlloyType == null
+                        ? "" : node.exactAlloyType.stableString()).append(';')
+                .append(node.getArityPolicy()).append(';')
+                .append(node.getSiblingQuotient()).append(';')
+                .append(node.getFlatLicense()).append(';')
+                .append(node.getUnitLicense()).append("}:");
+        if (node.opcode == Opcode.CALL) {
+            sb.append(CallMetadata.semanticKey(node));
+        } else if (node.semanticIdentity != null) {
+            sb.append(node.semanticIdentity);
+        } else if (node.alphaName != null) {
             sb.append(node.alphaName);
         } else if (node.sourceName != null) {
             sb.append(node.sourceName);
@@ -904,13 +1331,34 @@ public class EGraphNode {
 
     private EGraphNode snapshot() {
         EGraphNode copy = new EGraphNode(
-                id, opcode, Collections.emptyList(), isCommutative, maxArity, flexibleArity, metatype, false);
+                id, opcode, Collections.emptyList(), isCommutative, maxArity, flexibleArity,
+                metatype, semanticProfile, false);
         copy.sourceName = sourceName;
         copy.sourceType = sourceType;
+        copy.exactAlloyType = exactAlloyType;
         copy.alphaName = alphaName;
+        copy.semanticIdentity = semanticIdentity;
+        copy.sourceOccurrenceLineage = sourceOccurrenceLineage;
+        copy.callOccurrenceId = callOccurrenceId;
+        copy.declaredArity = declaredArity;
+        copy.callArityAuthority = callArityAuthority;
         copy.childClasses = new ArrayList<>(childClasses);
         copy.eClass = eClass;
         return copy;
+    }
+
+    private static long nextSourceOccurrenceLineage() {
+        long lineage = NEXT_SOURCE_OCCURRENCE_LINEAGE.getAndIncrement();
+        if (lineage <= 0L) {
+            throw new IllegalStateException("Source occurrence lineage space exhausted");
+        }
+        return lineage;
+    }
+
+    private String semanticLabel() {
+        return opcode == Opcode.CALL
+                ? CallMetadata.semanticKey(this)
+                : semanticIdentity == null ? sourceName : semanticIdentity;
     }
 
     private void refreshEClassSlots() {
@@ -1081,8 +1529,10 @@ public class EGraphNode {
         }
 
         public void addSlotSwap(String left, String right) {
-            ensureSlots();
-            symmetryGroup().addSwap(left, right);
+            arena.mutate(this, () -> {
+                ensureSlots();
+                symmetryGroup().addSwap(left, right);
+            });
         }
 
         public int symmetryCount() {
@@ -1195,6 +1645,72 @@ public class EGraphNode {
     private static final class EGraphArena {
         private final Map<Integer, EClass> classes = new LinkedHashMap<>();
         private final RenamedIdUnionFind unionFind = new RenamedIdUnionFind();
+        private final Set<EGraphNode> frozenCertificationSources =
+                Collections.newSetFromMap(new IdentityHashMap<>());
+
+        private synchronized void mutate(
+                EGraphNode source,
+                Runnable mutation) {
+            requireMutable(source);
+            mutation.run();
+        }
+
+        private synchronized <T> T mutate(
+                EClass left,
+                EClass right,
+                java.util.function.Supplier<T> mutation) {
+            requireMutable(left);
+            requireMutable(right);
+            return mutation.get();
+        }
+
+        private synchronized void mutate(EClass source, Runnable mutation) {
+            requireMutable(source);
+            mutation.run();
+        }
+
+        private synchronized void mutateGlobally(Runnable mutation) {
+            if (!frozenCertificationSources.isEmpty()) {
+                throw new IllegalStateException(
+                        "A global Fast Rewrite e-graph mutation would affect a certified source");
+            }
+            mutation.run();
+        }
+
+        private synchronized void freezeForCertification(EGraphNode root) {
+            Set<EClass> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            ArrayDeque<EClass> pending = new ArrayDeque<>();
+            pending.add(Objects.requireNonNull(root, "certification root").eClass);
+            while (!pending.isEmpty()) {
+                EClass eClass = pending.removeFirst();
+                if (!visited.add(eClass)) {
+                    continue;
+                }
+                for (EGraphNode node : eClass.nodes) {
+                    frozenCertificationSources.add(node);
+                    for (EClassRef child : node.childClasses) {
+                        pending.addLast(child.eClass);
+                    }
+                }
+            }
+        }
+
+        private synchronized boolean isFrozenForCertification(EGraphNode source) {
+            return frozenCertificationSources.contains(source);
+        }
+
+        private void requireMutable(EGraphNode source) {
+            if (frozenCertificationSources.contains(source)) {
+                throw new IllegalStateException(
+                        "A certified Fast Rewrite source e-graph is immutable");
+            }
+        }
+
+        private void requireMutable(EClass source) {
+            for (EGraphNode node : source.nodes) {
+                requireMutable(node);
+            }
+        }
     }
 
 }

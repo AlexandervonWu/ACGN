@@ -63,9 +63,6 @@ public final class BinderBlockDescriptor {
             this.automorphisms = BinderAutomorphismGroup.certified(
                     boundContext, certificates);
         }
-        for (TypedPermutation automorphism : automorphisms.elements()) {
-            requireDescriptorAutomorphism(coordinates, boundContext, automorphism);
-        }
         List<StructuralKey> children = new ArrayList<>(coordinates.size() + 1);
         for (BinderCoordinateDescriptor coordinate : coordinates) {
             children.add(coordinate.structuralKey());

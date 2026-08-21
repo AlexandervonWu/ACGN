@@ -11,6 +11,7 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.representations.NodeRepresentation;
 import parser.etc.Pair;
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.test.Playground;
 
 /*
@@ -27,6 +28,9 @@ public class AugmentedNode implements Serializable {
     private boolean isShadow;
     private Symbol symbol;
     private int maxDownlinks = -1; // -1 means no limit
+    private Map<Pair<Multigraph, Integer>, ExactAlloyType> exactTypeMapTOV;
+    private Map<Multigraph, Integer> exactTypeVisitMap;
+    private ExactAlloyType defaultExactType;
     public AugmentedNode(int syntactic, int semantic, Symbol symbol) throws IllegalArgumentException {
         if (syntactic > 127 || syntactic < -128) {
             throw new IllegalArgumentException("Syntactic is a single byte! ");
@@ -38,6 +42,8 @@ public class AugmentedNode implements Serializable {
         uplinks = new ArrayList<>();
         downlinks = new ArrayList<>();
         downlinkMapTOV = new HashMap<>();
+        exactTypeMapTOV = new HashMap<>();
+        exactTypeVisitMap = new HashMap<>();
     }
     public AugmentedNode(NodeRepresentation nr) {
         this((byte) nr.getSyntacticRepresentation(), (int) nr.getSemanticRepresentation());
@@ -48,6 +54,11 @@ public class AugmentedNode implements Serializable {
         this.semantic = (int) Math.round(original.getSemantic());
         this.symbol = MASGVisitor.SHADOW_SYMBOL;
         this.uplinks = new ArrayList<>();
+        this.downlinks = new ArrayList<>();
+        this.downlinkMapTOV = new HashMap<>();
+        this.exactTypeMapTOV = new HashMap<>();
+        this.exactTypeVisitMap = new HashMap<>();
+        this.defaultExactType = original.defaultExactType;
         // NO DOWNLINKS FOR SHADOW NODES
         // TODO: Exponential forms must be removed! What are exponential? 
         this.isShadow = true;
@@ -166,5 +177,54 @@ public class AugmentedNode implements Serializable {
     public void setMaxDownlinks(int maxDownlinks) {
         this.maxDownlinks = maxDownlinks;
         if (this.symbol != null) this.symbol.setMaxDownlinks(maxDownlinks);
+    }
+
+    public void setExactType(
+            Multigraph graph,
+            int timeOfVisit,
+            ExactAlloyType exactType) {
+        if (timeOfVisit <= 0) {
+            throw new IllegalArgumentException("Exact type occurrence must be positive");
+        }
+        if (exactTypeMapTOV == null) {
+            exactTypeMapTOV = new HashMap<>();
+        }
+        Pair<Multigraph, Integer> key = Pair.of(
+                java.util.Objects.requireNonNull(graph, "graph"), timeOfVisit);
+        ExactAlloyType checked = java.util.Objects.requireNonNull(exactType, "exactType");
+        ExactAlloyType previous = exactTypeMapTOV.putIfAbsent(key, checked);
+        if (previous != null && !previous.equals(checked)) {
+            throw new IllegalStateException(
+                    "One MASG occurrence received two different exact Alloy types");
+        }
+        if (exactTypeVisitMap == null) {
+            exactTypeVisitMap = new HashMap<>();
+        }
+        exactTypeVisitMap.merge(graph, timeOfVisit, Math::max);
+    }
+
+    public int nextExactTypeVisit(Multigraph graph) {
+        Multigraph checked = java.util.Objects.requireNonNull(graph, "graph");
+        if (exactTypeVisitMap == null) {
+            exactTypeVisitMap = new HashMap<>();
+        }
+        int next = Math.addExact(exactTypeVisitMap.getOrDefault(checked, 0), 1);
+        exactTypeVisitMap.put(checked, next);
+        return next;
+    }
+
+    public ExactAlloyType getExactType(Multigraph graph, int timeOfVisit) {
+        ExactAlloyType occurrence = exactTypeMapTOV == null
+                ? null : exactTypeMapTOV.get(Pair.of(graph, timeOfVisit));
+        return occurrence == null ? defaultExactType : occurrence;
+    }
+
+    public void setDefaultExactType(ExactAlloyType exactType) {
+        ExactAlloyType checked = java.util.Objects.requireNonNull(exactType, "exactType");
+        if (defaultExactType != null && !defaultExactType.equals(checked)) {
+            throw new IllegalStateException(
+                    "One shared MASG leaf received two different exact Alloy types");
+        }
+        defaultExactType = checked;
     }
 }

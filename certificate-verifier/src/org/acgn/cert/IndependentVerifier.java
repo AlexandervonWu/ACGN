@@ -112,8 +112,11 @@ public final class IndependentVerifier {
                     FailureCode.UNTRUSTED_THEORY,
                     "Theory digest is not pinned by the verifier caller");
         }
-        KernelModel model = new KernelModel(bundle);
-        KernelVerifier kernel = new KernelVerifier(model, policy.limits());
+        KernelModel model = new KernelModel(bundle, policy.limits());
+        SemanticEvidenceVerifier.Authorization semanticEvidence =
+                new SemanticEvidenceVerifier(bundle, model, policy.limits()).verify();
+        KernelVerifier kernel = new KernelVerifier(
+                model, policy.limits(), semanticEvidence);
         return new Session(bundle, model, kernel, policy.limits());
     }
 
@@ -163,6 +166,7 @@ public final class IndependentVerifier {
     private static PairEndpoint commonKernelEndpoint(Session session) {
         Wire.Node publication = session.bundle.publication();
         String rootId = publication.scalar(2);
+        PairEndpoint selected = null;
         for (Wire.Node record : session.bundle.canonicalRecords().values()) {
             String orbitProofId = record.scalar(1);
             String replayProofId = record.child(0).scalar(0);
@@ -171,9 +175,18 @@ public final class IndependentVerifier {
             if (!replay.left().id().equals(rootId)) {
                 continue;
             }
-            Wire.Node representativeKey = session.kernel.termOps()
-                    .structuralNode(orbit.right());
-            return new PairEndpoint(replay, orbit, orbit.right(), representativeKey);
+            String representativeKey = session.kernel.canonicalTermKey(orbit.right());
+            PairEndpoint candidate = new PairEndpoint(
+                    replay, orbit, orbit.right(), representativeKey);
+            if (selected != null) {
+                throw new FormatException(
+                        FailureCode.NONCANONICAL_ENCODING,
+                        "Published root has multiple canonical endpoint records");
+            }
+            selected = candidate;
+        }
+        if (selected != null) {
+            return selected;
         }
         throw new UncheckableException(
                 FailureCode.MISSING_PAIR_DERIVATION,
@@ -266,7 +279,7 @@ public final class IndependentVerifier {
             KernelVerifier.Judgment replay,
             KernelVerifier.Judgment orbit,
             KernelModel.Term representative,
-            Wire.Node representativeKey) {
+            String representativeKey) {
     }
 
     private record TermPair(KernelModel.Term left, KernelModel.Term right) {

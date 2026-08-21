@@ -30,7 +30,7 @@ public final class ContainerLawDeclaration {
     private final boolean associative;
     private final boolean commutative;
     private final boolean idempotent;
-    private final boolean hasUnit;
+    private final UnitLicense unitLicense;
     private final NavigableMap<ContainerLawCertificate.Law, ContainerLawCertificate>
             certificates;
 
@@ -45,7 +45,13 @@ public final class ContainerLawDeclaration {
         this.associative = associative;
         this.commutative = commutative;
         this.idempotent = idempotent;
-        this.hasUnit = hasUnit;
+        this.unitLicense = hasUnit ? UnitLicense.EXPLICIT : UnitLicense.ABSENT;
+        boolean quotientCommutative = kind == Kind.BAG || kind == Kind.SET;
+        boolean quotientIdempotent = kind == Kind.SET;
+        if (commutative != quotientCommutative || idempotent != quotientIdempotent) {
+            throw new IllegalArgumentException(
+                    "Sibling quotient and C/I declarations disagree for " + kind);
+        }
         Objects.requireNonNull(certificates, "certificates");
         NavigableMap<ContainerLawCertificate.Law, ContainerLawCertificate> copied =
                 new TreeMap<>();
@@ -104,10 +110,11 @@ public final class ContainerLawDeclaration {
             }
         }
         Kind kind = kindFor(schema);
-        boolean associative = kind != Kind.NONE;
+        boolean associative = indexed.containsKey(
+                ContainerLawCertificate.Law.ASSOCIATIVITY);
         boolean commutative = kind == Kind.BAG || kind == Kind.SET;
         boolean idempotent = kind == Kind.SET;
-        boolean hasUnit = containerEmptiness(schema) == ContainerEmptiness.K_ZERO;
+        boolean hasUnit = indexed.containsKey(ContainerLawCertificate.Law.UNIT);
         ContainerLawDeclaration declaration = new ContainerLawDeclaration(
                 kind,
                 associative,
@@ -137,7 +144,11 @@ public final class ContainerLawDeclaration {
     }
 
     public boolean hasUnit() {
-        return hasUnit;
+        return unitLicense == UnitLicense.EXPLICIT;
+    }
+
+    public UnitLicense unitLicense() {
+        return unitLicense;
     }
 
     public Map<ContainerLawCertificate.Law, ContainerLawCertificate> certificates() {
@@ -160,11 +171,11 @@ public final class ContainerLawDeclaration {
         requireCertificate(ContainerLawCertificate.Law.ASSOCIATIVITY, associative);
         requireCertificate(ContainerLawCertificate.Law.COMMUTATIVITY, commutative);
         requireCertificate(ContainerLawCertificate.Law.IDEMPOTENCY, idempotent);
-        requireCertificate(ContainerLawCertificate.Law.UNIT, hasUnit);
+        requireCertificate(ContainerLawCertificate.Law.UNIT, hasUnit());
         int expected = (associative ? 1 : 0)
                 + (commutative ? 1 : 0)
                 + (idempotent ? 1 : 0)
-                + (hasUnit ? 1 : 0);
+                + (hasUnit() ? 1 : 0);
         if (certificates.size() != expected) {
             throw new IllegalStateException(
                     "Container declaration contains an undeclared law certificate");
@@ -187,29 +198,61 @@ public final class ContainerLawDeclaration {
             throw new IllegalArgumentException(
                     "Container law kind " + kind + " does not match schema " + schema.kind());
         }
-        boolean expectedAssociative = expected != Kind.NONE;
         boolean expectedCommutative = expected == Kind.BAG || expected == Kind.SET;
         boolean expectedIdempotent = expected == Kind.SET;
-        if (associative != expectedAssociative
-                || commutative != expectedCommutative
+        if (commutative != expectedCommutative
                 || idempotent != expectedIdempotent) {
             throw new IllegalArgumentException(
-                    "Container law flags do not match " + expected
-                            + " semantics (Seq=A, Bag=AC, Set=ACI)");
+                    "Container law flags do not match sibling quotient " + expected);
         }
-        if (expected == Kind.NONE && hasUnit) {
+        if (expected == Kind.NONE && hasUnit()) {
             throw new IllegalArgumentException(
                     "A fixed port cannot declare a container unit");
         }
-        ContainerEmptiness emptiness = containerEmptiness(schema);
-        if (emptiness == ContainerEmptiness.K_ZERO && !hasUnit) {
+        if (hasUnit() && !arityPolicy(schema).admitsZero()) {
             throw new IllegalArgumentException(
-                    "A K0 container schema requires an explicit unit-law declaration");
+                    "A unit law requires a port that admits zero children");
         }
         for (ContainerLawCertificate certificate : certificates.values()) {
             if (!certificate.appliesTo(schema)) {
                 throw new IllegalArgumentException(
                         "Container certificate names a different schema");
+            }
+        }
+    }
+
+    void validateEvidenceFor(
+            String operator,
+            GraphType resultType,
+            PortPath path,
+            PortSchema schema,
+            boolean requireProductionAuthority) {
+        validateAgainst(schema);
+        SemanticProfile commonProfile = null;
+        for (ContainerLawCertificate certificate : certificates.values()) {
+            if (requireProductionAuthority
+                    && certificate.authority()
+                            != ContainerLawCertificate.Authority.ALLOY_PROFILE_THEORY) {
+                throw new IllegalStateException(
+                        "Production node theory contains fixture law evidence");
+            }
+            if (certificate.authority()
+                    == ContainerLawCertificate.Authority.ALLOY_PROFILE_THEORY) {
+                if (!certificate.appliesTo(
+                        certificate.semanticProfile(),
+                        operator,
+                        resultType,
+                        path,
+                        schema)) {
+                    throw new IllegalStateException(
+                            "Container law evidence does not match its enclosing operator instance");
+                }
+                if (commonProfile == null) {
+                    commonProfile = certificate.semanticProfile();
+                } else if (!commonProfile.equals(certificate.semanticProfile())) {
+                    throw new IllegalStateException(
+                            "One operator declaration mixes semantic profiles");
+                }
             }
         }
     }
@@ -227,20 +270,28 @@ public final class ContainerLawDeclaration {
         }
     }
 
-    private static ContainerEmptiness containerEmptiness(PortSchema schema) {
+    static ArityPolicy arityPolicy(PortSchema schema) {
         if (schema instanceof SeqPortSchema) {
-            return ((SeqPortSchema) schema).emptiness();
+            return ((SeqPortSchema) schema).arityPolicy();
         }
         if (schema instanceof BagPortSchema) {
-            return ((BagPortSchema) schema).emptiness();
+            return ((BagPortSchema) schema).arityPolicy();
         }
         if (schema instanceof SetPortSchema) {
-            return ((SetPortSchema) schema).emptiness();
+            return ((SetPortSchema) schema).arityPolicy();
         }
         return null;
     }
 
     public StructuralKey structuralKey() {
+        List<StructuralKey> evidence = new ArrayList<>();
+        for (Map.Entry<ContainerLawCertificate.Law, ContainerLawCertificate> entry
+                : certificates.entrySet()) {
+            evidence.add(StructuralKey.of(
+                    "container-law-evidence",
+                    Collections.singletonList(entry.getKey().name()),
+                    Collections.singletonList(entry.getValue().lawIndex())));
+        }
         return StructuralKey.of(
                 "container-laws",
                 Arrays.asList(
@@ -248,8 +299,8 @@ public final class ContainerLawDeclaration {
                         Boolean.toString(associative),
                         Boolean.toString(commutative),
                         Boolean.toString(idempotent),
-                        Boolean.toString(hasUnit)),
-                Collections.emptyList());
+                        unitLicense.name()),
+                evidence);
     }
 
     @Override
@@ -262,18 +313,20 @@ public final class ContainerLawDeclaration {
                 && associative == laws.associative
                 && commutative == laws.commutative
                 && idempotent == laws.idempotent
-                && hasUnit == laws.hasUnit;
+                && unitLicense == laws.unitLicense
+                && certificates.equals(laws.certificates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind, associative, commutative, idempotent, hasUnit);
+        return Objects.hash(
+                kind, associative, commutative, idempotent, unitLicense, certificates);
     }
 
     @Override
     public String toString() {
         return kind + "[A=" + associative + ",C=" + commutative
-                + ",I=" + idempotent + ",unit=" + hasUnit
+                + ",I=" + idempotent + ",unit=" + unitLicense
                 + ",certs=" + certificates.size() + "]";
     }
 }

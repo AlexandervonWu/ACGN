@@ -31,6 +31,7 @@ final class KernelModel {
         ONE_SLOT,
         ONE_TERM,
         SEQ,
+        DEPENDENT_SEQ,
         BAG,
         SET,
         BIND,
@@ -113,19 +114,111 @@ final class KernelModel {
         }
     }
 
-    record Schema(String id, SchemaKind kind, String value, String childSchema) {
+    enum SiblingQuotient {
+        RIGID,
+        ORDERED_SEQUENCE,
+        COMMUTATIVE_BAG,
+        COMMUTATIVE_IDEMPOTENT_SET
+    }
+
+    record ArityPolicy(boolean atLeast, int minimum, Set<Integer> finite) {
+        ArityPolicy {
+            finite = Set.copyOf(finite);
+            if (atLeast ? minimum < 0 : finite.isEmpty()) {
+                throw new IllegalArgumentException("Invalid arity policy");
+            }
+        }
+
+        boolean admits(int arity) {
+            return arity >= 0 && (atLeast ? arity >= minimum : finite.contains(arity));
+        }
+
+        boolean admitsZero() {
+            return admits(0);
+        }
+
+        boolean positiveDownwardClosed() {
+            if (atLeast) {
+                return minimum <= 1;
+            }
+            for (int arity : finite) {
+                for (int required = 1; required <= arity; required++) {
+                    if (!finite.contains(required)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        boolean flatSpliceClosed() {
+            if (atLeast) {
+                return true;
+            }
+            for (int outer : finite) {
+                if (outer == 0) {
+                    continue;
+                }
+                for (int nested : finite) {
+                    if (!finite.contains(outer + nested - 1)) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+
+    record Schema(
+            String id,
+            SchemaKind kind,
+            String value,
+            List<String> childSchemas,
+            ArityPolicy arityPolicy,
+            SiblingQuotient siblingQuotient) {
         Schema {
             requireText(id, "schema id");
             Objects.requireNonNull(kind, "schema kind");
             Objects.requireNonNull(value, "schema value");
-            Objects.requireNonNull(childSchema, "child schema");
+            childSchemas = List.copyOf(childSchemas);
+            Objects.requireNonNull(arityPolicy, "arity policy");
+            Objects.requireNonNull(siblingQuotient, "sibling quotient");
+        }
+
+        String childSchema() {
+            if (childSchemas.isEmpty()) {
+                return "";
+            }
+            if (childSchemas.size() != 1) {
+                throw new IllegalStateException(
+                        "A dependent sequence has one schema per position");
+            }
+            return childSchemas.get(0);
+        }
+
+        boolean isDependentSequence() {
+            return kind == SchemaKind.DEPENDENT_SEQ;
+        }
+
+        String positionalSchema(int index) {
+            if (!isDependentSequence()) {
+                return childSchema();
+            }
+            return childSchemas.get(index);
         }
     }
 
-    record Operator(String id, String outputType, List<String> schemas) {
+    record Operator(
+            String id,
+            String outputType,
+            String semanticIdentity,
+            String flatPath,
+            List<String> schemas) {
         Operator {
             requireText(id, "operator id");
             requireText(outputType, "operator output type");
+            requireText(semanticIdentity, "operator semantic identity");
+            requireText(flatPath, "operator flat path");
             schemas = List.copyOf(schemas);
         }
     }
@@ -136,7 +229,10 @@ final class KernelModel {
             String type,
             String quantifier,
             String disjointClass,
-            String scope) {
+            String domain,
+            String multiplicity,
+            String exchangeClass,
+            List<String> dependencies) {
         BinderCoordinate {
             if (index < 0) {
                 throw new IllegalArgumentException("Negative binder coordinate");
@@ -145,7 +241,10 @@ final class KernelModel {
             requireText(type, "binder type");
             requireText(quantifier, "binder quantifier");
             Objects.requireNonNull(disjointClass, "disjoint class");
-            requireText(scope, "binder scope");
+            requireText(domain, "binder domain");
+            requireText(multiplicity, "binder multiplicity");
+            requireText(exchangeClass, "binder exchange class");
+            dependencies = List.copyOf(dependencies);
         }
     }
 
@@ -250,9 +349,12 @@ final class KernelModel {
     private final Map<String, Embedding> embeddings;
     private final Map<String, Term> terms;
     private final Map<String, Witness> witnesses;
+    private final Limits limits;
+    private long validationSteps;
 
-    KernelModel(Bundle bundle) {
+    KernelModel(Bundle bundle, Limits limits) {
         this.bundle = Objects.requireNonNull(bundle, "bundle");
+        this.limits = Objects.requireNonNull(limits, "limits");
         contexts = parseContexts(bundle.contexts());
         Theory vocabulary = parseVocabulary(bundle.vocabulary(), bundle.theory());
         schemas = vocabulary.schemas;
@@ -338,6 +440,18 @@ final class KernelModel {
         return contexts;
     }
 
+    Map<String, Schema> schemas() {
+        return schemas;
+    }
+
+    Map<String, Operator> operators() {
+        return operators;
+    }
+
+    Map<String, Axiom> axioms() {
+        return axioms;
+    }
+
     Map<String, Term> terms() {
         return terms;
     }
@@ -385,7 +499,7 @@ final class KernelModel {
     }
 
     private Theory parseVocabulary(Wire.Node vocabulary, Wire.Node theory) {
-        vocabulary.requireShape("vocabulary", 1, 3);
+        vocabulary.requireShape("vocabulary", 1, 4);
         theory.requireShape("theory", 3, 1);
         Wire.Node schemaSection = vocabulary.child(0).requireTag("schemas");
         Wire.Node operatorSection = vocabulary.child(1).requireTag("operators");
@@ -405,31 +519,70 @@ final class KernelModel {
         String prior = null;
         for (Wire.Node record : section.children()) {
             record.requireTag("schema");
-            if (record.scalars().size() != 3 || record.children().size() > 1) {
+            if (record.scalars().size() != 5) {
                 throw shape("schema");
             }
             String id = record.scalar(0);
             prior = requireIncreasing(prior, id, "schema");
             SchemaKind kind = enumValue(SchemaKind.class, record.scalar(1));
-            String child = "";
-            if (record.children().size() == 1) {
-                child = record.child(0).requireShape("schema-ref", 1, 0).scalar(0);
+            List<String> children = new ArrayList<>();
+            for (Wire.Node child : record.children()) {
+                children.add(child.requireShape("schema-ref", 1, 0).scalar(0));
             }
-            Schema schema = new Schema(id, kind, record.scalar(2), child);
+            ArityPolicy arity = parseArityPolicy(record.scalar(3));
+            SiblingQuotient quotient = enumValue(
+                    SiblingQuotient.class, record.scalar(4));
+            Schema schema = new Schema(
+                    id, kind, record.scalar(2), children, arity, quotient);
             if (result.put(id, schema) != null) {
                 throw duplicate(id);
             }
         }
         for (Schema schema : result.values()) {
-            boolean container = switch (schema.kind()) {
-                case SEQ, BAG, SET, BIND, BIND_BLOCK -> true;
-                default -> false;
+            int expectedChildren = switch (schema.kind()) {
+                case SEQ, BAG, SET, BIND, BIND_BLOCK -> 1;
+                case DEPENDENT_SEQ -> schema.childSchemas().size();
+                default -> 0;
             };
-            if (container != !schema.childSchema().isEmpty()) {
+            if (schema.kind() == SchemaKind.DEPENDENT_SEQ) {
+                if (!schema.value().isEmpty()
+                        || expectedChildren < 2
+                        || schema.arityPolicy().atLeast()
+                        || !schema.arityPolicy().finite().equals(
+                                Set.of(expectedChildren))) {
+                    throw shape("dependent sequence schema");
+                }
+            } else if (schema.childSchemas().size() != expectedChildren) {
                 throw shape("schema child");
             }
-            if (container && !result.containsKey(schema.childSchema())) {
-                throw dangling("schema", schema.childSchema());
+            for (String child : schema.childSchemas()) {
+                if (!result.containsKey(child)) {
+                    throw dangling("schema", child);
+                }
+            }
+            SiblingQuotient expected = switch (schema.kind()) {
+                case SEQ, DEPENDENT_SEQ -> SiblingQuotient.ORDERED_SEQUENCE;
+                case BAG -> SiblingQuotient.COMMUTATIVE_BAG;
+                case SET -> SiblingQuotient.COMMUTATIVE_IDEMPOTENT_SET;
+                default -> SiblingQuotient.RIGID;
+            };
+            if (schema.siblingQuotient() != expected) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Schema sibling quotient disagrees with its constructor");
+            }
+            if (schema.kind() == SchemaKind.SET
+                    && !schema.arityPolicy().positiveDownwardClosed()) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Set arities are not positive downward closed");
+            }
+            boolean rigid = schema.childSchemas().isEmpty();
+            if (rigid && !schema.arityPolicy().equals(
+                    new ArityPolicy(false, -1, Set.of(1)))) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Rigid schemas must have exact arity one");
             }
         }
         return Collections.unmodifiableMap(result);
@@ -443,7 +596,7 @@ final class KernelModel {
         String prior = null;
         for (Wire.Node record : section.children()) {
             record.requireTag("operator");
-            if (record.scalars().size() != 2) {
+            if (record.scalars().size() != 4) {
                 throw shape("operator");
             }
             String id = record.scalar(0);
@@ -456,7 +609,12 @@ final class KernelModel {
                 }
                 ports.add(schemaId);
             }
-            if (result.put(id, new Operator(id, record.scalar(1), ports)) != null) {
+            String flatPath = record.scalar(3);
+            if (!flatPath.equals("none")) {
+                parsePortPath(flatPath, ports.size());
+            }
+            if (result.put(id, new Operator(
+                    id, record.scalar(1), record.scalar(2), flatPath, ports)) != null) {
                 throw duplicate(id);
             }
         }
@@ -479,8 +637,8 @@ final class KernelModel {
             boolean generatorsStarted = false;
             for (Wire.Node child : record.children()) {
                 if (child.tag().equals("coordinate")) {
-                    if (generatorsStarted || child.scalars().size() != 6
-                            || !child.children().isEmpty()) {
+                    if (generatorsStarted || child.scalars().size() != 8
+                            || child.children().size() != 1) {
                         throw shape("binder coordinate");
                     }
                     int index = parseIndex(child.scalar(0), "binder coordinate");
@@ -489,9 +647,26 @@ final class KernelModel {
                                 FailureCode.NONCANONICAL_ENCODING,
                                 "Binder coordinates must be consecutive");
                     }
+                    Wire.Node dependencies = child.child(0).requireTag("dependencies");
+                    if (!dependencies.children().isEmpty()) {
+                        throw shape("binder dependencies");
+                    }
+                    List<String> dependencyNames = List.copyOf(dependencies.scalars());
+                    Set<String> preceding = new LinkedHashSet<>();
+                    for (BinderCoordinate coordinate : coordinates) {
+                        preceding.add(coordinate.slotName());
+                    }
+                    if (new LinkedHashSet<>(dependencyNames).size()
+                                    != dependencyNames.size()
+                            || !preceding.containsAll(dependencyNames)) {
+                        throw new FormatException(
+                                FailureCode.INVALID_SYMMETRY,
+                                "Binder dependencies are duplicated or not preceding");
+                    }
                     coordinates.add(new BinderCoordinate(
                             index, child.scalar(1), child.scalar(2), child.scalar(3),
-                            child.scalar(4), child.scalar(5)));
+                            child.scalar(4), child.scalar(5), child.scalar(6),
+                            child.scalar(7), dependencyNames));
                 } else if (child.tag().equals("generator")) {
                     generatorsStarted = true;
                     if (!child.children().isEmpty()
@@ -517,6 +692,18 @@ final class KernelModel {
                                     FailureCode.INVALID_SYMMETRY,
                                     "Binder generator crosses descriptor classes");
                         }
+                        Set<String> mappedDependencies = new LinkedHashSet<>();
+                        for (String dependency : left.dependencies()) {
+                            int dependencyIndex = coordinateIndex(coordinates, dependency);
+                            mappedDependencies.add(
+                                    coordinates.get(image.get(dependencyIndex)).slotName());
+                        }
+                        if (!mappedDependencies.equals(
+                                new LinkedHashSet<>(right.dependencies()))) {
+                            throw new FormatException(
+                                    FailureCode.INVALID_SYMMETRY,
+                                    "Binder generator does not preserve dependencies");
+                        }
                     }
                     generators.add(image);
                 } else {
@@ -536,7 +723,62 @@ final class KernelModel {
         return left.type().equals(right.type())
                 && left.quantifier().equals(right.quantifier())
                 && left.disjointClass().equals(right.disjointClass())
-                && left.scope().equals(right.scope());
+                && left.domain().equals(right.domain())
+                && left.multiplicity().equals(right.multiplicity())
+                && left.exchangeClass().equals(right.exchangeClass());
+    }
+
+    private static int coordinateIndex(
+            List<BinderCoordinate> coordinates,
+            String slotName) {
+        for (int index = 0; index < coordinates.size(); index++) {
+            if (coordinates.get(index).slotName().equals(slotName)) {
+                return index;
+            }
+        }
+        throw new FormatException(
+                FailureCode.INVALID_SYMMETRY,
+                "Unknown binder dependency " + slotName);
+    }
+
+    private static ArityPolicy parseArityPolicy(String encoded) {
+        if (encoded.startsWith("AT_LEAST:")) {
+            int minimum = parseIndex(encoded.substring("AT_LEAST:".length()),
+                    "arity minimum");
+            return new ArityPolicy(true, minimum, Set.of());
+        }
+        if (!encoded.startsWith("FINITE:")) {
+            throw new FormatException(
+                    FailureCode.UNKNOWN_VARIANT,
+                    "Unknown arity policy " + encoded);
+        }
+        String suffix = encoded.substring("FINITE:".length());
+        if (suffix.isEmpty()) {
+            throw shape("finite arity policy");
+        }
+        Set<Integer> arities = new LinkedHashSet<>();
+        for (String part : suffix.split(",", -1)) {
+            int arity = parseIndex(part, "finite arity");
+            if (!arities.add(arity)) {
+                throw new FormatException(
+                        FailureCode.NONCANONICAL_ENCODING,
+                        "Duplicate finite arity " + arity);
+            }
+        }
+        return new ArityPolicy(false, -1, arities);
+    }
+
+    private static int[] parsePortPath(String encoded, int portCount) {
+        String[] parts = encoded.split("/", -1);
+        if (parts.length != 2) {
+            throw shape("operator flat path");
+        }
+        int port = parseIndex(parts[0], "flat port");
+        int depth = parseIndex(parts[1], "flat path depth");
+        if (port >= portCount) {
+            throw shape("operator flat path");
+        }
+        return new int[] {port, depth};
     }
 
     private Map<String, Axiom> parseAxioms(Wire.Node section) {
@@ -704,11 +946,21 @@ final class KernelModel {
 
     private void validateTerms() {
         for (Term term : terms.values()) {
-            validateTerm(term, new ArrayDeque<>());
+            validateTerm(term, new ArrayDeque<>(), 0);
         }
     }
 
-    private void validateTerm(Term term, Deque<List<String>> boundTypes) {
+    private void validateTerm(
+            Term term,
+            Deque<List<String>> boundTypes,
+            int traversalDepth) {
+        validationSteps = Math.addExact(validationSteps, 1L);
+        if (validationSteps > limits.maxNodes()
+                || traversalDepth > limits.maxDepth()) {
+            throw new FormatException(
+                    FailureCode.RESOURCE_LIMIT,
+                    "Typed-term validation exceeds configured node/depth limits");
+        }
         List<Term> children = term.children().stream().map(this::term).toList();
         switch (term.kind()) {
             case SLOT -> {
@@ -744,7 +996,7 @@ final class KernelModel {
                     requireSameContext(term, children.get(index));
                     requireSort(children.get(index), SortKind.PORT,
                             operator.schemas().get(index));
-                    validateTerm(children.get(index), boundTypes);
+                    validateTerm(children.get(index), boundTypes, traversalDepth + 1);
                 }
             }
             case INVOKE -> {
@@ -784,9 +1036,10 @@ final class KernelModel {
                 requireSort(term, SortKind.PORT, schema.id());
                 requireSameContext(term, children.get(0));
                 requireSort(children.get(0), SortKind.TERM, schema.value());
-                validateTerm(children.get(0), boundTypes);
+                validateTerm(children.get(0), boundTypes, traversalDepth + 1);
             }
-            case SEQ, BAG, SET -> validateContainer(term, children, boundTypes);
+            case SEQ, BAG, SET -> validateContainer(
+                    term, children, boundTypes, traversalDepth);
             case BIND -> {
                 requireArity(term, children, 1);
                 Schema schema = schema(term.symbol());
@@ -806,7 +1059,7 @@ final class KernelModel {
                 }
                 requireSort(children.get(0), SortKind.PORT, schema.childSchema());
                 boundTypes.addFirst(List.of(schema.value()));
-                validateTerm(children.get(0), boundTypes);
+                validateTerm(children.get(0), boundTypes, traversalDepth + 1);
                 boundTypes.removeFirst();
             }
             case BIND_BLOCK -> {
@@ -835,7 +1088,7 @@ final class KernelModel {
                 requireSort(children.get(0), SortKind.PORT, schema.childSchema());
                 boundTypes.addFirst(binder.coordinates().stream()
                         .map(BinderCoordinate::type).toList());
-                validateTerm(children.get(0), boundTypes);
+                validateTerm(children.get(0), boundTypes, traversalDepth + 1);
                 boundTypes.removeFirst();
             }
             case META -> throw illTyped(term, "META is permitted only inside axiom patterns");
@@ -845,10 +1098,12 @@ final class KernelModel {
     private void validateContainer(
             Term term,
             List<Term> children,
-            Deque<List<String>> boundTypes) {
+            Deque<List<String>> boundTypes,
+            int traversalDepth) {
         Schema schema = schema(term.symbol());
         SchemaKind expected = switch (term.kind()) {
-            case SEQ -> SchemaKind.SEQ;
+            case SEQ -> schema.kind() == SchemaKind.DEPENDENT_SEQ
+                    ? SchemaKind.DEPENDENT_SEQ : SchemaKind.SEQ;
             case BAG -> SchemaKind.BAG;
             case SET -> SchemaKind.SET;
             default -> throw new AssertionError();
@@ -856,11 +1111,15 @@ final class KernelModel {
         if (schema.kind() != expected) {
             throw illTyped(term, "Container constructor/schema mismatch");
         }
+        if (!schema.arityPolicy().admits(children.size())) {
+            throw illTyped(term, "Container arity is not admitted by its schema");
+        }
         requireSort(term, SortKind.PORT, schema.id());
-        for (Term child : children) {
+        for (int index = 0; index < children.size(); index++) {
+            Term child = children.get(index);
             requireSameContext(term, child);
-            requireSort(child, SortKind.PORT, schema.childSchema());
-            validateTerm(child, boundTypes);
+            requireSort(child, SortKind.PORT, schema.positionalSchema(index));
+            validateTerm(child, boundTypes, traversalDepth + 1);
         }
     }
 

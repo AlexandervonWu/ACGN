@@ -192,11 +192,30 @@ public final class ProducerBundleInspectionTest {
                         "INSERT_FRESH",
                         "INSERT_FRESH",
                         "UNION",
+                        "REBUILD_START",
                         "REBUILD_COMPLETE",
                         "INSERT_FRESH")),
                 "parent fixture has the exact accepted event sequence");
         check(parent.snapshots().size() == 6,
-                "five transitions retain all six exact snapshots");
+                "content addressing shares the rebuild start's exact no-op snapshot");
+        java.util.Map<String, java.util.Map<String, Set<String>>> shapeHistory =
+                new java.util.LinkedHashMap<>();
+        for (Wire.Node snapshot : parent.snapshots().values()) {
+            for (Wire.Node shape : snapshot.child(2).children()) {
+                shapeHistory.computeIfAbsent(
+                                shape.scalar(2), ignored -> new java.util.LinkedHashMap<>())
+                        .computeIfAbsent(
+                                shape.scalar(1), ignored -> new java.util.LinkedHashSet<>())
+                        .add(shape.scalar(0));
+            }
+        }
+        check(shapeHistory.values().stream().anyMatch(byOwner -> {
+                    Set<String> ids = byOwner.values().stream()
+                            .flatMap(Set::stream)
+                            .collect(java.util.stream.Collectors.toSet());
+                    return byOwner.size() > 1 && ids.size() >= byOwner.size();
+                }),
+                "rehomed shapes retain distinct owner-qualified record IDs");
         Wire.Node unfolding = parent.unfoldings().values().iterator().next();
         check("2".equals(unfolding.scalar(2)),
                 "parent unfolding has exact height two");

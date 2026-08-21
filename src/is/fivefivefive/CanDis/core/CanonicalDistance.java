@@ -17,6 +17,18 @@ import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
  */
 public final class CanonicalDistance {
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
+    private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
+            new OrderedTreeEditDistance.Adapter<>() {
+                @Override
+                public String label(TemporalTree node) {
+                    return node.label;
+                }
+
+                @Override
+                public List<? extends TemporalTree> children(TemporalTree node) {
+                    return node.children;
+                }
+            };
 
     private CanonicalDistance() {
     }
@@ -109,7 +121,28 @@ public final class CanonicalDistance {
             throw new IllegalArgumentException("Normal forms cannot be null");
         }
         List<NormalForm> snapshot = new ArrayList<>(normalForms);
+        validateCalls(snapshot);
         return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
+    }
+
+    private static void validateCalls(List<NormalForm> normalForms) {
+        Set<EGraphNode> seen = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+        java.util.ArrayDeque<EGraphNode> pending = new java.util.ArrayDeque<>();
+        for (NormalForm normalForm : normalForms) {
+            if (normalForm != null && normalForm.getMatrixEGraph() != null) {
+                pending.add(normalForm.getMatrixEGraph());
+            }
+        }
+        while (!pending.isEmpty()) {
+            EGraphNode node = pending.removeFirst();
+            if (!seen.add(node)) {
+                continue;
+            }
+            if (node.getOpcode() == EGraphNode.Opcode.CALL) {
+                CallMetadata.require(node);
+            }
+            pending.addAll(node.getChildren());
+        }
     }
 
     private static int canonicalFormSize(List<NormalForm> nfs) {
@@ -798,8 +831,10 @@ public final class CanonicalDistance {
         if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             String name = variableName(node);
             key.append(variableMapping.getOrDefault(name, name));
+        } else if (node.getOpcode() == EGraphNode.Opcode.CALL) {
+            key.append(callIdentity(node));
         } else if (node.getSourceName() != null) {
-            key.append(node.getSourceName());
+            key.append(atomIdentity(node));
         }
         key.append('[');
         List<EGraphNode> children = new ArrayList<>(node.getChildren());
@@ -851,9 +886,22 @@ public final class CanonicalDistance {
         if (left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
                 || left.getOpcode() == EGraphNode.Opcode.CONSTANT
                 || left.getOpcode() == EGraphNode.Opcode.REF) {
-            return safeEquals(left.getSourceName(), right.getSourceName()) ? 0 : 1;
+            return safeEquals(atomIdentity(left), atomIdentity(right)) ? 0 : 1;
+        }
+        if (left.getOpcode() == EGraphNode.Opcode.CALL) {
+            return safeEquals(callIdentity(left), callIdentity(right)) ? 0 : 1;
         }
         return 0;
+    }
+
+    private static String callIdentity(EGraphNode node) {
+        return CallMetadata.semanticKey(node);
+    }
+
+    private static String atomIdentity(EGraphNode node) {
+        return node.getSemanticIdentity() == null
+                ? node.getSourceName()
+                : node.getSemanticIdentity();
     }
 
     private static final class EGraphMetadata {
@@ -1132,23 +1180,7 @@ public final class CanonicalDistance {
     }
 
     private static int treeDistance(TemporalTree left, TemporalTree right) {
-        int cost = safeEquals(left.label, right.label) ? 0 : 1;
-        int[][] dp = intMatrix(left.children.size() + 1, right.children.size() + 1);
-        for (int i = 1; i <= left.children.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + temporalSize(left.children.get(i - 1));
-        }
-        for (int j = 1; j <= right.children.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + temporalSize(right.children.get(j - 1));
-        }
-        for (int i = 1; i <= left.children.size(); i++) {
-            for (int j = 1; j <= right.children.size(); j++) {
-                int delete = dp[i - 1][j] + temporalSize(left.children.get(i - 1));
-                int insert = dp[i][j - 1] + temporalSize(right.children.get(j - 1));
-                int update = dp[i - 1][j - 1] + treeDistance(left.children.get(i - 1), right.children.get(j - 1));
-                dp[i][j] = Math.min(update, Math.min(delete, insert));
-            }
-        }
-        return cost + dp[left.children.size()][right.children.size()];
+        return OrderedTreeEditDistance.distance(left, right, TEMPORAL_ADAPTER);
     }
 
     private static int temporalSize(TemporalTree node) {
@@ -1389,6 +1421,9 @@ public final class CanonicalDistance {
                 return infixFormula(node, "triggered");
             case ITE:
                 return iteFormula(node);
+            case CALL:
+                CallMetadata.require(node);
+                return operatorFormula(node);
             default:
                 return operatorFormula(node);
         }

@@ -93,7 +93,7 @@ public final class EGraphAblationTest {
         checkAllEquivalent("nested ACI flattening",
                 AlloyTerm.node("BF/AND", AlloyTerm.node("BF/AND", a, b), a),
                 AlloyTerm.node("BF/AND", b, a));
-        checkAllEquivalent("ordered associativity",
+        checkAllDistinct("JOIN without a dependent typed-chain certificate",
                 AlloyTerm.node("BE/JOIN", AlloyTerm.node("BE/JOIN", a, b),
                         AlloyTerm.atom("VAR", "c")),
                 AlloyTerm.node("BE/JOIN", a,
@@ -111,14 +111,81 @@ public final class EGraphAblationTest {
         checkAllEquivalent("or true annihilator", AlloyTerm.node("BF/OR", a, trueTerm), trueTerm);
         checkAllEquivalent("boolean excluded middle",
                 AlloyTerm.node("BF/OR", a, AlloyTerm.node("UF/NOT", a)), trueTerm);
-        checkAllEquivalent("membership in none",
+        checkAllDistinct("unproved membership in none",
                 AlloyTerm.node("BF/IN", a, noneTerm), falseTerm);
+        checkAllEquivalent("none is a subset of none",
+                AlloyTerm.node("BF/IN", noneTerm, noneTerm), trueTerm);
+        checkAllDistinct("synthetic unary label is not nonempty evidence",
+                AlloyTerm.node(
+                        "BF/IN", AlloyTerm.node("UE/ONE", a), noneTerm),
+                falseTerm);
         checkAllEquivalent("membership in univ",
                 AlloyTerm.node("BF/IN", a, univTerm), trueTerm);
         checkAllEquivalent("intersection with none",
                 AlloyTerm.node("BE/INTERSECT", a, noneTerm), noneTerm);
         checkAllEquivalent("union with none",
                 AlloyTerm.node("BE/PLUS", a, noneTerm), a);
+
+        AlloyTerm parsedNone = AlloyTerm.node(
+                "UE/NOOP", AlloyTerm.atom("CONST", "none"));
+        AlloyTerm parsedCarrier = AlloyTerm.node(
+                "UE/NOOP", AlloyTerm.atom("SIG", "A"));
+        AlloyTerm boundX = AlloyTerm.atom("VAR", "x");
+        AlloyTerm falseBody = AlloyTerm.node("UF/SOME", parsedNone);
+        AlloyTerm trueBody = AlloyTerm.node("UF/NO", parsedNone);
+        checkAllEquivalent(
+                "bare-one parameter authority",
+                predicateWithDomain(
+                        "x",
+                        parsedCarrier,
+                        AlloyTerm.node("BF/IN", boundX, parsedNone)),
+                predicateWithDomain("x", parsedCarrier, falseBody));
+        checkAllEquivalent(
+                "bare-one parameter authority under not-in",
+                predicateWithDomain(
+                        "x",
+                        parsedCarrier,
+                        AlloyTerm.node("BF/NOT_IN", boundX, parsedNone)),
+                predicateWithDomain("x", parsedCarrier, trueBody));
+        AlloyTerm someCarrierDomain = AlloyTerm.node("UE/SOME", parsedCarrier);
+        checkAllEquivalent(
+                "some parameter authority",
+                predicateWithDomain(
+                        "x",
+                        someCarrierDomain,
+                        AlloyTerm.node("BF/IN", boundX, parsedNone)),
+                predicateWithDomain("x", someCarrierDomain, falseBody));
+        checkAllEquivalent(
+                "some parameter authority under not-in",
+                predicateWithDomain(
+                        "x",
+                        someCarrierDomain,
+                        AlloyTerm.node("BF/NOT_IN", boundX, parsedNone)),
+                predicateWithDomain("x", someCarrierDomain, trueBody));
+        for (String multiplicity : List.of("UE/SETOF", "UE/LONE")) {
+            AlloyTerm nullableDomain = AlloyTerm.node(multiplicity, parsedCarrier);
+            checkAllDistinct(
+                    multiplicity + " parameter does not prove nonemptiness",
+                    predicateWithDomain(
+                            "x",
+                            nullableDomain,
+                            AlloyTerm.node("BF/IN", boundX, parsedNone)),
+                    predicateWithDomain("x", nullableDomain, falseBody));
+        }
+        AlloyTerm shadowedSet = quantifiedWithDomain(
+                "QF/ALL",
+                "x",
+                AlloyTerm.node("UE/SETOF", parsedCarrier),
+                AlloyTerm.node("BF/IN", boundX, parsedNone));
+        AlloyTerm shadowedFalse = quantifiedWithDomain(
+                "QF/ALL",
+                "x",
+                AlloyTerm.node("UE/SETOF", parsedCarrier),
+                falseBody);
+        checkAllDistinct(
+                "inner nullable binding shadows an outer positive parameter",
+                predicateWithDomain("x", parsedCarrier, shadowedSet),
+                predicateWithDomain("x", parsedCarrier, shadowedFalse));
 
         AlloyTerm iff = AlloyTerm.node("BF/IFF", a, b);
         AlloyTerm iffExpansion = AlloyTerm.node("BF/AND",
@@ -158,6 +225,27 @@ public final class EGraphAblationTest {
                 quantifiedWithDomain("QF/ALL", "x", noneTerm,
                         AlloyTerm.node("P", AlloyTerm.atom("VAR", "x"))),
                 trueTerm);
+        checkAllDistinct("set none admits its empty binding",
+                quantifiedWithDomain(
+                        "QF/SOME",
+                        "x",
+                        AlloyTerm.node("UE/SETOF", noneTerm),
+                        trueTerm),
+                falseTerm);
+        checkAllDistinct("lone none admits its empty binding",
+                quantifiedWithDomain(
+                        "QF/ALL",
+                        "x",
+                        AlloyTerm.node("UE/LONE", noneTerm),
+                        falseTerm),
+                trueTerm);
+        checkAllEquivalent("one none has no admissible binding",
+                quantifiedWithDomain(
+                        "QF/SOME",
+                        "x",
+                        AlloyTerm.node("UE/ONE", noneTerm),
+                        trueTerm),
+                falseTerm);
         checkAllEquivalent("false existential body",
                 quantified("QF/SOME", "x", "S", falseTerm), falseTerm);
         checkAllEquivalent("true universal body",
@@ -306,6 +394,19 @@ public final class EGraphAblationTest {
                 "slotted e-graph must apply " + rule);
     }
 
+    private static void checkAllDistinct(String rule, AlloyTerm left, AlloyTerm right) {
+        check(!new RawEGraph().compare(left, right).equivalent,
+                "fixed-arity e-graph must preserve " + rule);
+        check(!new RawDeBruijnEGraph().compare(left, right).equivalent,
+                "fixed-arity De Bruijn e-graph must preserve " + rule);
+        check(!new JavaEgglog().compare(left, right).equivalent,
+                "egglog core must preserve " + rule);
+        check(!new JavaEgglogDeBruijn().compare(left, right).equivalent,
+                "egglog De Bruijn core must preserve " + rule);
+        check(!new SlottedEGraph().compare(left, right).equivalent,
+                "slotted e-graph must preserve " + rule);
+    }
+
     private static AlloyTerm predicate(String variable, AlloyTerm body) {
         return predicate(List.of(variable), body);
     }
@@ -319,6 +420,18 @@ public final class EGraphAblationTest {
         AlloyTerm declaration = AlloyTerm.node(
                 "DECL/ParamDecl/disj=false/var=false", declarationChildren);
         return AlloyTerm.node("PREDICATE", declaration, AlloyTerm.node("Body", body));
+    }
+
+    private static AlloyTerm predicateWithDomain(
+            String variable,
+            AlloyTerm domain,
+            AlloyTerm body) {
+        AlloyTerm declaration = AlloyTerm.node(
+                "DECL/ParamDecl/disj=false/var=false",
+                AlloyTerm.atom("VAR", variable),
+                domain);
+        return AlloyTerm.node(
+                "PREDICATE", declaration, AlloyTerm.node("Body", body));
     }
 
     private static AlloyTerm quantified(String head, String variable, String domain, AlloyTerm body) {

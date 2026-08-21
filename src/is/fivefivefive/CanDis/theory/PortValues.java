@@ -17,12 +17,14 @@ final class PortValues {
     }
 
     static void requireAdmissibleCardinality(
-            ContainerEmptiness emptiness,
+            ArityPolicy policy,
             List<? extends PortValue> values) {
-        Objects.requireNonNull(emptiness, "emptiness");
+        Objects.requireNonNull(policy, "policy");
         Objects.requireNonNull(values, "values");
-        if (!emptiness.admitsEmpty() && values.isEmpty()) {
-            throw new IllegalArgumentException("A K+ port must contain at least one element");
+        if (!policy.admits(values.size())) {
+            throw new IllegalArgumentException(
+                    "Container cardinality " + values.size()
+                            + " is not admitted by " + policy);
         }
     }
 

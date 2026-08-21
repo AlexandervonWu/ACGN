@@ -88,19 +88,25 @@ public final class TheoryCoherentInsertionTest {
 
         OnePortSchema element = new OnePortSchema(GraphType.BOOL);
         SetPortSchema setSchema = new SetPortSchema(element);
-        InstantiatedOperator operator = setOperator("dedup-set", setSchema);
+        InstantiatedOperator operator = setOperator(setSchema);
         TypedSlotContext empty = TypedSlotContext.empty();
-        SetPort values = new SetPort(
-                setSchema,
-                empty,
-                Arrays.asList(
-                        OnePort.invocation(empty, TypedInvocation.identity(child)),
-                        OnePort.invocation(empty, TypedInvocation.identity(parent))));
-        TypedENode source = TypedENode.construct(
-                operator, empty, Collections.singletonList(values));
+        List<PortValue> sourceOccurrences = Arrays.asList(
+                OnePort.invocation(empty, TypedInvocation.identity(child)),
+                OnePort.invocation(empty, TypedInvocation.identity(parent)));
+        CertifiedContainerConstruction source =
+                TypedENode.constructContainerCertified(
+                        operator,
+                        PortPath.at(0),
+                        empty,
+                        sourceOccurrences,
+                        SemanticProfile.alloyOverflowForbidding());
 
-        CertifiedCanonicalizationResult result = graph.canonicalizeCertified(
+        CertifiedCanonicalizationResult result = graph.canonicalizeCertifiedConstructed(
                 source, graph.coherentWitnessFamily());
+        check(result.sourceConstruction().orElseThrow().equals(source.certificate())
+                        && result.sourceReplay().leftEndpoint().equals(
+                                source.certificate().leftEndpoint()),
+                "Certified canonicalization retains the exact ordered source endpoint");
         ContainerNormalizationTrace trace = result.xi()
                 .containerNormalizations().get(0);
         check(trace.deduplicated() && trace.outputOccurrences().size() == 1,
@@ -185,27 +191,26 @@ public final class TheoryCoherentInsertionTest {
                 operator, TypedSlotContext.empty(), Collections.emptyList());
     }
 
-    private static InstantiatedOperator setOperator(
-            String name,
-            SetPortSchema schema) {
+    private static InstantiatedOperator setOperator(SetPortSchema schema) {
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
         List<ContainerLawCertificate> certificates = Arrays.asList(
-                new ContainerLawCertificate(
-                        schema,
-                        ContainerLawCertificate.Law.ASSOCIATIVITY,
-                        CertificateOrigin.containerLaw(name, "0/0:A", 0)),
-                new ContainerLawCertificate(
-                        schema,
-                        ContainerLawCertificate.Law.COMMUTATIVITY,
-                        CertificateOrigin.containerLaw(name, "0/0:C", 1)),
-                new ContainerLawCertificate(
-                        schema,
-                        ContainerLawCertificate.Law.IDEMPOTENCY,
-                        CertificateOrigin.containerLaw(name, "0/0:I", 2)));
+                AlloyLawRegistry.issue(
+                        profile, is.fivefivefive.CanDis.core.EGraphNode.Opcode.AND,
+                        "ALLOY/AND", GraphType.BOOL, PortPath.at(0), schema,
+                        ContainerLawCertificate.Law.ASSOCIATIVITY),
+                AlloyLawRegistry.issue(
+                        profile, is.fivefivefive.CanDis.core.EGraphNode.Opcode.AND,
+                        "ALLOY/AND", GraphType.BOOL, PortPath.at(0), schema,
+                        ContainerLawCertificate.Law.COMMUTATIVITY),
+                AlloyLawRegistry.issue(
+                        profile, is.fivefivefive.CanDis.core.EGraphNode.Opcode.AND,
+                        "ALLOY/AND", GraphType.BOOL, PortPath.at(0), schema,
+                        ContainerLawCertificate.Law.IDEMPOTENCY));
         Map<PortPath, ContainerLawDeclaration> laws = new LinkedHashMap<>();
         laws.put(PortPath.at(0), ContainerLawDeclaration.certified(
                 schema, certificates));
         return OperatorDeclaration.monomorphic(
-                name,
+                "ALLOY/AND",
                 Collections.singletonList(schema),
                 GraphType.BOOL,
                 laws,

@@ -13,6 +13,7 @@ import java.util.Set;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.CanDis.ir.IRAgent;
 import is.fivefivefive.CanDis.core.EGraphNode;
+import is.fivefivefive.CanDis.core.CallMetadata;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.core.NormalForm;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
@@ -396,6 +397,9 @@ public final class CanonicalBacktranslator {
                 return callFormula(node, aliases);
             case ITE:
                 return iteFormula(node, aliases);
+            case DISJOINT:
+                return "disj[" + formulaFromChildren(
+                        node.getChildren(), ",", aliases) + "]";
             case LIST:
             case DISJOINT_LIST:
             case TOTALORDER_LIST:
@@ -520,6 +524,9 @@ public final class CanonicalBacktranslator {
     }
 
     private static String callFormula(EGraphNode node, Map<String, String> aliases) {
+        if (node.getOpcode() == Opcode.CALL) {
+            CallMetadata.require(node);
+        }
         String name = alloyName(firstNonEmpty(node.getSourceName(), node.getAlphaName(), node.getOpcode().name().toLowerCase(Locale.ROOT)));
         List<String> parts = childFormulaParts(node, aliases);
         if (parts.isEmpty()) {

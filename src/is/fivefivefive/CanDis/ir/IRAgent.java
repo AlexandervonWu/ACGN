@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import is.fivefivefive.ACGN.alloy.Symbol;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -17,6 +19,7 @@ import is.fivefivefive.CanDis.core.QuantiVar;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.theory.SemanticProfile;
 
 public class IRAgent {
     @FunctionalInterface
@@ -27,12 +30,23 @@ public class IRAgent {
     private static final DiagnosticsObserver NO_OBSERVER = (stage, active, normalForms) -> { };
 
     private Multigraph graph;
+    private final SemanticProfile semanticProfile;
     
     private List<NormalForm> nfs; // the normal forms from the graph in temporal logical operators order; 
     // try to normalize as much as possible from MASG to the normal form. Try prenexing. 
 
     public IRAgent(Multigraph graph) {
+        this(graph, SemanticProfile.alloyOverflowForbidding());
+    }
+
+    public IRAgent(Multigraph graph, SemanticProfile semanticProfile) {
         this.graph = graph;
+        this.semanticProfile = java.util.Objects.requireNonNull(
+                semanticProfile, "semanticProfile");
+        if (!this.semanticProfile.isAdmissibleAlloyProfile()) {
+            throw new IllegalArgumentException(
+                    "IRAgent requires an admitted Alloy semantic profile");
+        }
         this.nfs = new ArrayList<>();
     }
 
@@ -68,6 +82,11 @@ public class IRAgent {
                 if (normalForm.getMatrixEGraph() != null) {
                     roots.add(normalForm.getMatrixEGraph());
                 }
+                EGraphNode certificationRoot = normalForm.getCertificationMatrixEGraph();
+                if (certificationRoot != null
+                        && certificationRoot != normalForm.getMatrixEGraph()) {
+                    roots.add(certificationRoot);
+                }
             }
             EGraphNode.retainReachable(roots);
             stages.onStage("reachable-egraph", null, nfs);
@@ -85,8 +104,11 @@ public class IRAgent {
         Opcode opcode = opcodeOf(node);
         String activeKey = node.hashCode() + "@" + tov;
         List<MASGEdge> downlinks = downlinksFor(node, tov, opcode);
-        EGraphNode current = new EGraphNode(nextId[0]++, opcode, new ArrayList<>(), isCommutative(opcode), maxArity(opcode), isFlexibleArity(opcode), metatypeOf(node, opcode));
-        attachSourceMetadata(current, node);
+        EGraphNode current = new EGraphNode(
+                nextId[0]++, opcode, new ArrayList<>(), isCommutative(opcode),
+                maxArity(node, opcode), isFlexibleArity(opcode), metatypeOf(node, opcode),
+                semanticProfile);
+        attachSourceMetadata(current, node, tov);
 
         if (!activePath.add(activeKey)) {
             return current;
@@ -96,11 +118,28 @@ public class IRAgent {
             return current;
         }
 
+        if (opcode == Opcode.CALL) {
+            CallSymbol call = requireCallSymbol(node);
+            for (int index = 1; index <= call.getDeclaredArity(); index++) {
+                AugmentedNode argument = downlinks.get(index).getTarget();
+                current.addChild(buildEGraph(
+                        argument,
+                        nextTov(tovTracker, argument),
+                        nf,
+                        tovTracker,
+                        nextId,
+                        activePath));
+            }
+            return current;
+        }
+
         TemporalOp[] temporalOps = temporalOpsOf(node);
         if (temporalOps != null && downlinks.size() >= 2) {
             int temporalIndex = nf.getTemporalChildren().size();
-            NormalForm leftNf = new NormalForm(nf, temporalOps[0], nextId[0]++);
-            NormalForm rightNf = new NormalForm(nf, temporalOps[1], nextId[0]++);
+            NormalForm leftNf = new NormalForm(
+                    nf, temporalOps[0], nextId[0]++, semanticProfile);
+            NormalForm rightNf = new NormalForm(
+                    nf, temporalOps[1], nextId[0]++, semanticProfile);
             nf.addTemporalChild(leftNf);
             nf.addTemporalChild(rightNf);
             nfs.add(leftNf);
@@ -112,7 +151,8 @@ public class IRAgent {
         TemporalOp unaryTemporalOp = unaryTemporalOpOf(opcode);
         if (unaryTemporalOp != null && !downlinks.isEmpty()) {
             int temporalIndex = nf.getTemporalChildren().size();
-            NormalForm temporalNf = new NormalForm(nf, unaryTemporalOp, nextId[0]++);
+            NormalForm temporalNf = new NormalForm(
+                    nf, unaryTemporalOp, nextId[0]++, semanticProfile);
             nf.addTemporalChild(temporalNf);
             nfs.add(temporalNf);
             addTemporalChild(temporalNf, downlinks.get(0).getTarget(), tovTracker, nextId, activePath);
@@ -157,18 +197,29 @@ public class IRAgent {
 
     private static EGraphNode temporalReference(EGraphNode source, int childIndex, int arity) {
         EGraphNode reference = new EGraphNode(
-                source.getId(), Opcode.REF, new ArrayList<>(), false, 0, false, Metatype.BOOLEAN);
+                source.getId(), Opcode.REF, new ArrayList<>(), false, 0, false,
+                Metatype.BOOLEAN, source.getSemanticProfile());
         reference.setSourceName("temporal[" + childIndex + ":" + arity + "]");
         reference.setSourceType("Bool");
+        reference.setExactAlloyType(
+                is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
         return reference;
     }
 
     private List<MASGEdge> downlinksFor(AugmentedNode node, int tov, Opcode opcode) {
         int maxTov = graph.getTimeOfVisitMap().getOrDefault(node, tov);
         if (tov > maxTov) {
+            if (opcode == Opcode.CALL) {
+                throw new IllegalStateException(
+                        "CALL occurrence was referenced more than once: "
+                                + requireCallSymbol(node) + "@" + tov);
+            }
             return null;
         }
         List<MASGEdge> downlinks = node.getDownlinksAtTimeOfVisit(graph, tov);
+        if (opcode == Opcode.CALL) {
+            return validateCallDownlinks(node, tov, downlinks);
+        }
         int expected = expectedDownlinkCount(opcode);
         if (isQuantifierOpcode(opcode) && hasQuantifierBodyEdge(downlinks)) {
             return downlinks;
@@ -180,22 +231,73 @@ public class IRAgent {
             }
             return downlinks;
         }
-        if (expected <= 0 || (downlinks != null && downlinks.size() >= expected)) {
+        if (expected <= 0 || (downlinks != null && downlinks.size() == expected)) {
             return downlinks;
         }
         for (int candidateTov = Math.max(1, tov); candidateTov <= maxTov; candidateTov++) {
             List<MASGEdge> candidate = node.getDownlinksAtTimeOfVisit(graph, candidateTov);
-            if (candidate != null && candidate.size() >= expected) {
+            if (candidate != null && candidate.size() == expected) {
                 return candidate;
             }
         }
         for (int candidateTov = Math.min(tov - 1, maxTov); candidateTov >= 1; candidateTov--) {
             List<MASGEdge> candidate = node.getDownlinksAtTimeOfVisit(graph, candidateTov);
-            if (candidate != null && candidate.size() >= expected) {
+            if (candidate != null && candidate.size() == expected) {
                 return candidate;
             }
         }
         return downlinks;
+    }
+
+    private static List<MASGEdge> validateCallDownlinks(
+            AugmentedNode node,
+            int tov,
+            List<MASGEdge> downlinks) {
+        CallSymbol call = requireCallSymbol(node);
+        int expected = call.getDeclaredArity() + 2;
+        if (downlinks == null || downlinks.size() != expected) {
+            throw new IllegalStateException(
+                    "Incomplete CALL occurrence " + call + "@" + tov
+                            + ": expected " + expected + " downlinks, found "
+                            + (downlinks == null ? 0 : downlinks.size()));
+        }
+        List<MASGEdge> ordered = new ArrayList<>(downlinks);
+        ordered.sort((left, right) -> Integer.compare(left.getPosition(), right.getPosition()));
+        for (int index = 0; index < ordered.size(); index++) {
+            MASGEdge edge = ordered.get(index);
+            if (edge.getPosition() != index + 1
+                    || edge.getTimeOfVisit() != tov
+                    || edge.getSource() != node) {
+                throw new IllegalStateException(
+                        "CALL occurrence has noncontiguous roles: " + call + "@" + tov);
+            }
+        }
+        Symbol callee = ordered.get(0).getTarget().getSymbol();
+        if (!call.matchesTarget(callee)) {
+            throw new IllegalStateException(
+                    "CALL occurrence has the wrong callee: " + call + "@" + tov);
+        }
+        for (int index = 1; index < expected - 1; index++) {
+            Symbol argument = ordered.get(index).getTarget().getSymbol();
+            if (argument != null && argument.isEndSymbol()) {
+                throw new IllegalStateException(
+                        "CALL occurrence contains END in an argument role: " + call + "@" + tov);
+            }
+        }
+        Symbol terminator = ordered.get(expected - 1).getTarget().getSymbol();
+        if (terminator == null || !terminator.isEndSymbol()) {
+            throw new IllegalStateException(
+                    "CALL occurrence has no final terminator: " + call + "@" + tov);
+        }
+        return ordered;
+    }
+
+    private static CallSymbol requireCallSymbol(AugmentedNode node) {
+        if (!(node.getSymbol() instanceof CallSymbol)) {
+            throw new IllegalStateException(
+                    "CALL nodes require explicit callee/arity identity, found " + node.getSymbol());
+        }
+        return (CallSymbol) node.getSymbol();
     }
 
     private List<MASGEdge> nearestQuantifierVisitWithBody(AugmentedNode node, int tov, int maxTov) {
@@ -280,13 +382,30 @@ public class IRAgent {
         return -1;
     }
 
-    private static void attachSourceMetadata(EGraphNode eGraphNode, AugmentedNode sourceNode) {
+    private void attachSourceMetadata(
+            EGraphNode eGraphNode,
+            AugmentedNode sourceNode,
+            int timeOfVisit) {
         Symbol symbol = sourceNode.getSymbol();
         if (symbol == null) {
             return;
         }
-        eGraphNode.setSourceName(symbol.getName());
+        if (symbol instanceof CallSymbol) {
+            CallSymbol call = (CallSymbol) symbol;
+            eGraphNode.setSourceName(call.getSourceName());
+            eGraphNode.setSemanticIdentity(call.getCallee());
+            eGraphNode.setCallOccurrenceId(call.getOccurrenceId());
+            eGraphNode.setDeclaredArity(call.getDeclaredArity());
+            eGraphNode.setCallArityAuthority(call.getArityAuthority().name());
+        } else {
+            eGraphNode.setSourceName(symbol.getName());
+            if (symbol instanceof SigSymbol) {
+                eGraphNode.setSemanticIdentity(
+                        ((SigSymbol) symbol).getSemanticIdentity());
+            }
+        }
         eGraphNode.setSourceType(symbol.getType());
+        eGraphNode.setExactAlloyType(sourceNode.getExactType(graph, timeOfVisit));
         if (eGraphNode.getOpcode() == Opcode.VARIABLE) {
             eGraphNode.setAlphaName(symbol.getName());
         }
@@ -392,7 +511,7 @@ public class IRAgent {
         if (node.getSyntactic() == 4) {
             switch ((int) Math.round(node.getSemantic())) {
                 case 1:
-                    return Opcode.DISJOINT_LIST;
+                    return Opcode.DISJOINT;
                 case 2:
                     return Opcode.TOTALORDER_LIST;
                 default:
@@ -660,12 +779,18 @@ public class IRAgent {
                 || opcode == Opcode.EQUALS || opcode == Opcode.NOT_EQUALS
                 || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
                 || opcode == Opcode.IPLUS
-                || isRelDeclOpcode(opcode);
+                || opcode == Opcode.DISJOINT;
     }
 
-    private static int maxArity(Opcode opcode) {
+    private static int maxArity(AugmentedNode node, Opcode opcode) {
+        if (opcode == Opcode.CALL) {
+            return requireCallSymbol(node).getDeclaredArity();
+        }
         if (isFlexibleArity(opcode)) {
             return -1;
+        }
+        if (isLeaf(opcode)) {
+            return 0;
         }
         if (isUnary(opcode)) {
             return 1;
@@ -676,9 +801,19 @@ public class IRAgent {
         return 2;
     }
 
+    private static boolean isLeaf(Opcode opcode) {
+        return opcode == Opcode.VARIABLE
+                || opcode == Opcode.GLOBALBINDING
+                || opcode == Opcode.CONSTANT
+                || opcode == Opcode.REF
+                || opcode == Opcode.SHADOW
+                || opcode == Opcode.END;
+    }
+
     private static boolean isFlexibleArity(Opcode opcode) {
-        return isAssociative(opcode) || opcode == Opcode.CALL || opcode == Opcode.LIST
-                || opcode == Opcode.DISJOINT_LIST || opcode == Opcode.TOTALORDER_LIST
+        return isAssociative(opcode) || opcode == Opcode.LIST
+                || opcode == Opcode.DISJOINT || opcode == Opcode.DISJOINT_LIST
+                || opcode == Opcode.TOTALORDER_LIST
                 || opcode == Opcode.FORALL || opcode == Opcode.EXISTS || opcode == Opcode.NO
                 || opcode == Opcode.LONE || opcode == Opcode.ONE || opcode == Opcode.COMPREHENSION
                 || opcode == Opcode.SUM
@@ -686,9 +821,7 @@ public class IRAgent {
     }
 
     private static boolean isAssociative(Opcode opcode) {
-        return opcode == Opcode.AND || opcode == Opcode.OR
-                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
-                || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
+        return is.fivefivefive.CanDis.core.AlloyOperatorPolicy.isFlatSetOperator(opcode);
     }
 
     private static boolean isUnary(Opcode opcode) {
@@ -748,6 +881,7 @@ public class IRAgent {
                 || opcode == Opcode.BEFORE || opcode == Opcode.HISTORICALLY || opcode == Opcode.ONCE
                 || opcode == Opcode.ALWAYS || opcode == Opcode.EVENTUALLY || opcode == Opcode.AFTER
                 || opcode == Opcode.AND || opcode == Opcode.OR || opcode == Opcode.IMPLIES || opcode == Opcode.IFF
+                || opcode == Opcode.DISJOINT || opcode == Opcode.DISJOINT_LIST
                 || opcode == Opcode.RELEASES || opcode == Opcode.SINCE || opcode == Opcode.TRIGGERED
                 || opcode == Opcode.UNTIL || opcode == Opcode.PREDICATE) {
             return Metatype.BOOLEAN;

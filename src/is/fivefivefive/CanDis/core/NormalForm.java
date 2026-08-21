@@ -8,8 +8,10 @@ import java.util.Comparator;
 
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
+import is.fivefivefive.ACGN.alloy.SigSymbol;
 
 import java.util.HashMap;
 
@@ -28,12 +30,16 @@ public class NormalForm {
 
     // matrix e-graph representation of the formula, where each node is a subformula, and edges represent the structure of the formula.
     private EGraphNode matrixEGraphRoot;
+    // Post-prenex/NNF source tree retained before ACI folding for certified law replay.
+    private EGraphNode certificationMatrixEGraphRoot;
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
     private List<QuantiVar> inheritedQuantiVars; // bindings owned by ancestor temporal phases and visible in this matrix.
     private List<NormalForm> temporalChildren;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
     private int nextDisjointnessClass;
+    private int prenexReductionsThisPass;
+    private volatile boolean frozenForCertification;
     public enum TemporalOp {
         NONE,
         BEFORE,
@@ -54,6 +60,7 @@ public class NormalForm {
     public NormalForm() {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.
         this.matrixEGraphRoot = null;
+        this.certificationMatrixEGraphRoot = null;
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
         this.inheritedQuantiVars = new ArrayList<>();
@@ -63,7 +70,21 @@ public class NormalForm {
     }
 
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
-        this.matrixEGraphRoot = new EGraphNode(egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false, Metatype.BOOLEAN);
+        this(parent, temporalOp, egid,
+                parent.matrixEGraphRoot == null
+                        ? SemanticProfile.alloyOverflowForbidding()
+                        : parent.matrixEGraphRoot.getSemanticProfile());
+    }
+
+    public NormalForm(
+            NormalForm parent,
+            TemporalOp temporalOp,
+            int egid,
+            SemanticProfile semanticProfile) {
+        this.matrixEGraphRoot = new EGraphNode(
+                egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false,
+                Metatype.BOOLEAN, semanticProfile);
+        this.certificationMatrixEGraphRoot = null;
         this.params = new ArrayList<>(parent.params);
         this.matrixQuantiVars = new ArrayList<>();
         this.inheritedQuantiVars = new ArrayList<>();
@@ -75,64 +96,132 @@ public class NormalForm {
     public EGraphNode getMatrixEGraph() {
         return this.matrixEGraphRoot;
     }
+    public EGraphNode getCertificationMatrixEGraph() {
+        return certificationMatrixEGraphRoot == null
+                ? matrixEGraphRoot : certificationMatrixEGraphRoot;
+    }
     public List<QuantiVar> getParams() {
-        return this.params;
+        return Collections.unmodifiableList(this.params);
     }
     public List<QuantiVar> getMatrixQuantiVars() {
-        return this.matrixQuantiVars;
+        return Collections.unmodifiableList(this.matrixQuantiVars);
     }
     public List<QuantiVar> getInheritedQuantiVars() {
-        return this.inheritedQuantiVars;
+        return Collections.unmodifiableList(this.inheritedQuantiVars);
     }
-    public void addEClass(EGraphNode node) {
+    public synchronized void addEClass(EGraphNode node) {
+        requireMutable();
         if (this.matrixEGraphRoot == null) {
             this.matrixEGraphRoot = node;
         } else {
             this.matrixEGraphRoot.addChild(node);
         }
     }
-    public void addParam(QuantiVar param) {
+    public synchronized void addParam(QuantiVar param) {
+        requireMutable();
         this.params.add(param);
     }
-    public void addMatrixQuantiVar(QuantiVar quantiVar) {
+    public synchronized void addMatrixQuantiVar(QuantiVar quantiVar) {
+        requireMutable();
         this.matrixQuantiVars.add(quantiVar);
     }
     public TemporalOp getTemporalOp() {
         return this.temporalOp;
     }
     public List<NormalForm> getTemporalChildren() {
-        return this.temporalChildren;
+        return Collections.unmodifiableList(this.temporalChildren);
     }
-    public void addTemporalChild(NormalForm child) {
+    public synchronized void addTemporalChild(NormalForm child) {
+        requireMutable();
         this.temporalChildren.add(child);
     }
 
-    public void pushTemporalNegations() {
+    /** Freezes the complete normalized source consumed by certification. */
+    public synchronized void freezeForCertification() {
+        if (frozenForCertification) {
+            return;
+        }
+        frozenForCertification = true;
+        for (QuantiVar parameter : params) {
+            parameter.freezeForCertification();
+        }
+        for (QuantiVar variable : matrixQuantiVars) {
+            variable.freezeForCertification();
+        }
+        for (QuantiVar variable : inheritedQuantiVars) {
+            variable.freezeForCertification();
+        }
+        for (NormalForm child : temporalChildren) {
+            child.freezeForCertification();
+        }
+        if (matrixEGraphRoot != null) {
+            matrixEGraphRoot.freezeForCertification();
+        }
+        if (certificationMatrixEGraphRoot != null) {
+            certificationMatrixEGraphRoot.freezeForCertification();
+        }
+    }
+
+    public boolean isFrozenForCertification() {
+        return frozenForCertification;
+    }
+
+    private void requireMutable() {
+        if (frozenForCertification) {
+            throw new IllegalStateException(
+                    "A certified normalized form is immutable");
+        }
+    }
+
+    public synchronized void pushTemporalNegations() {
+        requireMutable();
         if (matrixEGraphRoot == null || temporalChildren.isEmpty()) {
             return;
         }
         boolean[] changed = new boolean[1];
-        matrixEGraphRoot = pushTemporalNegations(matrixEGraphRoot, changed);
+        java.util.Set<String> dualizedReferences = new java.util.LinkedHashSet<>();
+        matrixEGraphRoot = pushTemporalNegations(
+                matrixEGraphRoot, changed, true, dualizedReferences);
+        if (certificationMatrixEGraphRoot != null) {
+            certificationMatrixEGraphRoot = pushTemporalNegations(
+                    certificationMatrixEGraphRoot,
+                    new boolean[1],
+                    false,
+                    dualizedReferences);
+        }
         if (changed[0] && matrixEGraphRoot != null) {
             matrixEGraphRoot.saturate();
         }
     }
 
-    private EGraphNode pushTemporalNegations(EGraphNode node, boolean[] changed) {
+    private EGraphNode pushTemporalNegations(
+            EGraphNode node,
+            boolean[] changed,
+            boolean applyTemporalDualization,
+            java.util.Set<String> dualizedReferences) {
         if (node == null) {
             return null;
         }
         if (node.getOpcode() == Opcode.NOT && node.getChildren().size() == 1) {
             EGraphNode reference = node.getChildren().get(0);
             int[] target = temporalReferenceTarget(reference);
-            if (target != null && dualizeTemporalChildren(target[0], target[1])) {
+            boolean dualized = target != null
+                    && (applyTemporalDualization
+                            ? (dualizedReferences.contains(reference.getSourceName())
+                                    || dualizeTemporalChildren(target[0], target[1]))
+                            : dualizedReferences.contains(reference.getSourceName()));
+            if (dualized) {
+                if (applyTemporalDualization) {
+                    dualizedReferences.add(reference.getSourceName());
+                }
                 changed[0] = true;
                 return cloneEGraph(reference);
             }
         }
         EGraphNode rewritten = copyShallow(node, node.getOpcode());
         for (EGraphNode child : node.getChildren()) {
-            EGraphNode rewrittenChild = pushTemporalNegations(child, changed);
+            EGraphNode rewrittenChild = pushTemporalNegations(
+                    child, changed, applyTemporalDualization, dualizedReferences);
             if (rewrittenChild != null) {
                 rewritten.addChild(rewrittenChild);
             }
@@ -235,19 +324,23 @@ public class NormalForm {
                 return null;
         }
     }
-    public void prenex() {
+    public synchronized void prenex() {
+        requireMutable();
         normalize();
     }
-    public void normalize() {
+    public synchronized void normalize() {
+        requireMutable();
         normalize(new HashMap<>(), new int[] { 0 });
     }
-    public void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
+    public synchronized void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
+        requireMutable();
         normalize(inheritedBindings, nextVarId, NO_OBSERVER);
     }
-    public void normalize(
+    public synchronized void normalize(
             Map<String, QuantiVar> inheritedBindings,
             int[] nextVarId,
             NormalizationObserver observer) {
+        requireMutable();
         if (matrixEGraphRoot == null) {
             return;
         }
@@ -270,22 +363,70 @@ public class NormalForm {
         stages.onStage("alpha-beta-branch", this);
         stages.onStage("begin-nnf", this);
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
+        matrixEGraphRoot = flattenBooleanAssociationForPrenex(matrixEGraphRoot);
         stages.onStage("nnf", this);
         stages.onStage("begin-prenex", this);
-        List<EGraphNode> constraints = new ArrayList<>();
         Map<String, QuantiVar> prenexBindings = new HashMap<>(inheritedBindings);
         for (QuantiVar inherited : inheritedBindings.values()) {
             prenexBindings.put(inherited.getName(), inherited);
         }
-        matrixEGraphRoot = prenex(matrixEGraphRoot, prenexBindings, nextVarId, false, constraints, "root",
-                true, true, true, new PrenexSlotAllocator());
-        matrixEGraphRoot = removeEndNodes(conjoin(matrixEGraphRoot, constraints));
+        int remainingQuantifiers = countFormulaQuantifierNodes(matrixEGraphRoot);
+        int maximumPrenexPasses = Math.max(
+                1, Math.addExact(remainingQuantifiers, 1));
+        // One pass is mandatory even without formula quantifiers because the
+        // root's declaration children establish predicate/function parameters.
+        boolean reachedPrenexFixedPoint = false;
+        for (int pass = 0; pass < maximumPrenexPasses && !reachedPrenexFixedPoint; pass++) {
+            prenexReductionsThisPass = 0;
+            List<EGraphNode> constraints = new ArrayList<>();
+            matrixEGraphRoot = prenex(
+                    matrixEGraphRoot, prenexBindings, nextVarId, false, constraints,
+                    "root", true, true, true, new PrenexSlotAllocator());
+            matrixEGraphRoot = removeEndNodes(conjoin(matrixEGraphRoot, constraints));
+            int nextRemaining = countFormulaQuantifierNodes(matrixEGraphRoot);
+            if (prenexReductionsThisPass == 0 && nextRemaining != remainingQuantifiers) {
+                throw new IllegalStateException(
+                        "Prenex residual changed without a recorded reduction");
+            }
+            if (prenexReductionsThisPass > 0 && nextRemaining >= remainingQuantifiers) {
+                throw new IllegalStateException(
+                        "Recorded prenex reductions did not strictly decrease the residual");
+            }
+            reachedPrenexFixedPoint = nextRemaining == 0
+                    || prenexReductionsThisPass == 0;
+            if (!reachedPrenexFixedPoint) {
+                // A local quantifier may have introduced a domain implication.
+                // Eliminate that connective before another pass interprets
+                // child polarity; otherwise its antecedent can be negated a
+                // second time while an enclosing quantifier is lifted.
+                matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(
+                        matrixEGraphRoot));
+                matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
+                matrixEGraphRoot = flattenBooleanAssociationForPrenex(
+                        matrixEGraphRoot);
+                int normalizedRemaining = countFormulaQuantifierNodes(
+                        matrixEGraphRoot);
+                if (normalizedRemaining != nextRemaining) {
+                    throw new IllegalStateException(
+                            "Inter-pass connective elimination changed the quantifier residual");
+                }
+            }
+            remainingQuantifiers = nextRemaining;
+        }
+        if (!reachedPrenexFixedPoint) {
+            throw new IllegalStateException(
+                    "Prenexing did not reach a bounded structural fixed point");
+        }
         minimizeOperationalCarriersFromPrefixWitnesses();
         stages.onStage("prenex", this);
         stages.onStage("begin-post-prenex-nnf", this);
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
+        matrixEGraphRoot = removeEndNodes(normalizeGuardedSourceRules(
+                matrixEGraphRoot, guardedBindingFacts()));
         stages.onStage("post-prenex-nnf", this);
+        matrixEGraphRoot.reseedSourceOccurrenceLineages();
+        certificationMatrixEGraphRoot = cloneEGraph(matrixEGraphRoot);
         stages.onStage("begin-aci", this);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
@@ -310,7 +451,9 @@ public class NormalForm {
                 variable.setCarrierTypeName(variable.getTypeName());
                 carrier = primitive;
             }
-            if (!primitive.isEmpty() && primitive.equals(carrier)) {
+            if (!primitive.isEmpty()
+                    && primitive.equals(carrier)
+                    && cardinalityGuaranteesNonempty(variable.getCardinality())) {
                 inhabited.add(primitive);
             }
         }
@@ -322,7 +465,8 @@ public class NormalForm {
         for (QuantiVar variable : variables) {
             String primitive = normalizeType(variable.getTypeName());
             if (!primitive.isEmpty()
-                    && primitive.equals(normalizeType(variable.getCarrierTypeName()))) {
+                    && primitive.equals(normalizeType(variable.getCarrierTypeName()))
+                    && cardinalityGuaranteesNonempty(variable.getCardinality())) {
                 inhabited.add(primitive);
             }
         }
@@ -609,6 +753,23 @@ public class NormalForm {
             boolean canLiftAll,
             boolean globalLift,
             PrenexSlotAllocator slots) {
+        return prenexWithBoundaryAllowance(
+                node, env, nextVarId, negated, constraints, bindingPath,
+                canLiftSome, canLiftAll, globalLift, slots, null);
+    }
+
+    private EGraphNode prenexWithBoundaryAllowance(
+            EGraphNode node,
+            Map<String, QuantiVar> env,
+            int[] nextVarId,
+            boolean negated,
+            List<EGraphNode> constraints,
+            String bindingPath,
+            boolean canLiftSome,
+            boolean canLiftAll,
+            boolean globalLift,
+            PrenexSlotAllocator slots,
+            Quantifier boundaryAllowance) {
         if (node == null) {
             return null;
         }
@@ -643,26 +804,38 @@ public class NormalForm {
                 return localQuantifier(node, env, nextVarId, negated, bindingPath, slots);
             }
             Quantifier quantifier = quantifierOf(node.getOpcode(), negated);
-            if (!globalLift) {
+            boolean directlyLiftable = canLiftQuantifier(
+                    quantifier, canLiftSome, canLiftAll, globalLift)
+                    || globalLift && quantifier == boundaryAllowance;
+            boolean connectiveAdmitsWitnessLift = canLiftSome || canLiftAll;
+            if (!directlyLiftable
+                    && (!connectiveAdmitsWitnessLift
+                            || !hasScopedInhabitedCarrierWitness(
+                                    node, env, quantifier, globalLift))) {
                 slots.enterStructure(null);
                 return localQuantifier(node, env, nextVarId, negated, bindingPath, slots);
             }
+            Boolean preflightEmptyDomain = emptyTupleDomainValue(node, quantifier);
+            if (preflightEmptyDomain != null) {
+                prenexReductionsThisPass++;
+                return booleanConstant(node, preflightEmptyDomain);
+            }
+            prenexReductionsThisPass++;
             slots.enterQuantifier(quantifier);
-            boolean relativizeCarrier = !canLiftQuantifier(quantifier, canLiftSome, canLiftAll, true);
             Map<String, QuantiVar> scopedEnv = new HashMap<>(env);
             List<EGraphNode> localConstraints = new ArrayList<>();
             List<EGraphNode> bodyParts = new ArrayList<>();
             List<EGraphNode> children = node.getChildren();
             boolean bodyNegated = (node.getOpcode() == Opcode.NO && !negated)
                     || (negated && !consumesMatrixNegation(node.getOpcode()));
-            Boolean emptyDomainValue = null;
             for (int i = 0; i < children.size(); i++) {
                 EGraphNode child = children.get(i);
                 if (isRelDecl(child.getOpcode())) {
                     RelDeclResult relDecl = prenexRelDecl(node.getOpcode(), child, scopedEnv, nextVarId, false, negated, localConstraints,
-                            bindingPath + "/decl[" + i + "]", relativizeCarrier, slots);
+                            bindingPath + "/decl[" + i + "]", slots);
                     if (relDecl.emptyDomainValue != null) {
-                        emptyDomainValue = relDecl.emptyDomainValue;
+                        throw new IllegalStateException(
+                                "Quantifier-domain preflight disagreed with transformed domain");
                     }
                 }
             }
@@ -698,9 +871,6 @@ public class NormalForm {
                     }
                 }
             }
-            if (emptyDomainValue != null) {
-                return booleanConstant(node, emptyDomainValue);
-            }
             EGraphNode body = conjoin(null, bodyParts);
             body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), negated));
             return body == null ? booleanConstant(node, true) : body;
@@ -713,13 +883,15 @@ public class NormalForm {
         List<EGraphNode> children = node.getChildren();
         List<EGraphNode> rewritten = new ArrayList<>();
         Quantifier reusable = reusableAcrossBranches(node.getOpcode());
+        Quantifier completeBoundary = completeBoundaryQuantifier(node);
         slots.enterStructure(reusable);
         PrenexSlotAllocator branchBase = reusable == null ? null : slots.copy();
-        for (int i = 0; i < children.size(); i++) {
+        Map<Integer, EGraphNode> rewrittenByIndex = new HashMap<>();
+        for (int i : prenexChildOrder(node.getOpcode(), children)) {
             EGraphNode child = children.get(i);
             if (isRelDecl(child.getOpcode())) {
                 prenexRelDecl(Opcode.FORALL, child, env, nextVarId, true, false, constraints,
-                        bindingPath + "/param[" + i + "]", false, slots);
+                        bindingPath + "/param[" + i + "]", slots);
                 continue;
             }
             boolean childNegated = childNegated(node.getOpcode(), i, negated);
@@ -728,18 +900,72 @@ public class NormalForm {
             PrenexSlotAllocator childSlots = reusable == null
                     ? slots
                     : slots.branchFrom(branchBase, reusable);
-            EGraphNode rewrittenChild = prenex(child, env, nextVarId, childNegated, constraints,
+            EGraphNode rewrittenChild = prenexWithBoundaryAllowance(
+                    child, env, nextVarId, childNegated, constraints,
                     childBindingPath(bindingPath, node.getOpcode(), i, childNegated),
-                    childCanLiftSome, childCanLiftAll, globalLift, childSlots);
+                    childCanLiftSome, childCanLiftAll, globalLift, childSlots,
+                    completeBoundary);
             if (reusable != null) {
                 slots.mergeBranch(childSlots, reusable);
             }
             if (rewrittenChild != null && rewrittenChild.getOpcode() != Opcode.END) {
+                rewrittenByIndex.put(i, rewrittenChild);
+            }
+        }
+        for (int i = 0; i < children.size(); i++) {
+            EGraphNode rewrittenChild = rewrittenByIndex.get(i);
+            if (rewrittenChild != null) {
                 rewritten.add(rewrittenChild);
             }
         }
         node.setChildren(rewritten);
         return node;
+    }
+
+    private static List<Integer> prenexChildOrder(
+            Opcode opcode,
+            List<EGraphNode> children) {
+        List<Integer> order = new ArrayList<>(children.size());
+        boolean[] preferred = new boolean[children.size()];
+        Quantifier enabling = opcode == Opcode.AND
+                ? Quantifier.SOME
+                : opcode == Opcode.OR ? Quantifier.ALL : null;
+        if (enabling != null) {
+            for (int i = 0; i < children.size(); i++) {
+                if (reachesBooleanBoundary(children.get(i), opcode, enabling)) {
+                    preferred[i] = true;
+                    order.add(i);
+                }
+            }
+        }
+        for (int i = 0; i < children.size(); i++) {
+            if (!preferred[i]) {
+                order.add(i);
+            }
+        }
+        return order;
+    }
+
+    private static boolean reachesBooleanBoundary(
+            EGraphNode node,
+            Opcode boundary,
+            Quantifier target) {
+        if (isQuantifierNode(node)) {
+            return quantifierOf(node.getOpcode(), false) == target;
+        }
+        Opcode opcode = node.getOpcode();
+        if (opcode != boundary
+                && opcode != Opcode.PREDICATE
+                && opcode != Opcode.FUNCTION
+                && opcode != Opcode.TEMPORALROOT) {
+            return false;
+        }
+        for (EGraphNode child : node.getChildren()) {
+            if (reachesBooleanBoundary(child, boundary, target)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private EGraphNode prenexNegatedNonQuantifier(
@@ -843,6 +1069,49 @@ public class NormalForm {
         }
     }
 
+    private static Quantifier completeBoundaryQuantifier(EGraphNode node) {
+        Quantifier target;
+        if (node.getOpcode() == Opcode.AND) {
+            target = Quantifier.ALL;
+        } else if (node.getOpcode() == Opcode.OR) {
+            target = Quantifier.SOME;
+        } else {
+            return null;
+        }
+        java.util.Set<String> commonFactors = null;
+        boolean sawBranch = false;
+        for (EGraphNode branch : node.getChildren()) {
+            if (branch.getOpcode() == Opcode.END) {
+                continue;
+            }
+            sawBranch = true;
+            if (!isQuantifierNode(branch)
+                    || quantifierOf(branch.getOpcode(), false) != target) {
+                return null;
+            }
+            java.util.Set<String> factors = new java.util.LinkedHashSet<>();
+            for (EGraphNode declaration : branch.getChildren()) {
+                if (!isRelDecl(declaration.getOpcode())) {
+                    continue;
+                }
+                if (isDisj(declaration.getOpcode())
+                        || declaration.getChildren().isEmpty()) {
+                    return null;
+                }
+                factors.add(sortKey(declaration.getChildren().get(0)));
+            }
+            if (factors.isEmpty()) {
+                return null;
+            }
+            if (commonFactors == null) {
+                commonFactors = factors;
+            } else if (!commonFactors.equals(factors)) {
+                return null;
+            }
+        }
+        return sawBranch ? target : null;
+    }
+
     private static boolean childCanLiftSome(Opcode opcode, boolean current) {
         switch (opcode) {
             case AND:
@@ -874,16 +1143,25 @@ public class NormalForm {
             boolean negated,
             String bindingPath,
             PrenexSlotAllocator slots) {
+        Boolean emptyDomain = emptyTupleDomainValue(
+                node, quantifierOf(node.getOpcode(), negated));
+        if (emptyDomain != null) {
+            prenexReductionsThisPass++;
+            return booleanConstant(node, emptyDomain);
+        }
         EGraphNode quantifier = copyShallow(node, node.getOpcode());
         Map<String, QuantiVar> scopedEnv = new HashMap<>(env);
         List<EGraphNode> bodyParts = new ArrayList<>();
         List<EGraphNode> localConstraints = new ArrayList<>();
+        int localDepth = localBinderDepth(scopedEnv);
+        int[] localOrdinal = {0};
         List<EGraphNode> children = node.getChildren();
         for (int i = 0; i < children.size(); i++) {
             EGraphNode child = children.get(i);
             if (isRelDecl(child.getOpcode())) {
                 quantifier.addChild(localRelDecl(node.getOpcode(), child, scopedEnv, nextVarId, negated,
-                        localConstraints, bindingPath + "/local-decl[" + i + "]", slots));
+                        localConstraints, bindingPath + "/local-decl[" + i + "]", slots,
+                        localDepth, localOrdinal));
             } else {
                 EGraphNode rewrittenChild = prenex(child, scopedEnv, nextVarId, false, localConstraints,
                         bindingPath + "/local-body[" + i + "]", true, true, false, slots);
@@ -908,7 +1186,9 @@ public class NormalForm {
             boolean negated,
             List<EGraphNode> constraints,
             String bindingPath,
-            PrenexSlotAllocator slots) {
+            PrenexSlotAllocator slots,
+            int localDepth,
+            int[] localOrdinal) {
         EGraphNode copy = copyShallow(relDecl, relDecl.getOpcode());
         EGraphNode typeEGraph = null;
         if (!relDecl.getChildren().isEmpty()) {
@@ -917,7 +1197,8 @@ public class NormalForm {
                     bindingPath + "/type", true, true, false, domainSlots);
             copy.addChild(typeEGraph == null ? relDecl.getChildren().get(0) : typeEGraph);
         }
-        EGraphNode normalizedTypeEGraph = typeEGraph == null ? null : normalizeAssociativeCommutative(toNNF(typeEGraph, false));
+        EGraphNode normalizedTypeEGraph = typeEGraph == null
+                ? null : toNNF(typeEGraph, false);
         DomainDescriptor domain = domainDescriptor(normalizedTypeEGraph);
         boolean disj = isDisj(relDecl.getOpcode());
         int disjointnessClass = disj ? nextDisjointnessClass++ : 0;
@@ -927,14 +1208,16 @@ public class NormalForm {
             EGraphNode candidateCopy = cloneEGraph(candidate);
             if (candidate.getOpcode() == Opcode.VARIABLE) {
                 String originalName = candidate.getSourceName();
-                String alphaName = "_q" + nextVarId[0];
+                int ordinal = localOrdinal[0]++;
+                String alphaName = "_l" + localDepth + "_" + ordinal;
                 String varType = primitiveVarType(candidate.getSourceType());
                 QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
                 qv.setQuantifier(quantifierOf(quantifierOpcode, negated));
                 qv.setCardinality(domain.cardinality);
                 qv.setDisjointnessClass(disjointnessClass);
                 qv.setBindingPath(bindingPath);
-                qv.setDeBruijnKey(bindingPath + "#" + (i - 1) + ":" + qv.getCardinality()
+                qv.setDeBruijnKey("local#" + localDepth + "#" + ordinal
+                        + ":" + qv.getCardinality()
                         + ":" + normalizeType(varType));
                 candidateCopy.setAlphaName(alphaName);
                 if (needsDomainConstraint(domain, varType)) {
@@ -950,6 +1233,85 @@ public class NormalForm {
         return copy;
     }
 
+    private static int localBinderDepth(Map<String, QuantiVar> env) {
+        int depth = 0;
+        for (QuantiVar variable : new java.util.LinkedHashSet<>(env.values())) {
+            String key = variable.getDeBruijnKey();
+            if (key == null || !key.startsWith("local#")) {
+                continue;
+            }
+            int separator = key.indexOf('#', "local#".length());
+            if (separator < 0) {
+                throw new IllegalStateException("Malformed local De Bruijn key: " + key);
+            }
+            try {
+                depth = Math.max(
+                        depth,
+                        Integer.parseInt(key.substring("local#".length(), separator)) + 1);
+            } catch (NumberFormatException exception) {
+                throw new IllegalStateException(
+                        "Malformed local De Bruijn depth: " + key, exception);
+            }
+        }
+        return depth;
+    }
+
+    private boolean hasScopedInhabitedCarrierWitness(
+            EGraphNode quantifierNode,
+            Map<String, QuantiVar> env,
+            Quantifier quantifier,
+            boolean globalLift) {
+        if (!globalLift
+                || quantifier != Quantifier.ALL
+                        && quantifier != Quantifier.NO
+                        && quantifier != Quantifier.SOME) {
+            return false;
+        }
+        boolean foundDeclaration = false;
+        for (EGraphNode child : quantifierNode.getChildren()) {
+            if (!isRelDecl(child.getOpcode())) {
+                continue;
+            }
+            foundDeclaration = true;
+            if (isDisj(child.getOpcode()) || child.getChildren().isEmpty()) {
+                return false;
+            }
+            DomainDescriptor domain = domainDescriptor(child.getChildren().get(0));
+            if (hasEmptyAdmissibleBindingSet(domain)) {
+                return false;
+            }
+            for (int index = 1; index < child.getChildren().size(); index++) {
+                EGraphNode variable = child.getChildren().get(index);
+                if (variable.getOpcode() != Opcode.VARIABLE) {
+                    continue;
+                }
+                String primitiveType = primitiveVarType(variable.getSourceType());
+                if (!domainUsesPrimitiveCarrier(domain.domain, primitiveType)
+                        || !hasNonemptyBindingOfType(env, primitiveType)) {
+                    return false;
+                }
+            }
+        }
+        return foundDeclaration;
+    }
+
+    private boolean hasNonemptyBindingOfType(
+            Map<String, QuantiVar> env,
+            String primitiveType) {
+        java.util.LinkedHashSet<QuantiVar> enclosing =
+                new java.util.LinkedHashSet<>(env.values());
+        enclosing.addAll(matrixQuantiVars);
+        String required = normalizeType(primitiveType);
+        for (QuantiVar binding : enclosing) {
+            if (normalizeType(binding.getTypeName()).equals(required)
+                    && normalizeType(binding.getCarrierTypeName()).equals(required)
+                    && cardinalityGuaranteesNonempty(binding.getCardinality())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private RelDeclResult prenexRelDecl(
             Opcode quantifierOpcode,
             EGraphNode relDecl,
@@ -959,7 +1321,6 @@ public class NormalForm {
             boolean negated,
             List<EGraphNode> constraints,
             String bindingPath,
-            boolean relativizeCarrier,
             PrenexSlotAllocator slots) {
         EGraphNode typeEGraph = null;
         if (!relDecl.getChildren().isEmpty()) {
@@ -967,11 +1328,12 @@ public class NormalForm {
             typeEGraph = prenex(relDecl.getChildren().get(0), env, nextVarId, false, constraints,
                     bindingPath + "/type", true, true, false, domainSlots);
         }
-        EGraphNode normalizedTypeEGraph = typeEGraph == null ? null : normalizeAssociativeCommutative(toNNF(typeEGraph, false));
+        EGraphNode normalizedTypeEGraph = typeEGraph == null
+                ? null : toNNF(typeEGraph, false);
         DomainDescriptor domain = domainDescriptor(normalizedTypeEGraph);
         List<QuantiVar> quantiVars = new ArrayList<>();
         Quantifier quantifier = quantifierOf(quantifierOpcode, negated);
-        if (isNone(domain.domain)) {
+        if (hasEmptyAdmissibleBindingSet(domain)) {
             return new RelDeclResult(quantiVars, emptyDomainValue(quantifier));
         }
         boolean disj = isDisj(relDecl.getOpcode());
@@ -992,10 +1354,7 @@ public class NormalForm {
             qv.setQuantifier(quantifier);
             qv.setCardinality(domain.cardinality);
             boolean guardedDomain = domain.domain != null
-                    && (relativizeCarrier || needsDomainConstraint(domain, varType));
-            if (guardedDomain && relativizeCarrier) {
-                qv.setCarrierTypeName("univ");
-            }
+                    && needsDomainConstraint(domain, varType);
             qv.setDisjointnessClass(disjointnessClass);
             qv.setBindingPath(deBruijnBase);
             qv.setDeBruijnKey(deBruijnBase + "#" + (i - 1) + ":" + qv.getCardinality()
@@ -1033,6 +1392,25 @@ public class NormalForm {
             default:
                 return null;
         }
+    }
+
+    private static Boolean emptyTupleDomainValue(
+            EGraphNode quantifierNode,
+            Quantifier quantifier) {
+        if (quantifier == Quantifier.SUM || quantifier == Quantifier.COMPREHENSION) {
+            return null;
+        }
+        for (EGraphNode child : quantifierNode.getChildren()) {
+            if (!isRelDecl(child.getOpcode()) || child.getChildren().isEmpty()) {
+                continue;
+            }
+            EGraphNode normalizedDomain = removeEndNodes(
+                    toNNF(cloneEGraph(child.getChildren().get(0)), false));
+            if (hasEmptyAdmissibleBindingSet(domainDescriptor(normalizedDomain))) {
+                return emptyDomainValue(quantifier);
+            }
+        }
+        return null;
     }
 
     private static EGraphNode applyDomainConstraints(EGraphNode body, List<EGraphNode> constraints, Quantifier quantifier) {
@@ -1074,7 +1452,144 @@ public class NormalForm {
         EGraphNode constant = syntheticNode(source, Opcode.CONSTANT, value ? -7 : -8);
         constant.setSourceName(Boolean.toString(value));
         constant.setSourceType("Bool");
+        constant.setExactAlloyType(
+                is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
         return constant;
+    }
+
+    /**
+     * Source-semantic smart rules that must be visible at the certified
+     * adapter boundary. Algebraic A/C/I normalization deliberately remains
+     * after the certification snapshot and requires its own law evidence.
+     */
+    private Map<String, QuantiVar> guardedBindingFacts() {
+        Map<String, QuantiVar> result = new HashMap<>();
+        addGuardedBindingFacts(result, params);
+        addGuardedBindingFacts(result, inheritedQuantiVars);
+        addGuardedBindingFacts(result, matrixQuantiVars);
+        return result;
+    }
+
+    private static void addGuardedBindingFacts(
+            Map<String, QuantiVar> target,
+            List<QuantiVar> variables) {
+        for (QuantiVar variable : variables) {
+            target.put(variable.getName(), variable);
+            target.put(variable.getDeBruijnKey(), variable);
+            for (String original : variable.getOriginalNames()) {
+                target.putIfAbsent(original, variable);
+            }
+        }
+    }
+
+    private static EGraphNode normalizeGuardedSourceRules(
+            EGraphNode node,
+            Map<String, QuantiVar> bindings) {
+        if (node == null) {
+            return null;
+        }
+        List<EGraphNode> rewritten = new ArrayList<>();
+        for (EGraphNode child : node.getChildren()) {
+            EGraphNode normalized = normalizeGuardedSourceRules(child, bindings);
+            if (normalized != null && normalized.getOpcode() != Opcode.END) {
+                rewritten.add(normalized);
+            }
+        }
+        node.setChildren(rewritten);
+
+        if (node.getOpcode() == Opcode.NOT && rewritten.size() == 1) {
+            Boolean child = booleanConstantValue(rewritten.get(0));
+            if (child != null) {
+                return booleanConstant(node, !child);
+            }
+        }
+
+        if (node.getOpcode() == Opcode.IN && rewritten.size() == 2) {
+            EGraphNode lhs = rewritten.get(0);
+            EGraphNode rhs = rewritten.get(1);
+            if (isNone(lhs) && isNone(rhs)) {
+                return booleanConstant(node, true);
+            }
+            if (isNone(rhs) && isStaticallyNonemptySet(lhs, bindings)) {
+                return booleanConstant(node, false);
+            }
+            if (isUniv(rhs)) {
+                return booleanConstant(node, true);
+            }
+        }
+
+        if (node.getOpcode() == Opcode.NOT_IN && rewritten.size() == 2) {
+            EGraphNode lhs = rewritten.get(0);
+            EGraphNode rhs = rewritten.get(1);
+            if ((isNone(lhs) && isNone(rhs)) || isUniv(rhs)) {
+                return booleanConstant(node, false);
+            }
+            if (isNone(rhs) && isStaticallyNonemptySet(lhs, bindings)) {
+                return booleanConstant(node, true);
+            }
+        }
+
+        if (rewritten.size() == 1 && isNone(rewritten.get(0))) {
+            switch (node.getOpcode()) {
+                case NO:
+                case LONE:
+                    return booleanConstant(node, true);
+                case SOME:
+                case ONE:
+                    return booleanConstant(node, false);
+                default:
+                    break;
+            }
+        }
+        return node;
+    }
+
+    private static boolean isUniv(EGraphNode node) {
+        return node != null
+                && (node.getOpcode() == Opcode.GLOBALBINDING
+                        || node.getOpcode() == Opcode.CONSTANT)
+                && SigSymbol.BUILTIN_UNIV_IDENTITY.equals(
+                        node.getSemanticIdentity());
+    }
+
+    private static Boolean booleanConstantValue(EGraphNode node) {
+        if (node == null || node.getOpcode() != Opcode.CONSTANT) {
+            return null;
+        }
+        if ("true".equalsIgnoreCase(node.getSourceName())) {
+            return Boolean.TRUE;
+        }
+        if ("false".equalsIgnoreCase(node.getSourceName())) {
+            return Boolean.FALSE;
+        }
+        return null;
+    }
+
+    private static boolean isStaticallyNonemptySet(
+            EGraphNode node,
+            Map<String, QuantiVar> bindings) {
+        if (node == null) {
+            return false;
+        }
+        if (node.getOpcode() != Opcode.VARIABLE) {
+            return false;
+        }
+        QuantiVar variable = bindings.get(node.getAlphaName());
+        if (variable == null) {
+            variable = bindings.get(node.getSourceName());
+        }
+        if (variable == null) {
+            variable = bindings.get(bindingKey(node));
+        }
+        if (variable == null) {
+            return false;
+        }
+        Cardinality cardinality = variable.getCardinality();
+        return cardinalityGuaranteesNonempty(cardinality);
+    }
+
+    private static boolean cardinalityGuaranteesNonempty(Cardinality cardinality) {
+        return cardinality == Cardinality.ONE || cardinality == Cardinality.SOME;
     }
 
     private static String primitiveVarType(String type) {
@@ -1093,15 +1608,43 @@ public class NormalForm {
         return true;
     }
 
+    private static boolean domainUsesPrimitiveCarrier(
+            EGraphNode domain,
+            String primitiveType) {
+        if (domain == null || primitiveType == null) {
+            return false;
+        }
+        is.fivefivefive.ACGN.alloy.ExactAlloyType exact = domain.getExactAlloyType();
+        if (exact != null
+                && exact.kind()
+                        == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                && exact.relationArity() == 1
+                && !exact.alternatives().isEmpty()) {
+            String required = normalizeType(primitiveType);
+            for (List<String> alternative : exact.alternatives()) {
+                if (alternative.size() != 1
+                        || !normalizeType(alternative.get(0)).equals(required)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        String primitiveDomain = primitiveDomainName(domain);
+        return primitiveDomain != null
+                && normalizeType(primitiveDomain).equals(normalizeType(primitiveType));
+    }
+
     private static DomainDescriptor domainDescriptor(EGraphNode typeEGraph) {
         if (typeEGraph == null) {
-            return new DomainDescriptor(null, Cardinality.SET);
+            return new DomainDescriptor(null, Cardinality.ONE);
         }
         Cardinality cardinality = cardinalityOf(typeEGraph.getOpcode());
         if (cardinality != null && typeEGraph.getChildren().size() == 1) {
             return new DomainDescriptor(typeEGraph.getChildren().get(0), cardinality);
         }
-        return new DomainDescriptor(typeEGraph, Cardinality.SET);
+        // Alloy declaration domains default to exactly one value. Explicit
+        // set/lone/some/one wrappers above override this source-language default.
+        return new DomainDescriptor(typeEGraph, Cardinality.ONE);
     }
 
     private static String primitiveDomainName(EGraphNode typeEGraph) {
@@ -1134,15 +1677,52 @@ public class NormalForm {
     private static boolean isNone(EGraphNode node) {
         return node != null
                 && (node.getOpcode() == Opcode.GLOBALBINDING || node.getOpcode() == Opcode.CONSTANT)
-                && node.getSourceName() != null
-                && "none".equalsIgnoreCase(node.getSourceName());
+                && SigSymbol.BUILTIN_NONE_IDENTITY.equals(
+                        node.getSemanticIdentity());
+    }
+
+    private static boolean hasEmptyAdmissibleBindingSet(DomainDescriptor domain) {
+        if (domain == null || !isStaticallyEmptySet(domain.domain)) {
+            return false;
+        }
+        return domain.cardinality == Cardinality.SOME
+                || domain.cardinality == Cardinality.ONE;
+    }
+
+    private static boolean isStaticallyEmptySet(EGraphNode node) {
+        if (node == null) {
+            return false;
+        }
+        if (isNone(node)) {
+            return true;
+        }
+        if (node.getOpcode() == Opcode.INTERSECT) {
+            for (EGraphNode child : node.getChildren()) {
+                if (isStaticallyEmptySet(child)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (node.getOpcode() == Opcode.MINUS && node.getChildren().size() == 2) {
+            EGraphNode left = node.getChildren().get(0);
+            EGraphNode right = node.getChildren().get(1);
+            return isStaticallyEmptySet(left)
+                    || EGraphNode.sameSemanticInvocation(left, right);
+        }
+        return false;
     }
 
     private static EGraphNode domainConstraint(QuantiVar qv, EGraphNode sourceVariable, EGraphNode domain) {
         EGraphNode constraint = syntheticNode(sourceVariable, Opcode.IN, -1);
-        EGraphNode variable = new EGraphNode(sourceVariable.getId(), Opcode.VARIABLE, new ArrayList<>(), false, 0, false, Metatype.ATOMIC);
+        EGraphNode variable = new EGraphNode(
+                sourceVariable.getId(), Opcode.VARIABLE, new ArrayList<>(), false, 0, false,
+                Metatype.ATOMIC, sourceVariable.getSemanticProfile());
         variable.setSourceName(sourceVariable.getSourceName());
         variable.setSourceType(qv.getTypeName());
+        variable.setExactAlloyType(
+                is.fivefivefive.ACGN.alloy.ExactAlloyType.unaryRelation(
+                        qv.getTypeName()));
         variable.setAlphaName(qv.getName());
         constraint.addChild(variable);
         constraint.addChild(cloneEGraph(domain));
@@ -1161,14 +1741,40 @@ public class NormalForm {
             return toNNF(node.getChildren().get(0), !negated);
         }
         if (isQuantifierNode(node)) {
-            EGraphNode rewritten = copyShallow(node, opcode);
+            Opcode rewrittenOpcode = opcode;
+            boolean negateBody = false;
+            boolean retainOuterNegation = negated;
+            if (negated) {
+                switch (opcode) {
+                    case FORALL:
+                        rewrittenOpcode = Opcode.EXISTS;
+                        negateBody = true;
+                        retainOuterNegation = false;
+                        break;
+                    case EXISTS:
+                        rewrittenOpcode = Opcode.FORALL;
+                        negateBody = true;
+                        retainOuterNegation = false;
+                        break;
+                    case NO:
+                        rewrittenOpcode = Opcode.EXISTS;
+                        retainOuterNegation = false;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            EGraphNode rewritten = copyQuantifierShallow(node, rewrittenOpcode);
             for (EGraphNode child : node.getChildren()) {
-                EGraphNode rewrittenChild = toNNF(child, false);
+                EGraphNode rewrittenChild = toNNF(
+                        child, negateBody && !isRelDecl(child.getOpcode()));
                 if (rewrittenChild != null) {
                     rewritten.addChild(rewrittenChild);
                 }
             }
-            return negated ? syntheticUnary(node, Opcode.NOT, rewritten, -1) : rewritten;
+            return retainOuterNegation
+                    ? syntheticUnary(node, Opcode.NOT, rewritten, -1)
+                    : rewritten;
         }
         if (opcode == Opcode.IFF && node.getChildren().size() == 2) {
             return toNNF(expandIff(node, negated), false);
@@ -1344,7 +1950,7 @@ public class NormalForm {
             if (normalizedChild == null) {
                 continue;
             }
-            if (isAssociative(node.getOpcode()) && normalizedChild.getOpcode() == node.getOpcode()) {
+            if (node.sameFlatOperatorInstance(normalizedChild)) {
                 rewrittenChildren.addAll(normalizedChild.getChildren());
             } else {
                 rewrittenChildren.add(normalizedChild);
@@ -1355,6 +1961,33 @@ public class NormalForm {
         }
         node.setChildren(rewrittenChildren);
         return node;
+    }
+
+    /**
+     * Exposes each maximal Boolean ACI region to the slot allocator without
+     * applying commutativity or idempotence before certification. Quantifier,
+     * temporal, and all other operator nodes remain explicit barriers.
+     */
+    private static EGraphNode flattenBooleanAssociationForPrenex(
+            EGraphNode node) {
+        if (node == null) {
+            return null;
+        }
+        EGraphNode flattened = copyShallow(node, node.getOpcode());
+        for (EGraphNode child : node.getChildren()) {
+            EGraphNode flattenedChild = flattenBooleanAssociationForPrenex(child);
+            if (flattenedChild != null
+                    && (node.getOpcode() == Opcode.AND
+                            || node.getOpcode() == Opcode.OR)
+                    && flattenedChild.getOpcode() == node.getOpcode()) {
+                for (EGraphNode grandchild : flattenedChild.getChildren()) {
+                    flattened.addChild(grandchild);
+                }
+            } else if (flattenedChild != null) {
+                flattened.addChild(flattenedChild);
+            }
+        }
+        return flattened;
     }
 
     private static EGraphNode expandIff(EGraphNode node, boolean negated) {
@@ -1418,7 +2051,14 @@ public class NormalForm {
     }
 
     private static EGraphNode syntheticNode(EGraphNode source, Opcode opcode, int offset) {
-        return new EGraphNode(syntheticId(source, offset), opcode, new ArrayList<>(), isCommutative(opcode), maxArity(opcode), isFlexibleArity(opcode), Metatype.BOOLEAN);
+        EGraphNode synthetic = new EGraphNode(
+                syntheticId(source, offset), opcode, new ArrayList<>(), isCommutative(opcode),
+                maxArity(opcode), isFlexibleArity(opcode), Metatype.BOOLEAN,
+                source.getSemanticProfile());
+        synthetic.setSourceType("Bool");
+        synthetic.setExactAlloyType(
+                is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
+        return synthetic;
     }
 
     private static EGraphNode copyShallow(EGraphNode source, Opcode opcode) {
@@ -1428,12 +2068,39 @@ public class NormalForm {
                 opcode,
                 new ArrayList<>(),
                 sameOpcode ? source.isCommutative() : isCommutative(opcode),
-                sameOpcode ? source.getMaxArity() : maxArity(opcode),
-                sameOpcode ? source.isFlexibleArity() : isFlexibleArity(opcode),
-                source.getMetatype());
+                source.getMaxArity(),
+                source.isFlexibleArity(),
+                source.getMetatype(),
+                source.getSemanticProfile());
         copy.setSourceName(sameOpcode ? source.getSourceName() : null);
         copy.setSourceType(source.getSourceType());
+        copy.setExactAlloyType(source.getExactAlloyType());
         copy.setAlphaName(sameOpcode ? source.getAlphaName() : null);
+        copy.setSemanticIdentity(sameOpcode ? source.getSemanticIdentity() : null);
+        if (sameOpcode) {
+            copy.preserveSourceOccurrenceLineageFrom(source);
+        }
+        copy.setCallOccurrenceId(sameOpcode ? source.getCallOccurrenceId() : -1L);
+        copy.setDeclaredArity(sameOpcode ? source.getDeclaredArity() : -1);
+        copy.setCallArityAuthority(sameOpcode ? source.getCallArityAuthority() : null);
+        return copy;
+    }
+
+    private static EGraphNode copyQuantifierShallow(EGraphNode source, Opcode opcode) {
+        if (source.getOpcode() == opcode) {
+            return copyShallow(source, opcode);
+        }
+        EGraphNode copy = new EGraphNode(
+                source.getId(),
+                opcode,
+                new ArrayList<>(),
+                false,
+                source.getMaxArity(),
+                source.isFlexibleArity(),
+                source.getMetatype(),
+                source.getSemanticProfile());
+        copy.setSourceType(source.getSourceType());
+        copy.setExactAlloyType(source.getExactAlloyType());
         return copy;
     }
 
@@ -1445,12 +2112,13 @@ public class NormalForm {
     }
 
     private static boolean isAssociative(Opcode opcode) {
-        return opcode == Opcode.AND || opcode == Opcode.OR
-                || opcode == Opcode.INTERSECT || opcode == Opcode.PLUS || opcode == Opcode.MUL
-                || opcode == Opcode.IPLUS || opcode == Opcode.JOIN || opcode == Opcode.ARROW;
+        return AlloyOperatorPolicy.isFlatSetOperator(opcode);
     }
 
     private static int maxArity(Opcode opcode) {
+        if (opcode == Opcode.CONSTANT) {
+            return 0;
+        }
         if (opcode == Opcode.NOT) {
             return 1;
         }
@@ -1468,8 +2136,19 @@ public class NormalForm {
     }
 
     private static void appendSortKey(EGraphNode node, StringBuilder sb) {
-        sb.append(node.getOpcode()).append(':');
-        if (node.getAlphaName() != null) {
+        sb.append(node.getOpcode()).append('{')
+                .append(node.getSemanticProfile().fingerprint()).append(';')
+                .append(node.getExactAlloyType() == null
+                        ? "" : node.getExactAlloyType().stableString()).append(';')
+                .append(node.getArityPolicy()).append(';')
+                .append(node.getSiblingQuotient()).append(';')
+                .append(node.getFlatLicense()).append(';')
+                .append(node.getUnitLicense()).append("}:");
+        if (node.getOpcode() == Opcode.CALL) {
+            sb.append(CallMetadata.semanticKey(node));
+        } else if (node.getSemanticIdentity() != null) {
+            sb.append(node.getSemanticIdentity());
+        } else if (node.getAlphaName() != null) {
             sb.append(node.getAlphaName());
         } else if (node.getSourceName() != null) {
             sb.append(node.getSourceName());
@@ -1551,10 +2230,19 @@ public class NormalForm {
     }
 
     private static EGraphNode cloneEGraph(EGraphNode node) {
-        EGraphNode clone = new EGraphNode(node.getId(), node.getOpcode(), new ArrayList<>(), node.isCommutative(), node.getMaxArity(), node.isFlexibleArity(), node.getMetatype());
+        EGraphNode clone = new EGraphNode(
+                node.getId(), node.getOpcode(), new ArrayList<>(), node.isCommutative(),
+                node.getMaxArity(), node.isFlexibleArity(), node.getMetatype(),
+                node.getSemanticProfile());
         clone.setSourceName(node.getSourceName());
         clone.setSourceType(node.getSourceType());
+        clone.setExactAlloyType(node.getExactAlloyType());
         clone.setAlphaName(node.getAlphaName());
+        clone.setSemanticIdentity(node.getSemanticIdentity());
+        clone.preserveSourceOccurrenceLineageFrom(node);
+        clone.setCallOccurrenceId(node.getCallOccurrenceId());
+        clone.setDeclaredArity(node.getDeclaredArity());
+        clone.setCallArityAuthority(node.getCallArityAuthority());
         for (EGraphNode child : node.getChildren()) {
             clone.addChild(cloneEGraph(child));
         }
@@ -1589,6 +2277,19 @@ public class NormalForm {
         return false;
     }
 
+    private static int countFormulaQuantifierNodes(EGraphNode node) {
+        if (node == null) {
+            return 0;
+        }
+        int count = isQuantifierNode(node)
+                && node.getOpcode() != Opcode.COMPREHENSION
+                && node.getOpcode() != Opcode.SUM ? 1 : 0;
+        for (EGraphNode child : node.getChildren()) {
+            count += countFormulaQuantifierNodes(child);
+        }
+        return count;
+    }
+
     private static boolean consumesMatrixNegation(Opcode opcode) {
         return opcode == Opcode.NO || opcode == Opcode.ONE || opcode == Opcode.LONE;
     }
@@ -1598,7 +2299,10 @@ public class NormalForm {
             case IMPLIES:
                 return childIndex == 0 ? !negated : negated;
             case ITE:
-                return childIndex == 0 ? !negated : negated;
+                // Boolean ITEs were expanded before prenexing. A remaining ITE
+                // is relational, so its condition and value branches are all
+                // expression-positive; formula polarity must not be injected.
+                return false;
             default:
                 return negated;
         }

@@ -1,4 +1,7 @@
 package is.fivefivefive.ACGN.visitor;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
@@ -9,6 +12,7 @@ import java.util.Collections;
 import edu.mit.csail.sdg.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.ast.Type;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
+import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.etc.BiMap;
 import is.fivefivefive.ACGN.structure.ScopeTreeNode;
@@ -18,9 +22,12 @@ import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import is.fivefivefive.ACGN.alloy.AAME;
 import is.fivefivefive.ACGN.alloy.AssertSymbol;
+import is.fivefivefive.ACGN.alloy.AlloyLibraryCallableLedger;
 import is.fivefivefive.ACGN.alloy.ConstSymbol;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.EndSymbol;
 import is.fivefivefive.ACGN.alloy.ExtFact;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.alloy.FieldConfiner;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.LetSymbol;
@@ -54,6 +61,7 @@ import parser.ast.nodes.QtExpr;
 import parser.ast.nodes.QtExprOrFormula;
 import parser.ast.nodes.CallFormula;
 import parser.ast.nodes.CallExpr;
+import parser.ast.nodes.Call;
 import parser.ast.nodes.ListFormula;
 import parser.ast.nodes.ListExpr;
 import parser.ast.nodes.BinaryFormula;
@@ -97,14 +105,21 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // for each coarse symbol except local variables or predicate roots, the set of symbols that can be used to expand it in the fine-grained generation.
     public static final Symbol END_SYMBOL = new EndSymbol();
     public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
-    private final SigSymbol EMPTY_SET_SYMBOL = new SigSymbol("none");
+    private final SigSymbol EMPTY_SET_SYMBOL = SigSymbol.builtinNone();
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
-    private final SigSymbol UNIVERSAL_SET_SYMBOL = new SigSymbol("univ");
+    private final SigSymbol UNIVERSAL_SET_SYMBOL = SigSymbol.builtinUniv();
     private final AugmentedNode UNIVERSAL_SET_NODE = new AugmentedNode(126, 1, UNIVERSAL_SET_SYMBOL);
     public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
     public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private final Map<String, Integer> forestIdsByCallable = new HashMap<>();
+    private final Map<String, CallableDescriptor> callableDescriptors = new HashMap<>();
+    private final Map<String, ImportedModuleDescriptor> importedModules = new HashMap<>();
+    private String moduleIdentity = "this";
+    private long nextCallOccurrenceId;
+    private long callOccurrences;
+    private long callsContainingCalls;
+    private long validatedCallVisits;
     private Set<String> selectedCallables;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
@@ -177,6 +192,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public Set<Symbol> getFineSymbolsForCoarseSymbol(Symbol coarse) {
         return coarseToFineBin.getOrDefault(coarse, new HashSet<>());
     }
+    public CallExtractionStats callExtractionStats() {
+        return new CallExtractionStats(
+                callOccurrences, callsContainingCalls, validatedCallVisits);
+    }
     // visits, all non-predicates are discarded. 
     // consider AAME into it. 
     
@@ -218,6 +237,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      */
     @Override
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
+        callOccurrences = 0;
+        callsContainingCalls = 0;
+        validatedCallVisits = 0;
+        nextCallOccurrenceId = 0;
+        indexCallableDeclarations(n);
         AugmentedNode mu = new AugmentedNode(0, 1);
         overallRoot = mu;
         Multigraph demoGraph = new Multigraph(mu, globalVariables);
@@ -369,7 +393,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         
         String predName = n.getName();
         forestIdsByCallable.put(predName, numPredicates);
-        Symbol predSymbol = new PredRootSymbol(predNode, predName);
+        CallableDescriptor callable = callableDescriptors.get(predName);
+        if (callable == null) {
+            throw new IllegalStateException("Callable declaration was not indexed: " + predName);
+        }
+        Symbol predSymbol = new PredRootSymbol(
+                predNode,
+                callable.sourceName,
+                callable.identity,
+                callable.kind,
+                callable.arity,
+                callable.arityAuthority);
         predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);
         // System.out.println("Visiting predicate: " + predName + " with symbol: " + predSymbol + " into uniqueNode. ");
@@ -427,6 +461,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             declRoot : uniqueNode.get(declRootSym);
         updateTimeOfVisit(declRoot, arg);
         Multigraph graph = arg.getAffliation();
+        int declarationTimeOfVisit = graph.getTimeOfVisitMap()
+                .getOrDefault(declRoot, 1);
         graph.addVertex(declRoot);
         ExprOrFormula expr = n.getExpr(); // the type with constraints. 
         AugmentedNode exprNode;
@@ -436,7 +472,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             exprNode = expr.accept(this, arg);
         }
         // globalVariables.addEdge(declRoot, exprNode, 1);
-        visitAndConnect(declRoot, exprNode, 1, arg);
+        visitAndConnectAt(
+                declRoot, exprNode, 1, arg, declarationTimeOfVisit);
         // Pair<SigSymbol, Set<FieldConfiner>> sigPair = getSigSymbolByExpr(expr);
         // SigSymbol sigSymbol = sigPair.a;
         // TODO: not actually sigs; need to capture complex type expressions. 
@@ -479,12 +516,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 }
             }
             // globalVariables.addEdge(declRoot, varNode, iter);
-            visitAndConnect(declRoot, varNode, iter, arg);
+            visitAndConnectAt(
+                    declRoot, varNode, iter, arg, declarationTimeOfVisit);
             iter++;
         }
         // graph.addVertex(END_NODE);
         // globalVariables.addEdge(declRoot, END_NODE, iter);
-        visitAndConnect(declRoot, END_NODE, iter, arg);
+        visitAndConnectAt(
+                declRoot, END_NODE, iter, arg, declarationTimeOfVisit);
         return declRoot;
     }
     // TODO: Down here we need more implementation of the gv augmentations.
@@ -510,6 +549,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 System.out.println("Shadow node created for " + parent.getSymbol().getName() + " at time of visit " + timeOfVisit);
             }
             graph.addVertex(SHADOW_NODE);
+            updateTimeOfVisit(SHADOW_NODE, arg);
+            int shadowTimeOfVisit = graph.getTimeOfVisitMap()
+                    .getOrDefault(SHADOW_NODE, 1);
+            ExactAlloyType parentType = parent.getExactType(graph, timeOfVisit);
+            if (parentType == null) {
+                throw new IllegalStateException(
+                        "A shadow occurrence cannot lose its source exact type");
+            }
+            SHADOW_NODE.setExactType(graph, shadowTimeOfVisit, parentType);
             graph.connect(parent, SHADOW_NODE, graph, position, timeOfVisit);
             globalVariables.addEdge(parent, SHADOW_NODE, position);
         } else {
@@ -547,6 +595,36 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
         }
     }
+
+    private static void recordExactType(
+            AugmentedNode node,
+            ExprOrFormula source,
+            ScopeTreeNode scope,
+            int timeOfVisit) {
+        if (node == null || source == null || scope == null
+                || scope.getAffliation() == null) {
+            throw new IllegalArgumentException(
+                    "Exact Alloy type provenance requires one complete source occurrence");
+        }
+        node.setExactType(
+                scope.getAffliation(), timeOfVisit, ExactAlloyType.from(source.getType()));
+    }
+
+    private void recordLeafExactType(
+            AugmentedNode node,
+            ExprOrFormula source,
+            ScopeTreeNode scope) {
+        if (node == null) {
+            throw new IllegalStateException("A source leaf has no MASG node");
+        }
+        Multigraph graph = scope.getAffliation();
+        graph.addVertex(node);
+        recordExactType(
+                node,
+                source,
+                scope,
+                node.nextExactTypeVisit(graph));
+    }
     private AugmentedNode visitTypeExpr(ExprOrFormula expr, ScopeTreeNode arg, int depth) {
         // TODO: Implement type expression visiting logic
         if (expr instanceof UnaryExpr) {
@@ -563,6 +641,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
             uniqueNode.put(midSym, midNode);
             updateTimeOfVisit(midNode, arg);
+            recordExactType(
+                    midNode,
+                    expr,
+                    arg,
+                    arg.getAffliation().getTimeOfVisitMap().getOrDefault(midNode, 1));
             ExprOrFormula childExpr = unExpr.getSub();
             AugmentedNode childNode = visitTypeExpr(childExpr, arg, depth + 1);
             visitAndConnect(midNode, childNode, 1, arg);
@@ -578,6 +661,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             AugmentedNode midNode = new AugmentedNode(syntactic, semantic, midSym);
             uniqueNode.put(midSym, midNode);
             updateTimeOfVisit(midNode, arg);
+            recordExactType(
+                    midNode,
+                    expr,
+                    arg,
+                    arg.getAffliation().getTimeOfVisitMap().getOrDefault(midNode, 1));
             ExprOrFormula leftExpr = binExpr.getLeft();
             ExprOrFormula rightExpr = binExpr.getRight();
             AugmentedNode leftNode = visitTypeExpr(leftExpr, arg, depth + 1);
@@ -751,12 +839,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 Symbol boolSymbol = new ConstSymbol("true", true, false);
                 AugmentedNode node = new AugmentedNode(124, 1, boolSymbol);
                 node.setMaxDownlinks(0);
+                recordLeafExactType(node, n, arg);
                 uniqueNode.put(boolSymbol, node);
                 return node;
             } else {
                 Symbol boolSymbol = new ConstSymbol("false", true, false);
                 AugmentedNode node = new AugmentedNode(124, 0, boolSymbol);
                 node.setMaxDownlinks(0);
+                recordLeafExactType(node, n, arg);
                 uniqueNode.put(boolSymbol, node);
                 return node;
             }
@@ -765,6 +855,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 Symbol constSymbol = new ConstSymbol("iden", false, true);
                 AugmentedNode node = new AugmentedNode(121, 1, constSymbol);
                 node.setMaxDownlinks(0);
+                recordLeafExactType(node, n, arg);
                 uniqueNode.put(constSymbol, node);
                 return node;
             }
@@ -773,6 +864,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 Symbol constSymbol = new ConstSymbol(n.getValue(), false, false);
                 AugmentedNode node = new AugmentedNode(123, semantic, constSymbol);
                 node.setMaxDownlinks(0);
+                recordLeafExactType(node, n, arg);
                 uniqueNode.put(constSymbol, node);
                 return node;
             } catch (Exception e) {
@@ -807,6 +899,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             child.addSymbol(refSymbol);
             letNode.setSymbol(refSymbol);
             updateTimeOfVisit(letNode, arg);
+            int letTimeOfVisit = arg.getAffliation()
+                    .getTimeOfVisitMap().getOrDefault(letNode, 1);
+            recordExactType(letNode, n, arg, letTimeOfVisit);
             AugmentedNode boundNode = bound.accept(this, arg); 
             // globalVariables.addEdge(letNode, boundNode, 1);
             AugmentedNode bodyNode = body.accept(this, child);
@@ -833,6 +928,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ITEDummy.setMaxDownlinks(3);
         updateTimeOfVisit(ITEDummy, arg);
         int iteTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(ITEDummy, 1);
+        recordExactType(ITEDummy, n, arg, iteTimeOfVisit);
         ExprOrFormula condition = n.getCondition();
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
@@ -926,6 +1022,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         graph.addVertex(qtRoot);
         updateTimeOfVisit(qtRoot, arg);
         int qtTimeOfVisit = graph.getTimeOfVisitMap().getOrDefault(qtRoot, 1);
+        recordExactType(qtRoot, n, arg, qtTimeOfVisit);
         int iter = 2;
         for (VarDecl var : varDecls) {
             AugmentedNode varDeclNode = var.accept(this, subscope);
@@ -954,64 +1051,409 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // Calling a predicate or function
     @Override
     public AugmentedNode visit(CallFormula n, ScopeTreeNode arg) {
-        Symbol callSymbol = new MiddleSymbol("CALL_FORMULA");
-        AugmentedNode callNode;
-        if (uniqueNode.containsKey(callSymbol)) {
-            callNode = uniqueNode.get(callSymbol);
-        } else {
-            callNode = new AugmentedNode(-7, 1, callSymbol);
-            uniqueNode.put(callSymbol, callNode);
-        }
-        arg.getAffliation().addVertex(callNode);
-        updateTimeOfVisit(callNode, arg);
-        Symbol predOrFunSymbol = aame.getSymbol(n.getName());
-        AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
-        // globalVariables.addEdge(callNode, calledNode, 1);
-        // connect the callNode to the calledNode at position 1
-        visitAndConnect(callNode, calledNode, 1, arg);
-        int iter = 2;
-        for (ExprOrFormula param : n.getArguments()) {
-            AugmentedNode paramAug = param.accept(this, arg);
-            // globalVariables.addEdge(callNode, calledNode, 2);
-            visitAndConnect(callNode, paramAug, iter, arg);
-            iter++;
-        }
-        visitAndConnect(callNode, END_NODE, iter, arg);
-        return callNode;
+        return visitCall(n, arg, CallSymbol.Kind.FORMULA, -7);
     }
 
     @Override
     public AugmentedNode visit(CallExpr n, ScopeTreeNode arg) {
-        Symbol callSymbol = new MiddleSymbol("CALL_EXPR");
-        AugmentedNode callNode;
-        if (uniqueNode.containsKey(callSymbol)) {
-            callNode = uniqueNode.get(callSymbol);
-        } else {
-            callNode = new AugmentedNode(7, 1, callSymbol);
-            uniqueNode.put(callSymbol, callNode);
+        return visitCall(n, arg, CallSymbol.Kind.EXPRESSION, 7);
+    }
+
+    private AugmentedNode visitCall(
+            Call n,
+            ScopeTreeNode arg,
+            CallSymbol.Kind kind,
+            int syntactic) {
+        if (arg == null || arg.getAffliation() == null) {
+            throw new IllegalStateException("A call must be visited inside a callable graph");
         }
-        arg.getAffliation().addVertex(callNode);
+        List<ExprOrFormula> arguments = n.getArguments();
+        if (arguments == null) {
+            throw new IllegalArgumentException("Call arguments must not be null: " + n.getName());
+        }
+        callOccurrences++;
+        if (arguments.stream().anyMatch(MASGVisitor::containsCall)) {
+            callsContainingCalls++;
+        }
+        CallableDescriptor descriptor = resolveCallable(n, kind, arguments.size());
+        CallSymbol callSymbol = new CallSymbol(
+                kind,
+                descriptor.sourceName,
+                descriptor.identity,
+                descriptor.arity,
+                nextCallOccurrenceId++,
+                descriptor.arityAuthority);
+        AugmentedNode callNode = new AugmentedNode(syntactic, uniqueNode.size(), callSymbol);
+        callNode.setMaxDownlinks(callSymbol.getMaxDownlinks());
+        uniqueNode.put(callSymbol, callNode);
+        if (arguments.size() != callSymbol.getDeclaredArity()) {
+            throw new IllegalStateException(
+                    "Call arity disagrees with its declaration: " + callSymbol
+                            + " has " + arguments.size() + " arguments");
+        }
+        Multigraph localGraph = arg.getAffliation();
+        localGraph.addVertex(callNode);
         updateTimeOfVisit(callNode, arg);
-        Symbol predOrFunSymbol = aame.getSymbol(n.getName());
+        int callTov = localGraph.getTimeOfVisitMap().getOrDefault(callNode, 1);
+        recordExactType(callNode, n, arg, callTov);
+
+        Symbol predOrFunSymbol = aame.getSymbol(descriptor.sourceName);
+        if (predOrFunSymbol == null) {
+            predOrFunSymbol = aame.getSymbol(n.getName());
+        }
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
         if (calledNode == null) {
-            // the node is a built-in function
-            calledNode = new AugmentedNode(7, 1, new RefSymbol(null, n.getName()));
+            // Built-ins and forward references remain explicit callee leaves.
+            calledNode = new AugmentedNode(
+                    125,
+                    uniqueNode.size(),
+                    new RefSymbol(
+                            null,
+                            descriptor.sourceName,
+                            descriptor.identity,
+                            descriptor.kind,
+                            descriptor.arity,
+                            descriptor.arityAuthority));
             ((RefSymbol) calledNode.getSymbol()).setNode(calledNode);
             coarseToFineBin.get(DummySymbol.DUMMY_REF).add((RefSymbol) calledNode.getSymbol());
             uniqueNode.put(calledNode.getSymbol(), calledNode);
         }
-        // globalVariables.addEdge(callNode, calledNode, 1);
-        visitAndConnect(callNode, calledNode, 1, arg);
+        visitAndConnectAt(callNode, calledNode, 1, arg, callTov);
         int iter = 2;
-        for (ExprOrFormula param : n.getArguments()) {
+        for (ExprOrFormula param : arguments) {
             AugmentedNode paramAug = param.accept(this, arg);
-            // globalVariables.addEdge(callNode, calledNode, 2);
-            visitAndConnect(callNode, paramAug, iter, arg);
+            if (paramAug == null) {
+                throw new IllegalStateException(
+                        "Call argument " + (iter - 2) + " did not produce an MASG node for "
+                                + n.getName());
+            }
+            visitAndConnectAt(callNode, paramAug, iter, arg, callTov);
             iter++;
         }
-        visitAndConnect(callNode, END_NODE, iter, arg);
+        visitAndConnectAt(callNode, END_NODE, iter, arg, callTov);
+        validateCompletedCallVisit(callNode, callSymbol, localGraph, callTov);
+        validatedCallVisits++;
         return callNode;
+    }
+
+    private static boolean containsCall(Node root) {
+        if (root == null) {
+            return false;
+        }
+        java.util.ArrayDeque<Node> pending = new java.util.ArrayDeque<>();
+        Set<Node> seen = Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        pending.add(root);
+        while (!pending.isEmpty()) {
+            Node node = pending.removeFirst();
+            if (!seen.add(node)) {
+                continue;
+            }
+            if (node instanceof Call) {
+                return true;
+            }
+            pending.addAll(node.getChildren());
+        }
+        return false;
+    }
+
+    public static final class CallExtractionStats {
+        private final long occurrences;
+        private final long containingCalls;
+        private final long validatedVisits;
+
+        private CallExtractionStats(
+                long occurrences,
+                long containingCalls,
+                long validatedVisits) {
+            this.occurrences = occurrences;
+            this.containingCalls = containingCalls;
+            this.validatedVisits = validatedVisits;
+        }
+
+        public long occurrences() {
+            return occurrences;
+        }
+
+        public long containingCalls() {
+            return containingCalls;
+        }
+
+        public long validatedVisits() {
+            return validatedVisits;
+        }
+    }
+
+    private static void validateCompletedCallVisit(
+            AugmentedNode callNode,
+            CallSymbol callSymbol,
+            Multigraph graph,
+            int callTov) {
+        List<MASGEdge> edges = callNode.getDownlinksAtTimeOfVisit(graph, callTov);
+        int expected = callSymbol.getDeclaredArity() + 2;
+        if (edges == null || edges.size() != expected) {
+            throw new IllegalStateException(
+                    "Incomplete call visit " + callSymbol + "@" + callTov
+                            + ": expected " + expected + " downlinks, found "
+                            + (edges == null ? 0 : edges.size()));
+        }
+        MASGEdge[] byPosition = new MASGEdge[expected + 1];
+        for (MASGEdge edge : edges) {
+            int position = edge.getPosition();
+            if (edge.getTimeOfVisit() != callTov
+                    || edge.getSource() != callNode
+                    || position < 1
+                    || position > expected
+                    || byPosition[position] != null) {
+                throw new IllegalStateException(
+                        "Malformed call edge for " + callSymbol + "@" + callTov);
+            }
+            byPosition[position] = edge;
+        }
+        Symbol callee = byPosition[1].getTarget().getSymbol();
+        if (!callSymbol.matchesTarget(callee)) {
+            throw new IllegalStateException(
+                    "Call callee mismatch for " + callSymbol + "@" + callTov);
+        }
+        for (int position = 2; position < expected; position++) {
+            Symbol argument = byPosition[position].getTarget().getSymbol();
+            if (argument != null && argument.isEndSymbol()) {
+                throw new IllegalStateException(
+                        "Call argument position contains a terminator for " + callSymbol);
+            }
+        }
+        Symbol terminator = byPosition[expected].getTarget().getSymbol();
+        if (terminator == null || !terminator.isEndSymbol()) {
+            throw new IllegalStateException(
+                    "Call visit lacks its final terminator for " + callSymbol + "@" + callTov);
+        }
+    }
+
+    private void indexCallableDeclarations(ModelUnit model) {
+        callableDescriptors.clear();
+        importedModules.clear();
+        String declaredModule = model.getModuleDecl() == null
+                ? null
+                : model.getModuleDecl().getModelName();
+        moduleIdentity = declaredModule == null
+                || declaredModule.trim().isEmpty()
+                || "unknown".equalsIgnoreCase(declaredModule.trim())
+                ? anonymousModuleIdentity(model)
+                : declaredModule.trim();
+        for (Predicate predicate : model.getPredDeclList()) {
+            registerCallable(predicate, CallSymbol.Kind.FORMULA);
+        }
+        for (Function function : model.getFunDeclList()) {
+            registerCallable(function, CallSymbol.Kind.EXPRESSION);
+        }
+        for (OpenDecl open : model.getOpenDeclList()) {
+            String fileName = open.getFileName();
+            if (fileName == null || fileName.trim().isEmpty()) {
+                continue;
+            }
+            String alias = open.getAlias();
+            if (alias == null || alias.trim().isEmpty()) {
+                int slash = fileName.lastIndexOf('/');
+                alias = slash < 0 ? fileName : fileName.substring(slash + 1);
+            }
+            ImportedModuleDescriptor module =
+                    new ImportedModuleDescriptor(fileName, open.getArguments());
+            registerImportedAlias(alias, module);
+            registerImportedAlias(fileName, module);
+        }
+    }
+
+    private void registerImportedAlias(
+            String alias,
+            ImportedModuleDescriptor descriptor) {
+        ImportedModuleDescriptor previous = importedModules.putIfAbsent(alias, descriptor);
+        if (previous != null && !previous.equals(descriptor)) {
+            throw new IllegalStateException(
+                    "Ambiguous imported module alias " + alias + ": "
+                            + previous.identityPrefix() + " versus "
+                            + descriptor.identityPrefix());
+        }
+    }
+
+    private void registerCallable(PredOrFun callable, CallSymbol.Kind kind) {
+        String sourceName = callable.getName();
+        String localName = stripThisQualifier(sourceName);
+        String identity = sourceName.contains("/")
+                ? sourceName
+                : moduleIdentity + "/" + localName;
+        int arity = 0;
+        for (ParamDecl declaration : callable.getParamList()) {
+            arity += declaration.getNames().size();
+        }
+        CallableDescriptor descriptor = new CallableDescriptor(
+                sourceName,
+                identity,
+                arity,
+                kind,
+                CallSymbol.ArityAuthority.DECLARATION);
+        putCallableAlias(sourceName, descriptor);
+        putCallableAlias(localName, descriptor);
+        putCallableAlias("this/" + localName, descriptor);
+        putCallableAlias(identity, descriptor);
+    }
+
+    private void putCallableAlias(String alias, CallableDescriptor descriptor) {
+        CallableDescriptor previous = callableDescriptors.putIfAbsent(alias, descriptor);
+        if (previous != null && previous != descriptor) {
+            throw new IllegalStateException("Ambiguous callable alias: " + alias);
+        }
+    }
+
+    private static String anonymousModuleIdentity(ModelUnit model) {
+        String source = model.accept(new PrettyStringVisitor(), null);
+        try {
+            byte[] digest = MessageDigest.getInstance("SHA-256").digest(
+                    source.getBytes(StandardCharsets.UTF_8));
+            StringBuilder hex = new StringBuilder(digest.length * 2);
+            for (byte value : digest) {
+                hex.append(String.format("%02x", value & 0xff));
+            }
+            return "anonymous/sha256-" + hex;
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("SHA-256 is unavailable", exception);
+        }
+    }
+
+    private CallableDescriptor resolveCallable(
+            Call call,
+            CallSymbol.Kind kind,
+            int observedArity) {
+        String sourceName = call.getName();
+        CallableDescriptor descriptor = callableDescriptors.get(sourceName);
+        if (descriptor == null) {
+            descriptor = callableDescriptors.get(stripThisQualifier(sourceName));
+        }
+        if (descriptor == null) {
+            ImportedCall importedCall = importedCallable(sourceName);
+            if (importedCall == null) {
+                throw new IllegalStateException(
+                        "Unresolved call declaration: " + sourceName);
+            }
+            AlloyLibraryCallableLedger.Signature signature =
+                    AlloyLibraryCallableLedger.require(
+                            importedCall.module.fileName, importedCall.member, kind);
+            if (signature.arity() != observedArity) {
+                throw new IllegalStateException(
+                        "Call arity disagrees with imported declaration for " + sourceName
+                                + ": expected " + signature.arity()
+                                + ", found " + observedArity);
+            }
+            return new CallableDescriptor(
+                    sourceName,
+                    importedCall.identity(),
+                    signature.arity(),
+                    kind,
+                    CallSymbol.ArityAuthority.TYPECHECKED_IMPORT);
+        }
+        if (descriptor.kind != kind) {
+            throw new IllegalStateException(
+                    "Call kind disagrees with declaration for " + sourceName);
+        }
+        if (descriptor.arity != observedArity) {
+            throw new IllegalStateException(
+                    "Call arity disagrees with declaration for " + sourceName
+                            + ": expected " + descriptor.arity + ", found " + observedArity);
+        }
+        return descriptor;
+    }
+
+    private ImportedCall importedCallable(String sourceName) {
+        if (sourceName == null) {
+            return null;
+        }
+        String matchedPrefix = null;
+        for (String prefix : importedModules.keySet()) {
+            if (sourceName.startsWith(prefix + "/")
+                    && (matchedPrefix == null || prefix.length() > matchedPrefix.length())) {
+                matchedPrefix = prefix;
+            }
+        }
+        if (matchedPrefix == null) {
+            return null;
+        }
+        ImportedModuleDescriptor module = importedModules.get(matchedPrefix);
+        String member = sourceName.substring(matchedPrefix.length() + 1);
+        if (member.isEmpty() || member.indexOf('/') >= 0) {
+            return null;
+        }
+        return new ImportedCall(module, member);
+    }
+
+    private static String stripThisQualifier(String name) {
+        return name != null && name.startsWith("this/") ? name.substring(5) : name;
+    }
+
+    private static final class CallableDescriptor {
+        private final String sourceName;
+        private final String identity;
+        private final int arity;
+        private final CallSymbol.Kind kind;
+        private final CallSymbol.ArityAuthority arityAuthority;
+
+        private CallableDescriptor(
+                String sourceName,
+                String identity,
+                int arity,
+                CallSymbol.Kind kind,
+                CallSymbol.ArityAuthority arityAuthority) {
+            this.sourceName = sourceName;
+            this.identity = identity;
+            this.arity = arity;
+            this.kind = kind;
+            this.arityAuthority = arityAuthority;
+        }
+    }
+
+    private static final class ImportedModuleDescriptor {
+        private final String fileName;
+        private final List<String> arguments;
+
+        private ImportedModuleDescriptor(String fileName, List<String> arguments) {
+            this.fileName = fileName;
+            this.arguments = arguments == null
+                    ? Collections.emptyList()
+                    : Collections.unmodifiableList(new java.util.ArrayList<>(arguments));
+        }
+
+        private String identityPrefix() {
+            if (arguments.isEmpty()) {
+                return fileName;
+            }
+            return fileName + "<" + String.join(",", arguments) + ">";
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof ImportedModuleDescriptor)) {
+                return false;
+            }
+            ImportedModuleDescriptor descriptor = (ImportedModuleDescriptor) other;
+            return fileName.equals(descriptor.fileName)
+                    && arguments.equals(descriptor.arguments);
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(fileName, arguments);
+        }
+    }
+
+    private static final class ImportedCall {
+        private final ImportedModuleDescriptor module;
+        private final String member;
+
+        private ImportedCall(ImportedModuleDescriptor module, String member) {
+            this.module = module;
+            this.member = member;
+        }
+
+        private String identity() {
+            return module.identityPrefix() + "/" + member;
+        }
     }
 
     @Override
@@ -1034,6 +1476,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         arg.getAffliation().addVertex(opNode);
         updateTimeOfVisit(opNode, arg);
         int listTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(opNode, 1);
+        recordExactType(opNode, n, arg, listTimeOfVisit);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
@@ -1065,6 +1508,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         updateTimeOfVisit(opNode, arg);
         int listTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(opNode, 1);
+        recordExactType(opNode, n, arg, listTimeOfVisit);
         int iter = 1;
         for (ExprOrFormula child : n.getArguments()) {
             AugmentedNode argChildNode = child.accept(this, arg);
@@ -1178,6 +1622,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         int bopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(bopNode, 1);
+        recordExactType(bopNode, n, arg, bopTimeOfVisit);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1226,6 +1671,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         arg.getAffliation().addVertex(bopNode);
         updateTimeOfVisit(bopNode, arg);
         int bopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(bopNode, 1);
+        recordExactType(bopNode, n, arg, bopTimeOfVisit);
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
@@ -1459,6 +1905,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         int unopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(unopNode, 1);
+        recordExactType(unopNode, n, arg, unopTimeOfVisit);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         if (subNode == unopNode) {
@@ -1499,6 +1946,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         arg.getAffliation().addVertex(unopNode);
         updateTimeOfVisit(unopNode, arg);
         int unopTimeOfVisit = arg.getAffliation().getTimeOfVisitMap().getOrDefault(unopNode, 1);
+        recordExactType(unopNode, n, arg, unopTimeOfVisit);
         ExprOrFormula sub = n.getSub();
         AugmentedNode subNode = sub.accept(this, arg);
         if (subNode == unopNode) {
@@ -1575,21 +2023,24 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // TODO: Singular exprs starting here. 
     // Only invoked when the symbol was already declared and now used. 
     private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {
+        AugmentedNode result;
         if (aame.hasSymbol(name)) {
-            return uniqueNode.get(aame.getSymbol(name)); // a global var
+            result = uniqueNode.get(aame.getSymbol(name)); // a global var
         } else {
-            return uniqueNode.get(arg.getSymbol(name)); // recursively find the unique node
+            result = uniqueNode.get(arg.getSymbol(name)); // recursively find the unique node
         }
+        if (result == null) {
+            throw new IllegalStateException(
+                    "Cannot resolve source leaf '" + name + "' in its lexical scope");
+        }
+        recordLeafExactType(result, n, arg);
+        return result;
     }
 
     @Override
     public AugmentedNode visit(VarExpr n, ScopeTreeNode arg) {
         String name = n.getName();
-        Symbol scoped = arg == null ? null : arg.getSymbol(name);
-        if (scoped != null) {
-            return uniqueNode.get(scoped);
-        }
-        return aame.hasSymbol(name) ? uniqueNode.get(aame.getSymbol(name)) : null;
+        return visitAbsorbing(n, arg, name);
     }
 
     // TODO: How about fields? 
@@ -1663,6 +2114,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private SigSymbol typeCheckExpr(ExprOrFormula e) {
         // use this function to check the overall set / type of the expression
         // System.out.println(e);
+        ExactAlloyType exactType = ExactAlloyType.from(e.getType());
+        if (exactType.kind() == ExactAlloyType.Kind.EMPTY_RELATION) {
+            return EMPTY_SET_SYMBOL;
+        }
         SigSymbol annotated = typeCheckAnnotatedExpr(e);
         if (annotated != null) {
             return annotated;

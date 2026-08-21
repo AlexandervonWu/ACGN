@@ -305,7 +305,7 @@ compression and reconstructs their transported transitive proof for the caller
 context.
 
 The exact graph exposes stable identifiers `typed-slotted-port-egraph`,
-`leader-kernel-trace-v1`, `canon-g-production-v2`, and
+`leader-kernel-trace-v1`, `canon-g-production-v4`, and
 `typed-certificate-algebra-v3`; Phase G additionally reports
 `typed-fixed-batch-rebuild-v1`, and Phase H reports
 `typed-finite-unfolding-oracle-v2`. Its public

@@ -5,7 +5,7 @@ public enum ContainerEmptiness {
     /** {@code K+}: the empty container is outside the port grammar. */
     K_PLUS("+", false),
 
-    /** {@code K0}: the signature must declare a unit law. */
+    /** {@code K0}: zero children are admitted; only a flat K0 needs a unit law. */
     K_ZERO("0", true);
 
     private final String symbol;

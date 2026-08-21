@@ -1,5 +1,6 @@
 package is.fivefivefive.AlloyDataProcessor;
 import is.fivefivefive.ACGN.alloy.DummySymbol;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.FieldRelation;
 import is.fivefivefive.ACGN.alloy.LetSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
@@ -51,9 +52,9 @@ public class EdgeCounter {
                             Multigraph graph = visitor.getForest().get(id);
                             for (MASGEdge e : graph.getEdges()) {
                                 Symbol source = getSymbolForPretrain(e.getSource().getSymbol());
-                                if (source.getName().equals("CALL_EXPR")) {
+                                if (e.getSource().getSymbol() instanceof CallSymbol) {
                                     // output the debug with the filename
-                                    finalDebugMessage += "Debug: Found CALL_EXPR in file " + file.getName() + " at model count " + modelCount + " for id " + id + "\n";
+                                    finalDebugMessage += "Debug: Found CALL in file " + file.getName() + " at model count " + modelCount + " for id " + id + "\n";
                                     finalDebugMessage += "Source node symbol: " + e.getSource().getSymbol().getName() + "\n";
                                     finalDebugMessage += "Target node symbol: " + e.getTarget().getSymbol().getName() + "\n";
                                     finalDebugMessage += "Edge position: " + e.getPosition() + "\n";
@@ -94,7 +95,9 @@ public class EdgeCounter {
         return edgeCountMap;
     }
     public static Symbol getSymbolForPretrain(Symbol original) {
-        if (original instanceof VarSymbol && ((VarSymbol) original).isGlobal()) {
+        if (original instanceof CallSymbol) {
+            return ((CallSymbol) original).semanticOperator();
+        } else if (original instanceof VarSymbol && ((VarSymbol) original).isGlobal()) {
             return DummySymbol.DUMMY_GLOBAL_VAR;
         } else if (original instanceof VarSymbol && !((VarSymbol) original).isGlobal()) {
             return DummySymbol.DUMMY_LOCAL_VAR;

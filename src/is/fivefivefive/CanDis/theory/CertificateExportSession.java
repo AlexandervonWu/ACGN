@@ -80,7 +80,7 @@ public final class CertificateExportSession {
     }
 
     /** Writes before compact comparison discards the semantic artifact. */
-    public void write(Path output) throws IOException {
-        CertificateBundleWriter.write(this, output);
+    public CertificateWriteMetrics write(Path output) throws IOException {
+        return CertificateBundleWriter.write(this, output);
     }
 }

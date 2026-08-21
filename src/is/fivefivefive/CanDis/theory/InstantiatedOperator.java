@@ -64,8 +64,43 @@ public final class InstantiatedOperator {
         return law;
     }
 
+    public PortSchema schemaAt(PortPath path) {
+        Objects.requireNonNull(path, "path");
+        int index = path.portIndex();
+        if (index < 0 || index >= portSchemas.size()) {
+            throw new IllegalArgumentException("Port path is outside this operator: " + path);
+        }
+        PortSchema schema = portSchemas.get(index);
+        for (int depth = 0; depth < path.depth(); depth++) {
+            if (schema instanceof SeqPortSchema) {
+                SeqPortSchema sequence = (SeqPortSchema) schema;
+                if (sequence.isDependent()) {
+                    throw new IllegalArgumentException(
+                            "PortPath cannot descend through a positional dependent sequence");
+                }
+                schema = sequence.elementSchema();
+            } else if (schema instanceof BagPortSchema) {
+                schema = ((BagPortSchema) schema).elementSchema();
+            } else if (schema instanceof SetPortSchema) {
+                schema = ((SetPortSchema) schema).elementSchema();
+            } else if (schema instanceof BindPortSchema) {
+                schema = ((BindPortSchema) schema).bodySchema();
+            } else if (schema instanceof BindBlockPortSchema) {
+                schema = ((BindBlockPortSchema) schema).bodySchema();
+            } else {
+                throw new IllegalArgumentException(
+                        "Port path descends through a nonrecursive schema: " + path);
+            }
+        }
+        return schema;
+    }
+
     public boolean usesFlatConstruction() {
         return declaration.usesFlatConstruction();
+    }
+
+    public FlatLicense flatLicense() {
+        return declaration.flatLicense();
     }
 
     public StructuralKey structuralKey() {

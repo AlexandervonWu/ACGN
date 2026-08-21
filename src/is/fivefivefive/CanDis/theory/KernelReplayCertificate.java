@@ -125,8 +125,10 @@ public final class KernelReplayCertificate extends TypedEqualityCertificate {
                         trace.containerNormalization().orElseThrow(
                                 () -> new IllegalStateException(
                                         "Container replay is missing its normalization trace")),
-                        operator.lawForPath(path),
-                        children);
+                        operator,
+                        path,
+                        children,
+                        graph.requiresProductionTheoryAuthority());
             case BIND:
             case BIND_BLOCK:
                 TypedEqualityCertificate body = replayPort(

@@ -154,6 +154,12 @@ public final class CoherentWitnessFamily {
         return graphRevision;
     }
 
+    CanonicalShape canonicalShapeOf(TypedENode node) {
+        owner.requireCurrentWitnessFamily(this);
+        return owner.canonicalizeStoredNode(
+                Objects.requireNonNull(node, "node").inExactSupportContext()).shape();
+    }
+
     /** EC proofs indexed by their exact owner and canonical shape. */
     public Map<ParentRecordKey, TypedEqualityCertificate> shapeCoherence() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(shapeCoherence));

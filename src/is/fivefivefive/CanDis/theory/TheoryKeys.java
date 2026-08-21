@@ -51,6 +51,27 @@ final class TheoryKeys {
         return StructuralKey.branch("embedding", parts);
     }
 
+    /**
+     * Declared canonical-witness order shared with the wire verifier. Slot
+     * names are source identity, so sorting and comparing the complete mapping
+     * as text is deterministic without relying on content-hash order.
+     */
+    static StructuralKey witnessOrder(TypedEmbedding embedding) {
+        List<TypedSlot> sources = new ArrayList<>(embedding.source().slots());
+        sources.sort(java.util.Comparator.comparing(TypedSlot::toString));
+        List<String> mapping = new ArrayList<>(sources.size() * 2);
+        for (TypedSlot source : sources) {
+            mapping.add(source.toString());
+            mapping.add(embedding.apply(source).toString());
+        }
+        return StructuralKey.of(
+                "canonical-witness-order-v1",
+                mapping,
+                Arrays.asList(
+                        context(embedding.source()),
+                        context(embedding.codomain())));
+    }
+
     /** Compact action key for a permutation whose context is stored by its owner. */
     static StructuralKey permutationAction(
             TypedSlotContext context,

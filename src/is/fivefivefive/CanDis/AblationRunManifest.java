@@ -23,7 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
 import is.fivefivefive.CanDis.theory.CertificateVerifier;
 import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;

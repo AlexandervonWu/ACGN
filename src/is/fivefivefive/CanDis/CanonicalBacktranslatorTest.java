@@ -40,7 +40,8 @@ public final class CanonicalBacktranslatorTest {
                 CanonicalBacktranslator.predicate("canonical_quantified", normalForm));
         assertCompiles(module);
         assertContains(module, "pred canonical_quantified[]", "predicate header must be emitted");
-        assertContains(module, "all _q0: Person", "canonical quantified variable must be declared");
+        assertContains(module, "all _q0: one Person",
+                "canonical quantified variable must retain default-one cardinality");
         assertContains(module, "_q0 in Student", "alpha-normalized variable must be used in the matrix");
     }
 
@@ -58,7 +59,7 @@ public final class CanonicalBacktranslatorTest {
                 "sig S {}\n",
                 CanonicalBacktranslator.predicate("canonical_disj", normalForm));
         assertCompiles(module);
-        assertContains(module, "all disj _q0, _q1: S",
+        assertContains(module, "all disj _q0, _q1: one S",
                 "variables from the same disjointness class must be emitted as one disj declaration");
     }
 

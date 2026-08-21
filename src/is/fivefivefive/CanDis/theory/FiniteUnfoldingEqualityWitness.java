@@ -78,22 +78,24 @@ public final class FiniteUnfoldingEqualityWitness {
 
         TypedEClassRecord leaderRecord = graph.eclass(leftLeader.eclass().id());
         TypedSymmetryGroup group = leaderRecord.symmetryGroup();
-        TypedPermutation selected = null;
-        for (TypedPermutation permutation : group.elements()) {
+        TypedPermutation[] selected = {null};
+        group.forEachElement(permutation -> {
+            if (selected[0] != null) {
+                return;
+            }
             TypedEmbedding rightAfterPermutation = permutation.andThen(
                     rightLeader.embedding());
             if (leftLeader.embedding().equals(rightAfterPermutation)) {
-                selected = permutation;
-                break;
+                selected[0] = permutation;
             }
-        }
-        if (selected == null) {
+        });
+        if (selected[0] == null) {
             throw new IllegalArgumentException(
                     "Leader embeddings are not related by a certified leader symmetry");
         }
 
         TypedEqualityCertificate symmetry = group.derivationFor(
-                leaderRecord.interfaceView(), selected);
+                leaderRecord.interfaceView(), selected[0]);
         TypedEqualityCertificate rightToLeftLeader = EqualityCertificates.rename(
                 symmetry, rightLeader.embedding());
         TypedEqualityCertificate leftToRightLeader = EqualityCertificates.symmetric(
@@ -114,7 +116,7 @@ public final class FiniteUnfoldingEqualityWitness {
                 checkedRight,
                 leftFind,
                 rightFind,
-                selected,
+                selected[0],
                 symmetry,
                 reachability);
     }
