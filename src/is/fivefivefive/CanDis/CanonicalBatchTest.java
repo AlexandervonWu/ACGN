@@ -9,11 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +35,9 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
+import parser.ast.nodes.Call;
+import parser.ast.nodes.Function;
+import parser.ast.nodes.PredOrFun;
 import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
 import parser.etc.Pair;
@@ -271,11 +277,12 @@ public class CanonicalBatchTest {
             result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
-            visitor.visit(model, null);
+            MASGVisitor visitor = focusedVisitor(module, model, pair);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-            Multigraph left = forest.get(pair.leftId);
-            Multigraph right = forest.get(pair.rightId);
+            Integer leftForestId = visitor.getForestId(pair.leftName);
+            Integer rightForestId = visitor.getForestId(pair.rightName);
+            Multigraph left = leftForestId == null ? null : forest.get(leftForestId);
+            Multigraph right = rightForestId == null ? null : forest.get(rightForestId);
             if (left == null || right == null) {
                 result.error = "Could not find both predicate graphs in MASG forest.";
                 return result;
@@ -370,6 +377,66 @@ public class CanonicalBatchTest {
             }
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
             return result;
+        }
+    }
+
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair) {
+        Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables, module);
+        try {
+            visitor.visit(model, null);
+            return visitor;
+        } catch (RuntimeException focusedFailure) {
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
+            fallback.visit(model, null);
+            return fallback;
+        }
+    }
+
+    private static Set<String> callableClosure(
+            ModelUnit model,
+            String leftName,
+            String rightName) {
+        Map<String, PredOrFun> declarations = new HashMap<>();
+        for (Predicate predicate : model.getPredDeclList()) {
+            declarations.put(predicate.getName(), predicate);
+        }
+        for (Function function : model.getFunDeclList()) {
+            declarations.put(function.getName(), function);
+        }
+        Set<String> selected = new HashSet<>();
+        ArrayDeque<String> pending = new ArrayDeque<>();
+        pending.add(leftName);
+        pending.add(rightName);
+        while (!pending.isEmpty()) {
+            String name = pending.removeFirst();
+            if (!selected.add(name)) {
+                continue;
+            }
+            PredOrFun declaration = declarations.get(name);
+            if (declaration != null) {
+                collectCalledDeclarations(declaration, declarations, selected, pending);
+            }
+        }
+        return selected;
+    }
+
+    private static void collectCalledDeclarations(
+            Node node,
+            Map<String, PredOrFun> declarations,
+            Set<String> selected,
+            ArrayDeque<String> pending) {
+        if (node instanceof Call) {
+            String name = ((Call) node).getName();
+            if (declarations.containsKey(name) && !selected.contains(name)) {
+                pending.addLast(name);
+            }
+        }
+        for (Node child : DatasetConventions.rawAstChildren(node)) {
+            collectCalledDeclarations(child, declarations, selected, pending);
         }
     }
 

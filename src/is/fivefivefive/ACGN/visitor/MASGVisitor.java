@@ -109,7 +109,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private BiMap<Symbol, AugmentedNode> uniqueNode;
     private Map<Symbol, Set<Symbol>> coarseToFineBin; // for each coarse symbol except local variables or predicate roots, the set of symbols that can be used to expand it in the fine-grained generation.
     public static final Symbol END_SYMBOL = new EndSymbol();
-    public static final AugmentedNode END_NODE = new AugmentedNode(-128, 0, END_SYMBOL);
+    // AugmentedNode stores graph-specific links and occurrence types, so sentinels
+    // must not be shared across visitors.
+    private final AugmentedNode endNode = new AugmentedNode(-128, 0, END_SYMBOL);
     private final SigSymbol EMPTY_SET_SYMBOL = SigSymbol.builtinNone();
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
     private final SigSymbol UNIVERSAL_SET_SYMBOL = SigSymbol.builtinUniv();
@@ -121,7 +123,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final AugmentedNode SEQUENCE_INDEX_SET_NODE =
             new AugmentedNode(126, 3, SEQUENCE_INDEX_SET_SYMBOL);
     public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
-    public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
+    private final AugmentedNode shadowNode = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private final Map<String, Integer> forestIdsByCallable = new HashMap<>();
     private final Map<String, CallableDescriptor> callableDescriptors = new HashMap<>();
@@ -150,16 +152,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         globalVariables = new GlobalVariables();
         // localSymbols = new DoubleMap<Multigraph, Set<Symbol>>();
         uniqueNode = new BiMap<>();
-        uniqueNode.put(END_SYMBOL, END_NODE);
+        uniqueNode.put(END_SYMBOL, endNode);
         uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
-        uniqueNode.put(SHADOW_SYMBOL, SHADOW_NODE);
+        uniqueNode.put(SHADOW_SYMBOL, shadowNode);
         uniqueNode.put(UNIVERSAL_SET_SYMBOL, UNIVERSAL_SET_NODE);
         uniqueNode.put(INTEGER_SET_SYMBOL, INTEGER_SET_NODE);
         uniqueNode.put(SEQUENCE_INDEX_SET_SYMBOL, SEQUENCE_INDEX_SET_NODE);
         nodeDict = new HashMap<>();
-        nodeDict.put(0, END_NODE);
+        nodeDict.put(0, endNode);
         nodeDict.put(1, EMPTY_SET_NODE);
-        nodeDict.put(2, SHADOW_NODE);
+        nodeDict.put(2, shadowNode);
         nodeDict.put(3, UNIVERSAL_SET_NODE);
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         aame.addSymbol("none", EMPTY_SET_SYMBOL);
@@ -175,9 +177,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         for (DummySymbol ds : DummySymbol.ALL_DUMMIES) {
             if (ds != DummySymbol.DUMMY_LOCAL_VAR && ds != DummySymbol.DUMMY_PREDROOT) coarseToFineBin.put(ds, new HashSet<>());
         }
-        END_NODE.setMaxDownlinks(0);
+        endNode.setMaxDownlinks(0);
         EMPTY_SET_NODE.setMaxDownlinks(0);
-        SHADOW_NODE.setMaxDownlinks(0);
+        shadowNode.setMaxDownlinks(0);
         UNIVERSAL_SET_NODE.setMaxDownlinks(0);
         INTEGER_SET_NODE.setMaxDownlinks(0);
         SEQUENCE_INDEX_SET_NODE.setMaxDownlinks(0);
@@ -415,7 +417,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnect(sigExprNode, field, iter, arg);
             iter++;
         }
-        visitAndConnect(sigExprNode, END_NODE, iter, arg);
+        visitAndConnect(sigExprNode, endNode, iter, arg);
         return sigExprNode;
     }
 
@@ -478,8 +480,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             // predGraph.connect(predNode, pdNode, iter, 1);
             iter++;
         }
-        globalVariables.addEdge(predNode, END_NODE, iter);
-        visitAndConnectAt(predNode, END_NODE, iter, subscope, predTimeOfVisit);
+        globalVariables.addEdge(predNode, endNode, iter);
+        visitAndConnectAt(predNode, endNode, iter, subscope, predTimeOfVisit);
         AugmentedNode bodyNode = n.getBody().accept(this, subscope);
         globalVariables.addEdge(predNode, bodyNode, 1);
         visitAndConnectAt(predNode, bodyNode, 1, subscope, predTimeOfVisit);
@@ -575,10 +577,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     declRoot, varNode, iter, arg, declarationTimeOfVisit);
             iter++;
         }
-        // graph.addVertex(END_NODE);
-        // globalVariables.addEdge(declRoot, END_NODE, iter);
+        // graph.addVertex(endNode);
+        // globalVariables.addEdge(declRoot, endNode, iter);
         visitAndConnectAt(
-                declRoot, END_NODE, iter, arg, declarationTimeOfVisit);
+                declRoot, endNode, iter, arg, declarationTimeOfVisit);
         return declRoot;
     }
     // TODO: Down here we need more implementation of the gv augmentations.
@@ -603,18 +605,18 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             if (Playground.DEBUG) {
                 System.out.println("Shadow node created for " + parent.getSymbol().getName() + " at time of visit " + timeOfVisit);
             }
-            graph.addVertex(SHADOW_NODE);
-            updateTimeOfVisit(SHADOW_NODE, arg);
+            graph.addVertex(shadowNode);
+            updateTimeOfVisit(shadowNode, arg);
             int shadowTimeOfVisit = graph.getTimeOfVisitMap()
-                    .getOrDefault(SHADOW_NODE, 1);
+                    .getOrDefault(shadowNode, 1);
             ExactAlloyType parentType = parent.getExactType(graph, timeOfVisit);
             if (parentType == null) {
                 throw new IllegalStateException(
                         "A shadow occurrence cannot lose its source exact type");
             }
-            SHADOW_NODE.setExactType(graph, shadowTimeOfVisit, parentType);
-            graph.connect(parent, SHADOW_NODE, graph, position, timeOfVisit);
-            globalVariables.addEdge(parent, SHADOW_NODE, position);
+            shadowNode.setExactType(graph, shadowTimeOfVisit, parentType);
+            graph.connect(parent, shadowNode, graph, position, timeOfVisit);
+            globalVariables.addEdge(parent, shadowNode, position);
         } else {
             graph.addVertex(child);
             graph.connect(parent, child, graph, position, timeOfVisit);
@@ -1090,7 +1092,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             if (Playground.DEBUG) System.out.println("VarDecl at " + iter + ": " + var);
             iter++;
         }
-        visitAndConnectAt(qtRoot, END_NODE, iter, subscope, qtTimeOfVisit);
+        visitAndConnectAt(qtRoot, endNode, iter, subscope, qtTimeOfVisit);
         AugmentedNode bodyNode = body.accept(this, subscope);
         // globalVariables.addEdge(qtRoot, bodyNode, 1);
         visitAndConnectAt(qtRoot, bodyNode, 1, subscope, qtTimeOfVisit);
@@ -1189,7 +1191,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnectAt(callNode, paramAug, iter, arg, callTov);
             iter++;
         }
-        visitAndConnectAt(callNode, END_NODE, iter, arg, callTov);
+        visitAndConnectAt(callNode, endNode, iter, arg, callTov);
         validateCompletedCallVisit(callNode, callSymbol, localGraph, callTov);
         validatedCallVisits++;
         return callNode;
@@ -1548,8 +1550,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnectAt(opNode, argChildNode, iter, arg, listTimeOfVisit);
             iter++;
         }
-        // globalVariables.addEdge(opNode, END_NODE, iter);
-        visitAndConnectAt(opNode, END_NODE, iter, arg, listTimeOfVisit);
+        // globalVariables.addEdge(opNode, endNode, iter);
+        visitAndConnectAt(opNode, endNode, iter, arg, listTimeOfVisit);
         return opNode;
     }
 
@@ -1580,7 +1582,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnectAt(opNode, argChildNode, iter, arg, listTimeOfVisit);
             iter++;
         }
-        visitAndConnectAt(opNode, END_NODE, iter, arg, listTimeOfVisit);
+        visitAndConnectAt(opNode, endNode, iter, arg, listTimeOfVisit);
         return opNode;
     }
 
@@ -2318,7 +2320,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             visitAndConnect(declRoot, fieldNode, iter, arg);
             iter++;
         }
-        visitAndConnect(declRoot, END_NODE, iter, arg);
+        visitAndConnect(declRoot, endNode, iter, arg);
         return declRoot;
     }
     private SigSymbol typeCheckExpr(ExprOrFormula e) {

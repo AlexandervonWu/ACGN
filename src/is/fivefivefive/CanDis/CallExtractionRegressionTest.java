@@ -268,7 +268,8 @@ public final class CallExtractionRegressionTest {
         check(rejected, "a duplicate CALL callee must fail closed");
 
         MASGEdge originalArgument = damaged.get(1);
-        damaged.set(1, new MASGEdge(outerF, MASGVisitor.END_NODE, 2, 1));
+        AugmentedNode localEnd = damaged.get(damaged.size() - 1).getTarget();
+        damaged.set(1, new MASGEdge(outerF, localEnd, 2, 1));
         rejected = false;
         try {
             Canonical.prepare(nestedGraph);

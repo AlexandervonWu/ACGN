@@ -90,6 +90,7 @@ public final class MASGVisitorTypeRegressionTest {
         CompModule module = CompUtil.parseEverything_fromString(A4Reporter.NOP, source);
         MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(new ModelUnit(null, module), null);
+        checkVisitorLocalSentinels(module, visitor);
 
         Multigraph candidate = graph(visitor, "candidate");
         Multigraph direct = graph(visitor, "direct");
@@ -262,6 +263,29 @@ public final class MASGVisitorTypeRegressionTest {
 
         checkBoundedSemantics(preparedCandidate, preparedDirect);
         System.out.println("MASGVisitorTypeRegressionTest passed");
+    }
+
+    private static void checkVisitorLocalSentinels(
+            CompModule module,
+            MASGVisitor firstVisitor) {
+        AugmentedNode firstEnd = firstVisitor.getUniqueNode().get(MASGVisitor.END_SYMBOL);
+        AugmentedNode firstShadow = firstVisitor.getUniqueNode().get(MASGVisitor.SHADOW_SYMBOL);
+        int firstEndUplinks = firstEnd.getUplinks().size();
+
+        MASGVisitor secondVisitor = new MASGVisitor(new GlobalVariables(), module);
+        AugmentedNode secondEnd = secondVisitor.getUniqueNode().get(MASGVisitor.END_SYMBOL);
+        AugmentedNode secondShadow = secondVisitor.getUniqueNode().get(MASGVisitor.SHADOW_SYMBOL);
+        if (firstEnd == secondEnd || firstShadow == secondShadow) {
+            throw new AssertionError("MASG visitors share mutable sentinel nodes");
+        }
+
+        secondVisitor.visit(new ModelUnit(null, module), null);
+        if (firstEnd.getUplinks().size() != firstEndUplinks) {
+            throw new AssertionError("A later MASG visit mutated an earlier visitor's END node");
+        }
+        if (secondEnd.getUplinks().isEmpty()) {
+            throw new AssertionError("The visitor-local END node did not receive graph links");
+        }
     }
 
     private static Multigraph graph(MASGVisitor visitor, String name) {
