@@ -11,6 +11,9 @@ import java.util.Collections;
 import java.util.Objects;
 
 import edu.mit.csail.sdg.ast.Sig.PrimSig;
+import edu.mit.csail.sdg.ast.Sig;
+import edu.mit.csail.sdg.ast.Expr;
+import edu.mit.csail.sdg.ast.ExprUnary;
 import edu.mit.csail.sdg.ast.Type;
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -132,6 +135,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private Set<String> selectedCallables;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
+    private final Map<String, SigSymbol> signatureSymbols = new HashMap<>();
+    private final Map<FieldKey, FieldRelation> fieldSymbols = new HashMap<>();
     public static final boolean USE_SHADOW = false;
     public static final boolean TYPE_SPECIAL_SETS = false;
 
@@ -149,6 +154,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         uniqueNode.put(EMPTY_SET_SYMBOL, EMPTY_SET_NODE);
         uniqueNode.put(SHADOW_SYMBOL, SHADOW_NODE);
         uniqueNode.put(UNIVERSAL_SET_SYMBOL, UNIVERSAL_SET_NODE);
+        uniqueNode.put(INTEGER_SET_SYMBOL, INTEGER_SET_NODE);
+        uniqueNode.put(SEQUENCE_INDEX_SET_SYMBOL, SEQUENCE_INDEX_SET_NODE);
         nodeDict = new HashMap<>();
         nodeDict.put(0, END_NODE);
         nodeDict.put(1, EMPTY_SET_NODE);
@@ -159,6 +166,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         aame.addSymbol("univ", UNIVERSAL_SET_SYMBOL);
         aame.addSymbol("Int", INTEGER_SET_SYMBOL);
         aame.addSymbol("seq/Int", SEQUENCE_INDEX_SET_SYMBOL);
+        signatureSymbols.put("none", EMPTY_SET_SYMBOL);
+        signatureSymbols.put("univ", UNIVERSAL_SET_SYMBOL);
+        signatureSymbols.put("Int", INTEGER_SET_SYMBOL);
+        signatureSymbols.put("seq/Int", SEQUENCE_INDEX_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
         coarseToFineBin = new HashMap<>();
         for (DummySymbol ds : DummySymbol.ALL_DUMMIES) {
@@ -168,6 +179,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         EMPTY_SET_NODE.setMaxDownlinks(0);
         SHADOW_NODE.setMaxDownlinks(0);
         UNIVERSAL_SET_NODE.setMaxDownlinks(0);
+        INTEGER_SET_NODE.setMaxDownlinks(0);
+        SEQUENCE_INDEX_SET_NODE.setMaxDownlinks(0);
     }
     public MASGVisitor(GlobalVariables gv) {
         this();
@@ -271,6 +284,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         callsContainingCalls = 0;
         validatedCallVisits = 0;
         nextCallOccurrenceId = 0;
+        indexReachableGlobalRelations();
         indexCallableDeclarations(n);
         AugmentedNode mu = new AugmentedNode(0, 1);
         overallRoot = mu;
@@ -376,16 +390,24 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     @Override
     public AugmentedNode visit(SigDecl n, ScopeTreeNode arg) {
         String nameKey = n.getName();
-        SigSymbol sigsy = new SigSymbol(nameKey);
+        SigSymbol sigsy = signatureSymbols.get(nameKey);
+        if (sigsy == null) {
+            sigsy = new SigSymbol(nameKey);
+        }
         coarseToFineBin.get(DummySymbol.DUMMY_SIG).add(sigsy);
         if (unfoundSigs.containsKey(nameKey)) {
             sigsy = unfoundSigs.get(nameKey);
             unfoundSigs.remove(nameKey);
         }
+        signatureSymbols.put(nameKey, sigsy);
         aame.addSymbol(nameKey, sigsy);
         rootScope.addSymbol(sigsy);
-        AugmentedNode sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
-        uniqueNode.put(sigsy, sigExprNode);
+        AugmentedNode sigExprNode = uniqueNode.get(sigsy);
+        if (sigExprNode == null) {
+            sigExprNode = new AugmentedNode(126, uniqueNode.size(), sigsy);
+            uniqueNode.put(sigsy, sigExprNode);
+        }
+        sigExprNode.setMaxDownlinks(n.getFieldList().size() + 1);
         updateTimeOfVisit(sigExprNode, arg);
         int iter = 1;
         for (FieldDecl f : n.getFieldList()) {
@@ -514,7 +536,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         Integer graphId = forest.rget(graph);
         int variableScope = graphId == null ? -Math.max(1, arg.getId()) : graphId;
         for (String name : n.getNames()) {
-            VarSymbol varSym = new VarSymbol(sigSymbol.getName(), name, variableScope, exprNode);
+            String lexicalIdentity = "var/scope:" + arg.getId()
+                    + "/slot:" + arg.allocateBindingSlot();
+            VarSymbol varSym = new VarSymbol(
+                    sigSymbol.getName(), name, lexicalIdentity, variableScope, exprNode);
             if (arg.getParent() == null) {
                 // it is rootscope
                 coarseToFineBin.get(DummySymbol.DUMMY_GLOBAL_VAR).add(varSym);
@@ -763,12 +788,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             if (iter instanceof SigExpr) {
                 SigExpr sigExpr = (SigExpr) iter;
                 String sigName = sigExpr.getName();
-                Symbol sigSymbol = aame.getSymbol(sigName);
-                if (sigSymbol == null || !(sigSymbol instanceof SigSymbol)) {
-                    sigSymbol = new SigSymbol(sigName);
-                    unfoundSigs.put(sigName, (SigSymbol) sigSymbol);
-                }
-                SigSymbol concSigSymbol = (SigSymbol) sigSymbol;
+                SigSymbol concSigSymbol = signatureSymbolOrPlaceholder(sigName);
                 return Pair.of(concSigSymbol, confiners);
             } else {
                 if (iter instanceof BinaryExpr) {
@@ -788,9 +808,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                             }
                         }
                         FieldExpr fieldExpr = (FieldExpr) fieldExprRaw;
-                        String fieldName = fieldExpr.getName();
-                        Symbol fieldSymbol = aame.getSymbol(fieldName);
-                        FieldRelation fieldRel = (FieldRelation) fieldSymbol;
+                        FieldRelation fieldRel = fieldSymbol(fieldExpr);
                         SetSymbol iterSym = fieldRel;
                         while (iterSym instanceof FieldRelation) {
                             iterSym = ((FieldRelation) iterSym).getTarget();
@@ -931,7 +949,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             VarExpr varExpr = (VarExpr) var;
             AugmentedNode letNode = new AugmentedNode(122, uniqueNode.size());
             letNode.setMaxDownlinks(3);
-            Symbol refSymbol = new LetSymbol(letNode, varExpr.getName());
+            Symbol refSymbol = new LetSymbol(
+                    letNode,
+                    varExpr.getName(),
+                    "let/scope:" + child.getId());
             coarseToFineBin.get(DummySymbol.DUMMY_LET).add(refSymbol);
             uniqueNode.put(refSymbol, letNode);
             child.addSymbol(refSymbol);
@@ -1288,15 +1309,20 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             if (fileName == null || fileName.trim().isEmpty()) {
                 continue;
             }
-            String alias = open.getAlias();
-            if (alias == null || alias.trim().isEmpty()) {
+            String declaredAlias = open.getAlias();
+            boolean hasDeclaredAlias = declaredAlias != null
+                    && !declaredAlias.trim().isEmpty();
+            String alias = declaredAlias;
+            if (!hasDeclaredAlias) {
                 int slash = fileName.lastIndexOf('/');
                 alias = slash < 0 ? fileName : fileName.substring(slash + 1);
             }
             ImportedModuleDescriptor module =
                     new ImportedModuleDescriptor(fileName, open.getArguments());
             registerImportedAlias(alias, module);
-            registerImportedAlias(fileName, module);
+            if (!hasDeclaredAlias) {
+                registerImportedAlias(fileName, module);
+            }
         }
     }
 
@@ -2060,16 +2086,147 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     // TODO: Singular exprs starting here. 
     // Only invoked when the symbol was already declared and now used. 
-    private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {
+    private SigSymbol signatureSymbolOrPlaceholder(String name) {
+        SigSymbol existing = signatureSymbols.get(name);
+        if (existing != null) {
+            return existing;
+        }
+        SigSymbol placeholder = new SigSymbol(name);
+        signatureSymbols.put(name, placeholder);
+        unfoundSigs.put(name, placeholder);
+        return placeholder;
+    }
+
+    private void indexReachableGlobalRelations() {
+        for (Sig signature : parserModule.getAllReachableSigs()) {
+            String name = new SigSymbol(signature.label).getName();
+            SigSymbol symbol = signatureSymbols.get(name);
+            if (symbol == null) {
+                symbol = new SigSymbol(name);
+                signatureSymbols.put(name, symbol);
+            }
+            if (!uniqueNode.containsKey(symbol)) {
+                AugmentedNode node = new AugmentedNode(126, uniqueNode.size(), symbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(symbol, node);
+            }
+            coarseToFineBin.get(DummySymbol.DUMMY_SIG).add(symbol);
+        }
+        for (Sig signature : parserModule.getAllReachableSigs()) {
+            SigSymbol source = signatureSymbols.get(
+                    new SigSymbol(signature.label).getName());
+            for (Sig.Field field : signature.getFields()) {
+                String fieldName = simpleFieldName(field.label);
+                ExactAlloyType exactType = ExactAlloyType.fromParser(
+                        field.type(), parserModule);
+                FieldKey key = new FieldKey(fieldName, exactType);
+                if (fieldSymbols.containsKey(key)) {
+                    continue;
+                }
+                FieldRelation symbol = new FieldRelation(
+                        fieldName,
+                        source,
+                        targetSignature(field.type()),
+                        fieldConfiners(field));
+                fieldSymbols.put(key, symbol);
+                AugmentedNode node = new AugmentedNode(125, uniqueNode.size(), symbol);
+                node.setMaxDownlinks(0);
+                uniqueNode.put(symbol, node);
+                coarseToFineBin.get(DummySymbol.DUMMY_FIELD).add(symbol);
+            }
+        }
+    }
+
+    private SigSymbol targetSignature(Type type) {
+        PrimSig common = null;
+        for (Type.ProductType product : type) {
+            if (product.isEmpty()) {
+                continue;
+            }
+            PrimSig candidate = product.get(product.arity() - 1);
+            common = common == null ? candidate : common.leastParent(candidate);
+        }
+        if (common == null) {
+            throw new IllegalStateException(
+                    "A parser field has no concrete target signature");
+        }
+        return signatureSymbolOrPlaceholder(new SigSymbol(common.label).getName());
+    }
+
+    private static Set<FieldConfiner> fieldConfiners(Sig.Field field) {
+        Set<FieldConfiner> result = new HashSet<>();
+        Expr expression = field.decl().expr;
+        while (expression instanceof ExprUnary) {
+            ExprUnary unary = (ExprUnary) expression;
+            if (unary.op == ExprUnary.Op.SETOF) {
+                result.add(FieldConfiner.SET);
+            } else if (unary.op == ExprUnary.Op.LONEOF) {
+                result.add(FieldConfiner.LONE);
+            } else if (unary.op == ExprUnary.Op.ONEOF) {
+                result.add(FieldConfiner.ONE);
+            } else if (unary.op == ExprUnary.Op.SOMEOF) {
+                result.add(FieldConfiner.SOME);
+            } else if (unary.op == ExprUnary.Op.EXACTLYOF) {
+                result.add(FieldConfiner.EXACTLY);
+            }
+            expression = unary.sub;
+        }
+        return result;
+    }
+
+    private static String simpleFieldName(String label) {
+        int separator = label.lastIndexOf('/');
+        return separator < 0 ? label : label.substring(separator + 1);
+    }
+
+    private FieldRelation fieldSymbol(FieldExpr expression) {
+        ExactAlloyType exactType = ExactAlloyType.fromParser(
+                expression.getType(), parserModule);
+        return fieldSymbols.get(new FieldKey(expression.getName(), exactType));
+    }
+
+    private ExactAlloyType declaredFieldType(String ownerName, String fieldName) {
+        String normalizedOwner = new SigSymbol(ownerName).getName();
+        ExactAlloyType result = null;
+        for (Sig signature : parserModule.getAllReachableSigs()) {
+            if (!normalizedOwner.equals(new SigSymbol(signature.label).getName())) {
+                continue;
+            }
+            for (Sig.Field field : signature.getFields()) {
+                String simpleName = simpleFieldName(field.label);
+                if (!fieldName.equals(simpleName)) {
+                    continue;
+                }
+                if (result != null) {
+                    throw new IllegalStateException(
+                            "One signature declares duplicate field identity: "
+                                    + ownerName + "." + fieldName);
+                }
+                result = ExactAlloyType.fromParser(field.type(), parserModule);
+            }
+        }
+        if (result == null) {
+            throw new IllegalStateException(
+                    "Cannot recover parser-certified field type for "
+                            + ownerName + "." + fieldName);
+        }
+        return result;
+    }
+
+    private AugmentedNode visitAbsorbing(
+            ExprOrFormula n,
+            ScopeTreeNode arg,
+            String name) {
         AugmentedNode result;
-        if ("Int".equals(name)) {
-            result = INTEGER_SET_NODE;
-        } else if ("seq/Int".equals(name)) {
-            result = SEQUENCE_INDEX_SET_NODE;
-        } else if (aame.hasSymbol(name)) {
-            result = uniqueNode.get(aame.getSymbol(name)); // a global var
+        if (n instanceof VarExpr) {
+            Symbol lexical = arg == null ? null : arg.getSymbol(name);
+            result = lexical == null ? null : uniqueNode.get(lexical);
+        } else if (n instanceof SigExpr) {
+            result = uniqueNode.get(signatureSymbols.get(name));
+        } else if (n instanceof FieldExpr) {
+            result = uniqueNode.get(fieldSymbol((FieldExpr) n));
         } else {
-            result = uniqueNode.get(arg.getSymbol(name)); // recursively find the unique node
+            result = null;
         }
         if (result == null) {
             throw new IllegalStateException(
@@ -2130,20 +2287,31 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         } else {
             timeOfVisitMap.put(declRoot, 1);
         }
-        if (!aame.hasSymbol(sigName)) {
+        SigSymbol sourceSymbol = signatureSymbols.get(sigName);
+        if (sourceSymbol == null) {
             throw new RuntimeException("No signature found in AAME for signature " + sigName + " of field " + n.getNames().toString());
         }
         ExprOrFormula fieldRelType = n.getExpr();
         Pair<SigSymbol, Set<FieldConfiner>> targetPair = getSigSymbolByExpr(fieldRelType);
         SigSymbol targetSymbol = targetPair.a;
         Set<FieldConfiner> confiners = targetPair.b;
-        SigSymbol sourceSymbol = (SigSymbol) aame.getSymbol(sigName);
         int iter = 2;
         for (String fieldName : n.getNames()) {
-            Symbol fieldSymbol = new FieldRelation(fieldName, sourceSymbol, targetSymbol, confiners);
+            FieldKey fieldKey = new FieldKey(
+                    fieldName, declaredFieldType(sigName, fieldName));
+            FieldRelation fieldSymbol = fieldSymbols.get(fieldKey);
+            if (fieldSymbol == null) {
+                fieldSymbol = new FieldRelation(
+                        fieldName, sourceSymbol, targetSymbol, confiners);
+                fieldSymbols.put(fieldKey, fieldSymbol);
+            }
             coarseToFineBin.get(DummySymbol.DUMMY_FIELD).add(fieldSymbol);
-            AugmentedNode fieldNode = new AugmentedNode(125, uniqueNode.size(), fieldSymbol);
-            uniqueNode.put(fieldSymbol, fieldNode);
+            AugmentedNode fieldNode = uniqueNode.get(fieldSymbol);
+            if (fieldNode == null) {
+                fieldNode = new AugmentedNode(125, uniqueNode.size(), fieldSymbol);
+                uniqueNode.put(fieldSymbol, fieldNode);
+                fieldNode.setMaxDownlinks(0);
+            }
             aame.addSymbol(fieldName, fieldSymbol);
             fieldNode.setSymbol(fieldSymbol);
             // TODO: Name problem? Consider same-name nodes...
@@ -2169,16 +2337,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (e instanceof SigExpr) {
             SigExpr sigExpr = (SigExpr) e;
             String sigName = sigExpr.getName();
-            Symbol sigSymbol = aame.getSymbol(sigName);
-            if (sigSymbol instanceof SigSymbol) {
-                inferred = (SigSymbol) sigSymbol;
-            }
+            inferred = signatureSymbols.get(sigName);
         } else if (e instanceof FieldExpr) {
             FieldExpr fieldExpr = (FieldExpr) e;
-            String fieldName = fieldExpr.getName();
-            Symbol fieldSymbol = aame.getSymbol(fieldName);
-            if (fieldSymbol instanceof FieldRelation) {
-                FieldRelation fieldRel = (FieldRelation) fieldSymbol;
+            FieldRelation fieldRel = fieldSymbol(fieldExpr);
+            if (fieldRel != null) {
                 SetSymbol iterSym = fieldRel;
                 while (iterSym instanceof FieldRelation) {
                     iterSym = ((FieldRelation) iterSym).getTarget();
@@ -2229,13 +2392,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         if (commonType == null) {
             return null;
         }
-        String typeName = commonType.label;
-        int separator = typeName.lastIndexOf('/');
-        if (separator >= 0) {
-            typeName = typeName.substring(separator + 1);
-        }
-        Symbol knownType = aame.getSymbol(typeName);
-        return knownType instanceof SigSymbol ? (SigSymbol) knownType : new SigSymbol(typeName);
+        String typeName = new SigSymbol(commonType.label).getName();
+        return signatureSymbolOrPlaceholder(typeName);
     }
     private boolean isSigOrField(ExprOrFormula e) {
         if (e instanceof SigExpr) {
@@ -2266,5 +2424,29 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     public ScopeTreeNode getRootScope() {
         return rootScope;
+    }
+
+    private static final class FieldKey {
+        private final String name;
+        private final ExactAlloyType exactType;
+
+        private FieldKey(String name, ExactAlloyType exactType) {
+            this.name = Objects.requireNonNull(name, "field name");
+            this.exactType = Objects.requireNonNull(exactType, "field exact type");
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof FieldKey)) {
+                return false;
+            }
+            FieldKey key = (FieldKey) other;
+            return name.equals(key.name) && exactType.equals(key.exactType);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name, exactType);
+        }
     }
 }

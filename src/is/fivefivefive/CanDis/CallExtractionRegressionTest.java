@@ -118,6 +118,24 @@ public final class CallExtractionRegressionTest {
         assertCallVisit(importedGraph, importedFirst, 1, "ord/first", 0);
         assertCallVisit(importedGraph, importedLast, 1, "ord/last", 0);
 
+        String distinctImportSource = String.join("\n",
+                "module distinctimports",
+                "open util/ordering[A] as o1",
+                "open util/ordering[B] as o2",
+                "sig A {}",
+                "sig B {}",
+                "pred p { o1/first in A and o2/first in B }");
+        CompModule distinctImportModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, distinctImportSource);
+        MASGVisitor distinctImportVisitor = new MASGVisitor(
+                new GlobalVariables(), distinctImportModule);
+        distinctImportVisitor.visit(new ModelUnit(null, distinctImportModule), null);
+        Multigraph distinctImportGraph = graph(distinctImportVisitor, "p");
+        check(callNodes(distinctImportGraph, "util/ordering<A>/first", 0).size() == 1,
+                "the first explicitly aliased module instance must retain its type arguments");
+        check(callNodes(distinctImportGraph, "util/ordering<B>/first", 0).size() == 1,
+                "the second explicitly aliased module instance must retain its type arguments");
+
         String regenerated = new Generator().toCode(
                 nestedGraph, outerF, 1, null);
         check(countOccurrences(regenerated, "f[") == 2,

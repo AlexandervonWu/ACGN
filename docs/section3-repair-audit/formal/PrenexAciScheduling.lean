@@ -92,11 +92,160 @@ theorem different_scope_paths_separate_shadowed_bindings
   intro sameIdentity
   exact differentScope (Prod.mk.inj sameIdentity).1
 
+theorem different_slots_separate_bindings
+    (left right : ScopedBinding)
+    (differentSlot : left.slot ≠ right.slot) :
+    bindingIdentity left ≠ bindingIdentity right := by
+  intro sameIdentity
+  exact differentSlot (Prod.mk.inj sameIdentity).2
+
+theorem same_scope_distinct_slots_ignore_presentation
+    (leftSpelling rightSpelling : String) :
+    bindingIdentity ⟨[0], 0, leftSpelling⟩ ≠
+      bindingIdentity ⟨[0], 1, rightSpelling⟩ := by
+  apply different_slots_separate_bindings
+  simp
+
+def allocateBindingSlot (nextSlot : Nat) : Nat × Nat :=
+  (nextSlot, nextSlot + 1)
+
+theorem allocation_returns_current_slot_and_advances
+    (nextSlot : Nat) :
+    allocateBindingSlot nextSlot = (nextSlot, nextSlot + 1) := by
+  rfl
+
+theorem consecutive_allocations_are_distinct
+    (nextSlot : Nat) :
+    (allocateBindingSlot nextSlot).1 ≠
+      (allocateBindingSlot (allocateBindingSlot nextSlot).2).1 := by
+  simp [allocateBindingSlot]
+
 theorem same_spelling_does_not_override_scope_identity
     (spelling : String) :
     bindingIdentity ⟨[0], 0, spelling⟩ ≠
       bindingIdentity ⟨[0, 1], 0, spelling⟩ := by
   apply different_scope_paths_separate_shadowed_bindings
   simp
+
+theorem same_spelling_nested_let_bindings_separate
+    (spelling : String) :
+    bindingIdentity ⟨[1], 0, spelling⟩ ≠
+      bindingIdentity ⟨[1, 2], 0, spelling⟩ := by
+  apply different_scope_paths_separate_shadowed_bindings
+  simp
+
+/- A local signature declaration has one child per field-declaration group
+plus its explicit terminator. Preindexing a signature as a leaf must not
+remain the declaration node's arity once declaration structure is attached. -/
+def signatureDeclarationArity (fieldDeclarationCount : Nat) : Nat :=
+  fieldDeclarationCount + 1
+
+theorem signature_declaration_arity_includes_field_declarations_and_end
+    (fieldDeclarationCount : Nat) :
+    signatureDeclarationArity fieldDeclarationCount =
+      fieldDeclarationCount + 1 := by
+  rfl
+
+theorem one_field_signature_has_two_declaration_children :
+    signatureDeclarationArity 1 = 2 := by
+  rfl
+
+/- The resolved parser leaf class is authority: variable leaves use the
+lexical environment, while signature and field leaves use the global
+environment. Display spelling alone cannot choose between them. -/
+inductive LeafAuthority where
+  | lexical
+  | signature
+  | field
+
+def resolveName {Identity : Type}
+    (authority : LeafAuthority)
+    (lexical signature field : Option Identity) : Option Identity :=
+  match authority with
+  | .lexical => lexical
+  | .signature => signature
+  | .field => field
+
+theorem lexical_binding_precedes_global
+    {Identity : Type} (localIdentity globalIdentity : Identity) :
+    resolveName .lexical (some localIdentity) (some globalIdentity) none =
+      some localIdentity := by
+  rfl
+
+theorem signature_leaf_ignores_other_namespaces
+    {Identity : Type}
+    (localIdentity signatureIdentity fieldIdentity : Identity) :
+    resolveName .signature
+      (some localIdentity) (some signatureIdentity) (some fieldIdentity) =
+        some signatureIdentity := by
+  rfl
+
+theorem field_leaf_ignores_other_namespaces
+    {Identity : Type}
+    (localIdentity signatureIdentity fieldIdentity : Identity) :
+    resolveName .field
+      (some localIdentity) (some signatureIdentity) (some fieldIdentity) =
+        some fieldIdentity := by
+  rfl
+
+theorem missing_lexical_binding_rejects
+    {Identity : Type} (globalIdentity : Identity) :
+    resolveName .lexical none (some globalIdentity) none = none := by
+  rfl
+
+def indexReachable {Identity : Type} [DecidableEq Identity]
+    (reachable : List Identity) : List Identity :=
+  reachable.eraseDups
+
+theorem reachable_signature_is_indexed
+    {Identity : Type} [DecidableEq Identity]
+    (reachable : List Identity) (identity : Identity) :
+    identity ∈ indexReachable reachable ↔ identity ∈ reachable := by
+  simp [indexReachable]
+
+def fieldIdentity (name exactType : String) : String × String :=
+  (name, exactType)
+
+theorem same_named_fields_with_distinct_exact_types_separate
+    (name leftType rightType : String)
+    (differentType : leftType ≠ rightType) :
+    fieldIdentity name leftType ≠ fieldIdentity name rightType := by
+  intro sameIdentity
+  exact differentType (Prod.mk.inj sameIdentity).2
+
+/- Imported module instances are named by their declared client aliases. The
+raw module path is provenance inside the instance, not a second alias when an
+explicit alias exists. This permits two parameterizations of one module while
+still rejecting two different instances assigned the same alias. -/
+structure ImportedModuleInstance where
+  fileName : String
+  arguments : List String
+  deriving DecidableEq
+
+def admissibleAliasInsert
+    (entries : List (String × ImportedModuleInstance))
+    (alias : String)
+    (targetInstance : ImportedModuleInstance) : Prop :=
+  ∀ entry ∈ entries, entry.1 = alias → entry.2 = targetInstance
+
+theorem distinct_declared_aliases_separate_module_instances
+    (leftAlias rightAlias : String)
+    (left right : ImportedModuleInstance)
+    (differentAlias : leftAlias ≠ rightAlias) :
+    admissibleAliasInsert [(leftAlias, left)] rightAlias right := by
+  intro entry member sameAlias
+  have entryIdentity : entry = (leftAlias, left) := by
+    simpa using member
+  subst entry
+  exact False.elim (differentAlias sameAlias)
+
+theorem same_alias_distinct_module_instances_reject
+    (alias : String)
+    (left right : ImportedModuleInstance)
+    (differentInstance : left ≠ right) :
+    ¬ admissibleAliasInsert [(alias, left)] alias right := by
+  intro admissible
+  have sameInstance := admissible (alias, left) (by simp) rfl
+  exact differentInstance sameInstance
 
 end PrenexAciScheduling

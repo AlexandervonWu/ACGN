@@ -1025,3 +1025,94 @@ theory-certificate `445`, standalone verifier `179`, writer `109`, mutation
 newly explicit GC-F108 authority boundary, keep the result `INCOMPLETE`. This
 is dirty-tree development evidence whose log entry postdates the input
 manifest.
+
+## Development Run AJ: Parser-Authoritative Leaf Resolution
+
+Run AJ follows the publication-smoke counterexample recorded as GC-F109.
+Resolved parser variable leaves now use lexical authority only; resolved
+signature and field leaves use global authority only. The bounded regression
+distinguishes a local named `Trash` from the signature while retaining explicit
+`this/Trash` and `@x` references. Dedicated signature and exact-typed field
+namespaces also preserve signature/field collisions and overloaded fields.
+
+- Evidence directory: `/tmp/acgn-section3-release-post-shadow-fix-v6`
+- Outcome: `INCOMPLETE`
+- Executed steps: 58
+- Failed executable steps: 0
+- Open traceability diagnostics: 182
+- Input-manifest SHA-256:
+  `6b5a404e40d22366d92d55ecc6d968e3d3786e0948cb16c1c5e2b3cd65018df5`
+- Output-manifest SHA-256:
+  `0a7500e0b70a6fbe62a84ace0cf3782da6d4624ea53682ee478abe26149b6299`
+- Step-results SHA-256:
+  `999478aac067e7830cfdc17ad6a225b5e56a8833b3e51aad52031f77b70ff09a`
+- Summary SHA-256:
+  `c1e3d6b0fd5ac89df9890d6abc9b4771bf84385376f4aacda30d639c60ec6743`
+- Traceability-report SHA-256:
+  `2ea5f26bfdae15b543925044fb3cbf3b416552b5c00a53b94a0908d7f5d8ad48`
+
+All 58 executable steps passed, including the parser-backed Fast rewrite IR
+and certified-observation controls and all mapped Lean files. The unchanged
+182 explicit open obligations keep the correct result `INCOMPLETE`. This is
+dirty-tree development evidence whose log entry postdates the input manifest.
+
+## Development Run AK: Imported Module Instance Identity
+
+Run AK follows the GC-F110 adversarial counterexample. Explicit aliases now
+own client lookup for parameterized module instances, so two instances of
+`util/ordering` no longer collide on the shared provenance filename. Distinct
+instances assigned one declared alias still reject.
+
+- Evidence directory: `/tmp/acgn-section3-release-post-import-fix-v8`
+- Outcome: `INCOMPLETE`
+- Executed steps: 58
+- Failed executable steps: 0
+- Open traceability diagnostics: 182
+- Input-manifest SHA-256:
+  `62bfc1500330677fd9f7f474b55d61c34906cebd44b71b620f081fd8fd4d052c`
+- Output-manifest SHA-256:
+  `91302f88c10dad76a52c4a2c7ce2abf9949cc7ec228a59a03b91fe2eed6dfc94`
+- Step-results SHA-256:
+  `999478aac067e7830cfdc17ad6a225b5e56a8833b3e51aad52031f77b70ff09a`
+- Summary SHA-256:
+  `57acdb1e6bbb33c5c8b0675812941aadc1447466073d03fe5ce07c38c7e886d1`
+- Traceability-report SHA-256:
+  `2ea5f26bfdae15b543925044fb3cbf3b416552b5c00a53b94a0908d7f5d8ad48`
+
+All 58 executable steps passed. `CallExtractionRegressionTest` now passes 150
+checks, including both type-argument-qualified imported identities, and every
+mapped Lean file compiles. The 182 explicit open obligations keep the correct
+result `INCOMPLETE`. This is dirty-tree development evidence whose log entry
+postdates the input manifest.
+
+## Development Run AL: Lexical Coordinates And Signature Arity
+
+Run AL follows the GC-F111 through GC-F113 adversarial counterexamples.
+Parser-created variable nodes now use the presentation-independent lexical
+coordinate `(scope id, slot)`; nested lets carry separate lexical identities;
+and local signature declarations replace provisional leaf arity with their
+field-declaration-group count plus `END`.
+
+- Evidence directory:
+  `/tmp/acgn-section3-release-final-cleanup-v12`
+- Outcome: `INCOMPLETE`
+- Executed steps: 58
+- Failed executable steps: 0
+- Open traceability diagnostics: 182
+- Input-manifest SHA-256:
+  `52dcf5c941dc0e74a324b4719d4c6cd84e45caa8fb96d277a3f56e9793561b0e`
+- Output-manifest SHA-256:
+  `a24aafa27545294179bc54d03cac2a02e621d57e3d4b4d46acae38e3d22f4c45`
+- Step-results SHA-256:
+  `999478aac067e7830cfdc17ad6a225b5e56a8833b3e51aad52031f77b70ff09a`
+- Summary SHA-256:
+  `330385d8fed362d798d79837d608c22e3eda2ca15d8e564bdc18b280875f6f8f`
+- Traceability-report SHA-256:
+  `2ea5f26bfdae15b543925044fb3cbf3b416552b5c00a53b94a0908d7f5d8ad48`
+
+All 58 executable steps passed. The parser regression retains nested
+quantifier, nested-let, delimiter-collision, imported-namespace, overloaded
+field, and signature-arity witnesses, and every mapped Lean file compiles.
+The 182 explicit open obligations keep the correct result `INCOMPLETE`. This
+is dirty-tree development evidence whose log entry postdates the input
+manifest.
