@@ -259,3 +259,700 @@ only the reproduced counterexample; it does not convert either review into a
   injectivity, subtree, resource, checked-total, assignment-overflow, and
   bound/free-direction branches have permanent tests. A fresh review remains
   required because all of these are later bytes.
+
+## P0 Subtype JOIN Module-Authority Ballot 1
+
+- Verdict: `FAIL`; the ballot was invalidated on its first completed review.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Decisive reviewer: `01a0254b-8680-7b31-9c4f-d417d692650c`, formal
+  correspondence scope.
+- Invalidated running reviewers:
+  `01a0254a-ed54-7c20-b2b6-e958b8d59a0c` (producer authority),
+  `01a0254b-28cb-7951-817b-5fd364cac45f` (Java chain semantics),
+  `01a0254b-4ad1-7c60-ac78-d8b12f2fc6ab` (wire/verifier), and
+  `01a0254b-a866-7fc1-8b82-8a5ab86e0ae9` (integration/documentation).
+- Decisive findings: the Lean fold admitted unary chains, ignored the
+  unary-interior JOIN guard, did not consume parser authority, assumed its
+  encoded result, and did not model schema-v9 standalone outcomes.
+- Additional local falsification before replacement review: object IDs were
+  not paired with nominal labels; nullary JOIN output was admitted; and an
+  arbitrary unchecked `ChainIndex` could be wrapped as certified.
+- Moving-byte repair: producer evidence now binds module identity-to-label
+  pairs and positioned parent edges; executable producer and structural folds
+  enforce Java's arity, guard, type, result, and evidence constraints; equality
+  authority requires a checked fold; schema v8 rejects and schema-v9 exact,
+  malformed, and nonexact outcomes are explicit. These later bytes require a
+  wholly fresh five-reviewer ballot.
+
+## P0 Subtype JOIN Module-Authority Ballot 2
+
+- Verdict: `FAIL`; the replacement ballot was invalidated on its first
+  completed review.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Decisive reviewer: `01a02561-dda7-7111-8535-c711a393d488`, formal
+  correspondence scope.
+- Invalidated running reviewers:
+  `01a02561-597c-7d00-a4fb-7bad7017805f` (producer authority),
+  `01a02561-8229-7be2-95db-f7690fcc8498` (Java chain semantics),
+  `01a02561-b0ca-7341-9a00-b79d5b08457f` (wire/verifier), and
+  `01a02562-12f1-76e0-b2bc-e5adb4545c5e` (integration/documentation).
+- Reviewed evidence: `/tmp/acgn-subtype-section3-final6`, input manifest
+  `8171a4a8ff17df4b9c1e6925757b3bbf31fee5bbd7caf09a4b9d0f1535cb1733`.
+- Decisive findings: the finite exact-chain outcome ignored the fixed theory
+  digest; object IDs were not injective; source positions were self-supplied
+  flags; record replay assumed equality; and a slice-level result was named as
+  though it established whole-bundle verification.
+- Moving-byte repair: unique module object identities and concrete positioned
+  parent declarations are now part of the executable snapshot; path admission
+  replays those ledgers; the exact v5 version/digest are checked; outcome names
+  are chain-slice-specific; and replay compares each committed field. The
+  finite witness and Java/parser refinement remain openly partial. A third
+  wholly fresh ballot is required.
+
+## P0 Subtype JOIN Formal Preflight 3
+
+- Verdict: `FAIL`; this was a token-conserving preflight and was never counted
+  as one of the required five ballot reviews.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewer: `01a02575-9817-7193-ba91-8de0580ec925`.
+- Reviewed evidence: `/tmp/acgn-subtype-section3-final7`.
+- Decisive findings: the formal parent ledger lacked a global acyclicity check,
+  and one variadic JOIN could consume a different authority snapshot at each
+  boundary.
+- Moving-byte repair: snapshot validation now checks every module object's
+  functional parent chain with bounded fuel; the producer JOIN fold requires
+  one common authority snapshot. Concrete two-node-cycle and mixed-module
+  three-operand witnesses reject. Another preflight is required before the
+  five-reviewer ballot.
+
+## P0 Subtype JOIN Formal Preflight 4
+
+- Verdict: `PASS` for the bounded formal slice; this preflight does not count
+  toward the required five-reviewer ballot.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewer: `01a02587-84b5-7900-aeeb-38f8e410e005`.
+- Reviewed evidence: `/tmp/acgn-subtype-section3-final8`.
+- The reviewer found no bounded counterexample after independently checking
+  module identity uniqueness/ownership, positioned functional acyclic parent
+  declarations, identity-to-label paths, one authority snapshot per JOIN,
+  fold guards/results, fixed v5 metadata, field commitment replay, and
+  slice-local exact/nonexact/schema outcomes.
+- General parser/JVM/SHA-256/wire-parser refinement remained explicitly outside
+  this preflight and remains open in the claim catalog.
+
+## P0 Subtype JOIN Module-Authority Ballot 3
+
+- Verdict: `FAIL`; one finding invalidated the complete ballot, and the other
+  completed findings are retained rather than discarded.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewed evidence: `/tmp/acgn-subtype-section3-final9`.
+- Producer-provenance reviewer:
+  `01a0258c-ee6e-7fc0-9c02-2d124eecb7f3`.
+  It found that legal `sig B { f: seq A }` types were rejected because Alloy's
+  built-in `seq/Int -> Int` edge has no user-source filename.
+- Java-semantics reviewer:
+  `01a0258d-0f9e-76d0-a520-68e457257db8`.
+  It found that separately parsed modules with identical labels and ancestry
+  could be mixed after module identity was reduced to a Boolean.
+- Formal reviewer:
+  `01a0258d-4ccc-7ec1-8ecf-f172d0f82380`.
+  It found that `{ serializedAuthority with live := true }` reconstructed the
+  former Boolean authority in Lean.
+- Interrupted after invalidation to conserve the user's review budget:
+  `01a0258d-2f93-70c0-89d4-ebe298e1efbf` and
+  `01a0258d-6a73-7681-bc62-e69bd8f83323`.
+- Moving-byte repair: Java admits only the exact `Sig.SEQIDX -> Sig.SIGINT`
+  identity edge as built-in, carries a transient `CompModule` identity through
+  proof evidence, requires every present variadic-leaf capability to agree,
+  and requires both nonexact boundary endpoints to share it. Lean replaces the
+  Boolean with an immutable-snapshot-indexed capability and a distinct
+  snapshot-only serialization state. A wholly fresh ballot is required.
+
+## Correlated DAG Staged Review: Invalidated Luna Round 1
+
+- Verdict: `FAIL`; both completed Luna reviews invalidated the snapshot.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a034d4-5550-75f1-9ea8-93f8efc0994f` and
+  `01a034d4-9a9d-72e3-8b5e-7f281bae6744`.
+- Decisive bookkeeping findings: the audit files reused `GC-F58` and
+  `A2-F25` for distinct incidents.
+- Decisive producer finding: binary DAG combination checked module identity
+  but did not explicitly validate the merged hierarchy before JOIN could
+  consume both contradictory boundary columns.
+- Scope finding: the standalone Lean file is a declared finite falsification
+  model and not a proof of arbitrary parser-to-Java refinement. The claim
+  matrix already records that boundary as `PARTIAL`; a parser-backed subset
+  signature regression was added to strengthen, not overstate, conformance.
+- Moving-byte repair: audit IDs are unique; merged hierarchy consistency is
+  checked before pair decisions; a malformed internal-ledger witness rejects;
+  and subset versus primitive-extension parser behavior has an executable
+  regression. The full bounded Java suite, both dependent Lean modules, and
+  Development Run I pass their executable checks. A fresh Luna pair must
+  restart the staged review.
+
+## Correlated DAG Staged Review: Invalidated Luna Round 2
+
+- Verdict: `FAIL`; both completed Luna reviews invalidated staged tree
+  `a9ee8195eeca8bc1274d0ac49b1fad1c617de5d7`.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a034ed-8ce7-77e2-9537-888ad1e5b0d3` and
+  `01a034ed-b907-7281-baf4-c4a88d962245`.
+- Semantic findings: direct DAG JOIN accepted exact `univ` overlap, and the
+  public column constructor accepted non-Alloy atomic graph symbols. Both
+  states disagreed with the standalone verifier's closed vocabulary.
+- Reproducibility findings: the prose claimed pinned Lean 4.33.0 without a
+  repository toolchain pin, and four Phase 6 focused test counts were stale.
+- Moving-byte repair: dependent chain combination and direct boundary replay
+  reject explicit `univ`; dependent columns admit only `Int` or nonempty
+  `AlloySig:*`; a root `lean-toolchain` selects 4.33.0; the Lean model proves
+  fail-closed certified JOIN/ARROW witnesses; and current test counts are
+  synchronized. A fresh Luna pair must restart the staged review.
+
+## Correlated DAG Staged Review: Aborted Luna Round 3
+
+- Verdict: `ABORTED BEFORE DECISION`; local preflight invalidated staged tree
+  `1a6bf13dcd96dc1fce4c0027b4b679d08947115d` while both fresh Luna reviewers
+  were still running.
+- Reviewers: `01a03505-435e-7cf1-beb4-856167476926` and
+  `01a03505-8539-77e1-8615-961ed3ec3212`.
+- Decisive local counterexample: pairwise DAG folding could consume module A's
+  last exact boundary before module B entered a later pair. The scalar-column
+  fold already performed the required complete-input preflight; the DAG fold
+  did not.
+- Moving-byte repair: all original correlated alternatives are now checked for
+  one live module and one consistent acyclic hierarchy before the first fold
+  step. A fresh review pair is mandatory.
+
+## Correlated DAG Staged Review: Aborted Luna Round 4
+
+- Verdict: `ABORTED BEFORE DECISION`; local formal preflight invalidated
+  immutable review commit `9b83667e010350773effd1995863d1a0cb0ad53e`.
+- Reviewers: `01a0350a-3d64-7443-8154-62ccf6cb0a94` and
+  `01a0350a-6452-7c92-abca-a45da90d0429`.
+- Decisive mismatch: Java direct boundary derivation rejected explicit `univ`,
+  but Lean's raw `.univ/.univ` boundary remained exact; only the whole-family
+  certified wrapper rejected it.
+- Moving-byte repair: explicit `univ` makes the raw Lean boundary undefined,
+  matching Java and verifier behavior. A fresh pair must review later bytes.
+
+## Correlated DAG Semantic Correction After Round 4
+
+- Verdict: `PRIOR REPAIR INVALIDATED`; this is not a review PASS.
+- The earlier rounds correctly detected cross-layer disagreement, but their
+  proposed invariant was wrong: they conflated an explicit parser-provided
+  `univ` relation column with missing or unresolved type information.
+- Decisive counterexamples: for `trans : A -> B -> C`, both associations of
+  `(x.trans).univ` and `(univ.trans).x` are legal and have the same relational
+  denotation. The concrete endpoint's authenticated path terminates at `univ`;
+  an exact `univ/univ` boundary needs no invented carrier.
+- Moving-byte repair: dependent theory v8 admits explicit `univ` through exact
+  identity or an authenticated subtype path, removes special fallback behavior
+  from producer and verifier, and retains failure for absent typing. JOIN still
+  refuses reassociation when an interior operand is unary, which is the bounded
+  non-associative counterexample.
+- Evidence before the restarted ballot: 83 focused dependent-chain checks and
+  504 parser-pipeline checks pass; both standalone Lean files compile. A fresh
+  Luna pair must review the corrected immutable snapshot before Terra or Sol.
+
+## Correlated DAG Explicit-Univ Luna Round 5
+
+- Verdict: `FAIL`; immutable staged tree
+  `7de9f3114afc439920c761af9e7c0e3b3d58ff5d` is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a03536-61c0-7b93-ab38-9d73d585cc11` and
+  `01a03536-5b01-7bd0-9c3f-263bfe851105`.
+- Patch-local findings: the Phase A2 report retained the old 99-check/v6
+  evidence text, and the standalone correlated-family model did not expose a
+  guarded variadic JOIN certification function. Both are repaired on later
+  moving bytes; a new immutable review is required.
+- Rejected counterexample: the proposed `((A.(A -> B)).B)` nullary JOIN is
+  rejected by the Alloy parser as an illegal relational join. It therefore
+  does not refute the producer's supported well-typed expression domain.
+- Already-declared limitation: independent reconstruction of the Fast Rewrite
+  source-content scalar is already `PARTIAL` under A2-12; the review found no
+  new producer/verifier acceptance route.
+- Newly explicit release blockers: the protected bounded-assurance runner
+  omits root `lean-toolchain` bytes from its input manifest, and the protected
+  verifier build script emits timestamp-dependent JAR bytes. These are
+  recorded as GC-F65 and GC-F71 and are not silently modified in this phase.
+- Semantic result: neither reviewer found a concrete counterexample to Java
+  dependent-DAG correlation, ordered duplicate-preserving JOIN/ARROW `Seq`,
+  explicit parser-`univ` endpoint handling, or producer/verifier v8 identity.
+  The gate nevertheless remains failed because unanimity is mandatory.
+
+## Correlated DAG All-Disjoint Luna Round 6
+
+- Verdict: `FAIL`; immutable staged tree
+  `a25d0a18ad1e1a690b435320bb4e8082cb10f1d4` is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a03547-f4d0-7083-9c4e-e6a10b783594` and
+  `01a03547-fb51-7f10-bee6-eff7809ecf3a`.
+- Decisive semantic finding: the parser-valid binary JOIN
+  `(A->B).(C->D)` produced a complete one-by-one disjoint decision matrix but
+  then threw because its normalized alternative list was empty. Binary JOIN
+  needs no reassociation, and its result has positive arity two, so fallback
+  was semantically unjustified.
+- Documentation findings: two focused reports still named pre-DAG mutation
+  counts, and current prose did not separate an authenticated empty result from
+  unresolved typing.
+- Moving-byte repair: dependent theory v9 introduces a typed empty family with
+  positive arity and zero alternatives. Java, wire replay, and standalone Lean
+  preserve its arity, complete disjoint matrix, and ordered source `Seq`;
+  mutations of its arity, carrier, and common ancestor reject. A computed
+  nullary relation remains unsupported because Alloy has no nullary relation
+  carrier. The focused counts and claims are synchronized on later bytes.
+- Gate state: `FAIL` remains binding for this snapshot. A fresh immutable Luna
+  pair must review the repaired bytes before any Terra or Sol round begins.
+
+## Correlated DAG Typed-Empty Luna Round 7
+
+- Verdict: `FAIL`; immutable staged tree
+  `533f3e68c1ff615ec33607ab08b762ceb61d2e47` is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a03571-9ba4-7321-bfae-eb3de0e3eb2d` and
+  `01a03571-a576-7661-ad72-1b88ca1c5b32`.
+- Producer/verifier mismatch: a typed-empty arity-two interior JOIN operand
+  passed producer admission, while verifier replay called the nonempty product
+  decoder during its interior guard and rejected it.
+- Producer proof bypass: an empty parser result returned before a source
+  `PLUS` or `INTERSECT` node recursively derived its operand DAG and compared
+  that derivation with the parser type.
+- Formal authority gap: the first correlated-family wrapper checked a common
+  module identity but did not bind each exact column to an object/nominal
+  ancestry path. One reviewer compiled a forged `univ` witness using an
+  unrelated Product path. Pure family operations and authority therefore were
+  not yet one executable model.
+- Documentation finding: current Phase 6 prose still reported 364 theory
+  certificate checks while the immutable assurance run executed 398.
+- Moving-byte repair: verifier and producer now share the relation-arity guard;
+  empty set operators recurse before result acceptance; an exact empty-interior
+  certificate and parser-backed empty UNION/INTERSECTION fixtures are
+  permanent; and the formal correlated DAG carries per-column parser paths
+  through executable ARROW/JOIN matrices. Current focused counts are
+  synchronized. A fresh immutable Luna pair is mandatory.
+
+## Correlated DAG Authority Luna Round 8
+
+- Verdict: `FAIL`; immutable staged tree
+  `d11fcae129afec4fa530001c7a8589dc21d98281` is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a0358e-a6ef-7c61-997b-78995145f7e6` and
+  `01a0358e-a711-76a3-b3b6-02a6e721dad1`.
+- Decisive Java counterexample: direct calls to all three variadic fold APIs
+  bypassed the JOIN interior-arity guard. `[A->B, B, A->A]` therefore
+  returned a flattened relation although the application constructor and Lean
+  certified chain rejected it.
+- Decisive formal counterexamples: the older parser-authority abstraction
+  discarded absent authorities before comparing modules, while the standalone
+  public `TypedFamily` JOIN accepted a forged arity-zero empty operand and
+  wrong-width products.
+- Documentation findings: current prose named 398 theory-certificate checks
+  although the snapshot ran 405, and the wire grammar required a nonempty
+  product list despite typed-empty DAGs.
+- Qualification of one proposed repair: requiring a parser-module token on
+  every Java exact column is too strong. Quantified primitive-set slots carry
+  exact `PRIMITIVE_SET_SINGLETON` leaf proofs and legitimately have no subtype
+  ancestry. A2-27 now states the two authority cases separately; parser-derived
+  nontrivial ancestry still requires one live module plus object and nominal
+  paths.
+- Explicit unresolved boundary: wire replay checks the derived leaf DAG but
+  does not independently replay raw UNION/INTERSECTION source children.
+  Production paths carrying parser ancestry remain `UNCHECKABLE` without the
+  separately pinned hierarchy authority, so this is not a route to a false
+  `VERIFIED` result; it remains release-blocking for any stronger raw-source
+  replay claim under GC-F79.
+- Moving-byte repair: all variadic Java entry points now share the arity guard;
+  standalone typed-family operations validate positive arity and width; the
+  parser-correlated Lean fold rejects absent authorities; the grammar and
+  current counts are synchronized. A fresh immutable Luna pair is mandatory.
+
+## Correlated DAG Variadic Luna Round 9
+
+- Verdict: `FAIL`; immutable staged tree
+  `ee9b73aa2e3a3560fd8156c147207b241a4e83fc` is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a035b7-2977-7843-b1ce-35c268cd2524` and
+  `01a035b7-2953-7642-a5bd-8038f8dea9c2`.
+- Decisive verifier counterexample: an exact singleton relation headed by the
+  generic nullary constructor `Bogus` passed standalone atomic-column replay.
+  Its singleton ancestry did not trigger the missing hierarchy authority, so
+  the forged vocabulary could reach `VERIFIED` although producer construction
+  rejects it.
+- Formal boundary counterexample: `familyJoinFold` returned its current value
+  without validating the empty-rest base case. Direct raw calls therefore
+  admitted a forged arity-zero or wrong-width family, although the certified
+  wrapper validated all source operands.
+- Claim-boundary correction: the scalar `foldColumns` helper has no arity field
+  and therefore cannot encode a positive-arity empty family. Production,
+  graph-type, and DAG paths retain typed-empty arity; the scalar compatibility
+  path is now documented only for nonempty single products.
+- Control findings: both reviewers confirmed the v10 digest, current test
+  counts, typed-empty grammar, and GC-F79's `UNCHECKABLE` fence for nontrivial
+  parser ancestry. GC-F65, GC-F71, GC-F79, and the 182 traceability diagnostics
+  remain explicit blockers rather than repaired claims.
+- Moving-byte repair: verifier atomic columns now exactly mirror the producer
+  vocabulary and have direct negative tests; the Lean fold validates its base
+  case; the scalar-family boundary is stated precisely. A fresh immutable Luna
+  pair is mandatory.
+
+## Correlated DAG Atomic-Column Luna Round 10
+
+- Verdict: `FAIL`; immutable staged tree
+  `5221b6f7a09270313efff35afe40bacc040bb979` is invalidated. One reviewer
+  returned `PASS`; unanimity therefore was not reached.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a035cc-3b09-7ed3-969f-557462a0521b` and
+  `01a035cc-3ae7-7220-8471-79193a53e54c`.
+- Formal guard counterexample: direct `joinFlatGuard` accepted a malformed
+  interior family whose declared arity was two but whose only product had
+  width zero. The certified wrapper's outer validation prevented a false
+  certified result, but the public helper's answer contradicted its name and
+  report wording.
+- Formal ARROW counterexample: an early helper named `certifiedFamilyArrow`
+  accepted raw product families with inconsistent widths. Its raw Cartesian
+  behavior was correct, but it carried no typed certification boundary.
+- Documentation contradiction: `FORMAT.md` still said an arity-only empty
+  relation could not participate in JOIN/ARROW evidence, while the exact
+  empty-interior fixture is intentionally verified under v10.
+- Control findings: both reviewers found no bypass of the repaired atomic
+  verifier vocabulary, Java variadic guards, typed-empty DAG arity, or GC-F79
+  nonexact `UNCHECKABLE` fence. Current counts and v10 digest agreed.
+- Moving-byte repair: the guard validates all families, the certified ARROW
+  theorem uses `typedFamilyArrow`, and format prose states the positive-arity
+  typed-empty rule. A fresh immutable Luna pair is mandatory.
+
+## Correlated DAG Typed-Family Luna Round 11
+
+- Verdict: `FAIL`; immutable staged tree
+  `c43a3fa0feab39dccddbe48d37972ba3592e3031` is invalidated. One reviewer
+  returned `PASS`; unanimity therefore was not reached.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a035d8-4ba5-71e0-bd6b-98f5a35e166a` and
+  `01a035d8-4bc9-7a22-b5d5-2907d7cacab3`.
+- Decisive producer/verifier mismatch: primitive singleton conversion accepted
+  `AlloyCarrier(AlloySig:)` and could construct the empty signature relation
+  view, while the DAG and standalone verifier reject the same carrier.
+- Control findings: the reviewers found no new bypass in the verifier atomic
+  vocabulary, typed-family operations, Java variadic guards, typed-empty DAG
+  arity, v10 identity, or GC-F79 fence.
+- Moving-byte repair: primitive conversion now requires a nonempty signature
+  identity before building a unary view, with direct conversion and leaf-proof
+  regressions. A fresh immutable Luna pair is mandatory.
+
+## Correlated DAG Atomic-Identity Luna Round 12
+
+- Verdict: `FAIL`; immutable staged tree
+  `b7225a38ef093f2f8175e99ba4f39ace8f120a52` is invalidated. Both reviewers
+  independently reconstructed the same counterexample.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`.
+- Reviewers: `01a035e5-859c-7932-9cec-5257019ada29` and
+  `01a035e5-b2b5-72c0-bcd1-a6ec5d270c8d`.
+- Decisive producer/verifier mismatch: `AlloySig: ` has a whitespace-only suffix
+  but passed prefix-length tests in primitive conversion, dependent-column
+  admission, correspondence derivation, and standalone replay.
+- Control findings: all stated focused counts, Lean modules, theory-v10 digest,
+  protected-tree boundary, and GC-F79's `UNCHECKABLE` fence agreed with the
+  snapshot.
+- Moving-byte repair: producer and verifier now require a nonblank,
+  whitespace-free signature identity through mirrored atomic-column predicates;
+  direct producer and verifier regressions retain the exact witness. A fresh
+  immutable Luna pair is mandatory.
+
+## Correlated DAG Ingress-And-Replay Luna Round 13
+
+- Verdict: `FAIL`; immutable staged tree
+  `0ab2fcc8ca08f48ebd1a45ac484378ff5079ce66` (tree
+  `511906c12c00fa8d2093a1e1583d2c9af10acc1b`) is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`, bounded by an explicit
+  review timebox.
+- Reviewers: `01a035fc-73df-7fa0-8eb0-4e906e13fae6` and
+  `01a035fc-b1d6-7da3-bf32-45a09c9821bc`.
+- Decisive replay mismatch: producer-legal `seq/Int -> Int -> univ` ancestry
+  was serialized, but verifier replay's redundant constructor-only check
+  rejected its `Int` step.
+- Decisive fallback bypass: all leaf `IllegalArgumentException` values were
+  treated as unsupported flattening, allowing malformed public exact types to
+  fall back to ordinary binary syntax. Binding type normalization could erase
+  whitespace before the certification boundary observed it.
+- Decisive public-API mismatch: the exact leaf-rule helper admitted
+  `Rel(Bogus)` before later DAG validation rejected the same carrier.
+- Moving-byte repair: exact-type and binding ingress reject whitespace-bearing
+  identities; exact leaf proofs validate their full DAG family; only explicit
+  unsupported markers authorize fallback; verifier replay admits `Int` in the
+  closed atomic ancestry vocabulary and retains the hierarchy fence. The
+  sequence witness now crosses producer export and verifier replay in a
+  permanent fixture. A fresh immutable Luna pair is mandatory.
+
+## Correlated DAG Converter-Ingress Luna Round 14
+
+- Verdict: `FAIL`; immutable staged tree
+  `2e77452d5b45bc758ce5075a238698108a393a26` (tree
+  `225eafcc0ab4ed3c93bfddaec74fa44851be0025`) is invalidated.
+- Reviewer model and effort: `gpt-5.6-luna`, `max`, bounded by an explicit
+  review timebox.
+- Reviewers: `01a03616-8cc5-79c1-b6f0-e5e3b88bfe3e` and
+  `01a03616-d8f6-7ff2-888e-b1360c4310d1`.
+- New finding: package-level producer column converters still trimmed
+  `" S "` into `AlloySig:S`, violating fail-closed identity admission on an
+  alternate ingress.
+- Control findings: typed fallback routing, exact leaf/DAG parity, sequence
+  replay, theory identity, current focused counts, and protected paths agreed.
+  One reviewer returned `FAIL` solely because GC-F79 and the 182 catalogued
+  obligations remain open. Those are acknowledged whole-artifact blockers,
+  not newly repaired or silently waived by this focused ballot.
+- Moving-byte repair: both package-level conversion helpers reject whitespace
+  before constructing an Alloy column, with a direct regression. A fresh
+  immutable Luna pair is mandatory; whole-artifact status remains
+  `INCOMPLETE` regardless of the focused result.
+
+## Correlated DAG Scalar-Identity Review Ladder Round 15
+
+- Verdict: `FAIL` at the Terra tier; immutable staged commit
+  `e9e7e743057df5e172c6abd001f477bcc01bc668` (tree
+  `8fdad5838daae5671fad0817eaa20b18b36565d3`) is invalidated.
+- Luna tier: two independent `gpt-5.6-luna` maximum-effort reviewers returned
+  scoped `PASS` for the dependent-DAG moving bytes.
+- Terra tier: one reviewer returned `PASS`; the other found that the
+  whitespace policy still admitted C0 controls, Unicode format characters,
+  private-use and unassigned code points, and unpaired UTF-16 surrogates.
+  Unanimity was therefore not reached and no Sol tier was started.
+- Decisive serialization witness: an unpaired surrogate admitted as an Alloy
+  identity is not stable under UTF-8 certificate encoding.
+- Moving-byte repair: producer and verifier now mirror a scalar-category
+  admission rule at every identity ingress and retain direct NUL, `U+200B`,
+  and unpaired `U+D800` regressions. A fresh ladder is mandatory.
+- Whole-artifact blockers GC-F65, GC-F71, GC-F79, and the 182 traceability
+  diagnostics remain open and keep the bounded assurance outcome
+  `INCOMPLETE`; this focused ladder does not waive them.
+
+## Correlated DAG Canonical-UTF-8 Luna Round 16
+
+- Verdict: unanimous `FAIL`; immutable staged commit
+  `d8e4f539bce3a17870169e3003a6fefcfb66a762` (tree
+  `1d37a8cab6182b123511affa3cdcef66062c51ef`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort.
+- Decisive shared counterexample: polymorphic operator keys decoded Base64
+  bytes with replacement semantics. Malformed UTF-8 such as `ED A0 80` could
+  become the same Java `U+FFFD` string as valid `EF BF BD` before digest and
+  stable-key checks.
+- Additional producer counterexample: canonical wire encoding used
+  replacement semantics for an unpaired UTF-16 surrogate, so an in-memory
+  identity could change before serialization.
+- Coverage finding: the direct category matrix omitted private-use,
+  unassigned, and valid supplementary-plane identities.
+- Moving-byte repair: producer and verifier canonical encoders/decoders now
+  report malformed input, polymorphic-key replay uses the strict decoder, and
+  permanent tests cover all three missing categories. A fresh Luna pair is
+  mandatory.
+
+## Correlated DAG In-Memory Identity Luna Round 17
+
+- Verdict: unanimous `FAIL`; immutable staged commit
+  `3f9ac238d7640d595c2c556a7777a19e3a1f0f50` (tree
+  `f708d97527a5b5762aaf845c932a42f64319780a`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort.
+- Exact-type finding: verifier resolution checked a constructor symbol only
+  with `trim().isEmpty()`. A valid-UTF-8 exact-type record carrying a format,
+  control, private-use, or unassigned `AlloySig:` identity could therefore
+  enter verifier state although producer exact types reject it.
+- In-memory finding: `Wire.Node` and public `Bundle.parse(Wire.Node)` could
+  receive a lone surrogate without first crossing the strict decoder;
+  `SigSymbol` was another public producer identity ingress with no scalar
+  policy.
+- Moving-byte repair: all verifier exact-type symbols use the scalar policy,
+  every wire node validates well-formed Unicode at construction, and
+  `SigSymbol` reuses the exact Alloy identity guard. Permanent category and
+  supplementary-plane tests cover each path. A fresh Luna pair is mandatory.
+
+## Correlated DAG Producer-Parity Luna Round 18
+
+- Verdict: unanimous `FAIL`; immutable staged commit
+  `7c3b988566c66e5adc90cd8c294f04ce00071fa1` (tree
+  `ee9a512853188297d79d7bec14cb9ba455836db1`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort.
+- Generic-type finding: public `GraphType` admitted format, private-use, and
+  unassigned symbols that writer exact-type emission serialized, while the
+  verifier rejected the resulting record.
+- Normalization finding: public `ExactAlloyType.unaryRelation("this/A")`
+  retained `this/`, unlike parser ingestion, and therefore represented the
+  same Alloy signature with a different dependent identity.
+- Specification finding: outer wire strings are strict UTF-8 byte-length
+  framed, while embedded structural keys intentionally use Java/Unicode
+  UTF-16 code-unit lengths. The encoding remained injective and mirrored, but
+  the review scope did not state the inner unit.
+- Moving-byte repair: graph symbols and writer exact types enforce the common
+  identity policy, every exact column/ancestry normalizes `this/`, and the
+  nested length domains are explicit in `FORMAT.md`. A fresh Luna pair is
+  mandatory.
+
+## Correlated DAG Prefix-Alias Luna Round 19
+
+- Verdict: `ABORTED BEFORE DECISION`; immutable staged commit
+  `f731ce70bed762fb82448dbe9eafdd050ba76f39` (tree
+  `6dbb4f5728a224fac3aef8111c2f7440c96e5230`) is invalidated by local
+  preflight.
+- Reviewers: two independent `gpt-5.6-luna` maximum-effort agents were stopped
+  as soon as the local counterexample was established; neither vote is reused.
+- Counterexample: `ExactAlloyType` normalized `this/A`, but direct
+  `SigSymbol("this/A")`, package column conversion, and
+  `GraphType.constructor("AlloySig:this/A")` retained distinct spellings.
+- Moving-byte repair: every producer Alloy identity constructor normalizes one
+  prefix, rejects empty/repeated prefixes, and verifier wire replay rejects
+  noncanonical spellings. A wholly fresh Luna pair is mandatory.
+
+## Correlated DAG Polymorphic-Identity Luna Round 20
+
+- Verdict: `FAIL`; immutable staged commit
+  `8db1a455b14a642785fdaae80d4c5a757893d248` (tree
+  `8011fa01c6fc3e2f5a94122d80e0162c1fb48734`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort. One returned the decisive finding; the other exhausted the
+  bounded timebox without a verdict, which is not a pass.
+- Counterexample: an otherwise valid polymorphic declaration could carry a
+  control-character phantom type parameter. `OperatorDeclaration` admitted
+  it, and its structural key flowed into the Base64 polymorphic wire identity.
+- Moving-byte repair: operator and type-parameter names now use the common
+  visible-identity predicate, with category-complete direct tests. A wholly
+  fresh Luna pair is mandatory.
+
+## Correlated DAG Verifier-Parameter Luna Round 21
+
+- Verdict: `FAIL`; immutable staged commit
+  `101344cefee8ce227df262ec080acaec30942988` (tree
+  `63268c1533a68d3f78a396d932fe66dfe231a8aa`) is invalidated.
+- The first broad two-reviewer Luna attempt exhausted its bounded timebox
+  without returning verdicts and was closed as non-passing. A replacement
+  focused pair reviewed the same bytes; one returned the decisive failure and
+  the other exhausted the replacement timebox without a verdict.
+- Counterexample: standalone polymorphic-key replay accepted producer-forbidden
+  nonbreaking-space, control, format, private-use, or unassigned type-parameter
+  names through `requireCanonicalText`. Operator semantic identities had the
+  same broader model ingress.
+- Moving-byte repair: both verifier paths use an independent visible-identity
+  predicate with direct category and supplementary-plane probes. A wholly
+  fresh Luna pair is mandatory.
+
+## Correlated DAG Type-Reference Namespace Luna Round 22
+
+- Verdict: `FAIL`; immutable staged commit
+  `a9e298463e5986536bdef685c2b2c486b860e245` (tree
+  `5739d08f460ea7b445915e4617aa6b164e9d81d8`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort. One returned scoped `PASS`; the other supplied the decisive
+  counterexample, so unanimity was not reached.
+- Counterexample: the test-only exact-type reference fallback searched content
+  IDs before displays. A constructor display equal to the Boolean content ID
+  could therefore denote two distinct types and resolve as the Boolean type.
+- Moving-byte repair: exact-type parsing now proves that IDs and displays are
+  globally disjoint across distinct types before resolving any reference. A
+  publication-profile fixture retains the minimum collision. A wholly fresh
+  Luna pair is mandatory; whole-artifact status remains `INCOMPLETE`.
+
+## Correlated DAG CALL-Identity Luna Round 23
+
+- Verdict: `FAIL`; immutable staged commit
+  `5eac20736543a3a098c41e0ddb53de335680bdda` (tree
+  `12fac6af79cdf1e107f48be892b97a19c5a161d9`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort. One returned scoped `PASS`; the other supplied the decisive
+  counterexample, so unanimity was not reached.
+- Counterexample: `CallMetadata.requireText` admitted the valid-UTF-8 callee
+  `m/f\u0000X`, while later typed-operator construction or standalone replay
+  rejected the same identity.
+- Moving-byte repair: CALL symbols, normalized metadata, occurrence
+  certificates, and standalone replay now share the visible-identity category
+  boundary. Eleven direct checks cover the minimum witness and all excluded
+  categories. A wholly fresh Luna pair is mandatory.
+
+## Correlated DAG Authority And Completeness Round 24
+
+- Verdict: `FAIL`; immutable staged commit
+  `196fd7e72ed6dbf9fc6bfda63a6e3f85531a1490` (tree
+  `874f22eb6489358bba4a0edc6dff3b1b4c9da482`) is invalidated.
+- Reviewer ladder: two independent `gpt-5.6-luna` maximum-effort reviewers
+  both returned scoped `PASS`, so the same snapshot advanced to two fresh
+  `gpt-5.6-terra` reviewers. Both Terra reviewers returned `FAIL`; no Sol tier
+  was started.
+- Dependent-DAG finding: recursive `PLUS`/`INTERSECT` derivation compared its
+  result with parser evidence only after erasing parser-module occurrence
+  authority. Equal labels and ancestry from a separately parsed module could
+  satisfy that weaker comparison.
+- CALL finding: occurrence rows were checked only when present. Removing the
+  CALL occurrence ledger from an otherwise valid certificate was not rejected
+  by a closed completeness invariant.
+- Moving-byte repair: dependent DAG comparison now binds exact paths and a
+  shared live parser-module capability; source construction records every CALL
+  occurrence and both artifact assembly and standalone replay require exact
+  CALL coverage. Direct Java mutations and independent Lean predicates retain
+  both counterexamples. A wholly fresh Luna pair is mandatory.
+
+## CALL Occurrence-Cardinality Luna Round 25
+
+- Verdict: unanimous `FAIL`; immutable staged commit
+  `cca0eed85805990639d584e21cfd34a241fdbb76` (tree
+  `961b6609832859bb580dc95c35c71f9b8d022cac`) is invalidated.
+- Reviewer model and effort: two independent `gpt-5.6-luna` reviewers at
+  maximum effort. Both reconstructed the same counterexample independently.
+- Counterexample: the standalone verifier compared only sets of CALL semantic
+  operator identities. The two occurrences in `f[f[a]]` use one identity, so
+  deleting either occurrence row preserved the set and passed the claimed
+  completeness check.
+- Moving-byte repair: every wire occurrence now has a distinct nullary model
+  anchor derived injectively from its complete wire key; anchor/record sets and
+  semantic operator sets are checked independently. The nested same-operator
+  fixture and one-row omission mutation are permanent, with an independent
+  Lean occurrence-anchor model. A wholly fresh Luna pair is mandatory.
+
+## CALL Anchor-Isolation Preflight Round 26
+
+- Verdict: `ABORTED BEFORE DECISION`; immutable staged commit
+  `2e7f846287bb27dbbefe768a7e611657f4664fe7` (tree
+  `91198315f6d96c0eee51bc86a7c339b56e428592`) is invalidated by local
+  preflight. Both Luna reviewers were stopped and no vote is reusable.
+- Counterexample class: occurrence markers were nullary and complete, but the
+  verifier did not yet prove they were absent from semantic terms, witnesses,
+  proofs, canonical records, and publication structure.
+- Moving-byte repair: markers now match their source CALL context/sort and
+  their content-addressed term ID must occur exactly once across the complete
+  bundle. A single bounded iterative scan checks all markers, and Lean models
+  extra-reference and context/sort substitution rejection. A wholly fresh
+  Luna pair is mandatory.
+
+## CALL Anchor-Isolation Luna Round 27
+
+- Verdict: `NON-PASSING / NO ADMISSIBLE FINDING`; immutable staged commit
+  `ccbfe7e5e0f360a55c412b5bb2ce38faa230ca7d` (tree
+  `3a4bf9ba6375363b418d63085925528c9244f1d6`) is invalidated for review-gate
+  purposes.
+- The first Luna pair exhausted the timebox without either required verdict.
+  A fresh replacement pair also exhausted the timebox and, after forced
+  termination, each returned only the bare word `FAIL` with no counterexample,
+  location, or evidence.
+- Protocol consequence: silence is not `PASS`, and an unsupported one-word
+  failure is not an actionable falsification result. No code inference or
+  repair is made from these responses. The next ballot must bind a new
+  snapshot and provide each reviewer a compact immutable diff packet so an
+  evidenced verdict can be completed inside the bound.
+
+## CALL External-Authority Luna Round 28
+
+- Verdict: unanimous `FAIL`; immutable staged commit
+  `b0da56e034b094e5b2cf412a435458fb808c8afe` (tree
+  `2e61802ec8af71d6e6ca5ec59e94617fcf674705`) is invalidated.
+- Both fresh Luna reviewers used the compact 1,027-line immutable review packet
+  `/tmp/acgn-luna-round28-review.patch` (SHA-256
+  `0335dba5dd8bf23d353f8d7bedbd6a67629833b040db418c90544500e5e950c3`)
+  and independently returned the same evidenced finding.
+- Counterexample: remove one same-operator nested CALL row together with its
+  unused marker term/operator. The remaining row/marker sets and semantic
+  operator set still match. Adding an otherwise unused same-operator CALL term
+  exposes the dual underconstrained-model form.
+- Disposition: this is not repaired with another self-authored digest. Schema
+  v10 receives neither raw Alloy source nor an externally pinned occurrence
+  commitment, so complete source-occurrence coverage is outside standalone
+  authority. Claims are narrowed to unpaired-tampering detection, GC-F108 is
+  open, and the ladder stops before Terra/Sol with overall status
+  `INCOMPLETE`.

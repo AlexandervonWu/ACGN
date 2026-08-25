@@ -7,7 +7,7 @@
 ## Status
 
 PRELIMINARY MAX-ADVERSARIAL REVIEW FAILED; THE CURRENT MOVING SNAPSHOT AWAITS
-FRESH REVIEW. The in-memory graph and schema-v8 snapshot
+FRESH REVIEW. The in-memory graph and schema-v10 snapshot
 relation represent multiple incomparable leader owners for one exact shape.
 The producer bridge now keys every retained replay and serialized shape
 identity by the complete `(owner, shape)` parent-record key. Standalone
@@ -29,14 +29,14 @@ They must not be described as end-to-end producer evidence.
   exact quiescent ownership.
 - Snapshot and structural keys retain every `(shape, owner)` pair. Each shape
   record also carries its exact canonical-to-occurrence coordinate bijection.
-- `acgncert-schema-v8` parses hash ownership as `Map<key, Set<leader>>`, orders
+- `acgncert-schema-v10` parses hash ownership as `Map<key, Set<leader>>`, orders
   records by `(key, owner)`, checks nonempty leader buckets, and reconstructs
   exact quiescent buckets from all live shape records.
 - A fresh insertion into an existing key is accepted without a union only when
   the standalone verifier computes that neither owner context admits a typed
   injection into the other.
 - `acgncert-schema-v2`, rootless-binder `acgncert-schema-v5`, provenance-
-  incomplete v6, and transition-incomplete v7 fail with
+  incomplete v6, transition-incomplete v7, and subtype-authority-incomplete v8 fail with
   `UNSUPPORTED_FORMAT_VERSION`; no historical state is silently reinterpreted.
 - Producer replay lookup, shape IDs, reverse parent-use references, dirty
   records, and unfolding references use `ParentRecordKey`, not a shape-only
@@ -47,8 +47,8 @@ They must not be described as end-to-end producer evidence.
 
 The numeric counts in the historical review paragraphs below identify the
 snapshots those reviews actually examined; they are not current-ballot results.
-On the current moving schema-v8 worktree, the protected producer/verifier
-harness passes `VerifierTest=134`, writer `95` twice, inspection `68`, and pins
+On the current moving schema-v10 worktree, the protected producer/verifier
+harness passes `VerifierTest=179`, writer `109` twice, inspection `68`, and pins
 `31`, with the export census exactly `1/2/0`. The focused producer transition
 gate passes `69` checks; six neighboring theory suites pass `4,720` additional
 checks. These are moving-worktree conformance results, not a ballot.
@@ -81,7 +81,7 @@ checks. These are moving-worktree conformance results, not a ballot.
 | P4-F11 | This report named active schema v3 although the parser then accepted exactly schema v5. | Replace the stale v3 claim; P4-F14 subsequently advances the rooted contract to v6. | Retained as historical fault provenance; the current version boundary is tested by P4-F14. |
 | P4-F12 | The ledger requested an unqualified SHA-256 injectivity theorem for owner-qualified shape IDs. | State the defensible obligation: unique canonical preimage encoding, deterministic recomputation, and fail-closed collision checking; make no mathematical hash-injectivity claim. | Arbitrary and reused ID mutations remain negative tests; the formal model proves injectivity only of the unhashed structural pair. |
 | P4-F13 | No claim-complete Phase 4 Lean/Z3 and Java/wire refinement existed. | Import and strengthen the independent finite owner/interface model, then map every remaining implementation and provenance claim before ballots. | Still open; this finding blocks Phase 4. |
-| P4-F14 | Rooted binder-occurrence identity replaced the rootless identity while producer and parser still advertised schema v5, silently changing the meaning of accepted bytes. | It was first separated as v6; CALL provenance advanced the contract to v7, and exact transition plus witness-unfold evidence advances it to v8. All earlier versions reject. | `VerifierTest` relabels a valid v8 bundle as v5, v6, and v7 and requires `UNSUPPORTED_FORMAT_VERSION`; the formal version model admits only 8. |
+| P4-F14 | Rooted binder-occurrence identity replaced the rootless identity while producer and parser still advertised schema v5, silently changing the meaning of accepted bytes. A later subtype wire extension initially repeated that error under v8. | It was first separated as v6; CALL provenance advanced the contract to v7, exact transition plus witness-unfold evidence to v8, and the explicit dependent-subtype trust boundary to v9. All earlier versions reject. | `VerifierTest` relabels a valid v9 bundle as v5, v6, v7, and v8 and requires `UNSUPPORTED_FORMAT_VERSION`; the formal version model admits only 9. |
 | P4-F15 | The bounded Lean union relation accepted an arbitrary post-union dirty queue and erased parent topology, reverse uses, revision, status, histories, and rebuild intervals. | Extend `Phase4WireConservation.lean` with exact transition frames, deterministic union/rebuild effects, parent-path and reverse-use validity, event-specific revision/status, and a closed rebuild-interval automaton. | The former arbitrary-dirty and zero-revision countermodels now evaluate false; exact union/rebuild frames and seven interval attacks compile under Lean 4.33.0. This remains a bounded contract plus Java conformance evidence, not a mechanized JVM refinement proof. |
 | P4-F16 | A compressed parent path could retain an absent intermediate e-class or contradict the current assignment forest. | Validate every primitive path endpoint against current class metadata and require every primitive step to remain within one current rooted component. | Both independent compressed-path forgeries reject and are permanent cases in `Phase4ProducerTransitionEvidenceTest`. |
 | P4-F17 | Empty parent-use and restriction buckets remained visible through getters but were omitted from the structural state key, allowing a no-op rebuild start to hide a mutation. | Reject empty retained buckets at snapshot construction so observable state and state identity have one representation. | Both hidden-ledger mutations reject before event construction. |

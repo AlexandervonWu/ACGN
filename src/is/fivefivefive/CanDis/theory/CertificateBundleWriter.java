@@ -4,6 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,12 +30,14 @@ import java.util.TreeMap;
 
 /** Deterministic producer bridge into the standalone {@code .acgncert} schema. */
 public final class CertificateBundleWriter {
-    private static final String SCHEMA_VERSION = "acgncert-schema-v8";
+    private static final String SCHEMA_VERSION = "acgncert-schema-v10";
     private static final int FORMAT_VERSION = 1;
     private static final long DEFAULT_MAX_SERIALIZED_ORBIT_CANDIDATES = 100_000L;
     private static final int DEFAULT_MAX_SERIALIZED_ORBIT_DEPTH = 512;
     private static final String POLYMORPHIC_OPERATOR_KEY_PREFIX =
             "operator/polymorphic-key-v1/";
+    private static final String CALL_OCCURRENCE_ANCHOR_PREFIX =
+            "ACGN/CALL-OCCURRENCE/";
     private static final byte[] MAGIC = new byte[] {
             'A', 'C', 'G', 'N', 'C', 'E', 'R', 'T'
     };
@@ -1630,7 +1636,7 @@ public final class CertificateBundleWriter {
                 if (!serializedContext.equals(owner.exposedSlots())) {
                     throw uncheckable(
                             "fresh shape and owner definition do not share the exact "
-                                    + "schema v8 context");
+                                    + "schema v10 context");
                 }
                 Node occurrence = embedding(TypedEmbedding.identity(serializedContext));
                 Node ownerAmbient = embedding(TypedEmbedding.identity(
@@ -2164,6 +2170,7 @@ public final class CertificateBundleWriter {
                                 StructuralKey.branch(
                                         "alloy-call-wire-ordered-arguments-v1",
                                         argumentKeys)));
+                callOccurrenceAnchor(certificate, wireKey);
                 return node(
                         "call-occurrence",
                         List.of(
@@ -2182,6 +2189,38 @@ public final class CertificateBundleWriter {
                         "A validated CALL occurrence cannot fail serialization",
                         exception);
             }
+        }
+
+        private void callOccurrenceAnchor(
+                CallOccurrenceCertificate certificate,
+                StructuralKey wireKey)
+                throws IOException {
+            String markerIdentity = CALL_OCCURRENCE_ANCHOR_PREFIX
+                    + Base64.getUrlEncoder().withoutPadding().encodeToString(
+                            encodeCanonicalUtf8(wireKey.stableString()));
+            String markerOperatorId = "operator/" + contentId(node(
+                    "operator-id", List.of(markerIdentity), List.of()));
+            String outputType = type(certificate.sourceEndpoint().outputType());
+            internManifest(
+                    operators,
+                    markerOperatorId,
+                    node(
+                            "operator",
+                            List.of(
+                                    markerOperatorId,
+                                    outputType,
+                                    markerIdentity,
+                                    "none"),
+                            List.of()),
+                    "operator");
+            tables.term(
+                    "APP",
+                    context(certificate.sourceEndpoint().context()),
+                    "TERM",
+                    outputType,
+                    markerOperatorId,
+                    List.of(),
+                    List.of());
         }
 
         private Node flatConstruction(FlatConstructionCertificate certificate) {
@@ -2273,13 +2312,15 @@ public final class CertificateBundleWriter {
                 throws IOException {
             if (input instanceof DependentChainLeaf) {
                 DependentChainLeaf leaf = (DependentChainLeaf) input;
-                return leaf(
+                return node(
                         "dependent-chain-leaf",
-                        scalar(term(leaf.port()), 0),
-                        type(leaf.outputType()),
-                        leaf.typeRule().name(),
-                        leaf.structuralKey().stableString(),
-                        leaf.typeProof().stableString());
+                        List.of(
+                                scalar(term(leaf.port()), 0),
+                                type(leaf.outputType()),
+                                leaf.typeRule().name(),
+                                leaf.structuralKey().stableString(),
+                                leaf.typeProof().stableString()),
+                        List.of(dependentTypeDag(leaf.outputTypeDag())));
             }
             DependentChainApplication application =
                     (DependentChainApplication) input;
@@ -2292,7 +2333,115 @@ public final class CertificateBundleWriter {
                             application.structuralKey().stableString()),
                     List.of(
                             dependentChainInput(application.left()),
-                            dependentChainInput(application.right())));
+                            dependentChainInput(application.right()),
+                            dependentTypeDag(application.outputTypeDag()),
+                            dependentCombinationCases(
+                                    application.combinationCases())));
+        }
+
+        private Node dependentTypeDag(DependentTypeDag dag) {
+            List<Node> products = new ArrayList<>();
+            for (int index = 0; index < dag.alternatives().size(); index++) {
+                products.add(dependentTypeProduct(
+                        index, dag.alternatives().get(index)));
+            }
+            return node(
+                    "dependent-type-dag",
+                    List.of(
+                            type(dag.relationType()),
+                            dag.commonAncestorType().map(this::type)
+                                    .orElse("NONE"),
+                            Integer.toString(dag.arity()),
+                            dag.structuralKey().stableString()),
+                    products);
+        }
+
+        private Node dependentTypeProduct(
+                int index,
+                List<DependentColumnEvidence> columns) {
+            List<Node> encoded = new ArrayList<>();
+            for (DependentColumnEvidence column : columns) {
+                List<Node> ancestry = column.ancestry().stream()
+                        .map(type -> leaf("dependent-chain-ancestor", type(type)))
+                        .toList();
+                encoded.add(node(
+                        "dependent-chain-column",
+                        List.of(
+                                type(column.exactColumn()),
+                                column.structuralKey().stableString()),
+                        ancestry));
+            }
+            return node(
+                    "dependent-type-product",
+                    List.of(
+                            Integer.toString(index),
+                            type(DependentChainKind.typeOf(columns)),
+                            StructuralKey.branch(
+                                    "dependent-type-product-v1",
+                                    columns.stream()
+                                            .map(DependentColumnEvidence::structuralKey)
+                                            .toList())
+                                    .stableString()),
+                    encoded);
+        }
+
+        private Node dependentCombinationCases(
+                List<DependentTypeDag.CombinationCase> cases) {
+            return node(
+                    "dependent-chain-combination-cases",
+                    List.of(Integer.toString(cases.size())),
+                    cases.stream().map(this::dependentCombinationCase).toList());
+        }
+
+        private Node dependentCombinationCase(
+                DependentTypeDag.CombinationCase proof) {
+            Node boundary = proof.boundary()
+                    .map(this::dependentBoundary)
+                    .orElseGet(() -> leaf(
+                            "dependent-chain-no-boundary", "ARROW"));
+            Node result = proof.resultAlternative()
+                    .map(columns -> dependentTypeProduct(-1, columns))
+                    .orElseGet(() -> leaf(
+                            "dependent-chain-no-result", "DISJOINT"));
+            return node(
+                    "dependent-chain-combination-case",
+                    List.of(
+                            Integer.toString(proof.leftAlternative()),
+                            Integer.toString(proof.rightAlternative()),
+                            proof.decision().name(),
+                            proof.structuralKey().stableString()),
+                    List.of(boundary, result));
+        }
+
+        private Node dependentBoundary(
+                DependentBoundaryCorrespondence boundary) {
+            return node(
+                    "dependent-chain-boundary",
+                    List.of(
+                            boundary.rule().name(),
+                            type(boundary.leftBoundary()),
+                            type(boundary.rightBoundary()),
+                            boundary.overlaps()
+                                    ? type(boundary.meetBoundary()) : "NONE",
+                            type(boundary.commonAncestor()),
+                            boundary.structuralKey().stableString()),
+                    List.of(
+                            node(
+                                    "dependent-chain-boundary-left-path",
+                                    List.of(),
+                                    boundary.leftWitnessPath().stream()
+                                            .map(type -> leaf(
+                                                    "dependent-chain-boundary-step",
+                                                    type(type)))
+                                            .toList()),
+                            node(
+                                    "dependent-chain-boundary-right-path",
+                                    List.of(),
+                                    boundary.rightWitnessPath().stream()
+                                            .map(type -> leaf(
+                                                    "dependent-chain-boundary-step",
+                                                    type(type)))
+                                            .toList())));
         }
 
         private Node containerConstruction(
@@ -2501,6 +2650,11 @@ public final class CertificateBundleWriter {
                 collectPortTypes(occurrence.source());
                 collectPortTypes(occurrence.target());
             }
+            for (CallOccurrenceCertificate occurrence
+                    : session.artifact().callOccurrenceCertificates()) {
+                collectNodeTypes(occurrence.sourceEndpoint());
+                occurrence.orderedArguments().forEach(this::collectPortTypes);
+            }
         }
 
         private void collectFlatInputTypes(FlatInput input) {
@@ -2519,6 +2673,15 @@ public final class CertificateBundleWriter {
 
         private void collectDependentChainTypes(DependentChainInput input) {
             collectExactType(input.outputType());
+            for (List<DependentColumnEvidence> product
+                    : input.outputTypeDag().alternatives()) {
+                for (DependentColumnEvidence column : product) {
+                    collectExactType(column.exactColumn());
+                    column.ancestry().forEach(this::collectExactType);
+                }
+            }
+            input.outputTypeDag().commonAncestorType()
+                    .ifPresent(this::collectExactType);
             collectContextTypes(input.context());
             if (input instanceof DependentChainLeaf) {
                 collectPortTypes(((DependentChainLeaf) input).port());
@@ -2526,6 +2689,19 @@ public final class CertificateBundleWriter {
             }
             DependentChainApplication application =
                     (DependentChainApplication) input;
+            for (DependentTypeDag.CombinationCase proof
+                    : application.combinationCases()) {
+                proof.boundary().ifPresent(boundary -> {
+                    collectExactType(boundary.leftBoundary());
+                    collectExactType(boundary.rightBoundary());
+                    if (boundary.overlaps()) {
+                        collectExactType(boundary.meetBoundary());
+                    }
+                    collectExactType(boundary.commonAncestor());
+                    boundary.leftWitnessPath().forEach(this::collectExactType);
+                    boundary.rightWitnessPath().forEach(this::collectExactType);
+                });
+            }
             collectDependentChainTypes(application.left());
             collectDependentChainTypes(application.right());
         }
@@ -3019,11 +3195,12 @@ public final class CertificateBundleWriter {
                 id = "operator/" + contentId(node(
                         "operator-id", List.of(structuralKey), List.of()));
             } else {
+                byte[] structuralKeyBytes = encodeCanonicalUtf8(structuralKey);
                 String encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(
-                        structuralKey.getBytes(StandardCharsets.UTF_8));
+                        structuralKeyBytes);
                 id = POLYMORPHIC_OPERATOR_KEY_PREFIX
                         + HexFormat.of().formatHex(sha256(
-                                structuralKey.getBytes(StandardCharsets.UTF_8)))
+                                structuralKeyBytes))
                         + "/" + encoded;
             }
             List<Node> ports = new ArrayList<>();
@@ -3157,6 +3334,11 @@ public final class CertificateBundleWriter {
         }
 
         private Node exactType(GraphType graphType) {
+            if (graphType.symbol() != null
+                    && !AlloyTypeBridge.isAdmittedIdentity(graphType.symbol())) {
+                throw new IllegalArgumentException(
+                        "Exact type symbols must be well-formed visible identities");
+            }
             List<Node> arguments = new ArrayList<>();
             for (GraphType argument : graphType.arguments()) {
                 arguments.add(leaf("type-ref", scalar(exactType(argument), 0)));
@@ -3282,9 +3464,26 @@ public final class CertificateBundleWriter {
 
     private static void writeString(DataOutputStream output, String value)
             throws IOException {
-        byte[] encoded = value.getBytes(StandardCharsets.UTF_8);
+        byte[] encoded = encodeCanonicalUtf8(value);
         output.writeInt(encoded.length);
         output.write(encoded);
+    }
+
+    static byte[] encodeCanonicalUtf8(String value) {
+        Objects.requireNonNull(value, "canonical string");
+        try {
+            ByteBuffer encoded = StandardCharsets.UTF_8.newEncoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .encode(CharBuffer.wrap(value));
+            byte[] bytes = new byte[encoded.remaining()];
+            encoded.get(bytes);
+            return bytes;
+        } catch (CharacterCodingException exception) {
+            throw new IllegalArgumentException(
+                    "Canonical certificate strings must be well-formed Unicode",
+                    exception);
+        }
     }
 
     private static byte[] sha256(byte[] bytes) {

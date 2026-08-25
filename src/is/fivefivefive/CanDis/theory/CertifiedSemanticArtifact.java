@@ -361,6 +361,22 @@ public final class CertifiedSemanticArtifact {
                 semanticProfile);
     }
 
+    public CertifiedSemanticArtifact withCallOccurrenceCertificates(
+            List<? extends CallOccurrenceCertificate> replacements) {
+        return new CertifiedSemanticArtifact(
+                root,
+                classes,
+                witnesses,
+                unfoldings,
+                containerLaws,
+                flatConstructions,
+                containerConstructions,
+                dependentChainConstructions,
+                Objects.requireNonNull(replacements, "replacements"),
+                constructionSources,
+                semanticProfile);
+    }
+
     private void validateConstructionCoverage() {
         Set<StructuralKey> flatTargets = new LinkedHashSet<>();
         Map<StructuralKey, Integer> suppliedFlatSources = new LinkedHashMap<>();
@@ -414,13 +430,26 @@ public final class CertifiedSemanticArtifact {
                             + constructionSources.dependentChainSources()
                             + ", supplied=" + suppliedDependentSources);
         }
+        Map<StructuralKey, Integer> suppliedCallSources = new LinkedHashMap<>();
+        for (CallOccurrenceCertificate occurrence : callOccurrenceCertificates) {
+            increment(suppliedCallSources, occurrence.structuralKey());
+        }
+        if (!constructionSources.callSources().equals(suppliedCallSources)) {
+            throw new IllegalArgumentException(
+                    "CALL source occurrences and evidence differ: required="
+                            + constructionSources.callSources()
+                            + ", supplied=" + suppliedCallSources);
+        }
         Set<StructuralKey> requiredFlat = new LinkedHashSet<>();
         Set<StructuralKey> requiredContainers = new LinkedHashSet<>();
         Set<StructuralKey> requiredDependentChains = new LinkedHashSet<>();
+        Set<String> requiredCalls = new LinkedHashSet<>();
         for (TypedEClassRecord record : classes.values()) {
             for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
                 TypedENode node = shape.node();
-                if (node.operator().usesFlatConstruction()) {
+                if (isCallNode(node)) {
+                    requiredCalls.add(node.operator().operator());
+                } else if (node.operator().usesFlatConstruction()) {
                     requiredFlat.add(shape.structuralKey());
                 } else if (isDependentChainNode(node)) {
                     requiredDependentChains.add(shape.structuralKey());
@@ -445,6 +474,19 @@ public final class CertifiedSemanticArtifact {
                     "Stored dependent chains and exact type-proof targets differ: required="
                             + requiredDependentChains + ", supplied=" + dependentTargets);
         }
+        Set<String> suppliedCalls = callOccurrenceCertificates.stream()
+                .map(certificate -> certificate.sourceEndpoint()
+                        .operator().operator())
+                .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+        if (!requiredCalls.equals(suppliedCalls)) {
+            throw new IllegalArgumentException(
+                    "Stored CALL terms and source-occurrence evidence differ: required="
+                            + requiredCalls + ", supplied=" + suppliedCalls);
+        }
+    }
+
+    private static boolean isCallNode(TypedENode node) {
+        return node.operator().operator().startsWith("ALLOY/CALL/");
     }
 
     private static boolean isDependentChainNode(TypedENode node) {

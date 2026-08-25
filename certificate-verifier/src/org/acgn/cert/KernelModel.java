@@ -217,7 +217,11 @@ final class KernelModel {
         Operator {
             requireText(id, "operator id");
             requireText(outputType, "operator output type");
-            requireText(semanticIdentity, "operator semantic identity");
+            if (!SemanticEvidenceVerifier.isAdmittedIdentity(semanticIdentity)) {
+                throw new FormatException(
+                        FailureCode.INVALID_RECORD_SHAPE,
+                        "Operator semantic identity is not well-formed and visible");
+            }
             requireText(flatPath, "operator flat path");
             schemas = List.copyOf(schemas);
         }

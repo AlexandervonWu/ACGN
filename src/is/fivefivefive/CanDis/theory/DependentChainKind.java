@@ -14,28 +14,13 @@ public enum DependentChainKind {
     }
 
     public GraphType combine(GraphType left, GraphType right) {
-        List<GraphType> leftColumns = columns(left, "left");
-        List<GraphType> rightColumns = columns(right, "right");
-        List<GraphType> result = new ArrayList<>();
-        if (this == ARROW) {
-            result.addAll(leftColumns);
-            result.addAll(rightColumns);
-        } else {
-            GraphType leftBoundary = leftColumns.get(leftColumns.size() - 1);
-            GraphType rightBoundary = rightColumns.get(0);
-            if (!leftBoundary.equals(rightBoundary)) {
-                throw new IllegalArgumentException(
-                        "JOIN boundary mismatch: " + leftBoundary
-                                + " != " + rightBoundary);
-            }
-            result.addAll(leftColumns.subList(0, leftColumns.size() - 1));
-            result.addAll(rightColumns.subList(1, rightColumns.size()));
-            if (result.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "The certified Alloy relation slice has no nullary relation type");
-            }
-        }
-        return GraphType.relation(result);
+        return DependentTypeDag.combine(
+                this,
+                DependentTypeDag.fromRelationFamilyType(
+                        Objects.requireNonNull(left, "left")),
+                DependentTypeDag.fromRelationFamilyType(
+                        Objects.requireNonNull(right, "right")))
+                .result().relationType();
     }
 
     public GraphType fold(List<GraphType> operands) {
@@ -44,23 +29,113 @@ public enum DependentChainKind {
             throw new IllegalArgumentException(
                     "A dependent chain requires at least two operands");
         }
-        GraphType result = Objects.requireNonNull(operands.get(0), "operand type");
-        columns(result, "first");
+        DependentChainTheory.requireSoundFlattening(this, operands);
+        DependentTypeDag result = DependentTypeDag.fromRelationFamilyType(
+                Objects.requireNonNull(operands.get(0), "operand type"));
         for (int index = 1; index < operands.size(); index++) {
-            result = combine(
+            result = DependentTypeDag.combine(
+                    this,
                     result,
-                    Objects.requireNonNull(operands.get(index), "operand type"));
+                    DependentTypeDag.fromRelationFamilyType(
+                            Objects.requireNonNull(
+                                    operands.get(index), "operand type")))
+                    .result();
+        }
+        return result.relationType();
+    }
+
+    List<DependentColumnEvidence> combineColumns(
+            List<DependentColumnEvidence> leftColumns,
+            List<DependentColumnEvidence> rightColumns) {
+        requireColumns(leftColumns, "left");
+        requireColumns(rightColumns, "right");
+        requireCommonParserAuthority(leftColumns, rightColumns);
+        DependentChainTheory.requireConsistentHierarchy(
+                List.of(leftColumns, rightColumns));
+        DependentTypeDag.ChainCombination combination = DependentTypeDag.combine(
+                this,
+                DependentTypeDag.exactAlternative(
+                        typeOf(leftColumns), leftColumns),
+                DependentTypeDag.exactAlternative(
+                        typeOf(rightColumns), rightColumns));
+        if (combination.result().alternatives().size() != 1) {
+            throw new DependentChainTheory.UnsupportedFlattening(
+                    "A scalar column view cannot represent a relation-family result");
+        }
+        return combination.result().alternatives().get(0);
+    }
+
+    List<DependentColumnEvidence> foldColumns(
+            List<? extends List<DependentColumnEvidence>> operands) {
+        Objects.requireNonNull(operands, "operands");
+        if (operands.size() < 2) {
+            throw new IllegalArgumentException(
+                    "A dependent chain requires at least two operands");
+        }
+        List<GraphType> operandTypes = new ArrayList<>(operands.size());
+        for (List<DependentColumnEvidence> operand : operands) {
+            requireColumns(operand, "operand");
+            operandTypes.add(typeOf(operand));
+        }
+        DependentChainTheory.requireSoundFlattening(this, operandTypes);
+        requireCommonParserAuthority(operands);
+        DependentChainTheory.requireConsistentHierarchy(operands);
+        List<DependentColumnEvidence> result = List.copyOf(
+                Objects.requireNonNull(operands.get(0), "operand columns"));
+        requireColumns(result, "first");
+        for (int index = 1; index < operands.size(); index++) {
+            result = combineColumns(
+                    result,
+                    Objects.requireNonNull(
+                            operands.get(index), "operand columns"));
         }
         return result;
     }
 
-    private static List<GraphType> columns(GraphType type, String role) {
-        Objects.requireNonNull(type, role + " type");
-        if (type.kind() != GraphType.Kind.RELATION) {
+    static GraphType typeOf(List<DependentColumnEvidence> columns) {
+        return GraphType.relation(columns.stream()
+                .map(DependentColumnEvidence::exactColumn)
+                .toList());
+    }
+
+    private static void requireColumns(
+            List<DependentColumnEvidence> columns,
+            String role) {
+        Objects.requireNonNull(columns, role + " columns");
+        if (columns.isEmpty()) {
             throw new IllegalArgumentException(
-                    "Dependent " + role + " operand is not an exact relation type: "
-                            + type);
+                    "Dependent " + role + " operand has no relation columns");
         }
-        return type.arguments();
+        for (DependentColumnEvidence column : columns) {
+            Objects.requireNonNull(column, role + " column");
+        }
+    }
+
+    private static void requireCommonParserAuthority(
+            List<DependentColumnEvidence> leftColumns,
+            List<DependentColumnEvidence> rightColumns) {
+        requireCommonParserAuthority(List.of(leftColumns, rightColumns));
+    }
+
+    private static void requireCommonParserAuthority(
+            List<? extends List<DependentColumnEvidence>> operands) {
+        List<DependentColumnEvidence> all = new ArrayList<>();
+        for (List<DependentColumnEvidence> operand : operands) {
+            all.addAll(Objects.requireNonNull(operand, "operand columns"));
+        }
+        DependentColumnEvidence authority = all.stream()
+                .filter(DependentColumnEvidence::hasParserModuleAuthority)
+                .findFirst()
+                .orElse(null);
+        if (authority == null) {
+            return;
+        }
+        for (DependentColumnEvidence column : all) {
+            if (column.hasParserModuleAuthority()
+                    && !authority.sharesParserModuleAuthorityWith(column)) {
+                throw new IllegalArgumentException(
+                        "Dependent chain columns carry conflicting live parser authorities");
+            }
+        }
     }
 }

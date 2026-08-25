@@ -9,7 +9,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import edu.mit.csail.sdg.ast.Sig;
+import edu.mit.csail.sdg.ast.Sig.PrimSig;
+import edu.mit.csail.sdg.parser.CompModule;
+import edu.mit.csail.sdg.parser.CompUtil;
 import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.core.CallMetadata;
 import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
@@ -70,7 +75,36 @@ public final class CertificateBundleWriterTest {
         exportTwice(certifiedFlatAndFixture(true), coverage, "flat-and-alt");
         exportTwice(certifiedContainerEqualsFixture(), coverage, "container-equals");
         exportTwice(dependentJoinFixture(), coverage, "relation-columns");
-        exportTwice(callOccurrenceFixture(), coverage, "call-occurrence");
+        exportTwice(dependentFamilyJoinFixture(), coverage, "relation-family");
+        exportTwice(dependentEmptyJoinFixture(), coverage, "relation-empty");
+        exportTwice(
+                dependentEmptyInteriorJoinFixture(),
+                coverage,
+                "relation-empty-interior");
+        CertificateExportSession callOccurrence = callOccurrenceFixture();
+        boolean missingCallRejected = false;
+        try {
+            callOccurrence.artifact().withCallOccurrenceCertificates(List.of());
+        } catch (IllegalArgumentException expected) {
+            missingCallRejected = expected.getMessage().contains(
+                    "CALL source occurrences and evidence differ");
+        }
+        check(missingCallRejected,
+                "producer artifact construction must reject missing CALL provenance");
+        exportTwice(callOccurrence, coverage, "call-occurrence");
+        CertificateExportSession nestedCallOccurrence = nestedCallOccurrenceFixture();
+        boolean partialNestedCallRejected = false;
+        try {
+            nestedCallOccurrence.artifact().withCallOccurrenceCertificates(
+                    nestedCallOccurrence.artifact().callOccurrenceCertificates()
+                            .subList(0, 1));
+        } catch (IllegalArgumentException expected) {
+            partialNestedCallRejected = expected.getMessage().contains(
+                    "CALL source occurrences and evidence differ");
+        }
+        check(partialNestedCallRejected,
+                "producer artifact construction must reject one omitted nested CALL");
+        exportTwice(nestedCallOccurrence, coverage, "call-occurrence-nested");
         CertificateWriteMetrics repeatedSlotMetrics = exportTwice(
                 repeatedSameTypeFixture(), coverage, "repeated-same-type-slot");
         check(repeatedSlotMetrics.globalFreeRenamingCandidates() == 2
@@ -179,6 +213,9 @@ public final class CertificateBundleWriterTest {
                 family, new FiniteUnfoldingBounds(2, 16))
                 .enumerate(insertion.returnedInvocation()).get(0);
         SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        ConstructionSourceLedger.Builder sourceLedger =
+                ConstructionSourceLedger.builder(profile);
+        sourceLedger.recordCall(call);
         CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
                 insertion.returnedInvocation(),
                 graph.classes(),
@@ -189,7 +226,7 @@ public final class CertificateBundleWriterTest {
                 List.of(),
                 List.of(),
                 List.of(call),
-                ConstructionSourceLedger.empty(profile),
+                sourceLedger.build(),
                 profile);
         try {
             return new CertificateExportSession(
@@ -207,6 +244,118 @@ public final class CertificateBundleWriterTest {
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
+    }
+
+    private static CertificateExportSession nestedCallOccurrenceFixture() {
+        String callee = "fixture/nested-call";
+        String kind = "call/expression";
+        String authority = CallSymbol.ArityAuthority.DECLARATION.name();
+        GraphType atom = GraphType.constructor("AlloySig:A");
+        RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph(sink);
+        TypedInvocation argumentInvocation = graph.insertNode(
+                relationConstant("ALLOY/GLOBALBINDING/a", atom),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                "ALLOY/CALL/" + callee + "/1/" + kind + "/" + authority,
+                List.of(new OnePortSchema(atom)),
+                atom,
+                Map.of(),
+                null).instantiateMonomorphic();
+        OnePort innerArgument = OnePort.invocation(
+                TypedSlotContext.empty(), argumentInvocation);
+        TypedENode inner = TypedENode.construct(
+                operator, TypedSlotContext.empty(), List.of(innerArgument));
+        TypedInvocation innerInvocation = graph.insertNode(
+                inner, graph.coherentWitnessFamily()).returnedInvocation();
+        OnePort outerArgument = OnePort.invocation(
+                TypedSlotContext.empty(), innerInvocation);
+        TypedENode outer = TypedENode.construct(
+                operator, TypedSlotContext.empty(), List.of(outerArgument));
+
+        EGraphNode sourceArgument = new EGraphNode(
+                1802, Opcode.CONSTANT, List.of(), false, 0, false, Metatype.SET);
+        sourceArgument.setSourceName("a");
+        EGraphNode innerOccurrence = callOccurrenceSource(
+                1801, sourceArgument, callee, kind, authority, 18L);
+        EGraphNode outerOccurrence = callOccurrenceSource(
+                1800, innerOccurrence, callee, kind, authority, 19L);
+        CallOccurrenceCertificate innerCall = CallOccurrenceCertificate.create(
+                CallMetadata.require(innerOccurrence),
+                "phase/0/matrix/0",
+                inner,
+                List.of(innerArgument));
+        CallOccurrenceCertificate outerCall = CallOccurrenceCertificate.create(
+                CallMetadata.require(outerOccurrence),
+                "phase/0/matrix",
+                outer,
+                List.of(outerArgument));
+
+        CertifiedInsertionResult insertion = graph.insertNode(
+                outer, graph.coherentWitnessFamily());
+        CoherentWitnessFamily family = graph.coherentWitnessFamily();
+        FiniteUnfoldingTree unfolding = graph.finiteUnfoldingOracle(
+                family, new FiniteUnfoldingBounds(3, 32))
+                .enumerate(insertion.returnedInvocation()).get(0);
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        ConstructionSourceLedger.Builder sourceLedger =
+                ConstructionSourceLedger.builder(profile);
+        sourceLedger.recordCall(innerCall);
+        sourceLedger.recordCall(outerCall);
+        CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
+                insertion.returnedInvocation(),
+                graph.classes(),
+                family,
+                List.of(unfolding),
+                Map.of(),
+                List.of(),
+                List.of(),
+                List.of(),
+                List.of(innerCall, outerCall),
+                sourceLedger.build(),
+                profile);
+        try {
+            return new CertificateExportSession(
+                    sink,
+                    graph,
+                    artifact,
+                    unfolding.normalizedTermKey(),
+                    Map.of(),
+                    CertificateProvenance.capture(
+                            "fixture/call-occurrence-nested.als",
+                            "fun f[x: A]: A { x }\npred p { f[f[A]] = A }"
+                                    .getBytes(StandardCharsets.UTF_8),
+                            "certificate-writer-call-occurrence-nested-v1;"
+                                    + CertificateTheoryManifest.VERSION),
+                    "certificate-writer-call-occurrence-nested-v1");
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private static EGraphNode callOccurrenceSource(
+            int id,
+            EGraphNode argument,
+            String callee,
+            String kind,
+            String authority,
+            long occurrenceId) {
+        EGraphNode occurrence = new EGraphNode(
+                id,
+                Opcode.CALL,
+                List.of(argument),
+                false,
+                1,
+                false,
+                Metatype.SET,
+                SemanticProfile.alloyOverflowForbidding());
+        occurrence.setSourceName("call");
+        occurrence.setSemanticIdentity(callee);
+        occurrence.setSourceType(kind);
+        occurrence.setCallOccurrenceId(occurrenceId);
+        occurrence.setDeclaredArity(1);
+        occurrence.setCallArityAuthority(authority);
+        return occurrence;
     }
 
     private static CertificateExportSession singleFresh(
@@ -590,31 +739,53 @@ public final class CertificateBundleWriterTest {
         }
     }
 
-    private static CertificateExportSession dependentJoinFixture() {
+    private static CertificateExportSession dependentJoinFixture() throws Exception {
+        CompModule module = CompUtil.parseEverything_fromString(null,
+                "sig S {}\n"
+                        + "sig Parent {}\n"
+                        + "sig Child extends Parent {}\n"
+                        + "sig V {}\n"
+                        + "sig T {}\n");
+        PrimSig sSig = signature(module, "S");
+        PrimSig parentSig = signature(module, "Parent");
+        PrimSig childSig = signature(module, "Child");
+        PrimSig vSig = signature(module, "V");
+        PrimSig tSig = signature(module, "T");
+        ExactAlloyType firstExact = ExactAlloyType.fromParser(
+                sSig.type().product(parentSig.type()), module);
+        ExactAlloyType secondExact = ExactAlloyType.fromParser(
+                childSig.type().product(vSig.type()), module);
+        ExactAlloyType thirdExact = ExactAlloyType.fromParser(
+                Sig.UNIV.type().product(tSig.type()), module);
         SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
-        GraphType s = GraphType.constructor("AlloySig:S");
-        GraphType u = GraphType.constructor("AlloySig:U");
-        GraphType v = GraphType.constructor("AlloySig:V");
-        GraphType t = GraphType.constructor("AlloySig:T");
+        GraphType firstType = AlloyTypeBridge.graphType(firstExact);
+        GraphType secondType = AlloyTypeBridge.graphType(secondExact);
+        GraphType thirdType = AlloyTypeBridge.graphType(thirdExact);
         TypedSlotContext context = TypedSlotContext.empty();
 
         RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
         TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph(profile, sink);
         TypedInvocation firstInvocation = graph.insertNode(
-                relationConstant("join-first", GraphType.relation(s, u)),
+                relationConstant("join-first", firstType),
                 graph.coherentWitnessFamily()).returnedInvocation();
         TypedInvocation secondInvocation = graph.insertNode(
-                relationConstant("join-second", GraphType.relation(u, v)),
+                relationConstant("join-second", secondType),
                 graph.coherentWitnessFamily()).returnedInvocation();
         TypedInvocation thirdInvocation = graph.insertNode(
-                relationConstant("join-third", GraphType.relation(v, t)),
+                relationConstant("join-third", thirdType),
                 graph.coherentWitnessFamily()).returnedInvocation();
         DependentChainLeaf first = new DependentChainLeaf(
-                OnePort.invocation(context, firstInvocation));
+                OnePort.invocation(context, firstInvocation),
+                firstType,
+                AlloyTypeBridge.dependentColumns(firstExact));
         DependentChainLeaf second = new DependentChainLeaf(
-                OnePort.invocation(context, secondInvocation));
+                OnePort.invocation(context, secondInvocation),
+                secondType,
+                AlloyTypeBridge.dependentColumns(secondExact));
         DependentChainLeaf third = new DependentChainLeaf(
-                OnePort.invocation(context, thirdInvocation));
+                OnePort.invocation(context, thirdInvocation),
+                thirdType,
+                AlloyTypeBridge.dependentColumns(thirdExact));
         DependentChainApplication source = new DependentChainApplication(
                 DependentChainKind.JOIN,
                 new DependentChainApplication(
@@ -674,6 +845,284 @@ public final class CertificateBundleWriterTest {
         } catch (IOException exception) {
             throw new UncheckedIOException(exception);
         }
+    }
+
+    private static CertificateExportSession dependentFamilyJoinFixture()
+            throws Exception {
+        CompModule module = CompUtil.parseEverything_fromString(null,
+                "sig P {}\n"
+                        + "sig A extends P {}\n"
+                        + "sig B extends P {}\n"
+                        + "sig C {}\n");
+        ExactAlloyType leftExact = ExactAlloyType.fromParser(
+                CompUtil.parseOneExpression_fromString(
+                        module, "(A->A) + (B->B)").type(),
+                module);
+        ExactAlloyType rightExact = ExactAlloyType.fromParser(
+                CompUtil.parseOneExpression_fromString(
+                        module, "(A->C) + (B->C)").type(),
+                module);
+        DependentTypeDag leftDag = AlloyTypeBridge.dependentTypeDag(leftExact);
+        DependentTypeDag rightDag = AlloyTypeBridge.dependentTypeDag(rightExact);
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        TypedSlotContext context = TypedSlotContext.empty();
+
+        RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph(profile, sink);
+        TypedInvocation leftInvocation = graph.insertNode(
+                relationConstant("family-join-left", leftDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        TypedInvocation rightInvocation = graph.insertNode(
+                relationConstant("family-join-right", rightDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        DependentChainApplication source = new DependentChainApplication(
+                DependentChainKind.JOIN,
+                new DependentChainLeaf(
+                        OnePort.invocation(context, leftInvocation), leftDag),
+                new DependentChainLeaf(
+                        OnePort.invocation(context, rightInvocation), rightDag));
+
+        ConstructionSourceLedger.Builder ledger =
+                ConstructionSourceLedger.builder(profile);
+        StructuralKey sourceOccurrenceCommitment = StructuralKey.of(
+                "alloy-dependent-chain-source-occurrence-v1",
+                List.of("fixture/dependent-family-join/0"),
+                List.of(
+                        StructuralKey.branch(
+                                "alloy-dependent-chain-typed-source-v1",
+                                List.of(source.structuralKey())),
+                        StructuralKey.leaf(
+                                "alloy-dependent-chain-source-content-v1",
+                                source.structuralKey().stableString())));
+        ledger.recordDependentChain(source, sourceOccurrenceCommitment);
+        CertifiedDependentChainConstruction construction =
+                TypedENode.constructDependentChainCertified(
+                        source, profile, sourceOccurrenceCommitment);
+        CertifiedInsertionResult root = graph.insertNodeConstructed(
+                construction, graph.coherentWitnessFamily());
+        CoherentWitnessFamily family = graph.coherentWitnessFamily();
+        FiniteUnfoldingTree unfolding = graph.finiteUnfoldingOracle(
+                family, new FiniteUnfoldingBounds(2, 32))
+                .enumerate(root.returnedInvocation()).stream()
+                .filter(tree -> tree.height() == 2)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "missing dependent family JOIN unfolding"));
+        CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
+                root.returnedInvocation(),
+                graph.classes(),
+                family,
+                List.of(unfolding),
+                Map.of(),
+                List.of(),
+                List.of(),
+                List.of(construction.certificate()),
+                ledger.build(),
+                profile);
+        try {
+            return new CertificateExportSession(
+                    sink,
+                    graph,
+                    artifact,
+                    unfolding.normalizedTermKey(),
+                    Map.of(),
+                    CertificateProvenance.capture(
+                            "fixture/dependent-family-join",
+                            "((A->A)+(B->B)).((A->C)+(B->C))"
+                                    .getBytes(StandardCharsets.UTF_8),
+                            "certificate-writer-fixture-v3;"
+                                    + CertificateTheoryManifest.VERSION),
+                    "certificate-writer-fixture-v3");
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private static CertificateExportSession dependentEmptyJoinFixture()
+            throws Exception {
+        CompModule module = CompUtil.parseEverything_fromString(null,
+                "sig A {}\nsig B {}\nsig C {}\nsig Owner { f: seq A }\n");
+        ExactAlloyType leftExact = ExactAlloyType.fromParser(
+                CompUtil.parseOneExpression_fromString(module, "Owner.f").type(),
+                module);
+        ExactAlloyType rightExact = ExactAlloyType.fromParser(
+                CompUtil.parseOneExpression_fromString(module, "B->C").type(),
+                module);
+        DependentTypeDag leftDag = AlloyTypeBridge.dependentTypeDag(leftExact);
+        DependentTypeDag rightDag = AlloyTypeBridge.dependentTypeDag(rightExact);
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        TypedSlotContext context = TypedSlotContext.empty();
+
+        RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph(profile, sink);
+        TypedInvocation leftInvocation = graph.insertNode(
+                relationConstant("empty-join-left", leftDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        TypedInvocation rightInvocation = graph.insertNode(
+                relationConstant("empty-join-right", rightDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        DependentChainApplication source = new DependentChainApplication(
+                DependentChainKind.JOIN,
+                new DependentChainLeaf(
+                        OnePort.invocation(context, leftInvocation), leftDag),
+                new DependentChainLeaf(
+                        OnePort.invocation(context, rightInvocation), rightDag));
+
+        ConstructionSourceLedger.Builder ledger =
+                ConstructionSourceLedger.builder(profile);
+        StructuralKey sourceOccurrenceCommitment = StructuralKey.of(
+                "alloy-dependent-chain-source-occurrence-v1",
+                List.of("fixture/dependent-empty-join/0"),
+                List.of(
+                        StructuralKey.branch(
+                                "alloy-dependent-chain-typed-source-v1",
+                                List.of(source.structuralKey())),
+                        StructuralKey.leaf(
+                                "alloy-dependent-chain-source-content-v1",
+                                source.structuralKey().stableString())));
+        ledger.recordDependentChain(source, sourceOccurrenceCommitment);
+        CertifiedDependentChainConstruction construction =
+                TypedENode.constructDependentChainCertified(
+                        source, profile, sourceOccurrenceCommitment);
+        CertifiedInsertionResult root = graph.insertNodeConstructed(
+                construction, graph.coherentWitnessFamily());
+        CoherentWitnessFamily family = graph.coherentWitnessFamily();
+        FiniteUnfoldingTree unfolding = graph.finiteUnfoldingOracle(
+                family, new FiniteUnfoldingBounds(2, 32))
+                .enumerate(root.returnedInvocation()).stream()
+                .filter(tree -> tree.height() == 2)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "missing dependent empty JOIN unfolding"));
+        CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
+                root.returnedInvocation(),
+                graph.classes(),
+                family,
+                List.of(unfolding),
+                Map.of(),
+                List.of(),
+                List.of(),
+                List.of(construction.certificate()),
+                ledger.build(),
+                profile);
+        try {
+            return new CertificateExportSession(
+                    sink,
+                    graph,
+                    artifact,
+                    unfolding.normalizedTermKey(),
+                    Map.of(),
+                    CertificateProvenance.capture(
+                            "fixture/dependent-empty-join",
+                            "Owner.f.(B->C)".getBytes(StandardCharsets.UTF_8),
+                            "certificate-writer-fixture-v3;"
+                                    + CertificateTheoryManifest.VERSION),
+                    "certificate-writer-fixture-v3");
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private static CertificateExportSession dependentEmptyInteriorJoinFixture() {
+        GraphType a = GraphType.constructor("AlloySig:A");
+        GraphType b = GraphType.constructor("AlloySig:B");
+        GraphType c = GraphType.constructor("AlloySig:C");
+        GraphType d = GraphType.constructor("AlloySig:D");
+        DependentTypeDag leftDag = DependentTypeDag.exactRelation(
+                GraphType.relation(a, b));
+        DependentTypeDag emptyDag = DependentTypeDag.empty(2);
+        DependentTypeDag rightDag = DependentTypeDag.exactRelation(
+                GraphType.relation(c, d));
+        SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
+        TypedSlotContext context = TypedSlotContext.empty();
+
+        RecordingCertificateTraceSink sink = new RecordingCertificateTraceSink();
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph(profile, sink);
+        TypedInvocation leftInvocation = graph.insertNode(
+                relationConstant("empty-interior-left", leftDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        TypedInvocation emptyInvocation = graph.insertNode(
+                relationConstant("empty-interior-middle", emptyDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        TypedInvocation rightInvocation = graph.insertNode(
+                relationConstant("empty-interior-right", rightDag.relationType()),
+                graph.coherentWitnessFamily()).returnedInvocation();
+        DependentChainApplication first = new DependentChainApplication(
+                DependentChainKind.JOIN,
+                new DependentChainLeaf(
+                        OnePort.invocation(context, leftInvocation), leftDag),
+                new DependentChainLeaf(
+                        OnePort.invocation(context, emptyInvocation), emptyDag));
+        DependentChainApplication source = new DependentChainApplication(
+                DependentChainKind.JOIN,
+                first,
+                new DependentChainLeaf(
+                        OnePort.invocation(context, rightInvocation), rightDag));
+
+        ConstructionSourceLedger.Builder ledger =
+                ConstructionSourceLedger.builder(profile);
+        StructuralKey sourceOccurrenceCommitment = StructuralKey.of(
+                "alloy-dependent-chain-source-occurrence-v1",
+                List.of("fixture/dependent-empty-interior-join/0"),
+                List.of(
+                        StructuralKey.branch(
+                                "alloy-dependent-chain-typed-source-v1",
+                                List.of(source.structuralKey())),
+                        StructuralKey.leaf(
+                                "alloy-dependent-chain-source-content-v1",
+                                source.structuralKey().stableString())));
+        ledger.recordDependentChain(source, sourceOccurrenceCommitment);
+        CertifiedDependentChainConstruction construction =
+                TypedENode.constructDependentChainCertified(
+                        source, profile, sourceOccurrenceCommitment);
+        CertifiedInsertionResult root = graph.insertNodeConstructed(
+                construction, graph.coherentWitnessFamily());
+        CoherentWitnessFamily family = graph.coherentWitnessFamily();
+        FiniteUnfoldingTree unfolding = graph.finiteUnfoldingOracle(
+                family, new FiniteUnfoldingBounds(2, 32))
+                .enumerate(root.returnedInvocation()).stream()
+                .filter(tree -> tree.height() == 2)
+                .findFirst()
+                .orElseThrow(() -> new AssertionError(
+                        "missing dependent empty-interior JOIN unfolding"));
+        CertifiedSemanticArtifact artifact = new CertifiedSemanticArtifact(
+                root.returnedInvocation(),
+                graph.classes(),
+                family,
+                List.of(unfolding),
+                Map.of(),
+                List.of(),
+                List.of(),
+                List.of(construction.certificate()),
+                ledger.build(),
+                profile);
+        try {
+            return new CertificateExportSession(
+                    sink,
+                    graph,
+                    artifact,
+                    unfolding.normalizedTermKey(),
+                    Map.of(),
+                    CertificateProvenance.capture(
+                            "fixture/dependent-empty-interior-join",
+                            "(A->B).none.(C->D)".getBytes(StandardCharsets.UTF_8),
+                            "certificate-writer-fixture-v3;"
+                                    + CertificateTheoryManifest.VERSION),
+                    "certificate-writer-fixture-v3");
+        } catch (IOException exception) {
+            throw new UncheckedIOException(exception);
+        }
+    }
+
+    private static PrimSig signature(CompModule module, String name) {
+        for (Sig candidate : module.getAllReachableSigs()) {
+            if (candidate instanceof PrimSig
+                    && (candidate.label.equals(name)
+                            || candidate.label.endsWith("/" + name))) {
+                return (PrimSig) candidate;
+            }
+        }
+        throw new AssertionError("missing parser signature " + name);
     }
 
     private static CertificateExportSession dualSymmetricBindBlockFixture() {

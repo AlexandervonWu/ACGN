@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Objects;
 
 import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.core.CallMetadata;
 
 /** Provenance-only binding from one parser CALL occurrence to its typed source term. */
@@ -102,9 +103,9 @@ public final class CallOccurrenceCertificate {
     }
 
     private static String requireText(String value, String label) {
-        Objects.requireNonNull(value, label);
-        if (value.isBlank() || !value.equals(value.trim())) {
-            throw new IllegalArgumentException("CALL " + label + " must be canonical text");
+        if (!ExactAlloyType.isAdmittedIdentity(value)) {
+            throw new IllegalArgumentException(
+                    "CALL " + label + " must be a well-formed visible identity");
         }
         return value;
     }

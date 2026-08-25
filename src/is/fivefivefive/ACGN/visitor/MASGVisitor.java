@@ -8,9 +8,11 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Collections;
+import java.util.Objects;
 
 import edu.mit.csail.sdg.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.ast.Type;
+import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -109,6 +111,12 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final AugmentedNode EMPTY_SET_NODE = new AugmentedNode(126, 0, EMPTY_SET_SYMBOL);
     private final SigSymbol UNIVERSAL_SET_SYMBOL = SigSymbol.builtinUniv();
     private final AugmentedNode UNIVERSAL_SET_NODE = new AugmentedNode(126, 1, UNIVERSAL_SET_SYMBOL);
+    private final SigSymbol INTEGER_SET_SYMBOL = SigSymbol.builtinInt();
+    private final AugmentedNode INTEGER_SET_NODE = new AugmentedNode(126, 2, INTEGER_SET_SYMBOL);
+    private final SigSymbol SEQUENCE_INDEX_SET_SYMBOL =
+            SigSymbol.builtinSequenceIndex();
+    private final AugmentedNode SEQUENCE_INDEX_SET_NODE =
+            new AugmentedNode(126, 3, SEQUENCE_INDEX_SET_SYMBOL);
     public static final Symbol SHADOW_SYMBOL = ShadowSymbol.SHADOW;
     public static final AugmentedNode SHADOW_NODE = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
@@ -116,6 +124,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final Map<String, CallableDescriptor> callableDescriptors = new HashMap<>();
     private final Map<String, ImportedModuleDescriptor> importedModules = new HashMap<>();
     private String moduleIdentity = "this";
+    private CompModule parserModule;
     private long nextCallOccurrenceId;
     private long callOccurrences;
     private long callsContainingCalls;
@@ -148,6 +157,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         aame.addSymbol("NONE_SET", EMPTY_SET_SYMBOL);
         aame.addSymbol("none", EMPTY_SET_SYMBOL);
         aame.addSymbol("univ", UNIVERSAL_SET_SYMBOL);
+        aame.addSymbol("Int", INTEGER_SET_SYMBOL);
+        aame.addSymbol("seq/Int", SEQUENCE_INDEX_SET_SYMBOL);
         unfoundSigs = new HashMap<>();
         coarseToFineBin = new HashMap<>();
         for (DummySymbol ds : DummySymbol.ALL_DUMMIES) {
@@ -162,11 +173,26 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         this();
         globalVariables = gv;
     }
+    public MASGVisitor(CompModule parserModule) {
+        this();
+        this.parserModule = Objects.requireNonNull(parserModule, "parserModule");
+    }
+    public MASGVisitor(GlobalVariables gv, CompModule parserModule) {
+        this(gv);
+        this.parserModule = Objects.requireNonNull(parserModule, "parserModule");
+    }
     public MASGVisitor(GlobalVariables gv, Set<String> selectedCallables) {
         this(gv);
         this.selectedCallables = selectedCallables == null
                 ? null
                 : Collections.unmodifiableSet(new HashSet<>(selectedCallables));
+    }
+    public MASGVisitor(
+            GlobalVariables gv,
+            Set<String> selectedCallables,
+            CompModule parserModule) {
+        this(gv, selectedCallables);
+        this.parserModule = Objects.requireNonNull(parserModule, "parserModule");
     }
     public DoubleMap<Integer, Multigraph> getForest() {
         return forest;
@@ -237,6 +263,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
      */
     @Override
     public AugmentedNode visit(ModelUnit n, ScopeTreeNode arg) {
+        if (parserModule == null) {
+            throw new IllegalStateException(
+                    "MASGVisitor requires the CompModule that produced its ModelUnit");
+        }
         callOccurrences = 0;
         callsContainingCalls = 0;
         validatedCallVisits = 0;
@@ -596,7 +626,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
     }
 
-    private static void recordExactType(
+    private void recordExactType(
             AugmentedNode node,
             ExprOrFormula source,
             ScopeTreeNode scope,
@@ -607,7 +637,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     "Exact Alloy type provenance requires one complete source occurrence");
         }
         node.setExactType(
-                scope.getAffliation(), timeOfVisit, ExactAlloyType.from(source.getType()));
+                scope.getAffliation(), timeOfVisit,
+                ExactAlloyType.fromParser(source.getType(), parserModule));
     }
 
     private void recordLeafExactType(
@@ -767,7 +798,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                         SigSymbol sigSym = (SigSymbol) iterSym;
                         return Pair.of(sigSym, confiners);
                     } else {
-                        // select one branch and find its type
+                        // The parser type fixes the rightmost result column of
+                        // products such as seq/Int -> A. Treating the left
+                        // branch as a user signature leaves Alloy built-ins in
+                        // the unresolved-signature ledger.
+                        SigSymbol annotated = typeCheckAnnotatedExpr(binExpr);
+                        if (annotated != null) {
+                            return Pair.of(annotated, confiners);
+                        }
                         return getSigSymbolByExpr(binExpr.getLeft());
                     }
                 }
@@ -2024,7 +2062,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // Only invoked when the symbol was already declared and now used. 
     private AugmentedNode visitAbsorbing(ExprOrFormula n, ScopeTreeNode arg, String name) {
         AugmentedNode result;
-        if (aame.hasSymbol(name)) {
+        if ("Int".equals(name)) {
+            result = INTEGER_SET_NODE;
+        } else if ("seq/Int".equals(name)) {
+            result = SEQUENCE_INDEX_SET_NODE;
+        } else if (aame.hasSymbol(name)) {
             result = uniqueNode.get(aame.getSymbol(name)); // a global var
         } else {
             result = uniqueNode.get(arg.getSymbol(name)); // recursively find the unique node
@@ -2114,7 +2156,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private SigSymbol typeCheckExpr(ExprOrFormula e) {
         // use this function to check the overall set / type of the expression
         // System.out.println(e);
-        ExactAlloyType exactType = ExactAlloyType.from(e.getType());
+        ExactAlloyType exactType = ExactAlloyType.fromParser(
+                e.getType(), parserModule);
         if (exactType.kind() == ExactAlloyType.Kind.EMPTY_RELATION) {
             return EMPTY_SET_SYMBOL;
         }

@@ -271,7 +271,7 @@ public class CanonicalBatchTest {
             result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
             Multigraph left = forest.get(pair.leftId);

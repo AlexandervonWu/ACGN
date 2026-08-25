@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/** Focused producer gate for exact schema-v8 transition evidence. */
+/** Focused producer gate for exact schema-v10 transition evidence. */
 public final class Phase4ProducerTransitionEvidenceTest {
     private static int checks;
 

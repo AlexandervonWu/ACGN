@@ -217,7 +217,7 @@ public final class EGraphSemanticSoundnessCheck {
                     new JavaEgglogDeBruijn().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("slotted-egraph", new SlottedEGraph().compare(leftTerm, rightTerm).equivalent);
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
             Canonical.Prepared left = Canonical.prepare(forest.get(predicateIds.get(names[0])));

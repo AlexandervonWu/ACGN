@@ -74,7 +74,7 @@ public final class EGraphAblationInspector {
         printDistance("Java egglog", new JavaEgglog().compare(terms[0], terms[1]));
         printDistance("Java egglog + De Bruijn", new JavaEgglogDeBruijn().compare(terms[0], terms[1]));
         printDistance("slotted e-graph", new SlottedEGraph().compare(terms[0], terms[1]));
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(model, null);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Canonical.Prepared left = Canonical.prepare(forest.get(predicateIds.get(names[0])));

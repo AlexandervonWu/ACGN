@@ -82,7 +82,7 @@ public class RLTest {
         Node studentSolutionNode = predicates.get(0);
         Predicate groundTruth = (Predicate) groundTruthNode;
         Predicate studentSolution = (Predicate) studentSolutionNode;
-        MASGVisitor visitor = new MASGVisitor();
+        MASGVisitor visitor = new MASGVisitor(cm);
         visitor.visit(mu, null);
         Multigraph groundTruthGraph = visitor.getForest().get(2);
         Multigraph studentSolutionGraph = visitor.getForest().get(1);

@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
@@ -72,9 +73,24 @@ public final class Codec {
 
     private static void writeString(DataOutputStream output, String value)
             throws IOException {
-        byte[] encoded = value.getBytes(StandardCharsets.UTF_8);
+        byte[] encoded = encodeCanonicalUtf8(value);
         output.writeInt(encoded.length);
         output.write(encoded);
+    }
+
+    static byte[] encodeCanonicalUtf8(String value) {
+        try {
+            ByteBuffer encoded = StandardCharsets.UTF_8.newEncoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .encode(CharBuffer.wrap(value));
+            byte[] bytes = new byte[encoded.remaining()];
+            encoded.get(bytes);
+            return bytes;
+        } catch (CharacterCodingException exception) {
+            throw new IllegalArgumentException(
+                    "Canonical wire strings must be well-formed Unicode", exception);
+        }
     }
 
     public static Wire.Node decode(byte[] encoded, Limits limits) {

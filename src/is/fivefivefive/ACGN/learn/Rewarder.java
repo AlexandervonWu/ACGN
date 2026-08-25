@@ -57,7 +57,7 @@ public class Rewarder {
      * Throws IllegalArgumentException if no graph is found for the predicate.
      */
     public static DoubleMap<Integer, Multigraph> predicateGraph(CompModule cm, String name) {
-        MASGVisitor visitor = new MASGVisitor();
+        MASGVisitor visitor = new MASGVisitor(cm);
         ModelUnit mu = new ModelUnit(null, cm);
         List<Node> roots = parser.ast.visitor.ASTNodeFinder.findNodesByTypeAndName(mu, Predicate.class, name, false);
         if (roots.isEmpty()) {

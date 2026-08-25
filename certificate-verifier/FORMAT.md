@@ -1,6 +1,6 @@
 # `.acgncert` Format
 
-This document specifies `acgncert-schema-v8`, the closed input language of
+This document specifies `acgncert-schema-v10`, the closed input language of
 the independent verifier. Brackets below list scalar fields in order; braces
 list child nodes in order. A trailing `*` means zero or more children.
 
@@ -14,7 +14,8 @@ N bytes   canonical Wire tree
 32 bytes  SHA-256(payload)
 ```
 
-The decoder rejects invalid UTF-8, signed/overflowing lengths, truncation,
+The encoder rejects ill-formed Java strings instead of replacing malformed
+UTF-16, and the decoder rejects invalid UTF-8, signed/overflowing lengths, truncation,
 trailing bytes, digest disagreement, configured depth/count violations, and
 any payload that does not re-encode byte-identically.
 
@@ -29,6 +30,18 @@ u32                       scalar count
 u32                       child count
   node                     each child
 ```
+
+Embedded structural-key strings use their own injective grammar: each inner
+length counts UTF-16 code units, and the standalone parser consumes exactly
+that many code units. The enclosing wire scalar still uses the strict UTF-8
+byte length above. Consequently, one supplementary scalar contributes two
+inner structural-key units and four outer UTF-8 bytes; producer and verifier
+retain that distinction byte-for-byte.
+
+Operator semantic identities and polymorphic type-parameter identities use
+the same well-formed visible scalar vocabulary as producer declarations;
+whitespace, controls, format characters, surrogates, private-use code points,
+and unassigned code points are not canonical declaration identities.
 
 Tags and enum values are closed by the schemas below. Indexed tables are
 strictly increasing by ID and contain no duplicates. Decimal integers use
@@ -45,7 +58,7 @@ referenced record is decoded, type-checked, and structurally compared.
 The root has exactly this shape and child order:
 
 ```text
-acgncert-bundle["acgncert-schema-v8"] {
+acgncert-bundle["acgncert-schema-v10"] {
   metadata manifest contexts embeddings terms proofs witnesses snapshots
   events canonical-records unfoldings publication
 }
@@ -121,10 +134,43 @@ dependent-chain-construction[
   key,profile,JOIN|ARROW,target,leftEndpoint,rightEndpoint,sourceOwner,
   theoryVersion,theoryDigest,theoryIndex,sourceOccurrenceCommitment
 ] { dependent-chain-input }
-dependent-chain-leaf[term,relationType,typeRule,key,typeProof]
+dependent-chain-leaf[term,relationType,typeRule,key,typeProof] {
+  dependent-type-dag
+}
+dependent-type-dag[relationFamilyType,commonAncestorType|NONE,arity,key] {
+  dependent-type-product*
+}
+dependent-type-product[alternativeIndex,relationProductType,key] {
+  dependent-chain-column+
+}
+dependent-chain-column[exactColumn,key] { dependent-chain-ancestor+ }
+dependent-chain-ancestor[type]
 dependent-chain-application[JOIN|ARROW,context,outputType,key] {
   dependent-chain-input dependent-chain-input
+  dependent-type-dag dependent-chain-combination-cases
 }
+dependent-chain-combination-cases[count] {
+  dependent-chain-combination-case*
+}
+dependent-chain-combination-case[
+  leftAlternative,rightAlternative,
+  ARROW_PRODUCT|JOIN_OVERLAP|JOIN_DISJOINT,key
+] {
+  (dependent-chain-boundary | dependent-chain-no-boundary)
+  (dependent-type-product | dependent-chain-no-result)
+}
+dependent-chain-boundary[
+  EXACT|LEFT_SUBTYPE_OF_RIGHT|RIGHT_SUBTYPE_OF_LEFT|DISJOINT_BRANCHES,
+  leftBoundary,rightBoundary,meetBoundary|NONE,commonAncestor,key
+] {
+  dependent-chain-boundary-left-path
+  dependent-chain-boundary-right-path
+}
+dependent-chain-boundary-left-path { dependent-chain-boundary-step+ }
+dependent-chain-boundary-right-path { dependent-chain-boundary-step+ }
+dependent-chain-boundary-step[type]
+dependent-chain-no-boundary[ARROW]
+dependent-chain-no-result[DISJOINT]
 
 `sourceOccurrenceCommitment` is a canonical structural key with tag
 `alloy-dependent-chain-source-occurrence-v1`, one nonblank deterministic path
@@ -133,6 +179,39 @@ independently replayed typed source key, and one
 `alloy-dependent-chain-source-content-v1` child containing the canonical Fast
 Rewrite binary-source content. It participates in the left certificate endpoint
 and certificate key.
+
+Dependent-chain theory v10 represents each relation type as a finite normalized
+union of correlated ordered products. A union remains a product antichain;
+ARROW takes the correlated Cartesian product; and JOIN serializes one complete
+row-major decision for every pair of alternatives. Exact and one-sided subtype
+boundaries contribute a product. Distinct authenticated `PrimSig` branches
+serialize both paths to their first common ancestor and contribute no product.
+Every exact column and ancestry step is either `Int` or a nullary constructor
+with a nonempty, well-formed visible `AlloySig:` identity. Whitespace, Unicode
+space separators, controls, format characters, surrogates, private-use code
+points, and unassigned code points are rejected; generic constructors cannot
+become exact singleton columns.
+An explicit `univ` boundary is an ordinary exact column and may overlap by
+exact identity or by a concrete-to-`univ` subtype path. By contrast, `univ`
+appearing only as the first common ancestor of two divergent concrete branches
+proves disjointness and never overlap. The term carrier remains an ordered,
+duplicate-preserving dependent `Seq`. If every pair is disjoint, the DAG has
+zero product alternatives but retains a positive-arity
+`AlloyEmptyRelation$arity=n` carrier and the complete decision matrix.
+
+The verifier independently reconstructs one acyclic, single-parent nominal
+ancestry ledger, every normalized product family, every common-ancestor node,
+every pair decision, and every application and flat result. Synthetic family
+and common-ancestor nodes never enter the nominal parent ledger. The wire proves
+only internal structural consistency. It contains neither raw Alloy declarations
+nor an independently pinned signature hierarchy, so a well-formed nonexact
+subtype or disjoint-branch proof produces
+`UNCHECKABLE / MISSING_EVIDENCE` after structural replay. A malformed subtype
+or disjointness proof is `REJECTED`; an exact-only chain can remain verifiable.
+Zero `dependent-type-product` children are valid only for a positive-arity
+`AlloyEmptyRelation$arity=n` carrier whose encoded arity is `n` and whose
+common ancestor is `NONE`. Every nonempty relation family has one or more
+products, and every product has exactly the encoded positive arity.
 
 container-constructions { container-construction* }
 container-construction[
@@ -169,8 +248,11 @@ base-10 positive integer with no sign or leading zero. It carries no
 `type-ref` children because Alloy erases the unavailable parent column types;
 the producer must not invent `none`, `univ`, or source-child columns. The old
 arity-free `AlloyEmptyRelation`, zero/negative/noncanonical arities, and an
-argument-bearing reserved constructor are invalid. Column-dependent JOIN and
-ARROW evidence cannot use this arity-only type.
+argument-bearing reserved constructor are invalid. A positive-arity typed
+empty relation has no column children but may occur as a JOIN or ARROW source
+or result family. Its retained arity participates in the JOIN flattening guard
+and result-arity equation; no nominal boundary or subtype path may be invented
+for its absent alternatives.
 
 The binder-occurrence `key` commits to the complete enclosing-root term key,
 descriptor, source context and occurrence map, descriptor automorphism,
@@ -189,6 +271,21 @@ Occurrence ID and source path are provenance only: they do not enter the CALL
 operator declaration, canonical semantic equality, or repair cost. Distinct
 records may therefore point to one hash-consed semantic term, but occurrence
 IDs and source paths must each be unique.
+
+Every CALL record also has one nullary model anchor whose operator identity is
+`ACGN/CALL-OCCURRENCE/` followed by the canonical unpadded Base64url encoding
+of that record's replayed wire key. The verifier reconstructs this identity
+from the record, requires exact equality between the complete anchor set and
+the complete record set, and separately requires every semantic CALL operator
+present in model terms to be covered. The anchor is provenance-only and is not
+a canonical CALL operand: it must match the source term's context and sort,
+and its term ID must occur exactly once in the complete bundle. This detects
+unpaired row or anchor omission/insertion within the serialized normalized
+model, including nested or repeated occurrences of one callee. Coordinated
+removal of both a row and its self-declared anchor cannot be detected without
+an independently supplied source-occurrence authority; correspondence from
+the normalized model back to raw Alloy source remains outside standalone-
+verifier authority.
 
 Schemas, operators, and binders are typed uninterpreted declarations whose
 complete vocabulary is independently hashed. In PAIR mode, declarations used
@@ -442,7 +539,7 @@ The checkpoint verifier recomputes complete state differences and rejects
 all mutations not authorized by the named event. Only
 `RESTRICT_INTERFACE` may change an existing class interface. Its transport
 children are an exact ledger of every changed parent, shape, and symmetry
-record; unchanged sections are exact frames. Schema v8 currently fails closed
+record; unchanged sections are exact frames. Schema v10 currently fails closed
 when restriction would add or remove a symmetry key.
 
 `REBUILD_START` is an exact no-op over one dirty snapshot. Its payload must
@@ -569,9 +666,9 @@ never verify.
 ## Producer Compatibility
 
 The verifier wire schema and binary envelope versions are exclusively
-`acgncert-schema-v8` and `1`. Historical roots, including v7, are rejected
-rather than migrated or reinterpreted. `CertificateBundleWriter` emits v8 and
-must provide the v8 occurrence embeddings, owner equations, maintenance
+`acgncert-schema-v10` and `1`. Historical roots, including v9, are rejected
+rather than migrated or reinterpreted. `CertificateBundleWriter` emits v10 and
+must provide the v10 occurrence embeddings, owner equations, maintenance
 ledgers, source constructions, and closed event branches for every supported
 bundle. Neither writer nor verifier synthesizes those fields for older bytes.
 
@@ -583,15 +680,17 @@ ordered positional `DEPENDENT_SEQ`; APP and INVOKE
 terms; identity typed embeddings; AXIOM, SYM, PARENT_EDGE, CONGRUENCE, TRANS,
 WITNESS_UNFOLD, KERNEL_REPLAY, CANONICAL_ORBIT, and FRESH_WITNESS proofs. JOIN and plain ARROW
 may use a `DEPENDENT_SEQ` only with an independently replayed source tree,
-exact relation-column proof, fixed theory digest, and construction owner. The
+normalized correlated-family DAG, complete alternative-pair proof matrix,
+fixed theory digest, and construction owner. The
 leaf `typeRule` is `EXACT_RELATION` when the stored One-port type is already
 the claimed relation type, or `PRIMITIVE_SET_SINGLETON` when an `Int` or
 `AlloyCarrier(S)` slot is independently lifted to unary `Rel(Int)` or
 `Rel(AlloySig:S)`. Parameters use this exact underlying carrier rule and remain
 distinct through their typed-slot ordinals; constructor spellings such as
-`Parameter0` grant no typing authority. No other coercion is accepted, and a
-relation containing the polymorphic `AlloySig:univ` column receives no
-dependent-chain reassociation certificate. Generic flat/container evidence
+`Parameter0` grant no typing authority. No other coercion is accepted. An
+explicit source relation containing `AlloySig:univ` may receive a dependent
+certificate when the complete chain equation and JOIN interior-arity guard
+hold; missing or unresolved typing cannot fabricate that column. Generic flat/container evidence
 cannot consume `DEPENDENT_SEQ`.
 The emitted bounded history subset uses either a nonempty contiguous sequence
 of bottom-up fresh insertions or the exact six-event parent-path history
@@ -608,7 +707,7 @@ are carried by the separately hashed vocabulary. Recursive term keys include
 kind, context, sort, symbol, ordered
 attributes, and recursively keyed children.
 
-This subsection records producer capability rather than relaxing v8. It does not remove any
+This subsection records producer capability rather than relaxing v10. It does not remove any
 closed verifier record above, nor does it authorize a verifier to infer
 missing evidence. The theory digest remains an untrusted bundle field until
 the caller supplies the same digest out of band.

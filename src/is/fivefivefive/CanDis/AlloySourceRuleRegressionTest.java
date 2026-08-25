@@ -108,7 +108,7 @@ public final class AlloySourceRuleRegressionTest {
             checkHigherOrderCommandAuthorities(module, options);
 
             ModelUnit model = new ModelUnit(null, module);
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             checkEmptyUniverseNormalization(module, visitor, options, directory);
             checkUnsafePrenexRegressions(visitor, directory);

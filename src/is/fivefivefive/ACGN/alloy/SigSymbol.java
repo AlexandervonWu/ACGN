@@ -7,22 +7,28 @@ package is.fivefivefive.ACGN.alloy;
 public class SigSymbol extends SetSymbol {
     public static final String BUILTIN_NONE_IDENTITY = "alloy/builtin/none";
     public static final String BUILTIN_UNIV_IDENTITY = "alloy/builtin/univ";
+    public static final String BUILTIN_INT_IDENTITY = "alloy/builtin/Int";
+    public static final String BUILTIN_SEQUENCE_INDEX_IDENTITY =
+            "alloy/builtin/seq/Int";
 
     public enum Kind {
         USER,
         BUILTIN_NONE,
-        BUILTIN_UNIV
+        BUILTIN_UNIV,
+        BUILTIN_INT,
+        BUILTIN_SEQUENCE_INDEX
     }
 
     private final String name;
     private final Kind kind;
 
     public SigSymbol(String n) {
-        this(n, Kind.USER);
+        this(ExactAlloyType.normalizeColumn(n), Kind.USER);
     }
 
     private SigSymbol(String name, Kind kind) {
-        this.name = java.util.Objects.requireNonNull(name, "signature name");
+        this.name = ExactAlloyType.requireAdmittedIdentity(
+                name, "signature name");
         this.kind = java.util.Objects.requireNonNull(kind, "signature kind");
     }
 
@@ -32,6 +38,14 @@ public class SigSymbol extends SetSymbol {
 
     public static SigSymbol builtinUniv() {
         return new SigSymbol("univ", Kind.BUILTIN_UNIV);
+    }
+
+    public static SigSymbol builtinInt() {
+        return new SigSymbol("Int", Kind.BUILTIN_INT);
+    }
+
+    public static SigSymbol builtinSequenceIndex() {
+        return new SigSymbol("seq/Int", Kind.BUILTIN_SEQUENCE_INDEX);
     }
 
     public Kind getKind() {
@@ -44,6 +58,10 @@ public class SigSymbol extends SetSymbol {
                 return BUILTIN_NONE_IDENTITY;
             case BUILTIN_UNIV:
                 return BUILTIN_UNIV_IDENTITY;
+            case BUILTIN_INT:
+                return BUILTIN_INT_IDENTITY;
+            case BUILTIN_SEQUENCE_INDEX:
+                return BUILTIN_SEQUENCE_INDEX_IDENTITY;
             case USER:
             default:
                 return "alloy/signature/" + name;

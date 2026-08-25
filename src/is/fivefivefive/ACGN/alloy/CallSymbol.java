@@ -31,8 +31,10 @@ public final class CallSymbol extends AbstractSymbol {
         this.kind = Objects.requireNonNull(kind, "kind");
         this.sourceName = Objects.requireNonNull(sourceName, "sourceName");
         this.callee = Objects.requireNonNull(callee, "callee");
-        if (sourceName.trim().isEmpty() || callee.trim().isEmpty()) {
-            throw new IllegalArgumentException("Call callee must not be blank");
+        if (!ExactAlloyType.isAdmittedIdentity(sourceName)
+                || !ExactAlloyType.isAdmittedIdentity(callee)) {
+            throw new IllegalArgumentException(
+                    "Call callee must be a well-formed visible identity");
         }
         int separator = callee.lastIndexOf('/');
         if (separator <= 0 || separator + 1 >= callee.length()) {

@@ -417,7 +417,8 @@ public class Alloy4FunAugmenter {
             }
             acquireCanonicalPermit(canonicalPermits);
             try {
-                MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+                MASGVisitor visitor = new MASGVisitor(
+                        new GlobalVariables(), module);
                 visitor.visit(model, null);
                 DoubleMap<Integer, Multigraph> forest = visitor.getForest();
                 Multigraph studentGraph = forest.get(pair.leftId);
@@ -462,7 +463,7 @@ public class Alloy4FunAugmenter {
             if (pair == null) {
                 throw new IllegalStateException("No predicate pair of the form X and X[Cc] found.");
             }
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             Multigraph graph = visitor.getForest().get(oracle ? pair.rightId : pair.leftId);
             if (graph == null) {
@@ -3385,14 +3386,14 @@ public class Alloy4FunAugmenter {
 
         private static RepresentationKey student(ModelRecord record) {
             return new RepresentationKey(
-                    record.groupKey() + '\0' + record.prelude,
+                    record.relativePath + '\0' + record.groupKey() + '\0' + record.prelude,
                     record.studentBody,
                     record.studentAst.fingerprint);
         }
 
         private static RepresentationKey oracle(ModelRecord record) {
             return new RepresentationKey(
-                    record.groupKey() + '\0' + record.prelude,
+                    record.relativePath + '\0' + record.groupKey() + '\0' + record.prelude,
                     record.oracleBody,
                     record.oracleAst.fingerprint);
         }

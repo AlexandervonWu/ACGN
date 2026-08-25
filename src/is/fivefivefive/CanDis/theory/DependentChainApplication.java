@@ -11,7 +11,8 @@ public final class DependentChainApplication implements DependentChainInput {
     private final DependentChainInput left;
     private final DependentChainInput right;
     private final TypedSlotContext context;
-    private final GraphType outputType;
+    private final DependentTypeDag outputTypeDag;
+    private final List<DependentTypeDag.CombinationCase> combinationCases;
     private final List<OnePort> leaves;
     private final StructuralKey structuralKey;
 
@@ -27,29 +28,43 @@ public final class DependentChainApplication implements DependentChainInput {
                     "Dependent chain branches use different caller contexts");
         }
         this.context = left.context();
-        this.outputType = kind.combine(left.outputType(), right.outputType());
+        DependentTypeDag.ChainCombination combination =
+                DependentTypeDag.combine(
+                        kind, left.outputTypeDag(), right.outputTypeDag());
+        this.outputTypeDag = combination.result();
+        this.combinationCases = combination.cases();
         List<OnePort> ordered = new ArrayList<>();
         ordered.addAll(left.leaves());
         ordered.addAll(right.leaves());
         this.leaves = Collections.unmodifiableList(ordered);
-        List<GraphType> operandTypes = new ArrayList<>();
-        collectLeafTypes(left, operandTypes);
-        collectLeafTypes(right, operandTypes);
-        DependentChainTheory.requireSoundFlattening(kind, operandTypes);
-        GraphType flattened = kind.fold(operandTypes);
-        if (!outputType.equals(flattened)) {
+        List<DependentChainLeaf> leafInputs = new ArrayList<>();
+        collectLeafInputs(left, leafInputs);
+        collectLeafInputs(right, leafInputs);
+        DependentChainTheory.requireSoundFlatteningEvidence(kind, leafInputs);
+        List<DependentTypeDag> leafDags = leafInputs.stream()
+                .map(DependentChainLeaf::outputTypeDag)
+                .toList();
+        DependentTypeDag flattened = DependentTypeDag.fold(kind, leafDags);
+        if (!outputTypeDag.equals(flattened)) {
             throw new IllegalArgumentException(
-                    "Binary association and dependent-chain fold have different types: "
-                            + outputType + " != " + flattened);
+                    "Binary association and dependent-chain fold have different "
+                            + "correlated type DAGs");
         }
+        List<StructuralKey> keyChildren = new ArrayList<>(List.of(
+                TheoryKeys.context(context),
+                TheoryKeys.type(outputTypeDag.relationType()),
+                outputTypeDag.structuralKey(),
+                left.structuralKey(),
+                right.structuralKey(),
+                StructuralKey.branch(
+                        "dependent-chain-combination-cases-v1",
+                        combinationCases.stream()
+                                .map(DependentTypeDag.CombinationCase::structuralKey)
+                                .toList())));
         this.structuralKey = StructuralKey.of(
-                "dependent-chain-application-v1",
+                "dependent-chain-application-v3",
                 List.of(kind.name()),
-                List.of(
-                        TheoryKeys.context(context),
-                        TheoryKeys.type(outputType),
-                        left.structuralKey(),
-                        right.structuralKey()));
+                keyChildren);
     }
 
     public DependentChainKind kind() {
@@ -70,8 +85,21 @@ public final class DependentChainApplication implements DependentChainInput {
     }
 
     @Override
-    public GraphType outputType() {
-        return outputType;
+    public DependentTypeDag outputTypeDag() {
+        return outputTypeDag;
+    }
+
+    public DependentBoundaryCorrespondence boundaryCorrespondence() {
+        if (combinationCases.size() != 1
+                || combinationCases.get(0).boundary().isEmpty()) {
+            throw new IllegalStateException(
+                    "This chain step does not have one scalar boundary proof");
+        }
+        return combinationCases.get(0).boundary().get();
+    }
+
+    public List<DependentTypeDag.CombinationCase> combinationCases() {
+        return combinationCases;
     }
 
     @Override
@@ -82,6 +110,12 @@ public final class DependentChainApplication implements DependentChainInput {
     public List<GraphType> leafTypes() {
         List<GraphType> result = new ArrayList<>();
         collectLeafTypes(this, result);
+        return Collections.unmodifiableList(result);
+    }
+
+    public List<DependentChainLeaf> leafInputs() {
+        List<DependentChainLeaf> result = new ArrayList<>();
+        collectLeafInputs(this, result);
         return Collections.unmodifiableList(result);
     }
 
@@ -96,6 +130,19 @@ public final class DependentChainApplication implements DependentChainInput {
                 (DependentChainApplication) input;
         collectLeafTypes(application.left(), output);
         collectLeafTypes(application.right(), output);
+    }
+
+    private static void collectLeafInputs(
+            DependentChainInput input,
+            List<DependentChainLeaf> output) {
+        if (input instanceof DependentChainLeaf) {
+            output.add((DependentChainLeaf) input);
+            return;
+        }
+        DependentChainApplication application =
+                (DependentChainApplication) input;
+        collectLeafInputs(application.left(), output);
+        collectLeafInputs(application.right(), output);
     }
 
     @Override

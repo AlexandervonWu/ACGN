@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.ObjectStreamClass;
 import java.io.ObjectOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,6 +18,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
+import edu.mit.csail.sdg.ast.Attr;
+import edu.mit.csail.sdg.ast.Sig.PrimSig;
 import edu.mit.csail.sdg.ast.Type;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
@@ -37,6 +40,8 @@ import is.fivefivefive.CanDis.theory.ContainerConstructionCertificate;
 import is.fivefivefive.CanDis.theory.CertifiedSemanticArtifact;
 import is.fivefivefive.CanDis.theory.DependentChainCertificate;
 import is.fivefivefive.CanDis.theory.DependentChainKind;
+import is.fivefivefive.CanDis.theory.DependentChainTheory;
+import is.fivefivefive.CanDis.theory.DependentColumnEvidence;
 import is.fivefivefive.CanDis.theory.FlatConstructionCertificate;
 import is.fivefivefive.CanDis.theory.GraphType;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
@@ -59,9 +64,29 @@ public final class CanonicalAlloyPipelineTest {
             Files.writeString(modelPath, source(), StandardCharsets.UTF_8);
             CompModule module = AlloyUtil.compileAlloyModule(modelPath.toString());
             check(module != null, "self-contained Alloy fixture must parse");
+            check(Arrays.stream(ExactAlloyType.class.getDeclaredMethods())
+                            .noneMatch(method -> method.getName().equals(
+                                            "relationWithAncestry")
+                                    && java.lang.reflect.Modifier.isPublic(
+                                            method.getModifiers())),
+                    "explicit subtype ancestry must not be a public producer authority");
+            check(Arrays.stream(ExactAlloyType.class.getDeclaredConstructors())
+                            .noneMatch(constructor -> java.lang.reflect.Modifier.isPublic(
+                                    constructor.getModifiers())),
+                    "exact Alloy type construction must remain factory controlled");
+            check(Arrays.stream(DependentColumnEvidence.class.getDeclaredConstructors())
+                            .noneMatch(constructor -> java.lang.reflect.Modifier.isPublic(
+                                    constructor.getModifiers())),
+                    "dependent ancestry evidence must have no public constructor");
+            check(Arrays.stream(DependentColumnEvidence.class.getDeclaredMethods())
+                            .noneMatch(method -> method.getName().equals(
+                                            "fromExactAlloyType")
+                                    && java.lang.reflect.Modifier.isPublic(
+                                            method.getModifiers())),
+                    "parser ancestry extraction must remain package private");
             checkEmptyRelationArity(module);
             ModelUnit model = new ModelUnit(null, module);
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
 
             CanonicalAlloyPipeline.Prepared alphaLeft = prepare(visitor, "alphaLeft");
@@ -111,6 +136,8 @@ public final class CanonicalAlloyPipelineTest {
                     prepare(visitor, "heterogeneousDisjoint");
             CanonicalAlloyPipeline.Prepared binaryArrowType =
                     prepare(visitor, "binaryArrowType");
+            CanonicalAlloyPipeline.Prepared intArrowType =
+                    prepare(visitor, "intArrowType");
             CanonicalAlloyPipeline.Prepared reversedArrowType =
                     prepare(visitor, "reversedArrowType");
             CanonicalAlloyPipeline.Prepared binaryJoinType =
@@ -123,6 +150,24 @@ public final class CanonicalAlloyPipelineTest {
                     prepare(visitor, "joinAssocLeft");
             CanonicalAlloyPipeline.Prepared joinAssocRight =
                     prepare(visitor, "joinAssocRight");
+            CanonicalAlloyPipeline.Prepared rightUnivJoinLeft =
+                    prepare(visitor, "rightUnivJoinLeft");
+            CanonicalAlloyPipeline.Prepared rightUnivJoinRight =
+                    prepare(visitor, "rightUnivJoinRight");
+            CanonicalAlloyPipeline.Prepared leftUnivJoinLeft =
+                    prepare(visitor, "leftUnivJoinLeft");
+            CanonicalAlloyPipeline.Prepared leftUnivJoinRight =
+                    prepare(visitor, "leftUnivJoinRight");
+            CanonicalAlloyPipeline.Prepared subtypeBoundaryJoin =
+                    prepare(visitor, "subtypeBoundaryJoin");
+            CanonicalAlloyPipeline.Prepared relationFamilyJoin =
+                    prepare(visitor, "relationFamilyJoin");
+            CanonicalAlloyPipeline.Prepared disjointBoundaryJoin =
+                    prepare(visitor, "disjointBoundaryJoin");
+            CanonicalAlloyPipeline.Prepared emptyIntersectJoin =
+                    prepare(visitor, "emptyIntersectJoin");
+            CanonicalAlloyPipeline.Prepared emptyUnionJoin =
+                    prepare(visitor, "emptyUnionJoin");
             CanonicalAlloyPipeline.Prepared localGroupingLeft =
                     prepare(visitor, "localGroupingLeft");
             CanonicalAlloyPipeline.Prepared localGroupingRight =
@@ -437,6 +482,14 @@ public final class CanonicalAlloyPipelineTest {
                                     || laws.idempotent()
                                     || laws.hasUnit()),
                     "dependent ARROW Seq carries no A/C/I/unit quotient license");
+            DependentChainCertificate intArrow = dependentChain(
+                    intArrowType, DependentChainKind.ARROW);
+            check(intArrow.target().outputType().equals(
+                            GraphType.relation(GraphType.INT, sigS)),
+                    "parser-origin Int receives its unary relation view in ARROW");
+            check(intArrow.source().leafInputs().get(0).typeRule()
+                            == DependentChainTheory.LeafTypeRule.PRIMITIVE_SET_SINGLETON,
+                    "parser-origin Int retains an explicit primitive singleton proof");
             check(hasOutputType(
                             binaryJoinType,
                             GraphType.relation(Arrays.asList(sigEvent, sigState))),
@@ -459,6 +512,94 @@ public final class CanonicalAlloyPipelineTest {
                     "JOIN reassociation must share one certified ordered-chain target");
             assertReassociatedChain(
                     joinAssocLeft, joinAssocRight, DependentChainKind.JOIN);
+            check(rightUnivJoinLeft.equivalentTo(rightUnivJoinRight)
+                            && CanonicalAlloyPipeline.distance(
+                                    rightUnivJoinLeft, rightUnivJoinRight) == 0,
+                    "(x.trans).univ and x.(trans.univ) must share one certified target");
+            assertReassociatedChain(
+                    rightUnivJoinLeft,
+                    rightUnivJoinRight,
+                    DependentChainKind.JOIN);
+            check(leftUnivJoinLeft.equivalentTo(leftUnivJoinRight)
+                            && CanonicalAlloyPipeline.distance(
+                                    leftUnivJoinLeft, leftUnivJoinRight) == 0,
+                    "(univ.trans).x and univ.(trans.x) must share one certified target");
+            assertReassociatedChain(
+                    leftUnivJoinLeft,
+                    leftUnivJoinRight,
+                    DependentChainKind.JOIN);
+            DependentChainCertificate subtypeCertificate = subtypeBoundaryJoin
+                    .semanticArtifact().dependentChainConstructions().stream()
+                    .filter(certificate -> certificate.source().kind()
+                            == DependentChainKind.JOIN)
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError(
+                            "subtype-overlap JOIN lacks a dependent Seq certificate"));
+            check(subtypeCertificate.source().boundaryCorrespondence().rule()
+                            == is.fivefivefive.CanDis.theory
+                                    .DependentBoundaryCorrespondence.Rule
+                                            .RIGHT_SUBTYPE_OF_LEFT,
+                    "Product.(Component->Position) must carry the explicit "
+                            + "Component-subtype-of-Product correspondence");
+            check(subtypeCertificate.source().boundaryCorrespondence()
+                            .witnessPath().stream().map(GraphType::symbol).toList()
+                            .equals(List.of(
+                                    "AlloySig:Component", "AlloySig:Product")),
+                    "the subtype JOIN witness must retain its exact direct-parent path");
+            DependentChainCertificate familyCertificate = dependentChain(
+                    relationFamilyJoin, DependentChainKind.JOIN);
+            long familyOverlaps = familyCertificate.source()
+                    .combinationCases().stream()
+                    .filter(proof -> proof.decision()
+                            == is.fivefivefive.CanDis.theory.DependentTypeDag
+                                    .CombinationDecision.JOIN_OVERLAP)
+                    .count();
+            long familyDisjoint = familyCertificate.source()
+                    .combinationCases().stream()
+                    .filter(proof -> proof.decision()
+                            == is.fivefivefive.CanDis.theory.DependentTypeDag
+                                    .CombinationDecision.JOIN_DISJOINT)
+                    .count();
+            check(familyCertificate.source().outputTypeDag()
+                            .alternatives().size() == 2
+                            && familyCertificate.source()
+                                    .combinationCases().size() == 4
+                            && familyOverlaps == 2
+                            && familyDisjoint == 2,
+                    "the Alloy adapter retains correlated families and a complete JOIN matrix");
+            check(((SeqPort) familyCertificate.target().ports().get(0))
+                            .elements().size() == 2,
+                    "the relation-family JOIN still uses one ordered two-operand Seq");
+            DependentChainCertificate emptyJoinCertificate = dependentChain(
+                    disjointBoundaryJoin, DependentChainKind.JOIN);
+            check(emptyJoinCertificate.source().outputType()
+                            .equals(AlloyTypeBridge.emptyRelation(2))
+                            && emptyJoinCertificate.source().outputTypeDag()
+                                    .alternatives().isEmpty()
+                            && emptyJoinCertificate.source()
+                                    .combinationCases().size() == 1
+                            && emptyJoinCertificate.source()
+                                    .combinationCases().get(0).decision()
+                                    == is.fivefivefive.CanDis.theory.DependentTypeDag
+                                            .CombinationDecision.JOIN_DISJOINT,
+                    "a parser-valid all-disjoint JOIN becomes one certified typed-empty Seq");
+            check(((SeqPort) emptyJoinCertificate.target().ports().get(0))
+                            .elements().size() == 2,
+                    "typed-empty JOIN normalization preserves both source operands");
+            DependentChainCertificate emptyIntersectCertificate = dependentChain(
+                    emptyIntersectJoin, DependentChainKind.JOIN);
+            check(emptyIntersectCertificate.source().leafInputs().get(0)
+                            .outputTypeDag().alternatives().isEmpty()
+                            && emptyIntersectCertificate.source().leafInputs().get(0)
+                                    .outputTypeDag().arity() == 1,
+                    "a parser-empty INTERSECT leaf is independently derived as typed empty");
+            DependentChainCertificate emptyUnionCertificate = dependentChain(
+                    emptyUnionJoin, DependentChainKind.JOIN);
+            check(emptyUnionCertificate.source().leafInputs().get(0)
+                            .outputTypeDag().alternatives().isEmpty()
+                            && emptyUnionCertificate.source().leafInputs().get(0)
+                                    .outputTypeDag().arity() == 1,
+                    "a parser-empty UNION leaf retains recursively derived empty evidence");
             check(parameterJoinLeft.equivalentTo(parameterJoinRight),
                     "bound-parameter JOIN reassociation must receive symmetric evidence");
             check(CanonicalAlloyPipeline.distance(
@@ -468,10 +609,6 @@ public final class CanonicalAlloyPipelineTest {
                     parameterJoinLeft,
                     parameterJoinRight,
                     DependentChainKind.JOIN);
-            check(binderAll.semanticArtifact().dependentChainConstructions().stream()
-                            .noneMatch(certificate -> certificate.source().kind()
-                                    == DependentChainKind.JOIN),
-                    "an unresolved polymorphic univ JOIN must remain unflattened");
             check(witnessedCarrierLeft.equivalentTo(witnessedCarrierRight),
                     "a preceding primitive binder must discharge an unnecessary relativized carrier: "
                             + witnessedCarrierLeft.digest() + " != "
@@ -808,6 +945,54 @@ public final class CanonicalAlloyPipelineTest {
         forged[markerOffset + marker.length - 2] = '3';
         expectThrows(InvalidObjectException.class,
                 () -> deserialize(forged));
+
+        Type componentType = CompUtil.parseOneExpression_fromString(
+                module, "Component").type();
+        ExactAlloyType component = ExactAlloyType.fromParser(
+                componentType, module);
+        check(component.ancestryAlternatives().equals(List.of(
+                        List.of(List.of("Component", "Product", "univ")))),
+                "parser-derived subtype ancestry must retain its exact parent path");
+        check(component.hasParserAuthenticatedAncestry(),
+                "parsed extends hierarchy must carry live parser authority");
+        ExactAlloyType componentRoundTrip = (ExactAlloyType) deserialize(
+                serialize(component));
+        check(componentRoundTrip.ancestryAlternatives().equals(
+                        component.ancestryAlternatives()),
+                "current exact-type serialization must preserve subtype ancestry");
+        check(!componentRoundTrip.hasParserAuthenticatedAncestry(),
+                "serialized ancestry must not retain live parser authority");
+        expectThrows(IllegalArgumentException.class,
+                () -> AlloyTypeBridge.dependentColumns(componentRoundTrip));
+        expectThrows(IllegalArgumentException.class,
+                () -> AlloyTypeBridge.dependentColumns(
+                        ExactAlloyType.from(componentType)));
+
+        PrimSig syntheticParent = new PrimSig("SyntheticParent");
+        PrimSig syntheticChild = new PrimSig("SyntheticChild", syntheticParent);
+        ExactAlloyType synthetic = ExactAlloyType.from(syntheticChild.type());
+        check(!synthetic.hasParserAuthenticatedAncestry(),
+                "public PrimSig constructors must not mint parser ancestry authority");
+        expectThrows(IllegalArgumentException.class,
+                () -> AlloyTypeBridge.dependentColumns(synthetic));
+
+        PrimSig parsedComponent = componentType.iterator().next().get(0);
+        PrimSig transplanted = new PrimSig(
+                "TransplantedChild",
+                syntheticParent,
+                parsedComponent.attributes.toArray(new Attr[0]));
+        ExactAlloyType transplantedType = ExactAlloyType.fromParser(
+                transplanted.type(), module);
+        check(!transplantedType.hasParserAuthenticatedAncestry(),
+                "a transferable parser Attr must not authorize a foreign PrimSig");
+        expectThrows(IllegalArgumentException.class,
+                () -> AlloyTypeBridge.dependentColumns(transplantedType));
+        check(AlloyTypeBridge.dependentColumns(
+                        ExactAlloyType.relation(List.of("SyntheticChild"))).size() == 1,
+                "self-only public relation types must remain admissible");
+        check(ObjectStreamClass.lookup(ExactAlloyType.class)
+                        .getSerialVersionUID() == 3L,
+                "exact-type stream version 3 must invalidate ancestry-free caches");
 
         EGraphNode.beginGraph();
         try {
@@ -1343,6 +1528,7 @@ public final class CanonicalAlloyPipelineTest {
         return "module phase_i\n"
                 + "open util/ordering[S] as orderingS\n"
                 + "sig S { r: set S }\n"
+                + "sig SequenceOwner { sequenceField: seq S }\n"
                 + "sig T {}\n"
                 + "sig Protected, Trash in S {}\n"
                 + "sig State { trans: Event -> State }\n"
@@ -1353,6 +1539,12 @@ public final class CanonicalAlloyPipelineTest {
                 + "sig Class { Groups: Person -> Group }\n"
                 + "sig Teacher in Person {}\n"
                 + "sig Student in Person {}\n"
+                + "sig Product {}\n"
+                + "sig Position {}\n"
+                + "sig Component extends Product { position: one Position }\n"
+                + "sig FamilyParent {}\n"
+                + "sig FamilyA, FamilyB extends FamilyParent {}\n"
+                + "sig FamilyC {}\n"
                 + "pred alphaLeft { all x, y: S | y in x.r }\n"
                 + "pred alphaRight { all a, b: S | a in b.r }\n"
                 + "pred aciLeft { (some S and lone S) and one S }\n"
@@ -1386,12 +1578,25 @@ public final class CanonicalAlloyPipelineTest {
                 + "pred duplicateDisjoint { disj[S, S, Protected] }\n"
                 + "pred heterogeneousDisjoint { disj[S, T] }\n"
                 + "pred binaryArrowType { some (S -> T) }\n"
+                + "pred intArrowType[x: Int, s: S] { some (x -> s) }\n"
                 + "pred reversedArrowType { some (T -> S) }\n"
                 + "pred binaryJoinType { some (State.trans) }\n"
                 + "pred arrowAssocLeft { some ((S -> T) -> Protected) }\n"
                 + "pred arrowAssocRight { some (S -> (T -> Protected)) }\n"
                 + "pred joinAssocLeft { some ((State.trans).State) }\n"
                 + "pred joinAssocRight { some (State.(trans.State)) }\n"
+                + "pred rightUnivJoinLeft[x: State] { some ((x.trans).univ) }\n"
+                + "pred rightUnivJoinRight[x: State] { some (x.(trans.univ)) }\n"
+                + "pred leftUnivJoinLeft[x: State] { some ((univ.trans).x) }\n"
+                + "pred leftUnivJoinRight[x: State] { some (univ.(trans.x)) }\n"
+                + "pred subtypeBoundaryJoin { all p: Product | some p.position }\n"
+                + "pred relationFamilyJoin {\n"
+                + "  some (((FamilyA->FamilyA) + (FamilyB->FamilyB))."
+                + "((FamilyA->FamilyC) + (FamilyB->FamilyC)))\n"
+                + "}\n"
+                + "pred disjointBoundaryJoin { no ((S->T).(Event->Group)) }\n"
+                + "pred emptyIntersectJoin { no ((S & T).(S->T)) }\n"
+                + "pred emptyUnionJoin { no (((S & T) + (Event & Group)).(S->T)) }\n"
                 + "pred parameterJoinLeft[x:S] { some ((x.r).r) }\n"
                 + "pred parameterJoinRight[x:S] { some (x.(r.r)) }\n"
                 + "pred parameterTypeS[x:S] { some x }\n"

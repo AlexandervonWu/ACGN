@@ -10,27 +10,46 @@ language, synthesizes typed equality judgments bottom-up, replays graph
 transitions, exhaustively reconstructs finite canonical orbits, and checks
 explicit finite `Rep` trees.
 
-Schema v8 includes a closed `WITNESS_UNFOLD` kernel rule. Given only a witness
+Schema v10 retains the closed `WITNESS_UNFOLD` kernel rule. Given only a witness
 and a typed embedding, the verifier reconstructs the invocation and the acted
 witness definition internally; the rule has no premises and admits no theory
 axiom.
 
-Wire schema `acgncert-schema-v8` also has a dedicated dependent ordered-Seq
+Wire schema `acgncert-schema-v10` also has a dedicated dependent ordered-Seq
 construction for plain Alloy JOIN and ARROW. The verifier reconstructs the
 binary source association, independently checks every positional leaf's stored
-type and relation view, derives every intermediate/result column type, and
-then checks the ordered variadic target. This path is deliberately separate
+type and correlated relation-family DAG, structurally checks every supplied
+direct-parent path, independently normalizes each subtype antichain, replays
+the complete row-major alternative-pair matrix, derives every intermediate and
+result product, and then checks the ordered variadic target.
+This path is deliberately separate
 from homogeneous flat-container evidence and grants no commutativity,
 idempotency, permutation, or unit authority.
-ARROW reassociation is licensed for every well-typed ordered chain. JOIN
+ARROW takes the correlated Cartesian product and never widens independent
+columns. JOIN boundaries require exact identity, an explicit exact-signature
+subtype correspondence, or explicit divergent-branch disjointness reconstructed
+from two acyclic, single-parent paths to their first common ancestor. An
+explicit `univ` endpoint is a real relation column and may participate by exact
+identity or a concrete-to-`univ` subtype path; two divergent concrete branches
+that merely share `univ` remain disjoint. JOIN
 reassociation with more than two source operands is licensed only when each
-interior operand has at least two relation columns; a unary interior keeps the
-source fixed binary because JOIN is not associative in that case.
-Schema v8 retains that proof and binds it to one deterministic source path and
-one canonical source-content commitment; malformed or absent commitments are
-rejected rather than inferred from the typed target.
+alternative of each interior operand has at least two relation columns; a unary interior keeps the
+source fixed binary because JOIN is not associative in that case. Subtype
+evidence never replaces an endpoint with an invented `univ`, and synthetic union/common-
+ancestor nodes never enter the nominal parent ledger. Because the standalone verifier does not
+reparse the Alloy source and has no independently pinned signature-hierarchy
+authority, a structurally valid nonexact subtype or disjoint-branch proof ends as
+`UNCHECKABLE / MISSING_EVIDENCE`; it never yields `VERIFIED`. Malformed,
+conflicting, cyclic, reversed, truncated, incomplete-matrix, or unrelated evidence is
+`REJECTED`. Exact-boundary chains do not need that external authority.
 
-Schema v8 also retains the enclosing typed root as part of every
+Schema v10 retains the structural proof and binds it to one deterministic
+source path and one canonical source-content commitment; malformed or absent
+commitments are rejected rather than inferred from the typed target. Schema v9
+bytes are rejected as historical because v9 did not carry correlated DAGs and
+complete pair matrices.
+
+Schema v10 also retains the enclosing typed root as part of every
 binder-occurrence certificate identity and verifies the occurrence path from
 that root. Historical schemas are rejected as unsupported rather than silently
 reinterpreted. A provenance-only CALL ledger additionally binds parser
@@ -126,6 +145,9 @@ the supported bundles under `full`, and exercises both a manually constructed
 bundle-level PAIR and a real two-file parser -> MASG -> adapter -> writer PAIR.
 The latter asserts distinct source identities and content hashes before the
 standalone verifier accepts the pair under the static empty-theory pin.
+The producer test output subdirectory named `schema-v8-coverage` is retained
+only as a stable historical harness path; newly generated bundles in that
+directory use schema v10 and v9 payload roots are rejected.
 
 ## Producer Export Status
 

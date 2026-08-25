@@ -231,7 +231,7 @@ public final class CanonicalMemoryAttribution {
             }
 
             recorder.beginStage("masg");
-            MASGVisitor visitor = focusedVisitor(model, pair);
+            MASGVisitor visitor = focusedVisitor(module, model, pair);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
             Multigraph left = graph(forest, visitor.getForestId(pair.leftName));
             Multigraph right = graph(forest, visitor.getForestId(pair.rightName));
@@ -301,14 +301,18 @@ public final class CanonicalMemoryAttribution {
         return id == null ? null : forest.get(id);
     }
 
-    private static MASGVisitor focusedVisitor(ModelUnit model, PredicatePair pair) {
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair) {
         Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
+        MASGVisitor visitor = new MASGVisitor(
+                new GlobalVariables(), callables, module);
         try {
             visitor.visit(model, null);
             return visitor;
         } catch (RuntimeException focusedFailure) {
-            MASGVisitor fallback = new MASGVisitor(new GlobalVariables());
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
             fallback.visit(model, null);
             return fallback;
         }

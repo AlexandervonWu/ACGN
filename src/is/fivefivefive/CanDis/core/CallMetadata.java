@@ -1,6 +1,7 @@
 package is.fivefivefive.CanDis.core;
 
 import is.fivefivefive.ACGN.alloy.CallSymbol;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 
 /** Single fail-closed validator for every normalized CALL consumer. */
@@ -60,7 +61,7 @@ public final class CallMetadata {
     }
 
     private static String requireText(String value, String field) {
-        if (value == null || value.trim().isEmpty() || !value.equals(value.trim())) {
+        if (!ExactAlloyType.isAdmittedIdentity(value)) {
             throw new IllegalStateException("CALL lacks valid " + field);
         }
         return value;

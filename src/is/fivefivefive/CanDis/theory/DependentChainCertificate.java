@@ -97,13 +97,17 @@ public final class DependentChainCertificate extends TypedEqualityCertificate {
             }
             operandTypes.add(source.leafTypes().get(index));
         }
-        GraphType result = source.kind().fold(operandTypes);
-        if (!result.equals(target.outputType())) {
+        DependentTypeDag result = DependentTypeDag.fold(
+                source.kind(),
+                source.leafInputs().stream()
+                        .map(DependentChainLeaf::outputTypeDag)
+                        .toList());
+        if (!result.equals(source.outputTypeDag())
+                || !result.relationType().equals(target.outputType())) {
             throw new IllegalArgumentException(
-                    "Dependent target claims another exact result type");
+                    "Dependent target claims another correlated result family");
         }
-        StructuralKey theoryIndex = DependentChainTheory.proofIndex(
-                source.kind(), operandTypes, result);
+        StructuralKey theoryIndex = DependentChainTheory.proofIndex(source);
         List<StructuralKey> details = List.of(
                 semanticProfile.structuralKey(),
                 StructuralKey.leaf(

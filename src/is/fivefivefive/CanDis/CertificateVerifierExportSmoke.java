@@ -272,7 +272,7 @@ public final class CertificateVerifierExportSmoke {
             throw new IllegalStateException("Alloy rejected source fixture " + source);
         }
         ModelUnit model = new ModelUnit(null, module);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(model, null);
         return new Parsed(visitor);
     }

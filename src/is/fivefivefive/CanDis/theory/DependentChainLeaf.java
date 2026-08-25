@@ -6,7 +6,7 @@ import java.util.Objects;
 /** Ordered typed leaf of a dependent chain. */
 public final class DependentChainLeaf implements DependentChainInput {
     private final OnePort port;
-    private final GraphType relationType;
+    private final DependentTypeDag outputTypeDag;
     private final DependentChainTheory.LeafTypeRule typeRule;
     private final StructuralKey typeProof;
     private final StructuralKey structuralKey;
@@ -16,15 +16,36 @@ public final class DependentChainLeaf implements DependentChainInput {
     }
 
     public DependentChainLeaf(OnePort port, GraphType relationType) {
+        this(port, DependentTypeDag.fromRelationFamilyType(
+                Objects.requireNonNull(relationType, "relationType")));
+    }
+
+    public DependentChainLeaf(
+            OnePort port,
+            GraphType relationType,
+            List<DependentColumnEvidence> outputColumns) {
+        this(
+                port,
+                DependentTypeDag.exactAlternative(
+                        relationType, outputColumns));
+    }
+
+    public DependentChainLeaf(
+            OnePort port,
+            DependentTypeDag outputTypeDag) {
         this.port = Objects.requireNonNull(port, "port");
-        this.relationType = Objects.requireNonNull(relationType, "relationType");
+        this.outputTypeDag = Objects.requireNonNull(outputTypeDag, "outputTypeDag");
+        GraphType relationType = outputTypeDag.relationType();
         this.typeRule = DependentChainTheory.requireLeafTypeProof(
                 port.schema().type(), relationType);
         this.typeProof = DependentChainTheory.leafTypeProof(
                 typeRule, port.schema().type(), relationType);
         this.structuralKey = StructuralKey.branch(
-                "dependent-chain-leaf-v1",
-                List.of(port.structuralKey(), typeProof));
+                "dependent-chain-leaf-v3",
+                List.of(
+                        port.structuralKey(),
+                        typeProof,
+                        outputTypeDag.structuralKey()));
     }
 
     public OnePort port() {
@@ -45,8 +66,8 @@ public final class DependentChainLeaf implements DependentChainInput {
     }
 
     @Override
-    public GraphType outputType() {
-        return relationType;
+    public DependentTypeDag outputTypeDag() {
+        return outputTypeDag;
     }
 
     @Override
@@ -56,11 +77,25 @@ public final class DependentChainLeaf implements DependentChainInput {
 
     @Override
     public DependentChainLeaf act(TypedEmbedding embedding) {
-        return new DependentChainLeaf(port.act(embedding), relationType);
+        return new DependentChainLeaf(
+                port.act(embedding), outputTypeDag);
     }
 
     @Override
     public StructuralKey structuralKey() {
         return structuralKey;
+    }
+
+    StructuralKey columnEvidenceKey() {
+        return outputTypeDag.structuralKey();
+    }
+
+    static StructuralKey columnEvidenceKey(
+            List<DependentColumnEvidence> columns) {
+        return StructuralKey.branch(
+                "dependent-chain-column-evidence-v1",
+                columns.stream()
+                        .map(DependentColumnEvidence::structuralKey)
+                        .toList());
     }
 }

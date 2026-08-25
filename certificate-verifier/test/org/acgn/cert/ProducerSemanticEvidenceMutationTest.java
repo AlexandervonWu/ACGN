@@ -34,7 +34,39 @@ public final class ProducerSemanticEvidenceMutationTest {
         byte[] dualBinder = Files.readAllBytes(Path.of(args[4]));
         byte[] nestedBinder = Files.readAllBytes(Path.of(args[5]));
         byte[] relation = Files.readAllBytes(Path.of(args[6]));
+        Path relationFamilyPath = Path.of(args[6]).resolveSibling(
+                "relation-family-a.acgncert");
+        if (!Files.isRegularFile(relationFamilyPath)) {
+            throw new AssertionError(
+                    "dependent relation-family fixture is required: "
+                            + relationFamilyPath);
+        }
+        byte[] relationFamily = Files.readAllBytes(relationFamilyPath);
+        Path relationEmptyPath = Path.of(args[6]).resolveSibling(
+                "relation-empty-a.acgncert");
+        if (!Files.isRegularFile(relationEmptyPath)) {
+            throw new AssertionError(
+                    "dependent empty-family fixture is required: "
+                            + relationEmptyPath);
+        }
+        byte[] relationEmpty = Files.readAllBytes(relationEmptyPath);
+        Path relationEmptyInteriorPath = Path.of(args[6]).resolveSibling(
+                "relation-empty-interior-a.acgncert");
+        if (!Files.isRegularFile(relationEmptyInteriorPath)) {
+            throw new AssertionError(
+                    "dependent empty-interior fixture is required: "
+                            + relationEmptyInteriorPath);
+        }
+        byte[] relationEmptyInterior = Files.readAllBytes(
+                relationEmptyInteriorPath);
         byte[] call = Files.readAllBytes(Path.of(args[7]));
+        Path nestedCallPath = Path.of(args[7]).resolveSibling(
+                "call-occurrence-nested-a.acgncert");
+        if (!Files.isRegularFile(nestedCallPath)) {
+            throw new AssertionError(
+                    "nested CALL occurrence fixture is required: " + nestedCallPath);
+        }
+        byte[] nestedCall = Files.readAllBytes(nestedCallPath);
         byte[] repeatedFreeSlots = Files.readAllBytes(Path.of(args[8]));
         Path siblingParentPath = Path.of(args[0]).resolveSibling(
                 "parent-path-a.acgncert");
@@ -52,8 +84,22 @@ public final class ProducerSemanticEvidenceMutationTest {
         assertVerified(verifier, binder, "binder producer evidence");
         assertVerified(verifier, dualBinder, "dual binder producer evidence");
         assertVerified(verifier, nestedBinder, "nested binder producer evidence");
-        assertVerified(verifier, relation, "ordered relation-type evidence");
+        assertUncheckableSubtype(
+                verifier, relation, "parser hierarchy is outside verifier authority");
+        assertUncheckableSubtype(
+                verifier,
+                relationFamily,
+                "relation-family hierarchy is outside verifier authority");
+        assertUncheckableSubtype(
+                verifier,
+                relationEmpty,
+                "empty-family disjointness hierarchy is outside verifier authority");
+        assertVerified(
+                verifier,
+                relationEmptyInterior,
+                "typed-empty interior JOIN agrees with producer arity guard");
         assertVerified(verifier, call, "CALL occurrence evidence");
+        assertVerified(verifier, nestedCall, "nested CALL occurrence evidence");
         assertVerified(
                 verifier,
                 repeatedFreeSlots,
@@ -61,6 +107,11 @@ public final class ProducerSemanticEvidenceMutationTest {
         assertVerified(verifier, parentPath, "parent-path source replay");
         assertRelationColumns(relation, "AlloySig:S", "AlloySig:T");
         assertDependentChainShape(relation);
+        assertDependentSubtypeBoundary(relation);
+        assertDependentUnivBoundary(relation);
+        assertDependentFamilyShape(relationFamily);
+        assertDependentEmptyShape(relationEmpty);
+        assertDependentEmptyInteriorShape(relationEmptyInterior);
         assertDistinctBinderOwners(dualBinder);
         assertNestedSameDescriptorOccurrences(nestedBinder);
 
@@ -113,6 +164,17 @@ public final class ProducerSemanticEvidenceMutationTest {
                 }),
                 FailureCode.THEORY_MISMATCH,
                 "CALL ordered-argument endpoint mutation");
+        assertRejected(
+                verifier,
+                replaceEvidenceSection(call, 5, Wire.node(
+                        "call-occurrences", List.of(), List.of())),
+                FailureCode.MISSING_EVIDENCE,
+                "missing CALL occurrence evidence");
+        assertRejected(
+                verifier,
+                removeEvidenceRecord(nestedCall, 5, 0),
+                FailureCode.MISSING_EVIDENCE,
+                "one omitted nested CALL occurrence");
 
         assertRejected(
                 verifier,
@@ -304,10 +366,81 @@ public final class ProducerSemanticEvidenceMutationTest {
                 verifier,
                 mutateRecord(relation, 1, record -> {
                     Wire.Node source = record.child(0);
+                    Wire.Node nested = source.child(0);
+                    Wire.Node cases = nested.child(3);
+                    Wire.Node proof = cases.child(0);
+                    Wire.Node boundary = proof.child(0);
+                    List<String> scalars = new ArrayList<>(boundary.scalars());
+                    scalars.set(0, "EXACT");
+                    return replaceChild(record, 0, replaceChild(
+                            source, 0, replaceChild(
+                                    nested, 3, replaceChild(
+                                            cases, 0, replaceChild(
+                                                    proof, 0, Wire.node(
+                                                            boundary.tag(),
+                                                            scalars,
+                                                            boundary.children()))))));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent-chain subtype direction mutation");
+        assertRejected(
+                verifier,
+                mutateRecord(relation, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node nested = source.child(0);
+                    Wire.Node cases = nested.child(3);
+                    Wire.Node proof = cases.child(0);
+                    Wire.Node boundary = proof.child(0);
+                    Wire.Node rightPath = boundary.child(1);
+                    Wire.Node shortened = Wire.node(
+                            rightPath.tag(),
+                            rightPath.scalars(),
+                            rightPath.children().subList(
+                                    0, rightPath.children().size() - 1));
+                    return replaceChild(record, 0, replaceChild(
+                            source, 0, replaceChild(
+                                    nested,
+                                    3,
+                                    replaceChild(
+                                            cases,
+                                            0,
+                                            replaceChild(
+                                                    proof,
+                                                    0,
+                                                    replaceChild(
+                                                            boundary,
+                                                            1,
+                                                            shortened))))));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent-chain subtype endpoint omission");
+        assertRejected(
+                verifier,
+                mutateRecord(relation, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node nested = source.child(0);
+                    Wire.Node cases = nested.child(3);
+                    Wire.Node omitted = Wire.node(
+                            cases.tag(),
+                            List.of("0"),
+                            List.of());
+                    return replaceChild(record, 0, replaceChild(
+                            source, 0, replaceChild(nested, 3, omitted)));
+                }),
+                FailureCode.INVALID_RECORD_SHAPE,
+                "dependent-chain alternative-pair matrix omission");
+        assertRejected(
+                verifier,
+                mutateRecord(relation, 1, record -> {
+                    Wire.Node source = record.child(0);
                     return replaceChild(record, 0, Wire.node(
                             source.tag(),
                             source.scalars(),
-                            List.of(source.child(1), source.child(0))));
+                            List.of(
+                                    source.child(1),
+                                    source.child(0),
+                                    source.child(2),
+                                    source.child(3))));
                 }),
                 FailureCode.THEORY_MISMATCH,
                 "dependent-chain role-order mutation");
@@ -371,6 +504,93 @@ public final class ProducerSemanticEvidenceMutationTest {
                 crossReplaySwap(relation, "KERNEL_REPLAY", "CHAIN"),
                 FailureCode.MISSING_EVIDENCE,
                 "dependent-chain cross-replay substitution");
+        assertRejected(
+                verifier,
+                mutateRecord(relationFamily, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node cases = source.child(3);
+                    Wire.Node shortened = Wire.node(
+                            cases.tag(),
+                            List.of("3"),
+                            cases.children().subList(0, 3));
+                    return replaceChild(record, 0, replaceChild(
+                            source, 3, shortened));
+                }),
+                FailureCode.INVALID_RECORD_SHAPE,
+                "dependent-family complete pair-matrix omission");
+        assertRejected(
+                verifier,
+                mutateRecord(relationFamily, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node cases = source.child(3);
+                    Wire.Node proof = cases.child(1);
+                    List<String> scalars = new ArrayList<>(proof.scalars());
+                    scalars.set(2, "JOIN_OVERLAP");
+                    Wire.Node changed = Wire.node(
+                            proof.tag(), scalars, proof.children());
+                    return replaceChild(record, 0, replaceChild(
+                            source, 3, replaceChild(cases, 1, changed)));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent-family disjoint decision mutation");
+        assertRejected(
+                verifier,
+                mutateRecord(relationFamily, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node dag = source.child(2);
+                    List<String> scalars = new ArrayList<>(dag.scalars());
+                    scalars.set(1, "NONE");
+                    return replaceChild(record, 0, replaceChild(
+                            source, 2, Wire.node(
+                                    dag.tag(), scalars, dag.children())));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent-family common-ancestor omission");
+        assertRejected(
+                verifier,
+                mutateRecord(relationEmpty, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node outputDag = source.child(2);
+                    List<String> scalars = new ArrayList<>(outputDag.scalars());
+                    scalars.set(2, "3");
+                    return replaceChild(record, 0, replaceChild(
+                            source,
+                            2,
+                            Wire.node(
+                                    outputDag.tag(), scalars, outputDag.children())));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent empty-family arity mutation");
+        assertRejected(
+                verifier,
+                mutateRecord(relationEmpty, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node outputDag = source.child(2);
+                    List<String> scalars = new ArrayList<>(outputDag.scalars());
+                    scalars.set(0, source.child(0).child(0).scalar(0));
+                    return replaceChild(record, 0, replaceChild(
+                            source,
+                            2,
+                            Wire.node(
+                                    outputDag.tag(), scalars, outputDag.children())));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent empty-family carrier mutation");
+        assertRejected(
+                verifier,
+                mutateRecord(relationEmpty, 1, record -> {
+                    Wire.Node source = record.child(0);
+                    Wire.Node outputDag = source.child(2);
+                    List<String> scalars = new ArrayList<>(outputDag.scalars());
+                    scalars.set(1, source.child(0).child(0).scalar(1));
+                    return replaceChild(record, 0, replaceChild(
+                            source,
+                            2,
+                            Wire.node(
+                                    outputDag.tag(), scalars, outputDag.children())));
+                }),
+                FailureCode.THEORY_MISMATCH,
+                "dependent empty-family common-ancestor mutation");
         assertRejected(
                 verifier,
                 mutateDependentSchema(relation, schema -> {
@@ -484,7 +704,7 @@ public final class ProducerSemanticEvidenceMutationTest {
         check(record.scalars().size() == 11
                         && record.scalar(2).equals("JOIN")
                         && record.scalar(7).equals(
-                                "alloy-dependent-chain-theory-v4")
+                                "alloy-dependent-chain-theory-v10")
                         && record.scalar(8).matches("[0-9a-f]{64}")
                         && record.scalar(10).contains(
                                 "alloy-dependent-chain-source-occurrence-v1"),
@@ -505,11 +725,113 @@ public final class ProducerSemanticEvidenceMutationTest {
 
     private static int dependentLeaves(Wire.Node input) {
         if (input.tag().equals("dependent-chain-leaf")) {
-            input.requireShape("dependent-chain-leaf", 5, 0);
+            input.requireShape("dependent-chain-leaf", 5, 1);
             return 1;
         }
-        input.requireShape("dependent-chain-application", 4, 2);
+        input.requireShape("dependent-chain-application", 4, 4);
         return dependentLeaves(input.child(0)) + dependentLeaves(input.child(1));
+    }
+
+    private static void assertDependentSubtypeBoundary(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node record = root.child(1).child(1).child(3).child(1).child(0);
+        Wire.Node nested = record.child(0).child(0);
+        Wire.Node cases = nested.child(3);
+        Wire.Node boundary = cases.child(0).child(0);
+        check(boundary.tag().equals("dependent-chain-boundary")
+                        && boundary.scalar(0).equals("RIGHT_SUBTYPE_OF_LEFT")
+                        && boundary.children().size() == 2,
+                "dependent JOIN must serialize its subtype direction and path");
+        check("AlloySig:Parent".equals(
+                            boundary.child(0).child(0).scalar(0))
+                        && "AlloySig:Child".equals(
+                            boundary.child(1).child(0).scalar(0))
+                        && "AlloySig:Parent".equals(
+                            boundary.child(1).child(1).scalar(0)),
+                "dependent JOIN must retain Child <: Parent endpoints");
+    }
+
+    private static void assertDependentUnivBoundary(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node source = root.child(1).child(1).child(3).child(1).child(0)
+                .child(0);
+        Wire.Node boundary = source.child(3).child(0).child(0);
+        check(boundary.tag().equals("dependent-chain-boundary")
+                        && boundary.scalar(0).equals("LEFT_SUBTYPE_OF_RIGHT")
+                        && boundary.scalar(2).equals("AlloySig:univ"),
+                "dependent JOIN must admit an explicit univ endpoint through subtype evidence");
+        check(boundary.child(0).children().size() == 2
+                        && boundary.child(0).child(0).scalar(0)
+                                .equals("AlloySig:V")
+                        && boundary.child(0).child(1).scalar(0)
+                                .equals("AlloySig:univ")
+                        && boundary.child(1).children().size() == 1
+                        && boundary.child(1).child(0).scalar(0)
+                                .equals("AlloySig:univ"),
+                "dependent JOIN must retain the concrete-to-univ witness path");
+    }
+
+    private static void assertDependentFamilyShape(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node record = root.child(1).child(1).child(3).child(1).child(0);
+        Wire.Node source = record.child(0);
+        source.requireShape("dependent-chain-application", 4, 4);
+        Wire.Node leftDag = source.child(0).child(0);
+        Wire.Node rightDag = source.child(1).child(0);
+        Wire.Node outputDag = source.child(2);
+        Wire.Node cases = source.child(3);
+        check(leftDag.tag().equals("dependent-type-dag")
+                        && leftDag.children().size() == 2
+                        && rightDag.tag().equals("dependent-type-dag")
+                        && rightDag.children().size() == 2
+                        && outputDag.tag().equals("dependent-type-dag")
+                        && outputDag.children().size() == 2,
+                "dependent family wire retains two correlated input and output products");
+        check(cases.tag().equals("dependent-chain-combination-cases")
+                        && cases.children().size() == 4
+                        && cases.children().stream().filter(proof ->
+                                "JOIN_OVERLAP".equals(proof.scalar(2))).count() == 2
+                        && cases.children().stream().filter(proof ->
+                                "JOIN_DISJOINT".equals(proof.scalar(2))).count() == 2,
+                "dependent family wire carries the complete two-by-two JOIN matrix");
+    }
+
+    private static void assertDependentEmptyShape(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node record = root.child(1).child(1).child(3).child(1).child(0);
+        Wire.Node source = record.child(0);
+        source.requireShape("dependent-chain-application", 4, 4);
+        Wire.Node outputDag = source.child(2);
+        Wire.Node cases = source.child(3);
+        check(outputDag.tag().equals("dependent-type-dag")
+                        && outputDag.children().isEmpty()
+                        && outputDag.scalar(0).equals(
+                                "AlloyEmptyRelation$arity=2")
+                        && outputDag.scalar(1).equals("NONE")
+                        && outputDag.scalar(2).equals("2"),
+                "all-disjoint JOIN serializes one positive-arity empty family");
+        check(cases.children().size() == 1
+                        && cases.child(0).scalar(2).equals("JOIN_DISJOINT")
+                        && cases.child(0).child(1).tag().equals(
+                                "dependent-chain-no-result"),
+                "all-disjoint JOIN serializes its complete disjoint case matrix");
+    }
+
+    private static void assertDependentEmptyInteriorShape(byte[] bytes) {
+        Wire.Node root = Codec.decode(bytes, Limits.defaults());
+        Wire.Node record = root.child(1).child(1).child(3).child(1).child(0);
+        Wire.Node source = record.child(0);
+        Wire.Node nested = source.child(0);
+        Wire.Node outputDag = source.child(2);
+        check(nested.tag().equals("dependent-chain-application")
+                        && source.child(1).tag().equals(
+                                "dependent-chain-leaf"),
+                "typed-empty interior JOIN serializes its nested source association");
+        check(outputDag.children().isEmpty()
+                        && outputDag.scalar(0).equals(
+                                "AlloyEmptyRelation$arity=2")
+                        && outputDag.scalar(2).equals("2"),
+                "typed-empty interior JOIN retains its positive output arity");
     }
 
     private static void assertNestedSameDescriptorOccurrences(byte[] bytes) {
@@ -556,6 +878,20 @@ public final class ProducerSemanticEvidenceMutationTest {
                 label + ": " + result);
     }
 
+    private static void assertUncheckableSubtype(
+            IndependentVerifier verifier,
+            byte[] bytes,
+            String label) {
+        Bundle bundle = decode(bytes);
+        VerificationResult result = verifier.verify(
+                bytes,
+                Profile.FULL,
+                VerificationPolicy.trust(bundle.theoryDigest()));
+        check(result.outcome() == Outcome.UNCHECKABLE
+                        && result.code() == FailureCode.MISSING_EVIDENCE,
+                label + ": " + result);
+    }
+
     private static byte[] mutateRecord(
             byte[] source,
             int sectionIndex,
@@ -583,6 +919,45 @@ public final class ProducerSemanticEvidenceMutationTest {
                 List.of(manifest.scalar(0), Wire.contentId(changedVocabulary)),
                 List.of(manifest.child(0), changedVocabulary));
         return Codec.encode(replaceChild(root, 1, changedManifest));
+    }
+
+    private static byte[] replaceEvidenceSection(
+            byte[] source,
+            int sectionIndex,
+            Wire.Node changedSection) {
+        Wire.Node root = Codec.decode(source, Limits.defaults());
+        Wire.Node manifest = root.child(1);
+        Wire.Node vocabulary = manifest.child(1);
+        Wire.Node evidence = vocabulary.child(3);
+        Wire.Node changedEvidence = replaceChild(
+                evidence, sectionIndex, changedSection);
+        Wire.Node changedVocabulary = replaceChild(
+                vocabulary, 3, changedEvidence);
+        Wire.Node changedManifest = Wire.node(
+                manifest.tag(),
+                List.of(manifest.scalar(0), Wire.contentId(changedVocabulary)),
+                List.of(manifest.child(0), changedVocabulary));
+        return Codec.encode(replaceChild(root, 1, changedManifest));
+    }
+
+    private static byte[] removeEvidenceRecord(
+            byte[] source,
+            int sectionIndex,
+            int recordIndex) {
+        Wire.Node root = Codec.decode(source, Limits.defaults());
+        Wire.Node manifest = root.child(1);
+        Wire.Node vocabulary = manifest.child(1);
+        Wire.Node evidence = vocabulary.child(3);
+        Wire.Node section = evidence.child(sectionIndex);
+        if (recordIndex < 0 || recordIndex >= section.children().size()) {
+            throw new AssertionError("semantic-evidence record index is out of range");
+        }
+        List<Wire.Node> records = new ArrayList<>(section.children());
+        records.remove(recordIndex);
+        return replaceEvidenceSection(
+                source,
+                sectionIndex,
+                Wire.node(section.tag(), section.scalars(), records));
     }
 
     private static byte[] mutateDependentSchema(

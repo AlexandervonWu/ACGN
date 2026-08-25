@@ -55,7 +55,7 @@ public final class CallExtractionRegressionTest {
         }
         check(parserHOrders.contains("a,b"), "parser CALL must retain h[a,b] order");
         check(parserHOrders.contains("b,a"), "parser CALL must retain h[b,a] order");
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(parsedModel, null);
         MASGVisitor.CallExtractionStats extractionStats = visitor.callExtractionStats();
         check(extractionStats.occurrences() > 0,
@@ -315,26 +315,30 @@ public final class CallExtractionRegressionTest {
         }
         check(rejected, "a CALL occurrence reused as another occurrence must fail closed");
 
-        ModelUnit malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        CompModule malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        ModelUnit malformed = new ModelUnit(null, malformedModule);
         Call fUse = findCall(malformed, "f");
         fUse.setArguments(Collections.emptyList());
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains("arity disagrees with declaration");
         }
         check(rejected, "observed CALL arguments must be checked against declaration arity");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         Call importedUse = findCall(malformed, "ord/first");
         ExprOrFormula borrowedArgument = findCall(malformed, "f").getArguments().get(0);
         importedUse.setArguments(Collections.singletonList(borrowedArgument));
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains(
                     "arity disagrees with imported declaration");
@@ -342,44 +346,51 @@ public final class CallExtractionRegressionTest {
         check(rejected,
                 "imported CALL arity must come from the pinned declaration, not child count");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         findCall(malformed, "ord/first").setName("ord/missing");
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains(
                     "lacks an independently pinned declaration");
         }
         check(rejected, "an opened but unpinned imported member must fail closed");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         fUse = findCall(malformed, "f");
         fUse.setName("missing");
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains("Unresolved call declaration");
         }
         check(rejected, "an unqualified unresolved CALL must fail closed");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         fUse = findCall(malformed, "f");
         fUse.setName("ghost/f");
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains("Unresolved call declaration");
         }
         check(rejected, "a qualified but unopened CALL must fail closed");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         List<OpenDecl> opens = new ArrayList<>(malformed.getOpenDeclList());
         OpenDecl conflicting = new OpenDecl(malformed);
         conflicting.setFileName("util/ordering");
@@ -389,18 +400,21 @@ public final class CallExtractionRegressionTest {
         malformed.setOpenDeclList(opens);
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains("Ambiguous imported module alias");
         }
         check(rejected, "conflicting imported aliases must fail closed");
 
-        malformed = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source()));
+        malformedModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source());
+        malformed = new ModelUnit(null, malformedModule);
         malformed.getFunDeclList().get(1).setName("f");
         rejected = false;
         try {
-            new MASGVisitor(new GlobalVariables()).visit(malformed, null);
+            new MASGVisitor(
+                    new GlobalVariables(), malformedModule).visit(malformed, null);
         } catch (IllegalStateException expected) {
             rejected = expected.getMessage().contains("Ambiguous callable alias");
         }
@@ -456,6 +470,53 @@ public final class CallExtractionRegressionTest {
             rejected = expected.getMessage().contains("not qualified");
         }
         check(rejected, "the certified adapter must reject unqualified CALL identity");
+
+        EGraphNode controlIdentity = syntheticCall(
+                "callregression/control", "call/formula");
+        controlIdentity.setSemanticIdentity("callregression/control\0suffix");
+        rejected = false;
+        try {
+            TheoryAlloyAdapter.adapt(List.of(formWith(controlIdentity)));
+        } catch (IllegalStateException expected) {
+            rejected = expected.getMessage().contains("qualified semantic identity");
+        }
+        check(rejected,
+                "the certified adapter must reject embedded controls in CALL identity");
+
+        List<String> forbiddenCallFragments = List.of(
+                "\0", "\u200B", "\uE000", "\u0378",
+                String.valueOf((char) 0xD800));
+        for (String fragment : forbiddenCallFragments) {
+            rejected = false;
+            try {
+                new CallSymbol(
+                        CallSymbol.Kind.FORMULA,
+                        "f" + fragment,
+                        "module/f",
+                        0,
+                        0,
+                        CallSymbol.ArityAuthority.DECLARATION);
+            } catch (IllegalArgumentException expected) {
+                rejected = expected.getMessage().contains("visible identity");
+            }
+            check(rejected,
+                    "CallSymbol must reject forbidden source-name identity categories");
+
+            rejected = false;
+            try {
+                new CallSymbol(
+                        CallSymbol.Kind.FORMULA,
+                        "f",
+                        "module/f" + fragment,
+                        0,
+                        0,
+                        CallSymbol.ArityAuthority.DECLARATION);
+            } catch (IllegalArgumentException expected) {
+                rejected = expected.getMessage().contains("visible identity");
+            }
+            check(rejected,
+                    "CallSymbol must reject forbidden callee identity categories");
+        }
 
         rejected = false;
         try {
@@ -820,9 +881,10 @@ public final class CallExtractionRegressionTest {
     }
 
     private static String anonymousCallIdentity(String source) throws Exception {
-        ModelUnit model = new ModelUnit(null,
-                CompUtil.parseEverything_fromString(A4Reporter.NOP, source));
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        ModelUnit model = new ModelUnit(null, module);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(model, null);
         Multigraph graph = graph(visitor, "p");
         for (AugmentedNode node : graph.getVertices()) {

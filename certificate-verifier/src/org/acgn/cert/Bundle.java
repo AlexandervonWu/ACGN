@@ -12,7 +12,7 @@ import java.util.Objects;
 
 /** Strict structural view of one decoded certificate bundle. */
 public final class Bundle {
-    public static final String SCHEMA_VERSION = "acgncert-schema-v8";
+    public static final String SCHEMA_VERSION = "acgncert-schema-v10";
     public static final String THEORY_ID = "acgn-exact-alloy-theory-v2";
     public static final String RULE_SET = "phase-j-proof-kernel-v3";
     public static final String VOCABULARY_POLICY =

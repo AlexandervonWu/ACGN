@@ -43,7 +43,7 @@ public class EdgeCounter {
                     try {
                         CompModule module = AlloyUtil.compileAlloyModule(dir + "/" + file.getName());
                         ModelUnit mu = new ModelUnit(null, module);
-                        MASGVisitor visitor = new MASGVisitor(gv);
+                        MASGVisitor visitor = new MASGVisitor(gv, module);
                         mu.accept(visitor, null);
                         for (int id : visitor.getForest().keys()) {
                             if (id == 0) continue; // Skip the root node

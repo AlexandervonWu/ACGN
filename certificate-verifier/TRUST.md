@@ -126,3 +126,40 @@ Standalone DTO fixtures may exercise schema records that the producer cannot
 yet emit. That does not expand the producer boundary. Historical artifacts
 that predate retained proof traces cannot be retro-certified and remain
 `UNCHECKABLE`.
+
+## Subtype-Hierarchy Boundary
+
+The producer derives dependent JOIN column ancestry only through
+`ExactAlloyType.fromParser(Type, CompModule)`. Every nontrivial `PrimSig` object
+must be an identity member of that exact parsed module, and every parent edge
+must carry its parser-assigned source position. `MASGVisitor` receives the
+module that produced its `ModelUnit` and uses that same module for every source
+occurrence. Ordinary public relation constructors create self-only column
+evidence; a public synthetic parent chain remains unauthorized even if it
+reuses a genuine parser `Attr`. No public factory accepts a caller-supplied
+ancestry path. The in-process authority marker is transient: serialization
+retains ancestry as data for integrity checking but cannot preserve authority.
+A cached value must be reconstructed from its Alloy source and originating
+module before it can authorize a nonexact producer boundary.
+
+The standalone verifier can check that a supplied nominal path starts at the
+exact carrier, including an explicit `univ` endpoint, follows one acyclic
+single-parent ledger, ends at the
+opposite JOIN boundary or first common ancestor in the declared direction, and
+yields the claimed normalized correlated products. It also recomputes the
+complete alternative-pair JOIN matrix. Synthetic union and common-ancestor DAG
+nodes are excluded from the nominal parent ledger. An explicit `univ` boundary
+may participate by exact identity or by a supplied concrete-to-`univ` subtype
+path; merely finding `univ` as the first common ancestor of two divergent
+concrete branches does not authorize overlap. The verifier cannot authenticate that the nominal
+ledger was extracted from the source
+parser or that it belongs to the claimed source occurrence: raw declarations
+and an external hierarchy commitment are outside the
+current bundle and theory pin. Consequently, otherwise valid nonexact subtype
+or divergent-branch JOIN evidence is `UNCHECKABLE / MISSING_EVIDENCE`. Invalid structural evidence
+is `REJECTED`, and exact-boundary dependent chains remain eligible for normal
+verification. This distinction prevents internally consistent producer data
+from becoming its own subtype authority.
+
+Schema v10 introduces the correlated-family and complete-matrix boundary.
+Schema v9 and earlier bytes are rejected, not migrated or reinterpreted.

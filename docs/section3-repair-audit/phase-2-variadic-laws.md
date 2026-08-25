@@ -661,8 +661,8 @@ carrier but not the authenticated wrapper. This made admissibility depend on
 association and produced repair distance `3`.
 
 That attempted v3 repair was later invalidated because readable `ParameterN`
-spelling cannot authenticate a semantic type. The live dependent theory is v4:
-it admits only exact-relation and primitive-singleton leaf proofs, propagates
+spelling cannot authenticate a semantic type. The live dependent theory is v5;
+it retains v4's exact-relation and primitive-singleton leaf proofs, propagates
 parameter type evidence independently of spelling, and rejects `ParameterN`
 as a typing authority. The A2 fault log retains the failed v3 step as repair
 provenance rather than presenting it as a current rule.

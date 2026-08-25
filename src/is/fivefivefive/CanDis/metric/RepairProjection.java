@@ -610,7 +610,11 @@ public final class RepairProjection {
             Map<String, GraphType> aliasTypes,
             Map<String, GraphType> localTypes) {
         if (source.getExactAlloyType() != null) {
-            return AlloyTypeBridge.graphType(source.getExactAlloyType());
+            GraphType stored = AlloyTypeBridge.graphType(
+                    source.getExactAlloyType());
+            return AlloyTypeBridge.isRelationFamily(stored)
+                    ? stored
+                    : DependentChainTheory.relationViewFromStoredType(stored);
         }
         if (source.getOpcode() != Opcode.VARIABLE) {
             throw new IllegalStateException(
@@ -1470,11 +1474,19 @@ public final class RepairProjection {
     }
 
     private static String requireTypeName(String type, String label) {
+        requireAdmittedTypeName(type, label);
         String normalized = normalizeType(type);
         if (normalized.isEmpty()) {
             throw new IllegalStateException(label + " has no source type provenance");
         }
         return normalized;
+    }
+
+    private static void requireAdmittedTypeName(String type, String label) {
+        if (!AlloyTypeBridge.isAdmittedIdentity(type)) {
+            throw new IllegalStateException(
+                    label + " must have a well-formed visible type identity");
+        }
     }
 
     private static String firstNonempty(String first, String second) {

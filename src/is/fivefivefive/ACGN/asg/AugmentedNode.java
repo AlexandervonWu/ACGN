@@ -193,9 +193,9 @@ public class AugmentedNode implements Serializable {
                 java.util.Objects.requireNonNull(graph, "graph"), timeOfVisit);
         ExactAlloyType checked = java.util.Objects.requireNonNull(exactType, "exactType");
         ExactAlloyType previous = exactTypeMapTOV.putIfAbsent(key, checked);
-        if (previous != null && !previous.equals(checked)) {
+        if (previous != null && !previous.sameOccurrenceEvidenceAs(checked)) {
             throw new IllegalStateException(
-                    "One MASG occurrence received two different exact Alloy types");
+                    "One MASG occurrence received incompatible exact Alloy type evidence");
         }
         if (exactTypeVisitMap == null) {
             exactTypeVisitMap = new HashMap<>();
@@ -221,9 +221,10 @@ public class AugmentedNode implements Serializable {
 
     public void setDefaultExactType(ExactAlloyType exactType) {
         ExactAlloyType checked = java.util.Objects.requireNonNull(exactType, "exactType");
-        if (defaultExactType != null && !defaultExactType.equals(checked)) {
+        if (defaultExactType != null
+                && !defaultExactType.sameOccurrenceEvidenceAs(checked)) {
             throw new IllegalStateException(
-                    "One shared MASG leaf received two different exact Alloy types");
+                    "One shared MASG leaf received incompatible exact Alloy type evidence");
         }
         defaultExactType = checked;
     }

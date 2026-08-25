@@ -222,9 +222,9 @@ public final class EGraphAblationStudy {
             long engineStarted = System.nanoTime();
             long engineCpuStarted = currentThreadCpuNanos();
             if (options.engine == Engine.CANONICAL) {
-                runCanonical(model, pair, result);
+                runCanonical(module, model, pair, result);
             } else if (options.engine == Engine.TYPED_SLOTTED_PORT) {
-                runTypedSlottedPort(model, pair, result);
+                runTypedSlottedPort(module, model, pair, result);
             } else {
                 AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left);
                 AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right);
@@ -267,8 +267,12 @@ public final class EGraphAblationStudy {
         return started < 0 || finished < 0 ? 0L : Math.max(0L, finished - started);
     }
 
-    private static void runCanonical(ModelUnit model, PredicatePair pair, FileResult result) {
-        MASGVisitor visitor = focusedVisitor(model, pair);
+    private static void runCanonical(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair,
+            FileResult result) {
+        MASGVisitor visitor = focusedVisitor(module, model, pair);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Integer leftId = visitor.getForestId(pair.leftName);
         Integer rightId = visitor.getForestId(pair.rightName);
@@ -291,10 +295,11 @@ public final class EGraphAblationStudy {
     }
 
     private static void runTypedSlottedPort(
+            CompModule module,
             ModelUnit model,
             PredicatePair pair,
             FileResult result) {
-        MASGVisitor visitor = focusedVisitor(model, pair);
+        MASGVisitor visitor = focusedVisitor(module, model, pair);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Integer leftId = visitor.getForestId(pair.leftName);
         Integer rightId = visitor.getForestId(pair.rightName);
@@ -326,14 +331,18 @@ public final class EGraphAblationStudy {
                 leftPrepared.estimatedBytes() + rightPrepared.estimatedBytes());
     }
 
-    private static MASGVisitor focusedVisitor(ModelUnit model, PredicatePair pair) {
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair) {
         Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
+        MASGVisitor visitor = new MASGVisitor(
+                new GlobalVariables(), callables, module);
         try {
             visitor.visit(model, null);
             return visitor;
         } catch (RuntimeException focusedFailure) {
-            MASGVisitor fallback = new MASGVisitor(new GlobalVariables());
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
             fallback.visit(model, null);
             return fallback;
         }

@@ -331,6 +331,8 @@ inductive SchemaVersion where
   | v6
   | v7
   | v8
+  | v9
+  | v10
   | future
 deriving DecidableEq, Repr
 
@@ -339,29 +341,36 @@ structure ContractFeatures where
   callProvenance : Bool
   exactTransitions : Bool
   witnessUnfold : Bool
+  dependentSubtypeEvidence : Bool
+  dependentCorrelatedDag : Bool
 deriving DecidableEq, Repr
 
-def completeContract : ContractFeatures := ⟨true, true, true, true⟩
+def completeContract : ContractFeatures :=
+  ⟨true, true, true, true, true, true⟩
 
 def contractFeatures : SchemaVersion → ContractFeatures
-  | .v5 => ⟨false, false, false, false⟩
-  | .v6 => ⟨true, false, false, false⟩
-  | .v7 => ⟨true, true, false, false⟩
-  | .v8 => completeContract
-  | .future => ⟨false, false, false, false⟩
+  | .v5 => ⟨false, false, false, false, false, false⟩
+  | .v6 => ⟨true, false, false, false, false, false⟩
+  | .v7 => ⟨true, true, false, false, false, false⟩
+  | .v8 => ⟨true, true, true, true, false, false⟩
+  | .v9 => ⟨true, true, true, true, true, false⟩
+  | .v10 => completeContract
+  | .future => ⟨false, false, false, false, false, false⟩
 
-theorem schema_v8_admits_complete_contract :
-    contractFeatures .v8 = completeContract := by
+theorem schema_v10_admits_complete_contract :
+    contractFeatures .v10 = completeContract := by
   rfl
 
-theorem only_schema_v8_admits_complete_contract (version : SchemaVersion) :
-    contractFeatures version = completeContract ↔ version = .v8 := by
+theorem only_schema_v10_admits_complete_contract (version : SchemaVersion) :
+    contractFeatures version = completeContract ↔ version = .v10 := by
   cases version <;> decide
 
 theorem historical_and_future_schemas_reject_complete_contract :
     contractFeatures .v5 ≠ completeContract ∧
       contractFeatures .v6 ≠ completeContract ∧
       contractFeatures .v7 ≠ completeContract ∧
+      contractFeatures .v8 ≠ completeContract ∧
+      contractFeatures .v9 ≠ completeContract ∧
       contractFeatures .future ≠ completeContract := by
   decide
 

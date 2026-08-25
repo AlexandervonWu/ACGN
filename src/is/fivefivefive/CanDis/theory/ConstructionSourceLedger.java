@@ -12,16 +12,19 @@ public final class ConstructionSourceLedger {
     private final Map<StructuralKey, Integer> flatSources;
     private final Map<StructuralKey, Integer> containerSources;
     private final Map<StructuralKey, Integer> dependentChainSources;
+    private final Map<StructuralKey, Integer> callSources;
 
     private ConstructionSourceLedger(
             SemanticProfile semanticProfile,
             Map<StructuralKey, Integer> flatSources,
             Map<StructuralKey, Integer> containerSources,
-            Map<StructuralKey, Integer> dependentChainSources) {
+            Map<StructuralKey, Integer> dependentChainSources,
+            Map<StructuralKey, Integer> callSources) {
         this.semanticProfile = Objects.requireNonNull(semanticProfile, "semanticProfile");
         this.flatSources = immutableCounts(flatSources);
         this.containerSources = immutableCounts(containerSources);
         this.dependentChainSources = immutableCounts(dependentChainSources);
+        this.callSources = immutableCounts(callSources);
     }
 
     static Builder builder(SemanticProfile semanticProfile) {
@@ -48,6 +51,10 @@ public final class ConstructionSourceLedger {
         return dependentChainSources;
     }
 
+    public Map<StructuralKey, Integer> callSources() {
+        return callSources;
+    }
+
     private static Map<StructuralKey, Integer> immutableCounts(
             Map<StructuralKey, Integer> source) {
         Map<StructuralKey, Integer> copied = new LinkedHashMap<>();
@@ -71,6 +78,8 @@ public final class ConstructionSourceLedger {
         private final Map<StructuralKey, Integer> flatSources = new LinkedHashMap<>();
         private final Map<StructuralKey, Integer> containerSources = new LinkedHashMap<>();
         private final Map<StructuralKey, Integer> dependentChainSources =
+                new LinkedHashMap<>();
+        private final Map<StructuralKey, Integer> callSources =
                 new LinkedHashMap<>();
 
         private Builder(SemanticProfile semanticProfile) {
@@ -128,12 +137,20 @@ public final class ConstructionSourceLedger {
                             .structuralKey());
         }
 
+        void recordCall(CallOccurrenceCertificate occurrence) {
+            increment(
+                    callSources,
+                    Objects.requireNonNull(occurrence, "occurrence")
+                            .structuralKey());
+        }
+
         ConstructionSourceLedger build() {
             return new ConstructionSourceLedger(
                     semanticProfile,
                     flatSources,
                     containerSources,
-                    dependentChainSources);
+                    dependentChainSources,
+                    callSources);
         }
     }
 }

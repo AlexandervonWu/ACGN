@@ -777,6 +777,7 @@ public class NormalForm {
             QuantiVar qv = env.get(bindingKey(node));
             if (qv != null) {
                 node.setAlphaName(qv.getName());
+                inheritBindingTypeEvidence(node, qv);
             }
             return node;
         }
@@ -1212,6 +1213,7 @@ public class NormalForm {
                 String alphaName = "_l" + localDepth + "_" + ordinal;
                 String varType = primitiveVarType(candidate.getSourceType());
                 QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
+                qv.mergeExactAlloyType(bindingTypeEvidence(candidate, typeEGraph));
                 qv.setQuantifier(quantifierOf(quantifierOpcode, negated));
                 qv.setCardinality(domain.cardinality);
                 qv.setDisjointnessClass(disjointnessClass);
@@ -1351,6 +1353,7 @@ public class NormalForm {
             String alphaName = "_q" + nextVarId[0];
             String varType = primitiveVarType(candidate.getSourceType());
             QuantiVar qv = new QuantiVar(nextVarId[0], alphaName, originalName, varType);
+            qv.mergeExactAlloyType(bindingTypeEvidence(candidate, typeEGraph));
             qv.setQuantifier(quantifier);
             qv.setCardinality(domain.cardinality);
             boolean guardedDomain = domain.domain != null
@@ -2471,6 +2474,7 @@ public class NormalForm {
             BindingCoordinate coordinate = new BindingCoordinate(signature, ordinal);
             QuantiVar representative = representatives.get(coordinate);
             if (representative != null) {
+                representative.mergeExactAlloyType(candidate.getExactAlloyType());
                 representative.addOriginalName(candidate.getOriginalName());
                 return representative;
             }
@@ -2478,6 +2482,58 @@ public class NormalForm {
             matrixQuantiVars.add(candidate);
             return candidate;
         }
+    }
+
+    private static is.fivefivefive.ACGN.alloy.ExactAlloyType bindingTypeEvidence(
+            EGraphNode variable,
+            EGraphNode domain) {
+        is.fivefivefive.ACGN.alloy.ExactAlloyType direct =
+                variable.getExactAlloyType();
+        if (usableBindingTypeEvidence(direct)) {
+            return direct;
+        }
+        is.fivefivefive.ACGN.alloy.ExactAlloyType declared = domain == null
+                ? null : domain.getExactAlloyType();
+        return usableBindingTypeEvidence(declared) ? declared : null;
+    }
+
+    private static boolean usableBindingTypeEvidence(
+            is.fivefivefive.ACGN.alloy.ExactAlloyType evidence) {
+        if (evidence == null) {
+            return false;
+        }
+        if (evidence.kind()
+                == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.INT) {
+            return true;
+        }
+        return evidence.kind()
+                        == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                && evidence.relationArity() == 1
+                && evidence.alternatives().size() == 1;
+    }
+
+    private static void inheritBindingTypeEvidence(
+            EGraphNode occurrence,
+            QuantiVar binding) {
+        is.fivefivefive.ACGN.alloy.ExactAlloyType declared =
+                binding.getExactAlloyType();
+        if (declared == null) {
+            return;
+        }
+        is.fivefivefive.ACGN.alloy.ExactAlloyType current =
+                occurrence.getExactAlloyType();
+        if (current == null || current.sameOccurrenceEvidenceAs(declared)) {
+            occurrence.setExactAlloyType(declared);
+            return;
+        }
+        if (current.equals(declared)
+                && !current.hasParserAuthenticatedAncestry()
+                && declared.hasParserAuthenticatedAncestry()) {
+            occurrence.setExactAlloyType(declared);
+            return;
+        }
+        throw new IllegalStateException(
+                "A bound variable occurrence has incompatible declaration type evidence");
     }
 
     private static final class BindingSignature {

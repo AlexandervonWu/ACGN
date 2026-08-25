@@ -1,5 +1,6 @@
 package org.acgn.cert;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -30,6 +31,9 @@ public final class VerifierTest {
     }
 
     public static void main(String[] args) {
+        testSubtypeStackLedger();
+        testDependentAtomicColumnVocabulary();
+        testCallAnchorIsolationPredicate();
         TestBundleBuilder.Encoded fixture = fullFixture();
         IndependentVerifier verifier = new IndependentVerifier();
         VerificationPolicy policy = VerificationPolicy.trust(fixture.theoryDigest());
@@ -168,9 +172,26 @@ public final class VerifierTest {
                 FailureCode.NONCANONICAL_ENCODING,
                 verify(verifier, reverseExactTypes(publication), Profile.KERNEL),
                 "noncanonical exact type order");
+        assertCode(
+                FailureCode.INVALID_TYPE,
+                verify(verifier, typeReferenceNamespaceCollision(), Profile.KERNEL),
+                "test-only type display cannot collide with another type ID");
+        for (String forbiddenIdentity : List.of(
+                "AlloySig:",
+                "AlloySig:this/A",
+                "AlloySig:S\u200b",
+                "AlloySig:S\u0000T",
+                "AlloySig:S\ue000",
+                "AlloySig:S\u0378")) {
+            assertCode(
+                    FailureCode.INVALID_TYPE,
+                    verify(verifier, publicationWithConstructorType(
+                            forbiddenIdentity), Profile.KERNEL),
+                    "forbidden exact-type identity");
+        }
         assertOutcome(
                 Outcome.VERIFIED,
-                verify(verifier, publicationWithEmptyRelationType(
+                verify(verifier, publicationWithConstructorType(
                         "AlloyEmptyRelation$arity=2"), Profile.KERNEL),
                 "canonical positive empty relation arity");
         for (String malformedEmpty : List.of(
@@ -181,7 +202,7 @@ public final class VerifierTest {
                 "AlloyEmptyRelation$arity=not-a-number")) {
             assertCode(
                     FailureCode.INVALID_TYPE,
-                    verify(verifier, publicationWithEmptyRelationType(
+                    verify(verifier, publicationWithConstructorType(
                             malformedEmpty), Profile.KERNEL),
                     "malformed empty relation type " + malformedEmpty);
         }
@@ -241,6 +262,20 @@ public final class VerifierTest {
                         withSchemaVersion(fixture, "acgncert-schema-v7"),
                         Profile.KERNEL),
                 "schema without explicit owner EC and retirement sum is rejected");
+        assertCode(
+                FailureCode.UNSUPPORTED_FORMAT_VERSION,
+                verify(
+                        verifier,
+                        withSchemaVersion(fixture, "acgncert-schema-v8"),
+                        Profile.KERNEL),
+                "schema without dependent ancestry and boundary children is rejected");
+        assertCode(
+                FailureCode.UNSUPPORTED_FORMAT_VERSION,
+                verify(
+                        verifier,
+                        withSchemaVersion(fixture, "acgncert-schema-v9"),
+                        Profile.KERNEL),
+                "schema without correlated DAGs and complete pair matrices is rejected");
         assertCode(
                 FailureCode.INVALID_RECORD_SHAPE,
                 verify(
@@ -780,6 +815,141 @@ public final class VerifierTest {
                 "decoder resource cap cannot produce VERIFIED");
 
         System.out.println("VerifierTest: " + checks + " checks passed");
+    }
+
+    private static void testCallAnchorIsolationPredicate() {
+        KernelModel.Context sourceContext = new KernelModel.Context(
+                "context/source", List.of());
+        KernelModel.Context foreignContext = new KernelModel.Context(
+                "context/foreign", List.of());
+        KernelModel.Sort sourceSort = new KernelModel.Sort(
+                KernelModel.SortKind.TERM, "AlloySig:A");
+        KernelModel.Sort foreignSort = new KernelModel.Sort(
+                KernelModel.SortKind.TERM, "AlloySig:B");
+        KernelModel.Term source = new KernelModel.Term(
+                "term/source",
+                KernelModel.TermKind.APP,
+                sourceContext,
+                sourceSort,
+                "operator/source",
+                List.of(),
+                List.of());
+        KernelModel.Term marker = new KernelModel.Term(
+                "term/marker",
+                KernelModel.TermKind.APP,
+                sourceContext,
+                sourceSort,
+                "operator/marker",
+                List.of(),
+                List.of());
+        check(SemanticEvidenceVerifier.isIsolatedCallAnchor(marker, source, 1),
+                "one source-matched marker reference is isolated");
+        check(!SemanticEvidenceVerifier.isIsolatedCallAnchor(marker, source, 2),
+                "a semantically referenced marker is not isolated");
+        check(!SemanticEvidenceVerifier.isIsolatedCallAnchor(
+                        new KernelModel.Term(
+                                marker.id(), marker.kind(), foreignContext,
+                                marker.sort(), marker.symbol(),
+                                marker.attributes(), marker.children()),
+                        source,
+                        1),
+                "a foreign-context marker is rejected");
+        check(!SemanticEvidenceVerifier.isIsolatedCallAnchor(
+                        new KernelModel.Term(
+                                marker.id(), marker.kind(), marker.context(),
+                                foreignSort, marker.symbol(),
+                                marker.attributes(), marker.children()),
+                        source,
+                        1),
+                "a foreign-sort marker is rejected");
+    }
+
+    private static void testSubtypeStackLedger() {
+        SubtypeStackLedger<String> ledger = new SubtypeStackLedger<>();
+        ledger.register("Child", List.of("Child", "Parent", "univ"));
+        ledger.register("Child", List.of("Child", "Parent", "univ"));
+        boolean rejected = false;
+        try {
+            ledger.register("Child", List.of("Child"));
+        } catch (IllegalArgumentException expected) {
+            rejected = true;
+        }
+        check(rejected,
+                "a singleton stack cannot replace an authenticated full subtype stack");
+    }
+
+    private static void testDependentAtomicColumnVocabulary() {
+        check(SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "INT", null, 0),
+                "Int is an admitted exact dependent column");
+        check(SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S", 0),
+                "a nonempty Alloy signature identity is admitted");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "Bogus", 0),
+                "a generic nullary constructor cannot forge an exact column");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:", 0),
+                "an empty Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:this/A", 0),
+                "a noncanonical this/ Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig: ", 0),
+                "a whitespace-only Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:\u00a0", 0),
+                "a nonbreaking-space Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S\u200b", 0),
+                "a format-character Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S\u0000T", 0),
+                "a control-character Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:\ud800", 0),
+                "an unpaired-surrogate Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S\ue000", 0),
+                "a private-use Alloy signature identity is rejected");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S\u0378", 0),
+                "an unassigned Alloy signature identity is rejected");
+        String supplementary = new String(Character.toChars(0x10400));
+        check(SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S" + supplementary, 0),
+                "a valid supplementary-plane Alloy signature identity is admitted");
+        for (String forbidden : List.of(
+                "\u00a0", "\u0000", "\u200b", "\ue000", "\u0378")) {
+            check(!SemanticEvidenceVerifier.isAdmittedIdentity(forbidden),
+                    "a forbidden polymorphic identity is rejected");
+            expectThrows(FormatException.class, () ->
+                    SemanticEvidenceVerifier.requireCanonicalIdentity(
+                            forbidden, "type parameter"));
+        }
+        check(SemanticEvidenceVerifier.isAdmittedIdentity("T" + supplementary),
+                "a supplementary polymorphic identity is admitted");
+        check(SemanticEvidenceVerifier.requireCanonicalIdentity(
+                        "T" + supplementary, "type parameter")
+                        .equals("T" + supplementary),
+                "the polymorphic identity guard preserves supplementary scalars");
+        expectThrows(IllegalArgumentException.class, () ->
+                Codec.encodeCanonicalUtf8("AlloySig:\ud800"));
+        expectThrows(IllegalArgumentException.class, () ->
+                Wire.leaf("identity", "AlloySig:\ud800"));
+        expectThrows(IllegalArgumentException.class, () ->
+                Wire.utf8Length("AlloySig:\ud800"));
+        expectThrows(FormatException.class, () ->
+                SemanticEvidenceVerifier.decodeCanonicalUtf8(
+                        new byte[] {(byte) 0xed, (byte) 0xa0, (byte) 0x80},
+                        "test identity"));
+        check(SemanticEvidenceVerifier.decodeCanonicalUtf8(
+                        ("S" + supplementary).getBytes(StandardCharsets.UTF_8),
+                        "test identity").equals("S" + supplementary),
+                "strict UTF-8 replay admits a valid supplementary-plane identity");
+        check(!SemanticEvidenceVerifier.isAdmittedAtomicChainColumn(
+                        "CONSTRUCTOR", "AlloySig:S", 1),
+                "a constructor application is not one atomic column");
     }
 
     private static VerificationResult verify(
@@ -4382,13 +4552,24 @@ public final class VerifierTest {
                 });
     }
 
-    private static TestBundleBuilder.Encoded publicationWithEmptyRelationType(
+    private static TestBundleBuilder.Encoded publicationWithConstructorType(
             String symbol) {
         return fullFixture(
                 BaseOptions.defaults(),
                 builder -> builder.publicationSemanticEvidence(
                         publicationProfile("FORBID")),
                 fixture -> fixture.builder().exactType("CONSTRUCTOR", symbol));
+    }
+
+    private static TestBundleBuilder.Encoded typeReferenceNamespaceCollision() {
+        return fullFixture(
+                BaseOptions.defaults(),
+                builder -> builder.publicationSemanticEvidence(
+                        publicationProfile("FORBID")),
+                fixture -> {
+                    String boolId = fixture.builder().exactType("BOOL", "");
+                    fixture.builder().exactType("CONSTRUCTOR", boolId);
+                });
     }
 
     private static TestBundleBuilder.Encoded
@@ -4813,6 +4994,23 @@ public final class VerifierTest {
         if (!condition) {
             throw new AssertionError(message);
         }
+    }
+
+    private static void expectThrows(
+            Class<? extends Throwable> expected,
+            Runnable action) {
+        checks++;
+        try {
+            action.run();
+        } catch (Throwable thrown) {
+            if (expected.isInstance(thrown)) {
+                return;
+            }
+            throw new AssertionError(
+                    "Expected " + expected.getSimpleName() + " but got " + thrown,
+                    thrown);
+        }
+        throw new AssertionError("Expected " + expected.getSimpleName());
     }
 
     @FunctionalInterface

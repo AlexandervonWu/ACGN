@@ -463,6 +463,128 @@ theorem occurrence_is_provenance_not_semantic_identity
     semanticCallOfEvidence left = semanticCallOfEvidence right := by
   simp [semanticCallOfEvidence, sameKey, sameArguments]
 
+def exactCallOccurrenceLedger
+    (required supplied : List CallWireEvidence) : Bool :=
+  required.all supplied.contains && supplied.all required.contains
+
+def exactCallOperatorCoverage
+    (required supplied : List CallKey) : Bool :=
+  required.all supplied.contains && supplied.all required.contains
+
+def unaryCallWireEvidence : CallWireEvidence :=
+  { occurrence := 41
+    sourcePath := "phase/0/matrix"
+    sourceSpelling := "f"
+    key := requestedF
+    roles := [0]
+    orderedArgumentEndpoints := [11]
+    sourceEndpoint := 17 }
+
+theorem exact_call_occurrence_ledger_accepts_complete_evidence :
+    exactCallOccurrenceLedger
+      [unaryCallWireEvidence] [unaryCallWireEvidence] = true := by
+  decide
+
+theorem omitted_call_occurrence_evidence_rejects :
+    exactCallOccurrenceLedger [unaryCallWireEvidence] [] = false := by
+  decide
+
+theorem exact_call_operator_coverage_accepts_complete_evidence :
+    exactCallOperatorCoverage [requestedF] [requestedF] = true := by
+  decide
+
+theorem omitted_call_operator_evidence_rejects :
+    exactCallOperatorCoverage [requestedF] [] = false := by
+  decide
+
+def callOccurrenceAnchor
+    (evidence : CallWireEvidence) : Nat × String × CallWireEvidence :=
+  (evidence.occurrence, evidence.sourcePath, evidence)
+
+def exactCallAnchorCoverage
+    (required : List CallWireEvidence)
+    (anchors : List (Nat × String × CallWireEvidence)) : Bool :=
+  let expected := required.map callOccurrenceAnchor
+  expected.all anchors.contains && anchors.all expected.contains
+
+def nestedInnerCallWireEvidence : CallWireEvidence :=
+  { occurrence := 51
+    sourcePath := "phase/0/matrix/0"
+    sourceSpelling := "f"
+    key := requestedF
+    roles := [0]
+    orderedArgumentEndpoints := [11]
+    sourceEndpoint := 17 }
+
+def nestedOuterCallWireEvidence : CallWireEvidence :=
+  { occurrence := 52
+    sourcePath := "phase/0/matrix"
+    sourceSpelling := "f"
+    key := requestedF
+    roles := [0]
+    orderedArgumentEndpoints := [17]
+    sourceEndpoint := 18 }
+
+theorem nested_same_operator_occurrence_anchors_are_distinct :
+    callOccurrenceAnchor nestedInnerCallWireEvidence ≠
+      callOccurrenceAnchor nestedOuterCallWireEvidence := by
+  decide
+
+theorem complete_nested_call_anchor_coverage_accepts :
+    exactCallAnchorCoverage
+      [nestedInnerCallWireEvidence, nestedOuterCallWireEvidence]
+      [callOccurrenceAnchor nestedInnerCallWireEvidence,
+       callOccurrenceAnchor nestedOuterCallWireEvidence] = true := by
+  decide
+
+theorem one_omitted_nested_call_anchor_rejects :
+    exactCallAnchorCoverage
+      [nestedInnerCallWireEvidence, nestedOuterCallWireEvidence]
+      [callOccurrenceAnchor nestedOuterCallWireEvidence] = false := by
+  decide
+
+structure CallAnchorTerm where
+  key : Nat × String × CallWireEvidence
+  sourceContext : Nat
+  sourceSort : Nat
+  scalarReferences : Nat
+  deriving DecidableEq
+
+def validCallAnchorTerm
+    (evidence : CallWireEvidence)
+    (expectedContext expectedSort : Nat)
+    (anchor : CallAnchorTerm) : Bool :=
+  anchor.key == callOccurrenceAnchor evidence &&
+  anchor.sourceContext == expectedContext &&
+  anchor.sourceSort == expectedSort &&
+  anchor.scalarReferences == 1
+
+def nestedInnerAnchorTerm : CallAnchorTerm :=
+  { key := callOccurrenceAnchor nestedInnerCallWireEvidence
+    sourceContext := 7
+    sourceSort := 3
+    scalarReferences := 1 }
+
+theorem isolated_call_anchor_accepts :
+    validCallAnchorTerm nestedInnerCallWireEvidence 7 3
+      nestedInnerAnchorTerm = true := by
+  decide
+
+theorem canonically_referenced_call_anchor_rejects :
+    validCallAnchorTerm nestedInnerCallWireEvidence 7 3
+      { nestedInnerAnchorTerm with scalarReferences := 2 } = false := by
+  decide
+
+theorem wrong_context_call_anchor_rejects :
+    validCallAnchorTerm nestedInnerCallWireEvidence 7 3
+      { nestedInnerAnchorTerm with sourceContext := 8 } = false := by
+  decide
+
+theorem wrong_sort_call_anchor_rejects :
+    validCallAnchorTerm nestedInnerCallWireEvidence 7 3
+      { nestedInnerAnchorTerm with sourceSort := 4 } = false := by
+  decide
+
 inductive Atom where
   | a
   | b

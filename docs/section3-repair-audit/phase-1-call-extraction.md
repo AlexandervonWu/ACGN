@@ -144,10 +144,69 @@ with qualified identity `fraud/f` is rejected for a call of `module/f`. The
 focused test and Lean key model pass, but complete parser-to-wire refinement
 and a fresh immutable review remain open.
 
+`P1-F11`: a fresh Luna falsifier constructed the valid-UTF-8 callee
+`m/f\u0000X`. `CallMetadata.requireText` admitted the embedded control even
+though later typed-operator construction and standalone replay rejected it.
+CALL source names, qualified callees, and occurrence paths now use the common
+well-formed visible-identity rule at `CallSymbol`, normalized metadata,
+certificate construction, and verifier replay. Control, format, private-use,
+unassigned, and lone-surrogate fragments reject directly. A fresh immutable
+review remains required.
+
+`P1-F12`: a fresh Terra falsifier removed all CALL-occurrence rows from an
+otherwise valid producer bundle. Each supplied row had been checked, but no
+producer or standalone-verifier invariant required the ledger to be complete.
+The construction source ledger now records every occurrence certificate,
+artifact assembly requires exact occurrence equality, and standalone replay
+requires the supplied certificate operator identities to equal the CALL
+operator identities present in the kernel model. Producer and verifier
+omission mutations reject with `MISSING_EVIDENCE`.
+`Phase1CallExtraction.lean` independently defines exact occurrence-ledger and
+operator-coverage predicates; its complete-evidence and omitted-evidence
+theorems reduce to the corresponding Boolean outcomes. Full parser-to-Java
+refinement and a wholly fresh immutable review remain open.
+
+`P1-F13`: both fresh Luna reviewers then showed that operator-set coverage was
+not occurrence completeness. In `f[f[a]]`, deleting either row preserved the
+single semantic operator identity. Every wire occurrence now creates one
+nullary `ACGN/CALL-OCCURRENCE/<base64url-wire-key>` model anchor. Standalone
+replay reconstructs the full identity from each row and requires exact
+anchor/row set equality, separately from semantic operator coverage. The
+anchor is provenance-only, so it neither changes CALL equality nor blocks
+hash-consing of repeated semantic terms. The nested same-operator fixture
+verifies, deleting either one of its two rows while retaining its anchor
+rejects with `MISSING_EVIDENCE`,
+and `Phase1CallExtraction.lean` proves distinct anchors and the corresponding
+one-omission rejection. Raw source parsing is not claimed by this local
+certificate invariant.
+
+`P1-F14`: local preflight invalidated the next snapshot before ballot results
+because a cardinality anchor had not yet been prohibited from semantic use.
+The verifier now requires each marker to be a unique nullary term with the
+same context and sort as its CALL source and exactly one scalar occurrence in
+the complete decoded bundle: its own term-table ID. Any reference from a term,
+witness, proof, snapshot, canonical record, unfolding, publication, or other
+evidence therefore rejects. One iterative bounded scan handles all marker IDs
+together. Lean independently pins isolation and context/sort mismatch
+rejection. No review vote from the interrupted snapshot is retained.
+
+`P1-F15`: both Round 28 Luna reviewers demonstrated the remaining authority
+limit by deleting one nested CALL row together with its marker term/operator.
+The surviving bundle is internally consistent because the standalone verifier
+does not receive the raw Alloy source or an independently pinned occurrence
+commitment. Another bundle-internal digest cannot repair this circularity.
+Accordingly, marker checks are stated only as protection against unpaired
+tampering. Complete raw-source occurrence coverage is an open theory blocker
+requiring source replay or external authority; Phase 1 and the integrated
+artifact remain `INCOMPLETE`.
+
 ## Verification
 
-`CallExtractionRegressionTest` passes 137 checks in the current focused run, including an Alloy-backed
-two-atom witness separating `f[f[a]]` from `f[a]`.
+`CallExtractionRegressionTest` passes 148 checks in the current focused run,
+including an Alloy-backed two-atom witness separating `f[f[a]]` from `f[a]`.
+`CertificateBundleWriterTest` passes 109 checks and
+`ProducerSemanticEvidenceMutationTest` passes 113 checks, including the
+independent CALL-ledger omission paths.
 
 The protected `./scripts/run_bounded_ci_java_tests.sh` is byte-identical to the
 repair base and therefore does not claim to register this new focused suite.

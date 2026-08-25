@@ -54,9 +54,9 @@ public final class OperatorDeclaration {
     }
 
     private static String requireName(String value, String name) {
-        Objects.requireNonNull(value, name);
-        if (value.trim().isEmpty()) {
-            throw new IllegalArgumentException(name + " must not be blank");
+        if (!AlloyTypeBridge.isAdmittedIdentity(value)) {
+            throw new IllegalArgumentException(
+                    name + " must be a well-formed visible identity");
         }
         return value;
     }

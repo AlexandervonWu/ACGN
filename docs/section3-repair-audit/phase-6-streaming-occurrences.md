@@ -24,7 +24,7 @@ OPEN.
   and `ExhaustiveGraphCanonicalizer` reference orbits are deliberately outside
   that narrowly stated candidate-retention property.
 - Production and exhaustive Java canonicalizers order candidates by
-  `(shape, renaming witness)`. Schema v8 retains and independently checks the
+  `(shape, renaming witness)`. Schema v10 retains and independently checks the
   selected witness as well as the selected term. The rigid slot-only
   nonidentity path reconstructs the producer's exact canonical-shape key;
   equality of every producer and verifier execution set over leader, binder,
@@ -58,9 +58,10 @@ OPEN.
 | P6-F08 | Binder-occurrence identity omitted the enclosing root. Distinct roots with equal local block, path, and automorphism produced one key; FULL verification rejected the producer output as `DUPLICATE_ID`. | Include the root structural key, validate root-relative ownership at construction, serialize that root, and derive the rooted key independently in the verifier. | A two-root/same-path fixture FULL-verifies; root and cross-orbit mutations reject. |
 | P6-F09 | The wire proved only the selected term although Java's declared order uses `(shape,witness)`. Equal shapes with unequal witnesses were indistinguishable in the evidence. | Schema v6 serializes the orbit base, selected witness, and minimum `(term,witness)` pair; replay checks the selected action and tie-break. | A symmetric Set gives the same normalized term under identity and swap; selecting the larger swap now rejects. Lean proves shape-only noninjectivity and pair injectivity. |
 | P6-B10 | `BinderAutomorphismGroup` and `TypedSymmetryGroup` eagerly retained finite closure lists, including all `5,040` members of `S7`. | Replace production local closure lists with deterministic stabilizer-chain traversal. Keep complete materialization only in the explicitly exhaustive bounded differential oracle. | Ninety-six deterministic `S4` subgroup samples equal an independent materialized BFS oracle without duplicates; the `S7` probe emits exactly `5,040` elements while retaining six levels, maximum orbit width seven, and fewer transversals than group elements. A Java heap/refinement proof remains open. |
-| P6-F11 | The rooted binder-key repair initially retained the schema-v5 label, silently reinterpreting bytes whose binder identity had been rootless. | Separate every incompatible contract revision; the rooted/CALL-provenance/exact-transition/witness-unfold contract is admitted only as schema v8. | Otherwise-valid v5, v6, and v7 relabels reject with `UNSUPPORTED_FORMAT_VERSION`; the formal schema model admits only v8. |
+| P6-F11 | The rooted binder-key repair initially retained the schema-v5 label, silently reinterpreting bytes whose binder identity had been rootless; the first dependent-subtype extension later reused v8 despite adding a new trust-boundary contract. | Separate every incompatible contract revision; the rooted/CALL-provenance/exact-transition/witness-unfold/dependent-subtype contract is admitted only as schema v9. | Otherwise-valid v5, v6, v7, and v8 relabels reject with `UNSUPPORTED_FORMAT_VERSION`; the formal schema model admits only v9. |
 | P6-B12 | Earlier replay minimized normalized acted terms without establishing equality with the producer's `CanonicalShape` order. | The rigid nonidentity slice now carries the producer source and selected witness; independent replay reconstructs the exact stable canonical-shape key and the complete `(shape,witness)` order. | Canonical/reversed two-slot producer bundles, witness mutation, and FULL/PAIR replay pass the bounded regression. Complete candidate-set refinement over every leader, binder, and container action remains open. |
 | P6-B13 | PAIR previously used the orbit endpoint's structural key without demonstrating ownership by independently replayed least-shape evidence. | Semantic authorization records the independently reconstructed representative key, and PAIR composes source replay with the checked orbit while comparing that key and exact sort across bundles. | The alpha-equivalent canonical/reversed pair verifies; polymorphic/monomorphic declaration mismatch and selected-witness mutation reject. The complete cross-bundle substitution matrix remains open. |
+| P6-F14 | The correlated dependent-type DAG and complete JOIN/ARROW alternative-pair matrix were added after schema v9, so retaining the v9 label would silently reinterpret dependent-chain bytes. | Admit the combined rooted/CALL/transition/witness/subtype/correlated-DAG contract only as schema v10 and reject all v5 through v9 roots. | Lean admits the complete feature vector only at v10; the standalone verifier rejects an otherwise valid v9 relabel, and DAG/matrix omission, order, and decision mutations reject. |
 | P6-R14 | The replacement review showed that P6-10 falsely swept complete certificate and verifier evidence ledgers into a production no-retention claim. | Restrict P6-10 to complete lists of candidate terms and state every proof/completeness-ledger exclusion in the claim itself. | The traceability hash binds the narrowed sentence; the failed report remains immutable provenance. |
 | P6-R15 | Removal of the equal-shape witness tie-break survived permanent tests, and the first-candidate verifier required a temporary six-order `S3` sweep. | Permanently emit all six three-slot source orders and add a direct equal-term identity/swap comparator probe in both directions. | The producer/verifier regression now covers all six bundles and the exact witness-tie branch; fresh mutation review is still required. |
 | P6-R16 | The next frozen mutation review found three surviving variants: producer witness-tie removal, standalone verifier first-candidate selection, and production retention of a complete candidate list. | Add a producer comparator probe, route a verifier test hook through the real streaming minimum in both orders, and inspect the exact nonstatic state of `BestCandidate`. | Current focused runs report `TheoryCanonicalizationTest=14,481`, producer semantic order `5`, and verifier semantic order `26`; a new independent review is required because these are moving bytes. |
@@ -68,12 +69,12 @@ OPEN.
 ## Regression Evidence
 
 - Focused evidence on the current moving worktree includes
-  `TheoryCanonicalizationTest=14,481`, `TheoryPortsTest=1,006`,
-  `TheoryStateTest=4,214`, `TheoryCertificatesTest=323`,
-  `TheoryDeterminismTest=47`, `VerifierTest=134`,
-  `CertificateBundleWriterTest=95` in each deterministic run,
+  `TheoryCanonicalizationTest=14,481`, `TheoryPortsTest=1,014`,
+  `TheoryStateTest=4,214`, `TheoryCertificatesTest=445`,
+  `TheoryDeterminismTest=47`, `VerifierTest=179`,
+  `CertificateBundleWriterTest=109` in each deterministic run,
   `ProducerBundleInspectionTest=68`,
-  `ProducerSemanticEvidenceMutationTest=88`,
+  `ProducerSemanticEvidenceMutationTest=113`,
   the Phase 6 semantic-order producer/verifier regressions including six
   three-slot order bundles and both equal-shape witness-tie directions, and
   `TrustedTheoryPinsTest=31`. The bounded export census remains exactly
@@ -82,7 +83,7 @@ OPEN.
   distinct roots and returns `VERIFIED/NONE` under FULL verification.
 - `formal/Phase6OrbitCanonicalization.lean` preserves the rootless-key and
   shape-only counterexamples and proves the abstract rooted key, complete
-  candidate key, streaming fold, occurrence alignment, schema-v8, counter,
+  candidate key, streaming fold, occurrence alignment, schema-v10, counter,
   and PAIR-ownership obligations named in the traceability matrix.
 - The original independent mapping failure is retained at
   `/tmp/acgn-phase6-evidence-map-20260821.md`, SHA-256

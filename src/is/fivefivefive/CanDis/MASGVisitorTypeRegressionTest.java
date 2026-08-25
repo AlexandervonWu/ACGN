@@ -43,7 +43,7 @@ public final class MASGVisitorTypeRegressionTest {
                 "}");
 
         CompModule module = CompUtil.parseEverything_fromString(A4Reporter.NOP, source);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(new ModelUnit(null, module), null);
 
         Multigraph candidate = graph(visitor, "candidate");

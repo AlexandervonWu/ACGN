@@ -1,5 +1,8 @@
 package org.acgn.cert;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -32,6 +35,8 @@ final class SemanticEvidenceVerifier {
             "alloy-source-command-context-v1";
     private static final String SOURCE_COMMAND_CONTEXT_VERSION =
             "alloy-command-options-v2";
+    private static final String CALL_OCCURRENCE_ANCHOR_PREFIX =
+            "ACGN/CALL-OCCURRENCE/";
     private static final String PRODUCTION_ALLOY_REWRITE_MODE =
             "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v11";
     private static final String PRODUCTION_ALLOY_SIGNATURE_VERSION =
@@ -51,13 +56,24 @@ final class SemanticEvidenceVerifier {
     private static final String REGISTRY_DIGEST = sha256(
             REGISTRY_VERSION + "\n" + REGISTRY_TEXT);
     private static final String DEPENDENT_CHAIN_VERSION =
-            "alloy-dependent-chain-theory-v4";
+            "alloy-dependent-chain-theory-v10";
     private static final String DEPENDENT_CHAIN_TEXT = String.join("\n",
-            "JOIN:ordered;boundary=last(left)==first(right);result=init(left)++tail(right)",
-            "JOIN-FLAT-GUARD:every interior source operand has at least two columns",
-            "ARROW:ordered;result=columns(left)++columns(right)",
-            "LEAF:exact relation or Int/AlloyCarrier primitive singleton; no name-based parameter authority",
-            "POLYMORPHIC-UNIV:no dependent-chain reassociation certificate",
+            "FAMILY:finite-union-of-correlated-ordered-products;normalized=subtype-antichain",
+            "DAG:edges=specific-to-general;synthetic-union-and-common-ancestor-nodes-are-not-nominal-authority",
+            "UNION:retain-correlation;deduplicate;absorb-only-authenticated-componentwise-subtypes",
+            "INTERSECTION:pairwise-product-meet;omit-only-authenticated-disjoint-PrimSig-branches",
+            "SET-DERIVATION:source UNION and INTERSECTION DAGs are recursively derived before parser-result equality",
+            "JOIN:ordered;complete-alternative-pair-matrix;overlap=exact-or-one-endpoint-on-parser-derived-PrimSig-parent-path;result=init(left)++tail(right)",
+            "ARROW:ordered;complete-cartesian-product;result=columns(left)++columns(right)",
+            "SUBTYPE:path starts at exact AlloySig carrier, including parser-provided univ;edges are direct PrimSig parents;witness ends at opposite boundary",
+            "SUBTYPE-HIERARCHY:single-parent;acyclic;univ-terminal;independent-verification-requires-external-source-hierarchy-authority",
+            "DISJOINT:two distinct authenticated PrimSig branches with first common ancestor;univ-commonality-never-implies-overlap",
+            "AUTHORITY:one-complete-nominal-path-per-top;one-live-parser-module-per-chain",
+            "JOIN-FLAT-GUARD:every interior source operand has retained relation arity at least two, including typed-empty families",
+            "LEAF:exact correlated relation family or Int/AlloyCarrier primitive singleton;no-name-based-parameter-authority",
+            "UNIV:explicit parser-provided AlloySig:univ is an exact carrier;absent-or-unresolved-types-never-invent-univ",
+            "EMPTY:positive-arity typed empty family has zero alternatives;all-disjoint JOIN retains complete evidence and ordered Seq",
+            "CONTAINER:ordered-duplicate-preserving-Seq",
             "laws=guarded-associativity-only;no-commutativity;no-idempotency;no-unit");
     private static final String DEPENDENT_CHAIN_DIGEST = sha256(
             DEPENDENT_CHAIN_VERSION + "\n" + DEPENDENT_CHAIN_TEXT);
@@ -78,6 +94,45 @@ final class SemanticEvidenceVerifier {
     private static final Set<String> KNOWN_OPERATORS = Set.of(
             "AND", "OR", "PLUS", "INTERSECT", "IPLUS", "MUL",
             "EQUALS", "NOT_EQUALS", "IFF", "DISJOINT");
+
+    static boolean isAdmittedAtomicChainColumn(
+            String kind,
+            String symbol,
+            int argumentCount) {
+        if (argumentCount != 0) {
+            return false;
+        }
+        if ("INT".equals(kind)) {
+            return true;
+        }
+        return "CONSTRUCTOR".equals(kind)
+                && symbol != null
+                && symbol.startsWith("AlloySig:")
+                && hasAdmittedAlloySignatureIdentity(symbol);
+    }
+
+    private static boolean hasAdmittedAlloySignatureIdentity(String symbol) {
+        String identity = symbol.substring("AlloySig:".length());
+        return isAdmittedIdentity(identity) && !identity.startsWith("this/");
+    }
+
+    static boolean isAdmittedIdentity(String identity) {
+        return identity != null
+                && !identity.isEmpty()
+                && identity.codePoints().noneMatch(
+                SemanticEvidenceVerifier::isForbiddenIdentityCodePoint);
+    }
+
+    private static boolean isForbiddenIdentityCodePoint(int codePoint) {
+        int type = Character.getType(codePoint);
+        return Character.isWhitespace(codePoint)
+                || Character.isSpaceChar(codePoint)
+                || Character.isISOControl(codePoint)
+                || type == Character.FORMAT
+                || type == Character.SURROGATE
+                || type == Character.PRIVATE_USE
+                || type == Character.UNASSIGNED;
+    }
 
     private final Bundle bundle;
     private final KernelModel model;
@@ -134,6 +189,8 @@ final class SemanticEvidenceVerifier {
         }
         Set<Long> occurrenceIds = new HashSet<>();
         Set<String> sourcePaths = new HashSet<>();
+        Set<String> coveredCallOperators = new HashSet<>();
+        Map<String, KernelModel.Term> coveredOccurrenceAnchors = new HashMap<>();
         for (Wire.Node record : section.children()) {
             record.requireTag("call-occurrence");
             if (record.scalars().size() != 9) {
@@ -143,11 +200,11 @@ final class SemanticEvidenceVerifier {
                     record.scalar(0), "call occurrence structural key");
             long occurrenceId = parseNonnegativeLong(
                     record.scalar(1), "call occurrence id");
-            String sourcePath = requireCanonicalText(
+            String sourcePath = requireCanonicalIdentity(
                     record.scalar(2), "call occurrence source path");
-            String sourceName = requireCanonicalText(
+            String sourceName = requireCanonicalIdentity(
                     record.scalar(3), "call occurrence source spelling");
-            String callee = requireCanonicalText(
+            String callee = requireCanonicalIdentity(
                     record.scalar(4), "call occurrence qualified callee");
             int separator = callee.lastIndexOf('/');
             if (separator <= 0 || separator + 1 >= callee.length()) {
@@ -168,6 +225,7 @@ final class SemanticEvidenceVerifier {
                 throw theory("CALL occurrence endpoint is not an application term");
             }
             KernelModel.Operator operator = model.operator(source.symbol());
+            coveredCallOperators.add(operator.semanticIdentity());
             String expectedOperator = "ALLOY/CALL/" + callee + "/" + arity
                     + "/" + kind + "/" + authority;
             if (!expectedOperator.equals(operator.semanticIdentity())
@@ -211,12 +269,117 @@ final class SemanticEvidenceVerifier {
             if (!suppliedKey.equals(expectedKey)) {
                 throw theory("CALL occurrence structural key does not replay");
             }
+            String anchorIdentity = CALL_OCCURRENCE_ANCHOR_PREFIX
+                    + Base64.getUrlEncoder().withoutPadding().encodeToString(
+                            expectedKey.stableString().getBytes(
+                                    StandardCharsets.UTF_8));
+            if (coveredOccurrenceAnchors.put(anchorIdentity, source) != null) {
+                throw new FormatException(
+                        FailureCode.DUPLICATE_ID,
+                        "CALL occurrence anchor is duplicated");
+            }
             if (!occurrenceIds.add(occurrenceId) || !sourcePaths.add(sourcePath)) {
                 throw new FormatException(
                         FailureCode.DUPLICATE_ID,
                         "CALL occurrence id/path is duplicated");
             }
         }
+        Set<String> requiredCallOperators = new HashSet<>();
+        Map<String, KernelModel.Term> requiredOccurrenceAnchors = new HashMap<>();
+        for (Map.Entry<String, KernelModel.Term> entry : model.terms().entrySet()) {
+            KernelModel.Term term = entry.getValue();
+            if (term.kind() != KernelModel.TermKind.APP) {
+                continue;
+            }
+            KernelModel.Operator operator = model.operator(term.symbol());
+            String identity = operator.semanticIdentity();
+            if (identity.startsWith("ALLOY/CALL/")) {
+                requiredCallOperators.add(identity);
+            } else if (identity.startsWith(CALL_OCCURRENCE_ANCHOR_PREFIX)) {
+                String encoded = identity.substring(
+                        CALL_OCCURRENCE_ANCHOR_PREFIX.length());
+                byte[] decoded;
+                try {
+                    decoded = Base64.getUrlDecoder().decode(encoded);
+                } catch (IllegalArgumentException exception) {
+                    throw theory("CALL occurrence anchor is not canonical Base64");
+                }
+                if (decoded.length > limits.maxStringBytes()
+                        || !encoded.equals(Base64.getUrlEncoder().withoutPadding()
+                                .encodeToString(decoded))
+                        || !term.children().isEmpty()
+                        || !operator.schemas().isEmpty()
+                        || !operator.flatPath().equals("none")) {
+                    throw theory("CALL occurrence anchor is malformed");
+                }
+                decodeCanonicalUtf8(decoded, "CALL occurrence anchor");
+                if (requiredOccurrenceAnchors.put(identity, term) != null) {
+                    throw new FormatException(
+                            FailureCode.DUPLICATE_ID,
+                            "CALL occurrence anchor term is duplicated");
+                }
+            }
+        }
+        if (!requiredCallOperators.equals(coveredCallOperators)) {
+            throw new FormatException(
+                    FailureCode.MISSING_EVIDENCE,
+                    "CALL application operators and occurrence evidence differ");
+        }
+        if (!requiredOccurrenceAnchors.keySet().equals(
+                coveredOccurrenceAnchors.keySet())) {
+            throw new FormatException(
+                    FailureCode.MISSING_EVIDENCE,
+                    "CALL occurrence anchors and occurrence evidence differ");
+        }
+        Map<String, Integer> anchorReferences = scalarReferenceCounts(
+                requiredOccurrenceAnchors.values().stream()
+                        .map(KernelModel.Term::id)
+                        .collect(java.util.stream.Collectors.toSet()));
+        for (Map.Entry<String, KernelModel.Term> entry
+                : requiredOccurrenceAnchors.entrySet()) {
+            KernelModel.Term marker = entry.getValue();
+            KernelModel.Term source = coveredOccurrenceAnchors.get(entry.getKey());
+            int references = anchorReferences.getOrDefault(marker.id(), 0);
+            if (!isIsolatedCallAnchor(marker, source, references)) {
+                throw theory(
+                        "CALL occurrence anchor must match its source context/type "
+                                + "and remain an isolated provenance term");
+            }
+        }
+    }
+
+    static boolean isIsolatedCallAnchor(
+            KernelModel.Term marker,
+            KernelModel.Term source,
+            int scalarReferences) {
+        return marker.context().equals(source.context())
+                && marker.sort().equals(source.sort())
+                && scalarReferences == 1;
+    }
+
+    private Map<String, Integer> scalarReferenceCounts(Set<String> selected) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (String value : selected) {
+            counts.put(value, 0);
+        }
+        Deque<Wire.Node> pending = new ArrayDeque<>();
+        pending.push(model.bundle().root());
+        int visited = 0;
+        while (!pending.isEmpty()) {
+            if (++visited > limits.maxNodes()) {
+                throw resource("CALL anchor reference scan exceeds node bound");
+            }
+            Wire.Node node = pending.pop();
+            for (String scalar : node.scalars()) {
+                if (counts.containsKey(scalar)) {
+                    counts.put(scalar, Math.incrementExact(counts.get(scalar)));
+                }
+            }
+            for (Wire.Node child : node.children()) {
+                pending.push(child);
+            }
+        }
+        return counts;
     }
 
     private static void requireSection(Wire.Node section, String tag) {
@@ -441,6 +604,16 @@ final class SemanticEvidenceVerifier {
                         "Two exact type IDs render as " + type.display());
             }
         }
+        for (Map.Entry<String, ExactType> display : byDisplay.entrySet()) {
+            ExactType idCollision = resolved.get(display.getKey());
+            if (idCollision != null
+                    && !idCollision.id().equals(display.getValue().id())) {
+                throw new FormatException(
+                        FailureCode.INVALID_TYPE,
+                        "An exact type display collides with another type ID: "
+                                + display.getKey());
+            }
+        }
         return new TypeLedger(
                 Collections.unmodifiableMap(resolved),
                 Collections.unmodifiableMap(byDisplay));
@@ -482,8 +655,9 @@ final class SemanticEvidenceVerifier {
         String symbol = null;
         switch (kind) {
             case TYPE_VARIABLE, CONSTRUCTOR -> {
-                if (record.scalar(2).trim().isEmpty()) {
-                    throw invalidType(kind + " requires one nonblank symbol");
+                if (!isAdmittedIdentity(record.scalar(2))) {
+                    throw invalidType(
+                            kind + " requires one well-formed visible symbol");
                 }
                 symbol = record.scalar(2);
             }
@@ -506,6 +680,11 @@ final class SemanticEvidenceVerifier {
             }
         }
         if (kind == TypeKind.CONSTRUCTOR) {
+            if (symbol.startsWith("AlloySig:")
+                    && !hasAdmittedAlloySignatureIdentity(symbol)) {
+                throw invalidType(
+                        "Alloy signature constructors require one canonical identity");
+            }
             if ("AlloyEmptyRelation".equals(symbol)
                     || (symbol.startsWith(EMPTY_RELATION_PREFIX)
                             && emptyRelationArity(symbol) == null)) {
@@ -1083,6 +1262,8 @@ final class SemanticEvidenceVerifier {
                 new HashMap<>();
         private final Map<String, ConstructionEvidence> chainEvidence =
                 new HashMap<>();
+        private final SubtypeStackLedger<StableKey> chainSubtypeStacks =
+                new SubtypeStackLedger<>();
         private final Map<String, ConstructionEvidence> containerEvidence =
                 new HashMap<>();
         private final Map<String, BinderEvidence> binderEvidence = new HashMap<>();
@@ -1091,6 +1272,7 @@ final class SemanticEvidenceVerifier {
         private final Map<String, StableKey> orbitComparisonKeys = new HashMap<>();
         private final Map<String, StableKey> orbitRepresentativeKeys = new HashMap<>();
         private long orbitWork;
+        private boolean hasUntrustedSubtypeHierarchy;
 
         private SemanticReplay(
                 ProfileEvidence profile,
@@ -1126,6 +1308,12 @@ final class SemanticEvidenceVerifier {
                 verifyBinderOccurrence(record);
             }
             verifyEvidenceCoverage();
+            if (hasUntrustedSubtypeHierarchy) {
+                throw new UncheckableException(
+                        FailureCode.MISSING_EVIDENCE,
+                        "Subtype JOIN ancestry is internally consistent but lacks "
+                                + "an independently pinned source-hierarchy authority");
+            }
         }
 
         private void verifyProducerOrbitOrders() {
@@ -1544,7 +1732,9 @@ final class SemanticEvidenceVerifier {
             }
 
             StableKey theoryIndex = dependentChainTheoryIndex(
-                    kind, source.leafTypes(), source.outputType());
+                    kind,
+                    source.leafDags(),
+                    source.outputDag());
             requireKey(record.scalar(9), theoryIndex,
                     "dependent-chain theory index");
             StableKey sourceOccurrenceCommitment = parseStableKey(
@@ -1599,8 +1789,8 @@ final class SemanticEvidenceVerifier {
             if (kind == ChainKind.JOIN && operandTypes.size() > 2) {
                 for (int index = 1; index + 1 < operandTypes.size(); index++) {
                     ExactType interior = operandTypes.get(index);
-                    requireRelation(interior, "dependent-chain interior JOIN operand");
-                    if (interior.arguments().size() < 2) {
+                    Integer arity = relationArity(interior);
+                    if (arity == null || arity < 2) {
                         throw theory(
                                 "JOIN reassociation uses a unary interior operand");
                     }
@@ -1643,7 +1833,7 @@ final class SemanticEvidenceVerifier {
                 ChainKind expectedKind,
             KernelModel.Context expectedContext) {
             if (node.tag().equals("dependent-chain-leaf")) {
-                node.requireShape("dependent-chain-leaf", 5, 0);
+                node.requireShape("dependent-chain-leaf", 5, 1);
                 KernelModel.Term term = model.term(node.scalar(0));
                 KernelModel.Schema schema = model.schema(term.sort().value());
                 if ((term.kind() != KernelModel.TermKind.ONE_SLOT
@@ -1667,21 +1857,26 @@ final class SemanticEvidenceVerifier {
                         List.of(stored.key(), output.key()));
                 requireKey(node.scalar(4), typeProof,
                         "dependent-chain leaf type proof");
+                ChainDag dag = dependentTypeDag(node.child(0), output);
                 StableKey key = StableKey.of(
-                        "dependent-chain-leaf-v1",
+                        "dependent-chain-leaf-v3",
                         List.of(),
-                        List.of(portKey(term), typeProof));
+                        List.of(
+                                portKey(term),
+                                typeProof,
+                                dag.key()));
                 requireKey(node.scalar(3), key, "dependent-chain leaf key");
                 return new ChainView(
                         expectedKind,
                         term.context(),
-                        output,
+                        dag,
                         key,
                         List.of(term),
-                        List.of(output));
+                        List.of(output),
+                        List.of(dag));
             }
 
-            node.requireShape("dependent-chain-application", 4, 2);
+            node.requireShape("dependent-chain-application", 4, 4);
             if (!node.scalar(0).equals(expectedKind.name())) {
                 throw theory("Dependent source tree changes operator family");
             }
@@ -1694,43 +1889,207 @@ final class SemanticEvidenceVerifier {
             ChainView right = dependentChainInput(
                     node.child(1), expectedKind, context);
             ExactType output = type(node.scalar(2), "dependent-chain application");
-            requireChainCombination(expectedKind, left.outputType(), right.outputType(), output);
+            ChainCombination combination = requireChainCombination(
+                    expectedKind,
+                    left.outputDag(),
+                    right.outputDag());
+            ChainDag outputDag = dependentTypeDag(node.child(2), output);
+            if (!outputDag.equals(combination.outputDag())) {
+                throw theory(
+                        "Dependent-chain application serializes another output DAG");
+            }
+            requireCombinationCasesWire(
+                    node.child(3), combination.cases());
             List<KernelModel.Term> leaves = new ArrayList<>(left.leaves());
             leaves.addAll(right.leaves());
             List<ExactType> leafTypes = new ArrayList<>(left.leafTypes());
             leafTypes.addAll(right.leafTypes());
+            List<ChainDag> leafDags = new ArrayList<>(left.leafDags());
+            leafDags.addAll(right.leafDags());
             StableKey key = StableKey.of(
-                    "dependent-chain-application-v1",
+                    "dependent-chain-application-v3",
                     List.of(expectedKind.name()),
                     List.of(
-                            contextKey(context),
-                            output.key(),
-                            left.key(),
-                            right.key()));
+                    contextKey(context),
+                    output.key(),
+                    outputDag.key(),
+                    left.key(),
+                    right.key(),
+                    StableKey.of(
+                            "dependent-chain-combination-cases-v1",
+                            List.of(),
+                            combination.cases().stream()
+                                    .map(CombinationCaseView::key)
+                                    .toList())));
             requireKey(node.scalar(3), key, "dependent-chain application key");
             return new ChainView(
                     expectedKind,
                     context,
-                    output,
+                    outputDag,
                     key,
                     List.copyOf(leaves),
-                    List.copyOf(leafTypes));
+                    List.copyOf(leafTypes),
+                    List.copyOf(leafDags));
+        }
+
+        private ChainDag dependentTypeDag(
+                Wire.Node node,
+                ExactType expectedType) {
+            node.requireShape(
+                    "dependent-type-dag", 4, node.children().size());
+            ExactType relationType = type(
+                    node.scalar(0), "dependent type DAG relation family");
+            if (!relationType.key().equals(expectedType.key())) {
+                throw theory("A dependent type DAG names another relation family");
+            }
+            int arity = parsePositiveInt(
+                    node.scalar(2), "dependent type DAG arity");
+            if (node.children().isEmpty()) {
+                Integer emptyArity = relationArity(relationType);
+                if (emptyArity == null
+                        || emptyRelationArity(relationType.symbol()) == null
+                        || emptyArity != arity
+                        || !"NONE".equals(node.scalar(1))) {
+                    throw theory(
+                            "An alternative-free dependent DAG is not one typed empty relation");
+                }
+                StableKey key = dependentTypeDagKey(
+                        List.of(), relationType, null);
+                requireKey(node.scalar(3), key, "dependent empty type DAG");
+                return new ChainDag(relationType, List.of(), null, key);
+            }
+            List<ExactType> productTypes = relationProducts(
+                    relationType, "dependent type DAG relation family");
+            if (productTypes.size() != node.children().size()) {
+                throw theory(
+                        "A dependent type DAG changed its correlated alternatives");
+            }
+            if (productTypes.get(0).arguments().size() != arity) {
+                throw theory("A dependent type DAG changed its relation arity");
+            }
+            List<List<ChainColumn>> alternatives = new ArrayList<>();
+            for (int index = 0; index < productTypes.size(); index++) {
+                alternatives.add(dependentTypeProduct(
+                        node.child(index), index, productTypes.get(index)));
+            }
+            requireNormalizedAlternatives(alternatives);
+            ExactType common = commonAncestorType(alternatives);
+            if ("NONE".equals(node.scalar(1))) {
+                if (common != null) {
+                    throw theory(
+                            "A dependent type DAG omitted its common ancestor");
+                }
+            } else {
+                ExactType encoded = type(
+                        node.scalar(1), "dependent type DAG common ancestor");
+                if (common == null || !encoded.key().equals(common.key())) {
+                    throw theory(
+                            "A dependent type DAG changed its common ancestor");
+                }
+            }
+            StableKey key = dependentTypeDagKey(
+                    alternatives, relationType, common);
+            requireKey(node.scalar(3), key, "dependent type DAG");
+            return new ChainDag(
+                    relationType,
+                    List.copyOf(alternatives),
+                    common,
+                    key);
+        }
+
+        private List<ChainColumn> dependentTypeProduct(
+                Wire.Node node,
+                int expectedIndex,
+                ExactType relationType) {
+            requireRelation(relationType, "dependent type product");
+            node.requireShape(
+                    "dependent-type-product", 3, relationType.arguments().size());
+            if (!Integer.toString(expectedIndex).equals(node.scalar(0))
+                    || !type(node.scalar(1), "dependent type product")
+                            .key().equals(relationType.key())) {
+                throw theory("A dependent type product changed its index or type");
+            }
+            List<ChainColumn> columns = new ArrayList<>();
+            for (int index = 0; index < node.children().size(); index++) {
+                Wire.Node encoded = node.child(index);
+                encoded.requireShape(
+                        "dependent-chain-column", 2, encoded.children().size());
+                if (encoded.children().isEmpty()) {
+                    throw theory("A dependent column ancestry is empty");
+                }
+                ExactType exact = type(
+                        encoded.scalar(0), "dependent-chain exact column");
+                if (!exact.key().equals(relationType.arguments().get(index).key())) {
+                    throw theory("Dependent column evidence names another relation column");
+                }
+                requireAtomicChainColumn(exact, "dependent-chain exact column");
+                List<ExactType> ancestry = new ArrayList<>();
+                Set<StableKey> seen = new HashSet<>();
+                for (Wire.Node step : encoded.children()) {
+                    step.requireShape("dependent-chain-ancestor", 1, 0);
+                    ExactType ancestor = type(
+                            step.scalar(0), "dependent-chain ancestor");
+                    requireAtomicChainColumn(ancestor, "dependent-chain ancestor");
+                    if (!seen.add(ancestor.key())) {
+                        throw theory("Dependent column ancestry contains a cycle");
+                    }
+                    ancestry.add(ancestor);
+                }
+                if (!ancestry.get(0).key().equals(exact.key())) {
+                    throw theory("Dependent column ancestry does not start at its exact type");
+                }
+                for (int indexInPath = 0;
+                        indexInPath + 1 < ancestry.size();
+                        indexInPath++) {
+                    if ("AlloySig:univ".equals(
+                            ancestry.get(indexInPath).symbol())) {
+                        throw theory(
+                                "AlloySig:univ must terminate a dependent ancestry");
+                    }
+                }
+                ChainColumn column = new ChainColumn(
+                        exact, List.copyOf(ancestry), chainColumnKey(exact, ancestry));
+                requireKey(encoded.scalar(1), column.key(),
+                        "dependent-chain column evidence");
+                registerChainAncestry(column);
+                columns.add(column);
+            }
+            StableKey key = dependentTypeProductKey(columns);
+            requireKey(node.scalar(2), key, "dependent type product");
+            return List.copyOf(columns);
+        }
+
+        private void registerChainAncestry(ChainColumn column) {
+            List<StableKey> path = column.ancestry().stream()
+                    .map(ExactType::key)
+                    .toList();
+            if (path.size() > 1) {
+                hasUntrustedSubtypeHierarchy = true;
+            }
+            try {
+                chainSubtypeStacks.register(column.exact().key(), path);
+            } catch (IllegalArgumentException exception) {
+                throw theory(exception.getMessage());
+            }
         }
 
         private LeafTypeRule requireLeafTypeRule(
                 ExactType stored,
                 ExactType relation) {
-            requireRelation(relation, "dependent-chain relation view");
-            if (stored.key().equals(relation.key())) {
+            if (stored.key().equals(relation.key())
+                    && relationArity(relation) != null) {
                 return LeafTypeRule.EXACT_RELATION;
             }
-            if (relation.arguments().size() != 1) {
+            List<ExactType> alternatives = relationProducts(
+                    relation, "dependent-chain relation view");
+            if (alternatives.size() != 1
+                    || alternatives.get(0).arguments().size() != 1) {
                 throw theory("A primitive slot can justify only a unary relation view");
             }
             ExactType expectedColumn = primitiveRelationColumn(stored);
             if (expectedColumn == null
                     || !expectedColumn.key().equals(
-                            relation.arguments().get(0).key())) {
+                            alternatives.get(0).arguments().get(0).key())) {
                 throw theory("Stored primitive type does not justify its relation view");
             }
             return LeafTypeRule.PRIMITIVE_SET_SINGLETON;
@@ -1752,6 +2111,9 @@ final class SemanticEvidenceVerifier {
             }
             String expected = carrier.symbol().startsWith("AlloySig:")
                     ? carrier.symbol() : "AlloySig:" + carrier.symbol();
+            if (!isAdmittedAtomicChainColumn("CONSTRUCTOR", expected, 0)) {
+                return null;
+            }
             for (ExactType candidate : types.byId().values()) {
                 if (candidate.is(TypeKind.CONSTRUCTOR)
                         && expected.equals(candidate.symbol())
@@ -1762,54 +2124,354 @@ final class SemanticEvidenceVerifier {
             return null;
         }
 
-        private void requireChainCombination(
+        private ChainCombination requireChainCombination(
                 ChainKind kind,
-                ExactType left,
-                ExactType right,
-                ExactType claimed) {
-            requireRelation(left, "dependent-chain left operand");
-            requireRelation(right, "dependent-chain right operand");
-            if (containsAlloyUniv(left) || containsAlloyUniv(right)) {
-                throw theory(
-                        "A polymorphic univ operand has no dependent-chain license");
+                ChainDag left,
+                ChainDag right) {
+            Integer leftArity = relationArity(left.relationType());
+            Integer rightArity = relationArity(right.relationType());
+            if (leftArity == null || rightArity == null) {
+                throw theory("A dependent-chain operand has no positive relation arity");
             }
-            List<ExactType> columns = new ArrayList<>();
-            if (kind == ChainKind.ARROW) {
-                columns.addAll(left.arguments());
-                columns.addAll(right.arguments());
-            } else {
-                ExactType leftBoundary = left.arguments().get(
-                        left.arguments().size() - 1);
-                ExactType rightBoundary = right.arguments().get(0);
-                if (!leftBoundary.key().equals(rightBoundary.key())) {
-                    throw theory("JOIN dependent-chain boundary types differ");
-                }
-                columns.addAll(left.arguments().subList(
-                        0, left.arguments().size() - 1));
-                columns.addAll(right.arguments().subList(
-                        1, right.arguments().size()));
-                if (columns.isEmpty()) {
-                    throw theory("JOIN dependent-chain claims a nullary relation");
+            int resultArity;
+            try {
+                resultArity = kind == ChainKind.ARROW
+                        ? Math.addExact(leftArity, rightArity)
+                        : Math.subtractExact(
+                                Math.addExact(leftArity, rightArity), 2);
+            } catch (ArithmeticException exception) {
+                throw theory("Dependent-chain result arity overflows");
+            }
+            if (resultArity <= 0) {
+                throw theory("JOIN dependent-chain claims a nullary relation");
+            }
+            List<List<ChainColumn>> products = new ArrayList<>();
+            List<CombinationCaseView> cases = new ArrayList<>();
+            for (int leftIndex = 0;
+                    leftIndex < left.alternatives().size();
+                    leftIndex++) {
+                List<ChainColumn> leftProduct =
+                        left.alternatives().get(leftIndex);
+                for (int rightIndex = 0;
+                        rightIndex < right.alternatives().size();
+                        rightIndex++) {
+                    List<ChainColumn> rightProduct =
+                            right.alternatives().get(rightIndex);
+                    if (kind == ChainKind.ARROW) {
+                        List<ChainColumn> result = new ArrayList<>(leftProduct);
+                        result.addAll(rightProduct);
+                        List<ChainColumn> frozen = List.copyOf(result);
+                        products.add(frozen);
+                        cases.add(combinationCase(
+                                leftIndex,
+                                rightIndex,
+                                CombinationDecision.ARROW_PRODUCT,
+                                null,
+                                frozen));
+                        continue;
+                    }
+                    BoundaryView boundary = deriveBoundary(
+                            leftProduct.get(leftProduct.size() - 1),
+                            rightProduct.get(0));
+                    if (boundary.rule() == BoundaryRule.DISJOINT_BRANCHES) {
+                        cases.add(combinationCase(
+                                leftIndex,
+                                rightIndex,
+                                CombinationDecision.JOIN_DISJOINT,
+                                boundary,
+                                null));
+                        continue;
+                    }
+                    List<ChainColumn> result = new ArrayList<>();
+                    result.addAll(leftProduct.subList(
+                            0, leftProduct.size() - 1));
+                    result.addAll(rightProduct.subList(
+                            1, rightProduct.size()));
+                    if (result.isEmpty()) {
+                        throw theory(
+                                "A positive JOIN result arity produced a nullary alternative");
+                    }
+                    List<ChainColumn> frozen = List.copyOf(result);
+                    products.add(frozen);
+                    cases.add(combinationCase(
+                            leftIndex,
+                            rightIndex,
+                            CombinationDecision.JOIN_OVERLAP,
+                            boundary,
+                            frozen));
                 }
             }
-            requireRelation(claimed, "dependent-chain result");
-            if (!claimed.arguments().stream().map(ExactType::key).toList()
-                    .equals(columns.stream().map(ExactType::key).toList())) {
-                throw theory("Dependent-chain result columns do not follow the fixed theory");
+            ChainDag output = products.isEmpty()
+                    ? emptyChainDag(resultArity)
+                    : chainDagFromAlternatives(
+                            normalizeAlternatives(products));
+            return new ChainCombination(output, List.copyOf(cases));
+        }
+
+        private void requireColumnsMatch(
+                ExactType relation,
+                List<ChainColumn> columns,
+                String role) {
+            if (relation.arguments().size() != columns.size()
+                    || !relation.arguments().stream().map(ExactType::key).toList()
+                            .equals(columns.stream()
+                                    .map(column -> column.exact().key()).toList())) {
+                throw theory("Dependent-chain " + role
+                        + " ancestry names another relation type");
             }
         }
 
-        private boolean containsAlloyUniv(ExactType type) {
-            if (type.is(TypeKind.CONSTRUCTOR)
-                    && "AlloySig:univ".equals(type.symbol())) {
-                return true;
+        private BoundaryView deriveBoundary(
+                ChainColumn left,
+                ChainColumn right) {
+            ExactType leftType = left.exact();
+            ExactType rightType = right.exact();
+            BoundaryRule rule;
+            ExactType meet;
+            ExactType common;
+            List<ExactType> leftPath;
+            List<ExactType> rightPath;
+            if (leftType.key().equals(rightType.key())) {
+                rule = BoundaryRule.EXACT;
+                meet = leftType;
+                common = leftType;
+                leftPath = List.of(leftType);
+                rightPath = List.of(rightType);
+            } else {
+                requireNominalChainSignature(leftType);
+                requireNominalChainSignature(rightType);
+                int rightInLeft = ancestryIndex(left.ancestry(), rightType);
+                int leftInRight = ancestryIndex(right.ancestry(), leftType);
+                if (rightInLeft > 0 && leftInRight > 0) {
+                    throw theory("JOIN subtype evidence contains an ancestry cycle");
+                }
+                if (rightInLeft > 0) {
+                    rule = BoundaryRule.LEFT_SUBTYPE_OF_RIGHT;
+                    meet = leftType;
+                    common = rightType;
+                    leftPath = left.ancestry().subList(0, rightInLeft + 1);
+                    rightPath = List.of(rightType);
+                } else if (leftInRight > 0) {
+                    rule = BoundaryRule.RIGHT_SUBTYPE_OF_LEFT;
+                    meet = rightType;
+                    common = leftType;
+                    leftPath = List.of(leftType);
+                    rightPath = right.ancestry().subList(0, leftInRight + 1);
+                } else {
+                    common = firstCommonAncestor(
+                            left.ancestry(), right.ancestry());
+                    if (common == null) {
+                        throw theory(
+                                "JOIN boundary lacks authenticated overlap or disjointness");
+                    }
+                    int leftCommon = ancestryIndex(left.ancestry(), common);
+                    int rightCommon = ancestryIndex(right.ancestry(), common);
+                    if (leftCommon <= 0 || rightCommon <= 0) {
+                        throw theory(
+                                "A divergent JOIN boundary has invalid common ancestry");
+                    }
+                    rule = BoundaryRule.DISJOINT_BRANCHES;
+                    meet = null;
+                    leftPath = left.ancestry().subList(0, leftCommon + 1);
+                    rightPath = right.ancestry().subList(0, rightCommon + 1);
+                }
+                hasUntrustedSubtypeHierarchy = true;
             }
-            for (ExactType argument : type.arguments()) {
-                if (containsAlloyUniv(argument)) {
-                    return true;
+            StableKey key = boundaryKey(
+                    rule,
+                    leftType,
+                    rightType,
+                    meet,
+                    common,
+                    leftPath,
+                    rightPath);
+            return new BoundaryView(
+                    rule,
+                    leftType,
+                    rightType,
+                    meet,
+                    common,
+                    List.copyOf(leftPath),
+                    List.copyOf(rightPath),
+                    key);
+        }
+
+        private void requireCombinationCasesWire(
+                Wire.Node node,
+                List<CombinationCaseView> expected) {
+            node.requireShape(
+                    "dependent-chain-combination-cases", 1, expected.size());
+            if (!Integer.toString(expected.size()).equals(node.scalar(0))) {
+                throw theory("A dependent combination changed its matrix size");
+            }
+            for (int index = 0; index < expected.size(); index++) {
+                CombinationCaseView proof = expected.get(index);
+                Wire.Node encoded = node.child(index);
+                encoded.requireShape(
+                        "dependent-chain-combination-case", 4, 2);
+                if (!Integer.toString(proof.leftAlternative())
+                                .equals(encoded.scalar(0))
+                        || !Integer.toString(proof.rightAlternative())
+                                .equals(encoded.scalar(1))
+                        || !proof.decision().name().equals(encoded.scalar(2))) {
+                    throw theory(
+                            "A dependent combination changed an alternative-pair decision");
+                }
+                requireBoundaryWire(encoded.child(0), proof.boundary());
+                if (proof.resultAlternative() == null) {
+                    encoded.child(1).requireShape(
+                            "dependent-chain-no-result", 1, 0);
+                    if (!"DISJOINT".equals(encoded.child(1).scalar(0))) {
+                        throw theory("A disjoint JOIN case carries a result product");
+                    }
+                } else {
+                    ExactType resultType = relationType(
+                            proof.resultAlternative());
+                    List<ChainColumn> parsed = dependentTypeProduct(
+                            encoded.child(1), -1, resultType);
+                    if (!parsed.equals(proof.resultAlternative())) {
+                        throw theory(
+                                "A dependent combination changed its result product");
+                    }
+                }
+                requireKey(encoded.scalar(3), proof.key(),
+                        "dependent combination case");
+            }
+        }
+
+        private void requireBoundaryWire(
+                Wire.Node node,
+                BoundaryView expected) {
+            if (expected == null) {
+                node.requireShape("dependent-chain-no-boundary", 1, 0);
+                if (!"ARROW".equals(node.scalar(0))) {
+                    throw theory("ARROW source carries a JOIN boundary proof");
+                }
+                return;
+            }
+            node.requireShape(
+                    "dependent-chain-boundary", 6, 2);
+            if (!node.scalar(0).equals(expected.rule().name())
+                    || !type(node.scalar(1), "left JOIN boundary").key()
+                            .equals(expected.left().key())
+                    || !type(node.scalar(2), "right JOIN boundary").key()
+                            .equals(expected.right().key())
+                    || !(expected.meet() == null
+                            ? "NONE".equals(node.scalar(3))
+                            : type(node.scalar(3), "JOIN boundary meet").key()
+                                    .equals(expected.meet().key()))
+                    || !type(node.scalar(4), "JOIN boundary common ancestor")
+                            .key().equals(expected.common().key())) {
+                throw theory("JOIN boundary wire does not match its derived correspondence");
+            }
+            List<StableKey> leftPath = boundaryPath(
+                    node.child(0), "dependent-chain-boundary-left-path");
+            List<StableKey> rightPath = boundaryPath(
+                    node.child(1), "dependent-chain-boundary-right-path");
+            if (!leftPath.equals(expected.leftPath().stream()
+                            .map(ExactType::key).toList())
+                    || !rightPath.equals(expected.rightPath().stream()
+                            .map(ExactType::key).toList())) {
+                throw theory("JOIN boundary witness paths were changed");
+            }
+            requireKey(node.scalar(5), expected.key(),
+                    "JOIN boundary correspondence");
+        }
+
+        private List<StableKey> boundaryPath(
+                Wire.Node node,
+                String expectedTag) {
+            node.requireShape(expectedTag, 0, node.children().size());
+            if (node.children().isEmpty()) {
+                throw theory("A JOIN boundary path is empty");
+            }
+            List<StableKey> path = new ArrayList<>();
+            for (Wire.Node step : node.children()) {
+                step.requireShape("dependent-chain-boundary-step", 1, 0);
+                path.add(type(step.scalar(0), "JOIN boundary witness").key());
+            }
+            return List.copyOf(path);
+        }
+
+        private static int ancestryIndex(
+                List<ExactType> ancestry,
+                ExactType candidate) {
+            for (int index = 0; index < ancestry.size(); index++) {
+                if (ancestry.get(index).key().equals(candidate.key())) {
+                    return index;
                 }
             }
-            return false;
+            return -1;
+        }
+
+        private void requireAtomicChainColumn(ExactType type, String label) {
+            if (!isAdmittedAtomicChainColumn(
+                    type.kind().name(), type.symbol(), type.arguments().size())) {
+                throw theory(label + " is not an atomic Alloy carrier");
+            }
+        }
+
+        private void requireNominalChainSignature(ExactType type) {
+            if (type.is(TypeKind.INT)) {
+                return;
+            }
+            if (!isAdmittedAtomicChainColumn(
+                    type.kind().name(), type.symbol(), type.arguments().size())) {
+                throw theory(
+                        "Subtype JOIN correspondence requires Alloy signatures");
+            }
+        }
+
+        private StableKey chainColumnKey(
+                ExactType exact,
+                List<ExactType> ancestry) {
+            return StableKey.of(
+                    "dependent-column-evidence-v1",
+                    List.of(),
+                    List.of(
+                            exact.key(),
+                            StableKey.of(
+                                    "direct-parent-path-v1",
+                                    List.of(),
+                                    ancestry.stream().map(ExactType::key).toList())));
+        }
+
+        private StableKey dependentTypeProductKey(List<ChainColumn> columns) {
+            return StableKey.of(
+                    "dependent-type-product-v1",
+                    List.of(),
+                    columns.stream().map(ChainColumn::key).toList());
+        }
+
+        private StableKey boundaryKey(
+                BoundaryRule rule,
+                ExactType left,
+                ExactType right,
+                ExactType meet,
+                ExactType common,
+                List<ExactType> leftPath,
+                List<ExactType> rightPath) {
+            return StableKey.of(
+                    "dependent-boundary-correspondence-v2",
+                    List.of(rule.name()),
+                    List.of(
+                            left.key(),
+                            right.key(),
+                            meet == null
+                                    ? StableKey.of(
+                                            "dependent-boundary-empty-meet-v1",
+                                            List.of("disjoint"),
+                                            List.of())
+                                    : meet.key(),
+                            common.key(),
+                            StableKey.of(
+                                    "dependent-boundary-left-path-v1",
+                                    List.of(),
+                                    leftPath.stream().map(ExactType::key).toList()),
+                            StableKey.of(
+                                    "dependent-boundary-right-path-v1",
+                                    List.of(),
+                                    rightPath.stream().map(ExactType::key).toList())));
         }
 
         private void requireRelation(ExactType type, String label) {
@@ -1818,20 +2480,384 @@ final class SemanticEvidenceVerifier {
             }
         }
 
+        private List<ExactType> relationProducts(
+                ExactType type,
+                String label) {
+            if (type.is(TypeKind.RELATION) && !type.arguments().isEmpty()) {
+                return List.of(type);
+            }
+            if (!type.is(TypeKind.CONSTRUCTOR)
+                    || !"AlloyRelationUnion".equals(type.symbol())
+                    || type.arguments().size() < 2) {
+                throw theory(label + " is not a correlated relation family");
+            }
+            int arity = -1;
+            ExactType previous = null;
+            for (ExactType alternative : type.arguments()) {
+                requireRelation(alternative, label + " alternative");
+                if (arity < 0) {
+                    arity = alternative.arguments().size();
+                } else if (arity != alternative.arguments().size()) {
+                    throw theory(label + " has mixed relation arity");
+                }
+                if (previous != null
+                        && compareExactType(previous, alternative) >= 0) {
+                    throw theory(label + " alternatives are not strictly normalized");
+                }
+                previous = alternative;
+            }
+            return type.arguments();
+        }
+
+        private ExactType relationType(List<ChainColumn> columns) {
+            List<StableKey> expected = columns.stream()
+                    .map(column -> column.exact().key())
+                    .toList();
+            for (ExactType candidate : types.byId().values()) {
+                if (candidate.is(TypeKind.RELATION)
+                        && candidate.arguments().stream()
+                                .map(ExactType::key).toList().equals(expected)) {
+                    return candidate;
+                }
+            }
+            throw theory("A dependent product has no declared exact relation type");
+        }
+
+        private ExactType relationFamilyType(
+                List<List<ChainColumn>> alternatives) {
+            List<ExactType> products = alternatives.stream()
+                    .map(this::relationType)
+                    .sorted(this::compareExactType)
+                    .toList();
+            if (products.size() == 1) {
+                return products.get(0);
+            }
+            List<StableKey> expected = products.stream()
+                    .map(ExactType::key).toList();
+            for (ExactType candidate : types.byId().values()) {
+                if (candidate.is(TypeKind.CONSTRUCTOR)
+                        && "AlloyRelationUnion".equals(candidate.symbol())
+                        && candidate.arguments().stream()
+                                .map(ExactType::key).toList().equals(expected)) {
+                    return candidate;
+                }
+            }
+            throw theory("A dependent DAG has no declared correlated family type");
+        }
+
+        private ChainDag chainDagFromAlternatives(
+                List<List<ChainColumn>> alternatives) {
+            if (alternatives.isEmpty()) {
+                throw theory("A dependent DAG result has no alternatives");
+            }
+            ExactType relation = relationFamilyType(alternatives);
+            ExactType common = commonAncestorType(alternatives);
+            return new ChainDag(
+                    relation,
+                    List.copyOf(alternatives),
+                    common,
+                    dependentTypeDagKey(alternatives, relation, common));
+        }
+
+        private ChainDag emptyChainDag(int arity) {
+            ExactType relation = null;
+            String expected = EMPTY_RELATION_PREFIX + arity;
+            for (ExactType candidate : types.byId().values()) {
+                if (candidate.is(TypeKind.CONSTRUCTOR)
+                        && candidate.arguments().isEmpty()
+                        && expected.equals(candidate.symbol())) {
+                    relation = candidate;
+                    break;
+                }
+            }
+            if (relation == null) {
+                throw theory("A dependent empty DAG has no declared result type");
+            }
+            return new ChainDag(
+                    relation,
+                    List.of(),
+                    null,
+                    dependentTypeDagKey(List.of(), relation, null));
+        }
+
+        private List<List<ChainColumn>> normalizeAlternatives(
+                List<List<ChainColumn>> source) {
+            if (source.isEmpty()) {
+                throw theory("A dependent relation family is empty");
+            }
+            int arity = source.get(0).size();
+            Map<String, List<ChainColumn>> unique = new LinkedHashMap<>();
+            for (List<ChainColumn> product : source) {
+                if (product.isEmpty() || product.size() != arity) {
+                    throw theory("A dependent relation family has mixed or nullary products");
+                }
+                ExactType productType = relationType(product);
+                List<ChainColumn> previous = unique.putIfAbsent(
+                        productType.key().stableString(), List.copyOf(product));
+                if (previous != null && !previous.equals(product)) {
+                    throw theory(
+                            "One dependent product has conflicting ancestry evidence");
+                }
+            }
+            List<List<ChainColumn>> candidates = new ArrayList<>(unique.values());
+            List<List<ChainColumn>> result = new ArrayList<>();
+            for (int candidateIndex = 0;
+                    candidateIndex < candidates.size();
+                    candidateIndex++) {
+                boolean absorbed = false;
+                for (int otherIndex = 0;
+                        otherIndex < candidates.size();
+                        otherIndex++) {
+                    if (candidateIndex != otherIndex
+                            && productSubtypeOrEqual(
+                                    candidates.get(candidateIndex),
+                                    candidates.get(otherIndex))) {
+                        absorbed = true;
+                        break;
+                    }
+                }
+                if (!absorbed) {
+                    result.add(candidates.get(candidateIndex));
+                }
+            }
+            result.sort((left, right) -> compareExactType(
+                    relationType(left), relationType(right)));
+            return result.stream().map(List::copyOf).toList();
+        }
+
+        private void requireNormalizedAlternatives(
+                List<List<ChainColumn>> alternatives) {
+            List<List<ChainColumn>> normalized = normalizeAlternatives(alternatives);
+            if (!normalized.equals(alternatives)) {
+                throw theory(
+                        "A dependent type DAG is not its normalized subtype antichain");
+            }
+        }
+
+        private boolean productSubtypeOrEqual(
+                List<ChainColumn> specific,
+                List<ChainColumn> general) {
+            if (specific.size() != general.size()) {
+                return false;
+            }
+            boolean strict = false;
+            for (int index = 0; index < specific.size(); index++) {
+                ChainColumn left = specific.get(index);
+                ChainColumn right = general.get(index);
+                if (left.exact().key().equals(right.exact().key())) {
+                    continue;
+                }
+                if (ancestryIndex(left.ancestry(), right.exact()) <= 0) {
+                    return false;
+                }
+                strict = true;
+                hasUntrustedSubtypeHierarchy = true;
+            }
+            return strict;
+        }
+
+        private ExactType commonAncestorType(
+                List<List<ChainColumn>> alternatives) {
+            if (alternatives.size() == 1) {
+                return relationType(alternatives.get(0));
+            }
+            List<ChainColumn> first = alternatives.get(0);
+            List<ChainColumn> common = new ArrayList<>();
+            for (int column = 0; column < first.size(); column++) {
+                ExactType ancestor = null;
+                for (ExactType candidate : first.get(column).ancestry()) {
+                    boolean present = true;
+                    for (int alternative = 1;
+                            alternative < alternatives.size();
+                            alternative++) {
+                        if (ancestryIndex(
+                                alternatives.get(alternative).get(column).ancestry(),
+                                candidate) < 0) {
+                            present = false;
+                            break;
+                        }
+                    }
+                    if (present) {
+                        ancestor = candidate;
+                        break;
+                    }
+                }
+                if (ancestor == null) {
+                    return null;
+                }
+                common.add(new ChainColumn(
+                        ancestor,
+                        List.of(ancestor),
+                        chainColumnKey(ancestor, List.of(ancestor))));
+            }
+            return relationType(common);
+        }
+
+        private ExactType firstCommonAncestor(
+                List<ExactType> left,
+                List<ExactType> right) {
+            for (ExactType candidate : left) {
+                if (ancestryIndex(right, candidate) >= 0) {
+                    return candidate;
+                }
+            }
+            return null;
+        }
+
+        private StableKey dependentTypeDagKey(
+                List<List<ChainColumn>> alternatives,
+                ExactType relation,
+                ExactType common) {
+            Integer arity = relationArity(relation);
+            if (arity == null || arity <= 0) {
+                throw theory("A dependent DAG key has no positive relation arity");
+            }
+            return StableKey.of(
+                    "dependent-type-dag-v1",
+                    List.of(Integer.toString(arity)),
+                    List.of(
+                            StableKey.of(
+                                    "dependent-type-correlated-alternatives-v1",
+                                    List.of(),
+                                    alternatives.stream()
+                                            .map(this::dependentTypeProductKey)
+                                            .toList()),
+                            relation.key(),
+                            common == null
+                                    ? StableKey.of(
+                                            "dependent-type-no-common-ancestor-v1",
+                                            List.of("none"),
+                                            List.of())
+                                    : common.key()));
+        }
+
+        private CombinationCaseView combinationCase(
+                int leftAlternative,
+                int rightAlternative,
+                CombinationDecision decision,
+                BoundaryView boundary,
+                List<ChainColumn> resultAlternative) {
+            if (decision == CombinationDecision.ARROW_PRODUCT
+                    ? boundary != null || resultAlternative == null
+                    : decision == CombinationDecision.JOIN_OVERLAP
+                            ? boundary == null
+                                    || boundary.rule() == BoundaryRule.DISJOINT_BRANCHES
+                                    || resultAlternative == null
+                            : boundary == null
+                                    || boundary.rule() != BoundaryRule.DISJOINT_BRANCHES
+                                    || resultAlternative != null) {
+                throw theory("A dependent combination case is internally inconsistent");
+            }
+            StableKey key = StableKey.of(
+                    "dependent-type-combination-case-v1",
+                    List.of(
+                            Integer.toString(leftAlternative),
+                            Integer.toString(rightAlternative),
+                            decision.name()),
+                    List.of(
+                            boundary == null
+                                    ? StableKey.of(
+                                            "dependent-type-no-boundary-v1",
+                                            List.of("arrow"),
+                                            List.of())
+                                    : boundary.key(),
+                            resultAlternative == null
+                                    ? StableKey.of(
+                                            "dependent-type-empty-result-v1",
+                                            List.of("disjoint"),
+                                            List.of())
+                                    : StableKey.of(
+                                            "dependent-type-case-result-v1",
+                                            List.of(),
+                                            resultAlternative.stream()
+                                                    .map(ChainColumn::key)
+                                                    .toList())));
+            return new CombinationCaseView(
+                    leftAlternative,
+                    rightAlternative,
+                    decision,
+                    boundary,
+                    resultAlternative == null ? null : List.copyOf(resultAlternative),
+                    key);
+        }
+
         private StableKey dependentChainTheoryIndex(
                 ChainKind kind,
-                List<ExactType> leafTypes,
-                ExactType result) {
-            List<StableKey> children = new ArrayList<>();
-            leafTypes.stream().map(ExactType::key).forEach(children::add);
-            children.add(result.key());
+                List<ChainDag> leafDags,
+                ChainDag result) {
+            if (leafDags.size() < 2) {
+                throw theory("A dependent chain requires at least two operands");
+            }
+            List<StableKey> foldSteps = new ArrayList<>();
+            ChainDag folded = leafDags.get(0);
+            for (int index = 1; index < leafDags.size(); index++) {
+                ChainDag right = leafDags.get(index);
+                ChainCombination combination = requireChainCombination(
+                        kind, folded, right);
+                foldSteps.add(StableKey.of(
+                        "dependent-chain-fold-step-v1",
+                        List.of(Integer.toString(index)),
+                        List.of(
+                                folded.key(),
+                                right.key(),
+                                StableKey.of(
+                                        "dependent-chain-complete-case-matrix-v1",
+                                        List.of(),
+                                        combination.cases().stream()
+                                                .map(CombinationCaseView::key)
+                                                .toList()),
+                                combination.outputDag().key())));
+                folded = combination.outputDag();
+            }
+            if (!folded.equals(result)) {
+                throw theory("Dependent chain flat fold has another result DAG");
+            }
             return StableKey.of(
-                    "dependent-chain-theory-index-v1",
+                    "dependent-chain-theory-index-v3",
                     List.of(
                             DEPENDENT_CHAIN_VERSION,
                             DEPENDENT_CHAIN_DIGEST,
                             kind.name()),
-                    children);
+                    List.of(
+                            StableKey.of(
+                                    "dependent-chain-operand-dags-v1",
+                                    List.of(),
+                                    leafDags.stream().map(ChainDag::key).toList()),
+                            StableKey.of(
+                                    "dependent-chain-fold-steps-v1",
+                                    List.of(), foldSteps),
+                            result.key()));
+        }
+
+        private int compareExactType(ExactType left, ExactType right) {
+            int compared = Integer.compare(
+                    left.kind().ordinal(), right.kind().ordinal());
+            if (compared != 0) {
+                return compared;
+            }
+            String leftSymbol = left.symbol();
+            String rightSymbol = right.symbol();
+            if (leftSymbol == null) {
+                compared = rightSymbol == null ? 0 : -1;
+            } else {
+                compared = rightSymbol == null ? 1
+                        : leftSymbol.compareTo(rightSymbol);
+            }
+            if (compared != 0) {
+                return compared;
+            }
+            int shared = Math.min(
+                    left.arguments().size(), right.arguments().size());
+            for (int index = 0; index < shared; index++) {
+                compared = compareExactType(
+                        left.arguments().get(index),
+                        right.arguments().get(index));
+                if (compared != 0) {
+                    return compared;
+                }
+            }
+            return Integer.compare(
+                    left.arguments().size(), right.arguments().size());
         }
 
         private FlatView flatInput(
@@ -2359,7 +3385,8 @@ final class SemanticEvidenceVerifier {
                             .encodeToString(decoded))) {
                 throw theory("Polymorphic operator key commitment exceeds its bound or is noncanonical");
             }
-            String stable = new String(decoded, StandardCharsets.UTF_8);
+            String stable = decodeCanonicalUtf8(
+                    decoded, "polymorphic operator key commitment");
             if (!digest.equals(sha256(stable))) {
                 throw theory("Polymorphic operator key commitment digest mismatch");
             }
@@ -2384,7 +3411,8 @@ final class SemanticEvidenceVerifier {
                     1, committed.scalars().size());
             Set<String> unique = new java.util.LinkedHashSet<>();
             for (String parameter : parameters) {
-                if (!unique.add(requireCanonicalText(parameter, "type parameter"))) {
+                if (!unique.add(requireCanonicalIdentity(
+                        parameter, "type parameter"))) {
                     throw theory("Polymorphic operator repeats a type parameter");
                 }
             }
@@ -4182,6 +5210,19 @@ final class SemanticEvidenceVerifier {
             ARROW
         }
 
+        private enum BoundaryRule {
+            EXACT,
+            LEFT_SUBTYPE_OF_RIGHT,
+            RIGHT_SUBTYPE_OF_LEFT,
+            DISJOINT_BRANCHES
+        }
+
+        private enum CombinationDecision {
+            ARROW_PRODUCT,
+            JOIN_OVERLAP,
+            JOIN_DISJOINT
+        }
+
         private enum LeafTypeRule {
             EXACT_RELATION,
             PRIMITIVE_SET_SINGLETON
@@ -4271,17 +5312,79 @@ final class SemanticEvidenceVerifier {
         private record ChainView(
                 ChainKind kind,
                 KernelModel.Context context,
-                ExactType outputType,
+                ChainDag outputDag,
                 StableKey key,
                 List<KernelModel.Term> leaves,
-                List<ExactType> leafTypes) {
+                List<ExactType> leafTypes,
+                List<ChainDag> leafDags) {
             private ChainView {
                 leaves = List.copyOf(leaves);
                 leafTypes = List.copyOf(leafTypes);
-                if (leaves.size() != leafTypes.size()) {
+                leafDags = List.copyOf(leafDags);
+                if (leaves.size() != leafTypes.size()
+                        || leaves.size() != leafDags.size()) {
                     throw new IllegalArgumentException(
                             "Dependent-chain leaves and type proofs differ in arity");
                 }
+            }
+
+            private ExactType outputType() {
+                return outputDag.relationType();
+            }
+        }
+
+        private record ChainDag(
+                ExactType relationType,
+                List<List<ChainColumn>> alternatives,
+                ExactType commonAncestor,
+                StableKey key) {
+            private ChainDag {
+                alternatives = alternatives.stream().map(List::copyOf).toList();
+            }
+        }
+
+        private record ChainColumn(
+                ExactType exact,
+                List<ExactType> ancestry,
+                StableKey key) {
+            private ChainColumn {
+                ancestry = List.copyOf(ancestry);
+            }
+        }
+
+        private record BoundaryView(
+                BoundaryRule rule,
+                ExactType left,
+                ExactType right,
+                ExactType meet,
+                ExactType common,
+                List<ExactType> leftPath,
+                List<ExactType> rightPath,
+                StableKey key) {
+            private BoundaryView {
+                leftPath = List.copyOf(leftPath);
+                rightPath = List.copyOf(rightPath);
+            }
+        }
+
+        private record ChainCombination(
+                ChainDag outputDag,
+                List<CombinationCaseView> cases) {
+            private ChainCombination {
+                cases = List.copyOf(cases);
+            }
+        }
+
+        private record CombinationCaseView(
+                int leftAlternative,
+                int rightAlternative,
+                CombinationDecision decision,
+                BoundaryView boundary,
+                List<ChainColumn> resultAlternative,
+                StableKey key) {
+            private CombinationCaseView {
+                resultAlternative = resultAlternative == null
+                        ? null : List.copyOf(resultAlternative);
             }
         }
     }
@@ -4474,6 +5577,13 @@ final class SemanticEvidenceVerifier {
         return value;
     }
 
+    static String requireCanonicalIdentity(String value, String field) {
+        if (!isAdmittedIdentity(value)) {
+            throw malformed(field + " is not a well-formed visible identity");
+        }
+        return value;
+    }
+
     private static <E extends Enum<E>> E enumValue(
             Class<E> type,
             String encoded,
@@ -4514,6 +5624,18 @@ final class SemanticEvidenceVerifier {
 
     private static FormatException resource(String message) {
         return new FormatException(FailureCode.RESOURCE_LIMIT, message);
+    }
+
+    static String decodeCanonicalUtf8(byte[] value, String label) {
+        try {
+            return StandardCharsets.UTF_8.newDecoder()
+                    .onMalformedInput(CodingErrorAction.REPORT)
+                    .onUnmappableCharacter(CodingErrorAction.REPORT)
+                    .decode(ByteBuffer.wrap(value))
+                    .toString();
+        } catch (CharacterCodingException exception) {
+            throw theory(label + " is not canonical UTF-8");
+        }
     }
 
     private static String sha256(String value) {

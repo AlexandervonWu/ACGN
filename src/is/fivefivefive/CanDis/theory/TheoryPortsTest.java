@@ -88,6 +88,23 @@ public final class TheoryPortsTest {
                 alpha,
                 Collections.emptyMap(),
                 null));
+        for (String forbidden : List.of("\u0000", "\u200b", "\ue000", "\u0378")) {
+            expectThrows(IllegalArgumentException.class, () ->
+                    OperatorDeclaration.monomorphic(
+                            forbidden,
+                            Collections.emptyList(),
+                            GraphType.BOOL,
+                            Collections.emptyMap(),
+                            null));
+            expectThrows(IllegalArgumentException.class, () ->
+                    new OperatorDeclaration(
+                            "operator",
+                            Collections.singletonList(forbidden),
+                            Collections.emptyList(),
+                            GraphType.BOOL,
+                            Collections.emptyMap(),
+                            null));
+        }
         expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
                 "missing-law",
                 Collections.singletonList(new BagPortSchema(new OnePortSchema(GraphType.INT))),

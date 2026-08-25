@@ -536,12 +536,12 @@ def semanticallyQuiescent (state : RebuildState) : Bool :=
 example : semanticallyQuiescent ⟨0, true⟩ = false := by decide
 example : semanticallyQuiescent ⟨0, false⟩ = true := by decide
 
-def acceptedWireVersion (version : Nat) : Bool := decide (version = 8)
+def acceptedWireVersion (version : Nat) : Bool := decide (version = 10)
 
-theorem schema_v8_is_accepted : acceptedWireVersion 8 = true := by decide
+theorem schema_v10_is_accepted : acceptedWireVersion 10 = true := by decide
 
 theorem historical_and_future_schema_versions_reject :
-    ([2, 3, 4, 5, 6, 7, 9].all fun version =>
+    ([2, 3, 4, 5, 6, 7, 8, 9, 11].all fun version =>
       !acceptedWireVersion version) = true := by
   native_decide
 

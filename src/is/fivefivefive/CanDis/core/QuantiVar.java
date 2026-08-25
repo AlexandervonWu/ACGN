@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.core;
 
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
+
 /**
  * This class encodes quantified variables. They are defined as "slots" in the quantification system
  * invariants: variables are up to De Bruijn indices, but still have names; most importantly, encoding types.
@@ -35,6 +37,7 @@ public class QuantiVar {
     private Cardinality cardinality;
     private int disjointnessClass;
     private String bindingPath;
+    private ExactAlloyType exactAlloyType;
     private volatile boolean frozenForCertification;
     public QuantiVar(int id, String name, String typeName) {
         this(id, name, name, typeName);
@@ -125,6 +128,35 @@ public class QuantiVar {
     public synchronized void setBindingPath(String bindingPath) {
         requireMutable();
         this.bindingPath = bindingPath == null ? "" : bindingPath;
+    }
+    public ExactAlloyType getExactAlloyType() {
+        return exactAlloyType;
+    }
+    public synchronized void mergeExactAlloyType(ExactAlloyType evidence) {
+        requireMutable();
+        if (evidence == null) {
+            return;
+        }
+        if (exactAlloyType == null) {
+            exactAlloyType = evidence;
+            return;
+        }
+        if (exactAlloyType.sameOccurrenceEvidenceAs(evidence)) {
+            return;
+        }
+        if (exactAlloyType.equals(evidence)) {
+            if (!exactAlloyType.hasParserAuthenticatedAncestry()
+                    && evidence.hasParserAuthenticatedAncestry()) {
+                exactAlloyType = evidence;
+                return;
+            }
+            if (exactAlloyType.hasParserAuthenticatedAncestry()
+                    && !evidence.hasParserAuthenticatedAncestry()) {
+                return;
+            }
+        }
+        throw new IllegalStateException(
+                "One quantified slot received incompatible exact type evidence");
     }
     public synchronized void freezeForCertification() {
         frozenForCertification = true;

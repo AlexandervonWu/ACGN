@@ -1,7 +1,7 @@
 import Std
 
 /-
-  Independent bounded model of the Phase 4 schema-v8 wire obligations.
+  Independent bounded model of the Phase 4 schema-v10 wire obligations.
 
   Scope: three owners, two shapes, six owner-qualified records, and finite
   proof/symmetry identifiers. Acceptance is executable. The theorems expose
@@ -553,7 +553,7 @@ theorem valid_rebuild_replaces_or_retires_exactly
 
 /- Exact bounded transition frames.  Unlike the record-only model above,
    these frames retain every Java-observable administrative component used by
-   the schema-v8 transition checker. -/
+   the schema-v10 transition checker. -/
 
 inductive TraceStatus where
   | dirty | quiescent

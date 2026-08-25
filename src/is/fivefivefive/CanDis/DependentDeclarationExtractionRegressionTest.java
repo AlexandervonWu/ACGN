@@ -53,7 +53,7 @@ public final class DependentDeclarationExtractionRegressionTest {
             check(sourceQuantifier.getVarDecls().size() == 2,
                     "the parser must retain both source declaration blocks");
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             Multigraph graph = graph(visitor, "sourcePredicate");
             checkMasgDeclarationOccurrences(graph);

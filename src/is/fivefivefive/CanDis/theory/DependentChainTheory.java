@@ -4,24 +4,38 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-/** Independently fixed exact-column theory for guarded JOIN and ARROW reassociation. */
+/** Independently fixed correlated-family theory for guarded JOIN and ARROW chains. */
 public final class DependentChainTheory {
     public enum LeafTypeRule {
         EXACT_RELATION,
         PRIMITIVE_SET_SINGLETON
     }
 
-    public static final String VERSION = "alloy-dependent-chain-theory-v4";
+    public static final String VERSION = "alloy-dependent-chain-theory-v10";
     public static final String SOURCE_TEXT = String.join("\n",
-            "JOIN:ordered;boundary=last(left)==first(right);result=init(left)++tail(right)",
-            "JOIN-FLAT-GUARD:every interior source operand has at least two columns",
-            "ARROW:ordered;result=columns(left)++columns(right)",
-            "LEAF:exact relation or Int/AlloyCarrier primitive singleton; no name-based parameter authority",
-            "POLYMORPHIC-UNIV:no dependent-chain reassociation certificate",
+            "FAMILY:finite-union-of-correlated-ordered-products;normalized=subtype-antichain",
+            "DAG:edges=specific-to-general;synthetic-union-and-common-ancestor-nodes-are-not-nominal-authority",
+            "UNION:retain-correlation;deduplicate;absorb-only-authenticated-componentwise-subtypes",
+            "INTERSECTION:pairwise-product-meet;omit-only-authenticated-disjoint-PrimSig-branches",
+            "SET-DERIVATION:source UNION and INTERSECTION DAGs are recursively derived before parser-result equality",
+            "JOIN:ordered;complete-alternative-pair-matrix;overlap=exact-or-one-endpoint-on-parser-derived-PrimSig-parent-path;result=init(left)++tail(right)",
+            "ARROW:ordered;complete-cartesian-product;result=columns(left)++columns(right)",
+            "SUBTYPE:path starts at exact AlloySig carrier, including parser-provided univ;edges are direct PrimSig parents;witness ends at opposite boundary",
+            "SUBTYPE-HIERARCHY:single-parent;acyclic;univ-terminal;independent-verification-requires-external-source-hierarchy-authority",
+            "DISJOINT:two distinct authenticated PrimSig branches with first common ancestor;univ-commonality-never-implies-overlap",
+            "AUTHORITY:one-complete-nominal-path-per-top;one-live-parser-module-per-chain",
+            "JOIN-FLAT-GUARD:every interior source operand has retained relation arity at least two, including typed-empty families",
+            "LEAF:exact correlated relation family or Int/AlloyCarrier primitive singleton;no-name-based-parameter-authority",
+            "UNIV:explicit parser-provided AlloySig:univ is an exact carrier;absent-or-unresolved-types-never-invent-univ",
+            "EMPTY:positive-arity typed empty family has zero alternatives;all-disjoint JOIN retains complete evidence and ordered Seq",
+            "CONTAINER:ordered-duplicate-preserving-Seq",
             "laws=guarded-associativity-only;no-commutativity;no-idempotency;no-unit");
     public static final String DIGEST = sha256(VERSION + "\n" + SOURCE_TEXT);
 
@@ -30,7 +44,7 @@ public final class DependentChainTheory {
 
     /** Signals a valid expression whose source types do not license reassociation. */
     public static final class UnsupportedFlattening extends IllegalArgumentException {
-        private UnsupportedFlattening(String message) {
+        UnsupportedFlattening(String message) {
             super(message);
         }
     }
@@ -46,19 +60,15 @@ public final class DependentChainTheory {
         }
         for (GraphType operand : operandTypes) {
             GraphType checked = Objects.requireNonNull(operand, "operand type");
-            if (checked.kind()
-                    != GraphType.Kind.RELATION) {
+            if (!AlloyTypeBridge.isRelationFamily(checked)) {
                 throw new IllegalArgumentException(
-                        "A dependent-chain operand is not an exact relation type");
-            }
-            if (containsAlloyUniv(checked)) {
-                throw new UnsupportedFlattening(
-                        "A polymorphic univ operand has no dependent-chain license");
+                        "A dependent-chain operand is not a correlated relation family");
             }
         }
         if (kind == DependentChainKind.JOIN && operandTypes.size() > 2) {
             for (int index = 1; index + 1 < operandTypes.size(); index++) {
-                if (operandTypes.get(index).arguments().size() < 2) {
+                if (AlloyTypeBridge.relationArity(
+                        operandTypes.get(index)) < 2) {
                     throw new UnsupportedFlattening(
                             "JOIN reassociation requires every interior operand "
                                     + "to retain distinct left and right boundary columns");
@@ -71,36 +81,189 @@ public final class DependentChainTheory {
             DependentChainKind kind,
             List<GraphType> operandTypes,
             GraphType resultType) {
-        List<StructuralKey> children = new ArrayList<>();
         requireSoundFlattening(kind, operandTypes);
+        List<DependentTypeDag> dags = new ArrayList<>();
         for (GraphType operand : operandTypes) {
-            children.add(TheoryKeys.type(operand));
+            dags.add(DependentTypeDag.fromRelationFamilyType(operand));
         }
-        children.add(TheoryKeys.type(resultType));
+        return proofIndex(
+                kind,
+                dags,
+                DependentTypeDag.fromRelationFamilyType(resultType));
+    }
+
+    public static StructuralKey proofIndex(
+            DependentChainApplication source) {
+        Objects.requireNonNull(source, "source");
+        List<DependentChainLeaf> leaves = source.leafInputs();
+        requireSoundFlatteningEvidence(source.kind(), leaves);
+        return proofIndex(
+                source.kind(),
+                leaves.stream().map(DependentChainLeaf::outputTypeDag).toList(),
+                source.outputTypeDag());
+    }
+
+    public static void requireSoundFlatteningEvidence(
+            DependentChainKind kind,
+            List<DependentChainLeaf> leaves) {
+        Objects.requireNonNull(leaves, "leaves");
+        List<GraphType> operandTypes = leaves.stream()
+                .map(DependentChainLeaf::outputType)
+                .toList();
+        requireSoundFlattening(kind, operandTypes);
+        List<DependentTypeDag> dags = leaves.stream()
+                .map(DependentChainLeaf::outputTypeDag)
+                .toList();
+        DependentTypeDag.fold(kind, dags);
+    }
+
+    public static List<DependentBoundaryCorrespondence> boundaryCorrespondences(
+            DependentChainKind kind,
+            List<? extends List<DependentColumnEvidence>> operandColumns) {
+        Objects.requireNonNull(kind, "kind");
+        Objects.requireNonNull(operandColumns, "operandColumns");
+        requireConsistentHierarchy(operandColumns);
+        if (kind == DependentChainKind.ARROW) {
+            return List.of();
+        }
+        List<DependentBoundaryCorrespondence> result = new ArrayList<>();
+        for (int index = 1; index < operandColumns.size(); index++) {
+            List<DependentColumnEvidence> left = Objects.requireNonNull(
+                    operandColumns.get(index - 1), "left operand columns");
+            List<DependentColumnEvidence> right = Objects.requireNonNull(
+                    operandColumns.get(index), "right operand columns");
+            if (left.isEmpty() || right.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "A JOIN boundary requires nonempty relation operands");
+            }
+            result.add(DependentBoundaryCorrespondence.derive(
+                    left.get(left.size() - 1), right.get(0)));
+        }
+        return List.copyOf(result);
+    }
+
+    static void requireConsistentHierarchy(
+            List<? extends List<DependentColumnEvidence>> operandColumns) {
+        Map<GraphType, List<GraphType>> pathsByExact = new LinkedHashMap<>();
+        Map<GraphType, GraphType> directParents = new LinkedHashMap<>();
+        for (List<DependentColumnEvidence> operand : operandColumns) {
+            Objects.requireNonNull(operand, "operand columns");
+            for (DependentColumnEvidence column : operand) {
+                DependentColumnEvidence checked = Objects.requireNonNull(
+                        column, "dependent column");
+                List<GraphType> path = checked.ancestry();
+                List<GraphType> previousPath = pathsByExact.putIfAbsent(
+                        checked.exactColumn(), path);
+                if (previousPath != null && !previousPath.equals(path)) {
+                    throw new IllegalArgumentException(
+                            "One exact dependent-chain carrier has conflicting subtype stacks: "
+                                    + checked.exactColumn() + " -> "
+                                    + previousPath + " and " + path);
+                }
+                for (int index = 1; index < path.size(); index++) {
+                    GraphType child = path.get(index - 1);
+                    GraphType parent = path.get(index);
+                    GraphType previousParent = directParents.putIfAbsent(
+                            child, parent);
+                    if (previousParent != null && !previousParent.equals(parent)) {
+                        throw new IllegalArgumentException(
+                                "One JOIN subtype carrier has two direct parents");
+                    }
+                }
+            }
+        }
+        for (GraphType start : directParents.keySet()) {
+            java.util.Set<GraphType> seen = new LinkedHashSet<>();
+            GraphType current = start;
+            while (current != null) {
+                if (!seen.add(current)) {
+                    throw new IllegalArgumentException(
+                            "JOIN subtype ancestry contains a cross-path cycle");
+                }
+                current = directParents.get(current);
+            }
+        }
+    }
+
+    private static StructuralKey proofIndex(
+            DependentChainKind kind,
+            List<DependentTypeDag> operandDags,
+            DependentTypeDag resultDag) {
+        Objects.requireNonNull(kind, "kind");
+        Objects.requireNonNull(operandDags, "operandDags");
+        Objects.requireNonNull(resultDag, "resultDag");
+        requireSoundFlattening(
+                kind,
+                operandDags.stream()
+                        .map(DependentTypeDag::relationType)
+                        .toList());
+        if (operandDags.size() < 2) {
+            throw new IllegalArgumentException(
+                    "A dependent-chain proof index requires at least two operands");
+        }
+        List<StructuralKey> operandKeys = operandDags.stream()
+                .map(DependentTypeDag::structuralKey)
+                .toList();
+        List<StructuralKey> foldSteps = new ArrayList<>();
+        DependentTypeDag folded = operandDags.get(0);
+        for (int index = 1; index < operandDags.size(); index++) {
+            DependentTypeDag right = Objects.requireNonNull(
+                    operandDags.get(index), "operand DAG");
+            DependentTypeDag.ChainCombination combination =
+                    DependentTypeDag.combine(kind, folded, right);
+            foldSteps.add(StructuralKey.of(
+                    "dependent-chain-fold-step-v1",
+                    List.of(Integer.toString(index)),
+                    List.of(
+                            folded.structuralKey(),
+                            right.structuralKey(),
+                            StructuralKey.branch(
+                                    "dependent-chain-complete-case-matrix-v1",
+                                    combination.cases().stream()
+                                            .map(DependentTypeDag.CombinationCase::structuralKey)
+                                            .toList()),
+                            combination.result().structuralKey())));
+            folded = combination.result();
+        }
+        if (!folded.equals(resultDag)) {
+            throw new IllegalArgumentException(
+                    "Dependent DAG fold names another correlated result family");
+        }
         return StructuralKey.of(
-                "dependent-chain-theory-index-v1",
+                "dependent-chain-theory-index-v3",
                 List.of(VERSION, DIGEST, kind.name()),
-                children);
+                List.of(
+                        StructuralKey.branch(
+                                "dependent-chain-operand-dags-v1", operandKeys),
+                        StructuralKey.branch(
+                                "dependent-chain-fold-steps-v1", foldSteps),
+                        resultDag.structuralKey()));
     }
 
     public static LeafTypeRule requireLeafTypeProof(
             GraphType storedType,
             GraphType relationType) {
-        if (relationType.kind() != GraphType.Kind.RELATION) {
-            throw new IllegalArgumentException(
-                    "A dependent-chain relation view is not a relation: "
-                            + relationType);
-        }
-        if (storedType.equals(relationType)) {
+        if (storedType.equals(relationType)
+                && AlloyTypeBridge.isCommutativeRelationCarrier(relationType)) {
+            DependentTypeDag.fromRelationFamilyType(relationType);
             return LeafTypeRule.EXACT_RELATION;
         }
-        if (relationType.arguments().size() != 1) {
+        if (!AlloyTypeBridge.isRelationFamily(relationType)) {
+            throw new IllegalArgumentException(
+                    "A dependent-chain relation view is not a correlated family: "
+                            + relationType);
+        }
+        List<GraphType> alternatives = AlloyTypeBridge.relationAlternatives(
+                relationType);
+        if (alternatives.size() != 1
+                || alternatives.get(0).arguments().size() != 1) {
             throw new IllegalArgumentException(
                     "A primitive set slot can justify only a unary relation view");
         }
         GraphType expectedColumn = primitiveRelationColumn(storedType);
         if (expectedColumn == null
-                || !expectedColumn.equals(relationType.arguments().get(0))) {
+                || !expectedColumn.equals(
+                        alternatives.get(0).arguments().get(0))) {
             throw new IllegalArgumentException(
                     "Stored primitive type " + storedType
                             + " does not justify relation view " + relationType);
@@ -110,7 +273,7 @@ public final class DependentChainTheory {
 
     public static GraphType relationViewFromStoredType(GraphType storedType) {
         Objects.requireNonNull(storedType, "storedType");
-        if (storedType.kind() == GraphType.Kind.RELATION) {
+        if (AlloyTypeBridge.isRelationFamily(storedType)) {
             return storedType;
         }
         GraphType column = primitiveRelationColumn(storedType);
@@ -150,22 +313,14 @@ public final class DependentChainTheory {
                 || !carrier.arguments().isEmpty()) {
             return null;
         }
-        return carrier.symbol().startsWith("AlloySig:")
-                ? carrier
-                : GraphType.constructor("AlloySig:" + carrier.symbol());
-    }
-
-    private static boolean containsAlloyUniv(GraphType type) {
-        if (type.kind() == GraphType.Kind.CONSTRUCTOR
-                && "AlloySig:univ".equals(type.symbol())) {
-            return true;
+        String symbol = carrier.symbol();
+        if (symbol.startsWith("AlloySig:")) {
+            return DependentColumnEvidence.isAdmittedAtomicColumn(carrier)
+                    ? carrier : null;
         }
-        for (GraphType argument : type.arguments()) {
-            if (containsAlloyUniv(argument)) {
-                return true;
-            }
-        }
-        return false;
+        GraphType column = GraphType.constructor("AlloySig:" + symbol);
+        return DependentColumnEvidence.isAdmittedAtomicColumn(column)
+                ? column : null;
     }
 
     private static String sha256(String text) {

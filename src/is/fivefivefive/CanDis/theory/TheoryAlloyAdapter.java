@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.core.CallMetadata;
 import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.EGraphNode.EClassRef;
@@ -1059,11 +1060,13 @@ public final class TheoryAlloyAdapter {
                         throw new IllegalStateException(
                                 "A CALL source lacks a deterministic occurrence path");
                     }
-                    callOccurrenceCertificates.add(CallOccurrenceCertificate.create(
+                    CallOccurrenceCertificate call = CallOccurrenceCertificate.create(
                             CallMetadata.require(node),
                             occurrencePath,
                             typed.node,
-                            operands));
+                            operands);
+                    callOccurrenceCertificates.add(call);
+                    constructionSources.recordCall(call);
                 }
                 TypedInvocation invocation = insert(typed);
                 memo.put(key, invocation);
@@ -1176,51 +1179,25 @@ public final class TheoryAlloyAdapter {
                     application = new DependentChainApplication(kind, left, right);
                 } catch (DependentChainTheory.UnsupportedFlattening exception) {
                     throw new UnsupportedDependentChain(exception);
+                } catch (DependentBoundaryCorrespondence.UnsupportedCorrespondence exception) {
+                    throw new UnsupportedDependentChain(exception);
                 } catch (IllegalArgumentException exception) {
-                    if (hasExplicitPolymorphicUniv(source, left, right)) {
-                        throw new UnsupportedDependentChain(exception);
-                    }
                     throw new IllegalStateException(
                             "A concrete dependent " + kind
                                     + " source violates its chain equation",
                             exception);
                 }
                 if (!outputType(source).equals(application.outputType())) {
-                    if (hasExplicitPolymorphicUniv(source, left, right)) {
-                        throw new UnsupportedDependentChain(
-                                new IllegalArgumentException(
-                                        "Explicit polymorphic univ prevents an exact fold"));
-                    }
                     throw new IllegalStateException(
                             "A concrete dependent " + kind
-                                    + " source has another exact result type");
+                                    + " source has another exact result type: source="
+                                    + outputType(source) + ", derived="
+                                    + application.outputType());
                 }
                 return application;
             } finally {
                 activeChainClasses.remove(classId);
             }
-        }
-
-        private static boolean hasExplicitPolymorphicUniv(
-                EGraphNode source,
-                DependentChainInput left,
-                DependentChainInput right) {
-            return containsAlloyUniv(outputType(source))
-                    || containsAlloyUniv(left.outputType())
-                    || containsAlloyUniv(right.outputType());
-        }
-
-        private static boolean containsAlloyUniv(GraphType type) {
-            if (type.kind() == GraphType.Kind.CONSTRUCTOR
-                    && "AlloySig:univ".equals(type.symbol())) {
-                return true;
-            }
-            for (GraphType argument : type.arguments()) {
-                if (containsAlloyUniv(argument)) {
-                    return true;
-                }
-            }
-            return false;
         }
 
         private DependentChainInput dependentChainInput(
@@ -1255,14 +1232,76 @@ public final class TheoryAlloyAdapter {
                     bindings,
                     temporalReferences);
             try {
-                GraphType relationType = child.getOpcode() == Opcode.VARIABLE
-                                && child.getExactAlloyType() == null
-                        ? DependentChainTheory.relationViewFromStoredType(
-                                leaf.schema().type())
-                        : outputType(child);
-                return new DependentChainLeaf(leaf, relationType);
-            } catch (IllegalArgumentException exception) {
+                GraphType storedType = leaf.schema().type();
+                GraphType relationType = AlloyTypeBridge.isRelationFamily(storedType)
+                        ? storedType
+                        : DependentChainTheory.relationViewFromStoredType(storedType);
+                ExactAlloyType exactType = child.getExactAlloyType();
+                DependentTypeDag typeDag = exactType != null
+                                && (exactType.kind() == ExactAlloyType.Kind.RELATION
+                                        || exactType.kind()
+                                                == ExactAlloyType.Kind.EMPTY_RELATION)
+                        ? dependentTypeDagForSource(child, new HashSet<>())
+                        : DependentTypeDag.fromRelationFamilyType(relationType);
+                if (!typeDag.relationType().equals(relationType)) {
+                    throw new IllegalArgumentException(
+                            "Stored and parser-derived dependent relation families differ");
+                }
+                return new DependentChainLeaf(leaf, typeDag);
+            } catch (DependentChainTheory.UnsupportedFlattening
+                    | DependentBoundaryCorrespondence.UnsupportedCorrespondence exception) {
                 throw new UnsupportedDependentChain(exception);
+            }
+        }
+
+        private DependentTypeDag dependentTypeDagForSource(
+                EGraphNode source,
+                Set<Integer> activeTypeClasses) {
+            ExactAlloyType exactType = source.getExactAlloyType();
+            if (exactType == null
+                    || (exactType.kind() != ExactAlloyType.Kind.RELATION
+                            && exactType.kind()
+                                    != ExactAlloyType.Kind.EMPTY_RELATION)) {
+                throw new DependentChainTheory.UnsupportedFlattening(
+                        "A dependent DAG leaf lacks an exact relation family");
+            }
+            DependentTypeDag parserDag = AlloyTypeBridge.dependentTypeDag(
+                    exactType);
+            if (source.getOpcode() != Opcode.PLUS
+                    && source.getOpcode() != Opcode.INTERSECT) {
+                return parserDag;
+            }
+            int classId = source.getEClass().getId();
+            if (!activeTypeClasses.add(classId)) {
+                throw new IllegalStateException(
+                        "A dependent set-type DAG contains a recursive e-class");
+            }
+            try {
+                List<DependentTypeDag> operands = new ArrayList<>();
+                for (EClassRef childRef : source.getChildClasses()) {
+                    EGraphNode child = childRef.canonical().getEClass()
+                            .getRepresentative();
+                    operands.add(dependentTypeDagForSource(
+                            child, activeTypeClasses));
+                }
+                if (operands.isEmpty()) {
+                    throw new DependentChainTheory.UnsupportedFlattening(
+                            "A dependent set-type DAG has no nonempty operands");
+                }
+                DependentTypeDag derived = operands.size() == 1
+                        ? operands.get(0)
+                        : source.getOpcode() == Opcode.PLUS
+                                ? DependentTypeDag.union(operands)
+                                : DependentTypeDag.intersection(operands);
+                if (!derived.sameOccurrenceEvidenceAs(parserDag)) {
+                    throw new IllegalStateException(
+                            "A concrete set operator disagrees with its independently "
+                                    + "derived dependent type DAG: parser="
+                                    + parserDag + ", derived=" + derived);
+                }
+                return derived;
+            } finally {
+                activeTypeClasses.remove(classId);
             }
         }
 
@@ -2181,11 +2220,19 @@ public final class TheoryAlloyAdapter {
     }
 
     private static String requireTypeName(String value, String label) {
+        requireAdmittedTypeName(value, label);
         String normalized = normalizeType(value);
         if (normalized.isEmpty()) {
             throw new IllegalStateException(label + " has no source type provenance");
         }
         return normalized;
+    }
+
+    private static void requireAdmittedTypeName(String value, String label) {
+        if (!AlloyTypeBridge.isAdmittedIdentity(value)) {
+            throw new IllegalStateException(
+                    label + " must have a well-formed visible type identity");
+        }
     }
 
     private static void registerBinding(

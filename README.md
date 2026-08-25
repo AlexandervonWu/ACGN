@@ -504,6 +504,11 @@ jdeps -summary /tmp/candis-core/candis-core.jar
 ```
 
 The expected dependency summary is `candis-core.jar -> java.base`.
+The current source tree's `CanDis.core` sources also reference typed Alloy and
+theory classes, so this standalone helper currently fails when it is run
+against the checked-out sources. The bounded Java test and experiment scripts
+compile the complete producer source set and remain the supported validation
+entry points.
 
 ## Main Workflows
 
