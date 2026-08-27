@@ -105,6 +105,11 @@ public class SigSymbol extends SetSymbol {
         return parserSignature != null;
     }
 
+    /** True only for a live parser declaration marked {@code var}. */
+    public boolean isParserVariableSignature() {
+        return parserSignature != null && parserSignature.isVariable != null;
+    }
+
     public boolean authenticatesExactType(ExactAlloyType exactType) {
         return parserModuleAuthority != null
                 && exactType != null

@@ -30,5 +30,44 @@ theorem empty_carrier_blocks_unconditional_guarded_lift :
     exact nomatch x
   exact (alleged.mpr lifted).1
 
+def GuardedExistsOriginal
+    (α β : Type) (domain : α → Prop) (body : α → β → Prop) : Prop :=
+  ∀ x, domain x → ∃ y, body x y
+
+def GuardedExistsLifted
+    (α β : Type) (domain : α → Prop) (body : α → β → Prop) : Prop :=
+  ∀ x, ∃ y, domain x → body x y
+
+theorem guarded_exists_lift_requires_inhabited_inner_carrier
+    {α β : Type} [Nonempty β]
+    (domain : α → Prop) (body : α → β → Prop) :
+    GuardedExistsOriginal α β domain body ↔
+      GuardedExistsLifted α β domain body := by
+  constructor
+  · intro source x
+    by_cases active : domain x
+    · let ⟨y, proof⟩ := source x active
+      exact ⟨y, fun _ => proof⟩
+    · let ⟨y⟩ := ‹Nonempty β›
+      exact ⟨y, fun impossible => False.elim (active impossible)⟩
+  · intro lifted x active
+    let ⟨y, proof⟩ := lifted x
+    exact ⟨y, proof active⟩
+
+theorem empty_inner_carrier_blocks_guarded_exists_lift :
+    ¬ (GuardedExistsOriginal Unit Empty (fun _ => False)
+          (fun _ y => nomatch y) ↔
+       GuardedExistsLifted Unit Empty (fun _ => False)
+          (fun _ y => nomatch y)) := by
+  intro alleged
+  have source :
+      GuardedExistsOriginal Unit Empty (fun _ => False)
+        (fun _ y => nomatch y) := by
+    intro _ impossible
+    exact False.elim impossible
+  have lifted := alleged.mp source
+  let ⟨witness, _⟩ := lifted ()
+  exact nomatch witness
+
 def main : IO Unit := do
   IO.println "guarded-prenex-model-v1"

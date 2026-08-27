@@ -1498,6 +1498,9 @@ public class NormalForm {
             if (qv != null) {
                 node.setAlphaName(qv.getName());
                 inheritBindingTypeEvidence(node, qv);
+                if (isTemporalSnapshotBinding(qv)) {
+                    node.markTemporalSnapshotBinding();
+                }
             }
             return node;
         }
@@ -1586,12 +1589,26 @@ public class NormalForm {
                     bodyIndices.add(i);
                 }
             }
+            boolean bodyCanLiftSome = canLiftSome;
+            boolean bodyCanLiftAll = canLiftAll;
+            if (!localConstraints.isEmpty()) {
+                if (quantifier == Quantifier.ALL) {
+                    // The declaration guard will become an implication. An
+                    // existential may cross it only when its own carrier is
+                    // already known to be inhabited.
+                    bodyCanLiftSome = false;
+                } else {
+                    // Other declaration guards are conjunctive; the dual
+                    // universal movement has the same empty-carrier hazard.
+                    bodyCanLiftAll = false;
+                }
+            }
             if (bodyIndices.size() == 1) {
                 int index = bodyIndices.get(0);
                 EGraphNode rewrittenChild = prenex(
                         children.get(index), scopedEnv, nextVarId, bodyNegated, constraints,
                         bindingPath + "/body[" + index + "]",
-                        canLiftSome, canLiftAll, globalLift, slots);
+                        bodyCanLiftSome, bodyCanLiftAll, globalLift, slots);
                 if (rewrittenChild != null) {
                     bodyParts.add(rewrittenChild);
                 }
@@ -1605,7 +1622,7 @@ public class NormalForm {
                     EGraphNode rewrittenChild = prenex(
                             child, scopedEnv, nextVarId, bodyNegated, constraints,
                             bindingPath + "/body[" + index + "]",
-                            canLiftSome, canLiftAll, globalLift, childSlots);
+                            bodyCanLiftSome, bodyCanLiftAll, globalLift, childSlots);
                     slots.mergeBranch(childSlots, Quantifier.ALL);
                     if (rewrittenChild != null) {
                         bodyParts.add(rewrittenChild);
@@ -1613,7 +1630,7 @@ public class NormalForm {
                 }
             }
             EGraphNode body = conjoin(null, bodyParts);
-            body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), negated));
+            body = applyDomainConstraints(body, localConstraints, quantifier);
             return body == null ? booleanConstant(node, true) : body;
         }
         if (negated) {
@@ -2280,6 +2297,20 @@ public class NormalForm {
             if (normalizeType(binding.getTypeName()).equals(required)
                     && normalizeType(binding.getCarrierTypeName()).equals(required)
                     && cardinalityGuaranteesNonempty(binding.getCardinality())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isTemporalSnapshotBinding(QuantiVar variable) {
+        for (QuantiVar inherited : inheritedQuantiVars) {
+            if (inherited == variable) {
+                return true;
+            }
+        }
+        for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
+            if (imported.variable() == variable) {
                 return true;
             }
         }
@@ -3873,6 +3904,7 @@ public class NormalForm {
         copy.setCallArityAuthority(sameOpcode ? source.getCallArityAuthority() : null);
         if (sameOpcode) {
             copy.preserveTemporalReferenceAuthorityFrom(source);
+            copy.preserveTemporalSnapshotBindingFrom(source);
         }
         if (sameOpcode) {
             copy.preserveDerivedBooleanRewriteAuthorityFrom(source);

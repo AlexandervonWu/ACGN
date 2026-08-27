@@ -439,7 +439,7 @@ Every claim follows the same bounded process:
 - Claim SHA-256: `c2f3490370daf9b8652340f423149e63830113081eb8b6951fa23772fa079b38`
 - Ledger line: 76
 - Lean file: `docs/section3-repair-audit/formal/GuardedPrenex.lean`
-- Lean declarations: `guarded_lift_requires_inhabited_carrier;empty_carrier_blocks_unconditional_guarded_lift`
+- Lean declarations: `guarded_lift_requires_inhabited_carrier;empty_carrier_blocks_unconditional_guarded_lift;guarded_exists_lift_requires_inhabited_inner_carrier;empty_inner_carrier_blocks_guarded_exists_lift`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitRelDecl;src/is/fivefivefive/CanDis/core/NormalForm.java#hasScopedInhabitedCarrierWitness`
 - Bounded test references: `src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
@@ -2887,13 +2887,13 @@ Every claim follows the same bounded process:
 - Claim SHA-256: `a003878e947434b733bed35a4dccb33de350336b993a1cf2942d6b1fdc9efaf3`
 - Ledger line: 250
 - Lean file: `docs/section3-repair-audit/formal/TemporalPhaseLocalBinding.lean`
-- Lean declarations: `unary_temporal_preserves_lexical_depth;binary_temporal_preserves_lexical_depth_in_both_roles;unary_temporal_vocabulary_is_exhaustive;binary_temporal_vocabulary_is_exhaustive;outer_binder_scopes_every_unary_temporal_operator;outer_binder_scopes_both_roles_of_every_binary_temporal_operator;detached_unary_temporal_child_is_not_closed;detached_binary_temporal_children_are_not_closed;outer_binder_scopes_both_temporal_branches;detached_temporal_child_is_not_closed;repeating_the_exact_scope_snapshot_is_idempotent;a_repeated_reference_under_another_context_is_rejected;every_temporal_phase_role_admits_the_exact_owner;binary_temporal_phase_roles_remain_distinct;sibling_phases_reuse_the_exact_owner_coordinate;another_source_lineage_is_rejected;another_binder_context_is_rejected;global_prenex_over_conjunction_fails_for_an_empty_carrier`
-- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#normalizeTemporalTree;src/is/fivefivefive/CanDis/core/NormalForm.java#installPhaseLocalBindingImports;src/is/fivefivefive/CanDis/core/NormalForm.java#captureTemporalPhaseLocalBindings;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#certifyPhaseLocalBindings`
-- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
+- Lean declarations: `unary_temporal_preserves_lexical_depth;binary_temporal_preserves_lexical_depth_in_both_roles;unary_temporal_vocabulary_is_exhaustive;binary_temporal_vocabulary_is_exhaustive;outer_binder_scopes_every_unary_temporal_operator;outer_binder_scopes_both_roles_of_every_binary_temporal_operator;detached_unary_temporal_child_is_not_closed;detached_binary_temporal_children_are_not_closed;outer_binder_scopes_both_temporal_branches;detached_temporal_child_is_not_closed;repeating_the_exact_scope_snapshot_is_idempotent;a_repeated_reference_under_another_context_is_rejected;every_temporal_phase_role_admits_the_exact_owner;binary_temporal_phase_roles_remain_distinct;sibling_phases_reuse_the_exact_owner_coordinate;another_source_lineage_is_rejected;another_binder_context_is_rejected;global_prenex_over_conjunction_fails_for_an_empty_carrier;mutable_carrier_can_drop_an_imported_snapshot_value;preserved_membership_licenses_static_carrier_absorption;imported_snapshot_rejects_mutable_carrier_absorption;imported_snapshot_retains_static_carrier_absorption;same_phase_value_retains_carrier_absorption`
+- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#normalizeTemporalTree;src/is/fivefivefive/CanDis/core/NormalForm.java#installPhaseLocalBindingImports;src/is/fivefivefive/CanDis/core/NormalForm.java#captureTemporalPhaseLocalBindings;src/is/fivefivefive/CanDis/core/NormalForm.java#isTemporalSnapshotBinding;src/is/fivefivefive/CanDis/core/EGraphNode.java#isParserCertifiedSubrelationOfFullCarrier;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#isParserVariableSignature;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#certifyPhaseLocalBindings`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `DIRECT-BOUNDED`
-- Claim-specific process/limits: All six unary and all four binary temporal operators are covered in Lean and parser-backed regressions exercise sibling once/always reuse, alpha renaming, changed use, repeated snapshots, and malformed provenance; complete source-to-verifier refinement remains open
+- Claim-specific process/limits: All six unary and all four binary temporal operators are covered in Lean and parser-backed regressions exercise sibling once/always reuse, alpha renaming, changed use, repeated snapshots, malformed provenance, and mutable-versus-static carrier absorption; complete source-to-verifier refinement remains open
 - Current proof state: `INCOMPLETE`
 
 ### P5-44

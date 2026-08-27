@@ -39,6 +39,9 @@ public final class MASGVisitorTypeRegressionTest {
                 "sig C { dup: set File }",
                 "sig D { dup: set File }",
                 "sig Protected, Trash in File {}",
+                "sig Course {}",
+                "sig Instructor { courses: set Course }",
+                "sig Lecturer in Instructor {}",
                 "pred candidate {",
                 "  all x: univ | x in User implies x in User",
                 "  all u: User | all f: u - u.follows | f in User",
@@ -91,6 +94,13 @@ public final class MASGVisitorTypeRegressionTest {
                 "pred duplicateBinderRenamed {",
                 "  all unused, x, y: File | no x and no y",
                 "}",
+                "pred guardedNestedCorrect {",
+                "  all t: Lecturer | some c: Course | c in t.courses",
+                "}",
+                "pred guardedNestedOverconstrained {",
+                "  all p: Instructor | some c: Course |",
+                "    p in Lecturer implies c in p.courses",
+                "}",
                 "pred oracle { no none }",
                 "assert quantified {",
                 "  all p: Photo, u1, u2: User | u1 = u2 implies p = p",
@@ -129,6 +139,9 @@ public final class MASGVisitorTypeRegressionTest {
         Multigraph delimiterRenamed = graph(visitor, "delimiterRenamed");
         Multigraph duplicateBinder = graph(visitor, "duplicateBinder");
         Multigraph duplicateBinderRenamed = graph(visitor, "duplicateBinderRenamed");
+        Multigraph guardedNestedCorrect = graph(visitor, "guardedNestedCorrect");
+        Multigraph guardedNestedOverconstrained =
+                graph(visitor, "guardedNestedOverconstrained");
         Multigraph oracle = graph(visitor, "oracle");
         if (candidate == null || oracle == null) {
             throw new AssertionError("Expected both predicate graphs");
@@ -236,6 +249,28 @@ public final class MASGVisitorTypeRegressionTest {
             throw new AssertionError(
                     "LET substitution captured an outer variable under a same-spelled binder");
         }
+        Canonical.Prepared preparedGuardedNestedCorrect =
+                Canonical.prepare(guardedNestedCorrect);
+        Canonical.Prepared preparedGuardedNestedOverconstrained =
+                Canonical.prepare(guardedNestedOverconstrained);
+        if (Canonical.distance(
+                        preparedGuardedNestedCorrect,
+                        preparedGuardedNestedOverconstrained) == 0) {
+            throw new AssertionError(
+                    "An existential crossed a guarded universal over a possibly empty carrier");
+        }
+        CanonicalAlloyPipeline.Prepared certifiedGuardedNestedCorrect =
+                CanonicalAlloyPipeline.prepare(guardedNestedCorrect);
+        CanonicalAlloyPipeline.Prepared certifiedGuardedNestedOverconstrained =
+                CanonicalAlloyPipeline.prepare(guardedNestedOverconstrained);
+        if (certifiedGuardedNestedCorrect.equivalentTo(
+                        certifiedGuardedNestedOverconstrained)
+                || CanonicalAlloyPipeline.distance(
+                        certifiedGuardedNestedCorrect,
+                        certifiedGuardedNestedOverconstrained) == 0) {
+            throw new AssertionError(
+                    "Certified prenexing erased an empty-carrier distinction");
+        }
         if (Canonical.distance(delimiterCollision, delimiterRenamed) != 0
                 || !CanonicalAlloyPipeline.prepare(delimiterCollision).equivalentTo(
                         CanonicalAlloyPipeline.prepare(delimiterRenamed))) {
@@ -290,6 +325,8 @@ public final class MASGVisitorTypeRegressionTest {
         }
 
         checkBoundedSemantics(preparedCandidate, preparedDirect);
+        checkGuardedNestedQuantifierCounterexample();
+        checkTemporalSnapshotCarrierRegression();
         System.out.println("MASGVisitorTypeRegressionTest passed");
     }
 
@@ -721,6 +758,97 @@ public final class MASGVisitorTypeRegressionTest {
             }
         }
         return false;
+    }
+
+    private static void checkGuardedNestedQuantifierCounterexample()
+            throws Exception {
+        String source = String.join("\n",
+                "module guarded_nested_quantifier_counterexample",
+                "sig Course {}",
+                "sig Instructor { courses: set Course }",
+                "sig Lecturer in Instructor {}",
+                "pred correct {",
+                "  all t: Lecturer | some c: Course | c in t.courses",
+                "}",
+                "pred overconstrained {",
+                "  all p: Instructor | some c: Course |",
+                "    p in Lecturer implies c in p.courses",
+                "}",
+                "run { not (correct[] iff overconstrained[]) } for 2 but 0 Int",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        A4Solution result = TranslateAlloyToKodkod.execute_command(
+                A4Reporter.NOP,
+                module.getAllReachableSigs(),
+                module.getAllCommands().get(0),
+                options);
+        if (result == null || !result.satisfiable()) {
+            throw new AssertionError(
+                    "Alloy did not reproduce the empty-carrier prenex counterexample");
+        }
+    }
+
+    private static void checkTemporalSnapshotCarrierRegression()
+            throws Exception {
+        String source = String.join("\n",
+                "module temporal_snapshot_carrier_regression",
+                "var sig File {}",
+                "var sig Trash in File {}",
+                "sig StaticFile {}",
+                "sig StaticTrash in StaticFile {}",
+                "pred staleAtom { always all t: Trash | after no t }",
+                "pred currentMembership {",
+                "  always all t: Trash | after no (File & t)",
+                "}",
+                "pred staticAtom {",
+                "  always all t: StaticTrash | after no t",
+                "}",
+                "pred staticMembership {",
+                "  always all t: StaticTrash | after no (StaticFile & t)",
+                "}",
+                "run { not staleAtom[] and currentMembership[] }",
+                "  for 3 but 0 Int, 1..3 steps",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
+        visitor.visit(new ModelUnit(null, module), null);
+        Multigraph staleAtom = graph(visitor, "staleAtom");
+        Multigraph currentMembership = graph(visitor, "currentMembership");
+        Multigraph staticAtom = graph(visitor, "staticAtom");
+        Multigraph staticMembership = graph(visitor, "staticMembership");
+        CanonicalAlloyPipeline.Prepared stale =
+                CanonicalAlloyPipeline.prepare(staleAtom);
+        CanonicalAlloyPipeline.Prepared current =
+                CanonicalAlloyPipeline.prepare(currentMembership);
+        if (stale.equivalentTo(current)
+                || CanonicalAlloyPipeline.distance(stale, current) == 0) {
+            throw new AssertionError(
+                    "A temporal snapshot type proved membership in a later mutable carrier");
+        }
+        CanonicalAlloyPipeline.Prepared staticLeft =
+                CanonicalAlloyPipeline.prepare(staticAtom);
+        CanonicalAlloyPipeline.Prepared staticRight =
+                CanonicalAlloyPipeline.prepare(staticMembership);
+        if (!staticLeft.equivalentTo(staticRight)
+                || CanonicalAlloyPipeline.distance(staticLeft, staticRight) != 0) {
+            throw new AssertionError(
+                    "Temporal snapshot guarding disabled a sound static-carrier absorption");
+        }
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        A4Solution result = TranslateAlloyToKodkod.execute_command(
+                A4Reporter.NOP,
+                module.getAllReachableSigs(),
+                module.getAllCommands().get(0),
+                options);
+        if (result == null || !result.satisfiable()) {
+            throw new AssertionError(
+                    "Alloy did not reproduce the mutable-carrier temporal counterexample");
+        }
     }
 
     private static void checkBoundedSemantics(

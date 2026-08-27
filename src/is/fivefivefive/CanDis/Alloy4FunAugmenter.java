@@ -144,6 +144,16 @@ public class Alloy4FunAugmenter {
         stageStarted = beginStage("Ranking incorrect predicates");
         List<IncorrectMatch> matches = nearestIncorrectMatches(groups, options);
         endStage("Ranking incorrect predicates", stageStarted);
+        Path incorrectZeroAudit = options.outputDir.resolve(
+                "incorrect_nearest_zero_distances.csv");
+        int certifiedIncorrectZeroes = writeIncorrectNearestZeroAudit(
+                incorrectZeroAudit, matches);
+        if (certifiedIncorrectZeroes != 0) {
+            throw new IllegalStateException(
+                    "Certified ranking produced " + certifiedIncorrectZeroes
+                            + " incorrect predicate(s) at zero distance from a truth; see "
+                            + incorrectZeroAudit);
+        }
         if (!options.skipRewards) {
             stageStarted = beginStage("Computing rewards");
             computeRewards(matches, options);
@@ -174,6 +184,7 @@ public class Alloy4FunAugmenter {
         System.out.println("Wrote " + options.outputDir);
         System.out.println("Wrote " + parseRetriesPath);
         System.out.println("Wrote " + astIdenticalPairsPath);
+        System.out.println("Wrote " + incorrectZeroAudit);
         System.out.println("Wrote " + options.outputDir.resolve("index.json"));
         System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_canonical_equiv.json"));
         System.out.println("Wrote " + options.outputDir.resolve("correct_ast_diff_fast_rewrite_equiv.json"));
@@ -855,6 +866,61 @@ public class Alloy4FunAugmenter {
         }
     }
 
+    private static int writeIncorrectNearestZeroAudit(
+            Path path,
+            List<IncorrectMatch> matches) throws IOException {
+        int certifiedZeroes = 0;
+        try (Writer writer = outputWriter(path)) {
+            writer.write("metric,relativePath,questionSet,statusFolder,invariantId,"
+                    + "referenceName,referenceKind,referenceSource,distance\n");
+            for (IncorrectMatch match : matches) {
+                if (match.canonical.first().distance == 0) {
+                    certifiedZeroes++;
+                    writeIncorrectNearestZeroRow(
+                            writer, "certificate-integrated", match,
+                            match.canonical.first());
+                }
+                if (match.legacyCanonical.first().distance == 0) {
+                    writeIncorrectNearestZeroRow(
+                            writer, "fast-rewrite", match,
+                            match.legacyCanonical.first());
+                }
+            }
+        }
+        return certifiedZeroes;
+    }
+
+    private static int incorrectNearestZeroCount(
+            List<IncorrectMatch> matches,
+            boolean certificateIntegrated) {
+        int count = 0;
+        for (IncorrectMatch match : matches) {
+            Nearest nearest = certificateIntegrated
+                    ? match.canonical : match.legacyCanonical;
+            if (nearest.first().distance == 0) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static void writeIncorrectNearestZeroRow(
+            Writer writer,
+            String metric,
+            IncorrectMatch match,
+            RankedReference nearest) throws IOException {
+        writer.write(csv(metric) + ",");
+        writer.write(csv(match.record.relativePath) + ",");
+        writer.write(csv(match.record.questionSet) + ",");
+        writer.write(csv(match.record.statusFolder) + ",");
+        writer.write(csv(match.record.invariantId) + ",");
+        writer.write(csv(nearest.reference.augmentedName) + ",");
+        writer.write(csv(nearest.reference.kind) + ",");
+        writer.write(csv(nearest.reference.source.relativePath) + ",");
+        writer.write(Integer.toString(nearest.distance));
+        writer.write("\n");
+    }
+
     private static String calledSymbols(RawAstTree tree) {
         Set<String> names = new java.util.TreeSet<>();
         collectCalledSymbols(tree, names);
@@ -1326,6 +1392,8 @@ public class Alloy4FunAugmenter {
             CorrectPoolEquivalences correctPoolEquivalences) throws IOException {
         Summary summary = new Summary(groups, records, matches, unmatched, withoutAstDistinctReference);
         DistanceTableStats distanceTable = distanceTableStats(matches);
+        int certifiedIncorrectZeroes = incorrectNearestZeroCount(matches, true);
+        int fastRewriteIncorrectZeroes = incorrectNearestZeroCount(matches, false);
         try (Writer writer = outputWriter(path)) {
             writer.write("{\n");
             writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
@@ -1376,6 +1444,10 @@ public class Alloy4FunAugmenter {
             writer.write("    \"oracleReferences\": " + summary.oracleReferences + ",\n");
             writer.write("    \"uniqueCorrectStudentReferences\": " + summary.uniqueCorrectStudentReferences + ",\n");
             writer.write("    \"incorrectModelsWithNearestDistances\": " + matches.size() + ",\n");
+            writer.write("    \"incorrectNearestCertificateIntegratedZeroes\": "
+                    + certifiedIncorrectZeroes + ",\n");
+            writer.write("    \"incorrectNearestFastRewriteZeroes\": "
+                    + fastRewriteIncorrectZeroes + ",\n");
             writer.write("    \"correctPoolCertificateIntegratedEquivalentPairs\": "
                     + correctPoolEquivalences.certificateIntegrated.size() + ",\n");
             writer.write("    \"correctPoolFastRewriteEquivalentPairs\": "
@@ -1469,6 +1541,8 @@ public class Alloy4FunAugmenter {
         Map<String, RepairRadiusStats> repairByStatus = repairRadiusStatsByStatus(matches);
         Map<String, RepairRadiusStats> repairByQuestionSet = repairRadiusStatsByQuestionSet(matches);
         Map<String, RepairRadiusStats> repairByQuestionSetAndStatus = repairRadiusStatsByQuestionSetAndStatus(matches);
+        int certifiedIncorrectZeroes = incorrectNearestZeroCount(matches, true);
+        int fastRewriteIncorrectZeroes = incorrectNearestZeroCount(matches, false);
 
         try (Writer writer = outputWriter(path)) {
             writer.write("# Alloy4Fun Augmented Dataset Summary\n\n");
@@ -1508,6 +1582,11 @@ public class Alloy4FunAugmenter {
             writer.write("- Incorrect models skipped because every truth was AST-identical: "
                     + withoutAstDistinctReference.size() + "\n");
             writer.write("- Incorrect models without references: " + unmatched.size() + "\n\n");
+            writer.write("- Incorrect predicates with zero nearest Certificate-Integrated IR distance: "
+                    + certifiedIncorrectZeroes + " (release gate requires zero)\n");
+            writer.write("- Incorrect predicates with zero nearest Fast Rewrite IR distance: "
+                    + fastRewriteIncorrectZeroes
+                    + " (diagnostic; Fast Rewrite IR does not certify semantic equality)\n\n");
             writer.write("- Reference-pool preparation failures: "
                     + summary.referencePoolFailures + "\n");
             writer.write("- Incorrect-predicate ranking failures: "

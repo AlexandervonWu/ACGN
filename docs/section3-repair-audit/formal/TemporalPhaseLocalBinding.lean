@@ -188,4 +188,40 @@ theorem global_prenex_over_conjunction_fails_for_an_empty_carrier :
       ≠ allOver carrier (fun value => body value ∧ outside) := by
   simp [allOver]
 
+def snapshotSingletonIsEmpty {α : Type} (_value : α) : Prop := False
+
+def currentCarrierIntersectionIsEmpty
+    {α : Type} (currentCarrier : α → Prop) (value : α) : Prop :=
+  ¬ currentCarrier value
+
+theorem mutable_carrier_can_drop_an_imported_snapshot_value :
+    snapshotSingletonIsEmpty true ≠
+      currentCarrierIntersectionIsEmpty (fun _ : Bool => False) true := by
+  simp [snapshotSingletonIsEmpty, currentCarrierIntersectionIsEmpty]
+
+theorem preserved_membership_licenses_static_carrier_absorption
+    {α : Type} (currentCarrier : α → Prop) (value : α)
+    (membershipPersists : currentCarrier value) :
+    snapshotSingletonIsEmpty value ↔
+      currentCarrierIntersectionIsEmpty currentCarrier value := by
+  simp [snapshotSingletonIsEmpty, currentCarrierIntersectionIsEmpty,
+    membershipPersists]
+
+def carrierAbsorptionAdmitted
+    (importedSnapshot parserVariableCarrier : Bool) : Bool :=
+  !importedSnapshot || !parserVariableCarrier
+
+theorem imported_snapshot_rejects_mutable_carrier_absorption :
+    carrierAbsorptionAdmitted true true = false := by
+  decide
+
+theorem imported_snapshot_retains_static_carrier_absorption :
+    carrierAbsorptionAdmitted true false = true := by
+  decide
+
+theorem same_phase_value_retains_carrier_absorption
+    (parserVariableCarrier : Bool) :
+    carrierAbsorptionAdmitted false parserVariableCarrier = true := by
+  cases parserVariableCarrier <;> decide
+
 end TemporalPhaseLocalBinding

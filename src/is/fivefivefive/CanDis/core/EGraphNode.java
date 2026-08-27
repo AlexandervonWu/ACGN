@@ -62,6 +62,8 @@ public final class EGraphNode {
     private SigSymbol parserSignatureEvidence;
     /* Transfer-only identity: never participates in semantic keys or serialization. */
     private long sourceOccurrenceLineage;
+    /* A bound relation value imported from an enclosing temporal phase. */
+    private boolean temporalSnapshotBinding;
     /* Parser-owned CALL provenance; excluded from semantic keys and repair cost. */
     private long callOccurrenceId = -1L;
     private int declaredArity = -1;
@@ -1067,6 +1069,25 @@ public final class EGraphNode {
             parserSignatureEvidence = null;
             this.exactAlloyType = exactAlloyType;
         });
+    }
+
+    void markTemporalSnapshotBinding() {
+        arena.mutate(this, () -> {
+            if (opcode != Opcode.VARIABLE || !childClasses.isEmpty()) {
+                throw new IllegalStateException(
+                        "Temporal snapshot provenance applies only to a variable leaf");
+            }
+            temporalSnapshotBinding = true;
+        });
+    }
+
+    void preserveTemporalSnapshotBindingFrom(EGraphNode source) {
+        EGraphNode checked = Objects.requireNonNull(
+                source, "temporal snapshot source");
+        checked.requireLiveNode();
+        if (checked.temporalSnapshotBinding) {
+            markTemporalSnapshotBinding();
+        }
     }
 
     /** Records that trusted normalization derived this exact Boolean operator. */
@@ -3747,6 +3768,7 @@ public final class EGraphNode {
         callArityAuthority = replacement.callArityAuthority;
         derivedBooleanRewriteOpcode = replacement.derivedBooleanRewriteOpcode;
         temporalReferenceAuthorityId = replacement.temporalReferenceAuthorityId;
+        temporalSnapshotBinding = replacement.temporalSnapshotBinding;
         metatype = replacement.metatype;
     }
 
@@ -3768,6 +3790,7 @@ public final class EGraphNode {
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
         temporalReferenceAuthorityId = -1L;
+        temporalSnapshotBinding = false;
         metatype = Metatype.BOOLEAN;
     }
 
@@ -3795,6 +3818,7 @@ public final class EGraphNode {
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
         temporalReferenceAuthorityId = -1L;
+        temporalSnapshotBinding = false;
         metatype = Metatype.SET;
     }
 
@@ -4059,6 +4083,10 @@ public final class EGraphNode {
                 || !isParserAuthenticatedFullSignature(carrier)) {
             return false;
         }
+        if (containsTemporalSnapshotBinding(candidate)
+                && carrier.parserSignatureEvidence.isParserVariableSignature()) {
+            return false;
+        }
         if (candidate.parserSignatureEvidence != null) {
             return !candidate.parserSignatureEvidence.isSameParserSignatureAs(
                             carrier.parserSignatureEvidence)
@@ -4093,6 +4121,10 @@ public final class EGraphNode {
                 || !candidate.semanticProfile.equals(carrier.semanticProfile)) {
             return false;
         }
+        if (containsTemporalSnapshotBinding(candidate)
+                && containsParserVariableSignature(carrier)) {
+            return false;
+        }
         if (isParserAuthenticatedFullSignature(carrier)) {
             return isParserCertifiedSubrelationOfFullSignature(
                     candidate, carrier);
@@ -4104,6 +4136,66 @@ public final class EGraphNode {
         return carrierType != null
                 && candidateType != null
                 && candidateType.isParserCertifiedSetSubfamilyOf(carrierType);
+    }
+
+    private static boolean containsTemporalSnapshotBinding(EGraphNode root) {
+        return containsTemporalSnapshotBinding(
+                root, Collections.newSetFromMap(new IdentityHashMap<>()));
+    }
+
+    private static boolean containsTemporalSnapshotBinding(
+            EGraphNode node,
+            Set<EClass> active) {
+        if (!active.add(node.eClass)) {
+            return false;
+        }
+        try {
+            for (EGraphNode alternative : node.eClass.nodes) {
+                if (alternative.temporalSnapshotBinding) {
+                    return true;
+                }
+                for (EClassRef child : alternative.childClasses) {
+                    if (containsTemporalSnapshotBinding(
+                            child.eClass.getRepresentative(), active)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } finally {
+            active.remove(node.eClass);
+        }
+    }
+
+    private static boolean containsParserVariableSignature(EGraphNode root) {
+        return containsParserVariableSignature(
+                root, Collections.newSetFromMap(new IdentityHashMap<>()));
+    }
+
+    private static boolean containsParserVariableSignature(
+            EGraphNode node,
+            Set<EClass> active) {
+        if (!active.add(node.eClass)) {
+            return false;
+        }
+        try {
+            for (EGraphNode alternative : node.eClass.nodes) {
+                if (alternative.parserSignatureEvidence != null
+                        && alternative.parserSignatureEvidence
+                                .isParserVariableSignature()) {
+                    return true;
+                }
+                for (EClassRef child : alternative.childClasses) {
+                    if (containsParserVariableSignature(
+                            child.eClass.getRepresentative(), active)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } finally {
+            active.remove(node.eClass);
+        }
     }
 
     private static ExactAlloyType parserCertifiedPrimitiveCarrierTermType(
@@ -6845,6 +6937,7 @@ public final class EGraphNode {
         copy.callArityAuthority = callArityAuthority;
         copy.derivedBooleanRewriteOpcode = derivedBooleanRewriteOpcode;
         copy.temporalReferenceAuthorityId = temporalReferenceAuthorityId;
+        copy.temporalSnapshotBinding = temporalSnapshotBinding;
         copy.childClasses = new ArrayList<>(childClasses);
         copy.eClass = eClass;
         return copy;
@@ -6878,6 +6971,7 @@ public final class EGraphNode {
         callArityAuthority = null;
         derivedBooleanRewriteOpcode = null;
         temporalReferenceAuthorityId = -1L;
+        temporalSnapshotBinding = false;
         metatype = Metatype.CONTROL;
     }
 
