@@ -31,6 +31,10 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
         Bundle canonicalBundle = decode(canonical);
         String digest = canonicalBundle.theoryDigest();
         VerificationPolicy policy = VerificationPolicy.trust(digest);
+        for (byte[] bytes : List.of(canonical, reversed, polymorphic, monomorphic)) {
+            policy = policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(bytes, Limits.defaults()));
+        }
         IndependentVerifier verifier = new IndependentVerifier();
 
         assertVerified(verifier.verify(canonical, Profile.FULL, policy),
@@ -46,7 +50,9 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
         for (int index = 0; index < 6; index++) {
             byte[] order = Files.readAllBytes(
                     Path.of(args[4]).resolve("order-" + index + ".acgncert"));
-            assertVerified(verifier.verify(order, Profile.FULL, policy),
+            VerificationPolicy orderPolicy = policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(order, Limits.defaults()));
+            assertVerified(verifier.verify(order, Profile.FULL, orderPolicy),
                     "three-slot order " + index);
         }
 
@@ -80,7 +86,8 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
         Bundle bundle = decode(encoded);
         KernelModel model = new KernelModel(bundle, Limits.defaults());
         SemanticEvidenceVerifier.Authorization authorization =
-                new SemanticEvidenceVerifier(bundle, model, Limits.defaults()).verify();
+                new SemanticEvidenceVerifier(
+                        bundle, model, policyFor(encoded, bundle)).verify();
         KernelVerifier kernel = new KernelVerifier(
                 model, Limits.defaults(), authorization);
         KernelModel.Term term = model.term(onlyCanonicalRecord(bundle).scalar(2));
@@ -124,7 +131,8 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
         Bundle bundle = decode(encoded);
         KernelModel model = new KernelModel(bundle, Limits.defaults());
         SemanticEvidenceVerifier.Authorization authorization =
-                new SemanticEvidenceVerifier(bundle, model, Limits.defaults()).verify();
+                new SemanticEvidenceVerifier(
+                        bundle, model, policyFor(encoded, bundle)).verify();
         KernelVerifier kernel = new KernelVerifier(
                 model, Limits.defaults(), authorization);
         Wire.Node record = onlyCanonicalRecord(bundle);
@@ -138,6 +146,12 @@ public final class Phase6SemanticOrderVerifierRegressionTest {
         check(term.kind() == KernelModel.TermKind.APP,
                 "fixture representative is an application");
         return term.symbol();
+    }
+
+    private static VerificationPolicy policyFor(byte[] encoded, Bundle bundle) {
+        return VerificationPolicy.trust(bundle.theoryDigest())
+                .withCallOccurrenceCommitment(
+                        CallOccurrenceCommitment.inspect(encoded, Limits.defaults()));
     }
 
     private static Wire.Node onlyCanonicalRecord(Bundle bundle) {

@@ -26,6 +26,12 @@ pin_digest() {
   printf '%s' "$digest"
 }
 
+# TEST_ONLY fixture plumbing. This exercises commitment replay but is not an
+# independent raw-source authority and must not be copied into production use.
+fixture_call_commitment() {
+  java -jar "$verifier_jar" --inspect-call-occurrences "$1"
+}
+
 empty_theory_digest="$(pin_digest fixture-empty-theory-v1)"
 parent_theory_digest="$(pin_digest fixture-parent-path-theory-v1)"
 
@@ -140,22 +146,34 @@ for name in "${expected[@]}"; do
       "$name" "$artifact_digest" "$selected_digest" >&2
     exit 1
   fi
+  call_commitment="$(fixture_call_commitment "$run_a/$name")"
   java -jar "$verifier_jar" \
     --profile full \
     --theory-digest "$selected_digest" \
+    --call-occurrence-commitment "$call_commitment" \
     "$run_a/$name" >/dev/null
 done
 
+pair_left_commitment="$(fixture_call_commitment \
+  "$run_a/pair-equivalent-left.acgncert")"
+pair_right_commitment="$(fixture_call_commitment \
+  "$run_b/pair-equivalent-right.acgncert")"
 java -jar "$verifier_jar" \
   --profile pair \
   --theory-digest "$empty_theory_digest" \
+  --call-occurrence-commitment "$pair_left_commitment" \
+  --call-occurrence-commitment "$pair_right_commitment" \
   "$run_a/pair-equivalent-left.acgncert" \
   "$run_b/pair-equivalent-right.acgncert" >/dev/null
 
+pair_non_equivalent_commitment="$(fixture_call_commitment \
+  "$run_b/pair-non-equivalent.acgncert")"
 set +e
 java -jar "$verifier_jar" \
   --profile pair \
   --theory-digest "$empty_theory_digest" \
+  --call-occurrence-commitment "$pair_left_commitment" \
+  --call-occurrence-commitment "$pair_non_equivalent_commitment" \
   "$run_a/pair-equivalent-left.acgncert" \
   "$run_b/pair-non-equivalent.acgncert" >/dev/null
 non_equivalent_status=$?

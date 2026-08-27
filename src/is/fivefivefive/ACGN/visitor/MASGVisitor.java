@@ -126,7 +126,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private final AugmentedNode shadowNode = new AugmentedNode(-128, 1, SHADOW_SYMBOL);
     private Map<Integer, AugmentedNode> nodeDict;
     private final Map<String, Integer> forestIdsByCallable = new HashMap<>();
-    private final Map<String, CallableDescriptor> callableDescriptors = new HashMap<>();
+    private final Map<String, List<CallableDescriptor>> callableDescriptors =
+            new HashMap<>();
+    private final Map<CallableKey, Integer> forestIdsByDescriptor = new HashMap<>();
+    private final Map<CallableKey, Symbol> callableTargets = new HashMap<>();
     private final Map<String, ImportedModuleDescriptor> importedModules = new HashMap<>();
     private String moduleIdentity = "this";
     private CompModule parserModule;
@@ -213,7 +216,36 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         return forest;
     }
     public Integer getForestId(String callableName) {
+        List<CallableDescriptor> candidates = callableDescriptors.get(callableName);
+        if (candidates == null) {
+            candidates = callableDescriptors.get(stripThisQualifier(callableName));
+        }
+        if (candidates != null) {
+            List<CallableDescriptor> visited = candidates.stream()
+                    .filter(candidate -> forestIdsByDescriptor.containsKey(candidate.key()))
+                    .distinct()
+                    .toList();
+            if (visited.size() == 1) {
+                return forestIdsByDescriptor.get(visited.get(0).key());
+            }
+            List<CallableDescriptor> zeroArity = visited.stream()
+                    .filter(candidate -> candidate.arity == 0)
+                    .toList();
+            if (zeroArity.size() == 1) {
+                return forestIdsByDescriptor.get(zeroArity.get(0).key());
+            }
+            return null;
+        }
         return forestIdsByCallable.get(callableName);
+    }
+
+    public Integer getForestId(
+            String callableName,
+            CallSymbol.Kind kind,
+            int arity) {
+        CallableDescriptor descriptor = resolveDeclaredCallable(
+                callableName, kind, arity);
+        return forestIdsByDescriptor.get(descriptor.key());
     }
     public AAME getAAME() {
         return aame;
@@ -446,11 +478,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         AugmentedNode predNode = new AugmentedNode(syn, numPredicates);
         
         String predName = n.getName();
-        forestIdsByCallable.put(predName, numPredicates);
-        CallableDescriptor callable = callableDescriptors.get(predName);
-        if (callable == null) {
-            throw new IllegalStateException("Callable declaration was not indexed: " + predName);
-        }
+        int declaredArity = declaredArity(n);
+        CallSymbol.Kind declaredKind = n instanceof Function
+                ? CallSymbol.Kind.EXPRESSION : CallSymbol.Kind.FORMULA;
+        CallableDescriptor callable = resolveDeclaredCallable(
+                predName, declaredKind, declaredArity);
+        forestIdsByCallable.putIfAbsent(predName, numPredicates);
+        forestIdsByDescriptor.put(callable.key(), numPredicates);
         Symbol predSymbol = new PredRootSymbol(
                 predNode,
                 callable.sourceName,
@@ -460,6 +494,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 callable.arityAuthority);
         predNode.setSymbol(predSymbol);
         uniqueNode.put(predSymbol, predNode);
+        callableTargets.put(callable.key(), predSymbol);
         // System.out.println("Visiting predicate: " + predName + " with symbol: " + predSymbol + " into uniqueNode. ");
         aame.addSymbol(predName, predSymbol);
         Multigraph predGraph = new Multigraph(predNode, globalVariables);
@@ -910,7 +945,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
         } else {
             if (val.equalsIgnoreCase("iden")) {
-                Symbol constSymbol = new ConstSymbol("iden", false, true);
+                Symbol constSymbol = ConstSymbol.builtinIden();
                 AugmentedNode node = new AugmentedNode(121, 1, constSymbol);
                 node.setMaxDownlinks(0);
                 recordLeafExactType(node, n, arg);
@@ -994,32 +1029,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula thenClause = n.getThenClause();
         ExprOrFormula elseClause = n.getElseClause();
         AugmentedNode condNode = condition.accept(this, arg);
-        if (condNode == ITEDummy) {
-            downTimeOfVisit(ITEDummy, arg);
-        }
         // globalVariables.addEdge(ITEDummy, condNode, 1);
         AugmentedNode thenNode = thenClause.accept(this, arg);
-        if (thenNode == ITEDummy) {
-            downTimeOfVisit(ITEDummy, arg);
-        }
         // globalVariables.addEdge(ITEDummy, thenNode, 2);
         AugmentedNode elseNode = elseClause.accept(this, arg);
-        if (elseNode == ITEDummy) {
-            downTimeOfVisit(ITEDummy, arg);
-        }
         // globalVariables.addEdge(ITEDummy, elseNode, 3);
         visitAndConnectAt(ITEDummy, condNode, 1, arg, iteTimeOfVisit);
         visitAndConnectAt(ITEDummy, thenNode, 2, arg, iteTimeOfVisit);
         visitAndConnectAt(ITEDummy, elseNode, 3, arg, iteTimeOfVisit);
-        if (condNode == ITEDummy) {
-            updateTimeOfVisit(ITEDummy, arg);
-        }
-        if (thenNode == ITEDummy) {
-            updateTimeOfVisit(ITEDummy, arg);
-        }
-        if (elseNode == ITEDummy) {
-            updateTimeOfVisit(ITEDummy, arg);
-        }
         return ITEDummy;
     }
 
@@ -1158,9 +1175,14 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         int callTov = localGraph.getTimeOfVisitMap().getOrDefault(callNode, 1);
         recordExactType(callNode, n, arg, callTov);
 
-        Symbol predOrFunSymbol = aame.getSymbol(descriptor.sourceName);
+        Symbol predOrFunSymbol = callableTargets.get(descriptor.key());
         if (predOrFunSymbol == null) {
             predOrFunSymbol = aame.getSymbol(n.getName());
+            if (!(predOrFunSymbol instanceof is.fivefivefive.ACGN.alloy.CallableTargetSymbol)
+                    || !((is.fivefivefive.ACGN.alloy.CallableTargetSymbol) predOrFunSymbol)
+                            .matchesCall(callSymbol)) {
+                predOrFunSymbol = null;
+            }
         }
         AugmentedNode calledNode = uniqueNode.get(predOrFunSymbol);
         if (calledNode == null) {
@@ -1291,6 +1313,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
 
     private void indexCallableDeclarations(ModelUnit model) {
         callableDescriptors.clear();
+        forestIdsByDescriptor.clear();
+        callableTargets.clear();
         importedModules.clear();
         String declaredModule = model.getModuleDecl() == null
                 ? null
@@ -1346,10 +1370,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         String identity = sourceName.contains("/")
                 ? sourceName
                 : moduleIdentity + "/" + localName;
-        int arity = 0;
-        for (ParamDecl declaration : callable.getParamList()) {
-            arity += declaration.getNames().size();
-        }
+        int arity = declaredArity(callable);
         CallableDescriptor descriptor = new CallableDescriptor(
                 sourceName,
                 identity,
@@ -1363,9 +1384,15 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
 
     private void putCallableAlias(String alias, CallableDescriptor descriptor) {
-        CallableDescriptor previous = callableDescriptors.putIfAbsent(alias, descriptor);
-        if (previous != null && previous != descriptor) {
+        List<CallableDescriptor> descriptors = callableDescriptors.computeIfAbsent(
+                alias, ignored -> new java.util.ArrayList<>());
+        if (descriptors.stream().anyMatch(existing -> existing != descriptor
+                && existing.kind == descriptor.kind
+                && existing.arity == descriptor.arity)) {
             throw new IllegalStateException("Ambiguous callable alias: " + alias);
+        }
+        if (!descriptors.contains(descriptor)) {
+            descriptors.add(descriptor);
         }
     }
 
@@ -1389,11 +1416,29 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             CallSymbol.Kind kind,
             int observedArity) {
         String sourceName = call.getName();
-        CallableDescriptor descriptor = callableDescriptors.get(sourceName);
+        CallableDescriptor descriptor = findDeclaredCallable(
+                sourceName, kind, observedArity);
         if (descriptor == null) {
-            descriptor = callableDescriptors.get(stripThisQualifier(sourceName));
-        }
-        if (descriptor == null) {
+            List<CallableDescriptor> declared = callableDescriptors.get(sourceName);
+            if (declared == null) {
+                declared = callableDescriptors.get(stripThisQualifier(sourceName));
+            }
+            if (declared != null) {
+                List<Integer> declaredArities = declared.stream()
+                        .filter(candidate -> candidate.kind == kind)
+                        .map(candidate -> candidate.arity)
+                        .distinct()
+                        .sorted()
+                        .toList();
+                if (!declaredArities.isEmpty()) {
+                    throw new IllegalStateException(
+                            "Call arity disagrees with declaration for " + sourceName
+                                    + ": expected one of " + declaredArities
+                                    + ", found " + observedArity);
+                }
+                throw new IllegalStateException(
+                        "Call kind disagrees with declaration for " + sourceName);
+            }
             ImportedCall importedCall = importedCallable(sourceName);
             if (importedCall == null) {
                 throw new IllegalStateException(
@@ -1401,13 +1446,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             }
             AlloyLibraryCallableLedger.Signature signature =
                     AlloyLibraryCallableLedger.require(
-                            importedCall.module.fileName, importedCall.member, kind);
-            if (signature.arity() != observedArity) {
-                throw new IllegalStateException(
-                        "Call arity disagrees with imported declaration for " + sourceName
-                                + ": expected " + signature.arity()
-                                + ", found " + observedArity);
-            }
+                            importedCall.module.fileName,
+                            importedCall.member,
+                            kind,
+                            observedArity);
             return new CallableDescriptor(
                     sourceName,
                     importedCall.identity(),
@@ -1415,16 +1457,51 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                     kind,
                     CallSymbol.ArityAuthority.TYPECHECKED_IMPORT);
         }
-        if (descriptor.kind != kind) {
+        return descriptor;
+    }
+
+    private CallableDescriptor resolveDeclaredCallable(
+            String sourceName,
+            CallSymbol.Kind kind,
+            int arity) {
+        CallableDescriptor descriptor = findDeclaredCallable(sourceName, kind, arity);
+        if (descriptor == null) {
             throw new IllegalStateException(
-                    "Call kind disagrees with declaration for " + sourceName);
-        }
-        if (descriptor.arity != observedArity) {
-            throw new IllegalStateException(
-                    "Call arity disagrees with declaration for " + sourceName
-                            + ": expected " + descriptor.arity + ", found " + observedArity);
+                    "Callable declaration was not indexed uniquely: " + sourceName
+                            + "/" + kind + "/" + arity);
         }
         return descriptor;
+    }
+
+    private CallableDescriptor findDeclaredCallable(
+            String sourceName,
+            CallSymbol.Kind kind,
+            int arity) {
+        List<CallableDescriptor> candidates = callableDescriptors.get(sourceName);
+        if (candidates == null) {
+            candidates = callableDescriptors.get(stripThisQualifier(sourceName));
+        }
+        if (candidates == null) {
+            return null;
+        }
+        List<CallableDescriptor> matches = candidates.stream()
+                .filter(candidate -> candidate.kind == kind && candidate.arity == arity)
+                .distinct()
+                .toList();
+        if (matches.size() > 1) {
+            throw new IllegalStateException(
+                    "Ambiguous callable declaration: " + sourceName
+                            + "/" + kind + "/" + arity);
+        }
+        return matches.isEmpty() ? null : matches.get(0);
+    }
+
+    private static int declaredArity(PredOrFun callable) {
+        int arity = 0;
+        for (ParamDecl declaration : callable.getParamList()) {
+            arity += declaration.getNames().size();
+        }
+        return arity;
     }
 
     private ImportedCall importedCallable(String sourceName) {
@@ -1472,6 +1549,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             this.kind = kind;
             this.arityAuthority = arityAuthority;
         }
+
+        private CallableKey key() {
+            return new CallableKey(identity, kind, arity);
+        }
+    }
+
+    private record CallableKey(
+            String identity,
+            CallSymbol.Kind kind,
+            int arity) {
     }
 
     private static final class ImportedModuleDescriptor {
@@ -1692,27 +1779,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
-        if (leftNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, leftNode, 1);
         AugmentedNode rightNode = right.accept(this, arg);
-        if (rightNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, rightNode, 2);
-        visitAndConnectAt(bopNode, leftNode, 1, arg, bopTimeOfVisit);
-        visitAndConnectAt(bopNode, rightNode, 2, arg, bopTimeOfVisit);
-        // update the shadow node time of visit back
-        if (leftNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        if (rightNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        // System.out.println("BOP: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
+        connectBinaryOccurrence(
+                bopNode, leftNode, rightNode, arg, bopTimeOfVisit);
         return bopNode;
     }
 
@@ -1741,30 +1810,22 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         ExprOrFormula left = n.getLeft();
         ExprOrFormula right = n.getRight();
         AugmentedNode leftNode = left.accept(this, arg);
-        if (leftNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, leftNode, 1);
-        visitAndConnectAt(bopNode, leftNode, 1, arg, bopTimeOfVisit);
         AugmentedNode rightNode = right.accept(this, arg);
-        if (rightNode == bopNode) {
-            // shadow node created, need to down the time of visit tracker
-            downTimeOfVisit(bopNode, arg);
-        }
-        // globalVariables.addEdge(bopNode, rightNode, 2);
-        visitAndConnectAt(bopNode, rightNode, 2, arg, bopTimeOfVisit);
-        // update the shadow node time of visit back
-        // TODO: ALSO APPLY TO OTHER SHADOWY NODES
-        if (leftNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        if (rightNode == bopNode) {
-            updateTimeOfVisit(bopNode, arg);
-        }
-        // System.out.println("BOPex: " + bopNode.getSymbol().getName() + " at " + timeOfVisitMap.get(bopNode));
-
+        connectBinaryOccurrence(
+                bopNode, leftNode, rightNode, arg, bopTimeOfVisit);
         return bopNode;
+    }
+
+    private void connectBinaryOccurrence(
+            AugmentedNode parent,
+            AugmentedNode left,
+            AugmentedNode right,
+            ScopeTreeNode scope,
+            int parentVisit) {
+        // The saved parent visit owns these edges; nested same-operator visits retain
+        // their later visit numbers so each source occurrence remains addressable.
+        visitAndConnectAt(parent, left, 1, scope, parentVisit);
+        visitAndConnectAt(parent, right, 2, scope, parentVisit);
     }
 
     private Pair<String, Integer> getBinaryExprSymbolLabelAndSemantic(BinaryExpr n) {
@@ -1904,6 +1965,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         return Pair.of(symbolLabel, semantic);
     }
+
 
     @Override
     public AugmentedNode visit(UnaryFormula n, ScopeTreeNode arg) {
@@ -2104,7 +2166,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             String name = new SigSymbol(signature.label).getName();
             SigSymbol symbol = signatureSymbols.get(name);
             if (symbol == null) {
-                symbol = new SigSymbol(name);
+                symbol = SigSymbol.fromParser(signature, parserModule);
                 signatureSymbols.put(name, symbol);
             }
             if (!uniqueNode.containsKey(symbol)) {

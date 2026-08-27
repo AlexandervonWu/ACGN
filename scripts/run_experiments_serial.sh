@@ -7,9 +7,9 @@ set -euo pipefail
 # Environment overrides:
 #   DATASET, DISTANCE_OUTPUT, AUGMENTED_OUTPUT, ABLATION_OUTPUT,
 #   CAPABILITY_OUTPUT, SERIAL_SUMMARY, THREADS, MAX_HEAP,
-#   CAPABILITY_TARGET, SEED, LIMIT.
-# Set REWARD_POOL to a positive integer to enable Rewarder for the first two
-# stages; the default is the faster reward-free run.
+#   CAPABILITY_TARGET, SEED, LIMIT, REWARD_POOL.
+# Rewarder uses 100 instances by default for the first two stages. Set
+# REWARD_POOL=0 only for an explicitly reward-free structural smoke run.
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BUILD_DIR=""
@@ -20,22 +20,23 @@ AUGMENTED_OUTPUT="${AUGMENTED_OUTPUT:-$ROOT/alloy4fun-augmented}"
 ABLATION_OUTPUT="${ABLATION_OUTPUT:-$ROOT/egraph_ablation}"
 CAPABILITY_OUTPUT="${CAPABILITY_OUTPUT:-$ROOT/capability_benchmark}"
 SERIAL_SUMMARY="${SERIAL_SUMMARY:-$ROOT/experiment_results_summary.md}"
-MAX_HEAP="${MAX_HEAP:-4g}"
+MAX_HEAP="${MAX_HEAP:-8g}"
 CAPABILITY_TARGET="${CAPABILITY_TARGET:-500}"
 SEED="${SEED:-55520260811}"
+REWARD_POOL="${REWARD_POOL:-100}"
 
 logical_cores="$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf '1')"
 THREADS="${THREADS:-$logical_cores}"
-if (( THREADS > 32 )); then
-  THREADS=32
+if (( THREADS > 16 )); then
+  THREADS=16
 fi
 
 reward_args=(--skip-rewards)
-if [[ -n "${REWARD_POOL:-}" ]]; then
-  if (( REWARD_POOL <= 0 )); then
-    printf 'REWARD_POOL must be a positive integer\n' >&2
-    exit 2
-  fi
+if ! [[ "$REWARD_POOL" =~ ^[0-9]+$ ]]; then
+  printf 'REWARD_POOL must be a nonnegative integer\n' >&2
+  exit 2
+fi
+if (( REWARD_POOL > 0 )); then
   reward_args=(--reward-pool "$REWARD_POOL")
 fi
 
@@ -93,6 +94,7 @@ validate_augmenter() {
   require_text "$markdown" 'Avg nearest Fast Rewrite IR'
   require_file "$AUGMENTED_OUTPUT/correct_ast_diff_canonical_equiv.json"
   require_file "$AUGMENTED_OUTPUT/correct_ast_diff_fast_rewrite_equiv.json"
+  require_file "$AUGMENTED_OUTPUT/parse_retries.csv"
 }
 
 validate_ablation() {
@@ -127,6 +129,7 @@ write_serial_summary() {
     printf -- '- Dataset: `%s`\n' "$DATASET"
     printf -- '- Workers: %s\n' "$THREADS"
     printf -- '- JVM heap cap: `%s`\n' "$MAX_HEAP"
+    printf -- '- Reward pool size: %s\n' "$REWARD_POOL"
     if [[ ${#limit_args[@]} -gt 0 ]]; then
       printf -- '- Predicate-pair/file limit: %s\n' "$LIMIT"
     else

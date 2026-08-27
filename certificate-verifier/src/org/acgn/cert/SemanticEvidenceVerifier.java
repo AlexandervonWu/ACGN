@@ -38,15 +38,16 @@ final class SemanticEvidenceVerifier {
     private static final String CALL_OCCURRENCE_ANCHOR_PREFIX =
             "ACGN/CALL-OCCURRENCE/";
     private static final String PRODUCTION_ALLOY_REWRITE_MODE =
-            "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v11";
+            "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13";
     private static final String PRODUCTION_ALLOY_SIGNATURE_VERSION =
-            "canonical-alloy-signature-v7";
-    private static final String REGISTRY_VERSION = "alloy-container-law-theory-v2";
+            "canonical-alloy-signature-v8";
+    private static final String REGISTRY_VERSION = "alloy-container-law-theory-v3";
     private static final String REGISTRY_TEXT = String.join("\n",
             "AND:Set+:A,C,I",
             "OR:Set+:A,C,I",
             "PLUS:Set+:A,C,I",
             "INTERSECT:Set+:A,C,I",
+            "RELATIONAL-INT-CARRIER:PLUS,INTERSECT=Set<One(Int)>;parser-opcode-authority",
             "IPLUS:forbid=Bag2:C;modular=Bag+:A,C",
             "MUL:forbid=Bag2:C;modular=Bag+:A,C",
             "EQUALS:Bag2:C",
@@ -56,7 +57,7 @@ final class SemanticEvidenceVerifier {
     private static final String REGISTRY_DIGEST = sha256(
             REGISTRY_VERSION + "\n" + REGISTRY_TEXT);
     private static final String DEPENDENT_CHAIN_VERSION =
-            "alloy-dependent-chain-theory-v10";
+            "alloy-dependent-chain-theory-v11";
     private static final String DEPENDENT_CHAIN_TEXT = String.join("\n",
             "FAMILY:finite-union-of-correlated-ordered-products;normalized=subtype-antichain",
             "DAG:edges=specific-to-general;synthetic-union-and-common-ancestor-nodes-are-not-nominal-authority",
@@ -70,7 +71,7 @@ final class SemanticEvidenceVerifier {
             "DISJOINT:two distinct authenticated PrimSig branches with first common ancestor;univ-commonality-never-implies-overlap",
             "AUTHORITY:one-complete-nominal-path-per-top;one-live-parser-module-per-chain",
             "JOIN-FLAT-GUARD:every interior source operand has retained relation arity at least two, including typed-empty families",
-            "LEAF:exact correlated relation family or Int/AlloyCarrier primitive singleton;no-name-based-parameter-authority",
+            "LEAF:exact correlated relation family, Int/AlloyCarrier primitive singleton, or parser-authenticated same-arity subfamily;typed empty requires its live parser occurrence;no-name-based-parameter-authority",
             "UNIV:explicit parser-provided AlloySig:univ is an exact carrier;absent-or-unresolved-types-never-invent-univ",
             "EMPTY:positive-arity typed empty family has zero alternatives;all-disjoint JOIN retains complete evidence and ordered Seq",
             "CONTAINER:ordered-duplicate-preserving-Seq",
@@ -137,12 +138,17 @@ final class SemanticEvidenceVerifier {
     private final Bundle bundle;
     private final KernelModel model;
     private final Limits limits;
+    private final VerificationPolicy policy;
     private long parsedKeyNodes;
 
-    SemanticEvidenceVerifier(Bundle bundle, KernelModel model, Limits limits) {
+    SemanticEvidenceVerifier(
+            Bundle bundle,
+            KernelModel model,
+            VerificationPolicy policy) {
         this.bundle = Objects.requireNonNull(bundle, "bundle");
         this.model = Objects.requireNonNull(model, "model");
-        this.limits = Objects.requireNonNull(limits, "limits");
+        this.policy = Objects.requireNonNull(policy, "policy");
+        this.limits = policy.limits();
     }
 
     Authorization verify() {
@@ -189,6 +195,7 @@ final class SemanticEvidenceVerifier {
         }
         Set<Long> occurrenceIds = new HashSet<>();
         Set<String> sourcePaths = new HashSet<>();
+        Set<String> occurrenceKeys = new HashSet<>();
         Set<String> coveredCallOperators = new HashSet<>();
         Map<String, KernelModel.Term> coveredOccurrenceAnchors = new HashMap<>();
         for (Wire.Node record : section.children()) {
@@ -269,6 +276,11 @@ final class SemanticEvidenceVerifier {
             if (!suppliedKey.equals(expectedKey)) {
                 throw theory("CALL occurrence structural key does not replay");
             }
+            if (!occurrenceKeys.add(expectedKey.stableString())) {
+                throw new FormatException(
+                        FailureCode.DUPLICATE_ID,
+                        "CALL occurrence structural key is duplicated");
+            }
             String anchorIdentity = CALL_OCCURRENCE_ANCHOR_PREFIX
                     + Base64.getUrlEncoder().withoutPadding().encodeToString(
                             expectedKey.stableString().getBytes(
@@ -345,6 +357,26 @@ final class SemanticEvidenceVerifier {
                         "CALL occurrence anchor must match its source context/type "
                                 + "and remain an isolated provenance term");
             }
+        }
+        String inputSha256 = bundle.metadata().inputSha256();
+        String commitmentSubject = CallOccurrenceCommitment.subjectDigest(
+                bundle.metadata());
+        String expectedDigest = policy.trustedCallOccurrenceDigests().get(
+                commitmentSubject);
+        if (expectedDigest == null) {
+            throw new UncheckableException(
+                    FailureCode.MISSING_EVIDENCE,
+                    "CALL occurrence completeness requires a caller-pinned "
+                            + "commitment for input scope " + commitmentSubject
+                            + " (source " + inputSha256 + ")");
+        }
+        String actualDigest = CallOccurrenceCommitment.digest(
+                commitmentSubject, occurrenceKeys);
+        if (!expectedDigest.equals(actualDigest)) {
+            throw new FormatException(
+                    FailureCode.MISSING_EVIDENCE,
+                    "CALL occurrence evidence differs from the caller-pinned "
+                            + "source commitment");
         }
     }
 
@@ -1000,7 +1032,7 @@ final class SemanticEvidenceVerifier {
             case "AND", "OR" -> requireTypes(
                     result.is(TypeKind.BOOL) && element.is(TypeKind.BOOL), opcode);
             case "PLUS", "INTERSECT" -> requireTypes(
-                    relationArity(result) != null
+                    (relationArity(result) != null || result.is(TypeKind.INT))
                             && result.key().equals(element.key()),
                     opcode);
             case "IPLUS", "MUL" -> requireTypes(
@@ -1242,7 +1274,7 @@ final class SemanticEvidenceVerifier {
     /** Rebuilds every concrete semantic-evidence claim from the decoded model. */
     private final class SemanticReplay {
         private static final String BINDER_SIGNATURE =
-                "canonical-alloy-signature-v7";
+                "canonical-alloy-signature-v8";
         private static final String BINDER_DECLARATION = "alloy-binder-block";
 
         private final ProfileEvidence profile;
@@ -1847,19 +1879,55 @@ final class SemanticEvidenceVerifier {
                 }
                 ExactType stored = type(schema.value(), "dependent-chain stored leaf");
                 ExactType output = type(node.scalar(1), "dependent-chain relation view");
-                LeafTypeRule rule = requireLeafTypeRule(stored, output);
-                if (!node.scalar(2).equals(rule.name())) {
-                    throw theory("Dependent-chain leaf names another typing rule");
-                }
-                StableKey typeProof = StableKey.of(
-                        "dependent-chain-leaf-type-proof-v1",
-                        List.of(rule.name()),
-                        List.of(stored.key(), output.key()));
-                requireKey(node.scalar(4), typeProof,
-                        "dependent-chain leaf type proof");
                 ChainDag dag = dependentTypeDag(node.child(0), output);
+                LeafTypeRule rule;
+                try {
+                    rule = LeafTypeRule.valueOf(node.scalar(2));
+                } catch (IllegalArgumentException exception) {
+                    throw new FormatException(
+                            FailureCode.UNKNOWN_VARIANT,
+                            "Unknown dependent-chain leaf typing rule "
+                                    + node.scalar(2),
+                            exception);
+                }
+                StableKey typeProof;
+                if (rule == LeafTypeRule.PARSER_AUTHENTICATED_SUBFAMILY) {
+                    Integer storedArity = relationArity(stored);
+                    Integer outputArity = relationArity(output);
+                    if (storedArity == null
+                            || !storedArity.equals(outputArity)
+                            || stored.key().equals(output.key())) {
+                        throw theory(
+                                "Parser-authenticated subfamily evidence has incompatible leaf types");
+                    }
+                    typeProof = parseStableKey(
+                            node.scalar(4), "dependent-chain leaf type proof");
+                    if (!typeProof.tag().equals(
+                                    "dependent-chain-leaf-type-proof-v2")
+                            || typeProof.scalars().size() != 2
+                            || !typeProof.scalars().get(0).equals(rule.name())
+                            || typeProof.scalars().get(1).isBlank()
+                            || typeProof.children().size() != 2
+                            || !typeProof.children().get(0).equals(stored.key())
+                            || !typeProof.children().get(1).equals(dag.key())) {
+                        throw theory(
+                                "Parser-authenticated subfamily leaf proof does not replay structurally");
+                    }
+                    hasUntrustedSubtypeHierarchy = true;
+                } else {
+                    LeafTypeRule expected = requireLeafTypeRule(stored, output);
+                    if (rule != expected) {
+                        throw theory("Dependent-chain leaf names another typing rule");
+                    }
+                    typeProof = StableKey.of(
+                            "dependent-chain-leaf-type-proof-v1",
+                            List.of(rule.name()),
+                            List.of(stored.key(), output.key()));
+                    requireKey(node.scalar(4), typeProof,
+                            "dependent-chain leaf type proof");
+                }
                 StableKey key = StableKey.of(
-                        "dependent-chain-leaf-v3",
+                        "dependent-chain-leaf-v4",
                         List.of(),
                         List.of(
                                 portKey(term),
@@ -5225,7 +5293,8 @@ final class SemanticEvidenceVerifier {
 
         private enum LeafTypeRule {
             EXACT_RELATION,
-            PRIMITIVE_SET_SINGLETON
+            PRIMITIVE_SET_SINGLETON,
+            PARSER_AUTHENTICATED_SUBFAMILY
         }
 
         private record ConstructionEvidence(

@@ -58,7 +58,13 @@ public final class ParsedSourcePairInspectionTest {
         VerificationResult result = new IndependentVerifier().verifyPair(
                 leftBundleBytes,
                 rightBundleBytes,
-                VerificationPolicy.trust(trustedDigest));
+                VerificationPolicy.trust(trustedDigest)
+                        .withCallOccurrenceCommitment(
+                                CallOccurrenceCommitment.inspect(
+                                        leftBundleBytes, Limits.defaults()))
+                        .withCallOccurrenceCommitment(
+                                CallOccurrenceCommitment.inspect(
+                                        rightBundleBytes, Limits.defaults())));
         check(result.outcome() == Outcome.VERIFIED
                         && result.code() == FailureCode.NONE,
                 "the independently parsed source pair verifies under the static pin");

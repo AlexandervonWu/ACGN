@@ -190,8 +190,8 @@ certificate and stays in the ordinary fixed-binary representation.
   retains 182 open traceability diagnostics; this is not phase closure.
 
 The current fixed producer/verifier identity is
-`alloy-dependent-chain-theory-v10` with digest
-`2333d5911c360be748aef56db5ee2a818143cfbe0fdc95ae9814f432bca4019a`.
+`alloy-dependent-chain-theory-v11` with digest
+`3387749f582a53216caa599105386b710e9e5e748110c59e1b3bf3401ac03cf8`.
 The formalization is deliberately split across two independently compiled
 files. `DependentTypeDagStandalone.lean` covers normalized correlated
 families, the complete Cartesian alternative matrix, and the guarded

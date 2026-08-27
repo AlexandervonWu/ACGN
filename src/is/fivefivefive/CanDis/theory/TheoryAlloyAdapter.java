@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -138,6 +139,8 @@ public final class TheoryAlloyAdapter {
         private final long sourceOccurrenceLineage;
         private final String sourceOccurrencePath;
         private final StructuralKey sourceOccurrenceCommitment;
+        private final StructuralKey boundRepairOccurrenceCommitment;
+        private final String transferContentCommitment;
 
         private DependentChainSourceBinding(
                 EGraphNode source,
@@ -161,6 +164,32 @@ public final class TheoryAlloyAdapter {
                 throw new IllegalArgumentException(
                         "A dependent certificate names another source occurrence");
             }
+            this.boundRepairOccurrenceCommitment = sourceOccurrenceCommitment;
+            this.transferContentCommitment =
+                    source.dependentChainTransferContentCommitment();
+        }
+
+        private DependentChainSourceBinding(
+                EGraphNode repairSource,
+                DependentChainSourceBinding certifiedSource) {
+            this.certificate = certifiedSource.certificate;
+            this.sourceOccurrenceLineage = certifiedSource.sourceOccurrenceLineage;
+            this.sourceOccurrencePath = certifiedSource.sourceOccurrencePath;
+            this.sourceOccurrenceCommitment =
+                    certifiedSource.sourceOccurrenceCommitment;
+            this.transferContentCommitment =
+                    certifiedSource.transferContentCommitment;
+            requireLineage(repairSource);
+            String repairTransferContent =
+                    repairSource.dependentChainTransferContentCommitment();
+            if (!transferContentCommitment.equals(repairTransferContent)) {
+                throw new IllegalArgumentException(
+                        "A dependent source changed outside its certified ACI operands");
+            }
+            this.boundRepairOccurrenceCommitment = sourceOccurrenceCommitment(
+                    repairSource,
+                    sourceOccurrencePath,
+                    certificate.source().structuralKey());
         }
 
         private static String requireSourceOccurrencePath(String path) {
@@ -192,8 +221,7 @@ public final class TheoryAlloyAdapter {
 
         private DependentChainSourceBinding transferTo(EGraphNode source) {
             requireLineage(source);
-            return new DependentChainSourceBinding(
-                    source, sourceOccurrencePath, certificate);
+            return new DependentChainSourceBinding(source, this);
         }
 
         public void requireMatches(EGraphNode source) {
@@ -202,8 +230,9 @@ public final class TheoryAlloyAdapter {
                     source,
                     sourceOccurrencePath,
                     certificate.source().structuralKey());
-            if (!sourceOccurrenceCommitment.equals(current)
-                    || !certificate.sourceOccurrenceCommitment().equals(current)) {
+            if (!boundRepairOccurrenceCommitment.equals(current)
+                    || !transferContentCommitment.equals(
+                            source.dependentChainTransferContentCommitment())) {
                 throw new IllegalStateException(
                         "A certified dependent source occurrence changed after adaptation");
             }
@@ -228,6 +257,219 @@ public final class TheoryAlloyAdapter {
         public StructuralKey sourceOccurrenceCommitment() {
             return sourceOccurrenceCommitment;
         }
+
+        private boolean sameTransferPlanAs(
+                DependentChainSourceBinding other) {
+            return other != null
+                    && sourceOccurrenceLineage
+                            == other.sourceOccurrenceLineage
+                    && transferContentCommitment.equals(
+                            other.transferContentCommitment)
+                    && certificate.source().structuralKey().equals(
+                            other.certificate.source().structuralKey())
+                    && certificate.target().structuralKey().equals(
+                            other.certificate.target().structuralKey())
+                    && certificate.theoryIndex().equals(
+                            other.certificate.theoryIndex());
+        }
+    }
+
+    /**
+     * Exact Set-normalization fibers transferred from one certified source
+     * occurrence to its repaired occurrence by preserved lineage.
+     */
+    public static final class CertifiedSetOperandPartition {
+        private final long sourceOccurrenceLineage;
+        private final Opcode sourceOpcode;
+        private final int inputArity;
+        private final List<Long> inputSourceLineages;
+        private final List<List<Integer>> outputFibers;
+        private final StructuralKey traceKey;
+
+        private CertifiedSetOperandPartition(
+                EGraphNode source,
+                ContainerApplicationTrace trace) {
+            Objects.requireNonNull(source, "source");
+            Objects.requireNonNull(trace, "trace");
+            if (!(trace.schema() instanceof SetPortSchema)) {
+                throw new IllegalArgumentException(
+                        "Only a certified Set trace defines an idempotent partition");
+            }
+            sourceOccurrenceLineage = source.getSourceOccurrenceLineage();
+            if (sourceOccurrenceLineage <= 0L) {
+                throw new IllegalArgumentException(
+                        "A certified Set partition requires positive source lineage");
+            }
+            sourceOpcode = source.getOpcode();
+            inputArity = trace.inputOccurrences().size();
+            List<EGraphNode> sourceInputs = new ArrayList<>();
+            collectFlatInputs(source, source, sourceInputs,
+                    Collections.newSetFromMap(new IdentityHashMap<>()));
+            if (sourceInputs.size() != inputArity) {
+                throw new IllegalStateException(
+                        "A certified Set trace and its source have different flattened arity");
+            }
+            List<Long> sourceLineages = new ArrayList<>(sourceInputs.size());
+            for (EGraphNode input : sourceInputs) {
+                long lineage = input.getSourceOccurrenceLineage();
+                if (lineage <= 0L) {
+                    throw new IllegalStateException(
+                            "A certified Set input requires positive source lineage");
+                }
+                sourceLineages.add(lineage);
+            }
+            inputSourceLineages = Collections.unmodifiableList(sourceLineages);
+            outputFibers = trace.outputFibers();
+            traceKey = trace.structuralKey();
+        }
+
+        private static void collectFlatInputs(
+                EGraphNode root,
+                EGraphNode current,
+                List<EGraphNode> inputs,
+                Set<EGraphNode> active) {
+            if (current != root && !root.sameFlatOperatorInstance(current)) {
+                inputs.add(current);
+                return;
+            }
+            if (!active.add(current)) {
+                throw new IllegalStateException(
+                        "A certified Set source contains a recursive flat occurrence");
+            }
+            try {
+                for (EGraphNode child : current.getChildren()) {
+                    if (root.sameFlatOperatorInstance(child)) {
+                        collectFlatInputs(root, child, inputs, active);
+                    } else {
+                        inputs.add(child);
+                    }
+                }
+            } finally {
+                active.remove(current);
+            }
+        }
+
+        private boolean samePartition(CertifiedSetOperandPartition other) {
+            return other != null
+                    && sourceOccurrenceLineage == other.sourceOccurrenceLineage
+                    && sourceOpcode == other.sourceOpcode
+                    && inputArity == other.inputArity
+                    && inputSourceLineages.equals(other.inputSourceLineages)
+                    && outputFibers.equals(other.outputFibers);
+        }
+
+        private boolean deduplicated() {
+            return outputFibers.size() < inputArity;
+        }
+
+        public List<List<Integer>> inputFibers(EGraphNode repairedSource) {
+            Objects.requireNonNull(repairedSource, "repairedSource");
+            if (repairedSource.getSourceOccurrenceLineage()
+                            != sourceOccurrenceLineage
+                    || repairedSource.getOpcode() != sourceOpcode
+                    || !repairedSource.isSetFlexibleArity()
+                    || repairedSource.getChildren().size() != inputArity) {
+                throw new IllegalStateException(
+                        "A certified Set partition was attached to another repair occurrence");
+            }
+            for (List<Integer> fiber : outputFibers) {
+                if (fiber.isEmpty()) {
+                    throw new IllegalStateException(
+                            "A certified Set normalization fiber is empty");
+                }
+            }
+            Map<Long, ArrayDeque<Integer>> repairedByLineage = new LinkedHashMap<>();
+            List<EGraphNode> repairedInputs = repairedSource.getChildren();
+            for (int index = 0; index < repairedInputs.size(); index++) {
+                long lineage = repairedInputs.get(index).getSourceOccurrenceLineage();
+                if (lineage <= 0L) {
+                    throw new IllegalStateException(
+                            "A repaired Set input requires positive source lineage");
+                }
+                repairedByLineage.computeIfAbsent(
+                        lineage, ignored -> new ArrayDeque<>()).addLast(index);
+            }
+            int[] repairedIndex = new int[inputArity];
+            for (int sourceIndex = 0; sourceIndex < inputArity; sourceIndex++) {
+                long lineage = inputSourceLineages.get(sourceIndex);
+                ArrayDeque<Integer> candidates = repairedByLineage.get(lineage);
+                if (candidates == null || candidates.isEmpty()) {
+                    throw new IllegalStateException(
+                            "A repaired Set input cannot be matched to its certified source lineage");
+                }
+                repairedIndex[sourceIndex] = candidates.removeFirst();
+            }
+            for (ArrayDeque<Integer> unmatched : repairedByLineage.values()) {
+                if (!unmatched.isEmpty()) {
+                    throw new IllegalStateException(
+                            "A repaired Set contains an unmatched source lineage");
+                }
+            }
+            List<List<Integer>> remapped = new ArrayList<>(outputFibers.size());
+            for (List<Integer> fiber : outputFibers) {
+                List<Integer> repairedFiber = new ArrayList<>(fiber.size());
+                for (int sourceIndex : fiber) {
+                    repairedFiber.add(repairedIndex[sourceIndex]);
+                }
+                Collections.sort(repairedFiber);
+                remapped.add(Collections.unmodifiableList(repairedFiber));
+            }
+            return Collections.unmodifiableList(remapped);
+        }
+
+        public StructuralKey traceKey() {
+            return traceKey;
+        }
+    }
+
+    /** Certified import of one owner-local coordinate into a temporal phase. */
+    public static final class PhaseLocalBindingCertificate {
+        private final NormalForm.PhaseLocalBindingImport source;
+        private final int ownerPhase;
+        private final BinderBlockDescriptor ownerDescriptor;
+        private final int coordinate;
+        private final String ownerContext;
+
+        private PhaseLocalBindingCertificate(
+                NormalForm.PhaseLocalBindingImport source,
+                int ownerPhase,
+                BinderBlockDescriptor ownerDescriptor,
+                int coordinate) {
+            this.source = Objects.requireNonNull(source, "phase-local source import");
+            if (ownerPhase < 0) {
+                throw new IllegalArgumentException(
+                        "A phase-local certificate requires its owner phase");
+            }
+            this.ownerPhase = ownerPhase;
+            this.ownerDescriptor = Objects.requireNonNull(
+                    ownerDescriptor, "phase-local owner descriptor");
+            if (coordinate < 0 || coordinate >= ownerDescriptor.coordinates().size()) {
+                throw new IllegalArgumentException(
+                        "A phase-local certificate coordinate is outside its owner descriptor");
+            }
+            this.coordinate = coordinate;
+            this.ownerContext = source.ownerPhasePath() + "|" + source.binderContext();
+        }
+
+        public NormalForm.PhaseLocalBindingImport source() {
+            return source;
+        }
+
+        public int ownerPhase() {
+            return ownerPhase;
+        }
+
+        public BinderBlockDescriptor ownerDescriptor() {
+            return ownerDescriptor;
+        }
+
+        public int coordinate() {
+            return coordinate;
+        }
+
+        public String ownerContext() {
+            return ownerContext;
+        }
     }
 
     public static final class Result {
@@ -238,10 +480,14 @@ public final class TheoryAlloyAdapter {
         private final List<List<Integer>> phaseSourceCoordinates;
         private final Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors;
         private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates;
+        private final Map<NormalForm, List<PhaseLocalBindingCertificate>>
+                phaseLocalBindingCertificates;
         private final Map<EGraphNode, DependentChainCertificate>
                 dependentChainSourceCertificates;
         private final Map<EGraphNode, DependentChainSourceBinding>
                 dependentChainSourceBindings;
+        private final Map<EGraphNode, CertifiedSetOperandPartition>
+                certifiedSetOperandPartitions;
         private final long eclasses;
         private final long enodes;
         private final long slots;
@@ -260,8 +506,12 @@ public final class TheoryAlloyAdapter {
                 List<? extends List<Integer>> phaseSourceCoordinates,
                 Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors,
                 Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates,
+                Map<NormalForm, List<PhaseLocalBindingCertificate>>
+                        phaseLocalBindingCertificates,
                 Map<EGraphNode, DependentChainSourceBinding>
                         dependentChainSourceBindings,
+                Map<EGraphNode, CertifiedSetOperandPartition>
+                        certifiedSetOperandPartitions,
                 long eclasses,
                 long enodes,
                 long slots,
@@ -303,6 +553,16 @@ public final class TheoryAlloyAdapter {
             }
             this.localBinderSourceCoordinates = Collections.unmodifiableMap(
                     localCoordinateCopies);
+            IdentityHashMap<NormalForm, List<PhaseLocalBindingCertificate>>
+                    phaseLocalCopies = new IdentityHashMap<>();
+            for (Map.Entry<NormalForm, List<PhaseLocalBindingCertificate>> entry
+                    : phaseLocalBindingCertificates.entrySet()) {
+                phaseLocalCopies.put(
+                        entry.getKey(),
+                        Collections.unmodifiableList(new ArrayList<>(entry.getValue())));
+            }
+            this.phaseLocalBindingCertificates = Collections.unmodifiableMap(
+                    phaseLocalCopies);
             IdentityHashMap<EGraphNode, DependentChainSourceBinding> bindingCopies =
                     new IdentityHashMap<>();
             IdentityHashMap<EGraphNode, DependentChainCertificate> certificateCopies =
@@ -320,6 +580,19 @@ public final class TheoryAlloyAdapter {
             this.dependentChainSourceBindings = Collections.unmodifiableMap(bindingCopies);
             this.dependentChainSourceCertificates = Collections.unmodifiableMap(
                     certificateCopies);
+            IdentityHashMap<EGraphNode, CertifiedSetOperandPartition> partitionCopies =
+                    new IdentityHashMap<>();
+            for (Map.Entry<EGraphNode, CertifiedSetOperandPartition> entry
+                    : certifiedSetOperandPartitions.entrySet()) {
+                EGraphNode source = Objects.requireNonNull(
+                        entry.getKey(), "repaired Set occurrence");
+                CertifiedSetOperandPartition partition = Objects.requireNonNull(
+                        entry.getValue(), "certified Set partition");
+                partition.inputFibers(source);
+                partitionCopies.put(source, partition);
+            }
+            this.certifiedSetOperandPartitions = Collections.unmodifiableMap(
+                    partitionCopies);
             this.eclasses = eclasses;
             this.enodes = enodes;
             this.slots = slots;
@@ -376,6 +649,12 @@ public final class TheoryAlloyAdapter {
             return localBinderSourceCoordinates;
         }
 
+        /** Exact owner-coordinate proofs for local binders crossing a temporal edge. */
+        public Map<NormalForm, List<PhaseLocalBindingCertificate>>
+                phaseLocalBindingCertificates() {
+            return phaseLocalBindingCertificates;
+        }
+
         /** Source occurrence to the exact certificate authorizing its ordered flattening. */
         public Map<EGraphNode, DependentChainCertificate>
                 dependentChainSourceCertificates() {
@@ -386,6 +665,12 @@ public final class TheoryAlloyAdapter {
         public Map<EGraphNode, DependentChainSourceBinding>
                 dependentChainSourceBindings() {
             return dependentChainSourceBindings;
+        }
+
+        /** Exact idempotent fibers for repaired ACI Set occurrences. */
+        public Map<EGraphNode, CertifiedSetOperandPartition>
+                certifiedSetOperandPartitions() {
+            return certifiedSetOperandPartitions;
         }
 
         public long eclasses() {
@@ -445,6 +730,12 @@ public final class TheoryAlloyAdapter {
                 new IdentityHashMap<>();
         private final Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates =
                 new IdentityHashMap<>();
+        private final Map<NormalForm, List<PhaseLocalBindingCertificate>>
+                phaseLocalBindingCertificates = new IdentityHashMap<>();
+        private final IdentityHashMap<NormalForm, Integer> phaseIndices =
+                new IdentityHashMap<>();
+        private final ArrayDeque<NormalForm> activePhases = new ArrayDeque<>();
+        private final ArrayDeque<LocalBinderFrame> activeLocalBinders = new ArrayDeque<>();
         private final TypedSlottedPortEGraph graph;
         private final RecordingCertificateTraceSink recordingSink;
         private final CertificateProvenance provenance;
@@ -462,8 +753,15 @@ public final class TheoryAlloyAdapter {
                 new ArrayList<>();
         private final List<CallOccurrenceCertificate> callOccurrenceCertificates =
                 new ArrayList<>();
+        private final Map<Long, CallOccurrenceCertificate> callOccurrencesById =
+                new LinkedHashMap<>();
         private final Map<EGraphNode, DependentChainSourceBinding>
                 dependentChainSourceBindings = new LinkedHashMap<>();
+        private final Map<Long, CertifiedSetOperandPartition>
+                certifiedSetPartitionsByLineage = new LinkedHashMap<>();
+        private final Set<Long> nonuniformSetPartitionLineages = new HashSet<>();
+        private final Map<EGraphNode, CertifiedSetOperandPartition>
+                repairedSetOperandPartitions = new IdentityHashMap<>();
         private final Map<EGraphNode, String> sourceOccurrencePaths;
         private final ConstructionSourceLedger.Builder constructionSources;
         private final Set<InvocationKey> active = new HashSet<>();
@@ -484,6 +782,9 @@ public final class TheoryAlloyAdapter {
             this.semanticProfile = semanticProfile;
             this.constructionSources = ConstructionSourceLedger.builder(semanticProfile);
             this.normalForms = Collections.unmodifiableList(new ArrayList<>(normalForms));
+            if (!this.normalForms.isEmpty()) {
+                this.normalForms.get(0).requireAdmittedTemporalTree();
+            }
             for (NormalForm normalForm : this.normalForms) {
                 Objects.requireNonNull(normalForm, "normal form")
                         .freezeForCertification();
@@ -492,7 +793,14 @@ public final class TheoryAlloyAdapter {
             requirePristineCertificationSources(this.normalForms);
             this.sourceOccurrencePaths = indexSourceOccurrencePaths(this.normalForms);
             this.declaredForms = Collections.newSetFromMap(new IdentityHashMap<>());
-            this.declaredForms.addAll(normalForms);
+            for (int index = 0; index < this.normalForms.size(); index++) {
+                NormalForm form = this.normalForms.get(index);
+                this.declaredForms.add(form);
+                if (phaseIndices.put(form, index) != null) {
+                    throw new IllegalArgumentException(
+                            "One temporal phase occurs twice in the adapter input");
+                }
+            }
             certifySourceContainerLaws();
         }
 
@@ -613,6 +921,8 @@ public final class TheoryAlloyAdapter {
                 }
             }
             mirrorCertifiedSourcePlansToRepairMatrices();
+            mirrorCertifiedSetPartitionsToRepairMatrices();
+            certifyRepairContainerLaws();
             long constructionNanos = System.nanoTime() - phaseStarted;
             phaseStarted = System.nanoTime();
             ensureQuiescent();
@@ -691,7 +1001,9 @@ public final class TheoryAlloyAdapter {
                     orderedSourceCoordinates,
                     localBinderDescriptors,
                     localBinderSourceCoordinates,
+                    phaseLocalBindingCertificates,
                     dependentChainSourceBindings,
+                    repairedSetOperandPartitions,
                     eclasses,
                     enodes,
                     slots,
@@ -701,6 +1013,138 @@ public final class TheoryAlloyAdapter {
                     unfoldingNanos,
                     observationNanos,
                     exportSession);
+        }
+
+        /**
+         * The metric projects the frozen repaired matrix, while graph construction
+         * starts from the separately retained certification matrix.  A sound
+         * normalization may introduce another occurrence of an already admitted
+         * variadic operator (for example a binary relational PLUS beneath JOIN).
+         * Bind the immutable Alloy law declaration to that exact repaired carrier
+         * before projection; this does not certify a new rewrite or orient an
+         * equality.
+         */
+        private void certifyRepairContainerLaws() {
+            Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            for (NormalForm normalForm : normalForms) {
+                certifyRepairContainerLaws(
+                        normalForm.getMatrixEGraph(), visited);
+            }
+        }
+
+        private void certifyRepairContainerLaws(
+                EGraphNode node,
+                Set<EGraphNode> visited) {
+            if (node == null || !visited.add(node)) {
+                return;
+            }
+            if (node.hasFlatLicense()) {
+                PortSchema schema = containerSchema(
+                        node.getFlexibleArityKind(),
+                        new OnePortSchema(outputType(node)));
+                String operator = semanticHead(node);
+                recordContainerLaws(operator, certifiedLaws(
+                        schema,
+                        semanticProfile,
+                        node.getOpcode(),
+                        operator,
+                        outputType(node),
+                        true));
+            }
+            if (!node.isFlexibleArity()
+                    && node.isOrderInsensitive()
+                    && isCertifiedFixedCommutative(node.getOpcode())
+                    && node.getChildren().size() == 2) {
+                certifyRepairFixedCommutativeLaws(node);
+            }
+            for (EGraphNode child : node.getChildren()) {
+                certifyRepairContainerLaws(child, visited);
+            }
+        }
+
+        private void certifyRepairFixedCommutativeLaws(EGraphNode source) {
+            List<List<GraphType>> candidates = new ArrayList<>(2);
+            for (EGraphNode child : source.getChildren()) {
+                LinkedHashSet<GraphType> alternatives = new LinkedHashSet<>();
+                if (child.getOpcode() == Opcode.VARIABLE) {
+                    alternatives.add(bindingType(child));
+                }
+                alternatives.add(outputType(child));
+                candidates.add(List.copyOf(alternatives));
+            }
+            String operator = semanticHead(source);
+            for (GraphType left : candidates.get(0)) {
+                for (GraphType right : candidates.get(1)) {
+                    GraphType carrier = source.getOpcode() == Opcode.IFF
+                            ? GraphType.BOOL
+                            : AlloyTypeBridge.commutativeCarrier(
+                                    List.of(left, right));
+                    BagPortSchema schema = new BagPortSchema(
+                            ArityPolicy.exact(2),
+                            new OnePortSchema(carrier));
+                    recordContainerLaws(operator, certifiedLaws(
+                            schema,
+                            semanticProfile,
+                            source.getOpcode(),
+                            operator,
+                            outputType(source),
+                            false));
+                }
+            }
+        }
+
+        private void recordCertifiedSetPartition(
+                EGraphNode source,
+                ContainerApplicationTrace trace) {
+            if (!(trace.schema() instanceof SetPortSchema)) {
+                return;
+            }
+            CertifiedSetOperandPartition candidate =
+                    new CertifiedSetOperandPartition(source, trace);
+            long lineage = source.getSourceOccurrenceLineage();
+            if (nonuniformSetPartitionLineages.contains(lineage)) {
+                return;
+            }
+            CertifiedSetOperandPartition prior =
+                    certifiedSetPartitionsByLineage.putIfAbsent(
+                            lineage, candidate);
+            if (prior != null && !prior.samePartition(candidate)) {
+                certifiedSetPartitionsByLineage.remove(lineage);
+                nonuniformSetPartitionLineages.add(lineage);
+            }
+        }
+
+        private void mirrorCertifiedSetPartitionsToRepairMatrices() {
+            repairedSetOperandPartitions.clear();
+            if (certifiedSetPartitionsByLineage.isEmpty()) {
+                return;
+            }
+            Set<EGraphNode> visited = Collections.newSetFromMap(
+                    new IdentityHashMap<>());
+            ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
+            for (NormalForm form : normalForms) {
+                if (form.getMatrixEGraph() != null) {
+                    pending.add(form.getMatrixEGraph());
+                }
+            }
+            while (!pending.isEmpty()) {
+                EGraphNode candidate = pending.removeFirst();
+                if (!visited.add(candidate)) {
+                    continue;
+                }
+                CertifiedSetOperandPartition partition =
+                        certifiedSetPartitionsByLineage.get(
+                                candidate.getSourceOccurrenceLineage());
+                if (partition != null
+                        && partition.deduplicated()
+                        && candidate.getOpcode() == partition.sourceOpcode
+                        && candidate.isSetFlexibleArity()
+                        && candidate.getChildren().size() == partition.inputArity) {
+                    partition.inputFibers(candidate);
+                    repairedSetOperandPartitions.put(candidate, partition);
+                }
+                pending.addAll(candidate.getChildren());
+            }
         }
 
         private TypedSlotContext addParameters(
@@ -728,19 +1172,28 @@ public final class TheoryAlloyAdapter {
                     new LinkedHashMap<>();
             for (EGraphNode source : new ArrayList<>(localBinderDescriptors.keySet())) {
                 long lineage = source.getSourceOccurrenceLineage();
-                if (localDescriptorsByLineage.putIfAbsent(
-                                lineage, localBinderDescriptors.get(source)) != null
-                        || localCoordinatesByLineage.putIfAbsent(
-                                lineage, localBinderSourceCoordinates.get(source)) != null) {
+                BinderBlockDescriptor descriptor =
+                        localBinderDescriptors.get(source);
+                Map<String, Integer> coordinates =
+                        localBinderSourceCoordinates.get(source);
+                BinderBlockDescriptor priorDescriptor =
+                        localDescriptorsByLineage.putIfAbsent(
+                                lineage, descriptor);
+                Map<String, Integer> priorCoordinates =
+                        localCoordinatesByLineage.putIfAbsent(
+                                lineage, coordinates);
+                if (priorDescriptor != null
+                        && (!priorDescriptor.equals(descriptor)
+                                || !Objects.equals(
+                                        priorCoordinates, coordinates))) {
                     throw new IllegalStateException(
-                            "Two faithful local binders share source occurrence lineage "
+                            "Duplicated local-binder lineage carries different proof payloads "
                                     + lineage);
                 }
             }
             localBinderDescriptors.clear();
             localBinderSourceCoordinates.clear();
             Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
-            Set<Long> mappedLocalLineages = new HashSet<>();
             ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
             for (NormalForm form : normalForms) {
                 if (form.getMatrixEGraph() != null) {
@@ -763,11 +1216,6 @@ public final class TheoryAlloyAdapter {
                         throw new IllegalStateException(
                                 "A Fast Rewrite IR local binder has no faithful source plan");
                     }
-                    if (!mappedLocalLineages.add(lineage)) {
-                        throw new IllegalStateException(
-                                "One local source occurrence was duplicated after certification: "
-                                        + lineage);
-                    }
                     localBinderDescriptors.put(candidate, descriptor);
                     localBinderSourceCoordinates.put(candidate, coordinates);
                 }
@@ -779,16 +1227,18 @@ public final class TheoryAlloyAdapter {
             for (Map.Entry<EGraphNode, DependentChainSourceBinding> entry
                     : new ArrayList<>(dependentChainSourceBindings.entrySet())) {
                 long lineage = entry.getKey().getSourceOccurrenceLineage();
-                if (chainsByLineage.putIfAbsent(lineage, entry.getValue()) != null) {
+                DependentChainSourceBinding prior =
+                        chainsByLineage.putIfAbsent(lineage, entry.getValue());
+                if (prior != null
+                        && !prior.sameTransferPlanAs(entry.getValue())) {
                     throw new IllegalStateException(
-                            "Two faithful dependent chains share source occurrence lineage "
+                            "Duplicated dependent-chain lineage carries different proof payloads "
                                     + lineage);
                 }
             }
             dependentChainSourceBindings.clear();
             visited.clear();
             pending.clear();
-            Set<Long> mappedChainLineages = new HashSet<>();
             for (NormalForm form : normalForms) {
                 if (form.getMatrixEGraph() != null) {
                     pending.add(form.getMatrixEGraph());
@@ -804,11 +1254,6 @@ public final class TheoryAlloyAdapter {
                     long lineage = candidate.getSourceOccurrenceLineage();
                     DependentChainSourceBinding binding = chainsByLineage.get(lineage);
                     if (binding != null) {
-                        if (!mappedChainLineages.add(lineage)) {
-                            throw new IllegalStateException(
-                                    "One dependent source occurrence was duplicated after certification: "
-                                            + lineage);
-                        }
                         dependentChainSourceBindings.put(
                                 candidate, binding.transferTo(candidate));
                     }
@@ -827,7 +1272,9 @@ public final class TheoryAlloyAdapter {
             if (!builtForms.add(phase)) {
                 throw new IllegalStateException("A temporal phase is reachable through two structural parents");
             }
-
+            activePhases.addLast(phase);
+            try {
+            certifyPhaseLocalBindings(phase, inheritedBindings);
             BinderPlan plan = binderPlan(phase.getMatrixQuantiVars(), ambient);
             if (phaseBinderDescriptors.put(phase, plan.descriptor) != null) {
                 throw new IllegalStateException(
@@ -853,7 +1300,7 @@ public final class TheoryAlloyAdapter {
                 }
             }
 
-            Map<String, TypedInvocation> temporalReferences = buildTemporalReferences(
+            Map<String, TemporalReferencePlan> temporalReferences = buildTemporalReferences(
                     phase, bodyContext, bodyBindings);
             EGraphNode matrix = phase.getCertificationMatrixEGraph();
             OnePort matrixValue = matrix == null
@@ -887,6 +1334,13 @@ public final class TheoryAlloyAdapter {
                     declaration.instantiateMonomorphic(),
                     ambient,
                     Collections.singletonList(block)));
+            } finally {
+                NormalForm removed = activePhases.removeLast();
+                if (removed != phase) {
+                    throw new IllegalStateException(
+                            "Temporal phase construction stack lost lexical order");
+                }
+            }
         }
 
         private OnePort buildMatrixOperand(
@@ -894,7 +1348,7 @@ public final class TheoryAlloyAdapter {
                 EGraphNode matrix,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             Map<String, String> rootNames = identitySlotNames(matrix);
             if (phase == normalForms.get(0)
                     && matrix.getOpcode() == Opcode.PREDICATE
@@ -915,39 +1369,198 @@ public final class TheoryAlloyAdapter {
                     temporalReferences);
         }
 
-        private Map<String, TypedInvocation> buildTemporalReferences(
+        private void certifyPhaseLocalBindings(
+                NormalForm phase,
+                Map<String, TypedSlot> bindings) {
+            List<NormalForm.PhaseLocalBindingImport> imports =
+                    phase.getPhaseLocalBindingImports();
+            if (imports.isEmpty()) {
+                return;
+            }
+            List<PhaseLocalBindingCertificate> certificates = new ArrayList<>(
+                    imports.size());
+            for (NormalForm.PhaseLocalBindingImport imported : imports) {
+                if (!phase.getPhasePath().equals(imported.targetPhasePath())) {
+                    throw new IllegalStateException(
+                            "A phase-local binder import crossed its target phase");
+                }
+                LocalBinderFrame owner = null;
+                java.util.Iterator<LocalBinderFrame> frames =
+                        activeLocalBinders.descendingIterator();
+                while (frames.hasNext()) {
+                    LocalBinderFrame candidate = frames.next();
+                    if (candidate.ownerPhase == imported.ownerPhase()
+                            && sameBinderOccurrence(
+                                    candidate.source, imported.ownerBinder())
+                            && candidate.sourceCoordinates.containsKey(
+                                    imported.variable().getName())) {
+                        owner = candidate;
+                        break;
+                    }
+                }
+                if (owner == null) {
+                    throw new IllegalStateException(
+                            "A temporal phase local import has no active owner binder");
+                }
+                Integer coordinate = owner.sourceCoordinates.get(
+                        imported.variable().getName());
+                if (coordinate == null) {
+                    throw new IllegalStateException(
+                            "A temporal phase local import has no owner coordinate");
+                }
+                TypedSlot ownerSlot = owner.slotsByCoordinate.get(coordinate);
+                TypedSlot importedSlot = exactBinding(bindings, imported.variable());
+                if (ownerSlot == null || importedSlot == null
+                        || !ownerSlot.equals(importedSlot)) {
+                    throw new IllegalStateException(
+                            "A temporal phase local import changed its owner slot");
+                }
+                if (!ownerSlot.type().equals(bindingType(imported.variable()))) {
+                    throw new IllegalStateException(
+                            "A temporal phase local import changed its certified type");
+                }
+                Integer ownerPhase = phaseIndices.get(imported.ownerPhase());
+                if (ownerPhase == null) {
+                    throw new IllegalStateException(
+                            "A temporal phase local import names an undeclared owner phase");
+                }
+                certificates.add(new PhaseLocalBindingCertificate(
+                        imported,
+                        ownerPhase,
+                        owner.descriptor,
+                        coordinate));
+            }
+            if (phaseLocalBindingCertificates.put(
+                    phase, Collections.unmodifiableList(certificates)) != null) {
+                throw new IllegalStateException(
+                        "A temporal phase received phase-local certificates twice");
+            }
+        }
+
+        private static boolean sameBinderOccurrence(
+                EGraphNode active,
+                EGraphNode imported) {
+            if (active == imported) {
+                return true;
+            }
+            long activeLineage = active.getSourceOccurrenceLineage();
+            long importedLineage = imported.getSourceOccurrenceLineage();
+            return activeLineage > 0L && activeLineage == importedLineage;
+        }
+
+        private static TypedSlot exactBinding(
+                Map<String, TypedSlot> bindings,
+                QuantiVar variable) {
+            TypedSlot canonical = bindings.get(variable.getName());
+            if (canonical == null) {
+                canonical = bindings.get(variable.getDeBruijnKey());
+            }
+            if (canonical != null) {
+                return canonical;
+            }
+            TypedSlot result = null;
+            for (String alias : variable.getOriginalNames()) {
+                TypedSlot candidate = bindings.get(alias);
+                if (candidate == null) {
+                    continue;
+                }
+                if (result != null && !result.equals(candidate)) {
+                    throw new IllegalStateException(
+                            "One phase-local variable resolves to two active slots");
+                }
+                result = candidate;
+            }
+            return result;
+        }
+
+        private Map<String, TemporalReferencePlan> buildTemporalReferences(
                 NormalForm phase,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings) {
-            Map<String, TypedInvocation> result = new HashMap<>();
+            Map<String, TemporalReferencePlan> result = new HashMap<>();
             List<NormalForm> children = phase.getTemporalChildren();
             for (int index = 0; index < children.size();) {
                 NormalForm first = children.get(index);
                 TemporalOp operation = first.getTemporalOp();
+                DeferredTemporalReferencePlan plan;
+                String reference;
                 if (isBinaryLeft(operation)) {
                     if (index + 1 >= children.size()
                             || !isMatchingBinaryRight(operation, children.get(index + 1).getTemporalOp())) {
                         throw new IllegalStateException(
                                 "Malformed binary temporal phase pair at index " + index);
                     }
-                    TypedInvocation left = buildPhase(
-                            first, context, new LinkedHashMap<>(bindings));
-                    TypedInvocation right = buildPhase(
-                            children.get(index + 1), context, new LinkedHashMap<>(bindings));
-                    result.put(
-                            temporalReference(index, 2),
-                            temporalNode(binaryBase(operation), context, List.of(left, right)));
+                    plan = new DeferredTemporalReferencePlan(
+                            binaryBase(operation),
+                            List.of(first, children.get(index + 1)));
+                    reference = temporalReference(index, 2);
                     index += 2;
                 } else {
-                    TypedInvocation child = buildPhase(
-                            first, context, new LinkedHashMap<>(bindings));
-                    result.put(
-                            temporalReference(index, 1),
-                            temporalNode(operation.name(), context, Collections.singletonList(child)));
+                    plan = new DeferredTemporalReferencePlan(
+                            operation.name(), Collections.singletonList(first));
+                    reference = temporalReference(index, 1);
                     index++;
+                }
+                if (result.put(reference, plan) != null) {
+                    throw new IllegalStateException(
+                            "A temporal reference name was issued twice");
+                }
+                if (!plan.requiresPhaseLocalContext()) {
+                    plan.resolve(context, new LinkedHashMap<>(bindings));
                 }
             }
             return result;
+        }
+
+        private interface TemporalReferencePlan {
+            TypedInvocation resolve(
+                    TypedSlotContext context,
+                    Map<String, TypedSlot> bindings);
+        }
+
+        private final class DeferredTemporalReferencePlan
+                implements TemporalReferencePlan {
+            private final String operation;
+            private final List<NormalForm> children;
+            private TypedInvocation resolved;
+            private TypedSlotContext resolvedContext;
+
+            private DeferredTemporalReferencePlan(
+                    String operation,
+                    List<NormalForm> children) {
+                this.operation = Objects.requireNonNull(operation, "temporal operation");
+                this.children = List.copyOf(children);
+            }
+
+            private boolean requiresPhaseLocalContext() {
+                for (NormalForm child : children) {
+                    if (!child.getPhaseLocalBindingImports().isEmpty()) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public TypedInvocation resolve(
+                    TypedSlotContext context,
+                    Map<String, TypedSlot> bindings) {
+                if (resolved != null) {
+                    if (!resolvedContext.equals(context)) {
+                        throw new IllegalStateException(
+                                "One temporal phase was invoked under two binder contexts");
+                    }
+                    return resolved;
+                }
+                List<TypedInvocation> values = new ArrayList<>(children.size());
+                for (NormalForm child : children) {
+                    values.add(buildPhase(
+                            child, context, new LinkedHashMap<>(bindings)));
+                }
+                resolved = temporalNode(operation, context, values);
+                resolvedContext = context;
+                return resolved;
+            }
         }
 
         private TypedInvocation temporalNode(
@@ -975,7 +1588,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> slotNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             node.requireAdmittedArity();
             if (node.getOpcode() == Opcode.END) {
                 throw new IllegalStateException("END survived normal-form cleanup");
@@ -983,12 +1596,13 @@ public final class TheoryAlloyAdapter {
             if (node.getOpcode() == Opcode.REF
                     && node.getSourceName() != null
                     && node.getSourceName().startsWith("temporal[")) {
-                TypedInvocation temporal = temporalReferences.get(node.getSourceName());
+                TemporalReferencePlan temporal = temporalReferences.get(node.getSourceName());
                 if (temporal == null) {
                     throw new IllegalStateException(
                             "Unresolved temporal reference " + node.getSourceName());
                 }
-                return OnePort.invocation(context, temporal);
+                return OnePort.invocation(
+                        context, temporal.resolve(context, bindings));
             }
             if (node.getOpcode() == Opcode.VARIABLE) {
                 String local = firstNonempty(node.getAlphaName(), node.getSourceName());
@@ -1065,8 +1679,7 @@ public final class TheoryAlloyAdapter {
                             occurrencePath,
                             typed.node,
                             operands);
-                    callOccurrenceCertificates.add(call);
-                    constructionSources.recordCall(call);
+                    recordCallOccurrence(call);
                 }
                 TypedInvocation invocation = insert(typed);
                 memo.put(key, invocation);
@@ -1076,12 +1689,28 @@ public final class TheoryAlloyAdapter {
             }
         }
 
+        private void recordCallOccurrence(
+                CallOccurrenceCertificate occurrence) {
+            CallOccurrenceCertificate prior = callOccurrencesById.putIfAbsent(
+                    occurrence.occurrenceId(), occurrence);
+            if (prior != null) {
+                if (!prior.sameParserOccurrencePayloadAs(occurrence)) {
+                    throw new IllegalStateException(
+                            "Duplicated CALL occurrence carries a different typed payload: "
+                                    + occurrence.occurrenceId());
+                }
+                return;
+            }
+            callOccurrenceCertificates.add(occurrence);
+            constructionSources.recordCall(occurrence);
+        }
+
         private OnePort constructDependentChainOperand(
                 EGraphNode source,
                 Map<String, String> slotNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             DependentChainKind kind = source.getOpcode() == Opcode.JOIN
                     ? DependentChainKind.JOIN : DependentChainKind.ARROW;
             DependentChainApplication application;
@@ -1098,11 +1727,7 @@ public final class TheoryAlloyAdapter {
                     | DependentChainTheory.UnsupportedFlattening exception) {
                 return null;
             }
-            if (!outputType(source).equals(application.outputType())) {
-                throw new IllegalStateException(
-                        "A concrete dependent " + kind
-                                + " result disagrees with its independently checked operands");
-            }
+            requireDependentResultProof(source, application);
             String occurrencePath = sourceOccurrencePaths.get(source);
             if (occurrencePath == null) {
                 throw new IllegalStateException(
@@ -1142,7 +1767,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> slotNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences,
+                Map<String, TemporalReferencePlan> temporalReferences,
                 Set<Integer> activeChainClasses) {
             source.requireAdmittedArity();
             if (source.getChildren().size() != 2
@@ -1187,16 +1812,35 @@ public final class TheoryAlloyAdapter {
                                     + " source violates its chain equation",
                             exception);
                 }
-                if (!outputType(source).equals(application.outputType())) {
-                    throw new IllegalStateException(
-                            "A concrete dependent " + kind
-                                    + " source has another exact result type: source="
-                                    + outputType(source) + ", derived="
-                                    + application.outputType());
-                }
+                requireDependentResultProof(source, application);
                 return application;
             } finally {
                 activeChainClasses.remove(classId);
+            }
+        }
+
+        private static void requireDependentResultProof(
+                EGraphNode source,
+                DependentChainApplication application) {
+            GraphType storedResult = outputType(source);
+            try {
+                DependentChainTheory.LeafTypeRule rule =
+                        DependentChainTheory.requireLeafTypeProof(
+                                storedResult,
+                                application.outputTypeDag(),
+                                source.getExactAlloyType());
+                DependentChainTheory.leafTypeProof(
+                        rule,
+                        storedResult,
+                        application.outputTypeDag(),
+                        source.getExactAlloyType());
+            } catch (IllegalArgumentException exception) {
+                throw new IllegalStateException(
+                        "A concrete dependent " + application.kind()
+                                + " source has another exact result type: source="
+                                + storedResult + ", derived="
+                                + application.outputType(),
+                        exception);
             }
         }
 
@@ -1206,7 +1850,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> outerNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences,
+                Map<String, TemporalReferencePlan> temporalReferences,
                 Set<Integer> activeChainClasses) {
             EClassRef canonical = childRef.canonical();
             EGraphNode child = canonical.getEClass().getRepresentative();
@@ -1243,11 +1887,7 @@ public final class TheoryAlloyAdapter {
                                                 == ExactAlloyType.Kind.EMPTY_RELATION)
                         ? dependentTypeDagForSource(child, new HashSet<>())
                         : DependentTypeDag.fromRelationFamilyType(relationType);
-                if (!typeDag.relationType().equals(relationType)) {
-                    throw new IllegalArgumentException(
-                            "Stored and parser-derived dependent relation families differ");
-                }
-                return new DependentChainLeaf(leaf, typeDag);
+                return new DependentChainLeaf(leaf, typeDag, exactType);
             } catch (DependentChainTheory.UnsupportedFlattening
                     | DependentBoundaryCorrespondence.UnsupportedCorrespondence exception) {
                 throw new UnsupportedDependentChain(exception);
@@ -1317,7 +1957,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> outerNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             EClassRef canonical = child.canonical();
             return buildOperand(
                     canonical.getEClass().getRepresentative(),
@@ -1332,7 +1972,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> slotNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             source.requireAdmittedArity();
             GraphType output = outputType(source);
             PortSchema container = containerSchema(
@@ -1359,11 +1999,14 @@ public final class TheoryAlloyAdapter {
                     bindings,
                     temporalReferences,
                     operator,
+                    source.getExactAlloyType(),
                     new HashSet<>());
             constructionSources.recordFlat(application);
             CertifiedFlatConstruction construction = TypedENode.flatConstructCertified(
                     application, this::insert, semanticProfile);
-            flatConstructions.add(construction.certificate());
+            FlatConstructionCertificate certificate = construction.certificate();
+            flatConstructions.add(certificate);
+            recordCertifiedSetPartition(source, certificate.containerTrace());
             if (construction.collapsedToSingleton()) {
                 return construction.singleton();
             }
@@ -1375,12 +2018,17 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> slotNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences,
+                Map<String, TemporalReferencePlan> temporalReferences,
                 InstantiatedOperator operator,
+                ExactAlloyType carrierExactType,
                 Set<Integer> activeFlatClasses) {
             if (!source.hasFlatLicense()
                     || !semanticHead(source).equals(operator.operator())
-                    || !outputType(source).equals(operator.outputType())) {
+                    || (!outputType(source).equals(operator.outputType())
+                            && !isRelationalUnionWidening(
+                                    source,
+                                    operator.outputType(),
+                                    carrierExactType))) {
                 throw new IllegalArgumentException(
                         "Visible flat source changed its exact operator instance");
             }
@@ -1405,6 +2053,7 @@ public final class TheoryAlloyAdapter {
                                 bindings,
                                 temporalReferences,
                                 operator,
+                                carrierExactType,
                                 activeFlatClasses));
                         continue;
                     }
@@ -1430,6 +2079,19 @@ public final class TheoryAlloyAdapter {
             } finally {
                 activeFlatClasses.remove(classId);
             }
+        }
+
+        private static boolean isRelationalUnionWidening(
+                EGraphNode source,
+                GraphType outerType,
+                ExactAlloyType carrierExactType) {
+            return source.getOpcode() == Opcode.PLUS
+                    && source.getExactAlloyType() != null
+                    && carrierExactType != null
+                    && AlloyTypeBridge.graphType(carrierExactType).equals(outerType)
+                    && source.getExactAlloyType()
+                            .isParserCertifiedRelationSubfamilyOf(
+                                    carrierExactType);
         }
 
         private NodeConstruction constructNode(
@@ -1655,7 +2317,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, String> outerNames,
                 TypedSlotContext context,
                 Map<String, TypedSlot> bindings,
-                Map<String, TypedInvocation> temporalReferences) {
+                Map<String, TemporalReferencePlan> temporalReferences) {
             List<LocalCoordinate> locals = new ArrayList<>();
             int nextDisjointnessClass = 1;
             for (EClassRef childRef : source.getChildClasses()) {
@@ -1716,30 +2378,58 @@ public final class TheoryAlloyAdapter {
                         plan.coordinates.get(index).canonicalSlot());
                 bodyBindings.put(locals.get(index).name, occurrence);
             }
-
-            List<OnePort> bodies = new ArrayList<>();
-            for (EClassRef childRef : source.getChildClasses()) {
-                EClassRef canonical = childRef.canonical();
-                EGraphNode child = canonical.getEClass().getRepresentative();
-                if (isRelDecl(child.getOpcode())) {
-                    continue;
-                }
-                bodies.add(buildOperand(
-                        child,
-                        composeSlotNames(canonical.getSlotMap(), outerNames),
-                        bodyContext,
-                        bodyBindings,
-                        temporalReferences));
+            NormalForm ownerPhase = activePhases.peekLast();
+            if (ownerPhase == null) {
+                throw new IllegalStateException(
+                        "A local binder was constructed outside a temporal phase");
             }
-            TypedInvocation body = bodies.isEmpty()
-                    ? insert(constantNode("true", GraphType.BOOL, bodyContext))
-                    : bodies.size() == 1
-                            ? asInvocation(bodies.get(0), bodyContext, "local-binder-body")
-                            : insert(fixedNode(
-                                    "ALLOY/LOCAL-BODY/" + source.getOpcode(),
-                                    outputType(source),
-                                    bodyContext,
-                                    bodies));
+            Map<Integer, TypedSlot> slotsByCoordinate = new LinkedHashMap<>();
+            for (int sourceIndex = 0; sourceIndex < locals.size(); sourceIndex++) {
+                int coordinate = plan.sourceToCoordinate.get(sourceIndex);
+                slotsByCoordinate.put(
+                        coordinate,
+                        plan.occurrence.apply(
+                                plan.coordinates.get(coordinate).canonicalSlot()));
+            }
+            LocalBinderFrame frame = new LocalBinderFrame(
+                    ownerPhase,
+                    source,
+                    plan.descriptor,
+                    sourceCoordinates,
+                    slotsByCoordinate);
+            activeLocalBinders.addLast(frame);
+            TypedInvocation body;
+            try {
+                List<OnePort> bodies = new ArrayList<>();
+                for (EClassRef childRef : source.getChildClasses()) {
+                    EClassRef canonical = childRef.canonical();
+                    EGraphNode child = canonical.getEClass().getRepresentative();
+                    if (isRelDecl(child.getOpcode())) {
+                        continue;
+                    }
+                    bodies.add(buildOperand(
+                            child,
+                            composeSlotNames(canonical.getSlotMap(), outerNames),
+                            bodyContext,
+                            bodyBindings,
+                            temporalReferences));
+                }
+                body = bodies.isEmpty()
+                        ? insert(constantNode("true", GraphType.BOOL, bodyContext))
+                        : bodies.size() == 1
+                                ? asInvocation(bodies.get(0), bodyContext, "local-binder-body")
+                                : insert(fixedNode(
+                                        "ALLOY/LOCAL-BODY/" + source.getOpcode(),
+                                        outputType(source),
+                                        bodyContext,
+                                        bodies));
+            } finally {
+                LocalBinderFrame removed = activeLocalBinders.removeLast();
+                if (removed != frame) {
+                    throw new IllegalStateException(
+                            "Local binder construction stack lost lexical order");
+                }
+            }
             BindBlockPortSchema schema = new BindBlockPortSchema(
                     plan.descriptor, new OnePortSchema(body.outputType()));
             BindBlockPort block = new BindBlockPort(
@@ -2165,11 +2855,23 @@ public final class TheoryAlloyAdapter {
     }
 
     private static GraphType bindingType(QuantiVar variable) {
+        ExactAlloyType exact = variable.getExactAlloyType();
+        if (exact != null
+                && exact.kind() == ExactAlloyType.Kind.RELATION
+                && exact.relationArity() > 1) {
+            return AlloyTypeBridge.graphType(exact);
+        }
         String type = requireTypeName(variable.getTypeName(), "quantified binding");
         return bindingType(type);
     }
 
     private static GraphType bindingType(EGraphNode variable) {
+        ExactAlloyType exact = variable.getExactAlloyType();
+        if (exact != null
+                && exact.kind() == ExactAlloyType.Kind.RELATION
+                && exact.relationArity() > 1) {
+            return AlloyTypeBridge.graphType(exact);
+        }
         return bindingType(requireTypeName(variable.getSourceType(), "local binding"));
     }
 
@@ -2489,6 +3191,29 @@ public final class TheoryAlloyAdapter {
             this.multiplicity = multiplicity;
             this.disjointnessClass = disjointnessClass;
             this.type = type;
+        }
+    }
+
+    private static final class LocalBinderFrame {
+        private final NormalForm ownerPhase;
+        private final EGraphNode source;
+        private final BinderBlockDescriptor descriptor;
+        private final Map<String, Integer> sourceCoordinates;
+        private final Map<Integer, TypedSlot> slotsByCoordinate;
+
+        private LocalBinderFrame(
+                NormalForm ownerPhase,
+                EGraphNode source,
+                BinderBlockDescriptor descriptor,
+                Map<String, Integer> sourceCoordinates,
+                Map<Integer, TypedSlot> slotsByCoordinate) {
+            this.ownerPhase = Objects.requireNonNull(ownerPhase, "local owner phase");
+            this.source = Objects.requireNonNull(source, "local binder source");
+            this.descriptor = Objects.requireNonNull(descriptor, "local binder descriptor");
+            this.sourceCoordinates = Collections.unmodifiableMap(
+                    new LinkedHashMap<>(sourceCoordinates));
+            this.slotsByCoordinate = Collections.unmodifiableMap(
+                    new LinkedHashMap<>(slotsByCoordinate));
         }
     }
 

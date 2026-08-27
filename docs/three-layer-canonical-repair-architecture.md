@@ -280,18 +280,26 @@ the other 733 records preserve component parity.
 
 ## Regression Evidence
 
-- `QuotientRepairDistanceTest`: 13 checks covering sequence order, set/bag
+- `QuotientRepairDistanceTest`: 2,266 checks covering sequence order, set/bag
   assignment, declaration units, scope barriers, unequal-arity exact alpha
   minimization, proof presentation, temporal decomposition, and zero-kernel
   failure.
-- `CanonicalAlloyPipelineTest`: 185 checks covering real Alloy alpha and ACI discontinuity,
+- `CanonicalAlloyPipelineTest`: 1,428 checks covering real Alloy alpha and ACI discontinuity,
   certified symmetry invariance, canonical equality, scope legality, and
   negative discrimination, including unequal-arity alpha differential parity,
   heterogeneous binder order, guarded-domain ACI, and the documented local
   declaration-grouping correction, carrier-preserving guarded binders,
   fixed equality/inequality commutativity, named-reference identity, certified
   local-comprehension alpha alignment, one owner mapping across inherited
-  temporal phases, and post-permutation ACI normalization.
+  temporal phases, post-permutation ACI normalization, declaration-DAG
+  full-carrier absorption, exact relation-valued binders, guarded difference
+  and JOIN factoring, union-cardinality normalization, guarded left- and
+  right-nested difference laws, intersection/difference extraction, and the
+  exact one-coordinate boundary for Cartesian product difference factoring,
+  coordinatewise intersections of equal-length Cartesian products, exact
+  dependent-chain transfer across only certified ACI operand normalization,
+  converse-JOIN order reversal, and parser-authenticated domain/range
+  restriction coordinate algebra with diagonal and multi-difference barriers.
 - 100-file batch smoke: 100 successes, zero failures, zero incorrect zeroes,
   and 100/100 equality with the directly executed metric specification.
 - Exact replay of all 784 prior failures: 784 successes, zero failures, zero

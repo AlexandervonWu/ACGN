@@ -3,6 +3,8 @@ package is.fivefivefive.CanDis.theory;
 import java.util.List;
 import java.util.Objects;
 
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
+
 /** Ordered typed leaf of a dependent chain. */
 public final class DependentChainLeaf implements DependentChainInput {
     private final OnePort port;
@@ -10,6 +12,7 @@ public final class DependentChainLeaf implements DependentChainInput {
     private final DependentChainTheory.LeafTypeRule typeRule;
     private final StructuralKey typeProof;
     private final StructuralKey structuralKey;
+    private final ExactAlloyType parserSourceAuthority;
 
     public DependentChainLeaf(OnePort port) {
         this(port, Objects.requireNonNull(port, "port").schema().type());
@@ -33,15 +36,33 @@ public final class DependentChainLeaf implements DependentChainInput {
     public DependentChainLeaf(
             OnePort port,
             DependentTypeDag outputTypeDag) {
+        this(port, outputTypeDag, null);
+    }
+
+    DependentChainLeaf(
+            OnePort port,
+            DependentTypeDag outputTypeDag,
+            ExactAlloyType parserSourceAuthority) {
         this.port = Objects.requireNonNull(port, "port");
         this.outputTypeDag = Objects.requireNonNull(outputTypeDag, "outputTypeDag");
+        this.parserSourceAuthority = parserSourceAuthority;
         GraphType relationType = outputTypeDag.relationType();
-        this.typeRule = DependentChainTheory.requireLeafTypeProof(
-                port.schema().type(), relationType);
-        this.typeProof = DependentChainTheory.leafTypeProof(
-                typeRule, port.schema().type(), relationType);
+        if (parserSourceAuthority == null) {
+            this.typeRule = DependentChainTheory.requireLeafTypeProof(
+                    port.schema().type(), relationType);
+            this.typeProof = DependentChainTheory.leafTypeProof(
+                    typeRule, port.schema().type(), relationType);
+        } else {
+            this.typeRule = DependentChainTheory.requireLeafTypeProof(
+                    port.schema().type(), outputTypeDag, parserSourceAuthority);
+            this.typeProof = DependentChainTheory.leafTypeProof(
+                    typeRule,
+                    port.schema().type(),
+                    outputTypeDag,
+                    parserSourceAuthority);
+        }
         this.structuralKey = StructuralKey.branch(
-                "dependent-chain-leaf-v3",
+                "dependent-chain-leaf-v4",
                 List.of(
                         port.structuralKey(),
                         typeProof,
@@ -78,7 +99,7 @@ public final class DependentChainLeaf implements DependentChainInput {
     @Override
     public DependentChainLeaf act(TypedEmbedding embedding) {
         return new DependentChainLeaf(
-                port.act(embedding), outputTypeDag);
+                port.act(embedding), outputTypeDag, parserSourceAuthority);
     }
 
     @Override

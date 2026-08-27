@@ -11,12 +11,13 @@ import java.util.Set;
 /** Standalone positive and adversarial regression suite. */
 public final class VerifierTest {
     private static final String ALLOY_LAW_VERSION =
-            "alloy-container-law-theory-v2";
+            "alloy-container-law-theory-v3";
     private static final String ALLOY_LAW_TEXT = String.join("\n",
             "AND:Set+:A,C,I",
             "OR:Set+:A,C,I",
             "PLUS:Set+:A,C,I",
             "INTERSECT:Set+:A,C,I",
+            "RELATIONAL-INT-CARRIER:PLUS,INTERSECT=Set<One(Int)>;parser-opcode-authority",
             "IPLUS:forbid=Bag2:C;modular=Bag+:A,C",
             "MUL:forbid=Bag2:C;modular=Bag+:A,C",
             "EQUALS:Bag2:C",
@@ -36,7 +37,18 @@ public final class VerifierTest {
         testCallAnchorIsolationPredicate();
         TestBundleBuilder.Encoded fixture = fullFixture();
         IndependentVerifier verifier = new IndependentVerifier();
-        VerificationPolicy policy = VerificationPolicy.trust(fixture.theoryDigest());
+        VerificationPolicy policy = policyFor(fixture);
+        CallOccurrenceCommitment fixtureCommitment =
+                CallOccurrenceCommitment.inspect(
+                        fixture.bytes(), Limits.defaults());
+        CallOccurrenceCommitment otherRootCommitment =
+                CallOccurrenceCommitment.inspect(
+                        withMetadataScalar(
+                                fixture, 10, "test-fixture/other-root").bytes(),
+                        Limits.defaults());
+        check(!fixtureCommitment.subjectDigest().equals(
+                        otherRootCommitment.subjectDigest()),
+                "CALL commitments distinguish roots sharing source bytes");
 
         for (Profile profile : List.of(
                 Profile.KERNEL,
@@ -68,6 +80,10 @@ public final class VerifierTest {
                     verify(verifier, publication, profile),
                     "publication semantic evidence " + profile);
         }
+        assertOutcome(
+                Outcome.VERIFIED,
+                verify(verifier, publicationIntCarrierPlusFixture(), Profile.KERNEL),
+                "relational PLUS over the exact unary Int carrier");
         assertCode(
                 FailureCode.THEORY_MISMATCH,
                 verify(
@@ -532,14 +548,14 @@ public final class VerifierTest {
                 FailureCode.MISSING_PAIR_DERIVATION,
                 verifier.verifyPair(
                         noPairDerivation.bytes(), noPairDerivation.bytes(),
-                        VerificationPolicy.trust(noPairDerivation.theoryDigest())),
+                        policyFor(noPairDerivation)),
                 "equal observations without pair derivation");
         TestBundleBuilder.Encoded ambiguousPair = duplicateRootCanonicalEndpointFixture();
         assertCode(
                 FailureCode.NONCANONICAL_ENCODING,
                 verifier.verifyPair(
                         ambiguousPair.bytes(), ambiguousPair.bytes(),
-                        VerificationPolicy.trust(ambiguousPair.theoryDigest())),
+                        policyFor(ambiguousPair)),
                 "PAIR rejects multiple canonical records owned by one source root");
 
         assertOutcome(
@@ -808,7 +824,12 @@ public final class VerifierTest {
                         32,
                         128,
                         128,
-                        128));
+                        128),
+                Map.of(
+                        CallOccurrenceCommitment.inspect(
+                                fixture.bytes(), Limits.defaults()).subjectDigest(),
+                        CallOccurrenceCommitment.inspect(
+                                fixture.bytes(), Limits.defaults()).occurrenceDigest()));
         assertOutcome(
                 Outcome.UNCHECKABLE,
                 verifier.verify(fixture.bytes(), Profile.KERNEL, capped),
@@ -958,7 +979,20 @@ public final class VerifierTest {
             Profile profile) {
         return verifier.verify(
                 fixture.bytes(), profile,
-                VerificationPolicy.trust(fixture.theoryDigest()));
+                policyFor(fixture));
+    }
+
+    private static VerificationPolicy policyFor(
+            TestBundleBuilder.Encoded fixture) {
+        VerificationPolicy policy = VerificationPolicy.trust(
+                fixture.theoryDigest());
+        try {
+            return policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(
+                            fixture.bytes(), Limits.defaults()));
+        } catch (RuntimeException malformedBeforeSemanticReplay) {
+            return policy;
+        }
     }
 
     private static TestBundleBuilder.Encoded unregisteredAxiomFixture() {
@@ -4415,7 +4449,8 @@ public final class VerifierTest {
                             new String[] {setSchema});
                     for (String law : List.of(
                             "ASSOCIATIVITY", "COMMUTATIVITY", "IDEMPOTENCY")) {
-                        builder.lawCertificate(andLawCertificate(
+                        builder.lawCertificate(alloyLawCertificate(
+                                "AND", "ALLOY/AND", "BOOL",
                                 boolType, setSchema, law));
                     }
                     builder.operator("false", boolType);
@@ -4474,6 +4509,81 @@ public final class VerifierTest {
                             sourceChildren,
                             normalizationOperator,
                             normalizationPath);
+                });
+    }
+
+    private static TestBundleBuilder.Encoded publicationIntCarrierPlusFixture() {
+        return fullFixture(
+                BaseOptions.defaults(),
+                builder -> builder.publicationSemanticEvidence(
+                        publicationProfile("FORBID")),
+                fixture -> {
+                    TestBundleBuilder builder = fixture.builder();
+                    String intType = builder.exactType("INT", "");
+                    String oneSchema = builder.schema(
+                            "schema/publication/int-plus/one",
+                            "ONE",
+                            intType,
+                            "",
+                            "FINITE:1",
+                            "RIGID").scalar(0);
+                    String setSchema = builder.schema(
+                            "schema/publication/int-plus/set",
+                            "SET",
+                            "",
+                            oneSchema,
+                            "AT_LEAST:1",
+                            "COMMUTATIVE_IDEMPOTENT_SET").scalar(0);
+                    String operator = "operator/publication/int-plus";
+                    builder.operator(
+                            operator,
+                            intType,
+                            "ALLOY/PLUS",
+                            "0/0",
+                            new String[] {setSchema});
+                    for (String law : List.of(
+                            "ASSOCIATIVITY", "COMMUTATIVITY", "IDEMPOTENCY")) {
+                        builder.lawCertificate(alloyLawCertificate(
+                                "PLUS", "ALLOY/PLUS", "INT",
+                                intType, setSchema, law));
+                    }
+                    builder.operator("int/one", intType);
+                    builder.operator("int/two", intType);
+                    Wire.Node one = builder.term(
+                            "APP", fixture.empty(), "TERM", intType,
+                            "int/one", List.of());
+                    Wire.Node two = builder.term(
+                            "APP", fixture.empty(), "TERM", intType,
+                            "int/two", List.of());
+                    Wire.Node onePort = builder.term(
+                            "ONE_TERM", fixture.empty(), "PORT", oneSchema,
+                            oneSchema, List.of(), one);
+                    Wire.Node twoPort = builder.term(
+                            "ONE_TERM", fixture.empty(), "PORT", oneSchema,
+                            oneSchema, List.of(), two);
+                    List<Wire.Node> normalized = new ArrayList<>(
+                            List.of(onePort, twoPort));
+                    normalized.sort(Comparator.comparing(node -> node.scalar(0)));
+                    List<Wire.Node> sourceChildren = new ArrayList<>(normalized);
+                    sourceChildren.add(sourceChildren.get(0));
+                    Wire.Node source = builder.term(
+                            "SET", fixture.empty(), "PORT", setSchema,
+                            setSchema, List.of(),
+                            sourceChildren.toArray(Wire.Node[]::new));
+                    Wire.Node target = builder.term(
+                            "SET", fixture.empty(), "PORT", setSchema,
+                            setSchema, List.of(),
+                            normalized.toArray(Wire.Node[]::new));
+                    normalize(
+                            builder,
+                            fixture.empty(),
+                            "SET",
+                            setSchema,
+                            source,
+                            target,
+                            sourceChildren,
+                            operator,
+                            "0/0");
                 });
     }
 
@@ -4593,8 +4703,8 @@ public final class VerifierTest {
                 "4",
                 overflow,
                 context,
-                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v11",
-                "canonical-alloy-signature-v7");
+                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13",
+                "canonical-alloy-signature-v8");
         return List.of(
                 profile.get(0),
                 profile.get(1),
@@ -4663,15 +4773,19 @@ public final class VerifierTest {
                 ALLOY_LAW_DIGEST);
     }
 
-    private static Wire.Node andLawCertificate(
-            String boolType,
+    private static Wire.Node alloyLawCertificate(
+            String opcode,
+            String operatorIdentity,
+            String exactTypeKind,
+            String exactType,
             String schemaId,
             String law) {
         String profileKey = stableKey(
                 "semantic-profile",
                 publicationProfile("FORBID").subList(0, 5),
                 List.of());
-        String typeKey = stableKey("type/BOOL", List.of(), List.of());
+        String typeKey = stableKey("type/" + exactTypeKind,
+                List.of(), List.of());
         String arityKey = stableKey(
                 "arity-policy", List.of("AT_LEAST", "1"), List.of());
         String oneSchemaKey = stableKey(
@@ -4695,13 +4809,13 @@ public final class VerifierTest {
         };
         String parameter = stableKey(
                 "alloy-law-parameter-v1",
-                List.of("AND", "0/0", law, family),
+                List.of(opcode, "0/0", law, family),
                 List.of(profileKey, typeKey, schemaKey));
         String index = stableKey(
                 "container-law-index-v2",
                 List.of(
                         "ALLOY_PROFILE_THEORY",
-                        "ALLOY/AND",
+                        operatorIdentity,
                         "0/0",
                         law,
                         ALLOY_LAW_DIGEST),
@@ -4711,14 +4825,15 @@ public final class VerifierTest {
         String right = stableKey(
                 "container-law-source-endpoint", List.of("right"), List.of(index));
         String sourceArtifact = ALLOY_LAW_VERSION + "/" + ALLOY_LAW_DIGEST;
-        String declaration = "ALLOY/AND@0/0:" + law + ":" + sha256(parameter);
+        String declaration = operatorIdentity + "@0/0:" + law + ":"
+                + sha256(parameter);
         return Wire.leaf(
                 "law-certificate",
                 index,
                 "ALLOY_PROFILE_THEORY",
-                "ALLOY/AND",
-                boolType,
-                boolType,
+                operatorIdentity,
+                exactType,
+                exactType,
                 "0/0",
                 law,
                 ALLOY_LAW_DIGEST,

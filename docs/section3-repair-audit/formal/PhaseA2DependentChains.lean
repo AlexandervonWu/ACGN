@@ -1565,10 +1565,10 @@ def checkCompleteChainStructure (index : CompleteChainIndex) : Bool :=
   | none => false
 
 def fixedDependentChainTheoryVersion : String :=
-  "alloy-dependent-chain-theory-v10"
+  "alloy-dependent-chain-theory-v11"
 
 def fixedDependentChainTheoryDigest : String :=
-  "2333d5911c360be748aef56db5ee2a818143cfbe0fdc95ae9814f432bca4019a"
+  "3387749f582a53216caa599105386b710e9e5e748110c59e1b3bf3401ac03cf8"
 
 def checkCompleteChainEvidence (index : CompleteChainIndex) : Bool :=
   checkCompleteChainStructure index &&

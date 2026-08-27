@@ -56,6 +56,11 @@ reinterpreted. A provenance-only CALL ledger additionally binds parser
 occurrence IDs and deterministic source paths to qualified callees, call kinds,
 declared-arity authorities, contiguous roles, ordered argument endpoints, and
 the complete typed CALL endpoint without changing semantic operator equality.
+For every non-fixture semantic verification, the caller must additionally pin
+the complete CALL-occurrence set for the selected input scope. The scope key
+binds both the caller-owned input identifier and source SHA-256. Missing
+authority is `UNCHECKABLE / MISSING_EVIDENCE`; a supplied commitment that does
+not match the replayed wire records is `REJECTED / MISSING_EVIDENCE`.
 
 The checker and its closed schema implement all profiles below. The producer
 bridge is intentionally narrower. It exports either a nonempty bottom-up
@@ -90,8 +95,22 @@ The jar is written to
 java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
   --profile full \
   --theory-digest <pinned-sha256> \
+  --call-occurrence-commitment <subject-sha256>=<occurrence-sha256> \
   artifact.acgncert
 ```
+
+The CLI can format an **untrusted candidate** commitment from a bundle:
+
+```bash
+java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
+  --inspect-call-occurrences artifact.acgncert
+```
+
+That output becomes authority only after the caller independently retains or
+reviews it against the intended source scope. Feeding a producer bundle's own
+inspection result directly back into verification is circular and does not
+establish raw-source completeness. The current MVP does not include an
+independent Alloy parser inside the `java.base`-only verifier.
 
 Pair mode takes two independently exported bundles:
 
@@ -99,6 +118,8 @@ Pair mode takes two independently exported bundles:
 java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
   --profile pair \
   --theory-digest <pinned-sha256> \
+  --call-occurrence-commitment <left-subject-sha256>=<left-occurrence-sha256> \
+  --call-occurrence-commitment <right-subject-sha256>=<right-occurrence-sha256> \
   left.acgncert right.acgncert
 ```
 
@@ -148,6 +169,9 @@ standalone verifier accepts the pair under the static empty-theory pin.
 The producer test output subdirectory named `schema-v8-coverage` is retained
 only as a stable historical harness path; newly generated bundles in that
 directory use schema v10 and v9 payload roots are rejected.
+The harness's automatic CALL-candidate inspection is explicitly `TEST_ONLY`
+plumbing used to exercise replay. It is not an external source authority and
+does not support a production completeness claim.
 
 ## Producer Export Status
 

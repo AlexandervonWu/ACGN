@@ -114,7 +114,7 @@ public final class IndependentVerifier {
         }
         KernelModel model = new KernelModel(bundle, policy.limits());
         SemanticEvidenceVerifier.Authorization semanticEvidence =
-                new SemanticEvidenceVerifier(bundle, model, policy.limits()).verify();
+                new SemanticEvidenceVerifier(bundle, model, policy).verify();
         KernelVerifier kernel = new KernelVerifier(
                 model, policy.limits(), semanticEvidence);
         return new Session(bundle, model, kernel, policy.limits());

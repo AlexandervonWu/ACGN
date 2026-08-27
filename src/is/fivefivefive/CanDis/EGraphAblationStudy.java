@@ -116,8 +116,12 @@ public final class EGraphAblationStudy {
             CompletionService<IndexedFileResult> completion =
                     new ExecutorCompletionService<>(executor);
             Map<Future<IndexedFileResult>, Integer> active = new HashMap<>();
-            for (int index = 0; index < files.size(); index++) {
-                final int fileIndex = index;
+            int workers = Math.max(1, options.threads);
+            int maximumInFlight = workers > Integer.MAX_VALUE / 4
+                    ? Integer.MAX_VALUE : workers * 4;
+            int submitted = 0;
+            while (submitted < files.size() && active.size() < maximumInFlight) {
+                final int fileIndex = submitted++;
                 Future<IndexedFileResult> future = completion.submit(
                         () -> new IndexedFileResult(fileIndex,
                                 processFile(options, files.get(fileIndex))));
@@ -151,6 +155,9 @@ public final class EGraphAblationStudy {
                     results.set(indexed.index, indexed.result);
                 } catch (ExecutionException exception) {
                     Throwable cause = exception.getCause() == null ? exception : exception.getCause();
+                    if (cause instanceof VirtualMachineError) {
+                        throw (VirtualMachineError) cause;
+                    }
                     results.set(index, FileResult.failure(options.input, files.get(index),
                             cause.getClass().getSimpleName() + ": " + cause.getMessage()));
                 } catch (InterruptedException exception) {
@@ -158,6 +165,13 @@ public final class EGraphAblationStudy {
                     throw new IllegalStateException("Ablation run was interrupted", exception);
                 }
                 progress.update(++completed);
+                while (submitted < files.size() && active.size() < maximumInFlight) {
+                    final int fileIndex = submitted++;
+                    Future<IndexedFileResult> next = completion.submit(
+                            () -> new IndexedFileResult(fileIndex,
+                                    processFile(options, files.get(fileIndex))));
+                    active.put(next, fileIndex);
+                }
             }
             progress.finish(completed);
 
@@ -236,6 +250,8 @@ public final class EGraphAblationStudy {
             }
             result.engineNanos = System.nanoTime() - engineStarted;
             result.engineCpuNanos = elapsedThreadCpuNanos(engineCpuStarted);
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable throwable) {
             result.error = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             if (options.verbose) {

@@ -47,6 +47,7 @@ import is.fivefivefive.CanDis.theory.StructuralKey;
 import is.fivefivefive.CanDis.theory.TypedPermutation;
 import is.fivefivefive.CanDis.theory.TypedSlot;
 import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.CertifiedSetOperandPartition;
 import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBinding;
 
 /**
@@ -54,7 +55,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v9";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v13";
 
     private RepairProjection() {
     }
@@ -79,6 +80,13 @@ public final class RepairProjection {
     public static RepairView project(
             TheoryAlloyAdapter.Result evidence,
             List<NormalForm> normalForms) {
+        return RepairView.fromCertifiedProjection(
+                projectComponents(evidence, normalForms));
+    }
+
+    static Projection projectComponents(
+            TheoryAlloyAdapter.Result evidence,
+            List<NormalForm> normalForms) {
         Objects.requireNonNull(evidence, "evidence");
         evidence.requireRepairProjectionSources(normalForms);
         CertifiedSemanticArtifact artifact = evidence.semanticArtifact();
@@ -90,6 +98,9 @@ public final class RepairProjection {
                 evidence.localBinderDescriptors();
         Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates =
                 evidence.localBinderSourceCoordinates();
+        Map<NormalForm, List<TheoryAlloyAdapter.PhaseLocalBindingCertificate>>
+                phaseLocalBindingCertificates =
+                        evidence.phaseLocalBindingCertificates();
         Map<EGraphNode, DependentChainSourceBinding> dependentChainSourceBindings =
                 evidence.dependentChainSourceBindings();
         Objects.requireNonNull(artifact, "artifact");
@@ -100,6 +111,8 @@ public final class RepairProjection {
         Objects.requireNonNull(
                 localBinderSourceCoordinates, "localBinderSourceCoordinates");
         Objects.requireNonNull(
+                phaseLocalBindingCertificates, "phaseLocalBindingCertificates");
+        Objects.requireNonNull(
                 dependentChainSourceBindings, "dependentChainSourceBindings");
         if (normalForms.size() != phaseDescriptors.size()
                 || normalForms.size() != phaseSourceCoordinates.size()) {
@@ -107,7 +120,8 @@ public final class RepairProjection {
                     "Every repaired normal-form phase requires one certified binder plan");
         }
 
-        CertifiedContainers containers = CertifiedContainers.from(artifact);
+        CertifiedContainers containers = CertifiedContainers.from(
+                artifact, evidence.certifiedSetOperandPartitions());
         CertifiedDependentChains chains = CertifiedDependentChains.from(
                 artifact, dependentChainSourceBindings);
         OriginIndex origins = new OriginIndex(
@@ -121,17 +135,38 @@ public final class RepairProjection {
                     phaseSourceCoordinates,
                     localBinderDescriptors,
                     localBinderSourceCoordinates,
+                    phaseLocalBindingCertificates,
                     origins,
                     containers,
                     chains));
         }
         CanonicalPhaseProjection canonical = CanonicalPhaseProjection.create(
                 normalForms, phases);
-        return new RepairView(
+        return new Projection(
                 canonical.temporalRoot,
                 canonical.phases,
                 artifact.semanticProfile(),
                 evidence.canonicalKey());
+    }
+
+    static final class Projection {
+        final TemporalNode temporalRoot;
+        final List<Phase> phases;
+        final SemanticProfile semanticProfile;
+        final StructuralKey producerObservationKey;
+
+        private Projection(
+                TemporalNode temporalRoot,
+                List<Phase> phases,
+                SemanticProfile semanticProfile,
+                StructuralKey producerObservationKey) {
+            this.temporalRoot = Objects.requireNonNull(temporalRoot, "temporalRoot");
+            this.phases = List.copyOf(phases);
+            this.semanticProfile = Objects.requireNonNull(
+                    semanticProfile, "semanticProfile");
+            this.producerObservationKey = Objects.requireNonNull(
+                    producerObservationKey, "producerObservationKey");
+        }
     }
 
     private static Phase projectPhase(
@@ -141,6 +176,8 @@ public final class RepairProjection {
             List<? extends List<Integer>> sourceCoordinates,
             Map<EGraphNode, BinderBlockDescriptor> localBinderDescriptors,
             Map<EGraphNode, Map<String, Integer>> localBinderSourceCoordinates,
+            Map<NormalForm, List<TheoryAlloyAdapter.PhaseLocalBindingCertificate>>
+                    phaseLocalBindingCertificates,
             OriginIndex origins,
             CertifiedContainers containers,
             CertifiedDependentChains chains) {
@@ -168,7 +205,8 @@ public final class RepairProjection {
                             -1,
                             declaration,
                             variable.getBindingPath(),
-                            Collections.emptyList()));
+                            Collections.emptyList(),
+                            false));
             registerAliasType(
                     aliasTypes,
                     variable,
@@ -197,7 +235,8 @@ public final class RepairProjection {
                             coordinate,
                             declaration,
                             variable.getBindingPath(),
-                            certifiedOrbit(descriptor, coordinate)));
+                            certifiedOrbit(descriptor, coordinate),
+                            true));
             registerAliasType(
                     aliasTypes,
                     variable,
@@ -221,12 +260,51 @@ public final class RepairProjection {
                             origin.coordinate,
                             declaration,
                             variable.getBindingPath(),
-                            certifiedOrbit(descriptors.get(origin.phase), origin.coordinate)));
+                            certifiedOrbit(descriptors.get(origin.phase), origin.coordinate),
+                            true));
             registerAliasType(
                     aliasTypes,
                     variable,
                     descriptors.get(origin.phase).coordinates().get(origin.coordinate)
                             .canonicalSlot().type());
+        }
+
+        List<TheoryAlloyAdapter.PhaseLocalBindingCertificate> localImports =
+                phaseLocalBindingCertificates.getOrDefault(
+                        normalForm, Collections.emptyList());
+        if (localImports.size() != normalForm.getPhaseLocalBindingImports().size()) {
+            throw new IllegalStateException(
+                    "A temporal phase-local import lacks an exact adapter certificate");
+        }
+        for (int index = 0; index < localImports.size(); index++) {
+            TheoryAlloyAdapter.PhaseLocalBindingCertificate certificate =
+                    localImports.get(index);
+            QuantiVar variable = certificate.source().variable();
+            Declaration declaration = certifiedDeclaration(
+                    variable,
+                    certificate.ownerDescriptor(),
+                    certificate.coordinate());
+            addBinding(
+                    bindings,
+                    aliases,
+                    variable,
+                    new Binding(
+                            BindingRole.LOCAL_INHERITED,
+                            index,
+                            certificate.ownerPhase(),
+                            certificate.coordinate(),
+                            declaration,
+                            variable.getBindingPath(),
+                            certificate.ownerContext(),
+                            certifiedOrbit(
+                                    certificate.ownerDescriptor(),
+                                    certificate.coordinate()),
+                            false));
+            registerAliasType(
+                    aliasTypes,
+                    variable,
+                    certificate.ownerDescriptor().coordinates()
+                            .get(certificate.coordinate()).canonicalSlot().type());
         }
 
         Node matrix = projectNode(
@@ -468,19 +546,26 @@ public final class RepairProjection {
             containers.require(source, containerKind, aliasTypes, localTypes);
         }
         List<Node> children = new ArrayList<>(source.getChildren().size());
-        for (EGraphNode child : source.getChildren()) {
-            Node projected = projectNode(
-                    child,
-                    aliases,
-                    aliasTypes,
-                    localAliases,
-                    localTypes,
-                    localDepth,
-                    localBinderDescriptors,
-                    localBinderSourceCoordinates,
-                    containers,
-                    chains);
+        for (List<Integer> fiber : containers.childFibers(
+                source, containerKind)) {
+            List<Node> equivalentChildren = new ArrayList<>(fiber.size());
+            for (int childIndex : fiber) {
+                equivalentChildren.add(projectNode(
+                        source.getChildren().get(childIndex),
+                        aliases,
+                        aliasTypes,
+                        localAliases,
+                        localTypes,
+                        localDepth,
+                        localBinderDescriptors,
+                        localBinderSourceCoordinates,
+                        containers,
+                        chains));
+            }
+            Node projected = certifiedAlternativeNode(equivalentChildren);
+            EGraphNode child = source.getChildren().get(fiber.get(0));
             if (mergeLocalDeclarations
+                    && fiber.size() == 1
                     && isMergeableLocalDeclaration(child.getOpcode())
                     && !children.isEmpty()
                     && canMergeLocalDeclarations(
@@ -494,6 +579,14 @@ public final class RepairProjection {
         }
         if (containerKind == ContainerKind.SET && children.size() > 1) {
             children = deduplicateSetChildren(children);
+        }
+        if (containerKind == ContainerKind.SET
+                && containers.collapsedToSingleton(source)) {
+            if (children.size() != 1) {
+                throw new IllegalStateException(
+                        "A certified singleton Set collapse retained another arity");
+            }
+            return children.get(0);
         }
 
         String operator = source.getOpcode().name();
@@ -693,14 +786,14 @@ public final class RepairProjection {
     }
 
     private static boolean sameProjectedNode(Node left, Node right) {
-        if (!left.alphaAlternatives().isEmpty()
-                || !right.alphaAlternatives().isEmpty()) {
-            List<Node> leftAlternatives = left.alphaAlternatives().isEmpty()
+        if (!left.certifiedAlternatives().isEmpty()
+                || !right.certifiedAlternatives().isEmpty()) {
+            List<Node> leftAlternatives = left.certifiedAlternatives().isEmpty()
                     ? List.of(left)
-                    : left.alphaAlternatives();
-            List<Node> rightAlternatives = right.alphaAlternatives().isEmpty()
+                    : left.certifiedAlternatives();
+            List<Node> rightAlternatives = right.certifiedAlternatives().isEmpty()
                     ? List.of(right)
-                    : right.alphaAlternatives();
+                    : right.certifiedAlternatives();
             for (Node leftAlternative : leftAlternatives) {
                 for (Node rightAlternative : rightAlternatives) {
                     if (sameProjectedNode(leftAlternative, rightAlternative)) {
@@ -743,6 +836,40 @@ public final class RepairProjection {
             }
         }
         return result;
+    }
+
+    private static Node certifiedAlternativeNode(List<Node> candidates) {
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException(
+                    "A certified quotient fiber has no repair representative");
+        }
+        List<Node> unique = new ArrayList<>(candidates.size());
+        for (Node candidate : candidates) {
+            boolean duplicate = false;
+            for (Node retained : unique) {
+                if (sameProjectedNode(retained, candidate)) {
+                    duplicate = true;
+                    break;
+                }
+            }
+            if (!duplicate) {
+                unique.add(candidate);
+            }
+        }
+        if (unique.size() == 1) {
+            return unique.get(0);
+        }
+        Node primary = unique.get(0);
+        return new Node(
+                primary.operator(),
+                primary.payload(),
+                primary.semanticPayload(),
+                primary.lexicalVariable(),
+                primary.bindingIndex(),
+                primary.containerKind(),
+                primary.orderInsensitive(),
+                primary.children(),
+                unique);
     }
 
     private static ContainerKind containerKind(EGraphNode node) {
@@ -1047,10 +1174,11 @@ public final class RepairProjection {
             }
 
             visitPhase(0);
-            if (visited.size() != this.forms.size()) {
-                throw new IllegalStateException(
-                        "The repair projection contains an unreachable temporal phase");
-            }
+            // The exact adapter has already proved every source phase reachable.
+            // A phase can disappear here only when a certified alternative (most
+            // notably an idempotent Set fiber) selects an equivalent occurrence.
+            // Retaining that redundant phase would charge for syntax removed by
+            // the certified quotient and would leave no matrix reference to it.
             for (int index = 0; index < sourceOrder.size(); index++) {
                 canonicalIndices.put(sourceOrder.get(index), index);
             }
@@ -1100,7 +1228,9 @@ public final class RepairProjection {
                         binding.coordinate(),
                         binding.declaration(),
                         binding.bindingPath(),
-                        binding.certifiedOrbit()));
+                        binding.ownerContext(),
+                        binding.certifiedOrbit(),
+                        binding.prenexPathErasureCertified()));
             }
             return new Phase(
                     phase.quantifiers(),
@@ -1129,8 +1259,9 @@ public final class RepairProjection {
             for (Node child : node.children()) {
                 children.add(rewriteReferences(child, parentPhase));
             }
-            List<Node> alternatives = new ArrayList<>(node.alphaAlternatives().size());
-            for (Node alternative : node.alphaAlternatives()) {
+            List<Node> alternatives = new ArrayList<>(
+                    node.certifiedAlternatives().size());
+            for (Node alternative : node.certifiedAlternatives()) {
                 alternatives.add(rewriteReferences(alternative, parentPhase));
             }
             return new Node(
@@ -1187,12 +1318,12 @@ public final class RepairProjection {
         }
 
         private Node selectedAlternative(Node node, int parentPhase) {
-            if (node.alphaAlternatives().isEmpty()) {
+            if (node.certifiedAlternatives().isEmpty()) {
                 return node;
             }
             Node selected = null;
             StructuralKey selectedKey = null;
-            for (Node alternative : node.alphaAlternatives()) {
+            for (Node alternative : node.certifiedAlternatives()) {
                 StructuralKey key = matrixKey(alternative, parentPhase);
                 if (selected == null || key.compareTo(selectedKey) < 0) {
                     selected = alternative;
@@ -1242,9 +1373,9 @@ public final class RepairProjection {
                         List.of(reference.label),
                         branches);
             }
-            if (!node.alphaAlternatives().isEmpty()) {
+            if (!node.certifiedAlternatives().isEmpty()) {
                 StructuralKey minimum = null;
-                for (Node alternative : node.alphaAlternatives()) {
+                for (Node alternative : node.certifiedAlternatives()) {
                     StructuralKey candidate = matrixKey(alternative, parentPhase);
                     if (minimum == null || candidate.compareTo(minimum) < 0) {
                         minimum = candidate;
@@ -1583,14 +1714,31 @@ public final class RepairProjection {
                 if (source.getOpcode() != expected
                         || source.getChildren().size() != 2
                         || source.getExactAlloyType() == null
-                        || !AlloyTypeBridge.graphType(source.getExactAlloyType()).equals(
-                                certificate.target().outputType())) {
+                        || !matchesCertifiedResultType(
+                                source, certificate.target().outputType())) {
                     throw new IllegalArgumentException(
                             "Repair projection received a chain certificate for another source");
                 }
                 checked.put(source, certificate);
             }
             return new CertifiedDependentChains(Collections.unmodifiableMap(checked));
+        }
+
+        private static boolean matchesCertifiedResultType(
+                EGraphNode source,
+                GraphType certifiedRelationType) {
+            GraphType storedType = AlloyTypeBridge.graphType(
+                    source.getExactAlloyType());
+            try {
+                DependentChainTheory.LeafTypeRule rule =
+                        DependentChainTheory.requireLeafTypeProof(
+                                storedType, certifiedRelationType);
+                DependentChainTheory.leafTypeProof(
+                        rule, storedType, certifiedRelationType);
+                return true;
+            } catch (IllegalArgumentException unsupported) {
+                return false;
+            }
         }
 
         private DependentChainCertificate certificateFor(EGraphNode source) {
@@ -1601,17 +1749,44 @@ public final class RepairProjection {
     private static final class CertifiedContainers {
         private final SemanticProfile semanticProfile;
         private final Map<String, List<ContainerLawDeclaration>> declarations;
+        private final Map<EGraphNode, CertifiedSetOperandPartition> setPartitions;
 
         private CertifiedContainers(
                 SemanticProfile semanticProfile,
-                Map<String, List<ContainerLawDeclaration>> declarations) {
+                Map<String, List<ContainerLawDeclaration>> declarations,
+                Map<EGraphNode, CertifiedSetOperandPartition> setPartitions) {
             this.semanticProfile = semanticProfile;
             this.declarations = declarations;
+            this.setPartitions = setPartitions;
         }
 
-        private static CertifiedContainers from(CertifiedSemanticArtifact artifact) {
+        private static CertifiedContainers from(
+                CertifiedSemanticArtifact artifact,
+                Map<EGraphNode, CertifiedSetOperandPartition> setPartitions) {
             return new CertifiedContainers(
-                    artifact.semanticProfile(), artifact.containerLaws());
+                    artifact.semanticProfile(),
+                    artifact.containerLaws(),
+                    Objects.requireNonNull(setPartitions, "setPartitions"));
+        }
+
+        private List<List<Integer>> childFibers(
+                EGraphNode source,
+                ContainerKind kind) {
+            CertifiedSetOperandPartition partition = kind == ContainerKind.SET
+                    ? setPartitions.get(source) : null;
+            if (partition != null) {
+                return partition.inputFibers(source);
+            }
+            List<List<Integer>> all = new ArrayList<>(source.getChildren().size());
+            for (int index = 0; index < source.getChildren().size(); index++) {
+                all.add(Collections.singletonList(index));
+            }
+            return all;
+        }
+
+        private boolean collapsedToSingleton(EGraphNode source) {
+            CertifiedSetOperandPartition partition = setPartitions.get(source);
+            return partition != null && partition.inputFibers(source).size() == 1;
         }
 
         private static ContainerKind portKind(ContainerLawDeclaration.Kind kind) {
@@ -1789,6 +1964,14 @@ public final class RepairProjection {
     }
 
     private static GraphType bindingType(QuantiVar variable) {
+        is.fivefivefive.ACGN.alloy.ExactAlloyType exact =
+                variable.getExactAlloyType();
+        if (exact != null
+                && exact.kind()
+                        == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                && exact.relationArity() > 1) {
+            return AlloyTypeBridge.graphType(exact);
+        }
         String type = requireTypeName(variable.getTypeName(), "repair binding");
         if ("int".equalsIgnoreCase(type)) {
             return GraphType.INT;

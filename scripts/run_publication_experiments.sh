@@ -8,7 +8,7 @@ MAX_HEAP="4g"
 SEED="55520260811"
 CAPABILITY_TARGET="500"
 LIMIT="0"
-REWARD_POOL="0"
+REWARD_POOL="100"
 logical_cores="$(getconf _NPROCESSORS_ONLN 2>/dev/null || printf '1')"
 THREADS="$logical_cores"
 if (( THREADS > 32 )); then THREADS=32; fi
@@ -138,6 +138,7 @@ cat > "$RUN_ROOT/summary.md" <<EOF
 - Dataset: \`$DATASET\`
 - Workers: $THREADS
 - Heap: \`$MAX_HEAP\`
+- Reward pool size: $REWARD_POOL
 
 | Stage | Summary | Machine-readable data |
 | --- | --- | --- |

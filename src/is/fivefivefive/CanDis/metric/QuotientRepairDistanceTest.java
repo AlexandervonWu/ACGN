@@ -171,21 +171,20 @@ public final class QuotientRepairDistanceTest {
         Declaration rightT = typedDeclaration("ALL", "T", 0);
         Declaration rightS1 = typedDeclaration("ALL", "S", 0);
         Declaration rightS2 = typedDeclaration("ALL", "S", 0);
-        List<Integer> typedOrbit = List.of(0, 1, 2);
         check(distance(
                 view(
                         List.of(leftS0, leftT, leftS2),
                         List.of(
-                                binding(leftS0, "typed", 0, typedOrbit),
-                                binding(leftT, "typed", 1, typedOrbit),
-                                binding(leftS2, "typed", 2, typedOrbit)),
+                                binding(leftS0, "typed", 0, List.of(0, 2)),
+                                binding(leftT, "typed", 1, List.of(1)),
+                                binding(leftS2, "typed", 2, List.of(0, 2))),
                         variable("left-S", 0)),
                 view(
                         List.of(rightT, rightS1, rightS2),
                         List.of(
-                                binding(rightT, "typed", 0, typedOrbit),
-                                binding(rightS1, "typed", 1, typedOrbit),
-                                binding(rightS2, "typed", 2, typedOrbit)),
+                                binding(rightT, "typed", 0, List.of(0)),
+                                binding(rightS1, "typed", 1, List.of(1, 2)),
+                                binding(rightS2, "typed", 2, List.of(1, 2))),
                         variable("right-T", 0))) == 1,
                 "typed alpha alignment cannot use a same-coordinate incompatible fallback");
 
@@ -195,6 +194,62 @@ public final class QuotientRepairDistanceTest {
                 view(List.of(all), List.of(x), variable("x", 0)),
                 view(List.of(all), List.of(y), variable("renamed", 0))) == 0,
                 "pairwise alpha alignment uses a certified scope orbit");
+
+        Declaration lone = declaration("LONE", 1);
+        check(distance(
+                view(List.of(lone),
+                        List.of(binding(lone, "root/body[2]/decl[0]", 0)),
+                        variable("nested-lone-left", 0)),
+                view(List.of(lone),
+                        List.of(binding(lone, "root/body[1]/body[1]/decl[0]", 0)),
+                        variable("nested-lone-right", 0))) == 0,
+                "certified prenex coordinates ignore obsolete lexical binder paths");
+        check(distance(
+                view(List.of(lone),
+                        List.of(uncertifiedBinding(lone, "left/scope", 0)),
+                        variable("uncertified-left", 0)),
+                view(List.of(lone),
+                        List.of(uncertifiedBinding(lone, "right/scope", 0)),
+                        variable("uncertified-right", 0))) > 0,
+                "uncertified bindings cannot erase distinct lexical scope paths");
+        expectThrows(IllegalArgumentException.class, () -> new Binding(
+                BindingRole.PARAMETER, 0, -1, -1, parameterS,
+                "parameter/0", List.of(0), false));
+        expectThrows(IllegalArgumentException.class, () -> new Binding(
+                BindingRole.MATRIX, 0, 0, 0, lone,
+                "", List.of(0), false));
+        expectThrows(IllegalArgumentException.class, () -> new Node(
+                "VARIABLE", null, "negative", -2,
+                ContainerKind.SEQUENCE, false, List.of()));
+        expectThrows(IllegalArgumentException.class, () -> new Phase(
+                List.of(), List.of(), variable("absent-binding", 7)));
+
+        Declaration relabeledLone = declaration("LONE", 0);
+        check(distance(
+                view(List.of(lone),
+                        List.of(binding(lone, "left/lone", 0)),
+                        variable("left-lone", 0)),
+                view(List.of(relabeledLone),
+                        List.of(binding(relabeledLone, "right/lone", 0)),
+                        variable("right-lone", 0))) == 0,
+                "exchange-block identifiers are local and align order-preservingly");
+
+        Declaration loneBlockZero = declaration("LONE", 0);
+        Declaration loneBlockOne = declaration("LONE", 1);
+        check(distance(
+                view(List.of(loneBlockZero, loneBlockOne),
+                        List.of(
+                                binding(loneBlockZero, "left/lone-zero", 0),
+                                binding(loneBlockOne, "left/lone-one", 1)),
+                        node("PAIR", ContainerKind.SEQUENCE,
+                                variable("left-zero", 0), variable("left-one", 1))),
+                view(List.of(loneBlockZero, loneBlockOne),
+                        List.of(
+                                binding(loneBlockZero, "right/lone-zero", 0),
+                                binding(loneBlockOne, "right/lone-one", 1)),
+                        node("PAIR", ContainerKind.SEQUENCE,
+                                variable("right-one", 1), variable("right-zero", 0)))) > 0,
+                "distinct non-ALL exchange blocks cannot cross after path erasure");
 
         Declaration blockZero = declaration("ALL", 0);
         Declaration blockOne = declaration("ALL", 1);
@@ -210,6 +265,18 @@ public final class QuotientRepairDistanceTest {
                         node("PAIR", ContainerKind.SEQUENCE,
                                 variable("b", 1), variable("a", 0)))) > 0,
                 "separate certified scope blocks cannot cross-permute");
+
+        expectThrows(IllegalStateException.class, () -> distance(
+                view(List.of(all, all), List.of(
+                                binding(all, "malformed-orbit", 0, List.of(0)),
+                                binding(all, "malformed-orbit", 1, List.of(1))),
+                        node("PAIR", ContainerKind.SEQUENCE,
+                                variable("m0", 0), variable("m1", 1))),
+                view(List.of(all, all), List.of(
+                                binding(all, "complete-orbit", 0, List.of(0, 1)),
+                                binding(all, "complete-orbit", 1, List.of(0, 1))),
+                        node("PAIR", ContainerKind.SEQUENCE,
+                                variable("n0", 0), variable("n1", 1)))));
 
         Binding x0 = binding(all, "same-block", 0, List.of(0, 1, 2));
         Binding x1 = binding(all, "same-block", 1, List.of(0, 1, 2));
@@ -362,12 +429,13 @@ public final class QuotientRepairDistanceTest {
                 TEST_OBSERVATION);
         expectThrows(IllegalStateException.class, () ->
                 QuotientRepairDistance.evaluate(semantic, falseSameObservation));
-        check(QuotientRepairDistance.evaluate(semantic, semantic).distance() == 0,
-                "the public fast metric accepts zero only for the same producer observation");
-        check(QuotientRepairDistance.evaluate(semantic, semantic).kernelAuthority()
+        expectThrows(IllegalStateException.class, () ->
+                QuotientRepairDistance.evaluate(semantic, semantic));
+        check(QuotientRepairDistance.evaluateUncheckedForTesting(
+                        semantic, semantic).kernelAuthority()
                         == QuotientRepairDistance.KernelAuthority
-                                .IN_PROCESS_PRODUCER_CONSISTENCY,
-                "the fast metric cannot advertise independent verifier authority");
+                                .TEST_ONLY_UNCHECKED,
+                "an unbound fixture cannot advertise producer-kernel authority");
         RepairView modular = new RepairView(
                 semantic.temporalRoot(),
                 semantic.phases(),
@@ -461,7 +529,113 @@ public final class QuotientRepairDistanceTest {
                                                 variable("b0", 0), variable("b1", 1),
                                                 atom("B"))))));
 
+        testBoundedGlobalAlphaEnumerationCompleteness();
+
         System.out.println("QuotientRepairDistanceTest passed: " + checks + " checks");
+    }
+
+    private static void testBoundedGlobalAlphaEnumerationCompleteness() {
+        for (int bindingCount = 1; bindingCount <= 3; bindingCount++) {
+            List<int[]> words = coordinateWords(bindingCount, 3);
+            List<int[]> permutations = coordinatePermutations(bindingCount);
+            for (int[] leftWord : words) {
+                for (int[] rightWord : words) {
+                    int expected = Integer.MAX_VALUE;
+                    for (int[] permutation : permutations) {
+                        int mismatches = 0;
+                        for (int index = 0; index < leftWord.length; index++) {
+                            if (permutation[leftWord[index]] != rightWord[index]) {
+                                mismatches++;
+                            }
+                        }
+                        expected = Math.min(expected, mismatches);
+                    }
+                    int actual = distance(
+                            completeOrbitView(bindingCount, leftWord, "left"),
+                            completeOrbitView(bindingCount, rightWord, "right"));
+                    check(actual == expected,
+                            "global alpha enumeration must equal the independent bounded "
+                                    + "permutation oracle (bindings=" + bindingCount
+                                    + ", left=" + Arrays.toString(leftWord)
+                                    + ", right=" + Arrays.toString(rightWord)
+                                    + ", expected=" + expected + ", actual=" + actual + ")");
+                }
+            }
+        }
+    }
+
+    private static RepairView completeOrbitView(
+            int bindingCount,
+            int[] word,
+            String prefix) {
+        List<Integer> orbit = new ArrayList<>(bindingCount);
+        List<Declaration> declarations = new ArrayList<>(bindingCount);
+        for (int coordinate = 0; coordinate < bindingCount; coordinate++) {
+            orbit.add(coordinate);
+            declarations.add(typedDeclaration("ALL", "S", 0));
+        }
+        List<Binding> bindings = new ArrayList<>(bindingCount);
+        for (int coordinate = 0; coordinate < bindingCount; coordinate++) {
+            bindings.add(binding(
+                    declarations.get(coordinate),
+                    "bounded-complete-orbit",
+                    coordinate,
+                    orbit));
+        }
+        Node[] uses = new Node[word.length];
+        for (int index = 0; index < word.length; index++) {
+            uses[index] = variable(prefix + "-" + index, word[index]);
+        }
+        return view(declarations, bindings, node("ROOT", ContainerKind.SEQUENCE, uses));
+    }
+
+    private static List<int[]> coordinateWords(int alphabetSize, int length) {
+        List<int[]> result = new ArrayList<>();
+        enumerateCoordinateWords(
+                alphabetSize, new int[length], 0, result);
+        return result;
+    }
+
+    private static void enumerateCoordinateWords(
+            int alphabetSize,
+            int[] current,
+            int index,
+            List<int[]> result) {
+        if (index == current.length) {
+            result.add(current.clone());
+            return;
+        }
+        for (int value = 0; value < alphabetSize; value++) {
+            current[index] = value;
+            enumerateCoordinateWords(alphabetSize, current, index + 1, result);
+        }
+    }
+
+    private static List<int[]> coordinatePermutations(int size) {
+        List<int[]> result = new ArrayList<>();
+        enumerateCoordinatePermutations(
+                new int[size], new boolean[size], 0, result);
+        return result;
+    }
+
+    private static void enumerateCoordinatePermutations(
+            int[] current,
+            boolean[] used,
+            int index,
+            List<int[]> result) {
+        if (index == current.length) {
+            result.add(current.clone());
+            return;
+        }
+        for (int value = 0; value < current.length; value++) {
+            if (used[value]) {
+                continue;
+            }
+            used[value] = true;
+            current[index] = value;
+            enumerateCoordinatePermutations(current, used, index + 1, result);
+            used[value] = false;
+        }
     }
 
     private static int distance(RepairView left, RepairView right) {
@@ -817,7 +991,8 @@ public final class QuotientRepairDistanceTest {
                 -1,
                 declaration,
                 "parameter/" + ordinal,
-                Collections.emptyList());
+                Collections.emptyList(),
+                false);
     }
 
     private static Binding binding(
@@ -839,7 +1014,8 @@ public final class QuotientRepairDistanceTest {
                 coordinate,
                 declaration,
                 path,
-                orbit);
+                orbit,
+                true);
     }
 
     private static Binding inherited(
@@ -854,7 +1030,23 @@ public final class QuotientRepairDistanceTest {
                 coordinate,
                 declaration,
                 path,
-                orbit);
+                orbit,
+                true);
+    }
+
+    private static Binding uncertifiedBinding(
+            Declaration declaration,
+            String path,
+            int coordinate) {
+        return new Binding(
+                BindingRole.MATRIX,
+                coordinate,
+                0,
+                coordinate,
+                declaration,
+                path,
+                List.of(coordinate),
+                false);
     }
 
     private static Node variable(String name, int binding) {

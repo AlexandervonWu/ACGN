@@ -23,6 +23,8 @@ import is.fivefivefive.CanDis.theory.CertificateTheoryManifest;
 import is.fivefivefive.CanDis.theory.IndependentCertificateVerifier;
 import is.fivefivefive.CanDis.theory.RecordingCertificateTraceSink;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.augmentation.AlloyEquivalenceValidator;
+import is.fivefivefive.CanDis.augmentation.EquivalenceAugmenter;
 
 /**
  * Three-layer Alloy boundary: certificate-producing semantics, canonical
@@ -36,7 +38,7 @@ import is.fivefivefive.CanDis.theory.SemanticProfile;
  * diagnostic baseline.
  */
 public final class CanonicalAlloyPipeline {
-    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v13-three-layer";
+    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v38-phase-local-bindings";
     public static final String MEASUREMENT_PROJECTION_VERSION = RepairProjection.VERSION;
     public static final String REPRESENTATIVE_TED_VERSION =
             CanonicalRepresentativeTreeDistance.VERSION;
@@ -192,6 +194,59 @@ public final class CanonicalAlloyPipeline {
                     "Repair-view and canonical-observation equality disagree");
         }
         return result;
+    }
+
+    /**
+     * Explicit adaptive overlay evaluation. The ordinary R0 metric remains the
+     * default; this path can additionally replay verified local or admitted
+     * schema equality from the supplied augmenter.
+     */
+    public static EquivalenceAugmenter.Evaluation augmentedDistanceEvaluation(
+            Prepared left,
+            Prepared right,
+            EquivalenceAugmenter augmenter) {
+        requirePrepared(left, right);
+        return Objects.requireNonNull(augmenter, "augmenter").evaluate(left, right);
+    }
+
+    /** Schema-aware adaptive evaluation with source-level correspondence. */
+    public static EquivalenceAugmenter.Evaluation augmentedDistanceEvaluation(
+            Prepared left,
+            Prepared right,
+            EquivalenceAugmenter augmenter,
+            AlloyEquivalenceValidator.Request application) {
+        requirePrepared(left, right);
+        return Objects.requireNonNull(augmenter, "augmenter")
+                .evaluate(left, right, Objects.requireNonNull(application, "application"));
+    }
+
+    /**
+     * Records a positive-distance semantic miss through direct Alloy
+     * validation. This never adds a handwritten R0 rewrite or orients the
+     * resulting equality.
+     */
+    public static EquivalenceAugmenter.LocalRecordView observeAugmentedEquality(
+            Prepared left,
+            Prepared right,
+            EquivalenceAugmenter augmenter,
+            AlloyEquivalenceValidator.Request validation) {
+        requirePrepared(left, right);
+        return Objects.requireNonNull(augmenter, "augmenter")
+                .observeEquivalent(left, right, validation);
+    }
+
+    /** Records a positive semantic miss and immediately re-evaluates locally. */
+    public static EquivalenceAugmenter.Evaluation augmentEquivalentInFlight(
+            Prepared left,
+            Prepared right,
+            EquivalenceAugmenter augmenter,
+            AlloyEquivalenceValidator.Request validation) {
+        requirePrepared(left, right);
+        return Objects.requireNonNull(augmenter, "augmenter")
+                .evaluateAndObserveEquivalent(
+                        left,
+                        right,
+                        Objects.requireNonNull(validation, "validation"));
     }
 
     public enum StandaloneReplayScope {

@@ -128,8 +128,9 @@ public final class ExactAlloyType implements Serializable {
         if (type.is_bool) {
             return boolType();
         }
-        if (type.is_int()) {
-            return intType();
+        if (isExactlyUnaryInt(type)) {
+            return sourceModule == null
+                    ? intType() : parserIntType(sourceModule);
         }
         Map<String, AlternativeShape> tuples = new LinkedHashMap<>();
         java.util.Set<Integer> emptyArities = new java.util.TreeSet<>();
@@ -161,7 +162,10 @@ public final class ExactAlloyType implements Serializable {
         }
         if (tuples.isEmpty()) {
             return type.hasNoTuple() && emptyArities.size() == 1
-                    ? emptyRelation(emptyArities.iterator().next())
+                    ? (sourceModule == null
+                            ? emptyRelation(emptyArities.iterator().next())
+                            : parserEmptyRelation(
+                                    emptyArities.iterator().next(), sourceModule))
                     : unknownType();
         }
         int arity = tuples.values().iterator().next().columns.size();
@@ -184,12 +188,38 @@ public final class ExactAlloyType implements Serializable {
                 parserAuthenticatedAncestry ? sourceModule : null);
     }
 
+    private static boolean isExactlyUnaryInt(Type type) {
+        if (!type.is_int() || type.is_bool) {
+            return false;
+        }
+        boolean sawInt = false;
+        for (Type.ProductType product : type) {
+            if (product.isEmpty()) {
+                continue;
+            }
+            if (product.arity() != 1 || product.get(0) != Sig.SIGINT || sawInt) {
+                return false;
+            }
+            sawInt = true;
+        }
+        return sawInt;
+    }
+
     public static ExactAlloyType boolType() {
         return new ExactAlloyType(Kind.BOOL, Collections.emptyList(), -1);
     }
 
     public static ExactAlloyType intType() {
         return new ExactAlloyType(Kind.INT, Collections.emptyList(), -1);
+    }
+
+    private static ExactAlloyType parserIntType(CompModule sourceModule) {
+        return new ExactAlloyType(
+                Kind.INT,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                -1,
+                Objects.requireNonNull(sourceModule, "sourceModule"));
     }
 
     public static ExactAlloyType unaryRelation(String column) {
@@ -208,6 +238,562 @@ public final class ExactAlloyType implements Serializable {
                 columns.size());
     }
 
+    /**
+     * Derives the exact Cartesian-product type of parser-authenticated relation
+     * factors without inventing a column or ancestry edge.
+     */
+    public static ExactAlloyType parserCertifiedCartesianProduct(
+            List<ExactAlloyType> factors) {
+        Objects.requireNonNull(factors, "factors");
+        if (factors.size() < 2) {
+            throw new IllegalArgumentException(
+                    "A Cartesian product requires at least two relation factors");
+        }
+        CompModule module = null;
+        List<AlternativeShape> products = new ArrayList<>();
+        products.add(new AlternativeShape(
+                Collections.emptyList(), Collections.emptyList()));
+        int arity = 0;
+        boolean sawEmpty = false;
+        for (ExactAlloyType factor : factors) {
+            if (factor == null
+                    || (factor.kind != Kind.RELATION
+                            && factor.kind != Kind.INT
+                            && factor.kind != Kind.EMPTY_RELATION)
+                    || factor.parserModuleAuthority == null) {
+                throw new IllegalArgumentException(
+                        "Every Cartesian factor requires parser-authenticated set evidence");
+            }
+            if (module == null) {
+                module = factor.parserModuleAuthority;
+            } else if (module != factor.parserModuleAuthority) {
+                throw new IllegalArgumentException(
+                        "Cartesian factors must come from one parser module");
+            }
+            int factorArity = factor.kind == Kind.INT
+                    ? 1 : factor.relationArity;
+            arity += factorArity;
+            if (factor.kind == Kind.EMPTY_RELATION) {
+                sawEmpty = true;
+                products = Collections.emptyList();
+                continue;
+            }
+            List<AlternativeShape> factorShapes = new ArrayList<>();
+            if (factor.kind == Kind.INT) {
+                factorShapes.add(new AlternativeShape(
+                        Collections.singletonList(
+                                normalizeColumn(Sig.SIGINT.label)),
+                        Collections.singletonList(ancestryOf(Sig.SIGINT))));
+            } else {
+                for (int alternative = 0;
+                        alternative < factor.alternatives.size();
+                        alternative++) {
+                    factorShapes.add(new AlternativeShape(
+                            factor.alternatives.get(alternative),
+                            factor.ancestryAlternatives.get(alternative)));
+                }
+            }
+            List<AlternativeShape> expanded = new ArrayList<>();
+            for (AlternativeShape prefix : products) {
+                for (AlternativeShape factorShape : factorShapes) {
+                    List<String> columns = new ArrayList<>(prefix.columns);
+                    columns.addAll(factorShape.columns);
+                    List<List<String>> ancestries =
+                            new ArrayList<>(prefix.ancestries);
+                    ancestries.addAll(factorShape.ancestries);
+                    expanded.add(new AlternativeShape(
+                            Collections.unmodifiableList(columns),
+                            Collections.unmodifiableList(ancestries)));
+                }
+            }
+            products = expanded;
+        }
+        if (sawEmpty) {
+            return parserEmptyRelation(
+                    arity, Objects.requireNonNull(module, "Cartesian module"));
+        }
+        Map<String, AlternativeShape> unique = new LinkedHashMap<>();
+        for (AlternativeShape product : products) {
+            AlternativeShape previous = unique.putIfAbsent(
+                    tupleKey(product.columns), product);
+            if (previous != null && !previous.equals(product)) {
+                throw new IllegalStateException(
+                        "A Cartesian product derived conflicting ancestry evidence");
+            }
+        }
+        List<List<String>> alternatives = new ArrayList<>();
+        List<List<List<String>>> ancestries = new ArrayList<>();
+        for (AlternativeShape product : unique.values()) {
+            alternatives.add(product.columns);
+            ancestries.add(product.ancestries);
+        }
+        return new ExactAlloyType(
+                Kind.RELATION, alternatives, ancestries, arity, module);
+    }
+
+    /**
+     * Derives the exact same-arity relation family of a parser-authenticated
+     * relational union. The operands themselves remain in the term; this
+     * method supplies only their correlated static type proof.
+     */
+    public static ExactAlloyType parserCertifiedRelationUnion(
+            List<ExactAlloyType> operands) {
+        Objects.requireNonNull(operands, "operands");
+        if (operands.size() < 2) {
+            throw new IllegalArgumentException(
+                    "A derived relation union requires at least two operands");
+        }
+        CompModule module = null;
+        Integer arity = null;
+        boolean allInt = true;
+        boolean sawNonempty = false;
+        Map<String, AlternativeShape> unique = new LinkedHashMap<>();
+        for (ExactAlloyType operand : operands) {
+            if (operand == null
+                    || (operand.kind != Kind.RELATION
+                            && operand.kind != Kind.INT
+                            && operand.kind != Kind.EMPTY_RELATION)
+                    || operand.parserModuleAuthority == null) {
+                throw new IllegalArgumentException(
+                        "Every relation-union operand requires parser-authenticated set evidence");
+            }
+            if (module == null) {
+                module = operand.parserModuleAuthority;
+            } else if (module != operand.parserModuleAuthority) {
+                throw new IllegalArgumentException(
+                        "Relation-union operands must come from one parser module");
+            }
+            int operandArity = operand.kind == Kind.INT
+                    ? 1 : operand.relationArity;
+            if (arity == null) {
+                arity = operandArity;
+            } else if (arity.intValue() != operandArity) {
+                throw new IllegalArgumentException(
+                        "Relation-union operands must have one exact arity");
+            }
+            if (operand.kind == Kind.INT) {
+                sawNonempty = true;
+                AlternativeShape integer = new AlternativeShape(
+                        Collections.singletonList(
+                                normalizeColumn(Sig.SIGINT.label)),
+                        Collections.singletonList(ancestryOf(Sig.SIGINT)));
+                unique.putIfAbsent(tupleKey(integer.columns), integer);
+                continue;
+            }
+            if (operand.kind == Kind.EMPTY_RELATION) {
+                continue;
+            }
+            sawNonempty = true;
+            allInt = false;
+            for (int alternative = 0;
+                    alternative < operand.alternatives.size();
+                    alternative++) {
+                AlternativeShape shape = new AlternativeShape(
+                        operand.alternatives.get(alternative),
+                        operand.ancestryAlternatives.get(alternative));
+                AlternativeShape previous = unique.putIfAbsent(
+                        tupleKey(shape.columns), shape);
+                if (previous != null && !previous.equals(shape)) {
+                    throw new IllegalStateException(
+                            "A relation union derived conflicting ancestry evidence");
+                }
+            }
+        }
+        if (!sawNonempty) {
+            return parserEmptyRelation(
+                    Objects.requireNonNull(arity, "relation-union arity"),
+                    module);
+        }
+        if (allInt) {
+            return parserIntType(module);
+        }
+        List<List<String>> alternatives = new ArrayList<>(unique.size());
+        List<List<List<String>>> ancestries = new ArrayList<>(unique.size());
+        for (AlternativeShape shape : unique.values()) {
+            alternatives.add(shape.columns);
+            ancestries.add(shape.ancestries);
+        }
+        return new ExactAlloyType(
+                Kind.RELATION,
+                alternatives,
+                ancestries,
+                Objects.requireNonNull(arity, "relation-union arity"),
+                module);
+    }
+
+    /**
+     * Derives the exact same-arity overlap of parser-authenticated relation
+     * families. Each retained product alternative is justified column-wise by
+     * one operand's concrete signature being on the other's recorded ancestry
+     * path; unrelated products contribute no tuples.
+     */
+    public static ExactAlloyType parserCertifiedRelationIntersection(
+            List<ExactAlloyType> operands) {
+        Objects.requireNonNull(operands, "operands");
+        if (operands.size() < 2) {
+            throw new IllegalArgumentException(
+                    "A derived relation intersection requires at least two operands");
+        }
+        CompModule module = null;
+        Integer arity = null;
+        List<AlternativeShape> overlap = null;
+        for (ExactAlloyType operand : operands) {
+            if (operand == null
+                    || (operand.kind != Kind.RELATION
+                            && operand.kind != Kind.INT
+                            && operand.kind != Kind.EMPTY_RELATION)
+                    || operand.parserModuleAuthority == null) {
+                throw new IllegalArgumentException(
+                        "Every relation-intersection operand requires parser-authenticated set evidence");
+            }
+            if (module == null) {
+                module = operand.parserModuleAuthority;
+            } else if (module != operand.parserModuleAuthority) {
+                throw new IllegalArgumentException(
+                        "Relation-intersection operands must come from one parser module");
+            }
+            int operandArity = operand.kind == Kind.INT
+                    ? 1 : operand.relationArity;
+            if (arity == null) {
+                arity = operandArity;
+            } else if (arity.intValue() != operandArity) {
+                throw new IllegalArgumentException(
+                        "Relation-intersection operands must have one exact arity");
+            }
+            List<AlternativeShape> shapes = relationShapes(operand);
+            if (overlap == null) {
+                overlap = shapes;
+            } else {
+                overlap = intersectShapes(overlap, shapes);
+            }
+        }
+        if (overlap == null || overlap.isEmpty()) {
+            return parserEmptyRelation(
+                    Objects.requireNonNull(
+                            arity, "relation-intersection arity"),
+                    module);
+        }
+        if (overlap.size() == 1 && isIntegerShape(overlap.get(0))) {
+            return parserIntType(module);
+        }
+        List<List<String>> alternatives = new ArrayList<>(overlap.size());
+        List<List<List<String>>> ancestries = new ArrayList<>(overlap.size());
+        for (AlternativeShape shape : overlap) {
+            alternatives.add(shape.columns);
+            ancestries.add(shape.ancestries);
+        }
+        return new ExactAlloyType(
+                Kind.RELATION,
+                alternatives,
+                ancestries,
+                Objects.requireNonNull(arity, "relation-intersection arity"),
+                module);
+    }
+
+    /**
+     * Derives the static family of a parser-authenticated relational
+     * difference. Alloy difference retains the left operand's static family;
+     * the right operand contributes only the same-arity compatibility proof.
+     */
+    public static ExactAlloyType parserCertifiedRelationDifference(
+            ExactAlloyType left,
+            ExactAlloyType right) {
+        ExactAlloyType checkedLeft = Objects.requireNonNull(
+                left, "left difference type");
+        ExactAlloyType checkedRight = Objects.requireNonNull(
+                right, "right difference type");
+        if (!isSetFamily(checkedLeft.kind)
+                || !isSetFamily(checkedRight.kind)
+                || !checkedLeft.sharesParserModuleAuthorityWith(checkedRight)) {
+            throw new IllegalArgumentException(
+                    "Relational difference requires parser-authenticated operands from one module");
+        }
+        if (setFamilyArity(checkedLeft) != setFamilyArity(checkedRight)) {
+            throw new IllegalArgumentException(
+                    "Relational-difference operands must have one exact arity");
+        }
+        return checkedLeft;
+    }
+
+    /** Exact parser-backed type of Alloy domain restriction {@code S <: R}. */
+    public static ExactAlloyType parserCertifiedDomainRestriction(
+            ExactAlloyType restrictor,
+            ExactAlloyType relation) {
+        return parserCertifiedRestriction(restrictor, relation, true);
+    }
+
+    /** Exact parser-backed type of Alloy range restriction {@code R :> S}. */
+    public static ExactAlloyType parserCertifiedRangeRestriction(
+            ExactAlloyType relation,
+            ExactAlloyType restrictor) {
+        return parserCertifiedRestriction(restrictor, relation, false);
+    }
+
+    private static ExactAlloyType parserCertifiedRestriction(
+            ExactAlloyType restrictor,
+            ExactAlloyType relation,
+            boolean firstColumn) {
+        ExactAlloyType checkedRestrictor = Objects.requireNonNull(
+                restrictor, "restriction set type");
+        ExactAlloyType checkedRelation = Objects.requireNonNull(
+                relation, "restricted relation type");
+        if (!isSetFamily(checkedRestrictor.kind)
+                || !isSetFamily(checkedRelation.kind)
+                || !checkedRestrictor.sharesParserModuleAuthorityWith(
+                        checkedRelation)) {
+            throw new IllegalArgumentException(
+                    "Relational restriction requires parser-authenticated operands from one module");
+        }
+        if (setFamilyArity(checkedRestrictor) != 1) {
+            throw new IllegalArgumentException(
+                    "An Alloy restriction set must be unary");
+        }
+        int relationArity = setFamilyArity(checkedRelation);
+        int restrictedColumn = firstColumn ? 0 : relationArity - 1;
+        List<AlternativeShape> restrictorShapes = relationShapes(
+                checkedRestrictor);
+        List<AlternativeShape> relationAlternatives = relationShapes(
+                checkedRelation);
+        if (restrictorShapes.isEmpty() || relationAlternatives.isEmpty()) {
+            return parserEmptyRelation(
+                    relationArity, checkedRelation.parserModuleAuthority);
+        }
+        Map<String, AlternativeShape> unique = new LinkedHashMap<>();
+        for (AlternativeShape relationShape : relationAlternatives) {
+            for (AlternativeShape restrictorShape : restrictorShapes) {
+                AlternativeShape columnOverlap = intersectShape(
+                        new AlternativeShape(
+                                Collections.singletonList(
+                                        relationShape.columns.get(restrictedColumn)),
+                                Collections.singletonList(
+                                        relationShape.ancestries.get(restrictedColumn))),
+                        restrictorShape);
+                if (columnOverlap == null) {
+                    continue;
+                }
+                List<String> columns = new ArrayList<>(relationShape.columns);
+                List<List<String>> ancestries = new ArrayList<>(
+                        relationShape.ancestries);
+                columns.set(restrictedColumn, columnOverlap.columns.get(0));
+                ancestries.set(
+                        restrictedColumn, columnOverlap.ancestries.get(0));
+                AlternativeShape restricted = new AlternativeShape(
+                        Collections.unmodifiableList(columns),
+                        Collections.unmodifiableList(ancestries));
+                AlternativeShape previous = unique.putIfAbsent(
+                        tupleKey(restricted.columns), restricted);
+                if (previous != null && !previous.equals(restricted)) {
+                    throw new IllegalStateException(
+                            "A relational restriction derived conflicting ancestry evidence");
+                }
+            }
+        }
+        if (unique.isEmpty()) {
+            return parserEmptyRelation(
+                    relationArity, checkedRelation.parserModuleAuthority);
+        }
+        if (relationArity == 1 && unique.size() == 1
+                && isIntegerShape(unique.values().iterator().next())) {
+            return parserIntType(checkedRelation.parserModuleAuthority);
+        }
+        List<List<String>> alternatives = new ArrayList<>(unique.size());
+        List<List<List<String>>> ancestries = new ArrayList<>(unique.size());
+        for (AlternativeShape shape : unique.values()) {
+            alternatives.add(shape.columns);
+            ancestries.add(shape.ancestries);
+        }
+        return new ExactAlloyType(
+                Kind.RELATION,
+                alternatives,
+                ancestries,
+                relationArity,
+                checkedRelation.parserModuleAuthority);
+    }
+
+    /**
+     * Derives the correlated result family of one parser-authenticated Alloy
+     * relational join. Every admitted boundary pair must overlap through a
+     * recorded primitive-signature ancestry path; disjoint alternatives simply
+     * contribute no result tuples.
+     */
+    public static ExactAlloyType parserCertifiedRelationalJoin(
+            ExactAlloyType left,
+            ExactAlloyType right) {
+        ExactAlloyType checkedLeft = Objects.requireNonNull(left, "left join type");
+        ExactAlloyType checkedRight = Objects.requireNonNull(right, "right join type");
+        if (!isSetFamily(checkedLeft.kind)
+                || !isSetFamily(checkedRight.kind)
+                || !checkedLeft.sharesParserModuleAuthorityWith(checkedRight)) {
+            throw new IllegalArgumentException(
+                    "Relational join requires parser-authenticated operands from one module");
+        }
+        int resultArity = setFamilyArity(checkedLeft)
+                + setFamilyArity(checkedRight) - 2;
+        if (resultArity <= 0) {
+            throw new IllegalArgumentException(
+                    "This exact relation representation requires positive join arity");
+        }
+        Map<String, AlternativeShape> unique = new LinkedHashMap<>();
+        for (AlternativeShape leftShape : relationShapes(checkedLeft)) {
+            for (AlternativeShape rightShape : relationShapes(checkedRight)) {
+                int leftBoundary = leftShape.columns.size() - 1;
+                String leftColumn = leftShape.columns.get(leftBoundary);
+                String rightColumn = rightShape.columns.get(0);
+                if (!leftShape.ancestries.get(leftBoundary).contains(rightColumn)
+                        && !rightShape.ancestries.get(0).contains(leftColumn)) {
+                    continue;
+                }
+                List<String> columns = new ArrayList<>(resultArity);
+                List<List<String>> ancestries = new ArrayList<>(resultArity);
+                columns.addAll(leftShape.columns.subList(0, leftBoundary));
+                ancestries.addAll(leftShape.ancestries.subList(0, leftBoundary));
+                columns.addAll(rightShape.columns.subList(
+                        1, rightShape.columns.size()));
+                ancestries.addAll(rightShape.ancestries.subList(
+                        1, rightShape.ancestries.size()));
+                AlternativeShape joined = new AlternativeShape(
+                        Collections.unmodifiableList(columns),
+                        Collections.unmodifiableList(ancestries));
+                AlternativeShape previous = unique.putIfAbsent(
+                        tupleKey(joined.columns), joined);
+                if (previous != null && !previous.equals(joined)) {
+                    throw new IllegalStateException(
+                            "A relational join derived conflicting ancestry evidence");
+                }
+            }
+        }
+        CompModule module = checkedLeft.parserModuleAuthority;
+        if (unique.isEmpty()) {
+            return parserEmptyRelation(resultArity, module);
+        }
+        List<List<String>> alternatives = new ArrayList<>(unique.size());
+        List<List<List<String>>> ancestries = new ArrayList<>(unique.size());
+        for (AlternativeShape shape : unique.values()) {
+            alternatives.add(shape.columns);
+            ancestries.add(shape.ancestries);
+        }
+        if (resultArity == 1 && unique.size() == 1
+                && isIntegerShape(unique.values().iterator().next())) {
+            return parserIntType(module);
+        }
+        return new ExactAlloyType(
+                Kind.RELATION,
+                alternatives,
+                ancestries,
+                resultArity,
+                module);
+    }
+
+    private static List<AlternativeShape> relationShapes(
+            ExactAlloyType operand) {
+        if (operand.kind == Kind.EMPTY_RELATION) {
+            return Collections.emptyList();
+        }
+        if (operand.kind == Kind.INT) {
+            return Collections.singletonList(new AlternativeShape(
+                    Collections.singletonList(
+                            normalizeColumn(Sig.SIGINT.label)),
+                    Collections.singletonList(ancestryOf(Sig.SIGINT))));
+        }
+        List<AlternativeShape> shapes = new ArrayList<>(
+                operand.alternatives.size());
+        for (int alternative = 0;
+                alternative < operand.alternatives.size();
+                alternative++) {
+            shapes.add(new AlternativeShape(
+                    operand.alternatives.get(alternative),
+                    operand.ancestryAlternatives.get(alternative)));
+        }
+        return shapes;
+    }
+
+    private static List<AlternativeShape> intersectShapes(
+            List<AlternativeShape> left,
+            List<AlternativeShape> right) {
+        Map<String, AlternativeShape> unique = new LinkedHashMap<>();
+        for (AlternativeShape leftShape : left) {
+            for (AlternativeShape rightShape : right) {
+                AlternativeShape intersection = intersectShape(
+                        leftShape, rightShape);
+                if (intersection == null) {
+                    continue;
+                }
+                AlternativeShape previous = unique.putIfAbsent(
+                        tupleKey(intersection.columns), intersection);
+                if (previous != null && !previous.equals(intersection)) {
+                    throw new IllegalStateException(
+                            "A relation intersection derived conflicting ancestry evidence");
+                }
+            }
+        }
+        return new ArrayList<>(unique.values());
+    }
+
+    private static AlternativeShape intersectShape(
+            AlternativeShape left,
+            AlternativeShape right) {
+        if (left.columns.size() != right.columns.size()) {
+            throw new IllegalArgumentException(
+                    "Relation-intersection alternatives must have one exact arity");
+        }
+        List<String> columns = new ArrayList<>(left.columns.size());
+        List<List<String>> ancestries = new ArrayList<>(left.columns.size());
+        for (int column = 0; column < left.columns.size(); column++) {
+            String leftColumn = left.columns.get(column);
+            String rightColumn = right.columns.get(column);
+            List<String> leftAncestry = left.ancestries.get(column);
+            List<String> rightAncestry = right.ancestries.get(column);
+            if (leftAncestry.contains(rightColumn)) {
+                columns.add(leftColumn);
+                ancestries.add(leftAncestry);
+            } else if (rightAncestry.contains(leftColumn)) {
+                columns.add(rightColumn);
+                ancestries.add(rightAncestry);
+            } else {
+                return null;
+            }
+        }
+        return new AlternativeShape(
+                Collections.unmodifiableList(columns),
+                Collections.unmodifiableList(ancestries));
+    }
+
+    private static boolean isIntegerShape(AlternativeShape shape) {
+        return shape.columns.equals(Collections.singletonList(
+                normalizeColumn(Sig.SIGINT.label)));
+    }
+
+    /** Exact parser-authenticated type proof for relational converse. */
+    public static ExactAlloyType parserCertifiedTranspose(
+            ExactAlloyType operand) {
+        ExactAlloyType checked = Objects.requireNonNull(operand, "operand");
+        if (checked.kind != Kind.RELATION
+                || checked.relationArity != 2
+                || checked.parserModuleAuthority == null) {
+            throw new IllegalArgumentException(
+                    "Relational converse requires one parser-authenticated binary relation");
+        }
+        List<List<String>> alternatives = new ArrayList<>(
+                checked.alternatives.size());
+        List<List<List<String>>> ancestries = new ArrayList<>(
+                checked.ancestryAlternatives.size());
+        for (int alternative = 0;
+                alternative < checked.alternatives.size();
+                alternative++) {
+            List<String> columns = checked.alternatives.get(alternative);
+            List<List<String>> paths = checked.ancestryAlternatives.get(
+                    alternative);
+            alternatives.add(List.of(columns.get(1), columns.get(0)));
+            ancestries.add(List.of(paths.get(1), paths.get(0)));
+        }
+        return new ExactAlloyType(
+                Kind.RELATION,
+                alternatives,
+                ancestries,
+                2,
+                checked.parserModuleAuthority);
+    }
+
     public static ExactAlloyType emptyRelation(int arity) {
         if (arity <= 0) {
             throw new IllegalArgumentException(
@@ -215,6 +801,21 @@ public final class ExactAlloyType implements Serializable {
         }
         return new ExactAlloyType(
                 Kind.EMPTY_RELATION, Collections.emptyList(), arity);
+    }
+
+    private static ExactAlloyType parserEmptyRelation(
+            int arity,
+            CompModule sourceModule) {
+        if (arity <= 0) {
+            throw new IllegalArgumentException(
+                    "An empty Alloy relation requires positive arity");
+        }
+        return new ExactAlloyType(
+                Kind.EMPTY_RELATION,
+                Collections.emptyList(),
+                Collections.emptyList(),
+                arity,
+                Objects.requireNonNull(sourceModule, "sourceModule"));
     }
 
     public Kind kind() {
@@ -244,6 +845,114 @@ public final class ExactAlloyType implements Serializable {
         return other != null
                 && parserModuleAuthority != null
                 && parserModuleAuthority == other.parserModuleAuthority;
+    }
+
+    /** Runtime-only check used to bind occurrence evidence to its parser module. */
+    public boolean isParserAuthenticatedBy(CompModule sourceModule) {
+        return sourceModule != null && parserModuleAuthority == sourceModule;
+    }
+
+    /**
+     * Runtime proof that every correlated relation product in this occurrence
+     * is included column-wise in one product of {@code carrier}. The proof is
+     * available only when both occurrences came from the identical parser
+     * module and each subtype edge remains in the parser-authenticated ancestry
+     * ledger.
+     */
+    public boolean isParserCertifiedRelationSubfamilyOf(
+            ExactAlloyType carrier) {
+        if (carrier == null
+                || kind != Kind.RELATION
+                || carrier.kind != Kind.RELATION
+                || relationArity != carrier.relationArity
+                || !sharesParserModuleAuthorityWith(carrier)) {
+            return false;
+        }
+        for (int candidateIndex = 0;
+                candidateIndex < alternatives.size();
+                candidateIndex++) {
+            List<List<String>> candidateAncestry = ancestryAlternatives.get(
+                    candidateIndex);
+            boolean covered = false;
+            for (List<String> carrierAlternative : carrier.alternatives) {
+                boolean columnsCovered = true;
+                for (int columnIndex = 0;
+                        columnIndex < relationArity;
+                        columnIndex++) {
+                    if (!candidateAncestry.get(columnIndex).contains(
+                            carrierAlternative.get(columnIndex))) {
+                        columnsCovered = false;
+                        break;
+                    }
+                }
+                if (columnsCovered) {
+                    covered = true;
+                    break;
+                }
+            }
+            if (!covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Runtime proof that this parser-authenticated set-valued occurrence is a
+     * subfamily of {@code carrier}. Unlike the older relation-only query, this
+     * admits the parser's exact Int and empty-relation images as set families.
+     * It still requires one live parser module and correlated, column-wise
+     * ancestry for every nonempty alternative.
+     */
+    public boolean isParserCertifiedSetSubfamilyOf(
+            ExactAlloyType carrier) {
+        if (carrier == null
+                || !isSetFamily(kind)
+                || !isSetFamily(carrier.kind)
+                || setFamilyArity(this) != setFamilyArity(carrier)
+                || !sharesParserModuleAuthorityWith(carrier)) {
+            return false;
+        }
+        List<AlternativeShape> candidateShapes = relationShapes(this);
+        List<AlternativeShape> carrierShapes = relationShapes(carrier);
+        for (AlternativeShape candidate : candidateShapes) {
+            boolean covered = false;
+            for (AlternativeShape carrierShape : carrierShapes) {
+                if (shapeIsSubfamilyOf(candidate, carrierShape)) {
+                    covered = true;
+                    break;
+                }
+            }
+            if (!covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isSetFamily(Kind candidateKind) {
+        return candidateKind == Kind.RELATION
+                || candidateKind == Kind.EMPTY_RELATION
+                || candidateKind == Kind.INT;
+    }
+
+    private static int setFamilyArity(ExactAlloyType type) {
+        return type.kind == Kind.INT ? 1 : type.relationArity;
+    }
+
+    private static boolean shapeIsSubfamilyOf(
+            AlternativeShape candidate,
+            AlternativeShape carrier) {
+        if (candidate.columns.size() != carrier.columns.size()) {
+            return false;
+        }
+        for (int column = 0; column < candidate.columns.size(); column++) {
+            if (!candidate.ancestries.get(column).contains(
+                    carrier.columns.get(column))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

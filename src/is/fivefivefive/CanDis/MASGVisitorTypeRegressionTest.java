@@ -44,9 +44,9 @@ public final class MASGVisitorTypeRegressionTest {
                 "  all u: User | all f: u - u.follows | f in User",
                 "  all y: User | some z: y | z in User",
                 "  all n: none | n = n",
-                "  all pt: Protected & Trash | pt in File",
+                "  all pt: Protected & Trash | pt = Protected",
                 "}",
-                "pred direct { all pt: Protected & Trash | pt in File }",
+                "pred direct { all pt: Protected & Trash | pt = Protected }",
                 "pred signatureShadow { all Trash: File | File in Trash }",
                 "pred signatureReference { File in Trash }",
                 "pred qualifiedSignature { all Trash: File | File in this/Trash }",
@@ -91,6 +91,10 @@ public final class MASGVisitorTypeRegressionTest {
         MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(new ModelUnit(null, module), null);
         checkVisitorLocalSentinels(module, visitor);
+        checkIntegerCarrierSetOperators();
+        checkAbstractSignatureCovers();
+        checkRelationalUnaryIdentities();
+        checkRelationalDistributions();
 
         Multigraph candidate = graph(visitor, "candidate");
         Multigraph direct = graph(visitor, "direct");
@@ -296,6 +300,378 @@ public final class MASGVisitorTypeRegressionTest {
         return visitor.getForest().get(id);
     }
 
+    private static void checkIntegerCarrierSetOperators() throws Exception {
+        String source = String.join("\n",
+                "open util/integer",
+                "sig Left, Right {}",
+                "sig Parent {}",
+                "sig Child, Sibling extends Parent {}",
+                "sig NestedCarrier in Parent {}",
+                "sig NestedLeaf in NestedCarrier {}",
+                "sig MultiLeft, MultiRight extends Parent {}",
+                "sig MultiSubset in MultiLeft + MultiRight {}",
+                "sig Holder { chosen: set Parent, rel: Parent -> Parent }",
+                "assert IntUnion { Int + Int = Int }",
+                "assert IntDifference { no (Int - Int) }",
+                "assert CardinalUnion {",
+                "  (#Left = 1 and #Right = 1) implies (#Left + #Right = 1)",
+                "}",
+                "assert ArithmeticAddition { 1 fun/add 1 = 2 }",
+                "assert ArithmeticNotIdempotent { 1 fun/add 1 != 1 }",
+                "assert HeterogeneousIntUnion {",
+                "  (some Left) implies Int + Left != Int",
+                "}",
+                "assert SubtypeUnionAssociative {",
+                "  ((Int + Child) + Parent) = (Int + (Child + Parent))",
+                "}",
+                "assert SetConstantIdentities {",
+                "  Parent & univ = Parent",
+                "  Parent - none = Parent",
+                "  Parent + univ = univ",
+                "  no (Parent - univ)",
+                "  no (none - Parent)",
+                "}",
+                "assert SubtypeUnionAbsorption {",
+                "  Child + Sibling + Parent = Parent",
+                "}",
+                "assert TypedSubrelationAbsorption {",
+                "  (Child + Holder.chosen) + Parent = Parent",
+                "}",
+                "assert SubtypeIntersectionAbsorption {",
+                "  Child & Parent = Child",
+                "}",
+                "assert TypedSubrelationIntersection {",
+                "  Holder.chosen & Parent = Holder.chosen",
+                "}",
+                "assert ProductCarrierIntersection {",
+                "  Holder.rel & (Parent -> Parent) = Holder.rel",
+                "}",
+                "assert NestedSubsetAbsorption {",
+                "  NestedLeaf + NestedCarrier = NestedCarrier",
+                "}",
+                "assert EmptySubsetUnary { none in NestedCarrier }",
+                "assert EmptySubsetBinary {",
+                "  (none -> none) in (Parent -> Parent)",
+                "}",
+                "assert EmptyArrow { no (none -> Parent) }",
+                "assert EmptyJoin { no (none.(Parent -> Parent)) }",
+                "assert EmptyNotSubset { not (none not in Parent) }",
+                "assert MultiSubsetCommonAbsorption {",
+                "  MultiSubset + Parent = Parent",
+                "}",
+                "check IntUnion for 3 but 4 Int",
+                "check IntDifference for 3 but 4 Int",
+                "check CardinalUnion for 3 but 4 Int",
+                "check ArithmeticAddition for 3 but 4 Int",
+                "check ArithmeticNotIdempotent for 3 but 4 Int",
+                "check HeterogeneousIntUnion for 3 but 4 Int",
+                "check SubtypeUnionAssociative for 3 but 4 Int",
+                "check SetConstantIdentities for 3 but 4 Int",
+                "check SubtypeUnionAbsorption for 3 but 4 Int",
+                "check TypedSubrelationAbsorption for 3 but 4 Int",
+                "check SubtypeIntersectionAbsorption for 3 but 4 Int",
+                "check TypedSubrelationIntersection for 3 but 4 Int",
+                "check ProductCarrierIntersection for 3 but 4 Int",
+                "check NestedSubsetAbsorption for 3 but 4 Int",
+                "check EmptySubsetUnary for 3 but 4 Int",
+                "check EmptySubsetBinary for 3 but 4 Int",
+                "check EmptyArrow for 3 but 4 Int",
+                "check EmptyJoin for 3 but 4 Int",
+                "check EmptyNotSubset for 3 but 4 Int",
+                "check MultiSubsetCommonAbsorption for 3 but 4 Int",
+                "run {",
+                "  #Left = 1 and #Right = 1 and #Left + #Right != 2",
+                "} for 3 but exactly 1 Left, exactly 1 Right, 4 Int",
+                "run { some Child and no Holder.chosen",
+                "  and Child + Holder.chosen != Holder.chosen",
+                "} for 3 but exactly 1 Child, exactly 1 Holder, 4 Int",
+                "run { some (MultiSubset - MultiLeft) } for 3 but 4 Int",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(A4Reporter.NOP, source);
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        for (int index = 0; index < module.getAllCommands().size(); index++) {
+            A4Solution result = TranslateAlloyToKodkod.execute_command(
+                    A4Reporter.NOP,
+                    module.getAllReachableSigs(),
+                    module.getAllCommands().get(index),
+                    options);
+            boolean expectedSatisfiable = index == 20
+                    || index == 21
+                    || index == 22;
+            if (result == null || result.satisfiable() != expectedSatisfiable) {
+                throw new AssertionError(
+                        "Alloy Int-carrier set semantics failed for command " + index);
+            }
+        }
+    }
+
+    private static void checkAbstractSignatureCovers() throws Exception {
+        String source = String.join("\n",
+                "abstract sig Parent {}",
+                "sig Left, Right extends Parent {}",
+                "sig Holder { chosen: set Parent }",
+                "abstract sig Outer {}",
+                "abstract sig Inner extends Outer {}",
+                "sig LeafLeft, LeafRight extends Inner {}",
+                "abstract sig SingleParent {}",
+                "sig SingleChild extends SingleParent {}",
+                "sig PlainParent {}",
+                "sig PlainLeft, PlainRight extends PlainParent {}",
+                "abstract sig SubsetParent {}",
+                "sig SubsetOnly in SubsetParent {}",
+                "sig Unrelated {}",
+                "assert DirectCover { Parent = Left + Right }",
+                "assert NestedCover {",
+                "  Inner = LeafLeft + LeafRight",
+                "  Outer = Inner",
+                "}",
+                "assert SingletonCover { SingleParent = SingleChild }",
+                "assert CoveredUnionAbsorbsSubrelation {",
+                "  Left + Right + Holder.chosen = Parent",
+                "}",
+                "assert ProductRightCover {",
+                "  (Left -> Left) + (Left -> Right) = Left -> Parent",
+                "}",
+                "assert ProductLeftCover {",
+                "  (Left -> Left) + (Right -> Left) = Parent -> Left",
+                "}",
+                "assert ProductTernaryCover {",
+                "  (Left -> Left -> Left) + (Left -> Left -> Right)",
+                "    = Left -> Left -> Parent",
+                "}",
+                "assert ProductFullGridCover {",
+                "  (Left -> Left) + (Left -> Right)",
+                "    + (Right -> Left) + (Right -> Right) = Parent -> Parent",
+                "}",
+                "assert ProductIntCover {",
+                "  (Left -> Int) + (Right -> Int) = Parent -> Int",
+                "}",
+                "assert ProductIntLeftCover {",
+                "  (Int -> Left) + (Int -> Right) = Int -> Parent",
+                "}",
+                "check DirectCover for 4",
+                "check NestedCover for 4",
+                "check SingletonCover for 4",
+                "check CoveredUnionAbsorbsSubrelation for 4",
+                "check ProductRightCover for 4",
+                "check ProductLeftCover for 4",
+                "check ProductTernaryCover for 4",
+                "check ProductFullGridCover for 4",
+                "check ProductIntCover for 4 Int",
+                "check ProductIntLeftCover for 4 Int",
+                "run { some Right and Left != Parent } for 4",
+                "run { some (PlainParent - (PlainLeft + PlainRight)) } for 4",
+                "run { some (SubsetParent - SubsetOnly) } for 4",
+                "run {",
+                "  some Unrelated",
+                "  Left + Right + Unrelated != Parent",
+                "} for 4",
+                "run {",
+                "  some Left",
+                "  some Right",
+                "  (Left -> Left) + (Right -> Right) != Parent -> Parent",
+                "} for 4",
+                "run {",
+                "  some Left",
+                "  some Right",
+                "  (Left -> Left) + (Left -> Right) + (Right -> Left)",
+                "    != Parent -> Parent",
+                "} for 4",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        for (int index = 0; index < module.getAllCommands().size(); index++) {
+            A4Solution result = TranslateAlloyToKodkod.execute_command(
+                    A4Reporter.NOP,
+                    module.getAllReachableSigs(),
+                    module.getAllCommands().get(index),
+                    options);
+            boolean expectedSatisfiable = index >= 10;
+            if (result == null || result.satisfiable() != expectedSatisfiable) {
+                throw new AssertionError(
+                        "Alloy abstract-cover semantics failed for command " + index);
+            }
+        }
+    }
+
+    private static void checkRelationalUnaryIdentities() throws Exception {
+        String source = String.join("\n",
+                "sig A {}",
+                "sig B {}",
+                "sig V { r: set V }",
+                "enum E { EA, EB }",
+                "assert IdenLeft { iden.A = A }",
+                "assert IdenRight { A.iden = A }",
+                "assert IdenMiddle {",
+                "  (A -> B).iden.(B -> V) = (A -> B).(B -> V)",
+                "}",
+                "assert IdenAll { iden.iden = iden }",
+                "assert DoubleTranspose { ~(~r) = r }",
+                "assert TransposeArrow { ~(A -> B) = B -> A }",
+                "assert ClosureClosure { ^(^r) = ^r }",
+                "assert RClosureRClosure { *(*r) = *r }",
+                "assert ClosureRClosure { ^(*r) = *r }",
+                "assert RClosureClosure { *(^r) = *r }",
+                "assert EnumCover { E = EA + EB }",
+                "assert TransposeIden { ~iden = iden }",
+                "assert ClosureIden { ^iden = iden }",
+                "assert RClosureIden { *iden = iden }",
+                "check IdenLeft for 4",
+                "check IdenRight for 4",
+                "check IdenMiddle for 4",
+                "check IdenAll for 4",
+                "check DoubleTranspose for 4",
+                "check TransposeArrow for 4",
+                "check ClosureClosure for 4",
+                "check RClosureRClosure for 4",
+                "check ClosureRClosure for 4",
+                "check RClosureClosure for 4",
+                "check EnumCover for 4",
+                "check TransposeIden for 4",
+                "check ClosureIden for 4",
+                "check RClosureIden for 4",
+                "run { some A and some B and ~(A -> B) != A -> B }",
+                "  for 2 but exactly 1 A, exactly 1 B",
+                "run { some V and no r and ^r != *r }",
+                "  for 1 but exactly 1 V",
+                "run { some V and no r and V.r != V }",
+                "  for 1 but exactly 1 V",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        for (int index = 0; index < module.getAllCommands().size(); index++) {
+            A4Solution result = TranslateAlloyToKodkod.execute_command(
+                    A4Reporter.NOP,
+                    module.getAllReachableSigs(),
+                    module.getAllCommands().get(index),
+                    options);
+            boolean expectedSatisfiable = index >= 14;
+            if (result == null || result.satisfiable() != expectedSatisfiable) {
+                throw new AssertionError(
+                        "Alloy relational rewrite semantics failed for command "
+                                + index);
+            }
+        }
+    }
+
+    private static void checkRelationalDistributions() throws Exception {
+        String source = String.join("\n",
+                "sig A {}",
+                "sig B {}",
+                "sig V { r, s: set V }",
+                "assert TransposeUnion { ~(r + s) = (~r + ~s) }",
+                "assert TransposeIntersection { ~(r & s) = (~r & ~s) }",
+                "assert TransposeDifference { ~(r - s) = (~r - ~s) }",
+                "assert TransposeProductUnion {",
+                "  ~((A -> B) + (A -> A)) = (B -> A) + (A -> A)",
+                "}",
+                "assert TransposeSlotUnion {",
+                "  all x: V -> V | ~(x + r) = (~x + ~r)",
+                "}",
+                "assert ProductRightDistribution {",
+                "  (A -> A) + (A -> B) = A -> (A + B)",
+                "}",
+                "assert ProductLeftDistribution {",
+                "  (A -> B) + (B -> B) = (A + B) -> B",
+                "}",
+                "assert ProductTernaryDistribution {",
+                "  (A -> A -> A) + (A -> A -> B)",
+                "    = A -> A -> (A + B)",
+                "}",
+                "assert ProductFullGrid {",
+                "  (A -> A) + (A -> B) + (B -> A) + (B -> B)",
+                "    = (A + B) -> (A + B)",
+                "}",
+                "assert BooleanAbsorbAnd { all p,q:set V |",
+                "  ((some p) and ((some p) or (some q))) iff some p",
+                "}",
+                "assert BooleanAbsorbOr { all p,q:set V |",
+                "  ((some p) or ((some p) and (some q))) iff some p",
+                "}",
+                "assert BooleanDistributeAnd { all p,q,t:set V |",
+                "  ((some p) and ((some q) or (some t))) iff",
+                "    (((some p) and (some q)) or ((some p) and (some t)))",
+                "}",
+                "assert BooleanDistributeOr { all p,q,t:set V |",
+                "  ((some p) or ((some q) and (some t))) iff",
+                "    (((some p) or (some q)) and ((some p) or (some t)))",
+                "}",
+                "assert RelationAbsorbIntersect { all p,q:set V |",
+                "  p & (p + q) = p",
+                "}",
+                "assert RelationAbsorbUnion { all p,q:set V |",
+                "  p + (p & q) = p",
+                "}",
+                "assert RelationDistributeIntersect { all p,q,t:set V |",
+                "  p & (q + t) = (p & q) + (p & t)",
+                "}",
+                "assert RelationDistributeUnion { all p,q,t:set V |",
+                "  p + (q & t) = (p + q) & (p + t)",
+                "}",
+                "assert ProductRightSlot { all p,q,t:set V |",
+                "  (p -> q) + (p -> t) = p -> (q + t)",
+                "}",
+                "assert ProductLeftSlot { all p,q,t:set V |",
+                "  (p -> t) + (q -> t) = (p + q) -> t",
+                "}",
+                "assert ProductFullSlotGrid { all p,q:set V |",
+                "  (p -> p) + (p -> q) + (q -> p) + (q -> q)",
+                "    = (p + q) -> (p + q)",
+                "}",
+                "check TransposeUnion for 3",
+                "check TransposeIntersection for 3",
+                "check TransposeDifference for 3",
+                "check TransposeProductUnion for 3",
+                "check TransposeSlotUnion for 3",
+                "check ProductRightDistribution for 3",
+                "check ProductLeftDistribution for 3",
+                "check ProductTernaryDistribution for 3",
+                "check ProductFullGrid for 3",
+                "check BooleanAbsorbAnd for 3",
+                "check BooleanAbsorbOr for 3",
+                "check BooleanDistributeAnd for 3",
+                "check BooleanDistributeOr for 3",
+                "check RelationAbsorbIntersect for 3",
+                "check RelationAbsorbUnion for 3",
+                "check RelationDistributeIntersect for 3",
+                "check RelationDistributeUnion for 3",
+                "check ProductRightSlot for 3",
+                "check ProductLeftSlot for 3",
+                "check ProductFullSlotGrid for 3",
+                "run { some A and some B",
+                "  and (A -> A) + (A -> B) + (B -> A)",
+                "    != (A + B) -> (A + B)",
+                "} for 3 but exactly 1 A, exactly 1 B",
+                "run { some A and some B",
+                "  and (A -> A) + (B -> B) != (A + B) -> (A + B)",
+                "} for 3 but exactly 1 A, exactly 1 B",
+                "run { ~(r & s) != (~r + ~s) } for 3",
+                "run { some r and some s and r != s } for 3",
+                "");
+        CompModule module = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP, source);
+        A4Options options = new A4Options();
+        options.solver = A4Options.SatSolver.SAT4J;
+        for (int index = 0; index < module.getAllCommands().size(); index++) {
+            A4Solution result = TranslateAlloyToKodkod.execute_command(
+                    A4Reporter.NOP,
+                    module.getAllReachableSigs(),
+                    module.getAllCommands().get(index),
+                    options);
+            boolean expectedSatisfiable = index >= 20;
+            if (result == null || result.satisfiable() != expectedSatisfiable) {
+                throw new AssertionError(
+                        "Alloy relational distribution semantics failed for command "
+                                + index);
+            }
+        }
+    }
+
     private static boolean containsTypedLocalBinder(
             EGraphNode node,
             String sourceName,
@@ -341,10 +717,10 @@ public final class MASGVisitorTypeRegressionTest {
                 "  all u: User | all f: u - u.follows | f in User",
                 "  all y: User | some z: y | z in User",
                 "  all n: none | n = n",
-                "  all pt: Protected & Trash | pt in File",
+                "  all pt: Protected & Trash | pt = Protected",
                 "}",
                 "pred candidateNormalized { " + candidateNormalized + " }",
-                "pred directOriginal { all pt: Protected & Trash | pt in File }",
+                "pred directOriginal { all pt: Protected & Trash | pt = Protected }",
                 "pred directNormalized { " + directNormalized + " }",
                 "pred guardedOriginal {",
                 "  some File and (all pt: Protected & Trash | pt = pt)",

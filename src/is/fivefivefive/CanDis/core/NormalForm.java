@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.atomic.AtomicLong;
 
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.ir.IRAgent;
 import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
-import is.fivefivefive.ACGN.alloy.SigSymbol;
 
 import java.util.HashMap;
 
@@ -21,6 +22,8 @@ import java.util.HashMap;
  * It is the locus of control for the visitor that generates the normal form from the original formula. 
  */
 public class NormalForm {
+    private static final AtomicLong NEXT_TEMPORAL_REFERENCE_AUTHORITY_ID =
+            new AtomicLong(1L);
     @FunctionalInterface
     public interface NormalizationObserver {
         void onStage(String stage, NormalForm normalForm);
@@ -35,7 +38,13 @@ public class NormalForm {
     private List<QuantiVar> params; // the parameters of the formula or function, in the order they appear in the original formula or function declaration.
     private List<QuantiVar> matrixQuantiVars; // the quantified variables in the matrix, in the order they appear in the formula.
     private List<QuantiVar> inheritedQuantiVars; // bindings owned by ancestor temporal phases and visible in this matrix.
+    private List<PhaseLocalBindingImport> phaseLocalBindingImports;
+    private final Map<NormalForm, List<PhaseLocalBindingImport>> temporalChildBindingImports;
+    private final Map<String, LocalBindingSeed> localBindingSeeds;
+    private String phasePath;
     private List<NormalForm> temporalChildren;
+    private final Map<Long, TemporalReferenceAuthority> temporalReferenceAuthorities;
+    private final Object lifecycleLock;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
     private int nextDisjointnessClass;
     private int prenexReductionsThisPass;
@@ -57,6 +66,149 @@ public class NormalForm {
         TRIGGEREDL,
         TRIGGEREDR
     }
+
+    /**
+     * Owner-bound provenance for one lexical binder imported into another
+     * temporal phase. The source lineage authenticates the declaration; the
+     * phase paths and owner node prevent same-spelled binders in another scope
+     * from being substituted for it.
+     */
+    public static final class PhaseLocalBindingImport {
+        private final QuantiVar variable;
+        private final NormalForm ownerPhase;
+        private final EGraphNode ownerBinder;
+        private final long sourceBinderLineage;
+        private final String ownerPhasePath;
+        private final String targetPhasePath;
+        private final String binderContext;
+
+        private PhaseLocalBindingImport(
+                QuantiVar variable,
+                NormalForm ownerPhase,
+                EGraphNode ownerBinder,
+                long sourceBinderLineage,
+                String ownerPhasePath,
+                String targetPhasePath,
+                String binderContext) {
+            this.variable = java.util.Objects.requireNonNull(variable, "phase-local variable");
+            this.ownerPhase = java.util.Objects.requireNonNull(ownerPhase, "phase-local owner");
+            this.ownerBinder = java.util.Objects.requireNonNull(ownerBinder, "phase-local binder");
+            if (sourceBinderLineage <= 0L) {
+                throw new IllegalArgumentException(
+                        "A phase-local import requires positive source binder lineage");
+            }
+            this.sourceBinderLineage = sourceBinderLineage;
+            this.ownerPhasePath = requirePhasePath(ownerPhasePath);
+            this.targetPhasePath = requirePhasePath(targetPhasePath);
+            if (binderContext == null || binderContext.isBlank()) {
+                throw new IllegalArgumentException(
+                        "A phase-local import requires its lexical binder context");
+            }
+            this.binderContext = binderContext;
+        }
+
+        public QuantiVar variable() {
+            return variable;
+        }
+
+        public NormalForm ownerPhase() {
+            return ownerPhase;
+        }
+
+        public EGraphNode ownerBinder() {
+            return ownerBinder;
+        }
+
+        public long sourceBinderLineage() {
+            return sourceBinderLineage;
+        }
+
+        public String ownerPhasePath() {
+            return ownerPhasePath;
+        }
+
+        public String targetPhasePath() {
+            return targetPhasePath;
+        }
+
+        public String binderContext() {
+            return binderContext;
+        }
+
+        private PhaseLocalBindingImport retarget(String targetPath) {
+            return new PhaseLocalBindingImport(
+                    variable,
+                    ownerPhase,
+                    ownerBinder,
+                    sourceBinderLineage,
+                    ownerPhasePath,
+                    targetPath,
+                    binderContext);
+        }
+
+        private static String requirePhasePath(String path) {
+            if (path == null || path.isBlank()) {
+                throw new IllegalArgumentException("A temporal phase path must be nonempty");
+            }
+            return path;
+        }
+    }
+
+    private static final class LocalBindingSeed {
+        private final QuantiVar variable;
+        private final long sourceBinderLineage;
+
+        private LocalBindingSeed(QuantiVar variable, long sourceBinderLineage) {
+            this.variable = java.util.Objects.requireNonNull(variable, "local variable");
+            this.sourceBinderLineage = sourceBinderLineage;
+        }
+    }
+
+    private static final class ScopedLocalBinding {
+        private final QuantiVar variable;
+        private final NormalForm ownerPhase;
+        private final EGraphNode ownerBinder;
+        private final long sourceBinderLineage;
+        private final String ownerPhasePath;
+        private final String binderContext;
+
+        private ScopedLocalBinding(
+                QuantiVar variable,
+                NormalForm ownerPhase,
+                EGraphNode ownerBinder,
+                long sourceBinderLineage,
+                String ownerPhasePath,
+                String binderContext) {
+            this.variable = variable;
+            this.ownerPhase = ownerPhase;
+            this.ownerBinder = ownerBinder;
+            this.sourceBinderLineage = sourceBinderLineage;
+            this.ownerPhasePath = ownerPhasePath;
+            this.binderContext = binderContext;
+        }
+
+        private static ScopedLocalBinding from(PhaseLocalBindingImport imported) {
+            return new ScopedLocalBinding(
+                    imported.variable(),
+                    imported.ownerPhase(),
+                    imported.ownerBinder(),
+                    imported.sourceBinderLineage(),
+                    imported.ownerPhasePath(),
+                    imported.binderContext());
+        }
+
+        private PhaseLocalBindingImport importInto(String targetPath) {
+            return new PhaseLocalBindingImport(
+                    variable,
+                    ownerPhase,
+                    ownerBinder,
+                    sourceBinderLineage,
+                    ownerPhasePath,
+                    targetPath,
+                    binderContext);
+        }
+    }
+
     public NormalForm() {
         // initialize the normal form with empty quantification tree and matrix e-graph, and empty parameter list and quantified variable list.
         this.matrixEGraphRoot = null;
@@ -64,16 +216,20 @@ public class NormalForm {
         this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
         this.inheritedQuantiVars = new ArrayList<>();
+        this.phaseLocalBindingImports = new ArrayList<>();
+        this.temporalChildBindingImports = new java.util.IdentityHashMap<>();
+        this.localBindingSeeds = new HashMap<>();
+        this.phasePath = "phase[0]";
         this.temporalChildren = new ArrayList<>();
+        this.temporalReferenceAuthorities = new java.util.LinkedHashMap<>();
+        this.lifecycleLock = new Object();
         this.temporalOp = TemporalOp.NONE;
         this.nextDisjointnessClass = 1;
     }
 
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
         this(parent, temporalOp, egid,
-                parent.matrixEGraphRoot == null
-                        ? SemanticProfile.alloyOverflowForbidding()
-                        : parent.matrixEGraphRoot.getSemanticProfile());
+                childSemanticProfile(parent));
     }
 
     public NormalForm(
@@ -81,67 +237,278 @@ public class NormalForm {
             TemporalOp temporalOp,
             int egid,
             SemanticProfile semanticProfile) {
-        this.matrixEGraphRoot = new EGraphNode(
-                egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1, false,
-                Metatype.BOOLEAN, semanticProfile);
+        NormalForm checkedParent = java.util.Objects.requireNonNull(
+                parent, "temporal parent");
+        this.lifecycleLock = checkedParent.lifecycleLock;
         this.certificationMatrixEGraphRoot = null;
-        this.params = new ArrayList<>(parent.params);
+        this.params = new ArrayList<>();
         this.matrixQuantiVars = new ArrayList<>();
         this.inheritedQuantiVars = new ArrayList<>();
+        this.phaseLocalBindingImports = new ArrayList<>();
+        this.temporalChildBindingImports = new java.util.IdentityHashMap<>();
+        this.localBindingSeeds = new HashMap<>();
+        this.phasePath = "unassigned";
         this.temporalChildren = new ArrayList<>();
+        this.temporalReferenceAuthorities = new java.util.LinkedHashMap<>();
         this.temporalOp = temporalOp;
         this.nextDisjointnessClass = 1;
+        synchronized (lifecycleLock) {
+            checkedParent.requireMutable();
+            EGraphNode parentRoot = checkedParent.matrixEGraphRoot;
+            this.matrixEGraphRoot = parentRoot == null
+                    ? new EGraphNode(
+                            egid, Opcode.TEMPORALROOT, new ArrayList<>(), false, 1,
+                            false, Metatype.BOOLEAN, semanticProfile)
+                    : EGraphNode.inOwningArena(
+                            parentRoot,
+                            egid,
+                            Opcode.TEMPORALROOT,
+                            new ArrayList<>(),
+                            false,
+                            1,
+                            false,
+                            Metatype.BOOLEAN,
+                            semanticProfile);
+            this.params.addAll(checkedParent.params);
+        }
+    }
+
+    private static SemanticProfile childSemanticProfile(NormalForm parent) {
+        NormalForm checkedParent = java.util.Objects.requireNonNull(
+                parent, "temporal parent");
+        synchronized (checkedParent.lifecycleLock) {
+            checkedParent.requireMutable();
+            return checkedParent.matrixEGraphRoot == null
+                    ? SemanticProfile.alloyOverflowForbidding()
+                    : checkedParent.matrixEGraphRoot.getSemanticProfile();
+        }
     }
 
     public EGraphNode getMatrixEGraph() {
-        return this.matrixEGraphRoot;
-    }
-    public EGraphNode getCertificationMatrixEGraph() {
-        return certificationMatrixEGraphRoot == null
-                ? matrixEGraphRoot : certificationMatrixEGraphRoot;
-    }
-    public List<QuantiVar> getParams() {
-        return Collections.unmodifiableList(this.params);
-    }
-    public List<QuantiVar> getMatrixQuantiVars() {
-        return Collections.unmodifiableList(this.matrixQuantiVars);
-    }
-    public List<QuantiVar> getInheritedQuantiVars() {
-        return Collections.unmodifiableList(this.inheritedQuantiVars);
-    }
-    public synchronized void addEClass(EGraphNode node) {
-        requireMutable();
-        if (this.matrixEGraphRoot == null) {
-            this.matrixEGraphRoot = node;
-        } else {
-            this.matrixEGraphRoot.addChild(node);
+        synchronized (lifecycleLock) {
+            return this.matrixEGraphRoot;
         }
     }
-    public synchronized void addParam(QuantiVar param) {
-        requireMutable();
-        this.params.add(param);
+    public EGraphNode getCertificationMatrixEGraph() {
+        synchronized (lifecycleLock) {
+            return certificationMatrixEGraphRoot == null
+                    ? matrixEGraphRoot : certificationMatrixEGraphRoot;
+        }
     }
-    public synchronized void addMatrixQuantiVar(QuantiVar quantiVar) {
-        requireMutable();
-        this.matrixQuantiVars.add(quantiVar);
+    public List<QuantiVar> getParams() {
+        synchronized (lifecycleLock) {
+            return Collections.unmodifiableList(new ArrayList<>(this.params));
+        }
+    }
+    public List<QuantiVar> getMatrixQuantiVars() {
+        synchronized (lifecycleLock) {
+            return Collections.unmodifiableList(new ArrayList<>(this.matrixQuantiVars));
+        }
+    }
+    public List<QuantiVar> getInheritedQuantiVars() {
+        synchronized (lifecycleLock) {
+            return Collections.unmodifiableList(new ArrayList<>(this.inheritedQuantiVars));
+        }
+    }
+    public List<QuantiVar> getLocalQuantiVars() {
+        synchronized (lifecycleLock) {
+            java.util.Set<QuantiVar> seen = java.util.Collections.newSetFromMap(
+                    new java.util.IdentityHashMap<>());
+            List<QuantiVar> result = new ArrayList<>();
+            for (LocalBindingSeed seed : localBindingSeeds.values()) {
+                if (seen.add(seed.variable)) {
+                    result.add(seed.variable);
+                }
+            }
+            result.sort(java.util.Comparator.comparingInt(QuantiVar::getId));
+            return Collections.unmodifiableList(result);
+        }
+    }
+    public List<PhaseLocalBindingImport> getPhaseLocalBindingImports() {
+        synchronized (lifecycleLock) {
+            return Collections.unmodifiableList(new ArrayList<>(phaseLocalBindingImports));
+        }
+    }
+    public String getPhasePath() {
+        synchronized (lifecycleLock) {
+            return phasePath;
+        }
+    }
+
+    /** Assigns the deterministic structural path before tree normalization. */
+    public void assignPhasePath(String path) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            String checked = PhaseLocalBindingImport.requirePhasePath(path);
+            if (!"unassigned".equals(phasePath) && !phasePath.equals(checked)) {
+                throw new IllegalStateException("A temporal phase received two structural paths");
+            }
+            phasePath = checked;
+        }
+    }
+
+    /** Installs only imports issued by the exact structural parent reference. */
+    public void installPhaseLocalBindingImports(
+            List<PhaseLocalBindingImport> imports) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            List<PhaseLocalBindingImport> checked = new ArrayList<>();
+            java.util.Set<QuantiVar> seen = java.util.Collections.newSetFromMap(
+                    new java.util.IdentityHashMap<>());
+            for (PhaseLocalBindingImport imported
+                    : imports == null ? Collections.<PhaseLocalBindingImport>emptyList() : imports) {
+                PhaseLocalBindingImport value = java.util.Objects.requireNonNull(
+                        imported, "phase-local import");
+                if (!phasePath.equals(value.targetPhasePath())) {
+                    throw new IllegalArgumentException(
+                            "A phase-local import targets another temporal phase");
+                }
+                if (!seen.add(value.variable())) {
+                    throw new IllegalArgumentException(
+                            "A temporal phase received the same local binder twice");
+                }
+                checked.add(value);
+            }
+            phaseLocalBindingImports = checked;
+        }
+    }
+
+    public List<PhaseLocalBindingImport> phaseLocalBindingImportsFor(
+            NormalForm child) {
+        synchronized (lifecycleLock) {
+            NormalForm checked = java.util.Objects.requireNonNull(child, "temporal child");
+            if (!temporalChildren.contains(checked)) {
+                throw new IllegalArgumentException(
+                        "Phase-local imports can be requested only for a structural child");
+            }
+            List<PhaseLocalBindingImport> result = temporalChildBindingImports.get(checked);
+            return result == null
+                    ? Collections.emptyList()
+                    : Collections.unmodifiableList(new ArrayList<>(result));
+        }
+    }
+    public void addEClass(EGraphNode node) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            if (this.matrixEGraphRoot == null) {
+                this.matrixEGraphRoot = node;
+            } else {
+                this.matrixEGraphRoot.addChild(node);
+            }
+        }
+    }
+    public void addParam(QuantiVar param) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            this.params.add(param);
+        }
+    }
+    public void addMatrixQuantiVar(QuantiVar quantiVar) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            this.matrixQuantiVars.add(quantiVar);
+        }
     }
     public TemporalOp getTemporalOp() {
-        return this.temporalOp;
+        synchronized (lifecycleLock) {
+            return this.temporalOp;
+        }
     }
     public List<NormalForm> getTemporalChildren() {
-        return Collections.unmodifiableList(this.temporalChildren);
+        synchronized (lifecycleLock) {
+            return Collections.unmodifiableList(new ArrayList<>(this.temporalChildren));
+        }
     }
-    public synchronized void addTemporalChild(NormalForm child) {
+    public void addTemporalChild(NormalForm child) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            NormalForm checked = java.util.Objects.requireNonNull(
+                    child, "temporal child");
+            if (checked.lifecycleLock != lifecycleLock) {
+                throw new IllegalArgumentException(
+                        "A temporal child must share its parent's lifecycle lock");
+            }
+            this.temporalChildren.add(checked);
+        }
+    }
+
+    /** Lowers one parser occurrence after consuming IRAgent-owned evidence. */
+    public EGraphNode createTemporalReference(
+            IRAgent.TemporalReferenceEvidence evidence) {
+        synchronized (lifecycleLock) {
         requireMutable();
-        this.temporalChildren.add(child);
+        IRAgent.TemporalReferenceClaim claim =
+                java.util.Objects.requireNonNull(evidence, "temporal evidence")
+                        .consumeFor(this);
+        EGraphNode source = claim.source();
+        int childIndex = claim.childIndex();
+        int arity = claim.arity();
+        if (source == null || source.getMetatype() != Metatype.BOOLEAN
+                || source.getExactAlloyType() == null
+                || source.getExactAlloyType().kind()
+                        != is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.BOOL) {
+            throw new IllegalArgumentException(
+                    "A temporal reference requires an exact Boolean source operator");
+        }
+        List<TemporalOp> expected = temporalOpsForSource(source.getOpcode());
+        if (expected.size() != arity || childIndex < 0
+                || childIndex + arity > temporalChildren.size()) {
+            throw new IllegalArgumentException(
+                    "Temporal reference arity or child range disagrees with its source operator");
+        }
+        List<NormalForm> children = new ArrayList<>(arity);
+        for (int offset = 0; offset < arity; offset++) {
+            NormalForm child = temporalChildren.get(childIndex + offset);
+            if (child.temporalOp != expected.get(offset)) {
+                throw new IllegalArgumentException(
+                        "Temporal reference child operation disagrees with its source operator");
+            }
+            children.add(child);
+        }
+        long authorityId = NEXT_TEMPORAL_REFERENCE_AUTHORITY_ID.getAndIncrement();
+        if (authorityId <= 0L) {
+            throw new IllegalStateException("Temporal reference authority space exhausted");
+        }
+        EGraphNode reference = EGraphNode.inOwningArena(
+                source,
+                source.getId(),
+                Opcode.REF,
+                new ArrayList<>(),
+                false,
+                0,
+                false,
+                Metatype.BOOLEAN,
+                source.getSemanticProfile());
+        reference.setSourceName(temporalReferenceName(childIndex, arity));
+        reference.setSourceType("Bool");
+        reference.setExactAlloyType(
+                is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
+        reference.attachTemporalReferenceAuthority(authorityId);
+        TemporalReferenceAuthority prior = temporalReferenceAuthorities.put(
+                authorityId,
+                new TemporalReferenceAuthority(
+                        authorityId,
+                        this,
+                        source.getOpcode(),
+                        claim,
+                        claim.sourceOccurrenceLineage(),
+                        claim.parserOccurrenceId(),
+                        childIndex,
+                        children));
+        if (prior != null) {
+            throw new IllegalStateException("Duplicate temporal reference authority id");
+        }
+        return reference;
+        }
     }
 
     /** Freezes the complete normalized source consumed by certification. */
-    public synchronized void freezeForCertification() {
+    public void freezeForCertification() {
+        synchronized (lifecycleLock) {
         if (frozenForCertification) {
             return;
         }
-        frozenForCertification = true;
+        requireAdmittedTemporalTree();
         for (QuantiVar parameter : params) {
             parameter.freezeForCertification();
         }
@@ -151,19 +518,34 @@ public class NormalForm {
         for (QuantiVar variable : inheritedQuantiVars) {
             variable.freezeForCertification();
         }
+        for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
+            imported.variable().freezeForCertification();
+        }
         for (NormalForm child : temporalChildren) {
             child.freezeForCertification();
         }
         if (matrixEGraphRoot != null) {
-            matrixEGraphRoot.freezeForCertification();
+            admitAndFreezeTemporalReferences(matrixEGraphRoot, "live matrix");
         }
         if (certificationMatrixEGraphRoot != null) {
-            certificationMatrixEGraphRoot.freezeForCertification();
+            admitAndFreezeTemporalReferences(
+                    certificationMatrixEGraphRoot, "certification matrix");
+        }
+        sealTemporalReferenceEvidence();
+        frozenForCertification = true;
         }
     }
 
     public boolean isFrozenForCertification() {
         return frozenForCertification;
+    }
+
+    /** Drops parser graph retention after one final owner-bound provenance check. */
+    private void sealTemporalReferenceEvidence() {
+        for (TemporalReferenceAuthority authority
+                : temporalReferenceAuthorities.values()) {
+            authority.seal();
+        }
     }
 
     private void requireMutable() {
@@ -173,24 +555,160 @@ public class NormalForm {
         }
     }
 
-    public synchronized void pushTemporalNegations() {
+    /** Admits every matrix occurrence before any temporal phase can be rewritten. */
+    public void requireAdmittedTemporalTree() {
+        synchronized (lifecycleLock) {
+        java.util.Set<NormalForm> admitted = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
+        java.util.Set<NormalForm> active = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
+        requireAdmittedTemporalTree(this, admitted, active);
+        }
+    }
+
+    private static void requireAdmittedTemporalTree(
+            NormalForm current,
+            java.util.Set<NormalForm> admitted,
+            java.util.Set<NormalForm> active) {
+        if (admitted.contains(current)) {
+            return;
+        }
+        if (!active.add(current)) {
+            throw new IllegalStateException("Temporal normal forms must be acyclic");
+        }
+        if (current.matrixEGraphRoot != null) {
+            current.matrixEGraphRoot.requireAdmittedGraph();
+        }
+        if (current.certificationMatrixEGraphRoot != null
+                && current.certificationMatrixEGraphRoot
+                        != current.matrixEGraphRoot) {
+            current.certificationMatrixEGraphRoot.requireAdmittedGraph();
+            current.requireAdmittedTemporalReferences(
+                    current.certificationMatrixEGraphRoot,
+                    "certification matrix");
+        }
+        if (current.matrixEGraphRoot != null) {
+            current.requireAdmittedTemporalReferences(
+                    current.matrixEGraphRoot, "live matrix");
+        }
+        current.requireCompleteTemporalChildCoverage();
+        List<NormalForm> children = new ArrayList<>(current.temporalChildren);
+        for (NormalForm child : children) {
+            requireAdmittedTemporalTree(child, admitted, active);
+        }
+        active.remove(current);
+        admitted.add(current);
+    }
+
+    private void requireAdmittedTemporalReferences(EGraphNode root, String label) {
+        root.forEachAdmittedReachableNode(
+                node -> admitTemporalReference(node, label));
+    }
+
+    private void admitAndFreezeTemporalReferences(EGraphNode root, String label) {
+        root.admitAndFreezeForCertification(
+                node -> admitTemporalReference(node, label));
+    }
+
+    /**
+     * Validates every temporal reference that survives certified matrix
+     * normalization. An issued authority need not survive: Boolean quotient
+     * laws may prove its containing branch unreachable before certification.
+     */
+    private void admitTemporalReference(
+            EGraphNode node,
+            String label) {
+        String sourceName = node.getSourceName();
+        if (sourceName == null || !sourceName.startsWith("temporal[")) {
+            return;
+        }
+        int[] target = temporalReferenceTarget(node);
+        if (target == null) {
+            throw new IllegalStateException(
+                    "Malformed or non-REF temporal reference in " + label);
+        }
+        long authorityId = node.temporalReferenceAuthorityId();
+        TemporalReferenceAuthority authority =
+                temporalReferenceAuthorities.get(authorityId);
+        if (authority == null || !authority.matches(node, target[0], target[1])) {
+            throw new IllegalStateException(
+                    "Temporal reference lacks owner-bound source authority: "
+                            + sourceName);
+        }
+    }
+
+    private void requireCompleteTemporalChildCoverage() {
+        if (temporalChildren.isEmpty()) {
+            if (!temporalReferenceAuthorities.isEmpty()) {
+                throw new IllegalStateException(
+                        "Temporal reference authority has no child phase");
+            }
+            return;
+        }
+        if (matrixEGraphRoot == null || temporalReferenceAuthorities.isEmpty()) {
+            throw new IllegalStateException(
+                    "A temporal child phase lacks an owner-issued matrix reference");
+        }
+        boolean[] covered = new boolean[temporalChildren.size()];
+        for (TemporalReferenceAuthority authority
+                : temporalReferenceAuthorities.values()) {
+            if (authority.owner != this || authority.childIndex < 0
+                    || authority.childIndex + authority.children.size()
+                            > temporalChildren.size()) {
+                throw new IllegalStateException(
+                        "Temporal reference authority has an invalid child range");
+            }
+            for (int offset = 0; offset < authority.children.size(); offset++) {
+                int index = authority.childIndex + offset;
+                if (covered[index]
+                        || temporalChildren.get(index) != authority.children.get(offset)) {
+                    throw new IllegalStateException(
+                            "Temporal child phases must have one exact owner reference");
+                }
+                covered[index] = true;
+            }
+        }
+        for (boolean present : covered) {
+            if (!present) {
+                throw new IllegalStateException(
+                        "A temporal child phase lacks an owner-issued matrix reference");
+            }
+        }
+    }
+
+    public void pushTemporalNegations() {
+        synchronized (lifecycleLock) {
         requireMutable();
+        requireAdmittedTemporalTree();
         if (matrixEGraphRoot == null || temporalChildren.isEmpty()) {
             return;
         }
         boolean[] changed = new boolean[1];
         java.util.Set<String> dualizedReferences = new java.util.LinkedHashSet<>();
-        matrixEGraphRoot = pushTemporalNegations(
-                matrixEGraphRoot, changed, true, dualizedReferences);
+        List<TemporalDualization> stagedDualizations = new ArrayList<>();
+        EGraphNode rewrittenMatrix = pushTemporalNegations(
+                matrixEGraphRoot,
+                changed,
+                true,
+                dualizedReferences,
+                stagedDualizations);
+        EGraphNode rewrittenCertification = certificationMatrixEGraphRoot;
         if (certificationMatrixEGraphRoot != null) {
-            certificationMatrixEGraphRoot = pushTemporalNegations(
+            rewrittenCertification = pushTemporalNegations(
                     certificationMatrixEGraphRoot,
                     new boolean[1],
                     false,
-                    dualizedReferences);
+                    dualizedReferences,
+                    stagedDualizations);
         }
-        if (changed[0] && matrixEGraphRoot != null) {
-            matrixEGraphRoot.saturate();
+        if (changed[0] && rewrittenMatrix != null) {
+            rewrittenMatrix.saturate();
+        }
+        for (TemporalDualization staged : stagedDualizations) {
+            staged.commit();
+        }
+        matrixEGraphRoot = rewrittenMatrix;
+        certificationMatrixEGraphRoot = rewrittenCertification;
         }
     }
 
@@ -198,7 +716,8 @@ public class NormalForm {
             EGraphNode node,
             boolean[] changed,
             boolean applyTemporalDualization,
-            java.util.Set<String> dualizedReferences) {
+            java.util.Set<String> dualizedReferences,
+            List<TemporalDualization> stagedDualizations) {
         if (node == null) {
             return null;
         }
@@ -208,7 +727,8 @@ public class NormalForm {
             boolean dualized = target != null
                     && (applyTemporalDualization
                             ? (dualizedReferences.contains(reference.getSourceName())
-                                    || dualizeTemporalChildren(target[0], target[1]))
+                                    || stageTemporalChildren(
+                                            target[0], target[1], stagedDualizations))
                             : dualizedReferences.contains(reference.getSourceName()));
             if (dualized) {
                 if (applyTemporalDualization) {
@@ -221,56 +741,97 @@ public class NormalForm {
         EGraphNode rewritten = copyShallow(node, node.getOpcode());
         for (EGraphNode child : node.getChildren()) {
             EGraphNode rewrittenChild = pushTemporalNegations(
-                    child, changed, applyTemporalDualization, dualizedReferences);
+                    child,
+                    changed,
+                    applyTemporalDualization,
+                    dualizedReferences,
+                    stagedDualizations);
             if (rewrittenChild != null) {
-                rewritten.addChild(rewrittenChild);
+                rewritten.addNormalizedChild(rewrittenChild);
             }
         }
         return rewritten;
     }
 
-    private boolean dualizeTemporalChildren(int index, int arity) {
+    private boolean stageTemporalChildren(
+            int index,
+            int arity,
+            List<TemporalDualization> stagedDualizations) {
         if (index < 0 || arity < 1 || index + arity > temporalChildren.size()) {
             return false;
         }
-        List<TemporalOp> duals = new ArrayList<>(arity);
+        List<TemporalDualization> additions = new ArrayList<>(arity);
         for (int i = 0; i < arity; i++) {
-            TemporalOp dual = temporalNegationDual(temporalChildren.get(index + i).temporalOp);
+            NormalForm child = temporalChildren.get(index + i);
+            child.requireMutable();
+            TemporalOp dual = temporalNegationDual(child.temporalOp);
             if (dual == null) {
                 return false;
             }
-            duals.add(dual);
+            for (TemporalDualization staged : stagedDualizations) {
+                if (staged.child == child) {
+                    if (staged.temporalOp != dual) {
+                        throw new IllegalStateException(
+                                "A temporal child has contradictory staged duals");
+                    }
+                    dual = null;
+                    break;
+                }
+            }
+            if (dual != null) {
+                additions.add(new TemporalDualization(
+                        child,
+                        dual,
+                        negatedMatrixBeforeNormalization(child.matrixEGraphRoot)));
+            }
         }
-        for (int i = 0; i < arity; i++) {
-            NormalForm child = temporalChildren.get(index + i);
-            child.temporalOp = duals.get(i);
-            child.negateMatrixBeforeNormalization();
-        }
+        stagedDualizations.addAll(additions);
         return true;
     }
 
-    private void negateMatrixBeforeNormalization() {
+    private static EGraphNode negatedMatrixBeforeNormalization(
+            EGraphNode matrixEGraphRoot) {
         if (matrixEGraphRoot == null) {
-            return;
+            return null;
         }
         if (matrixEGraphRoot.getOpcode() != Opcode.TEMPORALROOT) {
-            matrixEGraphRoot = syntheticUnary(matrixEGraphRoot, Opcode.NOT, matrixEGraphRoot, -11);
-            return;
+            return syntheticUnary(
+                    matrixEGraphRoot, Opcode.NOT, matrixEGraphRoot, -11);
         }
         EGraphNode root = copyShallow(matrixEGraphRoot, Opcode.TEMPORALROOT);
         List<EGraphNode> body = new ArrayList<>();
         for (EGraphNode child : matrixEGraphRoot.getChildren()) {
             if (isRelDecl(child.getOpcode())) {
-                root.addChild(child);
+                root.addNormalizedChild(child);
             } else {
                 body.add(child);
             }
         }
         if (!body.isEmpty()) {
             EGraphNode matrix = body.size() == 1 ? body.get(0) : conjoin(null, body);
-            root.addChild(syntheticUnary(matrix, Opcode.NOT, matrix, -12));
+            root.addNormalizedChild(syntheticUnary(matrix, Opcode.NOT, matrix, -12));
         }
-        matrixEGraphRoot = root;
+        return root;
+    }
+
+    private static final class TemporalDualization {
+        private final NormalForm child;
+        private final TemporalOp temporalOp;
+        private final EGraphNode matrix;
+
+        private TemporalDualization(
+                NormalForm child,
+                TemporalOp temporalOp,
+                EGraphNode matrix) {
+            this.child = child;
+            this.temporalOp = temporalOp;
+            this.matrix = matrix;
+        }
+
+        private void commit() {
+            child.temporalOp = temporalOp;
+            child.matrixEGraphRoot = matrix;
+        }
     }
 
     private static int[] temporalReferenceTarget(EGraphNode node) {
@@ -291,6 +852,108 @@ public class NormalForm {
             return new int[] { index, arity };
         } catch (NumberFormatException ignored) {
             return null;
+        }
+    }
+
+    private static String temporalReferenceName(int index, int arity) {
+        return "temporal[" + index + ":" + arity + "]";
+    }
+
+    private static List<TemporalOp> temporalOpsForSource(Opcode opcode) {
+        switch (opcode) {
+            case BEFORE:
+                return Collections.singletonList(TemporalOp.BEFORE);
+            case HISTORICALLY:
+                return Collections.singletonList(TemporalOp.HISTORICALLY);
+            case ONCE:
+                return Collections.singletonList(TemporalOp.ONCE);
+            case ALWAYS:
+                return Collections.singletonList(TemporalOp.ALWAYS);
+            case EVENTUALLY:
+                return Collections.singletonList(TemporalOp.EVENTUALLY);
+            case AFTER:
+                return Collections.singletonList(TemporalOp.AFTER);
+            case UNTIL:
+                return List.of(TemporalOp.UNTILL, TemporalOp.UNTILR);
+            case RELEASES:
+                return List.of(TemporalOp.RELEASESL, TemporalOp.RELEASESR);
+            case SINCE:
+                return List.of(TemporalOp.SINCEL, TemporalOp.SINCER);
+            case TRIGGERED:
+                return List.of(TemporalOp.TRIGGEREDL, TemporalOp.TRIGGEREDR);
+            default:
+                throw new IllegalArgumentException(
+                        "Not a temporal source operator: " + opcode);
+        }
+    }
+
+    private static final class TemporalReferenceAuthority {
+        private final long authorityId;
+        private final NormalForm owner;
+        private final Opcode sourceOpcode;
+        private final IRAgent.TemporalReferenceClaim sourceClaim;
+        private final long sourceOccurrenceLineage;
+        private final long parserOccurrenceId;
+        private final int childIndex;
+        private final List<NormalForm> children;
+
+        private TemporalReferenceAuthority(
+                long authorityId,
+                NormalForm owner,
+                Opcode sourceOpcode,
+                IRAgent.TemporalReferenceClaim sourceClaim,
+                long sourceOccurrenceLineage,
+                long parserOccurrenceId,
+                int childIndex,
+                List<NormalForm> children) {
+            this.authorityId = authorityId;
+            this.owner = owner;
+            this.sourceOpcode = sourceOpcode;
+            this.sourceClaim = java.util.Objects.requireNonNull(
+                    sourceClaim, "temporal source claim");
+            this.sourceOccurrenceLineage = sourceOccurrenceLineage;
+            this.parserOccurrenceId = parserOccurrenceId;
+            this.childIndex = childIndex;
+            this.children = Collections.unmodifiableList(new ArrayList<>(children));
+        }
+
+        private boolean matches(EGraphNode reference, int index, int arity) {
+            if (authorityId <= 0L || sourceOccurrenceLineage <= 0L
+                    || parserOccurrenceId <= 0L || owner == null
+                    || !sourceClaim.remainsValidFor(owner)
+                    || reference.temporalReferenceAuthorityId() != authorityId
+                    || reference.getOpcode() != Opcode.REF
+                    || !reference.getChildren().isEmpty()
+                    || reference.getMetatype() != Metatype.BOOLEAN
+                    || reference.getExactAlloyType() == null
+                    || reference.getExactAlloyType().kind()
+                            != is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.BOOL
+                    || !"Bool".equals(reference.getSourceType())
+                    || !temporalReferenceName(childIndex, children.size())
+                            .equals(reference.getSourceName())
+                    || index != childIndex || arity != children.size()
+                    || childIndex < 0
+                    || childIndex + children.size() > owner.temporalChildren.size()) {
+                return false;
+            }
+            List<TemporalOp> expected = temporalOpsForSource(sourceOpcode);
+            boolean original = true;
+            boolean dual = true;
+            for (int offset = 0; offset < children.size(); offset++) {
+                NormalForm child = owner.temporalChildren.get(childIndex + offset);
+                if (child != children.get(offset)) {
+                    return false;
+                }
+                TemporalOp operation = child.temporalOp;
+                TemporalOp expectedOperation = expected.get(offset);
+                original &= operation == expectedOperation;
+                dual &= operation == temporalNegationDual(expectedOperation);
+            }
+            return original || dual;
+        }
+
+        private void seal() {
+            sourceClaim.sealFor(owner);
         }
     }
 
@@ -324,29 +987,50 @@ public class NormalForm {
                 return null;
         }
     }
-    public synchronized void prenex() {
-        requireMutable();
-        normalize();
+    public void prenex() {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            normalize();
+        }
     }
-    public synchronized void normalize() {
-        requireMutable();
-        normalize(new HashMap<>(), new int[] { 0 });
+    public void normalize() {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            normalize(new HashMap<>(), new int[] { 0 });
+        }
     }
-    public synchronized void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
-        requireMutable();
-        normalize(inheritedBindings, nextVarId, NO_OBSERVER);
+    public void normalize(Map<String, QuantiVar> inheritedBindings, int[] nextVarId) {
+        synchronized (lifecycleLock) {
+            requireMutable();
+            normalize(inheritedBindings, nextVarId, NO_OBSERVER);
+        }
     }
-    public synchronized void normalize(
+    public void normalize(
             Map<String, QuantiVar> inheritedBindings,
             int[] nextVarId,
             NormalizationObserver observer) {
+        synchronized (lifecycleLock) {
         requireMutable();
+        requireAdmittedTemporalTree();
         if (matrixEGraphRoot == null) {
             return;
         }
         NormalizationObserver stages = observer == null ? NO_OBSERVER : observer;
         matrixQuantiVars.clear();
-        inheritedQuantiVars = new ArrayList<>(new java.util.LinkedHashSet<>(inheritedBindings.values()));
+        localBindingSeeds.clear();
+        temporalChildBindingImports.clear();
+        java.util.Set<QuantiVar> localImports = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
+        for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
+            localImports.add(imported.variable());
+        }
+        inheritedQuantiVars = new ArrayList<>();
+        for (QuantiVar inherited
+                : new java.util.LinkedHashSet<>(inheritedBindings.values())) {
+            if (!localImports.contains(inherited)) {
+                inheritedQuantiVars.add(inherited);
+            }
+        }
         inheritedQuantiVars.sort(java.util.Comparator.comparingInt(QuantiVar::getId));
         nextDisjointnessClass = 1;
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
@@ -427,6 +1111,7 @@ public class NormalForm {
         stages.onStage("post-prenex-nnf", this);
         matrixEGraphRoot.reseedSourceOccurrenceLineages();
         certificationMatrixEGraphRoot = cloneEGraph(matrixEGraphRoot);
+        captureTemporalPhaseLocalBindings();
         stages.onStage("begin-aci", this);
         matrixEGraphRoot = normalizeAssociativeCommutative(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
@@ -438,12 +1123,14 @@ public class NormalForm {
         matrixEGraphRoot.saturate();
         registerQuantifierSymmetries();
         stages.onStage("saturation", this);
+        }
     }
 
     private void minimizeOperationalCarriersFromPrefixWitnesses() {
         java.util.Set<String> inhabited = new java.util.HashSet<>();
         recordDirectCarrierWitnesses(params, inhabited);
         recordDirectCarrierWitnesses(inheritedQuantiVars, inhabited);
+        recordDirectCarrierWitnesses(phaseLocalVariables(), inhabited);
         for (QuantiVar variable : matrixQuantiVars) {
             String primitive = normalizeType(variable.getTypeName());
             String carrier = normalizeType(variable.getCarrierTypeName());
@@ -490,7 +1177,7 @@ public class NormalForm {
         }
         if (node.getOpcode() == Opcode.LET && node.getChildren().size() >= 2) {
             EGraphNode renamed = copyShallow(node, Opcode.LET);
-            renamed.addChild(alphaRenameBoundVariables(node.getChildren().get(0), scope, nextBinderId));
+            renamed.addNormalizedChild(alphaRenameBoundVariables(node.getChildren().get(0), scope, nextBinderId));
             String alphaName = "@let:" + nextBinderId[0]++;
             renamed.setAlphaName(alphaName);
             Map<String, String> bodyScope = new HashMap<>(scope);
@@ -498,7 +1185,7 @@ public class NormalForm {
                 bodyScope.put(node.getSourceName(), alphaName);
             }
             for (int i = 1; i < node.getChildren().size(); i++) {
-                renamed.addChild(alphaRenameBoundVariables(node.getChildren().get(i), bodyScope, nextBinderId));
+                renamed.addNormalizedChild(alphaRenameBoundVariables(node.getChildren().get(i), bodyScope, nextBinderId));
             }
             return renamed;
         }
@@ -514,7 +1201,7 @@ public class NormalForm {
             }
             for (int i = 0; i < node.getChildren().size(); i++) {
                 EGraphNode declaration = declarations.get(i);
-                renamed.addChild(declaration == null
+                renamed.addNormalizedChild(declaration == null
                         ? alphaRenameBoundVariables(node.getChildren().get(i), bodyScope, nextBinderId)
                         : declaration);
             }
@@ -522,7 +1209,7 @@ public class NormalForm {
         }
         EGraphNode renamed = copyShallow(node, node.getOpcode());
         for (EGraphNode child : node.getChildren()) {
-            renamed.addChild(alphaRenameBoundVariables(child, scope, nextBinderId));
+            renamed.addNormalizedChild(alphaRenameBoundVariables(child, scope, nextBinderId));
         }
         return renamed;
     }
@@ -534,18 +1221,18 @@ public class NormalForm {
         EGraphNode renamed = copyShallow(declaration, declaration.getOpcode());
         List<EGraphNode> children = declaration.getChildren();
         if (!children.isEmpty()) {
-            renamed.addChild(alphaRenameBoundVariables(children.get(0), bodyScope, nextBinderId));
+            renamed.addNormalizedChild(alphaRenameBoundVariables(children.get(0), bodyScope, nextBinderId));
         }
         for (int i = 1; i < children.size(); i++) {
             EGraphNode child = children.get(i);
             if (child.getOpcode() != Opcode.VARIABLE) {
-                renamed.addChild(alphaRenameBoundVariables(child, bodyScope, nextBinderId));
+                renamed.addNormalizedChild(alphaRenameBoundVariables(child, bodyScope, nextBinderId));
                 continue;
             }
             EGraphNode variable = copyShallow(child, Opcode.VARIABLE);
             String alphaName = "@bind:" + nextBinderId[0]++;
             variable.setAlphaName(alphaName);
-            renamed.addChild(variable);
+            renamed.addNormalizedChild(variable);
             if (child.getSourceName() != null) {
                 bodyScope.put(child.getSourceName(), alphaName);
             }
@@ -616,55 +1303,63 @@ public class NormalForm {
         if (node == null) {
             return null;
         }
-        if (node.getOpcode() == Opcode.IMPLIES && node.getChildren().size() == 2) {
+        if (node.getOpcode() == Opcode.IMPLIES
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 2) {
             EGraphNode left = rewriteBranchConnectives(node.getChildren().get(0));
             EGraphNode right = rewriteBranchConnectives(node.getChildren().get(1));
             EGraphNode disjunction = syntheticNode(node, Opcode.OR, -1);
-            disjunction.addChild(syntheticUnary(node, Opcode.NOT, left, -2));
-            disjunction.addChild(right);
+            disjunction.addNormalizedChild(syntheticUnary(node, Opcode.NOT, left, -2));
+            disjunction.addNormalizedChild(right);
             return disjunction;
         }
-        if (node.getOpcode() == Opcode.IFF && node.getChildren().size() == 2) {
+        if (node.getOpcode() == Opcode.IFF
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 2) {
             EGraphNode left = rewriteBranchConnectives(node.getChildren().get(0));
             EGraphNode right = rewriteBranchConnectives(node.getChildren().get(1));
 
             EGraphNode leftImpliesRight = syntheticNode(node, Opcode.OR, -1);
-            leftImpliesRight.addChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(left), -2));
-            leftImpliesRight.addChild(cloneEGraph(right));
+            leftImpliesRight.addNormalizedChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(left), -2));
+            leftImpliesRight.addNormalizedChild(cloneEGraph(right));
 
             EGraphNode rightImpliesLeft = syntheticNode(node, Opcode.OR, -3);
-            rightImpliesLeft.addChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(right), -4));
-            rightImpliesLeft.addChild(cloneEGraph(left));
+            rightImpliesLeft.addNormalizedChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(right), -4));
+            rightImpliesLeft.addNormalizedChild(cloneEGraph(left));
 
             EGraphNode conjunction = syntheticNode(node, Opcode.AND, -5);
-            conjunction.addChild(leftImpliesRight);
-            conjunction.addChild(rightImpliesLeft);
+            conjunction.addNormalizedChild(leftImpliesRight);
+            conjunction.addNormalizedChild(rightImpliesLeft);
             return conjunction;
         }
-        if (node.getOpcode() == Opcode.ITE && node.getMetatype() == Metatype.BOOLEAN
+        if (node.getOpcode() == Opcode.ITE
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)
                 && node.getChildren().size() == 3) {
             EGraphNode condition = rewriteBranchConnectives(node.getChildren().get(0));
             EGraphNode thenBranch = rewriteBranchConnectives(node.getChildren().get(1));
             EGraphNode elseBranch = rewriteBranchConnectives(node.getChildren().get(2));
 
             EGraphNode thenCase = syntheticNode(node, Opcode.AND, -1);
-            thenCase.addChild(cloneEGraph(condition));
-            thenCase.addChild(thenBranch);
+            thenCase.addNormalizedChild(cloneEGraph(condition));
+            thenCase.addNormalizedChild(thenBranch);
 
             EGraphNode elseCase = syntheticNode(node, Opcode.AND, -2);
-            elseCase.addChild(syntheticUnary(node, Opcode.NOT, condition, -3));
-            elseCase.addChild(elseBranch);
+            elseCase.addNormalizedChild(syntheticUnary(node, Opcode.NOT, condition, -3));
+            elseCase.addNormalizedChild(elseBranch);
 
             EGraphNode disjunction = syntheticNode(node, Opcode.OR, -4);
-            disjunction.addChild(thenCase);
-            disjunction.addChild(elseCase);
+            disjunction.addNormalizedChild(thenCase);
+            disjunction.addNormalizedChild(elseCase);
             return disjunction;
         }
         EGraphNode rewritten = copyShallow(node, node.getOpcode());
         for (EGraphNode child : node.getChildren()) {
             EGraphNode rewrittenChild = rewriteBranchConnectives(child);
             if (rewrittenChild != null) {
-                rewritten.addChild(rewrittenChild);
+                rewritten.addNormalizedChild(rewrittenChild);
             }
         }
         return rewritten;
@@ -702,7 +1397,7 @@ public class NormalForm {
             for (EGraphNode child : node.getChildren()) {
                 EGraphNode rewrittenChild = betaRewriteLet(child, isRelDecl(child.getOpcode()) ? bindings : scopedBindings);
                 if (rewrittenChild != null) {
-                    rewritten.addChild(rewrittenChild);
+                    rewritten.addNormalizedChild(rewrittenChild);
                 }
             }
             return rewritten;
@@ -721,7 +1416,7 @@ public class NormalForm {
         for (EGraphNode child : node.getChildren()) {
             EGraphNode rewrittenChild = betaRewriteLet(child, scopedBindings);
             if (rewrittenChild != null) {
-                rewritten.addChild(rewrittenChild);
+                rewritten.addNormalizedChild(rewrittenChild);
             }
         }
         return rewritten;
@@ -773,6 +1468,24 @@ public class NormalForm {
         if (node == null) {
             return null;
         }
+        boolean booleanIte = node.getOpcode() == Opcode.ITE;
+        if ((isBooleanBranchConnective(node.getOpcode()) || booleanIte)
+                && (!EGraphNode.hasBooleanRewriteAuthority(node)
+                        || !EGraphNode.hasBooleanOperands(node))) {
+            slots.enterStructure(null);
+            List<EGraphNode> retainedChildren = new ArrayList<>();
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                EGraphNode retainedChild = prenex(
+                        node.getChildren().get(i), env, nextVarId, false,
+                        constraints, bindingPath + "/opaque[" + i + "]",
+                        false, false, false, slots);
+                if (retainedChild != null && retainedChild.getOpcode() != Opcode.END) {
+                    retainedChildren.add(retainedChild);
+                }
+            }
+            node.setNormalizedChildren(retainedChildren);
+            return negated ? syntheticUnary(node, Opcode.NOT, node, -1) : node;
+        }
         if (node.getOpcode() == Opcode.VARIABLE) {
             QuantiVar qv = env.get(bindingKey(node));
             if (qv != null) {
@@ -781,11 +1494,14 @@ public class NormalForm {
             }
             return node;
         }
-        if (node.getOpcode() == Opcode.IFF && node.getChildren().size() == 2) {
+        if (node.getOpcode() == Opcode.IFF
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 2) {
             return prenex(expandIff(node, negated), env, nextVarId, false, constraints, bindingPath + "/iff",
                     canLiftSome, canLiftAll, globalLift, slots);
         }
-        if (node.getOpcode() == Opcode.NOT) {
+        if (node.getOpcode() == Opcode.NOT
+                && EGraphNode.hasBooleanOperands(node)) {
             List<EGraphNode> rewritten = new ArrayList<>();
             for (EGraphNode child : node.getChildren()) {
                 EGraphNode rewrittenChild = prenex(child, env, nextVarId, !negated, constraints, bindingPath + "/not",
@@ -803,6 +1519,23 @@ public class NormalForm {
             if (node.getOpcode() == Opcode.COMPREHENSION || node.getOpcode() == Opcode.SUM) {
                 slots.enterStructure(null);
                 return localQuantifier(node, env, nextVarId, negated, bindingPath, slots);
+            }
+            if (!negated) {
+                EGraphNode eliminated = eliminateSingleMembershipQuantifier(node);
+                if (eliminated != null) {
+                    prenexReductionsThisPass++;
+                    return prenex(
+                            eliminated,
+                            env,
+                            nextVarId,
+                            false,
+                            constraints,
+                            bindingPath + "/membership-elimination",
+                            canLiftSome,
+                            canLiftAll,
+                            globalLift,
+                            slots);
+                }
             }
             Quantifier quantifier = quantifierOf(node.getOpcode(), negated);
             boolean directlyLiftable = canLiftQuantifier(
@@ -919,8 +1652,92 @@ public class NormalForm {
                 rewritten.add(rewrittenChild);
             }
         }
-        node.setChildren(rewritten);
+        node.setNormalizedChildren(rewritten);
         return node;
+    }
+
+    private static EGraphNode eliminateSingleMembershipQuantifier(
+            EGraphNode quantifier) {
+        Opcode quantifierOpcode = quantifier.getOpcode();
+        if (quantifierOpcode != Opcode.FORALL
+                && quantifierOpcode != Opcode.EXISTS
+                && quantifierOpcode != Opcode.NO) {
+            return null;
+        }
+        EGraphNode declaration = null;
+        EGraphNode body = null;
+        for (EGraphNode child : quantifier.getChildren()) {
+            if (isRelDecl(child.getOpcode())) {
+                if (declaration != null) {
+                    return null;
+                }
+                declaration = child;
+            } else {
+                if (body != null) {
+                    return null;
+                }
+                body = child;
+            }
+        }
+        if (declaration == null || body == null
+                || isDisj(declaration.getOpcode())
+                || declaration.getChildren().size() != 2
+                || declaration.getChildren().get(1).getOpcode()
+                        != Opcode.VARIABLE
+                || (body.getOpcode() != Opcode.IN
+                        && body.getOpcode() != Opcode.NOT_IN)
+                || body.getChildren().size() != 2) {
+            return null;
+        }
+        String expectedComparisonName = body.getOpcode() == Opcode.IN
+                ? "BOP_IN" : "BOP_NOT_IN";
+        if (!expectedComparisonName.equals(body.getSourceName())
+                || !("MIDDLENODE_" + expectedComparisonName).equals(
+                        body.getSourceType())) {
+            return null;
+        }
+        EGraphNode binder = declaration.getChildren().get(1);
+        EGraphNode compared = body.getChildren().get(0);
+        EGraphNode memberSet = body.getChildren().get(1);
+        String binderKey = bindingKey(binder);
+        if (binderKey == null || compared.getOpcode() != Opcode.VARIABLE
+                || !binderKey.equals(bindingKey(compared))
+                || containsBindingReference(
+                        declaration.getChildren().get(0), binderKey)
+                || containsBindingReference(memberSet, binderKey)) {
+            return null;
+        }
+        DomainDescriptor domain = domainDescriptor(
+                declaration.getChildren().get(0));
+        if (domain.domain == null) {
+            return null;
+        }
+        return EGraphNode.parserCertifiedMembershipQuantifierElimination(
+                quantifier,
+                quantifierOpcode,
+                domain.cardinality,
+                compared.getEClassRef(),
+                domain.domain.getEClassRef(),
+                memberSet.getEClassRef(),
+                body.getOpcode() == Opcode.IN);
+    }
+
+    private static boolean containsBindingReference(
+            EGraphNode node,
+            String binding) {
+        if (node == null) {
+            return false;
+        }
+        if (node.getOpcode() == Opcode.VARIABLE
+                && binding.equals(bindingKey(node))) {
+            return true;
+        }
+        for (EGraphNode child : node.getChildren()) {
+            if (containsBindingReference(child, binding)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<Integer> prenexChildOrder(
@@ -994,7 +1811,7 @@ public class NormalForm {
                         childBindingPath(bindingPath, opcode, i, true), childCanLiftSome, childCanLiftAll, globalLift, childSlots);
                 slots.mergeBranch(childSlots, reusable);
                 if (child != null && child.getOpcode() != Opcode.END) {
-                    rewritten.addChild(child);
+                    rewritten.addNormalizedChild(child);
                 }
             }
             return rewritten;
@@ -1008,14 +1825,17 @@ public class NormalForm {
             EGraphNode right = prenex(node.getChildren().get(1), env, nextVarId, true, constraints,
                     bindingPath + "/implies[1]/not", childCanLiftSome, childCanLiftAll, globalLift, slots);
             if (left != null && left.getOpcode() != Opcode.END) {
-                conjunction.addChild(left);
+                conjunction.addNormalizedChild(left);
             }
             if (right != null && right.getOpcode() != Opcode.END) {
-                conjunction.addChild(right);
+                conjunction.addNormalizedChild(right);
             }
             return conjunction;
         }
-        if (opcode == Opcode.ITE && node.getMetatype() == Metatype.BOOLEAN && node.getChildren().size() == 3) {
+        if (opcode == Opcode.ITE
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 3) {
             return prenex(expandIte(node, true), env, nextVarId, false, constraints, bindingPath + "/ite",
                     canLiftSome, canLiftAll, globalLift, slots);
         }
@@ -1027,7 +1847,7 @@ public class NormalForm {
                 EGraphNode child = prenex(node.getChildren().get(i), env, nextVarId, negateChildren, constraints,
                         childBindingPath(bindingPath, opcode, i, negateChildren), canLiftSome, canLiftAll, globalLift, slots);
                 if (child != null && child.getOpcode() != Opcode.END) {
-                    rewritten.addChild(child);
+                    rewritten.addNormalizedChild(child);
                 }
             }
             return rewritten;
@@ -1160,7 +1980,7 @@ public class NormalForm {
         for (int i = 0; i < children.size(); i++) {
             EGraphNode child = children.get(i);
             if (isRelDecl(child.getOpcode())) {
-                quantifier.addChild(localRelDecl(node.getOpcode(), child, scopedEnv, nextVarId, negated,
+                quantifier.addNormalizedChild(localRelDecl(node.getOpcode(), child, scopedEnv, nextVarId, negated,
                         localConstraints, bindingPath + "/local-decl[" + i + "]", slots,
                         localDepth, localOrdinal));
             } else {
@@ -1174,7 +1994,7 @@ public class NormalForm {
         EGraphNode body = conjoin(null, bodyParts);
         body = applyDomainConstraints(body, localConstraints, quantifierOf(node.getOpcode(), false));
         if (body != null) {
-            quantifier.addChild(body);
+            quantifier.addNormalizedChild(body);
         }
         return negated ? syntheticUnary(node, Opcode.NOT, quantifier, -1) : quantifier;
     }
@@ -1196,7 +2016,7 @@ public class NormalForm {
             PrenexSlotAllocator domainSlots = slots.domainView();
             typeEGraph = prenex(relDecl.getChildren().get(0), env, nextVarId, false, constraints,
                     bindingPath + "/type", true, true, false, domainSlots);
-            copy.addChild(typeEGraph == null ? relDecl.getChildren().get(0) : typeEGraph);
+            copy.addNormalizedChild(typeEGraph == null ? relDecl.getChildren().get(0) : typeEGraph);
         }
         EGraphNode normalizedTypeEGraph = typeEGraph == null
                 ? null : toNNF(typeEGraph, false);
@@ -1210,9 +2030,10 @@ public class NormalForm {
             if (candidate.getOpcode() == Opcode.VARIABLE) {
                 String originalName = candidate.getSourceName();
                 int ordinal = localOrdinal[0]++;
-                String alphaName = "_l" + localDepth + "_" + ordinal;
+                int localId = nextVarId[0]++;
+                String alphaName = "_l" + localId;
                 String varType = primitiveVarType(candidate.getSourceType());
-                QuantiVar qv = new QuantiVar(nextVarId[0]++, alphaName, originalName, varType);
+                QuantiVar qv = new QuantiVar(localId, alphaName, originalName, varType);
                 qv.mergeExactAlloyType(bindingTypeEvidence(candidate, typeEGraph));
                 qv.setQuantifier(quantifierOf(quantifierOpcode, negated));
                 qv.setCardinality(domain.cardinality);
@@ -1220,8 +2041,17 @@ public class NormalForm {
                 qv.setBindingPath(bindingPath);
                 qv.setDeBruijnKey("local#" + localDepth + "#" + ordinal
                         + ":" + qv.getCardinality()
-                        + ":" + normalizeType(varType));
+                        + ":" + normalizeType(varType)
+                        + "@" + bindingPath);
                 candidateCopy.setAlphaName(alphaName);
+                LocalBindingSeed prior = localBindingSeeds.put(
+                        alphaName,
+                        new LocalBindingSeed(
+                                qv, candidate.getSourceOccurrenceLineage()));
+                if (prior != null && prior.variable != qv) {
+                    throw new IllegalStateException(
+                            "A local alpha identity was issued twice");
+                }
                 if (needsDomainConstraint(domain, varType)) {
                     constraints.add(domainConstraint(qv, candidateCopy, domain.domain));
                 }
@@ -1230,7 +2060,7 @@ public class NormalForm {
                     env.put(key, qv);
                 }
             }
-            copy.addChild(candidateCopy);
+            copy.addNormalizedChild(candidateCopy);
         }
         return copy;
     }
@@ -1256,6 +2086,140 @@ public class NormalForm {
             }
         }
         return depth;
+    }
+
+    private void captureTemporalPhaseLocalBindings() {
+        Map<String, ScopedLocalBinding> visible = new java.util.LinkedHashMap<>();
+        for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
+            putScopedBinding(visible, ScopedLocalBinding.from(imported));
+        }
+        captureTemporalPhaseLocalBindings(certificationMatrixEGraphRoot, visible);
+    }
+
+    private void captureTemporalPhaseLocalBindings(
+            EGraphNode node,
+            Map<String, ScopedLocalBinding> visible) {
+        if (node == null) {
+            return;
+        }
+        int[] target = temporalReferenceTarget(node);
+        if (target != null) {
+            java.util.Set<ScopedLocalBinding> unique = java.util.Collections.newSetFromMap(
+                    new java.util.IdentityHashMap<>());
+            unique.addAll(visible.values());
+            for (int offset = 0; offset < target[1]; offset++) {
+                NormalForm child = temporalChildren.get(target[0] + offset);
+                List<PhaseLocalBindingImport> imports = new ArrayList<>(unique.size());
+                for (ScopedLocalBinding binding : unique) {
+                    imports.add(binding.importInto(child.phasePath));
+                }
+                imports.sort(java.util.Comparator
+                        .comparing((PhaseLocalBindingImport value) -> value.binderContext())
+                        .thenComparingInt(value -> value.variable().getId()));
+                List<PhaseLocalBindingImport> snapshot =
+                        Collections.unmodifiableList(imports);
+                List<PhaseLocalBindingImport> prior = temporalChildBindingImports.get(child);
+                if (prior == null) {
+                    temporalChildBindingImports.put(child, snapshot);
+                } else if (!samePhaseLocalBindingSnapshot(prior, snapshot)) {
+                    throw new IllegalStateException(
+                            "A temporal child was referenced under conflicting local scopes");
+                }
+            }
+            return;
+        }
+        if (isQuantifierNode(node)) {
+            Map<String, ScopedLocalBinding> scoped = new java.util.LinkedHashMap<>(visible);
+            for (EGraphNode child : node.getChildren()) {
+                if (!isRelDecl(child.getOpcode())) {
+                    continue;
+                }
+                if (!child.getChildren().isEmpty()) {
+                    captureTemporalPhaseLocalBindings(child.getChildren().get(0), scoped);
+                }
+                for (int index = 1; index < child.getChildren().size(); index++) {
+                    EGraphNode variableNode = child.getChildren().get(index);
+                    if (variableNode.getOpcode() != Opcode.VARIABLE) {
+                        continue;
+                    }
+                    String alpha = variableNode.getAlphaName() != null
+                                    && !variableNode.getAlphaName().isEmpty()
+                            ? variableNode.getAlphaName()
+                            : variableNode.getSourceName();
+                    LocalBindingSeed seed = localBindingSeeds.get(alpha);
+                    if (seed == null) {
+                        throw new IllegalStateException(
+                                "A retained local binder lacks its normalized binding seed: "
+                                        + alpha);
+                    }
+                    putScopedBinding(
+                            scoped,
+                            new ScopedLocalBinding(
+                                    seed.variable,
+                                    this,
+                                    node,
+                                    seed.sourceBinderLineage,
+                                    phasePath,
+                                    seed.variable.getBindingPath()));
+                }
+            }
+            for (EGraphNode child : node.getChildren()) {
+                if (!isRelDecl(child.getOpcode())) {
+                    captureTemporalPhaseLocalBindings(child, scoped);
+                }
+            }
+            return;
+        }
+        for (EGraphNode child : node.getChildren()) {
+            captureTemporalPhaseLocalBindings(child, visible);
+        }
+    }
+
+    private static boolean samePhaseLocalBindingSnapshot(
+            List<PhaseLocalBindingImport> left,
+            List<PhaseLocalBindingImport> right) {
+        if (left.size() != right.size()) {
+            return false;
+        }
+        for (int index = 0; index < left.size(); index++) {
+            PhaseLocalBindingImport a = left.get(index);
+            PhaseLocalBindingImport b = right.get(index);
+            if (a.variable() != b.variable()
+                    || a.ownerPhase() != b.ownerPhase()
+                    || a.ownerBinder() != b.ownerBinder()
+                    || a.sourceBinderLineage() != b.sourceBinderLineage()
+                    || !a.ownerPhasePath().equals(b.ownerPhasePath())
+                    || !a.targetPhasePath().equals(b.targetPhasePath())
+                    || !a.binderContext().equals(b.binderContext())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static void putScopedBinding(
+            Map<String, ScopedLocalBinding> scope,
+            ScopedLocalBinding binding) {
+        java.util.LinkedHashSet<String> aliases = new java.util.LinkedHashSet<>();
+        aliases.add(binding.variable.getName());
+        aliases.add(binding.variable.getDeBruijnKey());
+        aliases.addAll(binding.variable.getOriginalNames());
+        java.util.Set<ScopedLocalBinding> shadowed = java.util.Collections.newSetFromMap(
+                new java.util.IdentityHashMap<>());
+        for (String alias : aliases) {
+            ScopedLocalBinding prior = scope.get(alias);
+            if (prior != null && prior != binding) {
+                shadowed.add(prior);
+            }
+        }
+        if (!shadowed.isEmpty()) {
+            scope.entrySet().removeIf(entry -> shadowed.contains(entry.getValue()));
+        }
+        for (String alias : aliases) {
+            if (alias != null && !alias.isEmpty()) {
+                scope.put(alias, binding);
+            }
+        }
     }
 
     private boolean hasScopedInhabitedCarrierWitness(
@@ -1426,8 +2390,8 @@ public class NormalForm {
                 return domain;
             }
             EGraphNode implication = syntheticNode(domain, Opcode.IMPLIES, -1);
-            implication.addChild(domain);
-            implication.addChild(body);
+            implication.addNormalizedChild(domain);
+            implication.addNormalizedChild(body);
             return implication;
         }
         return conjoin(body, constraints);
@@ -1443,10 +2407,10 @@ public class NormalForm {
         EGraphNode source = body == null ? constraints.get(0) : body;
         EGraphNode conjunction = syntheticNode(source, Opcode.AND, -1);
         if (body != null) {
-            conjunction.addChild(body);
+            conjunction.addNormalizedChild(body);
         }
         for (EGraphNode constraint : constraints) {
-            conjunction.addChild(constraint);
+            conjunction.addNormalizedChild(constraint);
         }
         return conjunction;
     }
@@ -1469,7 +2433,16 @@ public class NormalForm {
         Map<String, QuantiVar> result = new HashMap<>();
         addGuardedBindingFacts(result, params);
         addGuardedBindingFacts(result, inheritedQuantiVars);
+        addGuardedBindingFacts(result, phaseLocalVariables());
         addGuardedBindingFacts(result, matrixQuantiVars);
+        return result;
+    }
+
+    private List<QuantiVar> phaseLocalVariables() {
+        List<QuantiVar> result = new ArrayList<>(phaseLocalBindingImports.size());
+        for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
+            result.add(imported.variable());
+        }
         return result;
     }
 
@@ -1498,19 +2471,350 @@ public class NormalForm {
                 rewritten.add(normalized);
             }
         }
-        node.setChildren(rewritten);
+        node.setNormalizedChildren(rewritten);
 
-        if (node.getOpcode() == Opcode.NOT && rewritten.size() == 1) {
+        if (node.getOpcode() == Opcode.GLOBALBINDING
+                && node.getChildren().isEmpty()) {
+            EGraphNode abstractCarrier =
+                    EGraphNode.parserCertifiedAbstractUnionCarrier(
+                            node, Collections.singletonList(node));
+            if (abstractCarrier != null) {
+                return abstractCarrier;
+            }
+        }
+
+        EGraphNode relationalRewrite = normalizeRelationalUnaryAndIdentityRules(
+                node, rewritten, bindings);
+        if (relationalRewrite != node) {
+            return relationalRewrite;
+        }
+
+        if (node.getOpcode() == Opcode.NOT
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && rewritten.size() == 1) {
             Boolean child = booleanConstantValue(rewritten.get(0));
             if (child != null) {
                 return booleanConstant(node, !child);
             }
+            EGraphNode rewrittenChild = rewritten.get(0);
+            if ((rewrittenChild.getOpcode() == Opcode.AND
+                            || rewrittenChild.getOpcode() == Opcode.OR)
+                    && EGraphNode.hasBooleanRewriteAuthority(rewrittenChild)
+                    && EGraphNode.hasBooleanOperands(rewrittenChild)) {
+                return normalizeGuardedSourceRules(
+                        removeEndNodes(toNNF(node, false)), bindings);
+            }
+        }
+
+        if ((node.getOpcode() == Opcode.AND || node.getOpcode() == Opcode.OR)
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)) {
+            boolean conjunction = node.getOpcode() == Opcode.AND;
+            boolean absorbing = !conjunction;
+            boolean neutral = conjunction;
+            List<EGraphNode> retained = new ArrayList<>(rewritten.size());
+            for (EGraphNode child : rewritten) {
+                Boolean value = booleanConstantValue(child);
+                if (value != null && value == absorbing) {
+                    return booleanConstant(node, absorbing);
+                }
+                if (value == null || value != neutral) {
+                    retained.add(child);
+                }
+            }
+            if (retained.isEmpty()) {
+                return booleanConstant(node, neutral);
+            }
+            if (containsSemanticComplement(retained)) {
+                return booleanConstant(node, !conjunction);
+            }
+            if (retained.size() == 1) {
+                return retained.get(0);
+            }
+            node.setNormalizedChildren(retained);
+            if (EGraphNode.containsCertifiedCoveredDualBranch(
+                    node, node.getChildClasses())) {
+                return booleanConstant(node, !conjunction);
+            }
+            EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
+                    node, node.getChildClasses());
+            if (lattice != null) {
+                return lattice;
+            }
+        }
+
+        if (node.getOpcode() == Opcode.PLUS) {
+            for (EGraphNode child : rewritten) {
+                if (isUniv(child)) {
+                    return child;
+                }
+            }
+            List<EGraphNode> retained = new ArrayList<>(rewritten.size());
+            for (EGraphNode child : rewritten) {
+                if (!isNone(child)) {
+                    retained.add(child);
+                }
+            }
+            if (retained.size() != rewritten.size()) {
+                if (retained.isEmpty()) {
+                    return rewritten.get(0);
+                }
+                if (retained.size() == 1) {
+                    return retained.get(0);
+                }
+                node.setNormalizedChildren(retained);
+            }
+            EGraphNode partition =
+                    EGraphNode.parserCertifiedDifferencePartitionRecombination(
+                            node, node.getChildClasses());
+            if (partition != null) {
+                return normalizeGuardedSourceRules(partition, bindings);
+            }
+            EGraphNode structuralAbsorption =
+                    EGraphNode.parserCertifiedStructuralLatticeAbsorption(
+                            node, node.getChildClasses());
+            if (structuralAbsorption != null) {
+                return normalizeGuardedSourceRules(
+                        structuralAbsorption, bindings);
+            }
+            EGraphNode restriction =
+                    EGraphNode.parserCertifiedRestrictionLatticeFactoring(
+                            node, node.getChildClasses());
+            if (restriction != null) {
+                return normalizeGuardedSourceRules(restriction, bindings);
+            }
+            EGraphNode difference = EGraphNode.parserCertifiedDifferenceFactoring(
+                    node, node.getChildClasses());
+            if (difference != null) {
+                return difference;
+            }
+            EGraphNode join = EGraphNode.parserCertifiedJoinUnionFactoring(
+                    node, node.getChildClasses());
+            if (join != null) {
+                // Factoring an outer chain coordinate can expose a union of
+                // shorter JOINs at the next coordinate. Close that strictly
+                // smaller duplicated-chain problem before the certification
+                // matrix is cloned; post-snapshot transfer may then compare
+                // only the certified ACI operand, never a distributive edit.
+                return normalizeGuardedSourceRules(join, bindings);
+            }
+            EGraphNode productCarrier =
+                    EGraphNode.parserCertifiedProductUnionCarrier(
+                            node, node.getChildClasses());
+            if (productCarrier != null) {
+                return productCarrier;
+            }
+            EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
+                    node, node.getChildClasses());
+            if (lattice != null) {
+                return lattice;
+            }
+            EGraphNode abstractCarrier =
+                    EGraphNode.parserCertifiedAbstractUnionCarrier(
+                            node, retained);
+            if (abstractCarrier != null) {
+                return abstractCarrier;
+            }
+            retained = removeSubrelationsCoveredByFullCarriers(retained);
+            if (retained.size() == 1) {
+                return retained.get(0);
+            }
+            if (!retained.equals(node.getChildren())) {
+                node.setNormalizedChildren(retained);
+            }
+        }
+
+        if (node.getOpcode() == Opcode.INTERSECT) {
+            for (EGraphNode child : rewritten) {
+                if (isNone(child)) {
+                    return child;
+                }
+            }
+            List<EGraphNode> retained = new ArrayList<>(rewritten.size());
+            for (EGraphNode child : rewritten) {
+                if (!isUniv(child)) {
+                    retained.add(child);
+                }
+            }
+            if (retained.size() != rewritten.size()) {
+                if (retained.isEmpty()) {
+                    return rewritten.get(0);
+                }
+                if (retained.size() == 1) {
+                    return retained.get(0);
+                }
+                node.setNormalizedChildren(retained);
+            }
+            retained = removeFullCarriersContainingSubrelations(retained);
+            if (retained.size() == 1) {
+                return retained.get(0);
+            }
+            if (!retained.equals(node.getChildren())) {
+                node.setNormalizedChildren(retained);
+            }
+            EGraphNode disjoint =
+                    EGraphNode.parserCertifiedDifferenceDisjointness(
+                            node, node.getChildClasses());
+            if (disjoint != null) {
+                return disjoint;
+            }
+            EGraphNode structuralAbsorption =
+                    EGraphNode.parserCertifiedStructuralLatticeAbsorption(
+                            node, node.getChildClasses());
+            if (structuralAbsorption != null) {
+                return normalizeGuardedSourceRules(
+                        structuralAbsorption, bindings);
+            }
+            EGraphNode restriction =
+                    EGraphNode.parserCertifiedRestrictionLatticeFactoring(
+                            node, node.getChildClasses());
+            if (restriction != null) {
+                return normalizeGuardedSourceRules(restriction, bindings);
+            }
+            EGraphNode productIntersection =
+                    EGraphNode.parserCertifiedProductIntersectionFactoring(
+                            node, node.getChildClasses());
+            if (productIntersection != null) {
+                return normalizeGuardedSourceRules(
+                        productIntersection, bindings);
+            }
+            EGraphNode difference = EGraphNode.parserCertifiedDifferenceFactoring(
+                    node, node.getChildClasses());
+            if (difference != null) {
+                return difference;
+            }
+            EGraphNode extractedDifference =
+                    EGraphNode.parserCertifiedIntersectionDifferenceExtraction(
+                            node, node.getChildClasses());
+            if (extractedDifference != null) {
+                return normalizeGuardedSourceRules(
+                        extractedDifference, bindings);
+            }
+            EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
+                    node, node.getChildClasses());
+            if (lattice != null) {
+                return lattice;
+            }
+        }
+
+        if (node.getOpcode() == Opcode.MINUS && rewritten.size() == 2) {
+            EGraphNode left = rewritten.get(0);
+            EGraphNode right = rewritten.get(1);
+            EGraphNode partition =
+                    EGraphNode.parserCertifiedDifferencePartitionNormalization(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (partition != null) {
+                return normalizeGuardedSourceRules(partition, bindings);
+            }
+            if (isNone(left)) {
+                return left;
+            }
+            if (isNone(right)) {
+                return left;
+            }
+            if (isUniv(right)
+                    || EGraphNode.sameSemanticInvocation(left, right)) {
+                return EGraphNode.derivedSetConstant(
+                        node,
+                        syntheticId(node, -9),
+                        "none",
+                        node.getExactAlloyType());
+            }
+            EGraphNode restriction =
+                    EGraphNode.parserCertifiedRestrictionDifferenceFactoring(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (restriction != null) {
+                return normalizeGuardedSourceRules(restriction, bindings);
+            }
+            EGraphNode productDifference =
+                    EGraphNode.parserCertifiedProductDifferenceFactoring(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (productDifference != null) {
+                return normalizeGuardedSourceRules(
+                        productDifference, bindings);
+            }
+            EGraphNode rightNestedDifference =
+                    EGraphNode.parserCertifiedRightNestedDifference(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (rightNestedDifference != null) {
+                return normalizeGuardedSourceRules(
+                        rightNestedDifference, bindings);
+            }
+            EGraphNode nestedDifference =
+                    EGraphNode.parserCertifiedLeftNestedDifference(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (nestedDifference != null) {
+                return normalizeGuardedSourceRules(
+                        nestedDifference, bindings);
+            }
+        }
+
+
+        if ((node.getOpcode() == Opcode.ARROW || node.getOpcode() == Opcode.JOIN)
+                && EGraphNode.isExactRelationNode(node)) {
+            for (EGraphNode child : rewritten) {
+                if (isNone(child)) {
+                    return EGraphNode.derivedSetConstant(
+                            node,
+                            syntheticId(node, -10),
+                            "none",
+                            node.getExactAlloyType());
+                }
+            }
+        }
+
+        Boolean reflexiveComparison =
+                EGraphNode.parserCertifiedReflexiveComparison(
+                        node, node.getChildClasses());
+        if (reflexiveComparison != null) {
+            return booleanConstant(node, reflexiveComparison);
+        }
+
+        Boolean structuralSubset =
+                EGraphNode.parserCertifiedStructuralSubsetComparison(
+                        node, node.getChildClasses());
+        if (structuralSubset != null) {
+            return booleanConstant(node, structuralSubset);
+        }
+
+        EGraphNode subsetExpansion =
+                EGraphNode.parserCertifiedSubsetLatticeExpansion(
+                        node, node.getChildClasses());
+        if (subsetExpansion != null) {
+            return normalizeGuardedSourceRules(subsetExpansion, bindings);
+        }
+
+        if ((node.getOpcode() == Opcode.IN
+                        || node.getOpcode() == Opcode.NOT_IN)
+                && rewritten.size() == 2
+                && isNone(rewritten.get(1))
+                && isStaticallyNonemptySet(rewritten.get(0), bindings)) {
+            return booleanConstant(node, node.getOpcode() == Opcode.NOT_IN);
+        }
+
+        EGraphNode emptyRightSubset =
+                EGraphNode.parserCertifiedEmptyRightSubsetExpansion(
+                        node, node.getChildClasses());
+        if (emptyRightSubset != null) {
+            return normalizeGuardedSourceRules(emptyRightSubset, bindings);
         }
 
         if (node.getOpcode() == Opcode.IN && rewritten.size() == 2) {
             EGraphNode lhs = rewritten.get(0);
             EGraphNode rhs = rewritten.get(1);
-            if (isNone(lhs) && isNone(rhs)) {
+            if (isNone(lhs)
+                    && (isNone(rhs)
+                            || EGraphNode.hasCompatibleRelationArity(lhs, rhs))) {
                 return booleanConstant(node, true);
             }
             if (isNone(rhs) && isStaticallyNonemptySet(lhs, bindings)) {
@@ -1524,7 +2828,10 @@ public class NormalForm {
         if (node.getOpcode() == Opcode.NOT_IN && rewritten.size() == 2) {
             EGraphNode lhs = rewritten.get(0);
             EGraphNode rhs = rewritten.get(1);
-            if ((isNone(lhs) && isNone(rhs)) || isUniv(rhs)) {
+            if ((isNone(lhs)
+                            && (isNone(rhs)
+                                    || EGraphNode.hasCompatibleRelationArity(lhs, rhs)))
+                    || isUniv(rhs)) {
                 return booleanConstant(node, false);
             }
             if (isNone(rhs) && isStaticallyNonemptySet(lhs, bindings)) {
@@ -1547,22 +2854,449 @@ public class NormalForm {
         return node;
     }
 
+    private static boolean containsSemanticComplement(List<EGraphNode> nodes) {
+        for (int left = 0; left < nodes.size(); left++) {
+            for (int right = left + 1; right < nodes.size(); right++) {
+                if (EGraphNode.areSemanticComplements(
+                        nodes.get(left), nodes.get(right))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private static boolean isUniv(EGraphNode node) {
-        return node != null
-                && (node.getOpcode() == Opcode.GLOBALBINDING
-                        || node.getOpcode() == Opcode.CONSTANT)
-                && SigSymbol.BUILTIN_UNIV_IDENTITY.equals(
-                        node.getSemanticIdentity());
+        return EGraphNode.isSetConstant(node, "univ");
+    }
+
+    private static EGraphNode normalizeRelationalUnaryAndIdentityRules(
+            EGraphNode node,
+            List<EGraphNode> rewritten,
+            Map<String, QuantiVar> bindings) {
+        if ((node.getOpcode() == Opcode.SOME
+                        || node.getOpcode() == Opcode.NO)
+                && rewritten.size() == 1) {
+            EGraphNode difference =
+                    EGraphNode.parserCertifiedDifferenceCardinalityExpansion(
+                            node, node.getChildClasses().get(0));
+            if (difference != null) {
+                return normalizeGuardedSourceRules(difference, bindings);
+            }
+            EGraphNode expanded =
+                    EGraphNode.parserCertifiedUnionCardinalityExpansion(
+                            node, node.getChildClasses().get(0));
+            if (expanded != null) {
+                return expanded;
+            }
+        }
+
+        if ((node.getOpcode() == Opcode.DOMAIN
+                        || node.getOpcode() == Opcode.RANGE)
+                && rewritten.size() == 2) {
+            EGraphNode identity =
+                    EGraphNode.parserCertifiedRestrictionIdentityOrZero(
+                            node, node.getEClassRef());
+            if (identity != null) {
+                return identity;
+            }
+            EGraphNode unary =
+                    EGraphNode.parserCertifiedUnaryRestrictionOrientation(
+                            node, node.getEClassRef());
+            if (unary != null) {
+                return unary;
+            }
+            EGraphNode restriction = EGraphNode.parserCertifiedNestedRestriction(
+                    node,
+                    node.getChildClasses().get(0),
+                    node.getChildClasses().get(1));
+            if (restriction != null) {
+                return restriction;
+            }
+        }
+
+        if (node.getOpcode() == Opcode.JOIN && rewritten.size() == 2) {
+            EGraphNode contextualRestriction =
+                    EGraphNode.parserCertifiedJoinRestrictionNormalization(
+                            node,
+                            node.getChildClasses().get(0),
+                            node.getChildClasses().get(1));
+            if (contextualRestriction != null) {
+                return normalizeGuardedSourceRules(
+                        contextualRestriction, bindings);
+            }
+        }
+
+        if (node.getOpcode() == Opcode.JOIN
+                && rewritten.size() >= 2
+                && EGraphNode.isExactRelationNode(node)
+                && rewritten.stream().allMatch(EGraphNode::isExactRelationNode)) {
+            List<EGraphNode> retained = new ArrayList<>(rewritten.size());
+            for (EGraphNode child : rewritten) {
+                if (!EGraphNode.isIdentityRelation(child)) {
+                    retained.add(child);
+                }
+            }
+            if (retained.size() != rewritten.size()) {
+                if (retained.isEmpty()) {
+                    return rewritten.get(0);
+                }
+                if (retained.size() == 1) {
+                    return retained.get(0);
+                }
+                node.setNormalizedChildren(retained);
+            }
+            return node;
+        }
+
+        if (node.getOpcode() == Opcode.TRANSPOSE
+                && rewritten.size() == 1
+                && isExactBinaryRelation(node)) {
+            EGraphNode empty =
+                    EGraphNode.parserCertifiedEmptyRelationalUnaryIdentity(
+                            node, node.getChildClasses().get(0));
+            if (empty != null) {
+                return empty;
+            }
+            EGraphNode child = rewritten.get(0);
+            if (EGraphNode.isIdentityRelation(child)
+                    && sameExactRelationOccurrence(node, child)) {
+                return child;
+            }
+            if (child.getOpcode() == Opcode.TRANSPOSE
+                    && child.getChildren().size() == 1
+                    && isExactBinaryRelation(child)
+                    && sameExactRelationOccurrence(
+                            node, child.getChildren().get(0))) {
+                return child.getChildren().get(0);
+            }
+            if (child.getOpcode() == Opcode.ARROW
+                    && child.getChildren().size() == 2
+                    && isExactBinaryRelation(child)) {
+                EGraphNode reversed = copyShallow(child, Opcode.ARROW);
+                reversed.setExactAlloyType(node.getExactAlloyType());
+                reversed.setNormalizedChildren(List.of(
+                        child.getChildren().get(1),
+                        child.getChildren().get(0)));
+                return reversed;
+            }
+            EGraphNode reversedJoin =
+                    EGraphNode.parserCertifiedTransposeJoinReversal(
+                            node, node.getChildClasses().get(0));
+            if (reversedJoin != null) {
+                return reversedJoin;
+            }
+            EGraphNode closure =
+                    EGraphNode.parserCertifiedTransposeClosureCommutation(
+                            node, node.getChildClasses().get(0));
+            if (closure != null) {
+                return normalizeGuardedSourceRules(closure, bindings);
+            }
+            EGraphNode restriction =
+                    EGraphNode.parserCertifiedTransposeRestrictionSwap(
+                            node, node.getChildClasses().get(0));
+            if (restriction != null) {
+                return normalizeGuardedSourceRules(restriction, bindings);
+            }
+            EGraphNode distributed = distributeTransposeThroughContainer(
+                    node, child);
+            if (distributed != null) {
+                return distributed;
+            }
+        }
+
+        if ((node.getOpcode() == Opcode.CLOSURE
+                        || node.getOpcode() == Opcode.RCLOSURE)
+                && rewritten.size() == 1
+                && isExactBinaryRelation(node)) {
+            EGraphNode empty =
+                    EGraphNode.parserCertifiedEmptyRelationalUnaryIdentity(
+                            node, node.getChildClasses().get(0));
+            if (empty != null) {
+                return empty;
+            }
+            EGraphNode child = rewritten.get(0);
+            if (EGraphNode.isIdentityRelation(child)
+                    && sameExactRelationOccurrence(node, child)) {
+                return child;
+            }
+            if ((child.getOpcode() == Opcode.CLOSURE
+                            || child.getOpcode() == Opcode.RCLOSURE)
+                    && child.getChildren().size() == 1
+                    && isExactBinaryRelation(child)) {
+                Opcode resultOpcode = node.getOpcode() == Opcode.RCLOSURE
+                                || child.getOpcode() == Opcode.RCLOSURE
+                        ? Opcode.RCLOSURE : Opcode.CLOSURE;
+                if (child.getOpcode() == resultOpcode
+                        && sameExactRelationOccurrence(node, child)) {
+                    return child;
+                }
+                EGraphNode collapsed = copyShallow(node, resultOpcode);
+                collapsed.setNormalizedChildren(Collections.singletonList(
+                        child.getChildren().get(0)));
+                return collapsed;
+            }
+        }
+        return node;
+    }
+
+    private static EGraphNode distributeTransposeThroughContainer(
+            EGraphNode transpose,
+            EGraphNode container) {
+        EGraphNode distributed = buildTransposeContainer(
+                transpose,
+                container,
+                transpose.getExactAlloyType(),
+                -30);
+        if (distributed != null) {
+            distributed.preserveSourceOccurrenceLineageFrom(transpose);
+        }
+        return distributed;
+    }
+
+    private static EGraphNode buildTransposeContainer(
+            EGraphNode owner,
+            EGraphNode container,
+            is.fivefivefive.ACGN.alloy.ExactAlloyType resultType,
+            int salt) {
+        Opcode opcode = container.getOpcode();
+        boolean aciContainer = opcode == Opcode.PLUS
+                || opcode == Opcode.INTERSECT;
+        if ((!aciContainer && opcode != Opcode.MINUS)
+                || !isExactBinaryRelation(container)
+                || (aciContainer && (!container.isSetFlexibleArity()
+                        || container.getChildren().size() < 2))
+                || (opcode == Opcode.MINUS
+                        && container.getChildren().size() != 2)) {
+            return null;
+        }
+        List<EGraphNode> transposedOperands = new ArrayList<>(
+                container.getChildren().size());
+        int index = 0;
+        for (EGraphNode operand : container.getChildren()) {
+            EGraphNode derived = buildNormalizedTransposeOperand(
+                    owner, operand, salt - index++ * 17);
+            if (derived == null) {
+                return null;
+            }
+            transposedOperands.add(derived);
+        }
+        EGraphNode distributed = copyShallow(container, opcode);
+        distributed.setExactAlloyType(resultType);
+        distributed.setNormalizedChildren(transposedOperands);
+        return distributed;
+    }
+
+    private static EGraphNode buildNormalizedTransposeOperand(
+            EGraphNode owner,
+            EGraphNode operand,
+            int salt) {
+        if (!isExactBinaryRelation(operand)) {
+            return null;
+        }
+        is.fivefivefive.ACGN.alloy.ExactAlloyType exact;
+        try {
+            exact = is.fivefivefive.ACGN.alloy.ExactAlloyType
+                    .parserCertifiedTranspose(operand.getExactAlloyType());
+        } catch (IllegalArgumentException rejectedProof) {
+            return null;
+        }
+        if (!owner.getExactAlloyType().sharesParserModuleAuthorityWith(exact)) {
+            return null;
+        }
+        if (operand.getOpcode() == Opcode.ARROW
+                && operand.getChildren().size() == 2) {
+            EGraphNode reversed = copyShallow(operand, Opcode.ARROW);
+            reversed.setExactAlloyType(exact);
+            reversed.setNormalizedChildren(List.of(
+                    operand.getChildren().get(1),
+                    operand.getChildren().get(0)));
+            return reversed;
+        }
+        EGraphNode distributed = buildTransposeContainer(
+                owner, operand, exact, salt - 1);
+        if (distributed != null) {
+            return distributed;
+        }
+        EGraphNode transpose = EGraphNode.inOwningArena(
+                owner,
+                syntheticId(owner, salt),
+                Opcode.TRANSPOSE,
+                new ArrayList<>(),
+                false,
+                1,
+                false,
+                owner.getMetatype(),
+                owner.getSemanticProfile());
+        transpose.setSourceName("UNOPE_TRANSPOSE");
+        transpose.setSourceType(operand.getSourceType());
+        transpose.setExactAlloyType(exact);
+        transpose.addNormalizedChild(operand);
+        return transpose;
+    }
+
+    private static boolean isExactBinaryRelation(EGraphNode node) {
+        is.fivefivefive.ACGN.alloy.ExactAlloyType exact =
+                node == null ? null : node.getExactAlloyType();
+        return exact != null
+                && (exact.kind()
+                                == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                        || exact.kind()
+                                == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.EMPTY_RELATION)
+                && exact.relationArity() == 2;
+    }
+
+    private static boolean sameExactRelationOccurrence(
+            EGraphNode left,
+            EGraphNode right) {
+        is.fivefivefive.ACGN.alloy.ExactAlloyType leftType =
+                left == null ? null : left.getExactAlloyType();
+        is.fivefivefive.ACGN.alloy.ExactAlloyType rightType =
+                right == null ? null : right.getExactAlloyType();
+        return leftType != null
+                && rightType != null
+                && (leftType.kind()
+                                == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                        || leftType.kind()
+                                == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.EMPTY_RELATION)
+                && leftType.sameOccurrenceEvidenceAs(rightType);
+    }
+
+    private static List<EGraphNode> removeSubrelationsCoveredByFullCarriers(
+            List<EGraphNode> children) {
+        List<EGraphNode> retained = new ArrayList<>(children.size());
+        for (int candidateIndex = 0;
+                candidateIndex < children.size();
+                candidateIndex++) {
+            EGraphNode candidate = children.get(candidateIndex);
+            EGraphNode pruned = pruneSubrelationsCoveredBySiblingCarriers(
+                    candidate, candidateIndex, children);
+            if (pruned != null) {
+                retained.add(pruned);
+            }
+        }
+        return retained;
+    }
+
+    private static EGraphNode pruneSubrelationsCoveredBySiblingCarriers(
+            EGraphNode candidate,
+            int candidateIndex,
+            List<EGraphNode> siblings) {
+        if (isCoveredBySiblingFullCarrier(candidate, candidateIndex, siblings)) {
+            return null;
+        }
+        if (candidate.getOpcode() != Opcode.PLUS) {
+            return candidate;
+        }
+        List<EGraphNode> retained = new ArrayList<>(candidate.getChildren().size());
+        for (EGraphNode child : candidate.getChildren()) {
+            EGraphNode pruned = pruneSubrelationsCoveredBySiblingSignatures(
+                    child, siblings);
+            if (pruned != null) {
+                retained.add(pruned);
+            }
+        }
+        if (retained.isEmpty()) {
+            return null;
+        }
+        if (retained.size() == 1) {
+            return retained.get(0);
+        }
+        if (retained.size() != candidate.getChildren().size()) {
+            candidate.setNormalizedChildren(retained);
+        }
+        return candidate;
+    }
+
+    private static EGraphNode pruneSubrelationsCoveredBySiblingSignatures(
+            EGraphNode candidate,
+            List<EGraphNode> siblings) {
+        for (EGraphNode carrier : siblings) {
+            if (EGraphNode.isParserCertifiedSubrelationOfFullSignature(
+                    candidate, carrier)) {
+                return null;
+            }
+        }
+        if (candidate.getOpcode() != Opcode.PLUS) {
+            return candidate;
+        }
+        List<EGraphNode> retained = new ArrayList<>(candidate.getChildren().size());
+        for (EGraphNode child : candidate.getChildren()) {
+            EGraphNode pruned = pruneSubrelationsCoveredBySiblingSignatures(
+                    child, siblings);
+            if (pruned != null) {
+                retained.add(pruned);
+            }
+        }
+        if (retained.isEmpty()) {
+            return null;
+        }
+        if (retained.size() == 1) {
+            return retained.get(0);
+        }
+        if (retained.size() != candidate.getChildren().size()) {
+            candidate.setNormalizedChildren(retained);
+        }
+        return candidate;
+    }
+
+    private static boolean isCoveredBySiblingFullCarrier(
+            EGraphNode candidate,
+            int candidateIndex,
+            List<EGraphNode> siblings) {
+        for (int carrierIndex = 0;
+                carrierIndex < siblings.size();
+                carrierIndex++) {
+            if (carrierIndex == candidateIndex) {
+                continue;
+            }
+            if (EGraphNode.isParserCertifiedSubrelationOfFullCarrier(
+                            candidate, siblings.get(carrierIndex))
+                    && (!EGraphNode.isParserCertifiedSubrelationOfFullCarrier(
+                                    siblings.get(carrierIndex), candidate)
+                            || (candidateIndex >= 0
+                                    && candidateIndex > carrierIndex))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<EGraphNode> removeFullCarriersContainingSubrelations(
+            List<EGraphNode> children) {
+        List<EGraphNode> retained = new ArrayList<>(children.size());
+        for (int carrierIndex = 0;
+                carrierIndex < children.size();
+                carrierIndex++) {
+            EGraphNode carrier = children.get(carrierIndex);
+            boolean redundant = false;
+            for (int candidateIndex = 0;
+                    candidateIndex < children.size();
+                    candidateIndex++) {
+                if (candidateIndex == carrierIndex) {
+                    continue;
+                }
+                if (EGraphNode.isParserCertifiedSubrelationOfFullCarrier(
+                                children.get(candidateIndex), carrier)
+                        && (!EGraphNode.isParserCertifiedSubrelationOfFullCarrier(
+                                        carrier, children.get(candidateIndex))
+                                || carrierIndex > candidateIndex)) {
+                    redundant = true;
+                    break;
+                }
+            }
+            if (!redundant) {
+                retained.add(carrier);
+            }
+        }
+        return retained;
     }
 
     private static Boolean booleanConstantValue(EGraphNode node) {
-        if (node == null || node.getOpcode() != Opcode.CONSTANT) {
-            return null;
-        }
-        if ("true".equalsIgnoreCase(node.getSourceName())) {
+        if (EGraphNode.isBooleanConstant(node, true)) {
             return Boolean.TRUE;
         }
-        if ("false".equalsIgnoreCase(node.getSourceName())) {
+        if (EGraphNode.isBooleanConstant(node, false)) {
             return Boolean.FALSE;
         }
         return null;
@@ -1678,10 +3412,7 @@ public class NormalForm {
     }
 
     private static boolean isNone(EGraphNode node) {
-        return node != null
-                && (node.getOpcode() == Opcode.GLOBALBINDING || node.getOpcode() == Opcode.CONSTANT)
-                && SigSymbol.BUILTIN_NONE_IDENTITY.equals(
-                        node.getSemanticIdentity());
+        return EGraphNode.isSetConstant(node, "none");
     }
 
     private static boolean hasEmptyAdmissibleBindingSet(DomainDescriptor domain) {
@@ -1718,17 +3449,24 @@ public class NormalForm {
 
     private static EGraphNode domainConstraint(QuantiVar qv, EGraphNode sourceVariable, EGraphNode domain) {
         EGraphNode constraint = syntheticNode(sourceVariable, Opcode.IN, -1);
-        EGraphNode variable = new EGraphNode(
-                sourceVariable.getId(), Opcode.VARIABLE, new ArrayList<>(), false, 0, false,
-                Metatype.ATOMIC, sourceVariable.getSemanticProfile());
+        EGraphNode variable = EGraphNode.inOwningArena(
+                sourceVariable,
+                sourceVariable.getId(),
+                Opcode.VARIABLE,
+                new ArrayList<>(),
+                false,
+                0,
+                false,
+                Metatype.ATOMIC,
+                sourceVariable.getSemanticProfile());
         variable.setSourceName(sourceVariable.getSourceName());
         variable.setSourceType(qv.getTypeName());
         variable.setExactAlloyType(
                 is.fivefivefive.ACGN.alloy.ExactAlloyType.unaryRelation(
                         qv.getTypeName()));
         variable.setAlphaName(qv.getName());
-        constraint.addChild(variable);
-        constraint.addChild(cloneEGraph(domain));
+        constraint.addNormalizedChild(variable);
+        constraint.addNormalizedChild(cloneEGraph(domain));
         return constraint;
     }
 
@@ -1739,6 +3477,21 @@ public class NormalForm {
         Opcode opcode = node.getOpcode();
         if (opcode == Opcode.END) {
             return null;
+        }
+        boolean booleanIte = opcode == Opcode.ITE;
+        if ((isBooleanBranchConnective(opcode) || booleanIte)
+                && (!EGraphNode.hasBooleanRewriteAuthority(node)
+                        || !EGraphNode.hasBooleanOperands(node))) {
+            EGraphNode retained = copyShallow(node, opcode);
+            for (EGraphNode child : node.getChildren()) {
+                EGraphNode retainedChild = toNNF(child, false);
+                if (retainedChild != null) {
+                    retained.addNormalizedChild(retainedChild);
+                }
+            }
+            return negated
+                    ? syntheticUnary(node, Opcode.NOT, retained, -1)
+                    : retained;
         }
         if (opcode == Opcode.NOT && node.getChildren().size() == 1) {
             return toNNF(node.getChildren().get(0), !negated);
@@ -1772,31 +3525,38 @@ public class NormalForm {
                 EGraphNode rewrittenChild = toNNF(
                         child, negateBody && !isRelDecl(child.getOpcode()));
                 if (rewrittenChild != null) {
-                    rewritten.addChild(rewrittenChild);
+                    rewritten.addNormalizedChild(rewrittenChild);
                 }
             }
             return retainOuterNegation
                     ? syntheticUnary(node, Opcode.NOT, rewritten, -1)
                     : rewritten;
         }
-        if (opcode == Opcode.IFF && node.getChildren().size() == 2) {
+        if (opcode == Opcode.IFF
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 2) {
             return toNNF(expandIff(node, negated), false);
         }
-        if (opcode == Opcode.IMPLIES && node.getChildren().size() == 2) {
+        if (opcode == Opcode.IMPLIES
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 2) {
             EGraphNode left = node.getChildren().get(0);
             EGraphNode right = node.getChildren().get(1);
             if (negated) {
                 EGraphNode conjunction = syntheticNode(node, Opcode.AND, -1);
-                conjunction.addChild(toNNF(left, false));
-                conjunction.addChild(toNNF(right, true));
+                conjunction.addNormalizedChild(toNNF(left, false));
+                conjunction.addNormalizedChild(toNNF(right, true));
                 return conjunction;
             }
             EGraphNode disjunction = syntheticNode(node, Opcode.OR, -1);
-            disjunction.addChild(toNNF(left, true));
-            disjunction.addChild(toNNF(right, false));
+            disjunction.addNormalizedChild(toNNF(left, true));
+            disjunction.addNormalizedChild(toNNF(right, false));
             return disjunction;
         }
-        if (opcode == Opcode.ITE && node.getMetatype() == Metatype.BOOLEAN && node.getChildren().size() == 3) {
+        if (opcode == Opcode.ITE
+                && EGraphNode.hasBooleanRewriteAuthority(node)
+                && EGraphNode.hasBooleanOperands(node)
+                && node.getChildren().size() == 3) {
             return toNNF(expandIte(node, negated), false);
         }
         if (opcode == Opcode.AND || opcode == Opcode.OR) {
@@ -1804,7 +3564,7 @@ public class NormalForm {
             for (EGraphNode child : node.getChildren()) {
                 EGraphNode rewrittenChild = toNNF(child, negated);
                 if (rewrittenChild != null) {
-                    rewritten.addChild(rewrittenChild);
+                    rewritten.addNormalizedChild(rewrittenChild);
                 }
             }
             return rewritten;
@@ -1815,7 +3575,7 @@ public class NormalForm {
             for (EGraphNode child : node.getChildren()) {
                 EGraphNode rewrittenChild = toNNF(child, negated && dualNegatesChildren(opcode));
                 if (rewrittenChild != null) {
-                    rewritten.addChild(rewrittenChild);
+                    rewritten.addNormalizedChild(rewrittenChild);
                 }
             }
             return rewritten;
@@ -1827,7 +3587,7 @@ public class NormalForm {
         for (EGraphNode child : node.getChildren()) {
             EGraphNode rewrittenChild = toNNF(child, false);
             if (rewrittenChild != null) {
-                rewritten.addChild(rewrittenChild);
+                rewritten.addNormalizedChild(rewrittenChild);
             }
         }
         return rewritten;
@@ -1844,8 +3604,12 @@ public class NormalForm {
                 rewrittenChildren.add(rewrittenChild);
             }
         }
-        node.setChildren(rewrittenChildren);
-        if (isAssociative(node.getOpcode()) && node.getChildren().size() == 1) {
+        node.setNormalizedChildren(rewrittenChildren);
+        if (isAssociative(node.getOpcode())
+                && node.getChildren().size() == 1
+                && (!isBooleanBranchConnective(node.getOpcode())
+                        || (EGraphNode.hasBooleanRewriteAuthority(node)
+                                && EGraphNode.hasBooleanOperands(node)))) {
             return node.getChildren().get(0);
         }
         if (isUnaryOperator(node.getOpcode()) && node.getChildren().isEmpty()) {
@@ -1962,7 +3726,7 @@ public class NormalForm {
         if (node.isOrderInsensitive()) {
             Collections.sort(rewrittenChildren, Comparator.comparing(NormalForm::sortKey));
         }
-        node.setChildren(rewrittenChildren);
+        node.setNormalizedChildren(rewrittenChildren);
         return node;
     }
 
@@ -1982,12 +3746,12 @@ public class NormalForm {
             if (flattenedChild != null
                     && (node.getOpcode() == Opcode.AND
                             || node.getOpcode() == Opcode.OR)
-                    && flattenedChild.getOpcode() == node.getOpcode()) {
+                    && node.sameFlatOperatorInstance(flattenedChild)) {
                 for (EGraphNode grandchild : flattenedChild.getChildren()) {
-                    flattened.addChild(grandchild);
+                    flattened.addNormalizedChild(grandchild);
                 }
             } else if (flattenedChild != null) {
-                flattened.addChild(flattenedChild);
+                flattened.addNormalizedChild(flattenedChild);
             }
         }
         return flattened;
@@ -1998,30 +3762,30 @@ public class NormalForm {
         EGraphNode right = node.getChildren().get(1);
         if (negated) {
             EGraphNode leftAndNotRight = syntheticNode(node, Opcode.AND, -1);
-            leftAndNotRight.addChild(cloneEGraph(left));
-            leftAndNotRight.addChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(right), -2));
+            leftAndNotRight.addNormalizedChild(cloneEGraph(left));
+            leftAndNotRight.addNormalizedChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(right), -2));
 
             EGraphNode rightAndNotLeft = syntheticNode(node, Opcode.AND, -3);
-            rightAndNotLeft.addChild(cloneEGraph(right));
-            rightAndNotLeft.addChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(left), -4));
+            rightAndNotLeft.addNormalizedChild(cloneEGraph(right));
+            rightAndNotLeft.addNormalizedChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(left), -4));
 
             EGraphNode disjunction = syntheticNode(node, Opcode.OR, -5);
-            disjunction.addChild(leftAndNotRight);
-            disjunction.addChild(rightAndNotLeft);
+            disjunction.addNormalizedChild(leftAndNotRight);
+            disjunction.addNormalizedChild(rightAndNotLeft);
             return disjunction;
         }
 
         EGraphNode leftImpliesRight = syntheticNode(node, Opcode.IMPLIES, -1);
-        leftImpliesRight.addChild(cloneEGraph(left));
-        leftImpliesRight.addChild(cloneEGraph(right));
+        leftImpliesRight.addNormalizedChild(cloneEGraph(left));
+        leftImpliesRight.addNormalizedChild(cloneEGraph(right));
 
         EGraphNode rightImpliesLeft = syntheticNode(node, Opcode.IMPLIES, -2);
-        rightImpliesLeft.addChild(cloneEGraph(right));
-        rightImpliesLeft.addChild(cloneEGraph(left));
+        rightImpliesLeft.addNormalizedChild(cloneEGraph(right));
+        rightImpliesLeft.addNormalizedChild(cloneEGraph(left));
 
         EGraphNode conjunction = syntheticNode(node, Opcode.AND, -3);
-        conjunction.addChild(leftImpliesRight);
-        conjunction.addChild(rightImpliesLeft);
+        conjunction.addNormalizedChild(leftImpliesRight);
+        conjunction.addNormalizedChild(rightImpliesLeft);
         return conjunction;
     }
 
@@ -2031,16 +3795,16 @@ public class NormalForm {
         EGraphNode elseBranch = node.getChildren().get(2);
 
         EGraphNode thenCase = syntheticNode(node, Opcode.AND, -1);
-        thenCase.addChild(cloneEGraph(condition));
-        thenCase.addChild(cloneEGraph(thenBranch));
+        thenCase.addNormalizedChild(cloneEGraph(condition));
+        thenCase.addNormalizedChild(cloneEGraph(thenBranch));
 
         EGraphNode elseCase = syntheticNode(node, Opcode.AND, -2);
-        elseCase.addChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(condition), -3));
-        elseCase.addChild(cloneEGraph(elseBranch));
+        elseCase.addNormalizedChild(syntheticUnary(node, Opcode.NOT, cloneEGraph(condition), -3));
+        elseCase.addNormalizedChild(cloneEGraph(elseBranch));
 
         EGraphNode expanded = syntheticNode(node, Opcode.OR, -4);
-        expanded.addChild(thenCase);
-        expanded.addChild(elseCase);
+        expanded.addNormalizedChild(thenCase);
+        expanded.addNormalizedChild(elseCase);
         if (negated) {
             return syntheticUnary(node, Opcode.NOT, expanded, -5);
         }
@@ -2049,24 +3813,34 @@ public class NormalForm {
 
     private static EGraphNode syntheticUnary(EGraphNode source, Opcode opcode, EGraphNode child, int offset) {
         EGraphNode node = syntheticNode(source, opcode, offset);
-        node.addChild(child);
+        node.addNormalizedChild(child);
         return node;
     }
 
     private static EGraphNode syntheticNode(EGraphNode source, Opcode opcode, int offset) {
-        EGraphNode synthetic = new EGraphNode(
-                syntheticId(source, offset), opcode, new ArrayList<>(), isCommutative(opcode),
-                maxArity(opcode), isFlexibleArity(opcode), Metatype.BOOLEAN,
+        EGraphNode synthetic = EGraphNode.inOwningArena(
+                source,
+                syntheticId(source, offset),
+                opcode,
+                new ArrayList<>(),
+                isCommutative(opcode),
+                maxArity(opcode),
+                isFlexibleArity(opcode),
+                Metatype.BOOLEAN,
                 source.getSemanticProfile());
         synthetic.setSourceType("Bool");
         synthetic.setExactAlloyType(
                 is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
+        if (isBooleanBranchConnective(opcode) || opcode == Opcode.ITE) {
+            synthetic.markDerivedBooleanRewriteAuthority();
+        }
         return synthetic;
     }
 
     private static EGraphNode copyShallow(EGraphNode source, Opcode opcode) {
         boolean sameOpcode = source.getOpcode() == opcode;
-        EGraphNode copy = new EGraphNode(
+        EGraphNode copy = EGraphNode.inOwningArena(
+                source,
                 source.getId(),
                 opcode,
                 new ArrayList<>(),
@@ -2076,16 +3850,32 @@ public class NormalForm {
                 source.getMetatype(),
                 source.getSemanticProfile());
         copy.setSourceName(sameOpcode ? source.getSourceName() : null);
-        copy.setSourceType(source.getSourceType());
-        copy.setExactAlloyType(source.getExactAlloyType());
+        copy.setSourceType(sameOpcode || !isBooleanBranchConnective(opcode)
+                ? source.getSourceType() : "Bool");
+        copy.setExactAlloyType(sameOpcode || !isBooleanBranchConnective(opcode)
+                ? source.getExactAlloyType()
+                : is.fivefivefive.ACGN.alloy.ExactAlloyType.boolType());
         copy.setAlphaName(sameOpcode ? source.getAlphaName() : null);
-        copy.setSemanticIdentity(sameOpcode ? source.getSemanticIdentity() : null);
         if (sameOpcode) {
             copy.preserveSourceOccurrenceLineageFrom(source);
         }
         copy.setCallOccurrenceId(sameOpcode ? source.getCallOccurrenceId() : -1L);
         copy.setDeclaredArity(sameOpcode ? source.getDeclaredArity() : -1);
         copy.setCallArityAuthority(sameOpcode ? source.getCallArityAuthority() : null);
+        if (sameOpcode) {
+            copy.preserveTemporalReferenceAuthorityFrom(source);
+        }
+        if (sameOpcode) {
+            copy.preserveDerivedBooleanRewriteAuthorityFrom(source);
+        } else if (isBooleanBranchConnective(opcode) || opcode == Opcode.ITE) {
+            copy.markDerivedBooleanRewriteAuthority();
+        }
+        if (sameOpcode) {
+            // Install semantic identity authority last: ordinary metadata setters
+            // intentionally revoke reserved built-in authority.
+            copy.preserveSemanticIdentityFrom(source);
+            copy.preserveParserSignatureEvidenceFrom(source);
+        }
         return copy;
     }
 
@@ -2093,7 +3883,8 @@ public class NormalForm {
         if (source.getOpcode() == opcode) {
             return copyShallow(source, opcode);
         }
-        EGraphNode copy = new EGraphNode(
+        EGraphNode copy = EGraphNode.inOwningArena(
+                source,
                 source.getId(),
                 opcode,
                 new ArrayList<>(),
@@ -2116,6 +3907,14 @@ public class NormalForm {
 
     private static boolean isAssociative(Opcode opcode) {
         return AlloyOperatorPolicy.isFlatSetOperator(opcode);
+    }
+
+    private static boolean isBooleanBranchConnective(Opcode opcode) {
+        return opcode == Opcode.NOT
+                || opcode == Opcode.AND
+                || opcode == Opcode.OR
+                || opcode == Opcode.IMPLIES
+                || opcode == Opcode.IFF;
     }
 
     private static int maxArity(Opcode opcode) {
@@ -2233,22 +4032,33 @@ public class NormalForm {
     }
 
     private static EGraphNode cloneEGraph(EGraphNode node) {
-        EGraphNode clone = new EGraphNode(
-                node.getId(), node.getOpcode(), new ArrayList<>(), node.isCommutative(),
-                node.getMaxArity(), node.isFlexibleArity(), node.getMetatype(),
+        EGraphNode clone = EGraphNode.inOwningArena(
+                node,
+                node.getId(),
+                node.getOpcode(),
+                new ArrayList<>(),
+                node.isCommutative(),
+                node.getMaxArity(),
+                node.isFlexibleArity(),
+                node.getMetatype(),
                 node.getSemanticProfile());
         clone.setSourceName(node.getSourceName());
         clone.setSourceType(node.getSourceType());
         clone.setExactAlloyType(node.getExactAlloyType());
         clone.setAlphaName(node.getAlphaName());
-        clone.setSemanticIdentity(node.getSemanticIdentity());
         clone.preserveSourceOccurrenceLineageFrom(node);
         clone.setCallOccurrenceId(node.getCallOccurrenceId());
         clone.setDeclaredArity(node.getDeclaredArity());
         clone.setCallArityAuthority(node.getCallArityAuthority());
+        clone.preserveTemporalReferenceAuthorityFrom(node);
+        clone.preserveDerivedBooleanRewriteAuthorityFrom(node);
         for (EGraphNode child : node.getChildren()) {
-            clone.addChild(cloneEGraph(child));
+            clone.addNormalizedChild(cloneEGraph(child));
         }
+        // Install semantic identity authority after all public metadata and child
+        // mutations, each of which deliberately revokes reserved authority.
+        clone.preserveSemanticIdentityFrom(node);
+        clone.preserveParserSignatureEvidenceFrom(node);
         return clone;
     }
 
@@ -2508,8 +4318,8 @@ public class NormalForm {
         }
         return evidence.kind()
                         == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
-                && evidence.relationArity() == 1
-                && evidence.alternatives().size() == 1;
+                && evidence.relationArity() >= 1
+                && !evidence.alternatives().isEmpty();
     }
 
     private static void inheritBindingTypeEvidence(
@@ -2542,6 +4352,7 @@ public class NormalForm {
         private final int disjointnessClass;
         private final String type;
         private final String carrierType;
+        private final String dependentRelationType;
 
         private BindingSignature(QuantiVar variable) {
             this.quantifier = variable.getQuantifier();
@@ -2549,6 +4360,13 @@ public class NormalForm {
             this.disjointnessClass = variable.getDisjointnessClass();
             this.type = normalizeType(variable.getTypeName());
             this.carrierType = normalizeType(variable.getCarrierTypeName());
+            is.fivefivefive.ACGN.alloy.ExactAlloyType exact =
+                    variable.getExactAlloyType();
+            this.dependentRelationType = exact != null
+                            && exact.kind()
+                                    == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
+                            && exact.relationArity() > 1
+                    ? exact.stableString() : "";
         }
 
         @Override
@@ -2561,13 +4379,16 @@ public class NormalForm {
                     && cardinality == signature.cardinality
                     && disjointnessClass == signature.disjointnessClass
                     && type.equals(signature.type)
-                    && carrierType.equals(signature.carrierType);
+                    && carrierType.equals(signature.carrierType)
+                    && dependentRelationType.equals(
+                            signature.dependentRelationType);
         }
 
         @Override
         public int hashCode() {
             return java.util.Objects.hash(
-                    quantifier, cardinality, disjointnessClass, type, carrierType);
+                    quantifier, cardinality, disjointnessClass, type,
+                    carrierType, dependentRelationType);
         }
     }
 

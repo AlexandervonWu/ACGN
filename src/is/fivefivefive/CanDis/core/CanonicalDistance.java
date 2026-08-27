@@ -122,6 +122,11 @@ public final class CanonicalDistance {
         }
         List<NormalForm> snapshot = new ArrayList<>(normalForms);
         validateCalls(snapshot);
+        for (NormalForm normalForm : snapshot) {
+            if (normalForm != null) {
+                normalForm.freezeForCertification();
+            }
+        }
         return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
     }
 
@@ -655,6 +660,7 @@ public final class CanonicalDistance {
         addBindings(bindings, nf.getParams(), BindingRole.PARAMETER);
         addBindings(bindings, nf.getMatrixQuantiVars(), BindingRole.MATRIX);
         addBindings(bindings, nf.getInheritedQuantiVars(), BindingRole.INHERITED);
+        addBindings(bindings, nf.getLocalQuantiVars(), BindingRole.LOCAL);
         return bindings;
     }
 
@@ -1607,7 +1613,8 @@ public final class CanonicalDistance {
     private enum BindingRole {
         PARAMETER,
         MATRIX,
-        INHERITED
+        INHERITED,
+        LOCAL
     }
 
     private static final class BindingDescriptor {

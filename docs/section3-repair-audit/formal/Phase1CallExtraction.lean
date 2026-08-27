@@ -543,6 +543,27 @@ theorem one_omitted_nested_call_anchor_rejects :
       [callOccurrenceAnchor nestedOuterCallWireEvidence] = false := by
   decide
 
+/- A bundle-local anchor cannot establish source completeness. The MVP
+   verifier therefore receives the expected occurrence set from a caller-owned
+   commitment. Coordinated deletion of a row and its local anchor still differs
+   from that independently retained set. SHA-256 transport of this finite set
+   is checked by Java and remains an explicit cryptographic assumption. -/
+def externallyAuthorizedCallOccurrences
+    (pinned observed : List CallWireEvidence) : Bool :=
+  exactCallOccurrenceLedger pinned observed
+
+theorem externally_pinned_nested_calls_accept :
+    externallyAuthorizedCallOccurrences
+      [nestedInnerCallWireEvidence, nestedOuterCallWireEvidence]
+      [nestedInnerCallWireEvidence, nestedOuterCallWireEvidence] = true := by
+  decide
+
+theorem coordinated_nested_call_omission_rejects :
+    externallyAuthorizedCallOccurrences
+      [nestedInnerCallWireEvidence, nestedOuterCallWireEvidence]
+      [nestedOuterCallWireEvidence] = false := by
+  decide
+
 structure CallAnchorTerm where
   key : Nat × String × CallWireEvidence
   sourceContext : Nat

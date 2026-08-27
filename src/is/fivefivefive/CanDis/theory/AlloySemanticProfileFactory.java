@@ -14,7 +14,8 @@ import edu.mit.csail.sdg.translator.A4Options;
 
 /** Derives an exact semantic profile from one parser-owned Alloy command. */
 public final class AlloySemanticProfileFactory {
-    public static final String CONTEXT_VERSION = "alloy-command-options-v2";
+    public static final String CONTEXT_VERSION =
+            "alloy-command-options-v4-independent-search-domain";
 
     /*
      * This is an explicit inventory of A4Options' public state. Bound fields
@@ -65,7 +66,16 @@ public final class AlloySemanticProfileFactory {
         Command command = Objects.requireNonNull(
                 selectedCommands.get(0), "selected command");
         requireParserOwnership(module, command);
+        requireIndependentCommand(command);
         return fromParserOwnedCommand(module, command, options);
+    }
+
+    private static void requireIndependentCommand(Command command) {
+        if (command.parent != null) {
+            throw new IllegalArgumentException(
+                    "Follow-up Alloy command chains are not represented by the "
+                            + "source-command semantic profile");
+        }
     }
 
     private static SemanticProfile fromParserOwnedCommand(

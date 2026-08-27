@@ -10,7 +10,7 @@ import java.util.Objects;
  * by the source adapter. Unknown modules and members are intentionally absent.
  */
 public final class AlloyLibraryCallableLedger {
-    public static final String VERSION = "alloy-library-callables-v1";
+    public static final String VERSION = "alloy-library-callables-v3";
 
     private static final Map<String, Signature> SIGNATURES = signatures();
 
@@ -20,17 +20,28 @@ public final class AlloyLibraryCallableLedger {
     public static Signature require(
             String module,
             String member,
-            CallSymbol.Kind expectedKind) {
-        Signature signature = SIGNATURES.get(key(module, member));
+            CallSymbol.Kind expectedKind,
+            int observedArity) {
+        if (observedArity < 0) {
+            throw new IllegalArgumentException(
+                    "An imported call cannot have negative arity");
+        }
+        Signature signature = SIGNATURES.get(key(
+                module, member, expectedKind, observedArity));
         if (signature == null) {
+            String prefix = Objects.requireNonNull(module, "module") + "/"
+                    + Objects.requireNonNull(member, "member") + "/"
+                    + Objects.requireNonNull(expectedKind, "expectedKind") + "/";
+            if (SIGNATURES.keySet().stream().anyMatch(key -> key.startsWith(prefix))) {
+                throw new IllegalStateException(
+                        "Call arity disagrees with imported declaration for "
+                                + module + "/" + member + ": found "
+                                + observedArity);
+            }
             throw new IllegalStateException(
                     "Imported call lacks an independently pinned declaration: "
-                            + module + "/" + member);
-        }
-        if (signature.kind != expectedKind) {
-            throw new IllegalStateException(
-                    "Imported call kind disagrees with pinned declaration for "
-                            + module + "/" + member);
+                            + module + "/" + member + "/"
+                            + expectedKind + "/" + observedArity);
         }
         return signature;
     }
@@ -51,6 +62,12 @@ public final class AlloyLibraryCallableLedger {
         expression(signatures, "util/ordering", "smaller", 2);
         expression(signatures, "util/ordering", "max", 1);
         expression(signatures, "util/ordering", "min", 1);
+        expression(signatures, "util/integer", "next", 0);
+        expression(signatures, "util/integer", "prev", 0);
+        expression(signatures, "util/integer", "max", 0);
+        expression(signatures, "util/integer", "max", 1);
+        expression(signatures, "util/integer", "min", 0);
+        expression(signatures, "util/integer", "min", 1);
         return Collections.unmodifiableMap(signatures);
     }
 
@@ -75,18 +92,24 @@ public final class AlloyLibraryCallableLedger {
             String module,
             String member,
             int arity,
-            CallSymbol.Kind kind) {
+        CallSymbol.Kind kind) {
         Signature previous = signatures.put(
-                key(module, member), new Signature(arity, kind));
+                key(module, member, kind, arity), new Signature(arity, kind));
         if (previous != null) {
             throw new IllegalStateException(
-                    "Duplicate imported callable signature: " + module + "/" + member);
+                    "Duplicate imported callable signature: " + module + "/"
+                            + member + "/" + kind + "/" + arity);
         }
     }
 
-    private static String key(String module, String member) {
+    private static String key(
+            String module,
+            String member,
+            CallSymbol.Kind kind,
+            int arity) {
         return Objects.requireNonNull(module, "module") + "/"
-                + Objects.requireNonNull(member, "member");
+                + Objects.requireNonNull(member, "member") + "/"
+                + Objects.requireNonNull(kind, "kind") + "/" + arity;
     }
 
     public static final class Signature {

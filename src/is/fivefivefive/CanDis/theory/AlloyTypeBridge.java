@@ -27,7 +27,8 @@ public final class AlloyTypeBridge {
                 return emptyRelation(type.relationArity());
             case RELATION:
                 TreeSet<GraphType> sortedAlternatives = new TreeSet<>();
-                for (List<String> tuple : type.alternatives()) {
+                for (int alternative : retainedAntichainAlternatives(type)) {
+                    List<String> tuple = type.alternatives().get(alternative);
                     List<GraphType> columns = new ArrayList<>(tuple.size());
                     for (String column : tuple) {
                         columns.add(alloyColumn(column));
@@ -43,6 +44,62 @@ public final class AlloyTypeBridge {
             default:
                 throw new IllegalStateException("An exact Alloy expression type is unavailable");
         }
+    }
+
+    /**
+     * Removes only a parser-authenticated product that is componentwise below
+     * another product already present in the same static union.  This changes
+     * the representation, not the denotation: {@code A + P = P} when every
+     * column of {@code A} is on the recorded subtype path to {@code P}.
+     */
+    private static List<Integer> retainedAntichainAlternatives(
+            ExactAlloyType type) {
+        List<Integer> retained = new ArrayList<>();
+        List<List<String>> alternatives = type.alternatives();
+        List<List<List<String>>> ancestries = type.ancestryAlternatives();
+        for (int candidate = 0; candidate < alternatives.size(); candidate++) {
+            boolean absorbed = false;
+            if (type.hasParserAuthenticatedAncestry()) {
+                for (int carrier = 0; carrier < alternatives.size(); carrier++) {
+                    if (candidate != carrier
+                            && parserProductSubtypeOf(
+                                    alternatives.get(candidate),
+                                    ancestries.get(candidate),
+                                    alternatives.get(carrier))) {
+                        absorbed = true;
+                        break;
+                    }
+                }
+            }
+            if (!absorbed) {
+                retained.add(candidate);
+            }
+        }
+        if (retained.isEmpty()) {
+            throw new IllegalStateException(
+                    "A nonempty exact Alloy relation lost every antichain alternative");
+        }
+        return Collections.unmodifiableList(retained);
+    }
+
+    private static boolean parserProductSubtypeOf(
+            List<String> candidate,
+            List<List<String>> candidateAncestry,
+            List<String> carrier) {
+        if (candidate.size() != carrier.size()
+                || candidate.size() != candidateAncestry.size()) {
+            return false;
+        }
+        boolean strict = false;
+        for (int column = 0; column < candidate.size(); column++) {
+            String candidateColumn = candidate.get(column);
+            String carrierColumn = carrier.get(column);
+            if (!candidateAncestry.get(column).contains(carrierColumn)) {
+                return false;
+            }
+            strict |= !candidateColumn.equals(carrierColumn);
+        }
+        return strict;
     }
 
     /** Proof-only column ancestry for one exact, non-union relation occurrence. */
@@ -178,6 +235,20 @@ public final class AlloyTypeBridge {
         return arity;
     }
 
+    /** True when every candidate relation alternative is admitted by one carrier. */
+    public static boolean isRelationSubfamily(
+            GraphType candidate,
+            GraphType carrier) {
+        Objects.requireNonNull(candidate, "candidate");
+        Objects.requireNonNull(carrier, "carrier");
+        if (!isRelationFamily(candidate) || !isRelationFamily(carrier)
+                || relationArity(candidate) != relationArity(carrier)) {
+            return false;
+        }
+        return relationAlternatives(carrier).containsAll(
+                relationAlternatives(candidate));
+    }
+
     public static GraphType emptyRelation(int arity) {
         if (arity <= 0) {
             throw new IllegalArgumentException(
@@ -189,6 +260,9 @@ public final class AlloyTypeBridge {
     private static Integer relationArityOrNull(GraphType type) {
         if (type.kind() == GraphType.Kind.RELATION) {
             return type.arguments().size();
+        }
+        if (isPrimitiveUnaryCarrier(type)) {
+            return 1;
         }
         Integer emptyArity = emptyRelationArity(type);
         if (emptyArity != null) {
@@ -209,6 +283,23 @@ public final class AlloyTypeBridge {
             arity = next;
         }
         return arity;
+    }
+
+    private static boolean isPrimitiveUnaryCarrier(GraphType type) {
+        if (type.kind() != GraphType.Kind.CONSTRUCTOR
+                || !"AlloyCarrier".equals(type.symbol())
+                || type.arguments().size() != 1) {
+            return false;
+        }
+        GraphType carrier = type.arguments().get(0);
+        if (carrier.kind() != GraphType.Kind.CONSTRUCTOR
+                || !carrier.arguments().isEmpty()) {
+            return false;
+        }
+        String identity = carrier.symbol().startsWith("AlloySig:")
+                ? carrier.symbol().substring("AlloySig:".length())
+                : carrier.symbol();
+        return isAdmittedIdentity(identity);
     }
 
     public static Integer emptyRelationArity(GraphType type) {

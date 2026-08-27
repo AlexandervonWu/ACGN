@@ -522,6 +522,68 @@ public final class DependentTypeDag {
         return structuralKey;
     }
 
+    /**
+     * Runtime proof that this normalized family is contained in a stored
+     * carrier through the exact source occurrence's parser-owned parent paths.
+     * The empty family is accepted only when that same live occurrence proves
+     * its arity and emptiness.
+     */
+    boolean isParserAuthenticatedSubfamilyOf(
+            GraphType carrier,
+            ExactAlloyType sourceAuthority) {
+        Objects.requireNonNull(carrier, "carrier");
+        ExactAlloyType authority = Objects.requireNonNull(
+                sourceAuthority, "sourceAuthority");
+        if (!authority.hasParserAuthenticatedAncestry()
+                || (authority.kind() != ExactAlloyType.Kind.RELATION
+                        && authority.kind()
+                                != ExactAlloyType.Kind.EMPTY_RELATION)) {
+            return false;
+        }
+        DependentTypeDag authenticated = fromExactAlloyType(authority);
+        if (!sameOccurrenceEvidenceAs(authenticated)
+                || !AlloyTypeBridge.isRelationFamily(carrier)
+                || AlloyTypeBridge.relationArity(carrier) != arity) {
+            return false;
+        }
+        if (alternatives.isEmpty()) {
+            return true;
+        }
+        List<GraphType> carrierAlternatives =
+                AlloyTypeBridge.relationAlternatives(carrier);
+        for (List<DependentColumnEvidence> candidate : alternatives) {
+            boolean covered = false;
+            for (GraphType carrierAlternative : carrierAlternatives) {
+                if (productCoveredBy(candidate, carrierAlternative)) {
+                    covered = true;
+                    break;
+                }
+            }
+            if (!covered) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean productCoveredBy(
+            List<DependentColumnEvidence> candidate,
+            GraphType carrier) {
+        if (carrier.kind() != GraphType.Kind.RELATION
+                || candidate.size() != carrier.arguments().size()) {
+            return false;
+        }
+        for (int column = 0; column < candidate.size(); column++) {
+            DependentColumnEvidence evidence = candidate.get(column);
+            if (!evidence.hasParserModuleAuthority()
+                    || evidence.ancestorIndex(
+                            carrier.arguments().get(column)) < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static List<List<DependentColumnEvidence>> normalize(
             List<? extends List<DependentColumnEvidence>> sourceAlternatives) {
         Objects.requireNonNull(sourceAlternatives, "alternatives");

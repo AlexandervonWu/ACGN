@@ -149,4 +149,23 @@ public final class CallOccurrenceCertificate {
     public StructuralKey structuralKey() {
         return structuralKey;
     }
+
+    /**
+     * True only when trusted normalization duplicated one parser occurrence
+     * without changing its callee, typed endpoint, or ordered arguments.  The
+     * deterministic tree path is intentionally excluded because each clone has
+     * a different normalized path while retaining one parser occurrence id.
+     */
+    boolean sameParserOccurrencePayloadAs(
+            CallOccurrenceCertificate other) {
+        return other != null
+                && occurrenceId == other.occurrenceId
+                && declaredArity == other.declaredArity
+                && sourceName.equals(other.sourceName)
+                && qualifiedCallee.equals(other.qualifiedCallee)
+                && kind.equals(other.kind)
+                && arityAuthority == other.arityAuthority
+                && sourceEndpoint.equals(other.sourceEndpoint)
+                && orderedArguments.equals(other.orderedArguments);
+    }
 }

@@ -15,6 +15,7 @@ import is.fivefivefive.CanDis.core.AlloyOperatorPolicy;
 import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.CanDis.theory.ArityPolicy;
 import is.fivefivefive.CanDis.theory.AlloyLawRegistry;
 import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
@@ -575,7 +576,7 @@ public final class TheoryLawPolicyRegressionTest {
             Opcode opcode,
             boolean variadic,
             EGraphNode... children) {
-        return new EGraphNode(
+        EGraphNode node = new EGraphNode(
                 opcode.ordinal(),
                 opcode,
                 new ArrayList<>(Arrays.asList(children)),
@@ -584,6 +585,33 @@ public final class TheoryLawPolicyRegressionTest {
                 variadic,
                 Metatype.BOOLEAN,
                 profile);
+        if (opcode == Opcode.NOT || opcode == Opcode.AND || opcode == Opcode.OR
+                || opcode == Opcode.IMPLIES || opcode == Opcode.IFF) {
+            String sourceName;
+            switch (opcode) {
+                case NOT:
+                    sourceName = "UNOPF_NOT";
+                    break;
+                case AND:
+                    sourceName = "BOP_AND";
+                    break;
+                case OR:
+                    sourceName = "BOP_OR";
+                    break;
+                case IMPLIES:
+                    sourceName = "BOP_IMPLIES";
+                    break;
+                case IFF:
+                    sourceName = "BOP_IFF";
+                    break;
+                default:
+                    throw new AssertionError(opcode);
+            }
+            node.setSourceName(sourceName);
+            node.setSourceType("MIDDLENODE_" + sourceName);
+            node.setExactAlloyType(ExactAlloyType.boolType());
+        }
+        return node;
     }
 
     private static EGraphNode variable(String name) {
@@ -611,6 +639,7 @@ public final class TheoryLawPolicyRegressionTest {
     private static EGraphNode booleanConstant(boolean value) {
         EGraphNode node = constant(Boolean.toString(value));
         node.setSourceType("Bool");
+        node.setExactAlloyType(ExactAlloyType.boolType());
         return node;
     }
 

@@ -178,7 +178,8 @@ public final class CertificateVerifierExportSmoke {
                         Duration.ofSeconds(30),
                         16L * 1024L * 1024L,
                         64 * 1024,
-                        true);
+                        true,
+                        callCommitments(verifierJar, leftBundle, rightBundle));
         CanonicalAlloyPipeline.StandaloneReplayDistance checked =
                 CanonicalAlloyPipeline.distanceEvaluationWithStandaloneReplay(
                         leftPrepared, rightPrepared, policy);
@@ -200,7 +201,8 @@ public final class CertificateVerifierExportSmoke {
                         Duration.ofSeconds(30),
                         16L * 1024L * 1024L,
                         64 * 1024,
-                        false),
+                        false,
+                        callCommitments(verifierJar, leftBundle, rightBundle)),
                 "rejects test-only evidence");
         expectIndependentFailure(
                 leftPrepared,
@@ -294,9 +296,11 @@ public final class CertificateVerifierExportSmoke {
             Path verifierJar,
             Path bundle,
             String trustedTheoryDigest) throws IOException {
+        String commitment = inspectCallCommitment(verifierJar, bundle);
         return runVerifier(new ProcessBuilder(
                 javaExecutable(), "-jar", verifierJar.toString(),
                 "--profile", "full", "--theory-digest", trustedTheoryDigest,
+                "--call-occurrence-commitment", commitment,
                 bundle.toString()));
     }
 
@@ -305,10 +309,60 @@ public final class CertificateVerifierExportSmoke {
             Path left,
             Path right,
             String trustedTheoryDigest) throws IOException {
+        String leftCommitment = inspectCallCommitment(verifierJar, left);
+        String rightCommitment = inspectCallCommitment(verifierJar, right);
         return runVerifier(new ProcessBuilder(
                 javaExecutable(), "-jar", verifierJar.toString(),
                 "--profile", "pair", "--theory-digest", trustedTheoryDigest,
+                "--call-occurrence-commitment", leftCommitment,
+                "--call-occurrence-commitment", rightCommitment,
                 left.toString(), right.toString()));
+    }
+
+    /** TEST_ONLY smoke plumbing; inspected bundle data is not production authority. */
+    private static java.util.Map<String, String> callCommitments(
+            Path verifierJar,
+            Path... bundles) throws IOException {
+        java.util.Map<String, String> result = new java.util.LinkedHashMap<>();
+        for (Path bundle : bundles) {
+            String assignment = inspectCallCommitment(verifierJar, bundle);
+            int separator = assignment.indexOf('=');
+            String subject = assignment.substring(0, separator);
+            String digest = assignment.substring(separator + 1);
+            String prior = result.putIfAbsent(subject, digest);
+            if (prior != null && !prior.equals(digest)) {
+                throw new IOException(
+                        "TEST_ONLY fixtures conflict on one CALL commitment subject");
+            }
+        }
+        return java.util.Map.copyOf(result);
+    }
+
+    private static String inspectCallCommitment(
+            Path verifierJar,
+            Path bundle) throws IOException {
+        Process process = new ProcessBuilder(
+                javaExecutable(), "-jar", verifierJar.toString(),
+                "--inspect-call-occurrences", bundle.toString())
+                .redirectErrorStream(true)
+                .start();
+        try {
+            String output = new String(
+                    process.getInputStream().readAllBytes(),
+                    StandardCharsets.UTF_8).trim();
+            if (process.waitFor() != 0
+                    || !output.matches("[0-9a-f]{64}=[0-9a-f]{64}")) {
+                throw new IOException(
+                        "TEST_ONLY CALL commitment inspection failed: "
+                                + compact(output));
+            }
+            return output;
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IOException(
+                    "TEST_ONLY CALL commitment inspection was interrupted",
+                    exception);
+        }
     }
 
     private static ProcessResult runVerifier(ProcessBuilder builder) throws IOException {

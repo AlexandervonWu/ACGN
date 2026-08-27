@@ -57,13 +57,13 @@ public final class ProducerBundleInspectionTest {
                 "parent fixture matches its external input-specific pin");
         assertVerified(verifier.verify(
                 nullaryA, Profile.FULL,
-                VerificationPolicy.trust(emptyTheoryDigest)), "nullary FULL");
+                policyFor(emptyTheoryDigest, nullaryA)), "nullary FULL");
         assertVerified(verifier.verify(
                 slotA, Profile.FULL,
-                VerificationPolicy.trust(emptyTheoryDigest)), "slot FULL");
+                policyFor(emptyTheoryDigest, slotA)), "slot FULL");
         assertVerified(verifier.verify(
                 parentA, Profile.FULL,
-                VerificationPolicy.trust(parentTheoryDigest)), "parent FULL");
+                policyFor(parentTheoryDigest, parentA)), "parent FULL");
         Bundle bundlePairLeft = decode(equivalentLeft);
         Bundle bundlePairRight = decode(equivalentRight);
         Path repo = Path.of(args[9]).toAbsolutePath().normalize();
@@ -109,13 +109,13 @@ public final class ProducerBundleInspectionTest {
         assertVerified(verifier.verifyPair(
                 equivalentLeft,
                 equivalentRight,
-                VerificationPolicy.trust(emptyTheoryDigest)),
+                policyFor(emptyTheoryDigest, equivalentLeft, equivalentRight)),
                 "manually constructed bundle-level equivalent PAIR");
 
         VerificationResult nonEquivalentResult = verifier.verifyPair(
                 equivalentLeft,
                 nonEquivalent,
-                VerificationPolicy.trust(emptyTheoryDigest));
+                policyFor(emptyTheoryDigest, equivalentLeft, nonEquivalent));
         check(nonEquivalentResult.outcome() == Outcome.UNCHECKABLE
                         && nonEquivalentResult.code()
                                 == FailureCode.MISSING_PAIR_DERIVATION,
@@ -125,7 +125,7 @@ public final class ProducerBundleInspectionTest {
         VerificationResult incompatibleResult = verifier.verifyPair(
                 equivalentLeft,
                 incompatible,
-                VerificationPolicy.trust(emptyTheoryDigest));
+                policyFor(emptyTheoryDigest, equivalentLeft, equivalentRight));
         check(incompatibleResult.outcome() == Outcome.REJECTED
                         && incompatibleResult.code() == FailureCode.THEORY_MISMATCH,
                 "an incompatible producer theory is rejected before trust elevation");
@@ -232,6 +232,18 @@ public final class ProducerBundleInspectionTest {
 
     private static Bundle decode(byte[] bytes) {
         return Bundle.parse(Codec.decode(bytes, Limits.defaults()));
+    }
+
+    /** TEST_ONLY fixtures exercise replay; these candidates are not source authority. */
+    private static VerificationPolicy policyFor(
+            String theoryDigest,
+            byte[]... bundles) {
+        VerificationPolicy policy = VerificationPolicy.trust(theoryDigest);
+        for (byte[] bytes : bundles) {
+            policy = policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(bytes, Limits.defaults()));
+        }
+        return policy;
     }
 
     private static byte[] withIncompatibleTheory(byte[] bytes) {

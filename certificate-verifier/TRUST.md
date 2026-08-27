@@ -13,12 +13,14 @@ The verifier trusts only:
    semantics, alpha action, full-interface symmetry, source-to-kernel replay,
    graph transitions, finite orbit enumeration, and finite unfolding;
 5. a complete theory digest, including every admitted axiom, pinned out of
-   band by the caller.
+   band by the caller;
+6. for non-fixture semantic verification, a complete CALL-occurrence digest
+   for the selected input scope, retained and pinned out of band by the caller.
 
 The JDK 17 runtime, operating system bytes supplied for the selected files,
-and the caller's choice of resource limits and theory pin are environmental
-assumptions. Resource limits may reduce an answer to `UNCHECKABLE`; they do
-not authorize acceptance.
+and the caller's choice of resource limits, theory pin, input-scope identifier,
+and CALL-occurrence pin are environmental assumptions. Resource limits may
+reduce an answer to `UNCHECKABLE`; they do not authorize acceptance.
 
 ## Untrusted
 
@@ -26,6 +28,11 @@ Everything in a bundle is a claim, including producer metadata, endpoint
 fields, contexts, type annotations, embeddings, proof IDs, hashes, orbit
 members, state snapshots, revisions, canonical representatives, unfolding
 trees, and observation forms.
+
+The candidate printed by `--inspect-call-occurrences` is also untrusted bundle
+data. It becomes a verifier input only after an external caller has retained
+or reviewed it for the intended source scope. Automatic inspect-then-verify
+does not establish source completeness.
 
 The producer Java implementation, `verifyLocal()`, canonicalizer, adapter,
 pipeline, repair projection, and distance metric are outside the verifier's
@@ -65,6 +72,11 @@ Unknown proof/event variants are rejected. There is no producer-validity,
 generic equality, inverse congruence, equal-hash, or equal-observation rule.
 Endpoint fields and content hashes are never accepted in place of a
 bottom-up derivation.
+
+For CALL evidence, absence of the externally pinned occurrence commitment is
+`UNCHECKABLE / MISSING_EVIDENCE`; disagreement with a supplied pin is
+`REJECTED / MISSING_EVIDENCE`. Internal row/anchor agreement alone never
+authorizes completeness.
 
 `WITNESS_UNFOLD` does not enlarge the admitted theory. It accepts no premises
 and treats its payload only as references: the verifier checks the embedding's
@@ -110,6 +122,13 @@ input identities. Those input fields are provenance, not semantic authority:
 certificate replay starts from the decoded normalized typed term and does not
 prove raw-Alloy parsing or normalization. Fixtures are visibly marked
 `TEST_ONLY` and cannot claim dirty publication provenance.
+
+The same boundary applies to CALL occurrences. The standalone verifier checks
+the externally pinned complete set against replayed wire records, but it does
+not independently parse arbitrary Alloy source to construct that set. The
+caller must bind a distinct input identifier to each selected predicate or
+function root; the commitment subject combines that identifier with the source
+hash so roots sharing one source file do not share authority accidentally.
 
 The writer constructs all content-addressed tables before touching the target
 and publishes through atomic sibling replacement. Unsupported histories are

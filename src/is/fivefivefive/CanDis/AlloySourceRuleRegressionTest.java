@@ -327,10 +327,11 @@ public final class AlloySourceRuleRegressionTest {
         EGraphNode alleged = node(
                 2, Opcode.SOME, Metatype.SET,
                 ExactAlloyType.unaryRelation("S"), profile, carrier);
-        EGraphNode none = leaf(
-                3, Opcode.GLOBALBINDING, "none", Metatype.SET,
-                ExactAlloyType.unaryRelation("S"), profile);
-        none.setSemanticIdentity(SigSymbol.BUILTIN_NONE_IDENTITY);
+        EGraphNode none = EGraphNode.builtinSetConstant(
+                3,
+                SigSymbol.builtinNone(),
+                ExactAlloyType.unaryRelation("S"),
+                profile);
         EGraphNode subset = node(
                 4, Opcode.IN, Metatype.BOOLEAN,
                 ExactAlloyType.boolType(), profile, alleged, none);
@@ -345,8 +346,8 @@ public final class AlloySourceRuleRegressionTest {
     private static void checkExactlyOfDoesNotMintNonemptiness() {
         SemanticProfile profile = SemanticProfile.alloyOverflowForbidding();
         ExactAlloyType unaryA = ExactAlloyType.unaryRelation("A");
-        EGraphNode none = global(20, "none", unaryA, profile);
-        none.setSemanticIdentity(SigSymbol.BUILTIN_NONE_IDENTITY);
+        EGraphNode none = EGraphNode.builtinSetConstant(
+                20, SigSymbol.builtinNone(), unaryA, profile);
         EGraphNode exactDomain = node(
                 21, Opcode.EXACTLY, Metatype.SET, unaryA, profile, none);
         EGraphNode variable = variable(22, "x", unaryA, profile);
@@ -407,8 +408,9 @@ public final class AlloySourceRuleRegressionTest {
         CanonicalAlloyPipeline.Prepared truth = CanonicalAlloyPipeline.prepare(
                 graph(visitor, "truth"), sourceProfile);
         NormalForm form = normalizedSubset.normalizedForms().get(0);
-        check(containsMembership(form.getMatrixEGraph())
-                        && containsMembership(form.getCertificationMatrixEGraph()),
+        check(containsGuardedUniverseEmptiness(form.getMatrixEGraph())
+                        && containsGuardedUniverseEmptiness(
+                                form.getCertificationMatrixEGraph()),
                 "univ has no unconditional nonemptiness witness");
         check(CanonicalAlloyPipeline.distance(subset, truth) > 0,
                 "the guarded metric must remain total when an empty universe makes subset true");
@@ -439,6 +441,35 @@ public final class AlloySourceRuleRegressionTest {
                 root,
                 java.util.Collections.newSetFromMap(
                         new java.util.IdentityHashMap<>()));
+    }
+
+    private static boolean containsGuardedUniverseEmptiness(EGraphNode root) {
+        return containsGuardedUniverseEmptiness(
+                root,
+                java.util.Collections.newSetFromMap(
+                        new java.util.IdentityHashMap<>()));
+    }
+
+    private static boolean containsGuardedUniverseEmptiness(
+            EGraphNode node,
+            java.util.Set<EGraphNode> seen) {
+        if (node == null || !seen.add(node)) {
+            return false;
+        }
+        if (node.getOpcode() == Opcode.IN || node.getOpcode() == Opcode.NOT_IN) {
+            return true;
+        }
+        if (node.getOpcode() == Opcode.NO
+                && node.getChildren().size() == 1
+                && "univ".equals(node.getChildren().get(0).getSourceName())) {
+            return true;
+        }
+        for (EGraphNode child : node.getChildren()) {
+            if (containsGuardedUniverseEmptiness(child, seen)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean containsMembership(
@@ -876,6 +907,10 @@ public final class AlloySourceRuleRegressionTest {
         try {
             Files.writeString(path, source, StandardCharsets.UTF_8);
             CompModule module = AlloyUtil.compileAlloyModule(path.toString());
+            if (module == null) {
+                throw new IllegalStateException(
+                        label + " generated invalid Alloy at " + path + ":\n" + source);
+            }
             A4Options options = new A4Options();
             options.solver = A4Options.SatSolver.SAT4J;
             for (int index = 0; index < module.getAllCommands().size(); index++) {

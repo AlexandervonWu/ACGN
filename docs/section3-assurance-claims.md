@@ -4,10 +4,10 @@
 
 ## Current Summary
 
-- Scoped claims: 161
-- Matrix rows: 161
+- Scoped claims: 190
+- Matrix rows: 190
 - Fully ready rows: 41
-- Open diagnostics: 182
+- Open diagnostics: 211
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -227,13 +227,30 @@ Every claim follows the same bounded process:
 - Claim-specific process/limits: Bounded independent reports exist on moving snapshots, but no complete phase set and integrated review share one immutable manifest digest
 - Current proof state: `INCOMPLETE`
 
+### A-13
+
+**Claim.** The adaptive equivalence augmenter admits no local observation directly, advances theory generation only after independently validated schema admission, and binds validation to exact parser, type, application, source-command, and provenance context; the MVP does not assert automatic generalized proof production.
+
+- Class: `U/I/P`
+- Claim SHA-256: `041dbc6aead75470c15230194bf4241ca7234e39fe69cda630eb2845bd3a75c6`
+- Ledger line: 59
+- Lean file: `docs/section3-repair-audit/formal/AdaptiveEquivalenceAugmenter.lean`
+- Lean declarations: `localCannotAdmitDirectly;schemaAdmissionRequiresVerification;generationStrictlyAdvances;forgedExactTypeCannotAuthenticate;sourceCommandContextCannotBeOverridden;sourceBoundConvenienceScopesHaveOneIdentity;unboundRequestScopeRemainsEffective;parserEquivalentEndpointSpellingsHaveOneContext;mismatchedApplicationContextHasNoAuthority;explicitOpenHasNoSourceClosureAuthority;distinctAritiesHaveDistinctCallableKeys;independentValidationExecutesItsOwnFormula;copiedParentCanSubstituteAnotherFormula;runSearchGuardIsFormula;checkSearchGuardIsCounterexampleDomain;guardedEqualityAppliesInSearchDomain;noContextualCounterexampleProvesEqualityInSearchDomain;erasedQuantifierDomainSchemaIsNotValid;consensusSchema`
+- Implementation references: `src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenter.java#observeEquivalent;src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenter.java#proposeSchema;src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenter.java#verifySchema;src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenter.java#admitSchema`
+- Bounded test references: `src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenterTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The bounded MVP exercises lifecycle, context, persistence, work-limit, replay, and rejection paths; it records observations and supports externally proved schemas but does not generate Lean proofs or automatically establish general Alloy equivalence
+- Current proof state: `INCOMPLETE`
+
 ### G-01
 
 **Claim.** Arity policy, sibling quotient, flattening authority, and unit authority are distinct and cannot imply one another accidentally.
 
 - Class: `U/I`
 - Claim SHA-256: `a97b31d693fcb38477f7887840306155f1ebdc55a5839f06e08eaced4d36ebdb`
-- Ledger line: 64
+- Ledger line: 65
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `policy_fields_are_independently_observable`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#admits;src/is/fivefivefive/CanDis/theory/SiblingQuotient.java#commutative;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled;src/is/fivefivefive/CanDis/theory/UnitLicense.java#UnitLicense`
@@ -250,7 +267,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `bcd536d62d0dae60396eb0c2ba10b180af81a0dc89ee2608f11d22a5da6914b5`
-- Ledger line: 65
+- Ledger line: 66
 - Lean file: `docs/section3-repair-audit/formal/TrustBoundary.lean`
 - Lean declarations: `bundle_selected_digest_is_not_authority;digest_disagreement_rejects;parent_pin_cannot_authorize_publication;empty_fixture_pin_authorizes_no_ground_equation`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateTheoryManifest.java#scalars;src/is/fivefivefive/CanDis/theory/IndependentCertificateVerifier.java#verify;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
@@ -267,7 +284,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `e7ea005566ea59d1721fc250b73de0b155db435a02d9fb2591778cb7830f4057`
-- Ledger line: 66
+- Ledger line: 67
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `accepted_at_retains_the_complete_index;any_index_mutation_rejects_replay`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;src/is/fivefivefive/CanDis/theory/ContainerLawDeclaration.java#validateEvidenceFor;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyLawRecord`
@@ -284,7 +301,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `cd94e7bfc46d71a32d8f8566931d2e20aaa63f66ffc679571df09445a44f4b92`
-- Ledger line: 67
+- Ledger line: 68
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `any_index_mutation_rejects_replay;wrong_theory_digest_rejects;wrong_source_endpoint_rejects;wrong_target_endpoint_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#appliesTo;src/is/fivefivefive/CanDis/theory/ContainerLawDeclaration.java#validateEvidenceFor;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
@@ -301,7 +318,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `c2715fb63547d1602f5ed57a5c6fc3c456d489870808878d059061211fe7a633`
-- Ledger line: 68
+- Ledger line: 69
 - Lean file: `docs/section3-repair-audit/formal/TemporalAciPhasePresentation.lean`
 - Lean declarations: `same_order_has_same_coherent_presentation;pair_permutation_has_one_presentation;triple_permutations_have_one_presentation;bounded_certified_aci_pair_has_zero_projection_distance;bounded_certified_aci_triple_has_zero_projection_distance`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#CanonicalPhaseProjection`
@@ -318,7 +335,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `de4b776d7d42767f5796d41bcd1d1201905145807cb9fa955f22d3d3cbea9d47`
-- Ledger line: 69
+- Ledger line: 70
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `zero_distance_has_certified_equality;uncertified_zero_disagreement_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluationWithStandaloneReplay`
@@ -335,7 +352,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `a000debcc2bee801aeed70d648ed615c822c199c59be0ee05685a249532edf66`
-- Ledger line: 70
+- Ledger line: 71
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `alpha_distance_is_exact_pairwise_minimum;aci_distance_is_exact_minimum_cost_assignment;nonmaximum_empty_alignment_is_not_admissible`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#minimumAssignmentCost`
@@ -352,7 +369,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `cbb5463a905bc30a1f410de31a1c22accca867e38ca185545b8e547d22ac7f10`
-- Ledger line: 71
+- Ledger line: 72
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `accepted_binding_preserves_exact_occurrence;occurrence_substitution_rejects;lineage_substitution_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#recordDependentChain;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyConstructionReference`
@@ -369,7 +386,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `f5f81ea6b991eafb08c0094155fdd92a5367e59d297f1bfc01df16294b2f3e11`
-- Ledger line: 72
+- Ledger line: 73
 - Lean file: `docs/section3-repair-audit/formal/CrossPhaseContract.lean`
 - Lean declarations: `unsupported_cases_cannot_receive_law_authority`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFixedBinaryTypedChainOperator;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening`
@@ -386,7 +403,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `3a56ce0a24935ae13c95f3625cb74f90d41b7372e4cbc3bd4133f7e6234f0505`
-- Ledger line: 73
+- Ledger line: 74
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `absent_type_does_not_invent_univ;explicit_univ_is_retained;explicit_univ_has_chain_typing_authority;absent_type_receives_no_flat_certificate`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#outputType;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#relationViewFromStoredType;src/is/fivefivefive/CanDis/metric/RepairProjection.java#requireExactResultType`
@@ -403,7 +420,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `0d69c4a80cc9fd76cfcc51125d35922b3e2e02ef9ab5b3b81d2df9b2c7813040`
-- Ledger line: 74
+- Ledger line: 75
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `candidate_key_order_is_total;schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;certificate_byte_count_is_encoded_length;byte_identical_runs_have_identical_derived_counters`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;certificate-verifier/src/org/acgn/cert/Codec.java#encode;certificate-verifier/src/org/acgn/cert/Bundle.java#parse`
@@ -420,7 +437,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `c2f3490370daf9b8652340f423149e63830113081eb8b6951fa23772fa079b38`
-- Ledger line: 75
+- Ledger line: 76
 - Lean file: `docs/section3-repair-audit/formal/GuardedPrenex.lean`
 - Lean declarations: `guarded_lift_requires_inhabited_carrier;empty_carrier_blocks_unconditional_guarded_lift`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitRelDecl;src/is/fivefivefive/CanDis/core/NormalForm.java#hasScopedInhabitedCarrierWitness`
@@ -437,7 +454,7 @@ Every claim follows the same bounded process:
 
 - Class: `E/P`
 - Claim SHA-256: `ccc9f0db05c2bc47bc4b511a1afb1ddfe2c884bf86bc20e8364064474084413d`
-- Ledger line: 76
+- Ledger line: 77
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_manifest_complete`
 - Implementation references: `src/is/fivefivefive/CanDis/AblationRunManifest.java#capture;src/is/fivefivefive/CanDis/CanonicalBatchTest.java#writeJsonHeader;src/is/fivefivefive/CanDis/Alloy4FunAugmenter.java#writeJson`
@@ -454,7 +471,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `42c8f6980168678c345681de6892e77a892b789e2a57839233f46fd3a3f20789`
-- Ledger line: 77
+- Ledger line: 78
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_manifest_complete`
 - Implementation references: `scripts/verify_imported_publication_snapshot.sh;scripts/run_publication_manifest_tests.sh`
@@ -471,7 +488,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `cf235ca02c21f5465c106049a488084319dff2177cdfa8c8980428e7ecdc3dbf`
-- Ledger line: 78
+- Ledger line: 79
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_three_test_classes;pass_implies_direct_conformance`
 - Implementation references: `scripts/run_section3_assurance.sh;.github/workflows/bounded-ci.yml`
@@ -488,7 +505,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P/E`
 - Claim SHA-256: `55d8f25a9b45ee3deace85550ff016e29558225d04bad00336f778f07a7c4aa5`
-- Ledger line: 79
+- Ledger line: 80
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_requirements_decomposed;missing_formal_evidence_blocks;open_fault_blocks`
 - Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#assess;src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate`
@@ -505,7 +522,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `0083fe6d6b89d25df2fde7924f753fc9be00dfd283a458a9e458792bd0a44fd2`
-- Ledger line: 80
+- Ledger line: 81
 - Lean file: `docs/section3-repair-audit/formal/TrustBoundary.lean`
 - Lean declarations: `bundle_selected_digest_is_not_authority;parent_pin_cannot_authorize_publication`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#kernelAuthority;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluationWithStandaloneReplay;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
@@ -522,7 +539,7 @@ Every claim follows the same bounded process:
 
 - Class: `E/P`
 - Claim SHA-256: `0e41d0c95dfc56c17619392d376b857ada14efaef1b4247191d64c09b7f18ebc`
-- Ledger line: 81
+- Ledger line: 82
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_manifest_complete`
 - Implementation references: `src/is/fivefivefive/CanDis/AblationRunManifest.java#loadCompatibleArms;src/is/fivefivefive/CanDis/AblationRunManifest.java#verifyOutputs;src/is/fivefivefive/CanDis/CanonicalBatchTest.java#writeMarkdown;src/is/fivefivefive/CanDis/Alloy4FunAugmenter.java#writeMarkdown`
@@ -539,7 +556,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `f4486d01f21e8d3c36616c00ec59a4a1a8ae77a0f3cbf1f3766a64c28537f8f3`
-- Ledger line: 87
+- Ledger line: 88
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_creation_capture_is_immediate_and_stable`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#updateTimeOfVisit`
@@ -556,7 +573,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `a2ae0c29fc467113d5b4e73472be65ee06ab23fd3edec8a8f1a6c3bf8064a22a`
-- Ledger line: 88
+- Ledger line: 89
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_visit_callee_belongs_to_occurrence;valid_visit_arguments_belong_to_occurrence;valid_visit_owns_exact_terminator;valid_visit_has_exact_callee_argument_end_order`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks`
@@ -573,7 +590,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `da23c175799de61eaa74dfdf356927a22977fa424f6e1ace08e79acaca4cdf05`
-- Ledger line: 89
+- Ledger line: 90
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_visit_has_one_callee;valid_visit_has_exact_callee_identity`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#matchesTarget`
@@ -590,7 +607,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `3f21609e7836b9d982bb677409d16207a9715eed342a8a9eaba8a558cf3d37b4`
-- Ledger line: 90
+- Ledger line: 91
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_visit_has_contiguous_ordered_roles;valid_visit_has_exact_callee_argument_end_order;noncontiguous_roles_reject`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks`
@@ -607,7 +624,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `3177b459222015bc1a67e108ca3b636dda3df1fdfe2147121d681cbab6349615`
-- Ledger line: 91
+- Ledger line: 92
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `call_term_equality_preserves_argument_order;swapped_arguments_are_distinct;capture_preserves_parser_key_and_argument_order`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/ACGN/codegen/Generator.java#toCode`
@@ -624,7 +641,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `30fb21fcb2a524cc57aa6a240c4380ce349da552b012527be9e41ff988e810f9`
-- Ledger line: 92
+- Ledger line: 93
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_visit_uses_declared_arity;observed_arity_cannot_replace_declared_arity`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
@@ -641,7 +658,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `d3acdcf133d537dd9ff91a096485f330dbf53cda8c9f223a6bf25f4b156c08f5`
-- Ledger line: 93
+- Ledger line: 94
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `valid_visit_owns_exact_terminator;valid_visit_has_exact_callee_argument_end_order;missing_end_rejects;foreign_end_rejects;end_before_arguments_rejects`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/codegen/Generator.java#validatedCallEdges`
@@ -658,7 +675,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `d1d676e2e8137b650615102be2d892e26467ddae8c44476f99905f8f21590d7d`
-- Ledger line: 94
+- Ledger line: 95
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `accepted_visit_is_complete_and_has_no_fallback;missing_end_rejects;foreign_end_rejects;noncontiguous_roles_reject;foreign_callee_visit_rejects;foreign_argument_visit_rejects;wrong_callee_identity_rejects;end_before_arguments_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#downlinksFor;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit`
@@ -675,7 +692,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `88fab51f179dd66df7b0703a9e3d93dac32ffde6432e699709e6ce3ab9bb02d3`
-- Ledger line: 95
+- Ledger line: 96
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `occurrence_ledger_prevents_reuse;duplicated_occurrence_is_rejected`
 - Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#downlinksFor;src/is/fivefivefive/CanDis/ir/IRAgent.java#nextTov;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getOccurrenceId`
@@ -692,7 +709,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `9de7836312c59f4bd84f6ab35bb9539dc0c9d377e380ac7c69c76a7f000db478`
-- Ledger line: 96
+- Ledger line: 97
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `zero_argument_call_is_valid;valid_visit_has_one_callee;valid_visit_owns_exact_terminator`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
@@ -709,7 +726,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `e52d1a052740761f20b94567a969bce9088fe742f06f3b03b3c181c887edf190`
-- Ledger line: 97
+- Ledger line: 98
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `equal_call_keys_preserve_kind`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getKind;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#semanticHead`
@@ -726,7 +743,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `81aa5d98c9d4ac4f3bb10fd959dce626bd82faf45a4928bd8ce5c6df93c17dbe`
-- Ledger line: 98
+- Ledger line: 99
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `equal_call_keys_preserve_qualified_identity;same_spelling_wrong_qualified_target_rejects;exact_complete_callee_target_accepts`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#registerCallable;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable;src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getCallee;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
@@ -743,7 +760,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `d88e29bde4aece1145e4645041756e8963b6e5ccd5f8d4e2d98334e00b6c5b2a`
-- Ledger line: 99
+- Ledger line: 100
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `equal_call_keys_preserve_declared_arity`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getDeclaredArity;src/is/fivefivefive/CanDis/core/CallMetadata.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
@@ -760,7 +777,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `44aad69520fd6a108714673bed03eba03f8fa776999470c575e7d718dc196506`
-- Ledger line: 100
+- Ledger line: 101
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `equal_call_keys_preserve_authority`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/CallSymbol.java#getArityAuthority;src/is/fivefivefive/CanDis/core/CallMetadata.java#require;src/is/fivefivefive/CanDis/core/CallMetadata.java#semanticKey`
@@ -777,7 +794,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `54d4d2121c0f1d04cc4fbfda65748f845b226da5cb8b89efc18491de910af381`
-- Ledger line: 101
+- Ledger line: 102
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `accepted_import_is_exact_fixed_ledger_member;unlisted_import_is_rejected`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#signatures;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#resolveCallable`
@@ -794,7 +811,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `2ff9bdd7b3b7112086c0a821d74da9c49a16620a39e6ab62f8b348e4a8d6e052`
-- Ledger line: 102
+- Ledger line: 103
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `call_policy_is_ordered_nonflat_noncommutative_nonidempotent`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/core/EGraphNode.java#appendSortKey;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
@@ -811,7 +828,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `ed22045e9aa67456e2d4eb2f334d80c1e3c1524cb099bb1e9d8a3d7dea864db3`
-- Ledger line: 103
+- Ledger line: 104
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `generation_preserves_source_order;generation_preserves_exact_identity_and_source_order;generation_rejects_same_spelling_wrong_qualified_target`
 - Implementation references: `src/is/fivefivefive/ACGN/codegen/Generator.java#toCode;src/is/fivefivefive/ACGN/codegen/Generator.java#validatedCallEdges`
@@ -828,7 +845,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `37cd24df073638b2e92c29e185e99320e45d7b721554cdfb92b97549130e9123`
-- Ledger line: 104
+- Ledger line: 105
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `nested_call_differs_from_single;nested_call_returns_input`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#prepare`
@@ -845,7 +862,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `fc135df69d2642ebac2bb48cee47019d8e89cf71cde69dd6da898916a11876bb`
-- Ledger line: 105
+- Ledger line: 106
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `nested_mixed_call_preserves_both_callees_and_ownership;nested_mixed_call_occurrences_are_distinct;exact_call_occurrence_ledger_accepts_complete_evidence;omitted_call_occurrence_evidence_rejects;exact_call_operator_coverage_accepts_complete_evidence;omitted_call_operator_evidence_rejects;nested_same_operator_occurrence_anchors_are_distinct;complete_nested_call_anchor_coverage_accepts;one_omitted_nested_call_anchor_rejects;isolated_call_anchor_accepts;canonically_referenced_call_anchor_rejects;wrong_context_call_anchor_rejects;wrong_sort_call_anchor_rejects`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#create;src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#recordCall;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#callOccurrenceAnchor;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyCallOccurrences;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#scalarReferenceCounts`
@@ -862,7 +879,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `4a8f0bb7a7706476d0b43b26e04226c1883239eeeff6df765dbaddd4bb56b217`
-- Ledger line: 106
+- Ledger line: 107
 - Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
 - Lean declarations: `equal_wire_evidence_preserves_every_serialized_field;valid_wire_evidence_has_exact_roles_and_ordered_endpoint_count;wire_field_projection_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#requireExactBinding;src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java#buildStructuralKey;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#callOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyCallOccurrences`
@@ -879,7 +896,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `38ac6b152f7e2176d15f7391a88879242d420feb897662b37ac0aafde3cecd32`
-- Ledger line: 112
+- Ledger line: 113
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `arrow_order_is_observable;join_order_is_observable`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
@@ -896,7 +913,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `5f8748b76ed20d27dc874462c96ae6215e4357216997ea072ea4de0c3f8a98b5`
-- Ledger line: 113
+- Ledger line: 114
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `arrow_duplicate_is_preserved;join_duplicate_is_preserved`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
@@ -913,7 +930,7 @@ Every claim follows the same bounded process:
 
 - Class: `U`
 - Claim SHA-256: `b7f78a96d5c0dee917d3af6e52f2ae7c0d926eaee7670bf9d74f760b63822479`
-- Ledger line: 114
+- Ledger line: 115
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `arrow_reassociation`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainKind.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainKind.java#fold`
@@ -930,7 +947,7 @@ Every claim follows the same bounded process:
 
 - Class: `U`
 - Claim SHA-256: `e5ed1e70cefbc417e2046ae878201b4c371f9e2223ed11f91e371d4658541e3d`
-- Ledger line: 115
+- Ledger line: 116
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `guarded_join_tuple_reassociation;guarded_join_relation_reassociation;binary_interior_join_has_flat_license`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireSoundDependentFlattening`
@@ -947,7 +964,7 @@ Every claim follows the same bounded process:
 
 - Class: `U`
 - Claim SHA-256: `dd47dbf983c253f843c8b7583869cfa5df16a117f8517fa03a2553938ba7071f`
-- Ledger line: 116
+- Ledger line: 117
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `unguarded_join_left_value;unguarded_join_right_value;unguarded_join_is_not_associative`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain`
@@ -964,7 +981,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `75921bb49ad69c617dfbccf8e31dfd7ed23bf3eb83daf5523811f7cf4a6f10c4`
-- Ledger line: 117
+- Ledger line: 118
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `unary_interior_join_has_no_flat_license;binary_interior_join_has_flat_license`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireSoundDependentFlattening`
@@ -981,7 +998,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `1f73b67ab4d51c8aa6cea982b564d710f2a6711852633153eedd075026a87f6e`
-- Ledger line: 118
+- Ledger line: 119
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `exact_relation_leaf;primitive_int_leaf;primitive_carrier_leaf`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireLeafTypeProof;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#leafTypeProof;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireLeafTypeRule`
@@ -998,7 +1015,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `bf6c4d114a718433a47d86edd7f729e2225f1fedbbcfef8663076f8783aa579f`
-- Ledger line: 119
+- Ledger line: 120
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `successful_relation_view_has_only_two_rule_families;parameter_spelling_has_no_independent_authority`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireLeafTypeProof;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireLeafTypeRule`
@@ -1015,7 +1032,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `b38e626545011035bf8ce43e0b067f937b4e3289e48fe5b351a4ecc55fb93c04`
-- Ledger line: 120
+- Ledger line: 121
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `unsupported_leaf_has_no_proof;absent_type_does_not_invent_univ;absent_type_receives_no_flat_certificate`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#relationViewFromStoredType;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentChainInput;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireTypeName`
@@ -1032,7 +1049,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `6f51ec6aaf3f637b5f284b2a71c81cc94046d022f78ad079a59a6242e0b658fc`
-- Ledger line: 121
+- Ledger line: 122
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `parser_authority_requires_a_well_formed_snapshot;production_module_membership_authorizes_component_path;transferred_position_without_module_membership_rejects;module_membership_without_identity_label_correspondence_rejects;duplicate_module_object_identity_rejects;unpositioned_parent_declaration_rejects;whitespace_only_parent_position_rejects;conflicting_direct_parent_declarations_reject;cyclic_parent_declaration_ledger_rejects;serialization_strips_parser_authority;alloy_sequence_index_builtin_parent_is_authorized;alloy_universe_root_parent_is_authorized;builtin_provenance_requires_exact_sequence_index_identity;nominal_subtype_preserves_membership;component_parent_path_is_valid;component_is_subtype_of_product;valid_boundary_wire_yields_correspondence;product_component_producer_evidence_is_valid;transferred_attribute_has_no_producer_boundary_authority;serialization_removes_producer_boundary_authority;missing_position_has_no_producer_boundary_authority;product_component_join_has_exact_dependent_result;nullary_join_result_is_not_in_the_certified_relation_slice;product_component_join_retains_ordered_seq_and_exact_result;sibling_boundary_has_no_subtype_certificate;univ_endpoint_uses_authenticated_subtype_path;explicit_univ_exact_wire_is_valid;valid_dependent_fold_rechecks_every_step_and_exact_result;dependent_fold_result_is_unique;product_component_index_is_a_valid_evidence_consuming_fold;unary_join_has_no_dependent_fold;unary_arrow_has_no_dependent_fold;unary_interior_join_has_no_dependent_fold;serialized_boundary_has_no_dependent_fold;mixed_module_authorities_have_no_dependent_fold`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#fromParser;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#recordExactType;src/is/fivefivefive/CanDis/theory/DependentColumnEvidence.java#fromExactAlloyType;src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/CanDis/theory/DependentChainKind.java#foldColumns;src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#createProduction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#isAdmittedAtomicChainColumn;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#deriveBoundary;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireChainCombination`
@@ -1049,7 +1066,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `d12228a367db5e5046a6eb901b867b559db8c57590b6c91ada4e8dd473459ef5`
-- Ledger line: 122
+- Ledger line: 123
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `equal_boundary_wire_indices_bind_all_fields;exact_index_retains_boundary_evidence;equal_complete_chain_indices_bind_every_field;complete_chain_index_fields_are_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#createProduction;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#proofIndex;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainConstruction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
@@ -1066,7 +1083,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `7238742b9ecea6ad607bbb6fc152d0226175bb229caa2ed5a69352dd5f5aafae`
-- Ledger line: 123
+- Ledger line: 124
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `accepted_binding_has_exact_path_and_content;same_typed_source_swap_rejects;post_certificate_content_mutation_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#indexSourceOccurrencePaths;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sourceOccurrenceCommitment;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireMatches;src/is/fivefivefive/CanDis/core/EGraphNode.java#dependentChainSourceContentCommitment`
@@ -1083,7 +1100,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `ae517f5c70c038ebfbf71a9fec589ca0fdcc1df55870e1946c463c875072e326`
-- Ledger line: 124
+- Ledger line: 125
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `accepted_binding_certificate_commits_to_source;typed_source_substitution_rejects;certificate_source_substitution_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sourceOccurrenceCommitment;src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java#sourceOccurrenceCommitment;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireDependentChainSourceOccurrenceCommitment`
@@ -1100,7 +1117,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `155ae3d4bcacf2992bc8fe1294c8ee5f6f5a550e0f246617a3a284c6e66c39c3`
-- Ledger line: 125
+- Ledger line: 126
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `lineage_transfer_is_functional;one_certificate_cannot_replay_over_two_roots`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#transferTo;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireLineage;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireMatches;src/is/fivefivefive/CanDis/metric/RepairProjection.java#from`
@@ -1117,7 +1134,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `b862e84d7ff5369124ec35570dd1c4eec6878b31c213210ffd13fb553e75b81c`
-- Ledger line: 126
+- Ledger line: 127
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `admitted_construction_has_concrete_recorded_source_application;unrecorded_construction_is_not_admitted`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#recordDependentChain;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage`
@@ -1134,7 +1151,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `71a9d475059d53bdac10e484990b7e089460598f1f8ad9ceb043117f8b06e968`
-- Ledger line: 127
+- Ledger line: 128
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `unsupported_chain_falls_back_to_exact_fixed_binary;unsupported_chain_fallback_has_no_equality_authority;absent_type_receives_no_flat_certificate;concrete_result_mismatch_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentChainApplication;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening`
@@ -1151,7 +1168,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `1424fff8c9cd0a2b823fe7b322e13dee255ff94422964be6992567a63b6b842b`
-- Ledger line: 128
+- Ledger line: 129
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `accepted_projection_rechecks_occurrence_and_every_bound_index;accepted_binding_has_exact_lineage;accepted_binding_has_exact_path_and_content`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#from;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain;src/is/fivefivefive/CanDis/metric/RepairProjection.java#collectDependentChainLeaves;src/is/fivefivefive/CanDis/metric/RepairProjection.java#dependentLeafType`
@@ -1168,7 +1185,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `8f67707d24cb3df11432cbf0529468db4ee503c5db4dcdac1ab41f1df9de0e3a`
-- Ledger line: 129
+- Ledger line: 130
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `readable_spelling_is_not_an_edit;exact_type_change_is_one_edit`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairProjection.java#repairPayload;src/is/fivefivefive/CanDis/metric/RepairProjection.java#repairSemanticPayload;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost`
@@ -1185,7 +1202,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `214964f7934381d1d1a1c8e2cabef223ad3b949e3cd49e16df671163e3ba157b`
-- Ledger line: 130
+- Ledger line: 131
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `licensed_reassociation_is_certified_equal_and_zero_distance;unlicensed_reassociation_is_not_certified_and_remains_nonzero`
 - Implementation references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#distanceEvaluation;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectDependentChain;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate`
@@ -1202,7 +1219,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `faa6f1a4c639f3ac9cd5995ee0bd1296074b428fb8ad5bcd81054619d1499009`
-- Ledger line: 131
+- Ledger line: 132
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `exact_chain_wire_example_replays;changed_chain_wire_source_content_rejects;changed_chain_wire_typed_tree_rejects;changed_chain_wire_leaf_proof_rejects;changed_chain_wire_positional_schema_rejects;accepted_chain_wire_replay_reconstructs_every_committed_field;any_chain_wire_field_difference_rejects;schema_v8_chain_wire_rejects;schema_v9_chain_wire_rejects;schema_v8_is_rejected_without_reinterpretation;schema_v9_is_rejected_without_reinterpretation;mismatched_result_schema_v10_chain_is_rejected;schema_v10_nonexact_chain_is_uncheckable_without_hierarchy_authority;schema_v10_nonexact_chain_cannot_be_accepted_as_exact;structurally_valid_exact_schema_v10_chain_evidence_is_accepted;mismatched_dependent_theory_digest_rejects;accepted_nonexact_chain_wire_is_uncheckable_not_exact;equal_boundary_wire_indices_bind_all_fields;valid_boundary_wire_yields_correspondence;univ_endpoint_uses_authenticated_subtype_path;explicit_univ_exact_wire_is_valid`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainConstruction;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentChainInput;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentBoundary;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#dependentChainInput;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#registerChainAncestry;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireBoundaryWire;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage`
@@ -1219,7 +1236,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `4bf2b29d09a49228b6013a04ae6d04576b2e092719bf27e3b9a9d320d0fdd6d3`
-- Ledger line: 132
+- Ledger line: 133
 - Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
 - Lean declarations: `union_absorbs_authenticated_subtype;union_retains_disjoint_siblings;union_eliminates_duplicate_products;demonstrated_normalization_is_idempotent;correlated_union_is_not_independent_column_widening`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#normalize;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#union`
@@ -1236,7 +1253,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `c4c3d3558acdd3162344346a38cf3f320b80486d1626ebdc8d7558cebf129a98`
-- Ledger line: 133
+- Ledger line: 134
 - Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
 - Lean declarations: `subtype_boundary_has_specific_meet;sibling_boundary_is_explicitly_disjoint;sharing_only_univ_does_not_create_overlap;sharing_only_univ_has_no_meet;explicit_univ_is_an_exact_boundary;concrete_to_univ_uses_the_subtype_boundary;intersection_keeps_more_specific_product;intersection_omits_proven_disjoint_product`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java#derive;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#intersection`
@@ -1253,7 +1270,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `88cd036c148f8baf6ed019c18205184021f9e037772881eb81e1c081ee9c7a2a`
-- Ledger line: 134
+- Ledger line: 135
 - Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
 - Lean declarations: `arrow_is_cartesian_over_correlated_products;correlated_union_is_not_independent_column_widening;arrow_preserves_duplicate_columns;arrow_preserves_order;explicit_univ_arrow_is_certified;right_univ_endpoint_chain_flattens;left_univ_endpoint_chain_flattens;interior_unary_chain_does_not_flatten;source_sequence_preserves_order;source_sequence_preserves_duplicates`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#DependentChainApplication`
@@ -1270,7 +1287,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `b8a2af71393a0d31b4a39ecaa99be26a9e24b47701ff53b7370fff22db8749c7`
-- Ledger line: 135
+- Ledger line: 136
 - Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
 - Lean declarations: `complete_matrix_has_cartesian_cardinality;join_omits_disjoint_branch_pair;join_retains_exact_branch_pair;join_retains_subtype_branch_pair;two_by_two_join_has_only_correlated_results;univ_commonality_cannot_create_join_result;explicit_univ_join_is_certified;all_disjoint_join_retains_positive_empty_arity;nullary_join_is_outside_the_typed_family_slice`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentChainApplication.java#combinationCases`
@@ -1287,7 +1304,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `a216882498a514d63ccf4a77326d4b68e46ca2296012892d295bb0ec23687c0a`
-- Ledger line: 136
+- Ledger line: 137
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentTypeDag;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#dependentCombinationCases;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#dependentTypeDag;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireCombinationCasesWire`
@@ -1304,7 +1321,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `2383859cecf4dbfa79f149e0308fde456c5fcb367993b813221961fbd99da6ad`
-- Ledger line: 137
+- Ledger line: 138
 - Lean file: `docs/section3-repair-audit/formal/DependentTypeDagStandalone.lean`
 - Lean declarations: `union_absorbs_authenticated_subtype;union_retains_disjoint_siblings;intersection_keeps_more_specific_product;intersection_omits_proven_disjoint_product;typed_empty_union_retains_positive_arity;all_disjoint_intersection_retains_positive_empty_arity;mixed_arity_set_operation_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentTypeDagForSource;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructDependentChainOperand`
@@ -1321,7 +1338,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `1718b5d1293b6aabd0d8f3099333fa7d5b8f97e411b1770d006c16f346c45222`
-- Ledger line: 138
+- Ledger line: 139
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `primitive_int_leaf;primitive_carrier_leaf;correlated_arrow_enumerates_complete_authorized_matrix;correlated_arrow_matrix_has_cartesian_size;correlated_arrow_output_retains_bound_paths;correlated_arrow_rejects_mixed_parser_authority;correlated_arrow_rejects_unbound_column_identity;same_module_dependent_dag_occurrence_accepts;equal_looking_foreign_module_dependent_dag_occurrence_rejects;correlated_join_enumerates_complete_authorized_matrix;correlated_join_retains_only_authorized_overlaps;correlated_join_output_retains_bound_paths;correlated_all_disjoint_join_retains_typed_empty_arity`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireLeafTypeProof;src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#leafTypeProof;src/is/fivefivefive/CanDis/theory/DependentColumnEvidence.java#fromExactAlloyType;src/is/fivefivefive/CanDis/theory/DependentColumnEvidence.java#sameOccurrenceEvidenceAs;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#combine;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#sameOccurrenceEvidenceAs;src/is/fivefivefive/CanDis/theory/DependentTypeDag.java#requireCompatibleAuthority;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#dependentTypeDagForSource`
@@ -1338,7 +1355,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `fac798f7c348cf4447dab6e756eed31855f2d049d4a111f93d8f9436cf283cf6`
-- Ledger line: 144
+- Ledger line: 145
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `ordinary_seq_plus_has_no_associativity_license;ordinary_seq_plus_is_valid;flat_seq_plus_without_associativity_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled`
@@ -1355,7 +1372,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `c5ca655e734ee107312eb1f23afcd324739b4c8dfdbd3e89176d31462970c74b`
-- Ledger line: 145
+- Ledger line: 146
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `policy_fields_jointly_determine_policy`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#arityPolicy;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#siblingQuotient;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#flatLicense;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
@@ -1372,7 +1389,7 @@ Every claim follows the same bounded process:
 
 - Class: `U`
 - Claim SHA-256: `b88c887a749ff0e6eeae1d4c8fa25815daca7ca7633d857a8cb32440ef4dfeaa`
-- Ledger line: 146
+- Ledger line: 147
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `invalid_set_downward_closure_rejects;valid_set_requires_positive_downward_closure`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requirePositiveDownwardClosure;src/is/fivefivefive/CanDis/theory/SetPortSchema.java#arityPolicy`
@@ -1389,7 +1406,7 @@ Every claim follows the same bounded process:
 
 - Class: `U`
 - Claim SHA-256: `91f2da39d8b90aa362920d49a580ce4e9266bea034c9ffef4aca843880d1fd3a`
-- Ledger line: 147
+- Ledger line: 148
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `invalid_flat_splice_closure_rejects;valid_flat_requires_splice_closure`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requireFlatSpliceClosure;src/is/fivefivefive/CanDis/theory/FlatLicense.java#enabled`
@@ -1406,7 +1423,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `b114200dc3396e59e67239676d4d7fce5ceac56b6e9ff6799b889097c9d9339a`
-- Ledger line: 148
+- Ledger line: 149
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `valid_flat_requires_one_root_container`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/FlatLicense.java#atRootPort;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
@@ -1423,7 +1440,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `2c839b74126cb1fffa416e6b93e58418d51d20025a4a2e7563dcf973734fcfec`
-- Ledger line: 149
+- Ledger line: 150
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `valid_flat_requires_homogeneous_element_and_result_types`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
@@ -1440,7 +1457,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `b708325769a359fe30bff6af5db19a53351beb8f8234089a125954b2c3206a7e`
-- Ledger line: 150
+- Ledger line: 151
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `ordinary_zero_arity_needs_no_unit;flat_zero_arity_without_A_and_U_rejects;flat_zero_arity_with_A_and_U_is_valid;valid_zero_admitting_flat_requires_A_and_U`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense;src/is/fivefivefive/CanDis/theory/ArityPolicy.java#admitsZero`
@@ -1457,7 +1474,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `afe3fc840f072921629394f4d7019b4c9c24a02a6b3f0361a2c7941d572cde9a`
-- Ledger line: 151
+- Ledger line: 152
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `nonempty_variadic_rejects_empty_storage;positive_at_least_policy_rejects_zero`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ArityPolicy.java#requireAdmitted`
@@ -1474,7 +1491,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `1b09f2b05d0a34faa0905f9a65479aa22dd62a44670b64890dfcd54a0faab1d9`
-- Ledger line: 152
+- Ledger line: 153
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `flat_set_plus_is_ACI_without_unit;alloy_flat_whitelist_is_exact`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFlatSetOperator;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
@@ -1491,7 +1508,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `7f50ea1852ffdf87e97206d78956e41ebd29722213bd795a426463e965356d72`
-- Ledger line: 153
+- Ledger line: 154
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `flat_bag_plus_requires_exactly_A_and_C_here;integer_flattening_is_profile_bounded`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isIntegerAcOperator;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
@@ -1508,7 +1525,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `84f0e523ab22515d09625fd39b8a51d85d1343fd3b08073d0155422cd6d50208`
-- Ledger line: 154
+- Ledger line: 155
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `four_bit_left_association_overflows;four_bit_right_association_succeeds;no_overflow_addition_reassociation_is_unsound`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
@@ -1525,7 +1542,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `0083271a3f13bcbda49097a05889538db1bb3c9f8fc748645886f99ceeef705f`
-- Ledger line: 155
+- Ledger line: 156
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `calls_joins_arrows_lists_binders_and_decls_are_not_flat`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#isFixedBinaryTypedChainOperator;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape`
@@ -1542,7 +1559,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `045cfe4c36afdadece97e8bd66627907558813a515c99e3d60900c8c2165ed04`
-- Ledger line: 156
+- Ledger line: 157
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `nonflat_bag_two_is_commutative_only;equality_inequality_and_iff_are_C_not_A_or_I`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue`
@@ -1559,7 +1576,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `90580fa8213530641731da222122de6b2857dac50b6d3b49f79241baae89d36e`
-- Ledger line: 157
+- Ledger line: 158
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `disjoint_is_nonflat_bag;bag_retains_duplicate_occurrences;semantic_disjoint_and_structural_disjoint_list_are_distinct`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#requireApplicableLaws`
@@ -1576,7 +1593,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `2987ffb5b4c7996dc25a09fa65e2b799709a45c8ef3338b67046ff90e368bf2b`
-- Ledger line: 158
+- Ledger line: 159
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `calls_joins_arrows_lists_binders_and_decls_are_not_flat;semantic_disjoint_and_structural_disjoint_list_are_distinct;role_sensitive_sequence_observes_swap`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#forShape;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#schemaAt`
@@ -1593,7 +1610,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `ae04f7e0f12a960156f639a69db652e044fdc8c2aa39cecf35b7d3132d53ef60`
-- Ledger line: 159
+- Ledger line: 160
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `boolean_empty_collapses_by_smart_constructor;boolean_singleton_collapses_by_smart_constructor;stored_boolean_carrier_is_nonempty_and_has_no_unit`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
@@ -1610,7 +1627,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `653ed8713894b7003dd496fec5d9f34049bf2e2b4089a176324ee75e7424e527`
-- Ledger line: 160
+- Ledger line: 161
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `bag_retains_duplicate_occurrences;set_observation_is_idempotent;role_sensitive_sequence_observes_swap`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#requireApplicableLaws`
@@ -1627,7 +1644,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `4dff4190a5709dd2253c47a941bd934e2b276bd595b7d9a4a581fd647b772735`
-- Ledger line: 161
+- Ledger line: 162
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `commutativity_witness_index_is_injective;idempotence_witness_index_is_injective;associativity_witness_index_is_injective;unit_witness_index_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#appliesTo`
@@ -1644,7 +1661,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `19ae22028dc1c50a3f7b92d54a236e8696c1b389ef204e6c5ae764cdab60a354`
-- Ledger line: 162
+- Ledger line: 163
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `issued_associativity_requires_exact_registry_entry`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#accepts`
@@ -1661,7 +1678,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `96b8ce07afc0aad611a36396786a36cd235e5c553f40611962d168721e70b936`
-- Ledger line: 163
+- Ledger line: 164
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
 - Lean declarations: `recursive_flatten_iff_same_head_and_typed_A_evidence`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand;src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java#create`
@@ -1678,7 +1695,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `38ae43263de3ae5c80fe60c492bf66afdb85c4f434aaf55d4fa98b7eb1fba686`
-- Ledger line: 169
+- Ledger line: 170
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `exact_relation_arity_is_retained;ordered_columns_are_observable;relation_is_not_generic_unary;missing_type_fails_closed`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#stableString;src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType`
@@ -1695,7 +1712,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `121d9cc65d7d9cecfdb855d72dc9a8bb35a7739a1774a5e7e161a9524a49ef1c`
-- Ledger line: 170
+- Ledger line: 171
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `missing_type_fails_closed;missing_type_does_not_invent_relation`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#graphType;src/is/fivefivefive/CanDis/metric/RepairProjection.java#requireExactResultType`
@@ -1712,7 +1729,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `c5733bd96ae6281cc4f3f9fe6d51e66261c20b0b0bf4b3aa426aaa210c7b0fca`
-- Ledger line: 171
+- Ledger line: 172
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `profile_payload_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/SemanticProfile.java#structuralKey;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyAuthorizedProfile`
@@ -1729,7 +1746,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `3991aa4c4db10ffcd0bcc1bc0197fda0b30377e422d4804b44dd05fd89bdab89`
-- Ledger line: 172
+- Ledger line: 173
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `complete_law_index_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyLawRecord`
@@ -1746,7 +1763,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `55424471ff9ad348d3c3603257809bba4b768fcf53a389c5cb7c799e490ab620`
-- Ledger line: 173
+- Ledger line: 174
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `exact_flat_replay_accepts;flat_replay_payload_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#splices;src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyFlat`
@@ -1763,7 +1780,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `fa0ab4cd0e16850dd0ec8bdb39c2043837ae3c20ead8ea771b5daafe002a1c67`
-- Ledger line: 174
+- Ledger line: 175
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `exact_container_replay_accepts;container_replay_payload_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#inputOccurrences;src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyContainer`
@@ -1780,7 +1797,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `169eb123f570225f3866ce215ce9558385ef374a795d3849c584282fb840cf91`
-- Ledger line: 175
+- Ledger line: 176
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `alpha_is_not_nonidentity_automorphism`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/TypedAlphaEquivalence.java#blocksRelated`
@@ -1797,7 +1814,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `b3b677e2bbd27f23dd74d92e0010a5db42677ed3443ceb21c68908a9caa0a6e1`
-- Ledger line: 176
+- Ledger line: 177
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `complete_binder_index_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#appliesTo;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence`
@@ -1814,7 +1831,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `680aa55c804d4816f24eebe8bbc5aeff08dd9ba573e589c5fda51f5740fc942f`
-- Ledger line: 177
+- Ledger line: 178
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `exact_binder_closure_and_conjugations_accept;missing_swap_from_generated_closure_rejects;missing_occurrence_conjugation_rejects`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#binderView;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#permutationClosure;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireConjugate;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#collectBinderObligations`
@@ -1831,7 +1848,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `413413515277fe133dc56fc4d80e10585618bf045eccafe5ffdd45349fb56ba2`
-- Ledger line: 178
+- Ledger line: 179
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `exact_source_obligation_accepts`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyEvidenceCoverage;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage`
@@ -1848,7 +1865,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `cb07e2c401b005826f599ccaebea150beb922179ed7f8773e678d07c773bcbaf`
-- Ledger line: 179
+- Ledger line: 180
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `stale_owner_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java#flatSources;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#constructionSourceOwners`
@@ -1865,7 +1882,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `981e681a6eac0f86c48a4aa9a4c95d01b6dafea2492683b66f22eb05f7fe0313`
-- Ledger line: 180
+- Ledger line: 181
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `canonical_wire_payload_is_injective;exact_wire_claim_accepts;reordered_wire_children_reject`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#indexedTable;certificate-verifier/src/org/acgn/cert/Bundle.java#contentId;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#sortedSection`
@@ -1882,7 +1899,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `e5f35d45c5799f10455454071df3c72cc22b76b1a6893073126fcfc3f9382ced`
-- Ledger line: 181
+- Ledger line: 182
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `retained_artifact_payload_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#validateConstructionCoverage;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#binderOccurrenceCertificates;src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java#constructionSources`
@@ -1899,7 +1916,7 @@ Every claim follows the same bounded process:
 
 - Class: `I/P`
 - Claim SHA-256: `d5fc74313d3b13382e223a4b64dd36ed2b4ef0c1ea7eeebb8acad34a58731b0c`
-- Ledger line: 182
+- Ledger line: 183
 - Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
 - Lean declarations: `certified_source_mutation_rejects;exact_projection_source_accepts;stale_projection_source_rejects;forged_projection_digest_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireRepairProjectionSources;src/is/fivefivefive/CanDis/metric/RepairProjection.java#project`
@@ -1916,7 +1933,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `80da7da76d5f854388a5a5fab6002b0cb2e00160851be975948c14df8545e22c`
-- Ledger line: 183
+- Ledger line: 184
 - Lean file: `docs/section3-repair-audit/formal/Phase3EmptyRelations.lean`
 - Lean declarations: `parser_retains_arity;no_decoder_recovers_both_parent_column_orders;arityless_empty_fails_closed;empty_graph_arity_is_injective;empty_arities_are_distinct`
 - Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#emptyRelation;src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java#emptyRelationArity`
@@ -1933,7 +1950,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `9080df58143d6f8aeaee0b1fa1cc1da32266e19a0995db9424a5ca5b5492de28`
-- Ledger line: 184
+- Ledger line: 185
 - Lean file: `docs/section3-repair-audit/formal/Phase3SemanticProfile.lean`
 - Lean declarations: `exact_selector_separates_width_4_and_5;omitted_width_defaults_to_four;explicit_zero_width_is_preserved;exact_selector_separates_overflow_modes;exact_selector_separates_temporal_bounds;exact_selector_separates_scope_contexts;exact_selector_separates_execution_options;exact_selector_separates_rewrite_versions;exact_selector_separates_signature_versions;missing_selection_rejects;ambiguous_selection_rejects;parser_owned_unique_selection_derives;foreign_command_selection_rejects;caller_asserted_profile_is_not_authorized;parser_owned_profile_is_authorized;compact_preserves_profile;compact_cross_profile_comparison_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/AlloySemanticProfileFactory.java#fromExactlyOne;src/is/fivefivefive/CanDis/theory/AlloySemanticProfileFactory.java#requireParserOwnership;src/is/fivefivefive/CanDis/theory/SemanticProfile.java#fromSourceCommand;src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#requirePrepared`
@@ -1950,7 +1967,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `a960ef731ffea7cae8081125e29b82017e2b180d8bd545d87c16d94254ca7c61`
-- Ledger line: 190
+- Ledger line: 191
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `stored_live_owner_is_in_bucket;stored_live_shape_has_nonempty_finite_bucket;bucket_contains_only_live_owners;live_owner_membership_is_permutation_invariant;duplicate_stored_records_do_not_change_membership;live_owner_bucket_is_deterministic;initial_graph_is_quiescent_exact;supported_operation_preserves_quiescent_exact;supported_run_preserves_quiescent_exact;supported_quiescent_public_observation_is_exact`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#requireHashBucketsExact;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#hashBucketsSnapshot;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#checkInvariants`
@@ -1967,7 +1984,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `084ce45f894a4e20927c30843e8aa7851fada2f4385639bd2e3b23a0d3bff5c5`
-- Ledger line: 191
+- Ledger line: 192
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `failed_collision_preserves_both_owners`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
@@ -1984,7 +2001,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `462917090ce0f6a7af44e4d63883a8fcf34de77d8d03d56372cc2a17c885a4a2`
-- Ledger line: 192
+- Ledger line: 193
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `second_orientation_is_considered;evaluation_records_both_directed_attempts`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
@@ -2001,7 +2018,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `ab47c5a21bf9acba434c49c0796b183d63d1a40b8d08fb61c120d67e948d4624`
-- Ledger line: 193
+- Ledger line: 194
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `admission_requires_an_orientation`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdgeOriented;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#unionCertified`
@@ -2018,7 +2035,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `331b981e2d59da0d84483d84d8c8cc19d07c4ce73ca89bfde8aaf0f6bfdb3c54`
-- Ledger line: 194
+- Ledger line: 195
 - Lean file: `docs/section3-repair-audit/formal/Phase4WireConservation.lean`
 - Lean declarations: `incomparable_decision_preserves_coexistence`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
@@ -2035,7 +2052,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `f2cfca69464ef3a1113b9efa31d2eaa5d82f65d4221e5ea1c920cb2c17791f2a`
-- Ledger line: 195
+- Ledger line: 196
 - Lean file: `docs/section3-repair-audit/formal/Phase4WireConservation.lean`
 - Lean declarations: `union_partition_count;valid_union_has_no_silent_source_loss;valid_union_result_is_exact;valid_union_retirement_ledger_is_exact;valid_rebuild_replaces_or_retires_exactly;valid_union_frame_is_the_exact_effect;valid_rebuild_base_frame_is_the_exact_effect;valid_rebuild_record_frame_is_the_exact_effect`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateTraceSnapshot.java#verifyConservationTo;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#unionCertifiedInternal;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions`
@@ -2052,7 +2069,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `0bd822921ae2c9f39329fd0cc21480548965c0e02e22a6470e479b1d93ed0a99`
-- Ledger line: 196
+- Ledger line: 197
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `canonical_preimage_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#parentUsesSnapshot`
@@ -2069,7 +2086,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `9e9ffde2a03d7ad605388bba45460064d6106d4be38dbbafeff2fc2a049af8fe`
-- Ledger line: 197
+- Ledger line: 198
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `initial_graph_is_quiescent_exact;supported_operation_preserves_quiescent_exact;supported_run_preserves_quiescent_exact;supported_quiescent_public_observation_is_exact`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuildHashConsExactly;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#requireHashBucketsExact;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#hashIndexRebuildCount`
@@ -2086,7 +2103,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `0a39e5dd9a5342d92f97ea8567bd2ab76a4d4753c6e12d8d9cbe475509782321`
-- Ledger line: 198
+- Ledger line: 199
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `revision_only_memo_is_unsound;changed_record_is_reconsidered`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#invalidateCollisionMemo;src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#collisionParentEdge`
@@ -2103,7 +2120,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `4a8255c26148e3ecd590fe0346fcfa764a892d9800d2883c65c9bf2eaa9682e0`
-- Ledger line: 199
+- Ledger line: 200
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `admitted_merge_strictly_decreases_positive_leaders`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java#rebuild`
@@ -2120,7 +2137,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `4d40daa73cffd3cc30363c0ddb3f0a5467907489b67460490c28157b37b52fe6`
-- Ledger line: 200
+- Ledger line: 201
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `canonical_preimage_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ParentRecordKey.java#structuralKey;certificate-verifier/src/org/acgn/cert/CheckpointVerifier.java#verifyTransitions`
@@ -2137,7 +2154,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `ff4b8bf192cab83740fe77850b109b4de517715ed1447ab81c700aa3385380ff`
-- Ledger line: 201
+- Ledger line: 202
 - Lean file: `docs/section3-repair-audit/formal/Phase4CollisionBuckets.lean`
 - Lean declarations: `schema_v10_is_accepted;historical_and_future_schema_versions_reject`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse`
@@ -2154,7 +2171,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `1058e7eb242b149f09c6fcd68fc12ed5b9d39375479e803ec7024ebde55e692b`
-- Ledger line: 207
+- Ledger line: 208
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `set_none_exactly_one_binding;some_set_none_equal_none;all_set_none_false_is_false`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet`
@@ -2171,7 +2188,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `4f67c3bf1336bf18d475a910b2bd81df88a81ec31e1c395c60458a637c766d87`
-- Ledger line: 208
+- Ledger line: 209
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `lone_none_exactly_one_binding;some_lone_none_equal_none;all_lone_none_false_is_false`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet`
@@ -2188,7 +2205,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `3ffdb7ee391b9a646efc73e75a12d77f50fad794b7033c7e289749b4aa7a158f`
-- Ledger line: 209
+- Ledger line: 210
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `bare_declaration_defaults_to_one;explicit_declaration_overrides_default`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#prenexRelDecl`
@@ -2205,7 +2222,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `8fbb71041b3a429e177e279f94d18f3269ccaeb4d28d5fc05ae951c8e93ca7b1`
-- Ledger line: 210
+- Ledger line: 211
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `none_subset;none_in_none`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode`
@@ -2222,7 +2239,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `4252bf755653e6ab1d7954ae66372c23a5df58520d532a0dfef38b7d46ec0652`
-- Ledger line: 211
+- Ledger line: 212
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `arbitrary_in_none_is_not_false_without_evidence;nonempty_in_none_is_false;in_unknown_none_stays_guarded;in_proven_nonempty_none_folds_false`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
@@ -2239,7 +2256,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `44498c99ed4894a86433afcd0d0262fe25e136bb0da4574bebf4a2a4fd4ab25e`
-- Ledger line: 212
+- Ledger line: 213
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `univ_requires_an_inhabitant_for_nonemptiness;empty_universe_is_not_nonempty;some_binding_proves_nonempty;one_binding_proves_nonempty;exactly_none_has_the_none_binding;exactly_binding_does_not_prove_nonempty;univ_without_inhabitant_witness_does_not_prove_nonempty;synthetic_label_never_proves_nonempty`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyNonemptySet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#isStaticallyNonempty`
@@ -2256,7 +2273,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `da74ebe0acd1ce6b63daadf6b3b6d1abd901208b31d3e9381134dc2b5130be83`
-- Ledger line: 213
+- Ledger line: 214
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `none_not_in_none_is_false;nonempty_not_in_none_is_true;no_relation_not_in_univ;not_in_unknown_none_stays_guarded;not_in_proven_nonempty_none_folds_true`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteNode`
@@ -2273,7 +2290,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `7b2c8c1094ecd7448db125f0a836fbd21a155b902aee0750477deb109113262f`
-- Ledger line: 214
+- Ledger line: 215
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `empty_domain_all;empty_domain_not_some;empty_domain_no;empty_domain_not_one;empty_domain_lone;empty_domain_not_not_lone;some_none_has_no_binding;one_none_has_no_binding;exactly_none_has_the_none_binding`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteQuantifier`
@@ -2290,15 +2307,15 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `a783f4e5b721db166f6236966d15ee0bb748825dea1f8afa963b46a94dfd59c4`
-- Ledger line: 215
+- Ledger line: 216
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `snapshot_after_guard_agrees`
-- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalize;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
+- Lean declarations: `boolean_and_true_identity;boolean_or_false_identity;boolean_and_false_absorbs;boolean_or_true_absorbs;relation_metatype_named_true_is_not_boolean;relation_exact_type_named_false_is_not_boolean;relation_source_type_named_true_is_not_boolean;exact_boolean_true_is_recognized;exact_boolean_false_is_recognized;relation_container_cannot_apply_boolean_identity;contradictory_container_source_type_blocks_boolean_identity;validated_operator_container_can_apply_boolean_identity;generic_boolean_type_does_not_authorize_an_operator;internally_derived_boolean_operator_is_authorized;public_mutation_revokes_internal_boolean_authority;trusted_normalized_construction_retains_internal_boolean_authority;generic_bool_after_public_mutation_cannot_reuse_derived_authority;relation_operand_blocks_boolean_rewrite;all_boolean_operands_admit_boolean_rewrite;forged_boolean_join_is_not_a_formula_operand;forged_boolean_binding_is_not_a_formula_operand;relation_ite_is_retained_but_its_children_are_traversed;exact_boolean_ite_may_expand;incomplete_call_is_rejected_before_parent_rewrite;complete_call_reaches_rewrite_traversal;malformed_descendant_call_blocks_the_whole_rewrite_graph;every_descendant_is_checked_before_rewrite;malformed_union_alternative_blocks_component_admission;malformed_temporal_descendant_blocks_parent_rewrite;forged_temporal_reference_is_rejected;wrong_owner_temporal_reference_is_rejected;unbound_temporal_source_is_rejected;wrong_temporal_source_arity_is_rejected;wrong_temporal_source_visit_is_rejected;incomplete_temporal_edge_bucket_is_rejected;duplicate_temporal_edge_position_is_rejected;removed_temporal_child_vertex_is_rejected;removed_temporal_graph_root_is_rejected;mutated_temporal_source_graph_is_rejected;invalid_live_temporal_reference_cannot_be_sealed;valid_live_temporal_reference_can_be_sealed;sealed_temporal_reference_does_not_require_retained_parser_graph;sealed_temporal_reference_rejects_another_owner;transplanted_temporal_authority_is_rejected;owner_bound_temporal_reference_is_admitted;unreferenced_temporal_child_is_rejected;exact_temporal_child_partition_is_admitted;overlapping_temporal_child_ranges_are_rejected;temporal_evidence_is_not_reusable;successive_temporal_authorities_are_globally_distinct;foreign_arena_child_is_rejected;foreign_profile_child_is_rejected;snapshot_preserves_owning_arena_and_profile;frozen_snapshot_is_immutable;atomic_admission_and_freeze_has_no_mutable_success_state;mutation_rejects_after_atomic_certification_freeze;publishing_normal_form_before_arena_freeze_is_invalid;publishing_after_arena_freeze_is_valid;shared_frozen_descendant_blocks_other_parent_rewrite;all_mutable_reachable_nodes_admit_rewrite;failed_whole_graph_preflight_has_no_partial_result;generated_rewrite_node_inherits_source_arena;thread_local_rewrite_node_is_rejected_when_threads_differ;sealed_egraph_node_admission_is_trusted;overridable_egraph_node_admission_is_rejected;disconnected_registered_union_component_is_pruned;reachable_union_component_member_is_retained;registration_alone_does_not_imply_reachability;empty_root_closure_prunes_every_registered_class;all_null_root_list_has_empty_closure;rejected_child_replacement_preserves_prior_state;admitted_child_replacement_commits_once;a_pruned_eclass_handle_cannot_be_reused;a_retained_eclass_handle_remains_live;a_retired_eclass_fails_admission_before_traversal;retirement_releases_all_eclass_payload;failed_temporal_rewrite_preserves_operation_and_matrix;successful_temporal_rewrite_commits_operation_and_matrix_together;serialized_temporal_rewrite_and_freeze_has_only_atomic_outcomes;public_metadata_cannot_mint_builtin_set_authority;parser_factory_authorizes_builtin_set_constant;derived_rewrite_authorizes_builtin_set_constant;trusted_nullary_rebuild_preserves_builtin_set_authority;adding_a_child_revokes_builtin_set_authority;retired_node_semantic_payload_is_unreadable;retired_child_view_is_unreadable;cross_arena_semantic_comparison_is_rejected;relation_union_none_is_relation;relation_union_univ_is_univ;relation_union_idempotent;relation_union_commutative;relation_union_associative;subset_transitive;subset_of_union_reaches_common_carrier;subset_of_union_does_not_prove_one_parent;authenticated_relational_widening_preserves_a_subrelation;subrelation_union_full_carrier_is_carrier;nested_subsignature_union_carrier_is_carrier;empty_relation_product_left;empty_relation_product_right;empty_relation_join_left;empty_relation_join_right;two_subrelations_union_full_carrier_is_carrier;subrelation_absorbs_through_left_association;subrelation_absorbs_through_right_association;widened_relational_union_flattening;subtype_and_exact_int_alternatives_are_covered;reverse_subtype_widening_is_rejected;sibling_subtype_widening_is_rejected;relation_arity_change_is_not_a_widening;relation_intersection_none_is_none;relation_intersection_univ_is_relation;relation_intersection_idempotent;relation_intersection_commutative;relation_intersection_associative;relation_difference_itself_is_none;equivalent_relations_difference_is_none;none_difference_is_none;relation_difference_none_is_relation;relation_difference_univ_is_none;boolean_complement_or_is_true;boolean_complement_and_is_false;equivalent_boolean_complement_or_is_true;equivalent_boolean_complement_and_is_false;source_rewrite_before_snapshot_agrees;snapshot_after_guard_agrees;exact_integer_plus_is_not_relational_union;exact_relation_plus_remains_relational_union;integer_addition_is_not_idempotent_witness;int_typed_surface_plus_remains_relational_union;int_typed_surface_minus_remains_relational_difference;exact_unary_int_classifier_iff;singleton_int_is_exact_unary_int;heterogeneous_int_signature_is_not_exact_unary_int;consecutive_nested_operator_occurrences_are_distinct;three_nested_ite_branch_occurrences_are_pairwise_distinct;distinct_equal_literal_occurrences_each_start_at_first_visit;swapped_equality_or_its_complement;abstract_direct_extension_cover;abstract_single_extension_cover;nested_abstract_extension_cover;complete_abstract_cover_absorbs_subrelation;union_with_outside_member_is_not_carrier;relation_product_distributes_over_union_right;relation_product_distributes_over_union_left;abstract_cover_lifts_through_product_right;abstract_cover_lifts_through_product_left;abstract_cover_lifts_through_integer_set_coordinate;abstract_cover_lifts_with_integer_first_coordinate;diagonal_products_do_not_cover_full_product;relation_product3_distributes_over_union_third;abstract_cover_lifts_through_variadic_product;complete_two_coordinate_grid_is_product_of_unions;abstract_covers_lift_through_complete_product_grid;partial_product_grid_does_not_cover_full_product;missing_abstract_branch_does_not_cover_parent;enum_two_atom_cover;public_metadata_cannot_mint_builtin_identity;parser_factory_authorizes_builtin_identity;trusted_exact_clone_preserves_builtin_identity;identity_relation_join_left;identity_relation_join_right;transpose_relation_involutive;transpose_identity_relation;transpose_relation_product;positive_identity_path_implies_equality;transitive_closure_identity_relation;reflexive_transitive_closure_identity_relation;positive_path_transitive;reflexive_transitive_closure_transitive;path_of_reflexive_transitive_edges;transitive_closure_idempotent;transitive_of_reflexive_transitive_is_reflexive_transitive;reflexive_transitive_closure_idempotent;reflexive_of_transitive_is_reflexive_transitive`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#normalize;src/is/fivefivefive/CanDis/core/NormalForm.java#requireAdmittedTemporalTree;src/is/fivefivefive/CanDis/core/NormalForm.java#createTemporalReference;src/is/fivefivefive/CanDis/core/NormalForm.java#requireCompleteTemporalChildCoverage;src/is/fivefivefive/CanDis/core/NormalForm.java#stageTemporalChildren;src/is/fivefivefive/CanDis/core/NormalForm.java#pushTemporalNegations;src/is/fivefivefive/CanDis/core/NormalForm.java#freezeForCertification;src/is/fivefivefive/CanDis/core/NormalForm.java#negatedMatrixBeforeNormalization;src/is/fivefivefive/CanDis/core/NormalForm.java#rewriteBranchConnectives;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/EGraphNode.java#builtinSetConstant;src/is/fivefivefive/CanDis/core/EGraphNode.java#derivedSetConstant;src/is/fivefivefive/CanDis/core/EGraphNode.java#areSemanticComplements;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameSemanticInvocation;src/is/fivefivefive/CanDis/core/EGraphNode.java#certifiedContainerInvocationKey;src/is/fivefivefive/CanDis/core/EGraphNode.java#certifiedAciSingletonInvocation;src/is/fivefivefive/CanDis/core/EGraphNode.java#setSemanticIdentity;src/is/fivefivefive/CanDis/core/EGraphNode.java#isSetConstant;src/is/fivefivefive/CanDis/core/EGraphNode.java#isBooleanConstant;src/is/fivefivefive/CanDis/core/EGraphNode.java#hasBooleanFormulaType;src/is/fivefivefive/CanDis/core/EGraphNode.java#hasBooleanOperands;src/is/fivefivefive/CanDis/core/EGraphNode.java#markDerivedBooleanRewriteAuthority;src/is/fivefivefive/CanDis/core/EGraphNode.java#setNormalizedChildren;src/is/fivefivefive/CanDis/core/EGraphNode.java#inOwningArena;src/is/fivefivefive/CanDis/core/EGraphNode.java#createDerivedNode;src/is/fivefivefive/CanDis/core/EGraphNode.java#replaceChildren;src/is/fivefivefive/CanDis/core/EGraphNode.java#appendChild;src/is/fivefivefive/CanDis/core/EGraphNode.java#addChildInvocation;src/is/fivefivefive/CanDis/core/EGraphNode.java#requireAdmittedArity;src/is/fivefivefive/CanDis/core/EGraphNode.java#requireAdmittedGraph;src/is/fivefivefive/CanDis/core/EGraphNode.java#requireCompatibleChild;src/is/fivefivefive/CanDis/core/EGraphNode.java#snapshot;src/is/fivefivefive/CanDis/core/EGraphNode.java#admitAndFreezeForCertification;src/is/fivefivefive/CanDis/core/EGraphNode.java#saturate;src/is/fivefivefive/CanDis/core/EGraphNode.java#retainReachable;src/is/fivefivefive/CanDis/core/EGraphNode.java#retireSemanticPayload;src/is/fivefivefive/CanDis/core/EGraphNode.java#requireLive;src/is/fivefivefive/CanDis/core/RenamedIdUnionFind.java#retainRegisteredIds;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameInvocation;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameFlatOperatorInstance;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameChildInvocations;src/is/fivefivefive/CanDis/core/EGraphNode.java#isParserCertifiedUnionWidening;src/is/fivefivefive/CanDis/core/EGraphNode.java#isParserCertifiedSubrelationOfFullSignature;src/is/fivefivefive/CanDis/core/EGraphNode.java#hasCompatibleRelationArity;src/is/fivefivefive/CanDis/core/EGraphNode.java#isExactRelationNode;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#fromParser;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#isParserCertifiedSubsignatureOf;src/is/fivefivefive/CanDis/core/NormalForm.java#removeSubrelationsCoveredByFullCarriers;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#from;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedCartesianProduct;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#isParserCertifiedRelationSubfamilyOf;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#getBinaryExprSymbolLabelAndSemantic;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#connectBinaryOccurrence;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#admitted;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireExactLawCarrier;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#buildFlatApplication;src/is/fivefivefive/CanDis/ir/IRAgent.java#TemporalReferenceEvidence;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/ir/IRAgent.java#metatypeOf;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#parserCertifiedAbstractCover;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedAbstractUnionCarrier;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductUnionCarrier;src/is/fivefivefive/CanDis/core/EGraphNode.java#plainProductFactorInvocations;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductSubgroupReduction;src/is/fivefivefive/CanDis/core/EGraphNode.java#buildDerivedPlainProduct;src/is/fivefivefive/CanDis/core/EGraphNode.java#containsCompleteProductGrid;src/is/fivefivefive/CanDis/core/EGraphNode.java#derivedParserSignature;src/is/fivefivefive/ACGN/alloy/ConstSymbol.java#builtinIden;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/CanDis/core/EGraphNode.java#builtinIdentityRelation;src/is/fivefivefive/CanDis/core/EGraphNode.java#isIdentityRelation;src/is/fivefivefive/CanDis/core/EGraphNode.java#saturateRelationalUnaryRule;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Java applies guarded normalization and closes exposed negation before cloning the certificate-facing matrix; the Lean snapshot theorem models the ordering contract but not the complete mutable traversal
+- Claim-specific process/limits: Java applies guarded Boolean laws, authenticated relational none/univ units and absorbers, difference identities, and Boolean complement/contradiction before the certificate snapshot. Enclosing complement and self-difference rules compare operands in the same typed/profile-indexed certified ACI quotient, including composed slot invocations, without mutating the source operands; ACI-distinct operators remain barriers. Relational and arithmetic additive families are selected from parser opcode identity; an exact INT carrier does not relabel relational PLUS/MINUS; exact Int classification requires the complete parser product family to be the singleton unary built-in Int product, while heterogeneous Int/signature alternatives remain a relation family; nested same-symbol binary occurrences retain monotone visits; distinct equal-valued literal nodes retain identity-scoped visits; commutative dual comparison consumes the certified child multiset; relational PLUS widening requires same-module, same-arity, column-wise authenticated ancestry coverage for every correlated product and explicit coercions. An actual parser-authenticated signature additionally absorbs a declaration-DAG descendant only when every subset-parent branch recursively reaches the carrier; primitive full carriers also absorb exact-type-proved subrelations, while a merely carrier-typed expression has no named subset-carrier authority. Exact same-arity empty relations are subsets of every relation, and plain relational ARROW/JOIN with an authenticated empty operand derive an exact-arity empty result before certification. Boolean laws apply only with concordant literal, formula-opcode-family, immediate operand, and parser-or-derived operator authority. Generic Bool type metadata is not operator provenance, and public semantic mutation revokes an internal derivation token. Relation-valued ITE is retained while its children are traversed; only an authorized exact Boolean ITE expands. Admission checks every alternative in each reachable union component and every temporal phase before branch, absorber, or dualization rewrites. A temporal-looking REF additionally requires one-use parser-issued source/graph/visit/downlink/type/lineage evidence, owner and child-range agreement, exact source arity, an exact source-visit edge bucket with unique contiguous positions and live captured root and child targets, live root-to-source reachability and graph-edge counterparts until a final validated snapshot seal, and one exact nonoverlapping exhaustive owner-issued child partition, plus a globally unique authority identity; metadata-only, unbound, cross-visit, incomplete-bucket, root-removed, child-removed, graph-mutated, wrong-owner, reused, or transplanted references reject. Named arity-zero LET references are the only explicit pre-beta placeholder. Reserved none/univ recognition additionally requires internal parser-factory or derived authority; public metadata cannot mint it, trusted nullary normalization preserves it, and any child mutation revokes it. Child insertion and semantic comparison require one arena/profile; rejected child and CALL-metadata mutations preserve their complete prior state; admission and complete reachable-component freezing share one arena monitor, EGraphNode is a final trusted representation with no producer override dispatch, and the NormalForm publishes frozen only afterward. Saturation preflights the complete reachable closure so another parent cannot mutate a shared frozen descendant or partially rewrite a mutable sibling before rejection. Rewrite-created nodes and snapshots inherit the existing source graph arena even when execution moves across threads, and creation rechecks owner mutability under that arena monitor. Retained-arena cleanup follows child edges and reachable union components but not registration alone; empty and all-null root sets clear both storage layers, and pruned handles become permanently retired, fail admission and semantic reads before traversal, invalidate escaped child views, and release node/child plus cache payload. NormalForm-derived rewrites preserve source-arena ownership, while one shared temporal-tree lifecycle monitor serializes child construction, normalization, admission, complete staging/commit, and recursive freeze. Lean pins the bounded relation ACI laws, equality transport into complement/self-difference, component, temporal, source-visit, root-liveness, child-liveness, exact temporal-child coverage, live-graph, owner-bound seal, atomic publication, transactional mutation, whole-graph mutability, generated-node arena inheritance, all-null closure, serialized lifecycle outcomes, sealed-dispatch, reachability-pruning, authority, and operand-family gates; complete Java-to-Lean mutable-graph refinement remains open. Complete parser-owned direct extends branches additionally reconstruct an abstract carrier, recursively through singleton abstract ancestors; missing branches, non-abstract parents, and subset-in-only declarations remain outside that rule. Parser-authorized iden additionally closes exact JOIN identity, exact binary transpose closes involution and binary-product reversal, and exact nested closure closes all four transitive/reflexive fixed points before the snapshot; SAT near misses and standalone finite-path proofs retain their boundaries. Enum carriers have an explicit complete-atom cover regression.
 - Current proof state: `INCOMPLETE`
 
 ### P5-10
@@ -2307,7 +2324,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `fe6e99245458df62856a377aa4b006ea615e6c389fdf31d08fc6abdb045795d1`
-- Ledger line: 216
+- Ledger line: 217
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `translated_sat_has_solver_authority;translated_unsat_has_solver_authority;unsupported_has_only_parser_type_lowering_authority;every_command_has_exactly_one_authority_record`
 - Implementation references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#CommandAuthorityRecord;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#checkHigherOrderCommandAuthorities`
@@ -2324,7 +2341,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `d47927aa3fbf53685a9009de72bf8e38a3aa860736c74f22d75ebea29e9e7050`
-- Ledger line: 217
+- Ledger line: 218
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `ablation_mirror_counterexample_for_one_binding;ablation_mirror_counterexample_for_some_binding`
 - Implementation references: `src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteScopedTree`
@@ -2341,7 +2358,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `40d847f6a1f63a52b785648d6d34c8d59497e7312f0500313a46120c65026cf1`
-- Ledger line: 218
+- Ledger line: 219
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `none_intersection_is_none;positive_one_over_none_intersection_has_no_binding;relation_difference_itself_is_none;positive_one_over_self_difference_has_no_binding`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#isStaticallyEmptySet;src/is/fivefivefive/CanDis/core/EGraphNode.java#sameSemanticInvocation;src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java#rewriteOnce`
@@ -2358,7 +2375,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `e47c5dc600c156f5a2bc38faf25a1b6f2494a480722e97c2eb56436f4de315b7`
-- Ledger line: 219
+- Ledger line: 220
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `existing_trace_kind_cannot_record_source_rewrite`
 - Implementation references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java#prepareForVerification;src/is/fivefivefive/CanDis/theory/CertificateProvenance.java#capture`
@@ -2375,7 +2392,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `99fcfbd81695b38d365749fcceda4328aa3b05d885b0abe2e0bc666d90101be4`
-- Ledger line: 220
+- Ledger line: 221
 - Lean file: `docs/section3-repair-audit/formal/PrenexAciScheduling.lean`
 - Lean declarations: `some_before_all_and;all_before_some_or;schedule_preserves_membership;schedule_preserves_length;exactly_none_retains_one_empty_binding;exactly_none_binding_count;different_scope_paths_separate_shadowed_bindings;different_slots_separate_bindings;same_scope_distinct_slots_ignore_presentation;allocation_returns_current_slot_and_advances;consecutive_allocations_are_distinct;same_spelling_does_not_override_scope_identity;same_spelling_nested_let_bindings_separate;signature_declaration_arity_includes_field_declarations_and_end;one_field_signature_has_two_declaration_children;lexical_binding_precedes_global;signature_leaf_ignores_other_namespaces;field_leaf_ignores_other_namespaces;missing_lexical_binding_rejects;reachable_signature_is_indexed;same_named_fields_with_distinct_exact_types_separate;distinct_declared_aliases_separate_module_instances;same_alias_distinct_module_instances_reject`
 - Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#flattenBooleanAssociationForPrenex;src/is/fivefivefive/CanDis/core/NormalForm.java#prenexChildOrder;src/is/fivefivefive/CanDis/core/NormalForm.java#hasEmptyAdmissibleBindingSet;src/is/fivefivefive/CanDis/metric/RepairProjection.java#addBinding;src/is/fivefivefive/CanDis/metric/RepairProjection.java#registerAliasType;src/is/fivefivefive/ACGN/structure/ScopeTreeNode.java#allocateBindingSlot;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitRelDecl;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitAbsorbing;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#indexReachableGlobalRelations;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#fieldSymbol;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#indexCallableDeclarations;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#registerImportedAlias;src/is/fivefivefive/ACGN/alloy/LetSymbol.java#LetSymbol`
@@ -2392,7 +2409,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `14959fe8a629b4661550cf2c51b90cb123c9bc6e9a53974d9201e6abd465c2b1`
-- Ledger line: 221
+- Ledger line: 222
 - Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
 - Lean declarations: `exact_none_spelling_is_builtin;exact_univ_spelling_is_builtin;capitalized_none_is_a_user_signature;capitalized_univ_is_a_user_signature;every_nonreserved_name_is_a_user_signature;none_and_univ_are_distinct_on_bool`
 - Implementation references: `src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java#fromAst;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#getSemanticIdentity;src/is/fivefivefive/CanDis/ir/IRAgent.java#attachSourceMetadata;src/is/fivefivefive/CanDis/core/EGraphNode.java#isSetConstant;src/is/fivefivefive/CanDis/core/NormalForm.java#isNone`
@@ -2403,13 +2420,489 @@ Every claim follows the same bounded process:
 - Claim-specific process/limits: The original solver-backed P5BuiltinIdentityProbe now reports rawEquivalent=false and all four formerly unsound canonical equalities false; 127 parser-backed checks cover certified and five ablation paths; structural coverage and immutable-snapshot review remain open
 - Current proof state: `INCOMPLETE`
 
+### P5-16
+
+**Claim.** Relational converse over exact parser-authenticated binary relations distributes through union, intersection, and difference while preserving the container operator and correlated type columns.
+
+- Class: `U/I`
+- Claim SHA-256: `ef754d535f3d9bfb09d656183a57e21b56cda473348e555f07898eb576dbfd08`
+- Ledger line: 223
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `converse_involutive;converse_distributes_over_union;converse_distributes_over_intersection;converse_distributes_over_difference`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedTranspose;src/is/fivefivefive/CanDis/core/NormalForm.java#distributeTransposeThroughContainer;src/is/fivefivefive/CanDis/core/EGraphNode.java#distributeTransposeThroughContainer`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#checkRelationalDistributions`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Parser-backed union, intersection, and difference pairs have certified equality and distance zero; composition through a product union and a quantified relation slot also closes while operator near misses remain distinct; exact-type tests reject synthetic, serialized, wrong-arity, and cross-module authority; universal Java-parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-17
+
+**Claim.** Cartesian-product union factoring preserves ordinary finite distributivity only for fixed-coordinate subgroups or complete coordinate grids; partial and diagonal grids remain distinct.
+
+- Class: `U/I`
+- Claim SHA-256: `4aabdec9f2ed544f980e94e3ab59bb03eddd3e63e3c87cb64fbb8ac4ac2310a1`
+- Ledger line: 224
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_product_distributes_over_union_right;relation_product_distributes_over_union_left;relation_product3_distributes_over_union_third;complete_two_coordinate_grid_is_product_of_unions;partial_product_grid_does_not_cover_full_product`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationUnion;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductUnionCarrier;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductSubgroupReduction;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#checkRelationalDistributions`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Parser-backed left/right binary, ternary, and complete-grid pairs have certified equality and distance zero; partial and diagonal grids remain positive and exact union authority-loss/mixed-module cases reject; unbounded grid recursion refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-18
+
+**Claim.** Cartesian-product union factoring preserves bound-slot invocations under certified coordinate distribution; fixed-coordinate subgroups and complete grids normalize, while partial grids remain distinct.
+
+- Class: `U/I`
+- Claim SHA-256: `10b6cc81d2d5bcdd5e8d8583194a98ea6cd151063be86cfafb920fa685606995`
+- Ledger line: 225
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `bound_relation_slot_product_distributes_right;bound_relation_slot_product_distributes_left;complete_two_coordinate_grid_is_product_of_unions;partial_product_grid_does_not_cover_full_product`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductUnionCarrier;src/is/fivefivefive/CanDis/core/EGraphNode.java#plainProductFactorInvocations;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductSubgroupReduction`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedDistributiveLattices;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#checkRelationalDistributions`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Arbitrary bound set parameters exercise fixed-left, fixed-right, and complete-grid factoring at certified distance zero; a three-cell partial grid remains nonzero and Alloy supplies the matching UNSAT/SAT witnesses; universal Java invocation-map refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-19
+
+**Claim.** Boolean conjunction/disjunction and relational intersection/union normalize by the two absorption laws and the two distributive laws only under their certified operator and exact-type authorities.
+
+- Class: `U/I`
+- Claim SHA-256: `a87bbedfc0801ac86b71a518ca41ec5e7da2b62ca63e1c41e64b002ad6957554`
+- Ledger line: 226
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `boolean_and_absorbs_or;boolean_or_absorbs_and;boolean_and_distributes_over_or;boolean_or_distributes_over_and;relation_intersection_absorbs_union;relation_union_absorbs_intersection;relation_intersection_distributes_over_union;relation_union_distributes_over_intersection;empty_intersection_prefix_does_not_skip_foreign_authority`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationUnion;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationIntersection;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedLatticeNormalForm;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedDistributiveLattices;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkEmptyRelationArity;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#checkRelationalDistributions`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: All eight dual laws are checked over overlapping bound set parameters and compare at certified distance zero; exact union/intersection type derivation retains live parser authority, handles authenticated empty carriers, validates every operand after an empty prefix, and rejects synthetic, serialized, or cross-module evidence; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-20
+
+**Claim.** Relational union with, and intersection by, a parser-certified full carrier normalize to the carrier and subrelation respectively only when declaration or exact correlated ancestry proves containment; composite carrier authority is restricted to closed primitive-signature unions/products, and mutual containment retains one ACI representative.
+
+- Class: `U/I`
+- Claim SHA-256: `cef3491bd80cce42fc3ee66bb572f182161c7fe0914f7d849e7b57691bfbdb39`
+- Ledger line: 227
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `subrelation_union_full_carrier_is_carrier;subrelation_intersection_full_carrier_is_subrelation;subrelation_intersection_full_product_is_subrelation;common_static_carrier_does_not_make_a_subrelation_full`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#isParserCertifiedSetSubfamilyOf;src/is/fivefivefive/CanDis/core/EGraphNode.java#isParserCertifiedSubrelationOfFullCarrier;src/is/fivefivefive/CanDis/core/NormalForm.java#removeFullCarriersContainingSubrelations`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedFullCarrierAbsorption;src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#checkIntegerCarrierSetOperators`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Primitive and subset signatures, typed fields, and binary product carriers close at certified distance zero only with declaration or exact ancestry containment; same-typed fields, sibling subsets, and proper sub-products remain distinct; direct Alloy supplies five UNSAT laws and four SAT/nonvacuity controls; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-21
+
+**Claim.** Set-difference factoring applies exactly the four pointwise Boolean schemas with a common kept or removed relation and preserves each typed slot invocation.
+
+- Class: `U/I`
+- Claim SHA-256: `7ca206e8356d06ff907a477c4317fa02b275f4379f80239127b508a835f63ea7`
+- Ledger line: 228
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `difference_union_common_right;difference_intersection_common_right;difference_intersection_common_left;difference_union_common_left`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedDifferenceFactoring;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: All four schemas compare at certified distance zero over relation-valued parameters and direct Alloy reports no counterexample; operand invocation maps and exact result type are retained, while universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-22
+
+**Claim.** Relational JOIN distributes over relational union on either coordinate only when exact parser-derived boundary types prove the JOIN chain and union family.
+
+- Class: `U/I`
+- Claim SHA-256: `b9ba994aafbf89e6a7840827bc7a07c2bc7f7328987325420dd095ea6937311e`
+- Ledger line: 229
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_join_distributes_over_union_right;relation_join_distributes_over_union_left`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationalJoin;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedJoinUnionFactoring;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Both coordinate laws compare at certified distance zero for exact binary relation parameters; direct Alloy proves them and supplies a JOIN/intersection counterexample; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-23
+
+**Claim.** Unary `some` and `no` over relational union expand to Boolean ACI form, and a finite outer Boolean container collapses only when a certified opposite-polarity branch covers every term.
+
+- Class: `U/I`
+- Claim SHA-256: `6f9ad4fcba3f1e015a923d5ce43a7f14d8edb832382914211180a7ee071f1730`
+- Ledger line: 230
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `nonempty_union_iff;no_union_iff;any_proposition_or_all_negated;all_propositions_excludes_any_negated;covered_dual_disjunction_with_extra_is_true;covered_dual_conjunction_with_extra_is_false`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedUnionCardinalityExpansion;src/is/fivefivefive/CanDis/core/EGraphNode.java#containsCertifiedCoveredDualBranch;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Some/no union pairs compare at certified distance zero, Boolean absorption/complement and duplicate ACI regressions remain green, and intersection near misses stay distinct; direct Alloy proves both admitted laws and refutes both proposed intersection analogues; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-24
+
+**Claim.** Quantified relation bindings retain their complete parser-derived relation arity in both the certified binder descriptor and repair tuple, so unary and higher-arity slots cannot merge by primitive label alone.
+
+- Class: `U/I`
+- Claim SHA-256: `692f70f4617f9d918d392422620747d345ede09ccb70601f37fd5c83a2c89e5a`
+- Ledger line: 231
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `unary_and_binary_binding_profiles_are_distinct`
+- Implementation references: `src/is/fivefivefive/CanDis/core/NormalForm.java#usableBindingTypeEvidence;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#bindingType;src/is/fivefivefive/CanDis/metric/RepairProjection.java#bindingType`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Binary relation parameters pass through JOIN, certified binder construction, observation, and zero-kernel repair comparison without being weakened to unary carrier labels; complete Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-25
+
+**Claim.** A left-nested relational difference accumulates every removed operand in one parser-certified union while preserving typed slot invocations; this rule does not reassociate a right-nested difference as a left chain.
+
+- Class: `U/I`
+- Claim SHA-256: `22ce7fbb647c0d65c41dce147cb7008734e9b57735bdf7e68077d69c8cab12b5`
+- Ledger line: 232
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `left_nested_difference_accumulates_union;right_nested_difference_is_not_left_nested`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedLeftNestedDifference;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Binary and four-level left-nested chains compare at certified distance zero and Alloy finds no counterexample; left and right nesting remain semantically distinct, synthetic exact types cannot authorize the left-chain rule, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-26
+
+**Claim.** A right-nested relational difference expands to the union of the retained difference and restored intersection under exact parser relation evidence.
+
+- Class: `U/I`
+- Claim SHA-256: `ce11038ec2b6bd9cbd93a86d4c62840bf479f8fe62fa0908791be89e04d083b0`
+- Ledger line: 233
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `right_nested_difference_expands`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedRightNestedDifference;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The right-nested expansion compares at certified distance zero and Alloy finds no counterexample; the source nesting remains distinct from the left-chain law and synthetic exact types cannot authorize expansion; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-27
+
+**Claim.** An intersection containing one or more relational differences extracts all kept operands into one intersection and all removed operands into one union, preserving exact typed slot invocations.
+
+- Class: `U/I`
+- Claim SHA-256: `76981d039f1938570b803533c28988caeb1a3d72d81ebaaac0ae6746e10c938c`
+- Ledger line: 234
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `intersection_extracts_difference;intersection_of_differences_accumulates_removed;intersection_of_three_differences_accumulates_removed`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedIntersectionDifferenceExtraction;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Single-, two-, and three-difference intersections compare at certified distance zero and Alloy finds no counterexample; exact slot invocations are accumulated and synthetic exact types cannot authorize extraction; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-28
+
+**Claim.** A difference of two parser-certified Cartesian products factors through a coordinate difference exactly when the products have the same arity and differ in one certified coordinate; products differing in multiple coordinates remain explicit.
+
+- Class: `U/I`
+- Claim SHA-256: `8c833a9d62f5b4a8976b6be043adb8b43486a93e4be000a0dcee063e83710a53`
+- Ledger line: 235
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_product_difference_left_coordinate;relation_product_difference_right_coordinate;relation_product3_difference_middle_coordinate;two_coordinate_product_difference_does_not_factor`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationDifference;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductDifferenceFactoring;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Left, right, and ternary-middle coordinate factorizations compare at certified distance zero and Alloy finds no counterexample; two changing coordinates remain distinct with a solver and Lean countermodel; exact-type construction rejects synthetic, serialized, cross-module, and arity-mismatched evidence; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-29
+
+**Claim.** An intersection subgroup of parser-certified equal-length Cartesian products factors coordinatewise, with every product contributing one operand to every coordinate; nonproduct residual operands remain outside the subgroup.
+
+- Class: `U/I`
+- Claim SHA-256: `8600be97e7e875ba762bf652a2fcd8bcb720e9a026693cfcc9bb85bf5f10be4f`
+- Ledger line: 236
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_product_intersection_coordinatewise;three_relation_products_intersect_coordinatewise;relation_product3_intersection_coordinatewise`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedCartesianProduct;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedProductIntersectionFactoring;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Fixed, all-coordinate, three-product, ternary-product, and residual-operand factorizations compare at certified distance zero and Alloy finds no counterexample; every coordinate retains every product conjunct and synthetic exact evidence cannot authorize the rule; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-30
+
+**Claim.** A dependent JOIN or ARROW certificate remains bound to its exact pre-ACI source occurrence while transfer to the frozen repair occurrence is admitted only when lineage, path, chain structure, types, slot maps, and certified ACI operand quotients agree.
+
+- Class: `U/I/P`
+- Claim SHA-256: `99aeacc0921c1c971d7a80bd9d08c485d312f35a6d93e6fcf196f822246b0461`
+- Ledger line: 237
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_product_respects_certified_operand_equalities;relation_join_respects_certified_operand_equalities;relation_union_associative;relation_union_commutative;relation_union_idempotent;relation_intersection_associative;relation_intersection_commutative;relation_intersection_idempotent`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#dependentChainTransferContentCommitment;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#DependentChainSourceBinding;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#mirrorCertifiedSourcePlansToRepairMatrices`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkDependentSourceOccurrenceBinding`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The certificate retains its exact pre-ACI occurrence commitment while the frozen repair source receives a second exact commitment after a lineage/path/type/slot-preserving ACI-quotient comparison; n-ary union/intersection reordering and duplicate elimination transfer under both JOIN and ARROW, source swaps and mutation reject, and complete Java-key injectivity beyond admitted laws remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-31
+
+**Claim.** For parser-authenticated exact binary relations, converse reverses an ordered JOIN chain and transposes every operand; preserving the original operand order is not admitted.
+
+- Class: `U/I/P`
+- Claim SHA-256: `c1805b7487d6cdc0725aad9b6c029cb6c96f66b7a28778f25cee17230d65d81b`
+- Ledger line: 238
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `converse_reverses_relation_join;converse_join_same_order_is_not_general`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedTransposeJoinReversal;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The parser pair compares at certified distance zero and direct Alloy reports no counterexample; same-order reversal has Alloy and Lean witnesses, synthetic exact metadata cannot authorize the rewrite, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-32
+
+**Claim.** Parser-authenticated domain and range restriction are homomorphisms in each relation/restrictor lattice coordinate, repeated same-side restrictions intersect their restrictors, opposite-side restrictions commute, and complete union grids factor while diagonal unions and multi-coordinate differences remain explicit.
+
+- Class: `U/I/P`
+- Claim SHA-256: `e82f302d4f7cbd2ba0e47bb9f47356bcb18ad486af214eaff5bf5ac6d293b7be`
+- Ledger line: 239
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `domain_restriction_relation_union;domain_restriction_relation_intersection;domain_restriction_relation_difference;domain_restriction_restrictor_union;domain_restriction_restrictor_intersection;domain_restriction_restrictor_difference;range_restriction_relation_union;range_restriction_relation_intersection;range_restriction_relation_difference;range_restriction_restrictor_union;range_restriction_restrictor_intersection;range_restriction_restrictor_difference;nested_domain_restrictions_intersect;nested_range_restrictions_intersect;domain_and_range_restrictions_commute;complete_restriction_union_grid_factors;diagonal_restriction_union_does_not_factor;two_coordinate_restriction_difference_does_not_factor`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedDomainRestriction;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRangeRestriction;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedRestrictionLatticeFactoring;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedRestrictionDifferenceFactoring;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedNestedRestriction;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Seventeen supported parser pairs compare at certified distance zero and all direct Alloy assertions are UNSAT; diagonal union and two-coordinate difference remain distinct with Alloy/Lean witnesses; exact type derivation preserves correlated alternatives and empty arity while synthetic, serialized, cross-module, and nonunary evidence rejects; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-33
+
+**Claim.** For parser-authenticated exact relational JOIN chains, union distribution closes at any chain coordinate while preserving ordered composition, exact boundary types, and slot invocations; relational intersection is not admitted as a distributive analogue.
+
+- Class: `U/I/P`
+- Claim SHA-256: `93afa7fabed6277c5fe537210734c3bdff0b46af6e970b52515304d22b744bf5`
+- Ledger line: 240
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_join_associative;relation_join_distributes_over_union_right;relation_join_distributes_over_union_left;relation_join_distributes_over_union_middle_context`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedJoinUnionFactoring;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Right, middle, and left coordinates of a four-operand JOIN chain compare at certified distance zero and three direct Alloy assertions are UNSAT; fixed-point normalization preserves exact dependent boundaries and slot invocations, while relational intersection and synthetic authority remain barriers; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-34
+
+**Claim.** For parser-authenticated exact binary relations, converse commutes with transitive and reflexive-transitive closure while preserving the closure kind, and swaps domain restriction with range restriction; unswapped restriction and closure-kind changes are not admitted.
+
+- Class: `U/I/P`
+- Claim SHA-256: `6ccb08eb9361de7fc4a33c08128d520c375eb7f6962cf054cffc686e2e011b6f`
+- Ledger line: 241
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `transpose_domain_restriction_is_range_restriction;transpose_range_restriction_is_domain_restriction;positive_path_prepend;converse_positive_path;converse_binary_involutive;converse_transitive_closure;converse_reflexive_transitive_closure`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedTransposeClosureCommutation;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedTransposeRestrictionSwap;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Converse over transitive closure, reflexive-transitive closure, domain restriction, and range restriction compares at certified distance zero and four direct Alloy assertions are UNSAT; closure-kind and unswapped-side witnesses are SAT, synthetic exact types cannot authorize either rewrite, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-35
+
+**Claim.** Parser-authenticated domain and range restriction return the relation under a proved full endpoint carrier and return an arity-preserving empty relation when either coordinate is authenticated empty; relation-valued variables and incomplete carriers are not identities.
+
+- Class: `U/I/P`
+- Claim SHA-256: `d11a86dbebb6c77966eac6c1d395cb8c161bf9a2488fd165269eded17838e94e`
+- Ledger line: 242
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `domain_restriction_univ_identity;range_restriction_univ_identity;domain_restriction_empty_restrictor;range_restriction_empty_restrictor;domain_restriction_empty_relation;range_restriction_empty_relation`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedRestrictionIdentityOrZero;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Built-in univ, an exact primitive endpoint carrier, either empty restrictor, and either empty relation coordinate close in ten parser pairs, including quantified relation slots, with UNSAT Alloy assertions; a relation-valued variable is not a full carrier, and forged/synthetic evidence remains outside authority; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-36
+
+**Claim.** For authenticated exact empty binary relations, converse and transitive closure remain empty while reflexive-transitive closure is iden; forged empty spellings and closure-kind substitutions are not admitted.
+
+- Class: `U/I/P`
+- Claim SHA-256: `0924998de37044b663035c6d45e3de62fd2eb18fa1e0ef0aee638a18ec2571f7`
+- Ledger line: 243
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `converse_empty_binary_relation;no_positive_empty_path;transitive_closure_empty_relation;reflexive_transitive_closure_empty_relation`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedEmptyRelationalUnaryIdentity;src/is/fivefivefive/CanDis/core/EGraphNode.java#derivedIdentityRelation;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testSetIdentitySaturation`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Converse and transitive closure of typed empty binary relations close to empty and reflexive-transitive closure closes to authenticated iden; three Alloy assertions are UNSAT, reflexive-versus-empty is SAT, forged empty spelling rejects, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-37
+
+**Claim.** For parser-authenticated exact relational JOIN chains, a domain restriction on a retained first coordinate and a range restriction on a retained last coordinate lift to the composed endpoint, while restrictions on an internal or unary eliminated boundary remain on that boundary and are oriented as a domain restriction on the right adjacent operand; ordered composition, exact occurrence types, restrictor slot invocations, and coordinate roles are preserved.
+
+- Class: `U/I/P`
+- Claim SHA-256: `6dba929f46be46ce917e66b6cd9f874fa8b51ed5acea265b355767adb85b2a06`
+- Ledger line: 244
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `join_lifts_left_endpoint_domain_restriction;join_lifts_right_endpoint_range_restriction;join_transfers_internal_range_to_domain_restriction;unary_left_restriction_stays_on_join_boundary;unary_domain_and_range_restriction_coincide;unary_right_range_or_domain_guard_has_same_join;relation_join_associative`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedJoinRestrictionNormalization;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Retained endpoint and eliminated boundary restrictions normalize across exact ordered JOIN chains at certified distance zero; long-chain, higher-arity, adjacent-intersection, unary-boundary, quantified-slot, wrong-side, wrong-guard, direct Alloy, and synthetic-authority cases pass; universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-38
+
+**Claim.** For a parser-authenticated unary relation, Alloy domain and range restriction coincide extensionally and canonicalize to DOMAIN; higher-arity restrictions retain distinct coordinate roles, and synthetic exact-type labels do not authorize the conversion.
+
+- Class: `U/I/P`
+- Claim SHA-256: `6431272c8615c1db67a10159bd930e0f38179426c60156ff3771cd9940890caa`
+- Ledger line: 245
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `unary_domain_and_range_restriction_coincide;binary_domain_and_range_restriction_do_not_generally_coincide`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedUnaryRestrictionOrientation;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Unary restriction sides close under parser authority, while binary side roles and synthetic unary labels remain distinct; one Alloy equality is UNSAT, one higher-arity inequality is SAT, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-39
+
+**Claim.** Under parser-authenticated relation-expression identity, reflexive subset and equality atoms normalize to true and their explicit negations normalize to false; identity may use the already-certified ACI operand quotient, while distinct invocations and synthetic type labels remain explicit.
+
+- Class: `U/I/P`
+- Claim SHA-256: `957a7056c1d37a94e2b84705f46531e41b43ba536e175cd27e8e31f4d446986f`
+- Ledger line: 246
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `relation_subset_reflexive;relation_equality_reflexive;relation_not_subset_self_is_false;relation_inequality_self_is_false;certified_equal_relations_subset;certified_equal_relations_compare_equal;certified_equal_relations_not_subset_is_false;certified_equal_relations_inequality_is_false`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedReflexiveComparison;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Reflexive subset/equality and their explicit negations close under parser-authenticated certified operand identity, including an already-certified ACI quotient; four Alloy assertions are UNSAT, distinct invocations and synthetic relation labels remain explicit, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-40
+
+**Claim.** For parser-authenticated equal-arity relation expressions, the structural containment proof closes certified union injection, intersection/difference/restriction projection, and recursively composed consequences; subset distributes conjunctively over a union on the left and an intersection on the right, with explicit NOT_IN using the De Morgan dual, while the unsound opposite disjunctions remain explicit.
+
+- Class: `U/I/P`
+- Claim SHA-256: `d590332fbbb9fca7efdd52889a721ffce3db31977b5447605deb774c9969a7e9`
+- Ledger line: 247
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `subset_union_left;intersection_subset_left;difference_subset_left;union_subset_iff;subset_intersection_iff;union_not_subset_iff;not_subset_intersection_iff;union3_subset_iff;subset_intersection3_iff;subset_union_does_not_split_disjunctively;domain_restriction_subset_relation;range_restriction_subset_relation`
+- Implementation references: `src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedStructuralSubsetComparison;src/is/fivefivefive/CanDis/core/EGraphNode.java#parserCertifiedSubsetLatticeExpansion;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#checkCertifiedRelationalFactoring;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#testNestedDifferenceRequiresParserAuthority`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Structural containment and the two exact subset/lattice adjunctions close for binary and n-ary parser sources, including explicit negations and restrictions; eleven Alloy assertions are UNSAT, opposite-disjunction and synthetic-authority controls remain distinct, and universal Java/parser refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-41
+
+**Claim.** Non-temporal full-corpus repairs retain exact integer callable arity and unary primitive-carrier evidence, use only proved relational converse, JOIN, restriction, and disjointness identities, and transfer a proof payload only across identical source lineage.
+
+- Class: `U/I/P`
+- Claim SHA-256: `b807aa45ef8efbe7158fd5225a2b40263206096bcbd1cf76dfe8804665a9ae29`
+- Ledger line: 248
+- Lean file: `docs/section3-repair-audit/formal/FullCorpusNonTemporalP0.lean`
+- Lean declarations: `integer_overloads_retain_exact_arity;primitive_binding_is_a_unary_relation;primitive_and_exact_unary_have_a_common_arity;converse_involution;converse_join;converse_range_is_domain;join_range_moves_to_domain;disjoint_is_commutative;identical_lineage_payload_reuses_one_proof;divergent_lineage_payload_is_rejected`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java#parserCertifiedRelationalJoin;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeRelationalUnaryAndIdentityRules;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#mirrorCertifiedSourcePlansToRepairMatrices`
+- Bounded test references: `src/is/fivefivefive/CanDis/FullCorpusNonTemporalP0RegressionTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The bounded parser and pipeline fixtures cover the named overload, carrier, relational, disjointness, and lineage cases; complete corpus conformance and a full Java-to-Lean refinement remain open
+- Current proof state: `INCOMPLETE`
+
+### P5-42
+
+**Claim.** Full-corpus preflight preserves the exact Int and integer-next relation views, temporal beta substitution, operator-and-carrier law keys, sequence/bag multiplicity, pairwise-minimum comparison, and lineage remapping, and removes only certified duplicate or unreachable temporal occurrences.
+
+- Class: `U/I/P`
+- Claim SHA-256: `5f94a037dacafe0bdd3d74c6a654938c8ea054ac0d98046437b9ad64b93db52e`
+- Ledger line: 249
+- Lean file: `docs/section3-repair-audit/formal/FullCorpusPreflight.lean`
+- Lean declarations: `integer_next_is_zero_arity;integer_next_returns_binary_int_relation;primitive_int_has_unary_relation_view;unary_int_join_integer_next_is_unary_int;stored_int_and_join_result_share_the_certified_relation_view;a_mismatched_join_boundary_is_rejected;beta_substitution_reaches_an_after_phase;beta_substitution_reaches_each_temporal_use;repaired_occurrence_cannot_change_the_authorized_law;another_carrier_cannot_receive_the_authorized_law;certified_eclass_equality_licenses_set_idempotence;idempotent_operation_respects_certified_eclass_equality;ordered_or_bag_occurrences_are_not_removed_by_the_set_step;certified_representatives_are_compared_by_pairwise_minimum;lineage_remapping_preserves_exact_fiber_membership;certified_duplicate_temporal_phase_has_one_repair_occurrence;complementary_guard_makes_temporal_or_branch_unreachable;unreachable_temporal_branch_has_no_observable_occurrence`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/CanDis/core/NormalForm.java#betaRewriteLet;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/CanonicalDistance.java#variableBindings;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#mirrorCertifiedSourcePlansToRepairMatrices`
+- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: The preflight suite covers the listed exact-type, substitution, law-key, quotient-container, alignment, lineage, and temporal-reachability cases; universal parser and Java refinement remains open
+- Current proof state: `INCOMPLETE`
+
+### P5-43
+
+**Claim.** An outer lexical binder is imported separately into every unary and left/right binary temporal phase under exact source-lineage, owner-phase, binder-context, coordinate, and target-path evidence; detached uses and mismatched provenance reject, and unsafe empty-carrier conjunction prenexing remains local.
+
+- Class: `U/I/P`
+- Claim SHA-256: `a003878e947434b733bed35a4dccb33de350336b993a1cf2942d6b1fdc9efaf3`
+- Ledger line: 250
+- Lean file: `docs/section3-repair-audit/formal/TemporalPhaseLocalBinding.lean`
+- Lean declarations: `unary_temporal_preserves_lexical_depth;binary_temporal_preserves_lexical_depth_in_both_roles;unary_temporal_vocabulary_is_exhaustive;binary_temporal_vocabulary_is_exhaustive;outer_binder_scopes_every_unary_temporal_operator;outer_binder_scopes_both_roles_of_every_binary_temporal_operator;detached_unary_temporal_child_is_not_closed;detached_binary_temporal_children_are_not_closed;outer_binder_scopes_both_temporal_branches;detached_temporal_child_is_not_closed;repeating_the_exact_scope_snapshot_is_idempotent;a_repeated_reference_under_another_context_is_rejected;every_temporal_phase_role_admits_the_exact_owner;binary_temporal_phase_roles_remain_distinct;sibling_phases_reuse_the_exact_owner_coordinate;another_source_lineage_is_rejected;another_binder_context_is_rejected;global_prenex_over_conjunction_fails_for_an_empty_carrier`
+- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#normalizeTemporalTree;src/is/fivefivefive/CanDis/core/NormalForm.java#installPhaseLocalBindingImports;src/is/fivefivefive/CanDis/core/NormalForm.java#captureTemporalPhaseLocalBindings;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#certifyPhaseLocalBindings`
+- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: All six unary and all four binary temporal operators are covered in Lean and parser-backed regressions exercise sibling once/always reuse, alpha renaming, changed use, repeated snapshots, and malformed provenance; complete source-to-verifier refinement remains open
+- Current proof state: `INCOMPLETE`
+
 ### P6-01
 
 **Claim.** Minimum selection has explicit unset state; Boolean bottom is a valid ordinary candidate.
 
 - Class: `U/I`
 - Claim SHA-256: `e625a3fff5e8782c07ad6244c747ac604a4d7d38a8d00826deeab4a69fd8da4f`
-- Ledger line: 227
+- Ledger line: 256
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `empty_minimum_is_unset;bottom_is_an_ordinary_minimum;first_candidate_is_present`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/LeastOption.java#consider;src/is/fivefivefive/CanDis/theory/LeastOption.java#orElseThrow;src/is/fivefivefive/CanDis/theory/LeastOption.java#isPresent`
@@ -2426,7 +2919,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `142c38ccfab12180e1ded0709fd6b76e62d31ba3024ec6525001f9ee71abefb0`
-- Ledger line: 228
+- Ledger line: 257
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `fold_minimum_exact;stream_summary_retains_only_minimum_and_count;streamed_cartesian_count_is_exact;s7_stabilizer_state_is_strictly_smaller_than_orbit`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyRigidProducerOrbit`
@@ -2443,7 +2936,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `45f999c757b05feda276c39aefd8c3cd7a5941e1516d0d1ef3377bc0e54a4c92`
-- Ledger line: 229
+- Ledger line: 258
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `candidate_key_order_is_total;producer_and_verifier_candidate_orders_are_identical;shared_candidate_key_is_injective;complete_permutation_action_key_is_injective;larger_witness_loses_equal_shape_tie`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
@@ -2460,7 +2953,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `7b0dee34e7f1ce3e1774ef70661ff0249a5f8cb0ac81f3a0b6c96860099f471d`
-- Ledger line: 230
+- Ledger line: 259
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `occurrence_coordinate_injective;directly_nested_occurrences_are_disjoint;descriptor_occurrence_round_trip`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderBlockDescriptor.java#freshOccurrenceRenaming;src/is/fivefivefive/CanDis/theory/BindBlockPort.java#descriptorToOccurrence;src/is/fivefivefive/CanDis/theory/BinderOccurrenceProofs.java#collect`
@@ -2477,7 +2970,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `b34e6b29a65b25d7df3172e4cbe2616823eddba0802a3fb025b956d81d5cbee9`
-- Ledger line: 231
+- Ledger line: 260
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `alignment_replay_preserves_complete_occurrence;action_alpha_canonical_serialization_commutes`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#appliesTo;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#quotientBlock;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence`
@@ -2494,7 +2987,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `27a44c285ef9c3d94f0192e868dbdef31b75f30b437c4302d01f45855bf948fb`
-- Ledger line: 232
+- Ledger line: 261
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `extended_action_fixes_caller_slot;map_caller_layer_is_capture_avoiding;nested_caller_layers_are_capture_avoiding`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#build;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#binderBodyAction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#actedPortKey`
@@ -2511,7 +3004,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `ae07e21c44f6e74f8dba90cf18facc04a64364d71692260af160b77098267802`
-- Ledger line: 233
+- Ledger line: 262
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `trace_length_decomposition;counter_tuple_is_injective;certificate_byte_count_is_encoded_length`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalizationMetrics.java#retainedTraceLength;src/is/fivefivefive/CanDis/theory/CertificateWriteMetrics.java#CertificateWriteMetrics;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#serializedCanonicalOrbitCandidates`
@@ -2528,7 +3021,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `93da2981342fe07d284f85505347dc6f6eee76234b4fb95cd0d4498ea7c5560f`
-- Ledger line: 234
+- Ledger line: 263
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `certificate_byte_count_is_encoded_length;byte_identical_runs_have_identical_derived_counters`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#replaceAtomically`
@@ -2545,7 +3038,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a`
-- Ledger line: 235
+- Ledger line: 264
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `distinct_roots_collide_under_rootless_key;rootless_key_is_not_injective;rooted_key_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey`
@@ -2562,7 +3055,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `27490ad0179b6c1b991380cda7a4a6d698d969eee454f90920862b4c16c64761`
-- Ledger line: 236
+- Ledger line: 265
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `stream_summary_retains_only_minimum_and_count;s7_stabilizer_state_is_strictly_smaller_than_orbit`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedRenamingEnumerator.java#forEachChecked;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#orbitSummary;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#producerOrbitSummary`
@@ -2579,7 +3072,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d`
-- Ledger line: 237
+- Ledger line: 266
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;rooted_key_is_injective;witness_unfold_is_definitional`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
@@ -2596,7 +3089,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `81348c205914caa38cb968d9ae5d8003ee87f20b7ae4540d6b1f8a5b74c21e0b`
-- Ledger line: 238
+- Ledger line: 267
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `producer_and_verifier_candidate_orders_are_identical;candidate_key_order_is_total;equal_complete_candidate_sets_have_equal_ordered_keys`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
@@ -2613,7 +3106,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `8a84a56322463d2907cad93c9d40a45df948b23fbdb49071c19c3de9a52bb849`
-- Ledger line: 239
+- Ledger line: 268
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `pair_comparison_preserves_separate_derivation_owners;pair_result_compares_exact_least_shapes`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verifyPair;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#commonKernelEndpoint;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#requireCompatibleVocabulary`
@@ -2630,7 +3123,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `411f909cf04e36c7cf147a39e439a8ac4e1f125648ac8bc49ff04e7641f52fb0`
-- Ledger line: 245
+- Ledger line: 274
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `decomposition_is_additive`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate`
@@ -2647,7 +3140,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `7a030f495ce3d5c53c5a03316e4471ec0ec56136f0dbad8f568610e31259412c`
-- Ledger line: 246
+- Ledger line: 275
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `equal_quantifier_tuple_costs_zero;unequal_quantifier_tuple_costs_one;every_quantifier_edit_is_one_unit;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;selected_positional_parameter_diagonal_does_not_authorize_coordinate;paid_correspondence_has_no_duplicate_left;paid_correspondence_has_no_duplicate_right`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#sameRepairTuple;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantificationAlignmentSpace;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantifierEditComponent;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence`
@@ -2664,15 +3157,15 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `153d1ab1172fc03481af938c9ec7933e2c021a0e8fa37d1179b351bb7630cb0d`
-- Ledger line: 247
+- Ledger line: 276
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
-- Lean declarations: `alpha_distance_is_exact_pairwise_minimum;singleton_alignment_is_compatible;nonmaximum_empty_alignment_is_not_admissible;same_coordinate_without_paid_edit_is_not_authorized;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;bound_and_same_spelled_free_variables_cost_one_both_directions`
-- Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#maximumGlobalCompatibleMatches;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence`
-- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main`
+- Lean declarations: `equal_fixture_keys_do_not_authorize_a_kernel_check;certified_projection_pair_authorizes_a_kernel_check;alpha_distance_is_exact_pairwise_minimum;singleton_alignment_is_compatible;nonmaximum_empty_alignment_is_not_admissible;same_coordinate_without_paid_edit_is_not_authorized;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;bound_and_same_spelled_free_variables_cost_one_both_directions;parameter_evidence_cannot_claim_orbit_or_prenex_authority;uncertified_matrix_evidence_retains_nonempty_path;certified_prenex_compatibility_ignores_obsolete_source_path;uncertified_prenex_paths_are_not_erased;certified_prenex_compatibility_requires_explicit_exchange_alignment;parameter_compatibility_requires_its_coordinate;repeated_coordinate_requires_one_orbit;crossing_exchange_blocks_are_rejected;distinct_owners_separate_equal_local_exchange_ids;all_and_some_ignore_presentation_path;nonexchangeable_quantifiers_split_distinct_paths;nonexchangeable_distinct_path_advances_exchange_class;continuous_all_run_preserves_exchange_class;maximum_scoped_matching_uses_only_owned_compatible_bindings;maximum_scoped_matching_preserves_certified_orbits;split_target_orbits_block_a_dynamic_pairing;scoped_problem_contains_one_entry_per_global_identity;maximum_scoped_matching_has_maximum_cardinality;optimal_scoped_matching_minimizes_matrix_cost_among_maximum;repeated_temporal_owner_occurrences_share_one_mapping;coherent_phase_reindex_preserves_repeated_owner_identity;canonical_phase_reindex_is_injective_on_matrix_identities;complete_two_coordinate_orbit_ledger_is_accepted;split_two_coordinate_orbit_ledger_is_rejected;bounded_three_coordinate_enumerator_is_complete;every_bounded_three_coordinate_candidate_is_evaluated`
+- Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#fromCertifiedProjection;src/is/fivefivefive/CanDis/metric/RepairView.java#requireCertifiedProjection;src/is/fivefivefive/CanDis/metric/RepairView.java#prenexPathErasureCertified;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectComponents;src/is/fivefivefive/CanDis/metric/RepairProjection.java#reindexPhase;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#maximumGlobalCompatibleMatches;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#preservesCertifiedOrbitRelations;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalBaseCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#GlobalBindingIndex;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sameExchangeRun`
+- Bounded test references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `DIRECT-BOUNDED`
-- Claim-specific process/limits: The coordinate fallback is removed; 1,156 minimum-plan parameter cases, typed scope controls, and bound/free symmetry pass, while all-and-only general quantified-scope candidate generation still requires an independent exhaustive refinement differential
+- Claim-specific process/limits: Public kernel checking accepts only sealed projections minted from matching frozen adapter results; fixture-supplied keys remain test-only. Path erasure requires certified projection, and owner/payload/exchange orbit ledgers must be complete. Zero-cost mappings preserve orbit relations and repeated inherited occurrences share one identity across coherent temporal reindexing. Parameters cannot claim binder orbits or path-erasure authority; uncertified quantified bindings retain nonempty paths. Parameter positions, owner-scoped injective/order-preserving exchange maps, paid fixed pairs, and minimum cost among maximum-cardinality candidates remain explicit. The 2,266-check suite includes an independent exhaustive oracle over every length-three use pattern and all permutations of up to three coordinates; the 13-task CORRECT-pool reproducer passes. Unbounded all-and-only Java candidate-generation refinement remains open.
 - Current proof state: `INCOMPLETE`
 
 ### M-04
@@ -2681,7 +3174,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `daafd9ba0fbc0819031fb1db0713ab6e57f11a2d46b43e65334a707aa5c24620`
-- Ledger line: 248
+- Ledger line: 277
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `aci_distance_is_exact_minimum_cost_assignment;exact_minimum_does_not_use_positional_choice;assignment_minimization_can_choose_crossed_pairs;two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#minimumAssignmentCost`
@@ -2698,7 +3191,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `ae25f1591bf2444e4a790eecefc661e0d7fb664f85f4489880e5ff3fd4df71e5`
-- Ledger line: 249
+- Ledger line: 278
 - Lean file: `docs/section3-repair-audit/formal/OrderedTreeEditDistance.lean`
 - Lean declarations: `ordered_forest_recurrence;empty_forest_insert_cost_is_node_count;empty_forest_delete_cost_is_node_count;deleting_internal_unary_node_costs_one;inserting_internal_unary_node_costs_one`
 - Implementation references: `src/is/fivefivefive/CanDis/core/OrderedTreeEditDistance.java#computeForestDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#temporalDistance;src/is/fivefivefive/CanDis/core/CanonicalDistance.java#treeDistance`
@@ -2715,7 +3208,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `78c9f0d452f13eabb45b8498cb31675eae64bc22b1ba03b500ecae11f5626b35`
-- Ledger line: 250
+- Ledger line: 279
 - Lean file: `docs/section3-repair-audit/formal/ConcreteRepairMetric.lean`
 - Lean declarations: `boundedVectorExpectations;profileMismatchIsFirst;temporalQuantifierMatrixCompositionIsAdditive;matrixOperandDeletionRemovesTheWholeSubtree`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#sequenceDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/RepairView.java#size`
@@ -2732,7 +3225,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `30b8d68cd64575f4f43092267b09821ce508aa0acf5aa17d714ee089dfd1b8bc`
-- Ledger line: 251
+- Ledger line: 280
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `readable_spelling_is_not_an_edit;exact_type_change_is_one_edit`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#semanticPayload;src/is/fivefivefive/CanDis/metric/RepairView.java#lexicalVariable;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectNode;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost`
@@ -2749,7 +3242,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `49ce4ec35da6198f8a0d4d474bb1285a9036dfd0fb679f18e74acc339d701e71`
-- Ledger line: 252
+- Ledger line: 281
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs;same_coordinate_without_paid_edit_is_not_authorized`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#MutableStats;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#ResourceLimitException`

@@ -23,11 +23,12 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * The established {@code CanonicalDistance} repair geometry evaluated over a
  * certificate-producing {@link RepairView}. Its decomposition and edit units
  * are metric semantics, while Layer 1 supplies admissible scope symmetries.
- * This in-process evaluator checks producer consistency only. It does not by
- * itself grant independent certificate authority.
+ * The public evaluator accepts only sealed certified projections and checks
+ * in-process producer consistency. It does not grant independent replay
+ * authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v8";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v12";
     private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
@@ -59,8 +60,38 @@ public final class QuotientRepairDistance {
             throw new IllegalArgumentException(
                     "Repair views from different semantic profiles cannot be compared");
         }
-        Result candidate = evaluateUnchecked(left, right);
+        left.requireCertifiedProjection();
+        right.requireCertifiedProjection();
+        Result candidate = evaluateMetric(
+                left,
+                right,
+                KernelAuthority.CERTIFIED_PROJECTION_PRODUCER_CONSISTENCY);
         boolean sameProducerObservation = left.hasSameProducerObservation(right);
+        if (sameProducerObservation != (candidate.distance == 0)) {
+            throw new IllegalStateException(sameProducerObservation
+                    ? "Equal producer observations have nonzero repair distance: "
+                            + "temporal=" + candidate.temporalDistance
+                            + ", quantifiers=" + candidate.quantifierDistance
+                            + ", matrix=" + candidate.matrixDistance
+                    : "A zero repair distance lacks producer-observation equality");
+        }
+        return candidate;
+    }
+
+    static Result evaluateUncheckedForTesting(RepairView left, RepairView right) {
+        return evaluateMetric(left, right, KernelAuthority.TEST_ONLY_UNCHECKED);
+    }
+
+    static Result evaluateClaimedProducerConsistencyForTesting(
+            RepairView left,
+            RepairView right) {
+        requireComparableProfiles(left, right);
+        Result candidate = evaluateMetric(
+                left,
+                right,
+                KernelAuthority.TEST_ONLY_CLAIMED_PRODUCER_CONSISTENCY);
+        boolean sameProducerObservation = left.hasSameClaimedProducerObservationForTesting(
+                right);
         if (sameProducerObservation != (candidate.distance == 0)) {
             throw new IllegalStateException(sameProducerObservation
                     ? "Equal producer observations have nonzero repair distance"
@@ -69,11 +100,19 @@ public final class QuotientRepairDistance {
         return candidate;
     }
 
-    static Result evaluateUncheckedForTesting(RepairView left, RepairView right) {
-        return evaluateUnchecked(left, right);
+    private static void requireComparableProfiles(RepairView left, RepairView right) {
+        Objects.requireNonNull(left, "left");
+        Objects.requireNonNull(right, "right");
+        if (!left.semanticProfile().equals(right.semanticProfile())) {
+            throw new IllegalArgumentException(
+                    "Repair views from different semantic profiles cannot be compared");
+        }
     }
 
-    private static Result evaluateUnchecked(RepairView left, RepairView right) {
+    private static Result evaluateMetric(
+            RepairView left,
+            RepairView right,
+            KernelAuthority authority) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
         MutableStats stats = new MutableStats();
@@ -89,7 +128,7 @@ public final class QuotientRepairDistance {
                 quantifiers,
                 matrix,
                 true,
-                KernelAuthority.IN_PROCESS_PRODUCER_CONSISTENCY,
+                authority,
                 stats.alphaAlignments);
     }
 
@@ -102,8 +141,12 @@ public final class QuotientRepairDistance {
     }
 
     public enum KernelAuthority {
-        /** Both sides of the zero-kernel check were produced in one trust domain. */
-        IN_PROCESS_PRODUCER_CONSISTENCY
+        /** Both views were minted from matching frozen certified projections. */
+        CERTIFIED_PROJECTION_PRODUCER_CONSISTENCY,
+        /** Bounded tests only; no zero-kernel claim has been checked. */
+        TEST_ONLY_UNCHECKED,
+        /** Bounded refinement only; observation identity is fixture-supplied. */
+        TEST_ONLY_CLAIMED_PRODUCER_CONSISTENCY
     }
 
     public static final class Result {
@@ -565,6 +608,7 @@ public final class QuotientRepairDistance {
         int[] mapping = new int[leftBindings.bindings.size()];
         Arrays.fill(mapping, -1);
         boolean[] usedRight = new boolean[rightBindings.bindings.size()];
+        boolean[] orbitRelevant = new boolean[leftBindings.bindings.size()];
         for (Map.Entry<Integer, Integer> entry : editCorrespondence.entrySet()) {
             int leftIndex = entry.getKey();
             int rightIndex = entry.getValue();
@@ -603,6 +647,7 @@ public final class QuotientRepairDistance {
                     scope,
                     mapping,
                     usedRight,
+                    orbitRelevant,
                     0,
                     0,
                     requiredMatches,
@@ -625,6 +670,7 @@ public final class QuotientRepairDistance {
             ScopeAlignment scope,
             int[] mapping,
             boolean[] usedRight,
+            boolean[] orbitRelevant,
             int index,
             int matched,
             int requiredMatches,
@@ -643,12 +689,20 @@ public final class QuotientRepairDistance {
         for (int rightIndex : right.used) {
             if (usedRight[rightIndex]
                     || !globalCompatible(
-                            leftBinding, right.binding(rightIndex), scope)) {
+                            leftBinding, right.binding(rightIndex), scope)
+                    || !preservesCertifiedOrbitRelations(
+                            left,
+                            right,
+                            leftIndex,
+                            rightIndex,
+                            mapping,
+                            orbitRelevant)) {
                 continue;
             }
             mapped = true;
             mapping[leftIndex] = rightIndex;
             usedRight[rightIndex] = true;
+            orbitRelevant[leftIndex] = true;
             best = searchGlobalMappings(
                     left,
                     right,
@@ -656,11 +710,13 @@ public final class QuotientRepairDistance {
                     scope,
                     mapping,
                     usedRight,
+                    orbitRelevant,
                     index + 1,
                     matched + 1,
                     requiredMatches,
                     best,
                     stats);
+            orbitRelevant[leftIndex] = false;
             usedRight[rightIndex] = false;
             mapping[leftIndex] = -1;
             if (best == 0) {
@@ -675,6 +731,7 @@ public final class QuotientRepairDistance {
                     scope,
                     mapping,
                     usedRight,
+                    orbitRelevant,
                     index + 1,
                     matched,
                     requiredMatches,
@@ -682,6 +739,43 @@ public final class QuotientRepairDistance {
                     stats);
         }
         return best;
+    }
+
+    private static boolean preservesCertifiedOrbitRelations(
+            GlobalBindingIndex left,
+            GlobalBindingIndex right,
+            int candidateLeft,
+            int candidateRight,
+            int[] mapping,
+            boolean[] orbitRelevant) {
+        for (int priorLeft = 0; priorLeft < mapping.length; priorLeft++) {
+            if (!orbitRelevant[priorLeft]) {
+                continue;
+            }
+            int priorRight = mapping[priorLeft];
+            if (priorRight < 0
+                    || sameCertifiedOrbit(
+                            left.binding(candidateLeft), left.binding(priorLeft))
+                            != sameCertifiedOrbit(
+                                    right.binding(candidateRight),
+                                    right.binding(priorRight))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean sameCertifiedOrbit(
+            GlobalBinding first,
+            GlobalBinding second) {
+        return !first.identity.parameter
+                && !second.identity.parameter
+                && first.identity.ownerPhase == second.identity.ownerPhase
+                && first.identity.ownerContext.equals(second.identity.ownerContext)
+                && first.binding.certifiedOrbit().contains(
+                        second.identity.coordinate)
+                && second.binding.certifiedOrbit().contains(
+                        first.identity.coordinate);
     }
 
     private static int globallyMappedMatrixDistance(
@@ -816,11 +910,15 @@ public final class QuotientRepairDistance {
         if (left.identity.ownerPhase != right.identity.ownerPhase) {
             return false;
         }
-        String quantifier = left.binding.declaration().quantifier();
-        if ("ALL".equals(quantifier) || "SOME".equals(quantifier)) {
-            return true;
+        if (!left.identity.ownerContext.equals(right.identity.ownerContext)) {
+            return false;
         }
-        return left.binding.bindingPath().equals(right.binding.bindingPath());
+        // A producer-certified prenex coordinate supersedes its presentation
+        // path. Without that explicit authority, lexical scope remains part
+        // of admissibility and must match exactly.
+        return left.binding.prenexPathErasureCertified()
+                        && right.binding.prenexPathErasureCertified()
+                || left.binding.bindingPath().equals(right.binding.bindingPath());
     }
 
     private static void forEachGlobalScopeAlignment(
@@ -893,7 +991,12 @@ public final class QuotientRepairDistance {
     }
 
     private static ScopeOwner globalScopeOwner(GlobalBinding binding) {
-        return new ScopeOwner(BindingRole.MATRIX, binding.identity.ownerPhase);
+        BindingRole role = binding.binding.role() == BindingRole.LOCAL_INHERITED
+                ? BindingRole.LOCAL_INHERITED : BindingRole.MATRIX;
+        return new ScopeOwner(
+                role,
+                binding.identity.ownerPhase,
+                binding.identity.ownerContext);
     }
 
     private static void forEachGlobalBlockMapping(
@@ -1004,10 +1107,13 @@ public final class QuotientRepairDistance {
         for (Node child : node.children()) {
             collectUsedBindings(child, output);
         }
+        for (Node alternative : node.certifiedAlternatives()) {
+            collectUsedBindings(alternative, output);
+        }
     }
 
     private static int nodeSize(Node node) {
-        return node == null ? 0 : node.size();
+        return node == null ? 0 : node.minimumRepresentativeSize();
     }
 
     private static final class MatrixDistanceContext {
@@ -1030,14 +1136,14 @@ public final class QuotientRepairDistance {
             if (remembered != null) {
                 return remembered;
             }
-            if (!left.alphaAlternatives().isEmpty()
-                    || !right.alphaAlternatives().isEmpty()) {
-                List<Node> leftAlternatives = left.alphaAlternatives().isEmpty()
+            if (!left.certifiedAlternatives().isEmpty()
+                    || !right.certifiedAlternatives().isEmpty()) {
+                List<Node> leftAlternatives = left.certifiedAlternatives().isEmpty()
                         ? List.of(left)
-                        : left.alphaAlternatives();
-                List<Node> rightAlternatives = right.alphaAlternatives().isEmpty()
+                        : left.certifiedAlternatives();
+                List<Node> rightAlternatives = right.certifiedAlternatives().isEmpty()
                         ? List.of(right)
-                        : right.alphaAlternatives();
+                        : right.certifiedAlternatives();
                 int best = Integer.MAX_VALUE;
                 for (Node leftAlternative : leftAlternatives) {
                     for (Node rightAlternative : rightAlternatives) {
@@ -1207,28 +1313,39 @@ public final class QuotientRepairDistance {
     private static final class ScopeOwner implements Comparable<ScopeOwner> {
         private final BindingRole role;
         private final int phase;
+        private final String context;
 
         private ScopeOwner(BindingRole role, int phase) {
+            this(role, phase, "");
+        }
+
+        private ScopeOwner(BindingRole role, int phase, String context) {
             this.role = role;
             this.phase = phase;
+            this.context = context == null ? "" : context;
         }
 
         @Override
         public int compareTo(ScopeOwner other) {
             int comparison = role.compareTo(other.role);
-            return comparison != 0 ? comparison : Integer.compare(phase, other.phase);
+            if (comparison != 0) {
+                return comparison;
+            }
+            comparison = Integer.compare(phase, other.phase);
+            return comparison != 0 ? comparison : context.compareTo(other.context);
         }
 
         @Override
         public boolean equals(Object other) {
             return other instanceof ScopeOwner
                     && role == ((ScopeOwner) other).role
-                    && phase == ((ScopeOwner) other).phase;
+                    && phase == ((ScopeOwner) other).phase
+                    && context.equals(((ScopeOwner) other).context);
         }
 
         @Override
         public int hashCode() {
-            return 31 * role.hashCode() + phase;
+            return 31 * (31 * role.hashCode() + phase) + context.hashCode();
         }
     }
 
@@ -1281,22 +1398,28 @@ public final class QuotientRepairDistance {
         private final boolean parameter;
         private final int ownerPhase;
         private final int coordinate;
+        private final String ownerContext;
 
         private GlobalBindingIdentity(
                 boolean parameter,
                 int ownerPhase,
-                int coordinate) {
+                int coordinate,
+                String ownerContext) {
             this.parameter = parameter;
             this.ownerPhase = ownerPhase;
             this.coordinate = coordinate;
+            this.ownerContext = ownerContext == null ? "" : ownerContext;
         }
 
         private static GlobalBindingIdentity from(Binding binding) {
             if (binding.role() == BindingRole.PARAMETER) {
-                return new GlobalBindingIdentity(true, -1, binding.ordinal());
+                return new GlobalBindingIdentity(true, -1, binding.ordinal(), "");
             }
             return new GlobalBindingIdentity(
-                    false, binding.ownerPhase(), binding.coordinate());
+                    false,
+                    binding.ownerPhase(),
+                    binding.coordinate(),
+                    binding.ownerContext());
         }
 
         @Override
@@ -1307,14 +1430,16 @@ public final class QuotientRepairDistance {
             GlobalBindingIdentity identity = (GlobalBindingIdentity) other;
             return parameter == identity.parameter
                     && ownerPhase == identity.ownerPhase
-                    && coordinate == identity.coordinate;
+                    && coordinate == identity.coordinate
+                    && ownerContext.equals(identity.ownerContext);
         }
 
         @Override
         public int hashCode() {
             int result = Boolean.hashCode(parameter);
             result = 31 * result + ownerPhase;
-            return 31 * result + coordinate;
+            result = 31 * result + coordinate;
+            return 31 * result + ownerContext.hashCode();
         }
     }
 
@@ -1380,6 +1505,7 @@ public final class QuotientRepairDistance {
                 }
                 localToGlobal.add(local);
             }
+            requireCertifiedOrbitPartitions(bindings);
 
             Set<Integer> used = new java.util.TreeSet<>();
             List<Map<Integer, Integer>> usedLocalByGlobal =
@@ -1412,13 +1538,47 @@ public final class QuotientRepairDistance {
             return bindings.get(index);
         }
 
+        private static void requireCertifiedOrbitPartitions(
+                List<GlobalBinding> bindings) {
+            for (GlobalBinding current : bindings) {
+                if (current.identity.parameter) {
+                    continue;
+                }
+                List<Integer> expected = new ArrayList<>();
+                for (GlobalBinding candidate : bindings) {
+                    if (!candidate.identity.parameter
+                            && current.identity.ownerPhase
+                                    == candidate.identity.ownerPhase
+                            && current.identity.ownerContext.equals(
+                                    candidate.identity.ownerContext)
+                            && current.binding.declaration().exchangeClass()
+                                    == candidate.binding.declaration().exchangeClass()
+                            && current.binding.declaration().sameCertifiedPayload(
+                                    candidate.binding.declaration())) {
+                        expected.add(candidate.identity.coordinate);
+                    }
+                }
+                expected.sort(Integer::compareTo);
+                if (!expected.equals(current.binding.certifiedOrbit())) {
+                    throw new IllegalStateException(
+                            "A certified binder orbit does not equal its complete "
+                                    + "owner-scoped exchange partition");
+                }
+            }
+        }
+
         private static void requireConsistentGlobalBinding(
                 Binding first,
                 Binding repeated) {
             if (!first.declaration().sameCertifiedPayload(repeated.declaration())
                     || first.declaration().exchangeClass()
                             != repeated.declaration().exchangeClass()
-                    || !first.certifiedOrbit().equals(repeated.certifiedOrbit())) {
+                    || !first.certifiedOrbit().equals(repeated.certifiedOrbit())
+                    || !first.ownerContext().equals(repeated.ownerContext())
+                    || first.prenexPathErasureCertified()
+                            != repeated.prenexPathErasureCertified()
+                    || !first.prenexPathErasureCertified()
+                            && !first.bindingPath().equals(repeated.bindingPath())) {
                 throw new IllegalStateException(
                         "Inherited binder metadata disagrees with its owning coordinate");
             }

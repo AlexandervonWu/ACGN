@@ -16,11 +16,13 @@ public final class RenamedIdUnionFind {
     private final Map<Integer, Map<String, String>> childToParent = new HashMap<>();
     private final Map<Integer, Integer> ranks = new HashMap<>();
     private final Map<Integer, Set<String>> slots = new HashMap<>();
+    private final Map<Integer, Set<Integer>> members = new HashMap<>();
 
     public synchronized void register(int id, Set<String> exposedSlots) {
         if (!parents.containsKey(id)) {
             parents.put(id, id);
             ranks.put(id, 0);
+            members.put(id, new LinkedHashSet<>(Collections.singleton(id)));
         }
         updateSlots(id, exposedSlots);
     }
@@ -60,11 +62,13 @@ public final class RenamedIdUnionFind {
         if (leftRank < rightRank) {
             parents.put(leftRoot.id, rightRoot.id);
             childToParent.put(leftRoot.id, invert(rightToLeft));
+            mergeMembers(rightRoot.id, leftRoot.id);
             return find(left);
         }
 
         parents.put(rightRoot.id, leftRoot.id);
         childToParent.put(rightRoot.id, rightToLeft);
+        mergeMembers(leftRoot.id, rightRoot.id);
         if (leftRank == rightRank) {
             ranks.put(leftRoot.id, leftRank + 1);
         }
@@ -75,6 +79,52 @@ public final class RenamedIdUnionFind {
         RenamedId leftRoot = find(left);
         RenamedId rightRoot = find(right);
         return leftRoot.id == rightRoot.id && leftRoot.renaming.equals(rightRoot.renaming);
+    }
+
+    /** Every registered e-class ID in the same union component as {@code id}. */
+    public synchronized Set<Integer> componentIds(int id) {
+        int root = componentRootId(id);
+        Set<Integer> result = new LinkedHashSet<>(
+                members.getOrDefault(root, Collections.singleton(root)));
+        return Collections.unmodifiableSet(result);
+    }
+
+    public synchronized int componentRootId(int id) {
+        if (!parents.containsKey(id)) {
+            throw new IllegalArgumentException(
+                    "Union component requires a registered e-class: " + id);
+        }
+        return findRoot(id).root;
+    }
+
+    /** Retains exactly a union-component-closed set of registered IDs. */
+    synchronized void retainRegisteredIds(Set<Integer> retainedIds) {
+        Set<Integer> retained = new LinkedHashSet<>(retainedIds);
+        for (Map.Entry<Integer, Set<Integer>> entry : members.entrySet()) {
+            boolean retainsAny = false;
+            boolean retainsAll = true;
+            for (int member : entry.getValue()) {
+                retainsAny |= retained.contains(member);
+                retainsAll &= retained.contains(member);
+            }
+            if (retainsAny && !retainsAll) {
+                throw new IllegalArgumentException(
+                        "Retained e-class IDs must be closed under union components");
+            }
+        }
+        parents.keySet().retainAll(retained);
+        childToParent.keySet().retainAll(retained);
+        ranks.keySet().retainAll(retained);
+        slots.keySet().retainAll(retained);
+        members.entrySet().removeIf(entry -> !retained.contains(entry.getKey()));
+    }
+
+    private void mergeMembers(int targetRoot, int absorbedRoot) {
+        Set<Integer> target = members.computeIfAbsent(
+                targetRoot, ignored -> new LinkedHashSet<>(Collections.singleton(targetRoot)));
+        target.addAll(members.getOrDefault(
+                absorbedRoot, Collections.singleton(absorbedRoot)));
+        members.remove(absorbedRoot);
     }
 
     private RootPath findRoot(int id) {

@@ -190,6 +190,8 @@ public final class CapabilityBenchmark {
                 seeds.add(new SeedPredicate(
                         dataset.relativize(file).toString().replace('\\', '/'),
                         names[0], source));
+            } catch (VirtualMachineError error) {
+                throw error;
             } catch (Throwable ignored) {
                 // Unusable seeds are not generated cases; aggregate availability is reported.
             }
@@ -237,6 +239,8 @@ public final class CapabilityBenchmark {
                 return Validation.rejected("parser-ast-identical");
             }
             return Validation.accepted(astSize(left.getBody()), astSize(right.getBody()));
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable throwable) {
             return Validation.rejected("parse-or-type-error:" + throwable.getClass().getSimpleName());
         }

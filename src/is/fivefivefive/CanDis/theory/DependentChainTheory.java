@@ -11,14 +11,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
+
 /** Independently fixed correlated-family theory for guarded JOIN and ARROW chains. */
 public final class DependentChainTheory {
     public enum LeafTypeRule {
         EXACT_RELATION,
-        PRIMITIVE_SET_SINGLETON
+        PRIMITIVE_SET_SINGLETON,
+        PARSER_AUTHENTICATED_SUBFAMILY
     }
 
-    public static final String VERSION = "alloy-dependent-chain-theory-v10";
+    public static final String VERSION = "alloy-dependent-chain-theory-v11";
     public static final String SOURCE_TEXT = String.join("\n",
             "FAMILY:finite-union-of-correlated-ordered-products;normalized=subtype-antichain",
             "DAG:edges=specific-to-general;synthetic-union-and-common-ancestor-nodes-are-not-nominal-authority",
@@ -32,7 +35,7 @@ public final class DependentChainTheory {
             "DISJOINT:two distinct authenticated PrimSig branches with first common ancestor;univ-commonality-never-implies-overlap",
             "AUTHORITY:one-complete-nominal-path-per-top;one-live-parser-module-per-chain",
             "JOIN-FLAT-GUARD:every interior source operand has retained relation arity at least two, including typed-empty families",
-            "LEAF:exact correlated relation family or Int/AlloyCarrier primitive singleton;no-name-based-parameter-authority",
+            "LEAF:exact correlated relation family, Int/AlloyCarrier primitive singleton, or parser-authenticated same-arity subfamily;typed empty requires its live parser occurrence;no-name-based-parameter-authority",
             "UNIV:explicit parser-provided AlloySig:univ is an exact carrier;absent-or-unresolved-types-never-invent-univ",
             "EMPTY:positive-arity typed empty family has zero alternatives;all-disjoint JOIN retains complete evidence and ordered Seq",
             "CONTAINER:ordered-duplicate-preserving-Seq",
@@ -271,6 +274,31 @@ public final class DependentChainTheory {
         return LeafTypeRule.PRIMITIVE_SET_SINGLETON;
     }
 
+    static LeafTypeRule requireLeafTypeProof(
+            GraphType storedType,
+            DependentTypeDag relationDag,
+            ExactAlloyType sourceAuthority) {
+        Objects.requireNonNull(storedType, "storedType");
+        Objects.requireNonNull(relationDag, "relationDag");
+        try {
+            return requireLeafTypeProof(
+                    storedType, relationDag.relationType());
+        } catch (IllegalArgumentException exactRuleUnavailable) {
+            GraphType carrier = AlloyTypeBridge.isRelationFamily(storedType)
+                    ? storedType : relationViewFromStoredType(storedType);
+            if (sourceAuthority != null
+                    && relationDag.isParserAuthenticatedSubfamilyOf(
+                    carrier, sourceAuthority)) {
+                return LeafTypeRule.PARSER_AUTHENTICATED_SUBFAMILY;
+            }
+            throw new IllegalArgumentException(
+                    "Stored type " + storedType
+                            + " does not admit parser-derived dependent family "
+                            + relationDag.relationType(),
+                    exactRuleUnavailable);
+        }
+    }
+
     public static GraphType relationViewFromStoredType(GraphType storedType) {
         Objects.requireNonNull(storedType, "storedType");
         if (AlloyTypeBridge.isRelationFamily(storedType)) {
@@ -297,6 +325,29 @@ public final class DependentChainTheory {
                 "dependent-chain-leaf-type-proof-v1",
                 List.of(rule.name()),
                 List.of(TheoryKeys.type(storedType), TheoryKeys.type(relationType)));
+    }
+
+    static StructuralKey leafTypeProof(
+            LeafTypeRule rule,
+            GraphType storedType,
+            DependentTypeDag relationDag,
+            ExactAlloyType sourceAuthority) {
+        LeafTypeRule checked = requireLeafTypeProof(
+                storedType, relationDag, sourceAuthority);
+        if (rule != checked) {
+            throw new IllegalArgumentException(
+                    "Dependent-chain leaf proof names another typing rule");
+        }
+        return StructuralKey.of(
+                "dependent-chain-leaf-type-proof-v2",
+                List.of(
+                        rule.name(),
+                        sourceAuthority == null
+                                ? "no-parser-source"
+                                : sourceAuthority.stableString()),
+                List.of(
+                        TheoryKeys.type(storedType),
+                        relationDag.structuralKey()));
     }
 
     private static GraphType primitiveRelationColumn(GraphType storedType) {

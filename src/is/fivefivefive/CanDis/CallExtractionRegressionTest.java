@@ -118,6 +118,30 @@ public final class CallExtractionRegressionTest {
         assertCallVisit(importedGraph, importedFirst, 1, "ord/first", 0);
         assertCallVisit(importedGraph, importedLast, 1, "ord/last", 0);
 
+        CompModule integerModule = CompUtil.parseEverything_fromString(
+                A4Reporter.NOP,
+                String.join("\n",
+                        "module integernextregression",
+                        "open util/integer",
+                        "sig Train { pos: one Int }",
+                        "pred usesNext { all t: Train | t.pos.next in Int }"));
+        ModelUnit integerModel = new ModelUnit(null, integerModule);
+        MASGVisitor integerVisitor = new MASGVisitor(
+                new GlobalVariables(), integerModule);
+        integerVisitor.visit(integerModel, null);
+        Multigraph integerGraph = graph(integerVisitor, "usesNext");
+        AugmentedNode integerNext = onlyCall(
+                integerGraph, "util/integer/next", 0);
+        check(((CallSymbol) integerNext.getSymbol()).getArityAuthority()
+                        == CallSymbol.ArityAuthority.TYPECHECKED_IMPORT,
+                "util/integer/next must use its independently pinned import declaration");
+        assertCallVisit(integerGraph, integerNext, 1, "integer/next", 0);
+        String integerNextSerialization = CanonicalAlloyPipeline.prepare(
+                Canonical.prepare(integerGraph)).canonicalObservation().stableForm();
+        check(integerNextSerialization.contains(
+                        "ALLOY/CALL/util/integer/next/0/call/expression/TYPECHECKED_IMPORT"),
+                "util/integer/next identity and zero arity must reach certification");
+
         String distinctImportSource = String.join("\n",
                 "module distinctimports",
                 "open util/ordering[A] as o1",

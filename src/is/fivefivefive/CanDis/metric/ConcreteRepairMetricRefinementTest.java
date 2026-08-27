@@ -73,8 +73,9 @@ public final class ConcreteRepairMetricRefinementTest {
     private static void compare(String name, Expected expected, CasePair pair) {
         Objects.requireNonNull(expected, "expected vector " + name);
         try {
-            QuotientRepairDistance.Result actual = QuotientRepairDistance.evaluate(
-                    pair.left, pair.right);
+            QuotientRepairDistance.Result actual =
+                    QuotientRepairDistance.evaluateClaimedProducerConsistencyForTesting(
+                            pair.left, pair.right);
             check(expected.outcome == Outcome.ACCEPT,
                     name + " unexpectedly returned an accepted Java result");
             check(actual.distance() == expected.total,
@@ -93,7 +94,7 @@ public final class ConcreteRepairMetricRefinementTest {
                     name + " violates additive decomposition in Java");
             check(actual.kernelAuthority()
                             == QuotientRepairDistance.KernelAuthority
-                                    .IN_PROCESS_PRODUCER_CONSISTENCY,
+                                    .TEST_ONLY_CLAIMED_PRODUCER_CONSISTENCY,
                     name + " returned an unexpected kernel authority");
         } catch (IllegalArgumentException exception) {
             check(expected.outcome == Outcome.REJECT_PROFILE_MISMATCH,
@@ -349,7 +350,8 @@ public final class ConcreteRepairMetricRefinementTest {
                 coordinate,
                 declaration,
                 "bounded-alpha-block",
-                orbit);
+                orbit,
+                true);
     }
 
     private static TemporalNode temporal(String label, TemporalNode... children) {

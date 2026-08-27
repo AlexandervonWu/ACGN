@@ -13,12 +13,13 @@ import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 
 /** Independently fixed source theory for production Alloy container laws. */
 public final class AlloyLawRegistry {
-    public static final String VERSION = "alloy-container-law-theory-v2";
+    public static final String VERSION = "alloy-container-law-theory-v3";
     private static final String THEORY_TEXT = String.join("\n",
             "AND:Set+:A,C,I",
             "OR:Set+:A,C,I",
             "PLUS:Set+:A,C,I",
             "INTERSECT:Set+:A,C,I",
+            "RELATIONAL-INT-CARRIER:PLUS,INTERSECT=Set<One(Int)>;parser-opcode-authority",
             "IPLUS:forbid=Bag2:C;modular=Bag+:A,C",
             "MUL:forbid=Bag2:C;modular=Bag+:A,C",
             "EQUALS:Bag2:C",
@@ -136,7 +137,8 @@ public final class AlloyLawRegistry {
             boolean exactCarrier = opcode == Opcode.AND || opcode == Opcode.OR
                     ? GraphType.BOOL.equals(resultType)
                             && GraphType.BOOL.equals(elementType)
-                    : AlloyTypeBridge.isCommutativeRelationCarrier(resultType)
+                    : (AlloyTypeBridge.isCommutativeRelationCarrier(resultType)
+                                    || GraphType.INT.equals(resultType))
                             && elementType.equals(resultType);
             return exactCarrier
                     && schema instanceof SetPortSchema

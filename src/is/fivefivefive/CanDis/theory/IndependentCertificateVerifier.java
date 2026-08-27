@@ -63,6 +63,7 @@ public final class IndependentCertificateVerifier {
         private final long maxVerifierBytes;
         private final int maxOutputBytes;
         private final boolean allowTestOnlyEvidence;
+        private final java.util.Map<String, String> callOccurrenceCommitments;
 
         public Policy(
                 Path verifierJar,
@@ -72,6 +73,26 @@ public final class IndependentCertificateVerifier {
                 long maxVerifierBytes,
                 int maxOutputBytes,
                 boolean allowTestOnlyEvidence) {
+            this(
+                    verifierJar,
+                    expectedVerifierSha256,
+                    trustedTheoryDigest,
+                    timeout,
+                    maxVerifierBytes,
+                    maxOutputBytes,
+                    allowTestOnlyEvidence,
+                    java.util.Map.of());
+        }
+
+        public Policy(
+                Path verifierJar,
+                String expectedVerifierSha256,
+                String trustedTheoryDigest,
+                Duration timeout,
+                long maxVerifierBytes,
+                int maxOutputBytes,
+                boolean allowTestOnlyEvidence,
+                java.util.Map<String, String> callOccurrenceCommitments) {
             this.verifierJar = Objects.requireNonNull(
                     verifierJar, "verifierJar").toAbsolutePath().normalize();
             this.expectedVerifierSha256 = requireDigest(
@@ -88,6 +109,13 @@ public final class IndependentCertificateVerifier {
             this.maxVerifierBytes = maxVerifierBytes;
             this.maxOutputBytes = maxOutputBytes;
             this.allowTestOnlyEvidence = allowTestOnlyEvidence;
+            this.callOccurrenceCommitments = java.util.Map.copyOf(
+                    callOccurrenceCommitments);
+            for (java.util.Map.Entry<String, String> entry
+                    : this.callOccurrenceCommitments.entrySet()) {
+                requireDigest(entry.getKey(), "CALL occurrence input hash");
+                requireDigest(entry.getValue(), "CALL occurrence digest");
+            }
         }
 
         public Path verifierJar() {
@@ -116,6 +144,10 @@ public final class IndependentCertificateVerifier {
 
         public boolean allowTestOnlyEvidence() {
             return allowTestOnlyEvidence;
+        }
+
+        public java.util.Map<String, String> callOccurrenceCommitments() {
+            return callOccurrenceCommitments;
         }
     }
 
@@ -148,6 +180,12 @@ public final class IndependentCertificateVerifier {
         command.add(profile.name().toLowerCase(java.util.Locale.ROOT));
         command.add("--theory-digest");
         command.add(policy.trustedTheoryDigest());
+        for (java.util.Map.Entry<String, String> commitment
+                : policy.callOccurrenceCommitments().entrySet().stream()
+                        .sorted(java.util.Map.Entry.comparingByKey()).toList()) {
+            command.add("--call-occurrence-commitment");
+            command.add(commitment.getKey() + "=" + commitment.getValue());
+        }
         for (Path bundle : bundles) {
             Path checked = Objects.requireNonNull(bundle, "bundle")
                     .toAbsolutePath().normalize();

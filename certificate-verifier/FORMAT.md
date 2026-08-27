@@ -282,10 +282,20 @@ a canonical CALL operand: it must match the source term's context and sort,
 and its term ID must occur exactly once in the complete bundle. This detects
 unpaired row or anchor omission/insertion within the serialized normalized
 model, including nested or repeated occurrences of one callee. Coordinated
-removal of both a row and its self-declared anchor cannot be detected without
-an independently supplied source-occurrence authority; correspondence from
-the normalized model back to raw Alloy source remains outside standalone-
-verifier authority.
+removal of both a row and its self-declared anchor is checked against a
+caller-owned `call-occurrence-commitment-v1` value. Its subject is the
+length-delimited SHA-256 of the commitment version, caller-owned input
+identifier, and input SHA-256. Its value is the length-delimited SHA-256 of
+the version, subject, and sorted complete set of replayed occurrence wire
+keys. Every non-fixture semantic verification requires this commitment even
+when the set is empty. Absence is `UNCHECKABLE / MISSING_EVIDENCE`; mismatch
+is `REJECTED / MISSING_EVIDENCE`.
+
+`--inspect-call-occurrences` only formats an untrusted candidate from bundle
+claims. It is not source authority and must not be fed back automatically.
+Correspondence from arbitrary raw Alloy source to the externally retained
+commitment remains outside the standalone verifier and is not claimed by this
+MVP.
 
 Schemas, operators, and binders are typed uninterpreted declarations whose
 complete vocabulary is independently hashed. In PAIR mode, declarations used

@@ -56,6 +56,10 @@ public final class SemanticProfileSourceCommandTest {
                     directory,
                     "formulaB",
                     "sig Scoped {}\npred target { some Scoped }\nrun target\n");
+            CompModule followUp = module(
+                    directory,
+                    "followUp",
+                    "run { some none } for 1 => run { no none } for 1\n");
 
             A4Options modular = options(false, 0);
             A4Options forbid = options(true, 0);
@@ -129,6 +133,10 @@ public final class SemanticProfileSourceCommandTest {
             expectFailure(() -> AlloySemanticProfileFactory.fromExactlyOne(
                             width4, List.of(only(width4)), optionsWithoutSolver()),
                     "an invalid execution option state must reject");
+            check(only(followUp).parent != null,
+                    "follow-up syntax must retain its executable parent command");
+            expectFailure(() -> profile(followUp, modular),
+                    "a profile must not erase follow-up command execution order");
             expectFailure(() -> AlloySemanticProfileFactory.fromExactlyOne(
                             null, List.of(only(width4)), modular),
                     "null parsed module must reject");

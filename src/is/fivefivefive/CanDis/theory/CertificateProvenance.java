@@ -21,7 +21,8 @@ import java.util.stream.Stream;
  */
 public final class CertificateProvenance {
     public static final String EXPORTER_VERSION = "phase-j-producer-export-v3";
-    public static final String VERIFIER_VERSION = "independent-certificate-verifier-v2";
+    public static final String VERIFIER_VERSION =
+            "independent-certificate-verifier-v3-external-call-occurrences";
     private static final String TEST_OVERRIDE = "acgn.provenance.testOverride";
 
     private final String commit;

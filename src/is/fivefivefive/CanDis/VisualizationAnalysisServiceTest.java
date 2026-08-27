@@ -9,7 +9,7 @@ public final class VisualizationAnalysisServiceTest {
             "sig User { follows: set User }",
             "fun neighbors[u: User]: set User { u.follows }",
             "pred hasNeighbor[u: User] { some neighbors[u] }",
-            "pred emptyPair { no (none -> none) }");
+            "fun emptyPair : univ -> univ { none -> none }");
 
     private VisualizationAnalysisServiceTest() {
     }
@@ -23,12 +23,12 @@ public final class VisualizationAnalysisServiceTest {
         }
         assertCallable(callables, "neighbors", "function");
         assertCallable(callables, "hasNeighbor", "predicate");
-        assertCallable(callables, "emptyPair", "predicate");
+        assertCallable(callables, "emptyPair", "function");
 
         assertAnalysis(service.analyze(MODEL, "neighbors", "function"), "neighbors", "function");
         assertAnalysis(service.analyze(MODEL, "hasNeighbor", "predicate"), "hasNeighbor", "predicate");
         assertEmptyRelationArity(
-                service.analyze(MODEL, "emptyPair", "predicate"), 2);
+                service.analyze(MODEL, "emptyPair", "function"), 2);
         assertComparison(service.compare(
                 MODEL, "neighbors", "function", "hasNeighbor", "predicate"), false);
         assertComparison(service.compare(

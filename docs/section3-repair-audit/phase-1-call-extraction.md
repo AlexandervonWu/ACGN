@@ -6,8 +6,9 @@
 
 ## Current Review Status
 
-IMPLEMENTED; PRIOR SINGLE-REVIEW EVIDENCE RETAINED; REOPENED UNDER THE CURRENT
-FIVE-REVIEW ZERO-TRUST GATE. See `adversarial-review-protocol.md`.
+MVP IMPLEMENTED WITH EXTERNAL CALL-OCCURRENCE AUTHORITY. Historical reviews
+remain repair provenance; the open-ended review ladder is no longer a release
+gate. Independent raw-Alloy-to-commitment reconstruction remains incomplete.
 
 ## Scope
 
@@ -192,20 +193,29 @@ rejection. No review vote from the interrupted snapshot is retained.
 
 `P1-F15`: both Round 28 Luna reviewers demonstrated the remaining authority
 limit by deleting one nested CALL row together with its marker term/operator.
-The surviving bundle is internally consistent because the standalone verifier
-does not receive the raw Alloy source or an independently pinned occurrence
-commitment. Another bundle-internal digest cannot repair this circularity.
-Accordingly, marker checks are stated only as protection against unpaired
-tampering. Complete raw-source occurrence coverage is an open theory blocker
-requiring source replay or external authority; Phase 1 and the integrated
-artifact remain `INCOMPLETE`.
+The surviving bundle was internally consistent because the standalone verifier
+received neither raw Alloy source nor an independently pinned occurrence set.
+The MVP now exposes that external authority explicitly. Every non-fixture
+semantic verification requires a caller-pinned
+`call-occurrence-commitment-v1`, including for an empty set. Its subject binds
+the caller-owned root identifier and source hash; its value binds the sorted
+complete set of replayed occurrence wire keys. A missing pin is
+`UNCHECKABLE / MISSING_EVIDENCE`, and coordinated row/marker deletion disagrees
+with the retained full-set pin and is `REJECTED / MISSING_EVIDENCE`.
+
+The verifier's `--inspect-call-occurrences` output is only an untrusted
+candidate. Automatically feeding it back would recreate the circularity.
+Therefore GC-F108 is unblocked only for a caller that independently retains or
+reviews the scoped commitment. An independent raw Alloy parser/refinement proof
+inside the `java.base` verifier remains outside this MVP and is stated as an
+incomplete boundary rather than silently certified.
 
 ## Verification
 
-`CallExtractionRegressionTest` passes 148 checks in the current focused run,
+`CallExtractionRegressionTest` passes 150 checks in the current focused run,
 including an Alloy-backed two-atom witness separating `f[f[a]]` from `f[a]`.
 `CertificateBundleWriterTest` passes 109 checks and
-`ProducerSemanticEvidenceMutationTest` passes 113 checks, including the
+`ProducerSemanticEvidenceMutationTest` passes 116 checks, including the
 independent CALL-ledger omission paths.
 
 The protected `./scripts/run_bounded_ci_java_tests.sh` is byte-identical to the

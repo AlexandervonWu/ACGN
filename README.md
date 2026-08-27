@@ -529,9 +529,32 @@ ablation, and the capability study each retained both the Fast Rewrite IR and
 Certificate-Integrated IR results. A run-level index is written to
 `experiment_results_summary.md`; the measurements remain in the four detailed
 summaries linked from that file. Use `LIMIT=100` for a bounded smoke run and
-`REWARD_POOL=N` to enable Rewarder for the first two stages. Output roots,
+the first two stages use a reward pool of 100 by default. Set `REWARD_POOL=0`
+only for a deliberately reward-free structural smoke run. Output roots,
 workers, heap, capability target, seed, and run-summary path are configurable
 through the environment variables listed at the top of the script.
+
+The requested worker count defaults to the number of logical processors and is
+capped at 16 by the serial runner; its default heap is `-Xmx8g`. Certificate
+construction and Rewarder are more memory-intensive than ordinary parsing and
+comparison, so their effective parallelism is additionally computed as:
+
+```text
+min(requested workers,
+    16,
+    max(1, floor(max(384 MiB, max heap - 512 MiB) / 384 MiB)))
+```
+
+Thus the serial workflow's `-Xmx8g` and 16-worker defaults admit all 16
+memory-intensive workers. A 4 GiB heap would admit nine, and an eight-core host
+admits at most eight. The 512 MiB reserve covers parser/report state and GC
+headroom. The 384 MiB admission unit is a conservative live-working-set budget,
+not a claim that every predicate allocates exactly that amount. Parsing and
+other bounded work may still use the full requested thread pool.
+
+For an AI-supervised full-corpus run with stage gates, diagnostics, and
+fail-closed Sol Max repair escalation, use the protocol in
+[`docs/luna-full-corpus-four-stage-supervisor-prompt.md`](docs/luna-full-corpus-four-stage-supervisor-prompt.md).
 
 For backward-compatible machine-readable output, `canonical*` fields denote
 the Certificate-Integrated IR and `legacyCanonical*` fields denote the Fast
@@ -543,7 +566,7 @@ For an archival run, use a new directory outside the Git worktree:
 ./scripts/run_publication_experiments.sh \
   --run-root /absolute/path/to/acgn-publication-run \
   --dataset "$PWD/classified-data" \
-  --threads 32 --max-heap 4g
+  --threads 16 --max-heap 8g
 ```
 
 This entry point refuses a dirty tree, compiles one JAR once, prevents the
@@ -559,11 +582,11 @@ omit it only for the later archival corpus run.
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.CanonicalBatchTest \
   classified-data distance_results \
-  --threads 32 --skip-rewards
+  --threads 16 --skip-rewards
 ```
 
 Use `--limit N` for a smoke run. The runner writes `distances.json` and
-`summary.md`. Remove `--skip-rewards` and add `--reward-pool 10` for a
+`summary.md`. Remove `--skip-rewards` and add `--reward-pool 100` for a
 separately rewarded run. Generate paper-table extracts outside the frozen
 snapshot with:
 
@@ -572,9 +595,11 @@ snapshot with:
   distance_results /tmp/acgn-paper-artifacts
 ```
 
-The current publication run is reward-disabled, so reward figures are skipped.
-For a rewarded result tree that retains its plotting script and inputs, the
-same command writes those figures to the selected derived-output directory.
+The checked-in publication snapshot is reward-disabled, so its reward figures
+are skipped. New publication runs default to a reward pool of 100; pass
+`--reward-pool 0` only for a deliberately structural run. For a rewarded result
+tree that retains its plotting script and inputs, the same command writes those
+figures to the selected derived-output directory.
 
 ### Augmented truth pools and nearest repairs
 
@@ -583,7 +608,7 @@ Start without rewards for the faster structural run:
 ```bash
 java -cp "$ACGN_CLASSPATH" is.fivefivefive.CanDis.Alloy4FunAugmenter \
   classified-data alloy4fun-augmented \
-  --threads 32 --skip-rewards
+  --threads 16 --skip-rewards
 ```
 
 Remove `--skip-rewards` and add `--reward-pool 100` for the rewarded run. The
@@ -605,7 +630,7 @@ correct-pool equivalence statistics for both canonical implementations.
 ./scripts/run_egraph_ablation.sh \
   --input classified-data \
   --output egraph_ablation \
-  --threads 32 --max-heap 4g
+  --threads 16 --max-heap 8g
 ```
 
 The suite runs all seven arms sequentially in fresh JVMs. The seventh is
@@ -637,7 +662,7 @@ manifests. It also regenerates `canonical_only_vs_slotted.md`,
   --output capability_benchmark \
   --natural egraph_ablation \
   --target 500 --seed 55520260811 \
-  --threads 32 --max-heap 4g
+  --threads 16 --max-heap 8g
 
 ./scripts/run_canonical_memory_attribution.sh \
   --input classified-data \

@@ -98,8 +98,23 @@ public final class ProducerSemanticEvidenceMutationTest {
                 verifier,
                 relationEmptyInterior,
                 "typed-empty interior JOIN agrees with producer arity guard");
+        assertUncheckableCallAuthority(
+                verifier, call, "CALL evidence without external source commitment");
         assertVerified(verifier, call, "CALL occurrence evidence");
         assertVerified(verifier, nestedCall, "nested CALL occurrence evidence");
+        CallOccurrenceCommitment nestedCommitment =
+                CallOccurrenceCommitment.inspect(nestedCall, Limits.defaults());
+        CallOccurrenceCommitment singleCommitment =
+                CallOccurrenceCommitment.inspect(call, Limits.defaults());
+        check(!nestedCommitment.occurrenceDigest().equals(
+                        singleCommitment.occurrenceDigest()),
+                "one and two CALL occurrences must have distinct external commitments");
+        assertRejectedWithCommitment(
+                verifier,
+                coordinatedCallOmission(nestedCall, 0),
+                nestedCommitment,
+                FailureCode.MISSING_EVIDENCE,
+                "a coordinated nested CALL omission cannot match the pinned full set");
         assertVerified(
                 verifier,
                 repeatedFreeSlots,
@@ -704,7 +719,7 @@ public final class ProducerSemanticEvidenceMutationTest {
         check(record.scalars().size() == 11
                         && record.scalar(2).equals("JOIN")
                         && record.scalar(7).equals(
-                                "alloy-dependent-chain-theory-v10")
+                                "alloy-dependent-chain-theory-v11")
                         && record.scalar(8).matches("[0-9a-f]{64}")
                         && record.scalar(10).contains(
                                 "alloy-dependent-chain-source-occurrence-v1"),
@@ -859,7 +874,7 @@ public final class ProducerSemanticEvidenceMutationTest {
         VerificationResult result = verifier.verify(
                 bytes,
                 Profile.FULL,
-                VerificationPolicy.trust(bundle.theoryDigest()));
+                policyFor(bytes, bundle));
         check(result.outcome() == Outcome.VERIFIED, label + ": " + result);
     }
 
@@ -872,7 +887,7 @@ public final class ProducerSemanticEvidenceMutationTest {
         VerificationResult result = verifier.verify(
                 bytes,
                 Profile.FULL,
-                VerificationPolicy.trust(bundle.theoryDigest()));
+                policyFor(bytes, bundle));
         check(result.outcome() == Outcome.REJECTED
                         && result.code() == expected,
                 label + ": " + result);
@@ -886,10 +901,50 @@ public final class ProducerSemanticEvidenceMutationTest {
         VerificationResult result = verifier.verify(
                 bytes,
                 Profile.FULL,
+                policyFor(bytes, bundle));
+        check(result.outcome() == Outcome.UNCHECKABLE
+                        && result.code() == FailureCode.MISSING_EVIDENCE,
+                label + ": " + result);
+    }
+
+    private static void assertUncheckableCallAuthority(
+            IndependentVerifier verifier,
+            byte[] bytes,
+            String label) {
+        Bundle bundle = decode(bytes);
+        VerificationResult result = verifier.verify(
+                bytes,
+                Profile.FULL,
                 VerificationPolicy.trust(bundle.theoryDigest()));
         check(result.outcome() == Outcome.UNCHECKABLE
                         && result.code() == FailureCode.MISSING_EVIDENCE,
                 label + ": " + result);
+    }
+
+    private static void assertRejectedWithCommitment(
+            IndependentVerifier verifier,
+            byte[] bytes,
+            CallOccurrenceCommitment commitment,
+            FailureCode expected,
+            String label) {
+        Bundle bundle = decode(bytes);
+        VerificationResult result = verifier.verify(
+                bytes,
+                Profile.FULL,
+                VerificationPolicy.trust(bundle.theoryDigest())
+                        .withCallOccurrenceCommitment(commitment));
+        check(result.outcome() == Outcome.REJECTED && result.code() == expected,
+                label + ": " + result);
+    }
+
+    private static VerificationPolicy policyFor(byte[] bytes, Bundle bundle) {
+        VerificationPolicy policy = VerificationPolicy.trust(bundle.theoryDigest());
+        try {
+            return policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(bytes, Limits.defaults()));
+        } catch (RuntimeException malformedBeforeSemanticReplay) {
+            return policy;
+        }
     }
 
     private static byte[] mutateRecord(
@@ -958,6 +1013,82 @@ public final class ProducerSemanticEvidenceMutationTest {
                 source,
                 sectionIndex,
                 Wire.node(section.tag(), section.scalars(), records));
+    }
+
+    private static byte[] coordinatedCallOmission(
+            byte[] source,
+            int recordIndex) {
+        Wire.Node root = Codec.decode(source, Limits.defaults());
+        Wire.Node manifest = root.child(1);
+        Wire.Node vocabulary = manifest.child(1);
+        Wire.Node evidence = vocabulary.child(3);
+        Wire.Node callSection = evidence.child(5);
+        if (recordIndex < 0 || recordIndex >= callSection.children().size()) {
+            throw new AssertionError("CALL occurrence record index is out of range");
+        }
+        Wire.Node removedRecord = callSection.child(recordIndex);
+        String markerIdentity = "ACGN/CALL-OCCURRENCE/"
+                + java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(
+                        removedRecord.scalar(0).getBytes(
+                                java.nio.charset.StandardCharsets.UTF_8));
+
+        List<Wire.Node> operators = new ArrayList<>();
+        String markerOperatorId = null;
+        for (Wire.Node operator : vocabulary.child(1).children()) {
+            if (operator.scalar(2).equals(markerIdentity)) {
+                if (markerOperatorId != null) {
+                    throw new AssertionError("CALL marker operator is duplicated");
+                }
+                markerOperatorId = operator.scalar(0);
+            } else {
+                operators.add(operator);
+            }
+        }
+        if (markerOperatorId == null) {
+            throw new AssertionError("CALL occurrence has no matching marker operator");
+        }
+
+        List<Wire.Node> terms = new ArrayList<>();
+        int removedTerms = 0;
+        for (Wire.Node term : root.child(4).children()) {
+            if (term.scalars().size() > 5
+                    && term.scalar(5).equals(markerOperatorId)) {
+                removedTerms++;
+            } else {
+                terms.add(term);
+            }
+        }
+        if (removedTerms != 1) {
+            throw new AssertionError(
+                    "CALL occurrence must own exactly one marker term");
+        }
+
+        List<Wire.Node> records = new ArrayList<>(callSection.children());
+        records.remove(recordIndex);
+        Wire.Node changedEvidence = replaceChild(
+                evidence,
+                5,
+                Wire.node(callSection.tag(), callSection.scalars(), records));
+        Wire.Node changedVocabulary = replaceChild(
+                replaceChild(
+                        vocabulary,
+                        1,
+                        Wire.node(
+                                vocabulary.child(1).tag(),
+                                vocabulary.child(1).scalars(),
+                                operators)),
+                3,
+                changedEvidence);
+        Wire.Node changedManifest = Wire.node(
+                manifest.tag(),
+                List.of(manifest.scalar(0), Wire.contentId(changedVocabulary)),
+                List.of(manifest.child(0), changedVocabulary));
+        root = replaceChild(root, 1, changedManifest);
+        root = replaceChild(
+                root,
+                4,
+                Wire.node(root.child(4).tag(), root.child(4).scalars(), terms));
+        return Codec.encode(root);
     }
 
     private static byte[] mutateDependentSchema(
