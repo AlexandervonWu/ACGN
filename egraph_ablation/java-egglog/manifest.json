@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "f74ca7b2fc97d828d58304dbb91510a8292aeac0ddd0c7080933122e1bd37628",
-      "sizeBytes": 11251510
+      "sha256": "639ff7dbdfdb1e621aa11469cb7091032edfee68317f01ebd232a3d9095f0024",
+      "sizeBytes": 11224210
     },
     {
       "path": "summary.json",
-      "sha256": "e98179ddae6ca788507bf8d7918295cb5f319ccc86055be2a8223a7446c0694c",
-      "sizeBytes": 81193
+      "sha256": "f27f41a9bf800ee2dcc991721958ef5010704200254d369d50b1f6d37383a870",
+      "sizeBytes": 81221
     },
     {
       "path": "metrics.properties",
-      "sha256": "afb3de71e0f2fdf6ddc0972f9d79d89370713ff0229f2e505011b298c250917b",
-      "sizeBytes": 1476
+      "sha256": "4c36fe54b87054131605bf42abd63064ff59ec156ce08826a6dee69716452c9c",
+      "sizeBytes": 1492
     },
     {
       "path": "run.log",
-      "sha256": "711ebcb87e2664905d49aeb629877dde81f9f29e4dcce3ce4e693d65c3514562",
+      "sha256": "23d2e04022383ef0e7a33aff4b39d736666cb7d16a0f69f491e74773082de77c",
       "sizeBytes": 6606
     },
     {
       "path": "process.time",
-      "sha256": "46d4be99955ade476a76228bdb467893c5cb18961af25865d6b7f53600e141b0",
-      "sizeBytes": 1348
+      "sha256": "0afb802a9d602c70535c7046426fe69c5483323d54a40771ff52f77fcfa134f9",
+      "sizeBytes": 1367
     }
   ],
   "seed": 55520260811,
-  "javaVersion": "17.0.19",
+  "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-19T17:27:41.382159656Z",
-  "javaSourceSha256": "f16d10a5bbb1b1089e6e78ccedd4675b6c3599f1c7b4372fb9d6eefa90eb72b4",
+  "startedAt": "2026-08-27T21:32:40.272516843Z",
+  "javaSourceSha256": "2bd306e5a2f573d9e41e67bc842a5a86190fc0fbfe7f2de1674383b04a8ad4c4",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -38,7 +38,7 @@
     "files": 66080
   },
   "logicalProcessors": 32,
-  "osVersion": "7.0.0-28-generic",
+  "osVersion": "7.0.0-30-generic",
   "engine": {
     "quotientMetricVersion": "not-applicable",
     "canonicalizerVersion": "legacy-bounded",
@@ -59,16 +59,16 @@
     "canonicalRepresentativeTedVersion": "not-applicable",
     "armId": "java-egglog",
     "alloyAdapterVersion": "not-applicable",
-    "ruleSetId": "canonical-equivalences-v2"
+    "ruleSetId": "canonical-equivalences-v3-explicit-laws"
   },
   "host": "augustus-x870e",
   "limit": 0,
   "datasetFileCount": 66080,
   "datasetSha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689",
-  "heap": "4g",
-  "workers": 32,
+  "heap": "8g",
+  "workers": 16,
   "arm": "java-egglog",
-  "ruleSetVersion": "canonical-equivalences-v2",
+  "ruleSetVersion": "canonical-equivalences-v3-explicit-laws",
   "outputSchemaVersion": "candis-ablation-output-v5",
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
@@ -76,7 +76,7 @@
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "f1bb1607911a4e5a7a0b8527be65148f66cf72d8",
+  "gitSha": "ebce874382c87108a32874149008842a7b0fa528",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "eb6b6e64-a929-44c4-9871-21c60de041b9"
+  "runId": "4e612dc7-5e3a-497c-8ee1-30c8fad7c869"
 }

@@ -27,7 +27,7 @@ run under
 sig CapBenchA { capBenchR: set CapBenchA }
 sig CapBenchB { capBenchS: set CapBenchB }
 
-pred cap000654 { (some ((CapBenchA.capBenchR).capBenchR) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA))) }
-pred cap000654c { (some (CapBenchA.(capBenchR.capBenchR)) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA))) }
+pred cap000654 { (some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA))) }
+pred cap000654c { (some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA))) }
 assert CapBenchEquivalent_cap000654 { cap000654 iff cap000654c }
 check CapBenchEquivalent_cap000654 for 4

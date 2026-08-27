@@ -48,22 +48,22 @@ complete theorem prover for arbitrary Alloy semantics.
 
 ## Current Experimental Snapshot
 
-The August 19, 2026 snapshot uses 66,080 source files. Every runner excludes
+The August 27, 2026 snapshot uses 66,080 source files. Every runner excludes
 4,482 student-oracle pairs with identical parser ASTs before pool construction,
 leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 
 | Evaluation | Headline result |
 | --- | --- |
-| Paired student-oracle (`pipeline-v11`, metric v5) | 61,598 successes, 0 failures; mean certified repair distance 14.042096; 2,317 `CORRECT` zeroes; 0 incorrect zeroes |
-| Nearest correct pool (`pipeline-v11`, metric v5) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 10.865569 |
-| Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,318 canonical components, 10,257 AST-different zero-distance truth pairs |
-| Seven-arm natural corpus | Certificate-Integrated IR retained 2,316 Fast Rewrite IR zeroes and added 1; both canonical paths had 0 incorrect zeroes |
-| Generated capability matrix | slotted, Fast Rewrite IR, and Certificate-Integrated IR arms recovered 5,500/5,500 pairs; all 11 expected capability boundaries matched |
+| Paired student-oracle (`pipeline-v38`, metric v12) | 61,598 successes, 0 failures; mean certified repair distance 14.021251; 4,088 `CORRECT` zeroes; 0 incorrect zeroes |
+| Nearest correct pool (`pipeline-v38`, metric v12) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 11.562190; 0 certified incorrect zeroes |
+| Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,101 certified components, 11,382 AST-different certified zero pairs |
+| Seven-arm natural corpus | Certificate-Integrated IR retained 4,074 Fast Rewrite IR zeroes and added 14; both paired-oracle canonical paths had 0 incorrect zeroes |
+| Generated capability matrix | slotted recovered 5,500/5,500; Fast Rewrite and Certificate-Integrated IR each recovered 5,492/5,500; all 11 expected capability boundaries matched |
 
-The certificate-integrated arm averaged 29.830 representation units, 20.935
-reachable e-classes, and 18.059 reachable e-nodes, but required 2,373.970
-seconds wall time versus 19.830 seconds for the Fast Rewrite IR arm. Maximum
-RSS was 4,672.453 versus 3,926.012 MiB. Its cost is dominated by certificate-bearing construction,
+The certificate-integrated arm averaged 29.540 representation units, 18.442
+reachable e-classes, and 16.148 reachable e-nodes, but required 2,730.160
+seconds wall time versus 24.690 seconds for the Fast Rewrite IR arm. Maximum
+RSS was 8,925.242 versus 1,718.941 MiB. Its cost is dominated by certificate-bearing construction,
 renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
 not by larger output terms or the final repair-distance recurrence.
 
@@ -76,9 +76,8 @@ a stronger semantic-assurance boundary at substantial runtime cost; neither
 the bounded checks nor the dataset labels constitute an unbounded Alloy proof.
 
 The publication, ablation, and capability manifests record a clean source tree
-at Git SHA `f1bb1607911a4e5a7a0b8527be65148f66cf72d8`. Their source, dataset, and
-output hashes are the exact provenance for these results; a tagged archival
-release remains a release task.
+at Git SHA `ebce874382c87108a32874149008842a7b0fa528`. Their source, dataset,
+and output hashes are the exact provenance for these results.
 
 ## Architecture
 
@@ -246,7 +245,7 @@ Dataset summaries compare this size with raw AST size and lexical body length.
 ## Rewrite Theory
 
 The ablation baselines share the terminating rule set
-`canonical-equivalences-v2`. The production canonicalizer applies the same main
+`canonical-equivalences-v3-explicit-laws`. The production canonicalizer applies the same main
 equivalences while additionally performing temporal partitioning, strict
 per-phase normalization, primitive binding extraction, and slot symmetries.
 
@@ -549,7 +548,7 @@ Options:
 | first positional path | input dataset, default `classified-data` |
 | second positional path | output directory, default `distance_results` |
 | `--threads N` | file workers, default `32` |
-| `--reward-pool N` | reward instance-pool size, default `10` |
+| `--reward-pool N` | reward instance-pool size, default `100` |
 | `--skip-rewards` | produce structural results without running Rewarder |
 | `--limit N` | process only the first `N` files |
 | `--verbose` | print individual failures and progress |
@@ -575,7 +574,7 @@ and statistic. Excluded paths are retained in
 ```bash
 java -cp "$BUILD:lib/*" is.fivefivefive.CanDis.Alloy4FunAugmenter \
   classified-data alloy4fun-augmented \
-  --threads 32 --reward-pool 100
+  --threads 16 --reward-pool 100
 ```
 
 Additional options are `--skip-rewards`, `--audit-only`, `--limit N`, and
@@ -674,18 +673,18 @@ The current full-corpus result is:
 
 | Arm | `CORRECT` zeroes | Mean distance | Wall s | Engine CPU s | Max RSS MiB |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `raw-egraph` | 823 | 18.390 | 18.260 | 4.517 | 933.320 |
-| `raw-egraph-debruijn` | 2,163 | 17.923 | 16.580 | 5.289 | 864.070 |
-| `java-egglog` | 823 | 17.996 | 16.400 | 4.094 | 874.352 |
-| `java-egglog-debruijn` | 2,163 | 17.530 | 16.630 | 4.997 | 915.074 |
-| `slotted-egraph` | 2,162 | 17.694 | 17.390 | 14.642 | 936.621 |
-| `canonical` | 2,316 | 14.029 | 18.470 | 13.255 | 3,529.023 |
-| `typed-slotted-port-egraph` | 2,317 | 14.042 | 2,303.890 | 47,451.149 | 3,603.680 |
+| `raw-egraph` | 820 | 18.364 | 19.130 | 4.233 | 1,645.855 |
+| `raw-egraph-debruijn` | 2,160 | 17.911 | 19.220 | 5.126 | 1,548.828 |
+| `java-egglog` | 820 | 18.147 | 19.330 | 4.090 | 1,561.074 |
+| `java-egglog-debruijn` | 2,160 | 17.690 | 19.140 | 4.814 | 1,488.988 |
+| `slotted-egraph` | 2,159 | 17.824 | 19.340 | 15.947 | 1,656.031 |
+| `canonical` | 4,074 | 13.938 | 24.690 | 68.050 | 1,718.941 |
+| `typed-slotted-port-egraph` | 4,088 | 14.021 | 2,730.160 | 41,550.938 | 8,925.242 |
 
 All arms completed all 61,598 eligible pairs with zero failures and zero
-incorrect zero-distance merges. Pair-level transitions show `+1/-0` from the
-Fast Rewrite IR to the Certificate-Integrated IR. The latter's p50 and p95 engine latencies were
-555.391 and 4,394.306 ms. Consult the generated report for per-pair transitions,
+incorrect paired-oracle zero-distance merges. Pair-level transitions show
+`+14/-0` from the Fast Rewrite IR to the Certificate-Integrated IR. The latter's
+p50 and p95 engine latencies were 320.451 and 2,376.936 ms. Consult the generated report for per-pair transitions,
 representation counts, and process metadata rather than copying this summary
 into a paper table by hand.
 
@@ -703,7 +702,7 @@ normalization, and compositions of those transformations.
   --dataset classified-data \
   --output capability_benchmark \
   --target 500 --seed 55520260811 \
-  --threads 32 --max-heap 3g
+  --threads 16 --max-heap 8g
 ```
 
 Generation compiles every model, rejects parser-AST-identical pairs, deduplicates
@@ -718,8 +717,9 @@ subtype by default (`--soundness-per-subtype N`) and labels that evidence as a
 bounded sanity check rather than proof.
 
 In the current 5,500-pair run, raw and Java egglog each recovered 47.00%; their
-De Bruijn variants recovered 65.96%; and slotted, Fast Rewrite IR, and
-Certificate-Integrated IR each recovered 100.00%. Every expected first-capable boundary matched. The 29
+De Bruijn variants recovered 65.96%; slotted recovered 100.00%; and Fast Rewrite
+IR and Certificate-Integrated IR each recovered 99.85% (5,492/5,500). Every
+expected first-capable boundary matched. The 29
 bounded checks had zero conclusive non-temporal failures; six temporal checks
 remain explicitly inconclusive because no temporal backend was available.
 
@@ -760,9 +760,9 @@ substitute for an object-layout profiler.
 - `distances.json`: pair-level distances, sizes, formulas, and edits
 - `summary.md`: aggregate raw/relative distances, compression, and repair radii
 
-The August 19 structural snapshot used `--skip-rewards`; reward CSVs, plots,
-correlations, and paper-table extracts from earlier rewarded runs are not part
-of this publication output.
+The August 27 snapshot used reward pool 100. Reward values and correlations are
+bound in `distances.json` and `summary.md`; the paired-distance tree does not
+retain separate plotting inputs.
 
 Generate paper-table extracts, and optional rewarded plots when their inputs
 exist, in a directory outside the frozen snapshot:

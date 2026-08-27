@@ -1,9 +1,9 @@
 # Phase I Artifact Integration
 
-> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 ## Scope
@@ -226,13 +226,13 @@ heap, 16 workers were faster on the allocation-heavy exact arm and avoided the
 is a separate potentially dominant phase; use `--skip-rewards` for structural
 reproduction, then run rewarded measurements deliberately.
 
-The completed seven-arm natural-corpus run makes the remaining exact-engine
-cost concrete. At 32 workers and `-Xmx3g`, the Fast Rewrite IR arm finished
-61,598 eligible pairs in 18.470 seconds with 13.255 engine CPU seconds; the
-exact arm required 2,303.890 seconds and 47,451.149 engine CPU seconds. Exact
-per-pair latency was 555.391 ms at p50 and 4,394.306 ms at p95. Maximum RSS was
-similar, 3,529.023 MiB for Fast Rewrite and 3,603.680 MiB for certificate-integrated execution, and the exact
-observation was not larger: 29.830 average units versus 29.843. This confirms
+The completed clean seven-arm natural-corpus run makes the remaining exact-engine
+cost concrete. At 16 workers and `-Xmx8g`, the Fast Rewrite IR arm finished
+61,598 eligible pairs in 24.690 seconds with 68.050 engine CPU seconds; the
+exact arm required 2,730.160 seconds and 41,550.938 engine CPU seconds. Exact
+per-pair latency was 320.451 ms at p50 and 2,376.936 ms at p95. Maximum RSS was
+1,718.941 MiB for Fast Rewrite and 8,925.242 MiB for certificate-integrated execution, while the exact
+observation remained slightly smaller: 29.540 average units versus 29.999. This confirms
 that certificate-bearing state transitions, orbit minimization, strict
 invariant checking, rebuild, and finite unfolding dominate; output size and the
 Layer-3 repair recurrence do not explain the wall-time gap.
@@ -269,7 +269,11 @@ settings, and SHA-256 hashes of generated outputs.
 before producing combined files. It does not silently combine an old six-arm
 run with the new exact arm.
 
-## Validation
+## Historical Validation Chronology
+
+The individual bullets in this section retain the developmental measurements
+that led to the current implementation. The superseding clean publication
+measurement is stated at the end of the chronology.
 
 The Phase I build and focused checks were refreshed on 2026-08-26:
 
@@ -376,15 +380,22 @@ The Phase I build and focused checks were refreshed on 2026-08-26:
   bounded subtype checks had 0 conclusive non-temporal failures and 6 temporal
   checks explicitly marked inconclusive.
 
-The generated seven-arm directories are now full-corpus measurements, not
-smokes. Their manifests record source SHA
-`cc53042333fa3a1c820eb5715aa3b124e03d0ff1` with a dirty tree, so the manifest
-source/output hashes are authoritative. A clean, tagged archival rerun remains
-a release-provenance task.
+The bullets above retain the developmental replay chronology. The current
+checked-in empirical trees supersede those measurements: clean publication run
+`6000d695-8b5e-4972-b0ea-3d9e55111245` at source `ebce8743` completed all
+61,598 eligible paired evaluations, all 42,386 incorrect-to-truth rankings,
+all seven ablation arms, and all 5,500 capability pairs. It reported zero stage
+failures, 4,088 certificate-integrated `CORRECT` paired zeroes, zero paired
+incorrect zeroes, and zero certified incorrect-to-truth zeroes. The Fast
+Rewrite path reported 4,074 paired `CORRECT` zeroes and ten non-certifying
+incorrect-to-truth zeroes. The bounded natural-corpus checker found no
+counterexample in the union of 4,088 claimed equalities. Capability recovery
+was 5,500/5,500 for slotted and 5,492/5,500 for each canonical arm; the two
+canonical arms agreed on all generated pairs.
 
 ## Post-Integration Distribution Repair
 
-Pipeline `canonical-alloy-pipeline-v37-three-layer` adds guarded semantic
+Pipeline `canonical-alloy-pipeline-v38-phase-local-bindings` includes the guarded semantic
 families found by the Round-63 through Round-73 staged reviews. Relational converse now
 distributes through exact binary union, intersection, and difference, using a
 parser-authenticated correlated-column reversal proof. Ordinary Cartesian

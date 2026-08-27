@@ -11,8 +11,8 @@ family,fromArm,toArm,retainedZero,newlyZero,noLongerZero
 "aci","raw-egraph-debruijn","java-egglog-debruijn",500,0,0
 "aci","java-egglog","java-egglog-debruijn",500,0,0
 "aci","java-egglog-debruijn","slotted-egraph",500,0,0
-"aci","slotted-egraph","canonical",500,0,0
-"aci","canonical","typed-slotted-port-egraph",500,0,0
+"aci","slotted-egraph","canonical",496,0,4
+"aci","canonical","typed-slotted-port-egraph",496,0,0
 "binder_permutation","raw-egraph","raw-egraph-debruijn",1,21,0
 "binder_permutation","raw-egraph","java-egglog",1,0,0
 "binder_permutation","raw-egraph-debruijn","java-egglog-debruijn",22,0,0
@@ -67,12 +67,12 @@ family,fromArm,toArm,retainedZero,newlyZero,noLongerZero
 "ac_logical","raw-egraph-debruijn","java-egglog-debruijn",500,0,0
 "ac_logical","java-egglog","java-egglog-debruijn",500,0,0
 "ac_logical","java-egglog-debruijn","slotted-egraph",500,0,0
-"ac_logical","slotted-egraph","canonical",500,0,0
-"ac_logical","canonical","typed-slotted-port-egraph",500,0,0
+"ac_logical","slotted-egraph","canonical",498,0,2
+"ac_logical","canonical","typed-slotted-port-egraph",498,0,0
 "mixed","raw-egraph","raw-egraph-debruijn",62,0,0
 "mixed","raw-egraph","java-egglog",62,0,0
 "mixed","raw-egraph-debruijn","java-egglog-debruijn",62,0,0
 "mixed","java-egglog","java-egglog-debruijn",62,0,0
 "mixed","java-egglog-debruijn","slotted-egraph",62,438,0
-"mixed","slotted-egraph","canonical",500,0,0
-"mixed","canonical","typed-slotted-port-egraph",500,0,0
+"mixed","slotted-egraph","canonical",498,0,2
+"mixed","canonical","typed-slotted-port-egraph",498,0,0

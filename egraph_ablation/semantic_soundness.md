@@ -1,11 +1,11 @@
 # E-Graph Semantic Soundness Check
 
-- Generated at: `2026-08-19T18:09:21.400347922Z`
-- Checked unique predicate pairs: 2320
+- Generated at: `2026-08-27T22:20:30.203644109Z`
+- Checked unique predicate pairs: 4088
 - Mode: union of all equivalence claims
-- Threads: 32
-- Claim-source run: `eb6b6e64-a929-44c4-9871-21c60de041b9`
-- Exact checker: `canonical-alloy-pipeline-v11-three-layer` / `typed-alloy-normal-form-adapter-v8` / `canonical-alloy-signature-v7`
+- Threads: 16
+- Claim-source run: `4e612dc7-5e3a-497c-8ee1-30c8fad7c869`
+- Exact checker: `canonical-alloy-pipeline-v38-phase-local-bindings` / `typed-alloy-normal-form-adapter-v13` / `canonical-alloy-signature-v8`
 
 This is a bounded semantic check using each model's own `check correct` command. An Alloy counterexample disproves a merge; absence of a counterexample is evidence only within that command's scope and temporal bounds.
 
@@ -13,13 +13,13 @@ This is a bounded semantic check using each model's own `check correct` command.
 
 | Arm | Claims checked | No counterexample | Counterexamples | Errors | Bounded precision |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| raw-egraph | 823 | 823 | 0 | 0 | 100.000% |
-| raw-egraph-debruijn | 2163 | 2163 | 0 | 0 | 100.000% |
-| java-egglog | 823 | 823 | 0 | 0 | 100.000% |
-| java-egglog-debruijn | 2163 | 2163 | 0 | 0 | 100.000% |
-| slotted-egraph | 2162 | 2162 | 0 | 0 | 100.000% |
-| canonical | 2316 | 2316 | 0 | 0 | 100.000% |
-| typed-slotted-port-egraph | 2317 | 2317 | 0 | 0 | 100.000% |
+| raw-egraph | 820 | 820 | 0 | 0 | 100.000% |
+| raw-egraph-debruijn | 2160 | 2160 | 0 | 0 | 100.000% |
+| java-egglog | 820 | 820 | 0 | 0 | 100.000% |
+| java-egglog-debruijn | 2160 | 2160 | 0 | 0 | 100.000% |
+| slotted-egraph | 2159 | 2159 | 0 | 0 | 100.000% |
+| canonical | 4074 | 4074 | 0 | 0 | 100.000% |
+| typed-slotted-port-egraph | 4088 | 4088 | 0 | 0 | 100.000% |
 
 ## Counterexamples
 

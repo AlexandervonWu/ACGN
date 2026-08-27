@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "bcc87805ac2928b57d7f8a0e52c2721350e853cd4566183be0bab712139ebc23",
-      "sizeBytes": 11946480
+      "sha256": "5e73092423ea1987ba6ff42613299642a09e6022c275f6f8eb7a2cf620188a99",
+      "sizeBytes": 11855022
     },
     {
       "path": "summary.json",
-      "sha256": "7fb965c8205e4bdd9734cd8a2743b48e468b7a5a4cd22616ffea7bb263d069bd",
-      "sizeBytes": 80846
+      "sha256": "1dea6102b53e022aeac04068b48fa9cc5f85726e96dadd0216ecf3ac9807f23d",
+      "sizeBytes": 80754
     },
     {
       "path": "metrics.properties",
-      "sha256": "5e9dd9f47bacaa19a0706448fad4244cc9909343ab98b92f2c34123c575cac67",
-      "sizeBytes": 1653
+      "sha256": "20a5362325d09d976e14da5782ba19e9042b259e4087d6bc04658060c866d06d",
+      "sizeBytes": 1692
     },
     {
       "path": "run.log",
-      "sha256": "5fd9a8e1e10c4df8e77d2202bff05e7bf81387e0eb8d306b6b4fdb98cedf40f0",
-      "sizeBytes": 12642
+      "sha256": "c7b4f8eec73fb21d90a00cd6c74a4fe5215d1baa0f3311cc79780af508fbf571",
+      "sizeBytes": 13607
     },
     {
       "path": "process.time",
-      "sha256": "017d620b87a9ccb0311656dcca67a5d6d4b1b19601fc97e65fa412a43cad233b",
-      "sizeBytes": 1386
+      "sha256": "0cf7778e23efb6d924ad49512e89b6a213b4a22807a4cbfb9ba8b15aa51f689e",
+      "sizeBytes": 1402
     }
   ],
   "seed": 55520260811,
-  "javaVersion": "17.0.19",
+  "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-19T17:27:41.382159656Z",
-  "javaSourceSha256": "f16d10a5bbb1b1089e6e78ccedd4675b6c3599f1c7b4372fb9d6eefa90eb72b4",
+  "startedAt": "2026-08-27T21:32:40.272516843Z",
+  "javaSourceSha256": "2bd306e5a2f573d9e41e67bc842a5a86190fc0fbfe7f2de1674383b04a8ad4c4",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -38,11 +38,11 @@
     "files": 66080
   },
   "logicalProcessors": 32,
-  "osVersion": "7.0.0-28-generic",
+  "osVersion": "7.0.0-30-generic",
   "engine": {
-    "quotientMetricVersion": "certified-legacy-repair-distance-v5",
-    "canonicalizerVersion": "canon-g-production-v2",
-    "canonicalPipelineVersion": "canonical-alloy-pipeline-v11-three-layer",
+    "quotientMetricVersion": "certified-fast-rewrite-repair-distance-v12",
+    "canonicalizerVersion": "canon-g-production-v4",
+    "canonicalPipelineVersion": "canonical-alloy-pipeline-v38-phase-local-bindings",
     "boundedSettings": {
       "legacyMaximumTermSize": 0,
       "legacyRewriteIterations": 0,
@@ -50,7 +50,7 @@
       "finiteUnfoldingMaximumAlternatives": 64
     },
     "invariantCheckMode": "strict-every-transition",
-    "measurementProjectionVersion": "faithful-legacy-repair-projection-v6",
+    "measurementProjectionVersion": "faithful-fast-rewrite-repair-projection-v13",
     "certificateMode": "required",
     "engineIdentifier": "TypedSlottedPortEGraph",
     "theoryFaithfulEngineUsed": true,
@@ -58,17 +58,17 @@
     "finiteUnfoldingVersion": "typed-finite-unfolding-oracle-v2",
     "canonicalRepresentativeTedVersion": "canonical-representative-ted-v1",
     "armId": "typed-slotted-port-egraph",
-    "alloyAdapterVersion": "typed-alloy-normal-form-adapter-v8",
-    "ruleSetId": "canonical-alloy-signature-v7"
+    "alloyAdapterVersion": "typed-alloy-normal-form-adapter-v13",
+    "ruleSetId": "canonical-alloy-signature-v8"
   },
   "host": "augustus-x870e",
   "limit": 0,
   "datasetFileCount": 66080,
   "datasetSha256": "d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689",
-  "heap": "4g",
-  "workers": 32,
+  "heap": "8g",
+  "workers": 16,
   "arm": "typed-slotted-port-egraph",
-  "ruleSetVersion": "canonical-equivalences-v2",
+  "ruleSetVersion": "canonical-equivalences-v3-explicit-laws",
   "outputSchemaVersion": "candis-ablation-output-v5",
   "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor",
   "javaVendor": "Ubuntu",
@@ -76,7 +76,7 @@
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "f1bb1607911a4e5a7a0b8527be65148f66cf72d8",
+  "gitSha": "ebce874382c87108a32874149008842a7b0fa528",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "eb6b6e64-a929-44c4-9871-21c60de041b9"
+  "runId": "4e612dc7-5e3a-497c-8ee1-30c8fad7c869"
 }

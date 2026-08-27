@@ -462,15 +462,15 @@ Every claim follows the same bounded process:
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `REFUTED`
-- Claim-specific process/limits: One historical snapshot is hash-bound, but the literal every-empirical-claim assertion is false for the moving repair snapshot and no new immutable run exists
+- Claim-specific process/limits: Clean publication run 6000d695-8b5e-4972-b0ea-3d9e55111245 hash-binds the current generated trees, but no complete statement-to-manifest registry proves the literal every-empirical-claim assertion
 - Current proof state: `INCOMPLETE`
 
 ### G-14
 
-**Claim.** Historical result trees, paper, release assets, frozen manifests, and reproducibility terminal programs are unchanged.
+**Claim.** Archived prior publication runs, paper, prior release assets, and reproducibility terminal programs remain unchanged; current imported result trees match their selected clean-run manifest.
 
 - Class: `P`
-- Claim SHA-256: `42c8f6980168678c345681de6892e77a892b789e2a57839233f46fd3a3f20789`
+- Claim SHA-256: `5056a084c7d3e236a07dd45785f61c494ea802e809f87753a563db4e934abf24`
 - Ledger line: 78
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_manifest_complete`
@@ -479,7 +479,7 @@ Every claim follows the same bounded process:
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `DIRECT-BOUNDED`
-- Claim-specific process/limits: The enumerated protected paths are unchanged from 8ec25613 and the imported 5804-file snapshot verifies; this is bounded path-set evidence, not universal external-asset identity
+- Claim-specific process/limits: The four imported result trees exactly match the 5808 stage artifacts in clean publication run 6000d695-8b5e-4972-b0ea-3d9e55111245; this is bounded path-set evidence, not universal external-asset identity
 - Current proof state: `INCOMPLETE`
 
 ### G-15

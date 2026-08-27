@@ -476,7 +476,8 @@ primitive type, cardinality, or disjointness class at unit cost.
 - Shared ablation rules: [`AlloyRewriteSystem.java`](../src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java)
 - Distance extraction: [`CanonicalDistance.java`](../src/is/fivefivefive/CanDis/core/CanonicalDistance.java)
 
-The shared ablation rule set is versioned as `canonical-equivalences-v2`. The
+The shared ablation rule set is versioned as
+`canonical-equivalences-v3-explicit-laws`. The
 production canonicalizer adds temporal partitioning, strict phase-local
 prenexing, binding tuples, renamed slots, and permutation groups around that
 core equivalence vocabulary.

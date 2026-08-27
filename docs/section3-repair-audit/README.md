@@ -50,6 +50,9 @@ was generated; this overview deliberately does not duplicate them. Run
 the current values and an input-bound report. Any nonzero diagnostic count
 means `INCOMPLETE`, never `PASS`.
 
-The protected historical empirical result trees and protected reproduction
-scripts are outside this repair directory and were not modified by this
-assurance work.
+The prior archived publication run remains intact. The four current empirical
+result trees were intentionally refreshed from clean publication run
+`6000d695-8b5e-4972-b0ea-3d9e55111245` and are checked against its 5,808
+manifest-selected stage artifacts. Reproduction programs were not altered by
+the experiment itself; the snapshot verifier and result-regeneration test were
+advanced only to recognize the newly imported run.

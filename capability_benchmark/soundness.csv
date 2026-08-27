@@ -4,7 +4,7 @@ relativePath,family,subtype,solverReportedCounterexample,inconclusive,note,error
 "aci/CORRECT/generated_cap000501.als","aci","reorder-or",false,false,"",""
 "aci/CORRECT/generated_cap000502.als","aci","duplicate-and",false,false,"",""
 "aci/CORRECT/generated_cap000503.als","aci","duplicate-or",false,false,"",""
-"aci/CORRECT/generated_cap000504.als","aci","reassociate-join",false,false,"",""
+"aci/CORRECT/generated_cap000504.als","aci","reassociate-intersection",false,false,"",""
 "aci/CORRECT/generated_cap000505.als","aci","flatten-unflatten-union",false,false,"",""
 "alpha/CORRECT/generated_cap000000.als","alpha","nested-rename",false,false,"",""
 "alpha/CORRECT/generated_cap000001.als","alpha","capture-avoiding-nested-swap",false,false,"",""

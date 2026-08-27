@@ -1,9 +1,9 @@
 # Theory-to-Artifact Architecture Map
 
-> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 This document began as the Phase A architecture audit for commit
@@ -184,8 +184,8 @@ proof construction, law validation, renaming orbits, rebuild, invariant
 checking, and finite observations. In return it fails closed when semantic
 admissibility cannot be certified and provides an auditable boundary against
 unsupported scope permutations or rewrite laws. The current 61,598-pair run
-measured 18.360 seconds versus 2,265.990 seconds wall time and 2,316 versus
-2,317 `CORRECT` zeroes, with no incorrect zeroes in either arm. Those corpus
+measured 24.690 seconds versus 2,730.160 seconds wall time and 4,074 versus
+4,088 `CORRECT` zeroes, with no paired incorrect zeroes in either arm. Those corpus
 labels and bounded Alloy checks are evidence, not an unbounded soundness proof.
 
 ## Formal State Mapping

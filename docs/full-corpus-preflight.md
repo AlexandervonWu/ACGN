@@ -100,6 +100,16 @@ The 30-file serial smoke completed CanonicalBatchTest, Alloy4FunAugmenter, all
 seven ablation arms, and the capability benchmark with zero preparation,
 ranking, batch, or conclusive soundness failures.
 
+The final clean publication replay used 16 workers, an 8 GiB heap, and reward
+pool 100. Publication run `6000d695-8b5e-4972-b0ea-3d9e55111245` completed all
+four stages from source `ebce874382c87108a32874149008842a7b0fa528`:
+CanonicalBatchTest produced 61,598 successes, 4,482 AST skips, and 0 failures;
+Alloy4FunAugmenter ranked and rewarded all 42,386 incorrect predicates with 0
+failures and 0 certified incorrect-to-truth zeroes; all seven ablation arms
+completed 61,598 pairs with 0 failures; and the capability benchmark generated
+and evaluated 5,500 valid pairs. This replay is the checked-in empirical
+snapshot.
+
 ## Intentional Stop Conditions
 
 The following still terminate a run because continuing would make the result

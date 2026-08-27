@@ -30,7 +30,7 @@ separate semantic evidence.
 
 ## Headline Results
 
-The checked-in experimental snapshot was regenerated on August 19, 2026. It
+The checked-in experimental snapshot was regenerated on August 27, 2026. It
 contains all seven ablation arms over the same 61,598 nontrivial corpus pairs,
 a 5,500-pair capability matrix, the paired student-oracle evaluation, and the
 augmented nearest-correct evaluation. Per-problem and per-status tables are in
@@ -51,7 +51,7 @@ Certificate-Integrated IR is the fail-closed semantic-assurance path.
 The three-layer Certificate-Integrated IR treats `CanonicalDistance` as the
 repair-metric specification and retains canonical-representative TED as an
 explicit baseline. Its manifest identifier remains
-`certified-legacy-repair-distance-v5` for compatibility with existing runs;
+`certified-fast-rewrite-repair-distance-v12` for compatibility with existing runs;
 that string names the certified port of the **Fast Rewrite metric**. Layer 1
 certifies legal scopes and symmetries; Layer 3 preserves the Fast Rewrite IR's
 temporal/quantifier/matrix decomposition, unit edits, alpha minimization, and
@@ -59,8 +59,11 @@ unordered assignment. One binder-owner mapping is reused by every inherited
 temporal phase, narrowing a phase-local alignment space that the certificate
 model showed to be too broad. The full certificate-integrated ablation arm
 completed all 61,598 eligible pairs with zero failures and zero incorrect
-zero-distance merges. It retained all 2,316 Fast Rewrite IR zeroes and
-certified one additional `CORRECT` pair.
+paired-oracle merges. It retained all 4,074 Fast Rewrite IR zeroes and
+certified 14 additional `CORRECT` pairs. In the stricter
+incorrect-to-any-truth ranking, the certified path again had zero false
+zeroes; ten Fast Rewrite-only zeroes remain published as non-certifying
+diagnostics.
 
 ### Implementation tradeoff
 
@@ -70,12 +73,13 @@ certified one additional `CORRECT` pair.
 | Rewrite/equality authority | Implemented rewrite rules and repaired IR invariants | Typed signatures, explicit ports, structured certificates, strict graph invariants, and certified finite observations |
 | Failure policy | Assumes the directly encoded rewrite and scope machinery is valid | Rejects missing, stale, ill-typed, or uncertified semantic evidence |
 | Metric | Direct `CanonicalDistance` | The same edit algebra restricted by certified scope and symmetry information |
-| Full-corpus wall time | 19.830 s | 2,373.970 s |
-| Full-corpus engine CPU | 13.234 s | 51,529.981 s |
-| Maximum RSS | 3,926.012 MiB | 4,672.453 MiB |
-| `CORRECT` zeroes / incorrect zeroes | 2,316 / 0 | 2,317 / 0 |
+| Full-corpus wall time | 24.690 s | 2,730.160 s |
+| Full-corpus engine CPU | 68.050 s | 41,550.938 s |
+| Maximum RSS | 1,718.941 MiB | 8,925.242 MiB |
+| `CORRECT` paired-oracle zeroes / incorrect zeroes | 4,074 / 0 | 4,088 / 0 |
+| Incorrect-to-any-truth zeroes | 10, diagnostic only | 0, release-gated |
 
-The measured speed difference is about 120x in wall time. It buys stronger
+The measured speed difference is about 111x in wall time. It buys stronger
 semantic assurance, not a different repair objective: the
 Certificate-Integrated IR validates law provenance, scope legality,
 congruence, and quiescence before accepting equality. The Fast Rewrite IR
@@ -86,11 +90,10 @@ incorrect merges and bounded Alloy checks are empirical evidence, not an
 unbounded semantic proof for either path.
 
 The result directories come from clean source commit
-`f1bb1607911a4e5a7a0b8527be65148f66cf72d8` and are hash-bound by publication
-run `dc368829-9623-4856-8bf1-b655aeaf59e0`. The archived top-level manifest
-records the dataset, JVM, heap, workers, stage manifests, and every generated
-output; a tagged archival release remains the final camera-ready provenance
-step.
+`ebce874382c87108a32874149008842a7b0fa528` and are hash-bound by publication
+run `6000d695-8b5e-4972-b0ea-3d9e55111245`. The archived top-level manifest
+records the dataset, JVM, 8 GiB heap, 16 workers, reward pool 100, stage
+manifests, and every generated output.
 
 ### Corpus and paired-oracle distance
 
@@ -108,17 +111,17 @@ truth-pool construction.
 | Eligible incorrect pairs | 42,386 |
 | Mean predicate-body Levenshtein distance | 39.261064 |
 | Mean raw-AST Zhang-Shasha distance | 22.841358 |
-| Mean certified repair / direct reference distance | 14.042096 / 14.029027 |
-| Mean canonical-representative TED baseline | 37.119533 |
-| Mean normalized Levenshtein / AST / certified repair distance | 0.547644 / 0.811451 / 0.717864 |
-| Mean raw-AST / repair-observation size | 26.787315 / 18.117812 |
-| Compression from the ratio of those means | 32.364% |
-| AST-different `CORRECT` pairs at certified distance zero | 2,317 |
+| Mean certified repair / Fast Rewrite IR distance | 14.021251 / 13.938342 |
+| Mean canonical-representative TED baseline | 32.254732 |
+| Mean normalized Levenshtein / AST / certified repair distance | 0.547644 / 0.811451 / 0.711525 |
+| Mean raw-AST / repair-observation size | 26.787315 / 17.989285 |
+| Compression from the ratio of those means | 32.844% |
+| AST-different `CORRECT` pairs at certified distance zero | 4,088 |
 | Incorrect zero-distance merges | 0 |
-| Certified repair distance range | 0 to 139 |
+| Certified repair distance range | 0 to 180 |
 
-This paired snapshot uses `canonical-alloy-pipeline-v11-three-layer` and the
-compatibility manifest ID `certified-legacy-repair-distance-v5`. Normalization
+This paired snapshot uses `canonical-alloy-pipeline-v38-phase-local-bindings`
+and the compatibility manifest ID `certified-fast-rewrite-repair-distance-v12`. Normalization
 divides by the larger corresponding representation of the student-oracle pair.
 The directly executed Fast Rewrite metric remains a co-maintained differential
 oracle, and representative TED is a separate baseline rather than the repair
@@ -136,56 +139,59 @@ metric is minimized independently over all truths in its group.
 | Invariant question groups | 181 |
 | Correct truth predicates, including 181 oracles | 19,393 |
 | AST-distinct truths | 4,496 |
-| Unique canonical truth forms | 2,318 |
-| AST-different, canonically equivalent truth pairs | 10,257 |
+| Unique Certificate-Integrated truth forms | 2,101 |
+| AST-different, certificate-integrated equivalent truth pairs | 11,382 |
+| Unique Fast Rewrite truth forms / zero pairs | 2,136 / 10,934 |
 | Incorrect predicates ranked | 42,386 |
 | Groups using oracle plus correct students / oracle only | 176 / 5 |
 | Mean nearest Levenshtein distance | 28.054924 |
 | Mean nearest raw-AST distance | 15.987944 |
-| Mean nearest certified canonical distance | 10.865569 |
-| Mean relative Levenshtein / AST / canonical distance | 0.415603 / 0.608420 / 0.602091 |
+| Mean nearest certified canonical distance | 11.562190 |
+| Mean relative Levenshtein / AST / canonical distance | 0.415603 / 0.608420 / 0.648609 |
+| Certified / Fast Rewrite incorrect zeroes | 0 / 10 |
 
 Repair-radius coverage shows how many incorrect predicates have at least one
 correct reference within the given edit budget:
 
 | Radius | Raw AST | Canonical |
 | ---: | ---: | ---: |
-| 1 | 3,479 (8.2%) | 2,345 (5.5%) |
-| 2 | 4,962 (11.7%) | 5,446 (12.8%) |
-| 5 | 10,106 (23.8%) | 13,976 (33.0%) |
-| 10 | 18,242 (43.0%) | 26,274 (62.0%) |
+| 1 | 3,479 (8.2%) | 1,676 (4.0%) |
+| 2 | 4,962 (11.7%) | 4,417 (10.4%) |
+| 5 | 10,106 (23.8%) | 13,156 (31.0%) |
+| 10 | 18,242 (43.0%) | 25,143 (59.3%) |
 
 At radii expressed as a fraction of each incorrect predicate's representation
 size, the coverage is:
 
 | Relative radius | Levenshtein | Raw AST | Canonical |
 | ---: | ---: | ---: | ---: |
-| 5% | 1,085 (2.6%) | 2,049 (4.8%) | 317 (0.7%) |
-| 10% | 2,939 (6.9%) | 4,110 (9.7%) | 1,568 (3.7%) |
-| 20% | 8,169 (19.3%) | 7,476 (17.6%) | 5,862 (13.8%) |
-| 50% | 30,080 (71.0%) | 18,668 (44.0%) | 18,263 (43.1%) |
+| 5% | 1,085 (2.6%) | 2,049 (4.8%) | 226 (0.5%) |
+| 10% | 2,939 (6.9%) | 4,110 (9.7%) | 1,077 (2.5%) |
+| 20% | 8,169 (19.3%) | 7,476 (17.6%) | 4,971 (11.7%) |
+| 50% | 30,080 (71.0%) | 18,668 (44.0%) | 16,029 (37.8%) |
 
-This augmented snapshot uses `canonical-alloy-pipeline-v11-three-layer` and
-the compatibility manifest ID `certified-legacy-repair-distance-v5`. This structural run used
-`--skip-rewards`: all 42,386 incorrect predicates were ranked, but reward
-values were deliberately not recomputed.
+This augmented snapshot uses `canonical-alloy-pipeline-v38-phase-local-bindings`
+and the compatibility manifest ID `certified-fast-rewrite-repair-distance-v12`.
+All 42,386 incorrect predicates were ranked and rewarded with pool size 100;
+both stages reported zero reward failures.
 
 ### Seven-arm e-graph ablation
 
-All seven arms processed the same 61,598 eligible pairs with 32 workers in
-fresh JVMs. The first five use the same `canonical-equivalences-v2` rule program.
+All seven arms processed the same 61,598 eligible pairs with 16 workers in
+fresh JVMs. The first five use the same
+`canonical-equivalences-v3-explicit-laws` rule program.
 `java-egglog` is a Java replica of the execution model used in this study, not
 a full textual-language-compatible port of external egglog.
 
 | Arm | `CORRECT` zeroes | Coverage | Mean distance | Wall s | Engine CPU s | Max RSS MiB | Avg units |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Raw fixed-arity e-graph | 823 | 4.284% | 18.390 | 17.310 | 4.482 | 1,087.395 | 58.184 |
-| Raw e-graph + De Bruijn | 2,163 | 11.259% | 17.923 | 16.950 | 5.641 | 1,149.645 | 57.865 |
-| Java egglog-like variadic | 823 | 4.284% | 17.996 | 17.000 | 4.269 | 1,147.535 | 56.740 |
-| Java egglog-like + De Bruijn | 2,163 | 11.259% | 17.530 | 19.270 | 4.945 | 973.191 | 56.410 |
-| Slotted e-graph | 2,162 | 11.253% | 17.694 | 17.380 | 14.974 | 1,203.305 | 52.952 |
-| Fast Rewrite IR | 2,316 | 12.055% | 14.029 | 19.830 | 13.234 | 3,926.012 | 29.843 |
-| Certificate-Integrated IR | 2,317 | 12.060% | 14.042 | 2,373.970 | 51,529.981 | 4,672.453 | 29.830 |
+| Raw fixed-arity e-graph | 820 | 4.268% | 18.364 | 19.130 | 4.233 | 1,645.855 | 58.073 |
+| Raw e-graph + De Bruijn | 2,160 | 11.243% | 17.911 | 19.220 | 5.126 | 1,548.828 | 57.752 |
+| Java egglog-like variadic | 820 | 4.268% | 18.147 | 19.330 | 4.090 | 1,561.074 | 57.055 |
+| Java egglog-like + De Bruijn | 2,160 | 11.243% | 17.690 | 19.140 | 4.814 | 1,488.988 | 56.732 |
+| Slotted e-graph | 2,159 | 11.238% | 17.824 | 19.340 | 15.947 | 1,656.031 | 53.168 |
+| Fast Rewrite IR | 4,074 | 21.205% | 13.938 | 24.690 | 68.050 | 1,718.941 | 29.999 |
+| Certificate-Integrated IR | 4,088 | 21.278% | 14.021 | 2,730.160 | 41,550.938 | 8,925.242 | 29.540 |
 
 Key transitions in the observed zero-distance sets are:
 
@@ -193,12 +199,13 @@ Key transitions in the observed zero-distance sets are:
   no losses.
 - Variadic egglog-like storage alone adds no zeroes over fixed arity on this
   natural corpus.
-- Slotted storage retains 2,160 egglog-plus-De-Bruijn zeroes, adds 2, and loses
+- Slotted storage retains 2,157 egglog-plus-De-Bruijn zeroes, adds 2, and loses
   3. Those three are documented false negatives, not semantic counterexamples.
-- Fast Rewrite IR canonicalization adds 154 zeroes over slotted storage and loses none
+- Fast Rewrite IR canonicalization adds 1,915 zeroes over slotted storage and loses none
   of the slotted zeroes.
-- The Certificate-Integrated IR retains all 2,316 Fast Rewrite IR zeroes and
-  adds one `CORRECT` zero. Neither canonical arm produces an incorrect zero.
+- The Certificate-Integrated IR retains all 4,074 Fast Rewrite IR zeroes and
+  adds 14 `CORRECT` zeroes. Neither canonical arm produces a paired-oracle
+  incorrect zero.
 
 The full transition data and pair identities are in
 [`equivalence_disagreements.csv`](egraph_ablation/equivalence_disagreements.csv).
@@ -216,49 +223,52 @@ in each of 11 transformation families.
 | Java egglog-like variadic | 2,585 (47.00%) | 2,023 / 4,000 (50.58%) |
 | Java egglog-like + De Bruijn | 3,628 (65.96%) | 2,566 / 4,000 (64.15%) |
 | Slotted e-graph | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Fast Rewrite IR | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
-| Certificate-Integrated IR | 5,500 (100.00%) | 4,000 / 4,000 (100.00%) |
+| Fast Rewrite IR | 5,492 (99.85%) | 3,998 / 4,000 (99.95%) |
+| Certificate-Integrated IR | 5,492 (99.85%) | 3,998 / 4,000 (99.95%) |
 
 De Bruijn encoding gives complete alpha-equivalence recovery, but the raw and
 egglog-like representations do not implement general declaration-block
 permutations. The raw and egglog-like arms recover 1 of 500 binder-permutation
 cases incidentally, and their De Bruijn variants recover 22 of 500. Slotted and
 canonical representations recover all 500 alpha-equivalence and all 500
-binder-permutation cases. The Certificate-Integrated IR agrees with both of them on every
-generated pair, and all 11 expected first-capable boundaries match the observed
-matrix. The complete family matrix is in
+binder-permutation cases. The Certificate-Integrated IR agrees with the Fast
+Rewrite IR on every generated pair, and all 11 expected first-capable
+boundaries match the observed matrix. The two canonical arms conservatively
+miss the same eight generated cases: four ACI, two composed AC/logical, and two
+mixed cases. The complete family matrix is in
 [`capability_benchmark/REPORT.md`](capability_benchmark/REPORT.md).
 
-**AC/logical v2 correction.** Fixed-arity re-binarization could expose a
+**AC/logical rule correction.** Fixed-arity re-binarization could expose a
 complement as normalized atomic duals such as `some S` and `no S`, while the v1
 matcher recognized only an explicit `A` / `not A` pair. Rule set
-`canonical-equivalences-v2` recognizes those duals and folds only
+`canonical-equivalences-v3-explicit-laws` recognizes those duals and folds only
 domain-independent constant quantified bodies. Raw and raw-plus-De-Bruijn
-coverage for the composed AC-plus-logical-normalization family increased from
-479/500 to 500/500; all seven arms now recover all 500 cases. The natural-corpus
-zero sets did not change, no incorrect zeroes were introduced, and
+coverage for the composed AC-plus-logical-normalization family is 500/500. The
+slotted arm also recovers all 500 cases; the two canonical arms recover
+498/500 under their stricter normalized frontend. No incorrect natural-corpus
+zeroes were introduced, and
 [`unexpected_failures.csv`](capability_benchmark/unexpected_failures.csv) is
 empty.
 
 ### Bounded semantic evidence
 
-The bounded semantic checker covers the current seven-arm union of 2,320
+The bounded semantic checker covers the current seven-arm union of 4,088
 natural-corpus equivalence claims using each model's own Alloy
 `check correct` command:
 
 | Arm | Claims checked | Bounded counterexamples | Errors |
 | --- | ---: | ---: | ---: |
-| Raw / raw + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
-| Egglog-like / egglog-like + De Bruijn | 823 / 2,163 | 0 / 0 | 0 / 0 |
-| Slotted / Fast Rewrite IR | 2,162 / 2,316 | 0 / 0 | 0 / 0 |
-| Certificate-Integrated IR | 2,317 | 0 | 0 |
+| Raw / raw + De Bruijn | 820 / 2,160 | 0 / 0 | 0 / 0 |
+| Egglog-like / egglog-like + De Bruijn | 820 / 2,160 | 0 / 0 | 0 / 0 |
+| Slotted / Fast Rewrite IR | 2,159 / 4,074 | 0 / 0 | 0 / 0 |
+| Certificate-Integrated IR | 4,088 | 0 | 0 |
 
 Four targeted negative probes for capture, comprehension-column permutation,
 signature shadowing, and temporal implication all had Alloy counterexamples and
 were rejected by every arm, including the Certificate-Integrated IR. This is
 bounded evidence, not an unbounded proof. The claim set and performance data
-come from clean ablation run `eb6b6e64-a929-44c4-9871-21c60de041b9` using the
-v11 pipeline correction that preserves comprehension result-column order. The
+come from clean ablation run `4e612dc7-5e3a-497c-8ee1-30c8fad7c869` using the
+v38 phase-local-binding pipeline. The
 current targeted capability soundness sample had zero
 conclusive non-temporal failures across 29 subtype checks; six temporal checks
 were inconclusive because the installed solver lacked a temporal backend. One
@@ -268,37 +278,36 @@ conclusive evidence. See
 [`semantic_soundness.md`](egraph_ablation/semantic_soundness.md) and
 [`capability_benchmark/SOUNDNESS.md`](capability_benchmark/SOUNDNESS.md).
 
-### Retained reward observations
+### Reward observations
 
 Rewarder results depend on finite sampled instance pools and should not be read
-as semantic equivalence proofs. The August 19 structural runs used
-`--skip-rewards`; the following values are retained from earlier rewarded runs
-over the same 61,598-pair selection and are not part of the current run
-manifests.
+as semantic equivalence proofs. Both current distance stages used pool size 100
+and recorded zero reward failures; these values are bound by the publication
+manifest.
 
 | Protocol | Pool | Predicates | Mean candidate reward | Headline Pearson result |
 | --- | ---: | ---: | ---: | ---: |
-| Paired student vs oracle | 10 | 61,598 | 0.567082 | certified distance vs reward: -0.040249 |
-| Incorrect vs nearest-correct pool | 100 | 42,386 | 0.352766 | certified distance vs `1 - reward`: 0.056805 |
+| Paired student vs oracle | 100 | 61,598 | 0.554601 | certified distance vs reward: -0.063929 |
+| Incorrect vs nearest-correct pool | 100 | 42,386 | 0.352766 | certified distance vs `1 - reward`: 0.067405 |
 
 For the paired run, oracle self-reward averaged 1.000000. On the 42,386
 non-`CORRECT` pairs, Levenshtein, raw AST, and certified repair correlations
-with candidate reward were -0.089408, -0.073326, and -0.040249. In the
+with candidate reward were -0.090795, -0.081877, and -0.063929. In the
 augmented nearest-correct run, their correlations with raw reward error were
-0.141856, 0.123954, and 0.056805. All are weak in these sampled configurations.
+0.141856, 0.123954, and 0.067405. All are weak in this sampled configuration.
 
 ### Runtime and memory interpretation
 
-The Fast Rewrite IR arm completed the 61,598-pair corpus in 19.830 seconds on
-a 32-logical-core Ryzen 9 9950X3D host with Java 17 and a 4 GiB heap cap. Its
-representation averaged 29.843 units, 25.022 reachable e-classes, and 25.173
-reachable e-nodes, with 3,926.012 MiB maximum RSS.
+The Fast Rewrite IR arm completed the 61,598-pair corpus in 24.690 seconds on
+a 32-logical-core host with Java 17, 16 workers, and an 8 GiB heap cap. Its
+representation averaged 29.999 units, 25.489 reachable e-classes, and 25.506
+reachable e-nodes, with 1,718.941 MiB maximum RSS.
 
-The exact typed slotted-port arm completed the same pairs in 2,373.970 seconds
-(25.954 pairs/s). It used 51,529.981 engine CPU seconds, with per-pair engine
-latency p50 566.026 ms and p95 4,523.886 ms. Its normalized observations were
-slightly smaller at 29.830 units, 20.935 reachable e-classes, and 18.059
-reachable e-nodes, while maximum RSS was 4,672.453 MiB. The roughly 120x
+The exact typed slotted-port arm completed the same pairs in 2,730.160 seconds
+(22.567 pairs/s). It used 41,550.938 engine CPU seconds, with per-pair engine
+latency p50 320.451 ms and p95 2,376.936 ms. Its normalized observations were
+slightly smaller at 29.540 units, 18.442 reachable e-classes, and 16.148
+reachable e-nodes, while maximum RSS was 8,925.242 MiB. The roughly 111x
 wall-time increase is therefore not representation growth: it comes from
 certificate validation, exact renaming-orbit enumeration, immutable graph
 transactions, strict invariant checks, rebuild-to-quiescence, and complete
@@ -468,7 +477,7 @@ git lfs pull
 ./scripts/verify_imported_publication_snapshot.sh
 ```
 
-The verifier reports exactly 5,804 manifest-bound stage files. If an LFS
+The verifier reports exactly 5,808 manifest-bound stage files. If an LFS
 pointer is present instead of its object, it stops with the corresponding
 `git lfs pull` instruction.
 
@@ -595,8 +604,7 @@ snapshot with:
   distance_results /tmp/acgn-paper-artifacts
 ```
 
-The checked-in publication snapshot is reward-disabled, so its reward figures
-are skipped. New publication runs default to a reward pool of 100; pass
+The checked-in publication snapshot uses a reward pool of 100. Pass
 `--reward-pool 0` only for a deliberately structural run. For a rewarded result
 tree that retains its plotting script and inputs, the same command writes those
 figures to the selected derived-output directory.
@@ -781,7 +789,7 @@ an independently parsed two-source PAIR, a static test-only trust-pin ledger, a
 verified parent-path fixture, and an exact real-source coverage census. The
 publication-manifest test deliberately mutates a bound report and requires the
 drift check to fail. Derived paper tables are written outside the frozen result
-trees, whose 5,804 files are checked against relative manifest paths and hashes.
+trees, whose 5,808 files are checked against relative manifest paths and hashes.
 
 The closure rationale, defect map, bounded test record, and remaining
 proof-export boundary are recorded in
@@ -789,28 +797,28 @@ proof-export boundary are recorded in
 
 The checked-in publication snapshot records:
 
-- publication run ID `dc368829-9623-4856-8bf1-b655aeaf59e0`;
-- seven-arm run ID `eb6b6e64-a929-44c4-9871-21c60de041b9`;
-- clean source SHA `f1bb1607911a4e5a7a0b8527be65148f66cf72d8`;
+- publication run ID `6000d695-8b5e-4972-b0ea-3d9e55111245`;
+- seven-arm run ID `4e612dc7-5e3a-497c-8ee1-30c8fad7c869`;
+- clean source SHA `ebce874382c87108a32874149008842a7b0fa528`;
 - dataset SHA-256
   `d6741fbf4c4a9b3714d012d068f84cc918052f1f55211bf4d0443b990736a689`;
-- Java 17.0.19, 32 workers, a 4 GiB heap cap, rule set
-  `canonical-equivalences-v2`, host/CPU metadata, schema versions, timestamps,
+- Java 17.0.20, 16 workers, an 8 GiB heap cap, rule set
+  `canonical-equivalences-v3-explicit-laws`, host/CPU metadata, schema versions, timestamps,
   and hashes of every generated arm and combined output.
 
 The checked-in capability snapshot uses run ID
-`cdf14cb3-6481-4512-8022-7c5e0e5929ec`, the same clean source SHA,
+`e68d2ed1-2609-47b4-8fa3-db848889e379`, the same clean source SHA,
 generated-dataset SHA-256
-`e9901ba9e63a8090e0beb9d04d19bd66da3a7f49ca681ef6adf164e8ca6265f0`,
-and the same v2 rule set. Its arm manifests and generated-report hashes are
+`898d8123ce12ee9a28cb106b801c4d3cb9e1c8aaa2644e0389aedd41e6fb49c3`,
+and the same v3 rule set. Its arm manifests and generated-report hashes are
 anchored by the capability
 [`run-manifest.json`](capability_benchmark/arms/run-manifest.json).
 
 See [`run-manifest.json`](egraph_ablation/run-manifest.json) and the archived
-[publication-run provenance](publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md).
+[publication-run provenance](publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md).
 The archived run also stages the exact original experiment JAR as a release
 asset candidate; its SHA-256 is
-`2167064013b2c97de00dd08db9806daf06de2d0bbefe206939ffff38a1af101f`.
+`21b721e31b5270c1b5e63bca368eccee9323886fd5c571e6190c296a853abc52`.
 
 ## Interpretation and Limits
 
@@ -837,7 +845,7 @@ asset candidate; its SHA-256 is
 - [Ordered rewrite system and side conditions](documentation/REWRITE_SYSTEM.md)
 - [Phase I exact-engine integration, invariants, faults, and reproduction](docs/theory-phase-i-artifact-integration.md)
 - [Paired-distance summary](distance_results/summary.md)
-- [Publication-run provenance](publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md)
+- [Publication-run provenance](publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md)
 - [Augmented dataset summary](alloy4fun-augmented/summary.md)
 - [Current seven-arm ablation report](egraph_ablation/summary.md)
 - [Targeted capability benchmark](capability_benchmark/REPORT.md)

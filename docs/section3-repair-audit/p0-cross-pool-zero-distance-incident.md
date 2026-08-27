@@ -2,7 +2,7 @@
 
 ## Status
 
-`REPAIRED / BOUNDED REPLAY PASSED / FULL REPLAY REQUIRED`.
+`REPAIRED / FULL PUBLICATION REPLAY PASSED`.
 
 The clean run rooted at
 `/home/augustus/acgn-publication-20260827T163127Z` completed every scheduled
@@ -10,6 +10,17 @@ stage, but it is rejected as a publication snapshot. Its paired-file check had
 no incorrect zero, while the augmented correct-pool ranking exposed 19
 incorrect predicates whose nearest Certificate-Integrated IR distance was
 zero. A release decision must inspect both populations.
+
+The replacement clean publication run
+`6000d695-8b5e-4972-b0ea-3d9e55111245`, rooted at
+`/home/augustus/acgn-publication-20260827T194941Z`, completed on source commit
+`ebce874382c87108a32874149008842a7b0fa528`. It evaluated 61,598 paired
+predicates and ranked all 42,386 incorrect predicates against their complete
+AST-distinct truth pools with zero failures. The certificate-integrated path
+had zero incorrect nearest-distance zeroes, so the release gate passed. The ten
+remaining Fast Rewrite zeroes are retained in
+`alloy4fun-augmented/incorrect_nearest_zero_distances.csv` as non-certifying
+diagnostics.
 
 ## Fault 1: Guarded Nested Quantifiers
 
@@ -83,4 +94,3 @@ for values bound in the current phase.
 or report publication if any incorrect predicate has zero nearest
 Certificate-Integrated IR distance. Fast Rewrite IR zeroes remain visible in
 the same audit file but are not certified equality claims.
-
