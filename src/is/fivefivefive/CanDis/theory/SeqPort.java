@@ -1,5 +1,7 @@
 package is.fivefivefive.CanDis.theory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -15,8 +17,25 @@ public final class SeqPort implements PortValue {
             List<? extends PortValue> elements) {
         this.schema = Objects.requireNonNull(schema, "schema");
         this.context = Objects.requireNonNull(context, "context");
-        PortValues.requireAdmissibleCardinality(schema.emptiness(), elements);
-        this.elements = PortValues.immutableSequence(schema.elementSchema(), context, elements);
+        PortValues.requireAdmissibleCardinality(schema.arityPolicy(), elements);
+        if (schema.isDependent()) {
+            List<PortValue> copied = new ArrayList<>();
+            for (int index = 0; index < elements.size(); index++) {
+                PortValue element = Objects.requireNonNull(
+                        elements.get(index), "sequence element");
+                if (!schema.schemaAt(index).equals(element.schema())
+                        || !context.equals(element.context())) {
+                    throw new IllegalArgumentException(
+                            "Dependent sequence element " + index
+                                    + " has another schema or context");
+                }
+                copied.add(element);
+            }
+            this.elements = Collections.unmodifiableList(copied);
+        } else {
+            this.elements = PortValues.immutableSequence(
+                    schema.elementSchema(), context, elements);
+        }
     }
 
     @Override

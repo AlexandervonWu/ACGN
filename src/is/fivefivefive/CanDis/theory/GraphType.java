@@ -76,9 +76,13 @@ public final class GraphType implements Comparable<GraphType> {
     }
 
     private static String requireSymbol(String symbol) {
-        Objects.requireNonNull(symbol, "symbol");
-        if (symbol.trim().isEmpty()) {
-            throw new IllegalArgumentException("Type symbol must not be blank");
+        if (!AlloyTypeBridge.isAdmittedIdentity(symbol)) {
+            throw new IllegalArgumentException(
+                    "Type symbol must be a well-formed visible identity");
+        }
+        if (symbol.startsWith("AlloySig:")) {
+            return "AlloySig:" + AlloyTypeBridge.normalizeAlloyIdentity(
+                    symbol.substring("AlloySig:".length()));
         }
         return symbol;
     }

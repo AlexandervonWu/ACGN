@@ -12,7 +12,7 @@ import java.util.Objects;
 
 /** Strict structural view of one decoded certificate bundle. */
 public final class Bundle {
-    public static final String SCHEMA_VERSION = "acgncert-schema-v2";
+    public static final String SCHEMA_VERSION = "acgncert-schema-v10";
     public static final String THEORY_ID = "acgn-exact-alloy-theory-v2";
     public static final String RULE_SET = "phase-j-proof-kernel-v3";
     public static final String VOCABULARY_POLICY =
@@ -37,6 +37,7 @@ public final class Bundle {
     private final String theoryDigest;
     private final Wire.Node vocabulary;
     private final String vocabularyDigest;
+    private final Wire.Node semanticEvidence;
     private final Map<String, Wire.Node> contexts;
     private final Map<String, Wire.Node> embeddings;
     private final Map<String, Wire.Node> terms;
@@ -96,7 +97,7 @@ public final class Bundle {
                     FailureCode.DIGEST_MISMATCH,
                     "Theory manifest digest does not match its complete content");
         }
-        vocabulary = manifest.child(1).requireShape("vocabulary", 1, 3);
+        vocabulary = manifest.child(1).requireShape("vocabulary", 1, 4);
         if (!VOCABULARY_POLICY.equals(vocabulary.scalar(0))) {
             throw new FormatException(
                     FailureCode.THEORY_MISMATCH,
@@ -105,6 +106,14 @@ public final class Bundle {
         vocabulary.child(0).requireTag("schemas");
         vocabulary.child(1).requireTag("operators");
         vocabulary.child(2).requireTag("binders");
+        semanticEvidence = vocabulary.child(3).requireShape(
+                "semantic-evidence", 8, 6);
+        semanticEvidence.child(0).requireTag("law-certificates");
+        semanticEvidence.child(1).requireTag("flat-constructions");
+        semanticEvidence.child(2).requireTag("container-constructions");
+        semanticEvidence.child(3).requireTag("binder-occurrences");
+        semanticEvidence.child(4).requireTag("exact-types");
+        semanticEvidence.child(5).requireTag("call-occurrences");
         vocabularyDigest = Wire.contentId(vocabulary);
         if (!vocabularyDigest.equals(manifest.scalar(1))) {
             throw new FormatException(
@@ -282,6 +291,10 @@ public final class Bundle {
 
     public String vocabularyDigest() {
         return vocabularyDigest;
+    }
+
+    public Wire.Node semanticEvidence() {
+        return semanticEvidence;
     }
 
     public Map<String, Wire.Node> contexts() {

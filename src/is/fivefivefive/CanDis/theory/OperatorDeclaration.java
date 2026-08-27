@@ -17,7 +17,7 @@ public final class OperatorDeclaration {
     private final List<PortSchema> portSchemas;
     private final GraphType outputType;
     private final Map<PortPath, ContainerLawDeclaration> containerLaws;
-    private final Integer flatPortIndex;
+    private final FlatLicense flatLicense;
 
     public OperatorDeclaration(
             String operator,
@@ -31,7 +31,8 @@ public final class OperatorDeclaration {
         this.portSchemas = copySchemas(portSchemas);
         this.outputType = Objects.requireNonNull(outputType, "outputType");
         this.containerLaws = copyLaws(containerLaws);
-        this.flatPortIndex = flatPortIndex;
+        this.flatLicense = flatPortIndex == null
+                ? FlatLicense.none() : FlatLicense.atRootPort(flatPortIndex);
         validateTypeVariables();
         validateContainerLaws();
         validateFlatPort();
@@ -53,9 +54,9 @@ public final class OperatorDeclaration {
     }
 
     private static String requireName(String value, String name) {
-        Objects.requireNonNull(value, name);
-        if (value.trim().isEmpty()) {
-            throw new IllegalArgumentException(name + " must not be blank");
+        if (!AlloyTypeBridge.isAdmittedIdentity(value)) {
+            throw new IllegalArgumentException(
+                    name + " must be a well-formed visible identity");
         }
         return value;
     }
@@ -117,8 +118,28 @@ public final class OperatorDeclaration {
                     "Every Seq/Bag/Set schema path requires exactly one explicit law declaration");
         }
         for (Map.Entry<PortPath, ContainerLawDeclaration> entry : containerLaws.entrySet()) {
-            entry.getValue().validateAgainst(required.get(entry.getKey()));
+            entry.getValue().validateEvidenceFor(
+                    operator,
+                    outputType,
+                    entry.getKey(),
+                    required.get(entry.getKey()),
+                    false);
         }
+    }
+
+    PortSchema schemaAt(PortPath path) {
+        Objects.requireNonNull(path, "path");
+        if (path.portIndex() >= portSchemas.size()) {
+            throw new IllegalArgumentException("Port path is outside this operator");
+        }
+        PortSchema schema = portSchemas.get(path.portIndex());
+        for (int depth = 0; depth < path.depth(); depth++) {
+            schema = childSchema(schema);
+            if (schema == null) {
+                throw new IllegalArgumentException("Port path is outside this schema");
+            }
+        }
+        return schema;
     }
 
     private static void collectContainerSchemas(
@@ -138,7 +159,8 @@ public final class OperatorDeclaration {
 
     private static PortSchema childSchema(PortSchema schema) {
         if (schema instanceof SeqPortSchema) {
-            return ((SeqPortSchema) schema).elementSchema();
+            SeqPortSchema sequence = (SeqPortSchema) schema;
+            return sequence.isDependent() ? null : sequence.elementSchema();
         }
         if (schema instanceof BagPortSchema) {
             return ((BagPortSchema) schema).elementSchema();
@@ -156,9 +178,10 @@ public final class OperatorDeclaration {
     }
 
     private void validateFlatPort() {
-        if (flatPortIndex == null) {
+        if (!flatLicense.enabled()) {
             return;
         }
+        int flatPortIndex = flatLicense.path().portIndex();
         if (flatPortIndex < 0 || flatPortIndex >= portSchemas.size()) {
             throw new IllegalArgumentException("Flat port index is out of range");
         }
@@ -175,6 +198,13 @@ public final class OperatorDeclaration {
         }
         if (!containerLaws.get(PortPath.at(flatPortIndex)).associative()) {
             throw new IllegalArgumentException("A flat port requires an associative law declaration");
+        }
+        ArityPolicy arities = ContainerLawDeclaration.arityPolicy(schema);
+        arities.requireFlatSpliceClosure("A flat port");
+        if (arities.admitsZero()
+                && !containerLaws.get(PortPath.at(flatPortIndex)).hasUnit()) {
+            throw new IllegalArgumentException(
+                    "A flat port admitting zero requires an exact unit license");
         }
     }
 
@@ -212,11 +242,15 @@ public final class OperatorDeclaration {
     }
 
     public Integer flatPortIndex() {
-        return flatPortIndex;
+        return flatLicense.enabled() ? flatLicense.path().portIndex() : null;
+    }
+
+    public FlatLicense flatLicense() {
+        return flatLicense;
     }
 
     public boolean usesFlatConstruction() {
-        return flatPortIndex != null;
+        return flatLicense.enabled();
     }
 
     public InstantiatedOperator instantiate(Map<String, GraphType> substitution) {
@@ -244,12 +278,13 @@ public final class OperatorDeclaration {
         List<String> scalars = new ArrayList<>();
         scalars.add(operator);
         scalars.addAll(typeParameters);
-        scalars.add(flatPortIndex == null ? "none" : Integer.toString(flatPortIndex));
+        scalars.add(flatLicense.toString());
         List<StructuralKey> children = new ArrayList<>();
         for (PortSchema schema : portSchemas) {
             children.add(schema.structuralKey());
         }
         children.add(TheoryKeys.type(outputType));
+        children.add(flatLicense.structuralKey());
         for (Map.Entry<PortPath, ContainerLawDeclaration> entry : containerLaws.entrySet()) {
             children.add(StructuralKey.of(
                     "port-law",
@@ -270,13 +305,13 @@ public final class OperatorDeclaration {
                 && portSchemas.equals(declaration.portSchemas)
                 && outputType.equals(declaration.outputType)
                 && containerLaws.equals(declaration.containerLaws)
-                && Objects.equals(flatPortIndex, declaration.flatPortIndex);
+                && flatLicense.equals(declaration.flatLicense);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(
-                operator, typeParameters, portSchemas, outputType, containerLaws, flatPortIndex);
+                operator, typeParameters, portSchemas, outputType, containerLaws, flatLicense);
     }
 
     @Override

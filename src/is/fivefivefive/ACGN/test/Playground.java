@@ -30,7 +30,7 @@ public class Playground {
         List<Node> root = ASTNodeFinder.findNodesByTypeAndName(mu, Predicate.class, "moved", false);
         Predicate rootMoved = (Predicate) root.get(0);
         GlobalVariables gv = new GlobalVariables();
-        MASGVisitor visitor = new MASGVisitor(gv);
+        MASGVisitor visitor = new MASGVisitor(gv, module);
         visitor.visit(mu, null);
         System.out.println("Finished visiting the model unit.");
         DoubleMap<Integer, Multigraph> map = visitor.getForest();

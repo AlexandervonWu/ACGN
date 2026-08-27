@@ -39,6 +39,11 @@ exhaustion are `UNCHECKABLE`.
 `THEORY_MISMATCH`, `MISSING_PAIR_DERIVATION`,
 `EQUAL_HASH_WITHOUT_DERIVATION`, `MISSING_EVIDENCE`.
 
+For CALL completeness, a missing caller-owned occurrence commitment is
+`UNCHECKABLE / MISSING_EVIDENCE`. A present commitment that disagrees with the
+complete replayed occurrence-key set is malformed supplied evidence and is
+`REJECTED / MISSING_EVIDENCE`.
+
 `IO_ERROR` and `INTERNAL_ERROR` indicate verifier/runtime failures rather than
 a certified semantic result.
 

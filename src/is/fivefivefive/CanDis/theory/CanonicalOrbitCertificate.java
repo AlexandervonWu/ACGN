@@ -67,8 +67,8 @@ public final class CanonicalOrbitCertificate extends TypedEqualityCertificate {
                 add(exactPremises, certificate);
             }
         }
-        collectBinderCertificates(result.shape().node().ports(), exactPremises);
-        collectBinderCertificates(result.kernel().ports(), exactPremises);
+        collectBinderCertificates(result.shape().node(), exactPremises);
+        collectBinderCertificates(result.kernel(), exactPremises);
 
         CanonicalOrbitCertificate certificate = new CanonicalOrbitCertificate(
                 result,
@@ -111,19 +111,11 @@ public final class CanonicalOrbitCertificate extends TypedEqualityCertificate {
     }
 
     private static void collectBinderCertificates(
-            List<? extends PortValue> ports,
+            TypedENode node,
             Map<StructuralKey, TypedEqualityCertificate> target) {
-        for (PortValue port : ports) {
-            if (port instanceof BindBlockPort) {
-                BinderBlockDescriptor descriptor = ((BindBlockPort) port)
-                        .schema().descriptor();
-                descriptor.automorphisms().requireCertifiedFor(descriptor);
-                for (BinderAutomorphismCertificate certificate
-                        : descriptor.automorphisms().generatorCertificates()) {
-                    add(target, certificate);
-                }
-            }
-            collectBinderCertificates(children(port), target);
+        for (BinderOccurrenceAutomorphismCertificate certificate
+                : BinderOccurrenceProofs.collect(node)) {
+            add(target, certificate);
         }
     }
 

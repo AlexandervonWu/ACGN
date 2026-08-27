@@ -7,7 +7,7 @@ import java.util.Set;
 
 /** Schema {@code Bag^epsilon(kappa)}. */
 public final class BagPortSchema implements PortSchema {
-    private final ContainerEmptiness emptiness;
+    private final ArityPolicy arityPolicy;
     private final PortSchema elementSchema;
 
     /** Shorthand for the nonempty schema {@code Bag+(kappa)}. */
@@ -16,12 +16,27 @@ public final class BagPortSchema implements PortSchema {
     }
 
     public BagPortSchema(ContainerEmptiness emptiness, PortSchema elementSchema) {
-        this.emptiness = Objects.requireNonNull(emptiness, "emptiness");
+        this(Objects.requireNonNull(emptiness, "emptiness").admitsEmpty()
+                ? ArityPolicy.zeroOrMore()
+                : ArityPolicy.nonemptyVariadic(), elementSchema);
+    }
+
+    public BagPortSchema(ArityPolicy arityPolicy, PortSchema elementSchema) {
+        this.arityPolicy = Objects.requireNonNull(arityPolicy, "arityPolicy");
         this.elementSchema = Objects.requireNonNull(elementSchema, "elementSchema");
     }
 
     public ContainerEmptiness emptiness() {
-        return emptiness;
+        return arityPolicy.admitsZero()
+                ? ContainerEmptiness.K_ZERO : ContainerEmptiness.K_PLUS;
+    }
+
+    public ArityPolicy arityPolicy() {
+        return arityPolicy;
+    }
+
+    public SiblingQuotient siblingQuotient() {
+        return SiblingQuotient.COMMUTATIVE_BAG;
     }
 
     public PortSchema elementSchema() {
@@ -40,31 +55,32 @@ public final class BagPortSchema implements PortSchema {
 
     @Override
     public BagPortSchema substitute(Map<String, GraphType> substitution) {
-        return new BagPortSchema(emptiness, elementSchema.substitute(substitution));
+        return new BagPortSchema(arityPolicy, elementSchema.substitute(substitution));
     }
 
     @Override
     public StructuralKey structuralKey() {
         return StructuralKey.of(
                 "schema/bag",
-                Collections.singletonList(emptiness.name()),
-                Collections.singletonList(elementSchema.structuralKey()));
+                Collections.singletonList(siblingQuotient().name()),
+                java.util.Arrays.asList(
+                        arityPolicy.structuralKey(), elementSchema.structuralKey()));
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof BagPortSchema
-                && emptiness == ((BagPortSchema) other).emptiness
+                && arityPolicy.equals(((BagPortSchema) other).arityPolicy)
                 && elementSchema.equals(((BagPortSchema) other).elementSchema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind(), emptiness, elementSchema);
+        return Objects.hash(kind(), arityPolicy, elementSchema);
     }
 
     @Override
     public String toString() {
-        return "Bag" + emptiness.symbol() + "(" + elementSchema + ")";
+        return "Bag" + arityPolicy + "(" + elementSchema + ")";
     }
 }

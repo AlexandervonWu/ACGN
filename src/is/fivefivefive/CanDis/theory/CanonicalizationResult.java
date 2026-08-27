@@ -9,15 +9,18 @@ public final class CanonicalizationResult {
     private final CanonicalShape shape;
     private final TypedRenaming witness;
     private final TypedEmbedding ambientTransport;
+    private final CanonicalizationMetrics metrics;
     private final StructuralKey structuralKey;
 
     CanonicalizationResult(
             LeaderKernelResult leaderKernel,
             CanonicalShape shape,
-            TypedRenaming witness) {
+            TypedRenaming witness,
+            CanonicalizationMetrics metrics) {
         this.leaderKernel = Objects.requireNonNull(leaderKernel, "leaderKernel");
         this.shape = Objects.requireNonNull(shape, "shape");
         this.witness = Objects.requireNonNull(witness, "witness");
+        this.metrics = Objects.requireNonNull(metrics, "metrics");
         if (!shape.exactSlots().equals(witness.source())) {
             throw new IllegalArgumentException(
                     "Canonical shape slots must equal the witness source");
@@ -109,6 +112,10 @@ public final class CanonicalizationResult {
 
     public LeaderKernelTrace xi() {
         return trace();
+    }
+
+    public CanonicalizationMetrics metrics() {
+        return metrics;
     }
 
     public boolean verifyWitness(TypedSlottedPortEGraph graph) {

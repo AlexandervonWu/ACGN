@@ -88,6 +88,23 @@ public final class TheoryPortsTest {
                 alpha,
                 Collections.emptyMap(),
                 null));
+        for (String forbidden : List.of("\u0000", "\u200b", "\ue000", "\u0378")) {
+            expectThrows(IllegalArgumentException.class, () ->
+                    OperatorDeclaration.monomorphic(
+                            forbidden,
+                            Collections.emptyList(),
+                            GraphType.BOOL,
+                            Collections.emptyMap(),
+                            null));
+            expectThrows(IllegalArgumentException.class, () ->
+                    new OperatorDeclaration(
+                            "operator",
+                            Collections.singletonList(forbidden),
+                            Collections.emptyList(),
+                            GraphType.BOOL,
+                            Collections.emptyMap(),
+                            null));
+        }
         expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
                 "missing-law",
                 Collections.singletonList(new BagPortSchema(new OnePortSchema(GraphType.INT))),
@@ -283,16 +300,21 @@ public final class TheoryPortsTest {
             ContainerLawDeclaration.Kind lawKind = containerLawKind(kind);
             ContainerLawDeclaration noUnit = laws(
                     lawKind,
-                    true,
+                    false,
                     kind != PortSchema.Kind.SEQ,
                     kind == PortSchema.Kind.SET,
                     false);
-            expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
-                    "illegal-k0-" + kind,
+            InstantiatedOperator ordinaryZero = OperatorDeclaration.monomorphic(
+                    "ordinary-k0-" + kind,
                     Collections.singletonList(unitSchema),
                     GraphType.BOOL,
                     lawMap(0, noUnit),
-                    null));
+                    null).instantiateMonomorphic();
+            check(TypedENode.construct(
+                            ordinaryZero,
+                            TypedSlotContext.empty(),
+                            Collections.singletonList(empty)).support().isEmpty(),
+                    kind + " ordinary K0 needs no unit law");
 
             ContainerLawDeclaration unit = laws(
                     lawKind,
@@ -349,18 +371,23 @@ public final class TheoryPortsTest {
                     bound,
                     emptyContainer(nestedUnitSchema, bodyContext));
             ContainerLawDeclaration.Kind lawKind = containerLawKind(kind);
-            expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
-                    "illegal-nested-k0-" + kind,
+            InstantiatedOperator nestedWithoutUnit = OperatorDeclaration.monomorphic(
+                    "nested-k0-without-unit-" + kind,
                     Collections.singletonList(binderSchema),
                     GraphType.BOOL,
                     lawMap(nestedPath,
                             laws(
                                     lawKind,
-                                    true,
+                                    false,
                                     kind != PortSchema.Kind.SEQ,
                                     kind == PortSchema.Kind.SET,
                                     false)),
-                    null));
+                    null).instantiateMonomorphic();
+            check(TypedENode.construct(
+                            nestedWithoutUnit,
+                            TypedSlotContext.empty(),
+                            Collections.singletonList(emptyBinder)).support().isEmpty(),
+                    "Nested " + kind + " ordinary K0 needs no unit law");
             InstantiatedOperator nestedUnit = OperatorDeclaration.monomorphic(
                     "nested-k0-" + kind,
                     Collections.singletonList(binderSchema),
@@ -522,13 +549,18 @@ public final class TheoryPortsTest {
                         canonicalOccurrence.codomain(),
                         Collections.emptyList()));
         PortPath blockBodyPath = PortPath.at(0).child();
-        expectThrows(IllegalArgumentException.class, () -> OperatorDeclaration.monomorphic(
-                "illegal-block-unit",
+        InstantiatedOperator blockWithoutUnitOperator = OperatorDeclaration.monomorphic(
+                "ordinary-block-k0",
                 Collections.singletonList(blockUnitSchema),
                 GraphType.BOOL,
                 lawMap(blockBodyPath,
-                        laws(ContainerLawDeclaration.Kind.SEQ, true, false, false, false)),
-                null));
+                        laws(ContainerLawDeclaration.Kind.SEQ, false, false, false, false)),
+                null).instantiateMonomorphic();
+        check(TypedENode.construct(
+                        blockWithoutUnitOperator,
+                        TypedSlotContext.empty(),
+                        Collections.singletonList(emptyBlock)).support().isEmpty(),
+                "Ordinary K0 beneath BindBlock needs no unit law");
         InstantiatedOperator blockUnitOperator = OperatorDeclaration.monomorphic(
                 "block-unit",
                 Collections.singletonList(blockUnitSchema),

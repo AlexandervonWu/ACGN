@@ -27,6 +27,7 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BagPort;
+import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
 import is.fivefivefive.CanDis.theory.BindBlockPort;
 import is.fivefivefive.CanDis.theory.BindPort;
 import is.fivefivefive.CanDis.theory.CanonicalShape;
@@ -103,7 +104,8 @@ public final class VisualizationAnalysisService {
         }
 
         phaseStarted = System.nanoTime();
-        MASGVisitor visitor = focusedVisitor(parsed.model, declaration.name);
+        MASGVisitor visitor = focusedVisitor(
+                parsed.module, parsed.model, declaration.name);
         Integer graphId = visitor.getForestId(declaration.name);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Multigraph graph = graphId == null ? null : forest.get(graphId);
@@ -178,7 +180,7 @@ public final class VisualizationAnalysisService {
         Set<String> selected = new HashSet<>();
         selected.add(leftDeclaration.name);
         selected.add(rightDeclaration.name);
-        MASGVisitor visitor = focusedVisitor(parsed.model, selected);
+        MASGVisitor visitor = focusedVisitor(parsed.module, parsed.model, selected);
         ComparisonOperand left = comparisonOperand(visitor, leftDeclaration);
         ComparisonOperand right = comparisonOperand(visitor, rightDeclaration);
         long preparationNanos = System.nanoTime() - phaseStarted;
@@ -503,23 +505,29 @@ public final class VisualizationAnalysisService {
                         .put("rootEClassId", rootId));
     }
 
-    private static MASGVisitor focusedVisitor(ModelUnit model, String selectedName) {
-        return focusedVisitor(model, java.util.Collections.singleton(selectedName));
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            String selectedName) {
+        return focusedVisitor(
+                module, model, java.util.Collections.singleton(selectedName));
     }
 
     private static MASGVisitor focusedVisitor(
+            CompModule module,
             ModelUnit model,
             Set<String> selectedNames) {
         Set<String> callables = new HashSet<>();
         for (String selectedName : selectedNames) {
             callables.addAll(callableClosure(model, selectedName));
         }
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
+        MASGVisitor visitor = new MASGVisitor(
+                new GlobalVariables(), callables, module);
         try {
             visitor.visit(model, null);
             return visitor;
         } catch (RuntimeException focusedFailure) {
-            MASGVisitor fallback = new MASGVisitor(new GlobalVariables());
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
             fallback.visit(model, null);
             return fallback;
         }
@@ -602,7 +610,7 @@ public final class VisualizationAnalysisService {
             callables.sort(Comparator
                     .comparing((CallableDeclaration value) -> value.kind)
                     .thenComparing(value -> value.name));
-            return new ParsedModel(model, callables);
+            return new ParsedModel(module, model, callables);
         } catch (AnalysisException exception) {
             throw exception;
         } catch (Exception exception) {
@@ -721,10 +729,15 @@ public final class VisualizationAnalysisService {
     }
 
     private static final class ParsedModel {
+        private final CompModule module;
         private final ModelUnit model;
         private final List<CallableDeclaration> callables;
 
-        private ParsedModel(ModelUnit model, List<CallableDeclaration> callables) {
+        private ParsedModel(
+                CompModule module,
+                ModelUnit model,
+                List<CallableDeclaration> callables) {
+            this.module = module;
             this.model = model;
             this.callables = callables;
         }
@@ -1004,6 +1017,14 @@ public final class VisualizationAnalysisService {
                     }
                     return new JSONObject().put("kind", "relation").put("columns", columns);
                 case CONSTRUCTOR:
+                    Integer emptyArity = AlloyTypeBridge.emptyRelationArity(type);
+                    if (emptyArity != null) {
+                        return new JSONObject()
+                                .put("kind", "relation")
+                                .put("empty", true)
+                                .put("arity", emptyArity)
+                                .put("columns", new JSONArray());
+                    }
                     if ("AlloyRel".equals(type.symbol())) {
                         return new JSONObject()
                                 .put("kind", "relation")

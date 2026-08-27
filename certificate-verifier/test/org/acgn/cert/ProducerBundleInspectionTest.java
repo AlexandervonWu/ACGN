@@ -57,13 +57,13 @@ public final class ProducerBundleInspectionTest {
                 "parent fixture matches its external input-specific pin");
         assertVerified(verifier.verify(
                 nullaryA, Profile.FULL,
-                VerificationPolicy.trust(emptyTheoryDigest)), "nullary FULL");
+                policyFor(emptyTheoryDigest, nullaryA)), "nullary FULL");
         assertVerified(verifier.verify(
                 slotA, Profile.FULL,
-                VerificationPolicy.trust(emptyTheoryDigest)), "slot FULL");
+                policyFor(emptyTheoryDigest, slotA)), "slot FULL");
         assertVerified(verifier.verify(
                 parentA, Profile.FULL,
-                VerificationPolicy.trust(parentTheoryDigest)), "parent FULL");
+                policyFor(parentTheoryDigest, parentA)), "parent FULL");
         Bundle bundlePairLeft = decode(equivalentLeft);
         Bundle bundlePairRight = decode(equivalentRight);
         Path repo = Path.of(args[9]).toAbsolutePath().normalize();
@@ -109,13 +109,13 @@ public final class ProducerBundleInspectionTest {
         assertVerified(verifier.verifyPair(
                 equivalentLeft,
                 equivalentRight,
-                VerificationPolicy.trust(emptyTheoryDigest)),
+                policyFor(emptyTheoryDigest, equivalentLeft, equivalentRight)),
                 "manually constructed bundle-level equivalent PAIR");
 
         VerificationResult nonEquivalentResult = verifier.verifyPair(
                 equivalentLeft,
                 nonEquivalent,
-                VerificationPolicy.trust(emptyTheoryDigest));
+                policyFor(emptyTheoryDigest, equivalentLeft, nonEquivalent));
         check(nonEquivalentResult.outcome() == Outcome.UNCHECKABLE
                         && nonEquivalentResult.code()
                                 == FailureCode.MISSING_PAIR_DERIVATION,
@@ -125,7 +125,7 @@ public final class ProducerBundleInspectionTest {
         VerificationResult incompatibleResult = verifier.verifyPair(
                 equivalentLeft,
                 incompatible,
-                VerificationPolicy.trust(emptyTheoryDigest));
+                policyFor(emptyTheoryDigest, equivalentLeft, equivalentRight));
         check(incompatibleResult.outcome() == Outcome.REJECTED
                         && incompatibleResult.code() == FailureCode.THEORY_MISMATCH,
                 "an incompatible producer theory is rejected before trust elevation");
@@ -192,11 +192,30 @@ public final class ProducerBundleInspectionTest {
                         "INSERT_FRESH",
                         "INSERT_FRESH",
                         "UNION",
+                        "REBUILD_START",
                         "REBUILD_COMPLETE",
                         "INSERT_FRESH")),
                 "parent fixture has the exact accepted event sequence");
         check(parent.snapshots().size() == 6,
-                "five transitions retain all six exact snapshots");
+                "content addressing shares the rebuild start's exact no-op snapshot");
+        java.util.Map<String, java.util.Map<String, Set<String>>> shapeHistory =
+                new java.util.LinkedHashMap<>();
+        for (Wire.Node snapshot : parent.snapshots().values()) {
+            for (Wire.Node shape : snapshot.child(2).children()) {
+                shapeHistory.computeIfAbsent(
+                                shape.scalar(2), ignored -> new java.util.LinkedHashMap<>())
+                        .computeIfAbsent(
+                                shape.scalar(1), ignored -> new java.util.LinkedHashSet<>())
+                        .add(shape.scalar(0));
+            }
+        }
+        check(shapeHistory.values().stream().anyMatch(byOwner -> {
+                    Set<String> ids = byOwner.values().stream()
+                            .flatMap(Set::stream)
+                            .collect(java.util.stream.Collectors.toSet());
+                    return byOwner.size() > 1 && ids.size() >= byOwner.size();
+                }),
+                "rehomed shapes retain distinct owner-qualified record IDs");
         Wire.Node unfolding = parent.unfoldings().values().iterator().next();
         check("2".equals(unfolding.scalar(2)),
                 "parent unfolding has exact height two");
@@ -213,6 +232,18 @@ public final class ProducerBundleInspectionTest {
 
     private static Bundle decode(byte[] bytes) {
         return Bundle.parse(Codec.decode(bytes, Limits.defaults()));
+    }
+
+    /** TEST_ONLY fixtures exercise replay; these candidates are not source authority. */
+    private static VerificationPolicy policyFor(
+            String theoryDigest,
+            byte[]... bundles) {
+        VerificationPolicy policy = VerificationPolicy.trust(theoryDigest);
+        for (byte[] bytes : bundles) {
+            policy = policy.withCallOccurrenceCommitment(
+                    CallOccurrenceCommitment.inspect(bytes, Limits.defaults()));
+        }
+        return policy;
     }
 
     private static byte[] withIncompatibleTheory(byte[] bytes) {

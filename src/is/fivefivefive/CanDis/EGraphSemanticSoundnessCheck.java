@@ -39,7 +39,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglog;
 import is.fivefivefive.CanDis.core.egraph.JavaEgglogDeBruijn;
@@ -217,7 +217,7 @@ public final class EGraphSemanticSoundnessCheck {
                     new JavaEgglogDeBruijn().compare(leftTerm, rightTerm).equivalent);
             result.merged.put("slotted-egraph", new SlottedEGraph().compare(leftTerm, rightTerm).equivalent);
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
             Canonical.Prepared left = Canonical.prepare(forest.get(predicateIds.get(names[0])));

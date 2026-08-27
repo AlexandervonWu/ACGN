@@ -77,7 +77,11 @@ public final class AlloyAstTermAdapter {
             return AlloyTerm.atom("VAR", ((VarExpr) node).getName());
         }
         if (node instanceof SigExpr) {
-            return AlloyTerm.atom("SIG", ((SigExpr) node).getName());
+            String name = ((SigExpr) node).getName();
+            if ("none".equals(name) || "univ".equals(name)) {
+                return AlloyTerm.atom("CONST", name);
+            }
+            return AlloyTerm.atom("SIG", name);
         }
         if (node instanceof FieldExpr) {
             return AlloyTerm.atom("FIELD", ((FieldExpr) node).getName());

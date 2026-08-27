@@ -11,7 +11,7 @@ import java.util.Set;
 /** Shared, terminating orientation of the Alloy equivalences used by the baselines. */
 final class AlloyRewriteSystem {
     static final int MAX_ITERATIONS = 32;
-    static final String RULE_SET_VERSION = "canonical-equivalences-v2";
+    static final String RULE_SET_VERSION = "canonical-equivalences-v3-explicit-laws";
     private static final List<String> RULE_NAMES = List.of(
             "operator aliases",
             "NOOP elimination",
@@ -46,8 +46,7 @@ final class AlloyRewriteSystem {
     private static final Set<String> ACI = Set.of(
             "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT");
     private static final Set<String> ASSOCIATIVE = Set.of(
-            "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT",
-            "ARITH/MUL", "ARITH/PLUS", "REL/JOIN", "REL/ARROW");
+            "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT");
     private static final Set<String> COMMUTATIVE = Set.of(
             "BOOL/AND", "BOOL/OR", "REL/PLUS", "REL/INTERSECT",
             "ARITH/MUL", "ARITH/PLUS", "LIST/DISJOINT",
@@ -66,21 +65,30 @@ final class AlloyRewriteSystem {
 
     static Pass rewriteOnce(AlloyTerm input, ArityMode arityMode) {
         Counter counter = new Counter();
-        AlloyTerm output = rewriteTree(input, counter, arityMode);
+        AlloyTerm output = rewriteTree(
+                input, counter, arityMode, Collections.emptyMap());
         return new Pass(output, counter.changes);
     }
 
-    private static AlloyTerm rewriteTree(AlloyTerm input, Counter counter, ArityMode arityMode) {
+    private static AlloyTerm rewriteTree(
+            AlloyTerm input,
+            Counter counter,
+            ArityMode arityMode,
+            Map<String, Boolean> positiveBindings) {
+        if (isScopedBinder(input)) {
+            return rewriteScopedTree(input, counter, arityMode, positiveBindings);
+        }
         List<AlloyTerm> children = input.children();
         List<AlloyTerm> rewrittenChildren = new ArrayList<>(children.size());
         boolean childChanged = false;
         for (AlloyTerm child : children) {
-            AlloyTerm rewritten = rewriteTree(child, counter, arityMode);
+            AlloyTerm rewritten = rewriteTree(
+                    child, counter, arityMode, positiveBindings);
             rewrittenChildren.add(rewritten);
             childChanged |= rewritten != child;
         }
         AlloyTerm current = childChanged ? input.withChildren(rewrittenChildren) : input;
-        AlloyTerm rewritten = rewriteNode(current, arityMode);
+        AlloyTerm rewritten = rewriteNode(current, arityMode, positiveBindings);
         if (!rewritten.equals(current)) {
             counter.changes++;
             return rewritten;
@@ -88,7 +96,82 @@ final class AlloyRewriteSystem {
         return current;
     }
 
-    private static AlloyTerm rewriteNode(AlloyTerm input, ArityMode arityMode) {
+    private static AlloyTerm rewriteScopedTree(
+            AlloyTerm input,
+            Counter counter,
+            ArityMode arityMode,
+            Map<String, Boolean> outerBindings) {
+        Map<String, Boolean> scopedBindings = new HashMap<>(outerBindings);
+        List<AlloyTerm> rewrittenChildren = new ArrayList<>(input.children().size());
+        boolean childChanged = false;
+        for (AlloyTerm child : input.children()) {
+            AlloyTerm rewritten = rewriteTree(
+                    child, counter, arityMode, scopedBindings);
+            rewrittenChildren.add(rewritten);
+            childChanged |= rewritten != child;
+            if (isDeclaration(rewritten)) {
+                addDeclarationBindings(rewritten, scopedBindings);
+            }
+        }
+        AlloyTerm current = childChanged
+                ? input.withChildren(rewrittenChildren)
+                : input;
+        AlloyTerm rewritten = rewriteNode(current, arityMode, outerBindings);
+        if (!rewritten.equals(current)) {
+            counter.changes++;
+            return rewritten;
+        }
+        return current;
+    }
+
+    private static boolean isScopedBinder(AlloyTerm term) {
+        return "PREDICATE".equals(term.head())
+                || term.head().startsWith("QF/")
+                || term.head().startsWith("QE/");
+    }
+
+    private static boolean isDeclaration(AlloyTerm term) {
+        return term.head().startsWith("DECL/");
+    }
+
+    private static void addDeclarationBindings(
+            AlloyTerm declaration,
+            Map<String, Boolean> target) {
+        List<AlloyTerm> children = declaration.children();
+        int variableCount = 0;
+        while (variableCount < children.size()
+                && children.get(variableCount).isVariable()) {
+            variableCount++;
+        }
+        if (variableCount == 0 || variableCount == children.size()) {
+            return;
+        }
+        boolean positive = isPositiveBindingDomain(
+                children.get(children.size() - 1));
+        for (int index = 0; index < variableCount; index++) {
+            target.put(children.get(index).atom(), positive);
+        }
+    }
+
+    private static boolean isPositiveBindingDomain(AlloyTerm domain) {
+        AlloyTerm current = domain;
+        while ("UE/NOOP".equals(canonicalHead(current.head()))
+                && current.children().size() == 1) {
+            current = current.children().get(0);
+        }
+        String head = canonicalHead(current.head());
+        if ("UE/SETOF".equals(head) || "UE/LONE".equals(head)) {
+            return false;
+        }
+        return "UE/SOME".equals(head)
+                || "UE/ONE".equals(head)
+                || !head.startsWith("UE/");
+    }
+
+    private static AlloyTerm rewriteNode(
+            AlloyTerm input,
+            ArityMode arityMode,
+            Map<String, Boolean> positiveBindings) {
         String canonicalHead = canonicalHead(input.head());
         AlloyTerm current = canonicalHead.equals(input.head())
                 ? input
@@ -129,6 +212,19 @@ final class AlloyRewriteSystem {
         if ("BOOL/NOT".equals(current.head()) && current.children().size() == 1) {
             return rewriteNot(current.children().get(0));
         }
+        if (current.children().size() == 1
+                && isConstant(current.children().get(0), "none")) {
+            switch (current.head()) {
+                case "UF/SOME":
+                case "UF/ONE":
+                    return bool(false);
+                case "UF/NO":
+                case "UF/LONE":
+                    return bool(true);
+                default:
+                    break;
+            }
+        }
         if (current.head().startsWith("QF/")) {
             AlloyTerm empty = emptyDomainResult(current);
             if (empty != null) {
@@ -143,12 +239,33 @@ final class AlloyRewriteSystem {
             }
         }
         if ("BF/IN".equals(current.head()) && current.children().size() == 2) {
+            AlloyTerm value = current.children().get(0);
             AlloyTerm domain = current.children().get(1);
             if (isConstant(domain, "none")) {
-                return bool(false);
+                if (isConstant(value, "none")) {
+                    return bool(true);
+                }
+                if (isStaticallyNonempty(value, positiveBindings)) {
+                    return bool(false);
+                }
             }
             if (isConstant(domain, "univ")) {
                 return bool(true);
+            }
+        }
+        if ("BF/NOT_IN".equals(current.head()) && current.children().size() == 2) {
+            AlloyTerm value = current.children().get(0);
+            AlloyTerm domain = current.children().get(1);
+            if (isConstant(domain, "none")) {
+                if (isConstant(value, "none")) {
+                    return bool(false);
+                }
+                if (isStaticallyNonempty(value, positiveBindings)) {
+                    return bool(true);
+                }
+            }
+            if (isConstant(domain, "univ")) {
+                return bool(false);
             }
         }
         if (ASSOCIATIVE.contains(current.head())) {
@@ -176,6 +293,10 @@ final class AlloyRewriteSystem {
             current = current.withChildren(kept);
         }
         if ("REL/INTERSECT".equals(current.head()) && containsConstant(current.children(), "none")) {
+            return constant("none");
+        }
+        if ("REL/MINUS".equals(current.head()) && current.children().size() == 2
+                && current.children().get(0).equals(current.children().get(1))) {
             return constant("none");
         }
         if ("BOOL/AND".equals(current.head())) {
@@ -394,14 +515,25 @@ final class AlloyRewriteSystem {
         if (isConstant(term, "none")) {
             return true;
         }
-        return term.children().size() == 1
-                && ("UE/NOOP".equals(term.head())
-                        || "UE/SETOF".equals(term.head())
-                        || "UE/SOME".equals(term.head())
-                        || "UE/ONE".equals(term.head())
-                        || "UE/LONE".equals(term.head())
-                        || "UE/EXACTLY".equals(term.head()))
+        if (term.children().size() != 1) {
+            return false;
+        }
+        if ("UE/NOOP".equals(term.head())) {
+            return isEmptyDomain(term.children().get(0));
+        }
+        if ("UE/SETOF".equals(term.head()) || "UE/LONE".equals(term.head())) {
+            return false;
+        }
+        return ("UE/SOME".equals(term.head())
+                        || "UE/ONE".equals(term.head()))
                 && isEmptyDomain(term.children().get(0));
+    }
+
+    private static boolean isStaticallyNonempty(
+            AlloyTerm term,
+            Map<String, Boolean> positiveBindings) {
+        return term.isVariable()
+                && Boolean.TRUE.equals(positiveBindings.get(term.atom()));
     }
 
     private static AlloyTerm substitute(AlloyTerm term, String variable, AlloyTerm replacement) {
@@ -708,6 +840,8 @@ final class AlloyRewriteSystem {
                 return "REL/PLUS";
             case "BE/INTERSECT":
                 return "REL/INTERSECT";
+            case "BE/MINUS":
+                return "REL/MINUS";
             case "BE/JOIN":
                 return "REL/JOIN";
             case "BE/ARROW":

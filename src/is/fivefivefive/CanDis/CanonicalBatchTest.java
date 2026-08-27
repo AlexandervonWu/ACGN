@@ -9,11 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
@@ -21,6 +24,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 import edu.mit.csail.sdg.parser.CompModule;
@@ -32,10 +36,13 @@ import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
+import parser.ast.nodes.Call;
+import parser.ast.nodes.Function;
+import parser.ast.nodes.PredOrFun;
 import parser.ast.nodes.Predicate;
 import parser.util.AlloyUtil;
 import parser.etc.Pair;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.CanonicalDistance;
 import is.fivefivefive.CanDis.metric.QuotientRepairDistance;
 import is.fivefivefive.CanDis.theory.BoundedFiniteUnfoldingOracle;
@@ -45,7 +52,7 @@ import is.fivefivefive.CanDis.theory.ProductionGraphCanonicalizer;
 public class CanonicalBatchTest {
     private static final String DEFAULT_INPUT = "classified-data";
     private static final String DEFAULT_OUTPUT = "distance_results";
-    private static final int DEFAULT_REWARD_POOL_SIZE = 10;
+    private static final int DEFAULT_REWARD_POOL_SIZE = 100;
     private static final int DEFAULT_THREAD_COUNT = 32;
 
     public static void main(String[] args) throws IOException {
@@ -104,6 +111,8 @@ public class CanonicalBatchTest {
         int maximumInFlight = workers > Integer.MAX_VALUE / 4
                 ? Integer.MAX_VALUE
                 : workers * 4;
+        int memoryIntensiveWorkers = ExperimentMemoryBudget.effectiveWorkers(workers);
+        Semaphore memoryIntensivePermits = new Semaphore(memoryIntensiveWorkers, true);
         ExecutorService executor = Executors.newFixedThreadPool(workers);
         try {
             CompletionService<IndexedResult> completions =
@@ -120,11 +129,13 @@ public class CanonicalBatchTest {
                     Math.min(1000, Math.max(1, (files.size() + 19) / 20)));
             originalErr.println("CanonicalBatchTest: processing " + files.size()
                     + " files with " + workers + " workers and at most "
-                    + maximumInFlight + " tasks in flight.");
+                    + maximumInFlight + " tasks in flight; memory-intensive concurrency "
+                    + memoryIntensiveWorkers + ".");
             while (submitted < files.size() && submitted - emitted < maximumInFlight) {
                 int index = submitted++;
                 Future<IndexedResult> future = completions.submit(
-                        () -> processIndexedFile(index, files.get(index), options));
+                        () -> processIndexedFile(
+                                index, files.get(index), options, memoryIntensivePermits));
                 active.put(future, index);
             }
 
@@ -199,7 +210,8 @@ public class CanonicalBatchTest {
                 while (submitted < files.size() && submitted - emitted < maximumInFlight) {
                     int index = submitted++;
                     Future<IndexedResult> next = completions.submit(
-                            () -> processIndexedFile(index, files.get(index), options));
+                            () -> processIndexedFile(
+                                    index, files.get(index), options, memoryIntensivePermits));
                     active.put(next, index);
                 }
             }
@@ -216,12 +228,22 @@ public class CanonicalBatchTest {
     private static IndexedResult processIndexedFile(
             int index,
             Path file,
-            Options options) {
-        FileResult result = processFile(options.inputDir, file, options);
+            Options options,
+            Semaphore memoryIntensivePermits) {
+        FileResult result = processFile(options.inputDir, file, options, memoryIntensivePermits);
         if (result.error != null) {
-            result = processFile(options.inputDir, file, options);
+            result = processFile(options.inputDir, file, options, memoryIntensivePermits);
         }
         return new IndexedResult(index, result);
+    }
+
+    private static void acquireMemoryIntensivePermit(Semaphore permits) {
+        try {
+            permits.acquire();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Canonical batch memory permit was interrupted", exception);
+        }
     }
 
     private static String formatDuration(long seconds) {
@@ -239,7 +261,11 @@ public class CanonicalBatchTest {
         return result;
     }
 
-    private static FileResult processFile(Path inputRoot, Path file, Options options) {
+    private static FileResult processFile(
+            Path inputRoot,
+            Path file,
+            Options options,
+            Semaphore memoryIntensivePermits) {
         FileResult result = new FileResult(inputRoot, file);
         try {
             CompModule module = AlloyUtil.compileAlloyModule(file.toString());
@@ -271,11 +297,12 @@ public class CanonicalBatchTest {
             result.rawAstTreeDistance = rawAstTreeDistance(pair.left.getBody(), pair.right.getBody());
             result.normalizedRawAstDistance = normalizedDistance(result.rawAstTreeDistance, result.rawAstSize);
 
-            MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
-            visitor.visit(model, null);
+            MASGVisitor visitor = focusedVisitor(module, model, pair);
             DoubleMap<Integer, Multigraph> forest = visitor.getForest();
-            Multigraph left = forest.get(pair.leftId);
-            Multigraph right = forest.get(pair.rightId);
+            Integer leftForestId = visitor.getForestId(pair.leftName);
+            Integer rightForestId = visitor.getForestId(pair.rightName);
+            Multigraph left = leftForestId == null ? null : forest.get(leftForestId);
+            Multigraph right = rightForestId == null ? null : forest.get(rightForestId);
             if (left == null || right == null) {
                 result.error = "Could not find both predicate graphs in MASG forest.";
                 return result;
@@ -289,77 +316,21 @@ public class CanonicalBatchTest {
                     result.predicateBodySize);
             result.leftVertices = left.size();
             result.rightVertices = right.size();
-            Canonical.Prepared leftCanonical = Canonical.prepare(left);
-            Canonical.Prepared rightCanonical = Canonical.prepare(right);
-            result.leftLegacyCanonicalFormSize = Canonical.canonicalFormSize(leftCanonical);
-            result.rightLegacyCanonicalFormSize = Canonical.canonicalFormSize(rightCanonical);
-            result.legacyCanonicalFormSize = Math.max(
-                    result.leftLegacyCanonicalFormSize,
-                    result.rightLegacyCanonicalFormSize);
-            CanonicalDistance.DistanceBreakdown legacyBreakdown =
-                    Canonical.distanceBreakdown(leftCanonical, rightCanonical);
-            result.legacyCanonicalDistance = legacyBreakdown.distance();
-            result.legacyTemporalDistance = legacyBreakdown.temporalDistance();
-            result.legacyQuantifierDistance = legacyBreakdown.quantifierDistance();
-            result.legacyMatrixDistance = legacyBreakdown.matrixDistance();
-            result.normalizedLegacyCanonicalDistance = normalizedDistance(
-                    result.legacyCanonicalDistance,
-                    result.legacyCanonicalFormSize);
-
-            long exactStarted = System.nanoTime();
-            CanonicalAlloyPipeline.Prepared leftExact = CanonicalAlloyPipeline.prepare(leftCanonical);
-            result.leftExactPreparationNanos = System.nanoTime() - exactStarted;
-            exactStarted = System.nanoTime();
-            CanonicalAlloyPipeline.Prepared rightExact = CanonicalAlloyPipeline.prepare(rightCanonical);
-            result.rightExactPreparationNanos = System.nanoTime() - exactStarted;
-            result.leftCanonicalFormSize = leftExact.repairObservationSize();
-            result.rightCanonicalFormSize = rightExact.repairObservationSize();
-            result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
-            result.leftCanonicalRepresentativeTreeSize = leftExact.representativeTreeSize();
-            result.rightCanonicalRepresentativeTreeSize = rightExact.representativeTreeSize();
-            result.canonicalRepresentativeTreeSize = Math.max(
-                    result.leftCanonicalRepresentativeTreeSize,
-                    result.rightCanonicalRepresentativeTreeSize);
-            result.representationSizesAvailable = true;
-            exactStarted = System.nanoTime();
-            QuotientRepairDistance.Result quotient =
-                    CanonicalAlloyPipeline.distanceEvaluation(leftExact, rightExact);
-            result.distance = quotient.distance();
-            result.quotientTemporalDistance = quotient.temporalDistance();
-            result.quotientQuantifierDistance = quotient.quantifierDistance();
-            result.quotientMatrixDistance = quotient.matrixDistance();
-            result.exactDistanceNanos = System.nanoTime() - exactStarted;
-            result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
-            result.quotientBinderAlignments = quotient.binderAlignments();
-            result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
-            exactStarted = System.nanoTime();
-            result.canonicalRepresentativeTreeDistance =
-                    CanonicalAlloyPipeline.canonicalRepresentativeTreeDistance(leftExact, rightExact);
-            result.canonicalRepresentativeTreeDistanceNanos = System.nanoTime() - exactStarted;
-            result.normalizedCanonicalRepresentativeTreeDistance = normalizedDistance(
-                    result.canonicalRepresentativeTreeDistance,
-                    result.canonicalRepresentativeTreeSize);
-            result.leftExactDigest = leftExact.digest();
-            result.rightExactDigest = rightExact.digest();
-            result.exactEclasses = leftExact.eclassCount() + rightExact.eclassCount();
-            result.exactEnodes = leftExact.enodeCount() + rightExact.enodeCount();
-            result.exactSlots = leftExact.slotCount() + rightExact.slotCount();
-            result.exactRebuilds = leftExact.rebuildCount() + rightExact.rebuildCount();
-            result.exactConstructionNanos = leftExact.constructionNanos()
-                    + rightExact.constructionNanos();
-            result.exactUnfoldingNanos = leftExact.unfoldingNanos()
-                    + rightExact.unfoldingNanos();
-            result.exactObservationNanos = leftExact.observationNanos()
-                    + rightExact.observationNanos();
-            result.exactRepairProjectionNanos = leftExact.repairProjectionNanos()
-                    + rightExact.repairProjectionNanos();
-            result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
-            result.rightIRTemporalFOL = Canonical.irTemporalFol(rightCanonical);
-            result.edits = Canonical.edits(leftCanonical, rightCanonical);
+            acquireMemoryIntensivePermit(memoryIntensivePermits);
+            try {
+                computeDistanceMetrics(left, right, result);
+            } finally {
+                memoryIntensivePermits.release();
+            }
             if (options.skipRewards) {
                 result.rewardSkipped = true;
             } else {
-                computeRewardMetrics(module, result, options.rewardPoolSize);
+                acquireMemoryIntensivePermit(memoryIntensivePermits);
+                try {
+                    computeRewardMetrics(module, result, options.rewardPoolSize);
+                } finally {
+                    memoryIntensivePermits.release();
+                }
             }
             return result;
         } catch (VirtualMachineError error) {
@@ -370,6 +341,139 @@ public class CanonicalBatchTest {
             }
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
             return result;
+        }
+    }
+
+    private static void computeDistanceMetrics(
+            Multigraph left,
+            Multigraph right,
+            FileResult result) {
+        Canonical.Prepared leftCanonical = Canonical.prepare(left);
+        Canonical.Prepared rightCanonical = Canonical.prepare(right);
+        result.leftLegacyCanonicalFormSize = Canonical.canonicalFormSize(leftCanonical);
+        result.rightLegacyCanonicalFormSize = Canonical.canonicalFormSize(rightCanonical);
+        result.legacyCanonicalFormSize = Math.max(
+                result.leftLegacyCanonicalFormSize,
+                result.rightLegacyCanonicalFormSize);
+        CanonicalDistance.DistanceBreakdown legacyBreakdown =
+                Canonical.distanceBreakdown(leftCanonical, rightCanonical);
+        result.legacyCanonicalDistance = legacyBreakdown.distance();
+        result.legacyTemporalDistance = legacyBreakdown.temporalDistance();
+        result.legacyQuantifierDistance = legacyBreakdown.quantifierDistance();
+        result.legacyMatrixDistance = legacyBreakdown.matrixDistance();
+        result.normalizedLegacyCanonicalDistance = normalizedDistance(
+                result.legacyCanonicalDistance,
+                result.legacyCanonicalFormSize);
+
+        long exactStarted = System.nanoTime();
+        CanonicalAlloyPipeline.Prepared leftExact = CanonicalAlloyPipeline.prepare(leftCanonical);
+        result.leftExactPreparationNanos = System.nanoTime() - exactStarted;
+        exactStarted = System.nanoTime();
+        CanonicalAlloyPipeline.Prepared rightExact = CanonicalAlloyPipeline.prepare(rightCanonical);
+        result.rightExactPreparationNanos = System.nanoTime() - exactStarted;
+        result.leftCanonicalFormSize = leftExact.repairObservationSize();
+        result.rightCanonicalFormSize = rightExact.repairObservationSize();
+        result.canonicalFormSize = Math.max(result.leftCanonicalFormSize, result.rightCanonicalFormSize);
+        result.leftCanonicalRepresentativeTreeSize = leftExact.representativeTreeSize();
+        result.rightCanonicalRepresentativeTreeSize = rightExact.representativeTreeSize();
+        result.canonicalRepresentativeTreeSize = Math.max(
+                result.leftCanonicalRepresentativeTreeSize,
+                result.rightCanonicalRepresentativeTreeSize);
+        result.representationSizesAvailable = true;
+        exactStarted = System.nanoTime();
+        QuotientRepairDistance.Result quotient =
+                CanonicalAlloyPipeline.distanceEvaluation(leftExact, rightExact);
+        result.distance = quotient.distance();
+        result.quotientTemporalDistance = quotient.temporalDistance();
+        result.quotientQuantifierDistance = quotient.quantifierDistance();
+        result.quotientMatrixDistance = quotient.matrixDistance();
+        result.exactDistanceNanos = System.nanoTime() - exactStarted;
+        result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
+        result.quotientBinderAlignments = quotient.binderAlignments();
+        result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
+        exactStarted = System.nanoTime();
+        result.canonicalRepresentativeTreeDistance =
+                CanonicalAlloyPipeline.canonicalRepresentativeTreeDistance(leftExact, rightExact);
+        result.canonicalRepresentativeTreeDistanceNanos = System.nanoTime() - exactStarted;
+        result.normalizedCanonicalRepresentativeTreeDistance = normalizedDistance(
+                result.canonicalRepresentativeTreeDistance,
+                result.canonicalRepresentativeTreeSize);
+        result.leftExactDigest = leftExact.digest();
+        result.rightExactDigest = rightExact.digest();
+        result.exactEclasses = leftExact.eclassCount() + rightExact.eclassCount();
+        result.exactEnodes = leftExact.enodeCount() + rightExact.enodeCount();
+        result.exactSlots = leftExact.slotCount() + rightExact.slotCount();
+        result.exactRebuilds = leftExact.rebuildCount() + rightExact.rebuildCount();
+        result.exactConstructionNanos = leftExact.constructionNanos()
+                + rightExact.constructionNanos();
+        result.exactUnfoldingNanos = leftExact.unfoldingNanos()
+                + rightExact.unfoldingNanos();
+        result.exactObservationNanos = leftExact.observationNanos()
+                + rightExact.observationNanos();
+        result.exactRepairProjectionNanos = leftExact.repairProjectionNanos()
+                + rightExact.repairProjectionNanos();
+        result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
+        result.rightIRTemporalFOL = Canonical.irTemporalFol(rightCanonical);
+        result.edits = Canonical.edits(leftCanonical, rightCanonical);
+    }
+
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair) {
+        Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables, module);
+        try {
+            visitor.visit(model, null);
+            return visitor;
+        } catch (RuntimeException focusedFailure) {
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
+            fallback.visit(model, null);
+            return fallback;
+        }
+    }
+
+    private static Set<String> callableClosure(
+            ModelUnit model,
+            String leftName,
+            String rightName) {
+        Map<String, PredOrFun> declarations = new HashMap<>();
+        for (Predicate predicate : model.getPredDeclList()) {
+            declarations.put(predicate.getName(), predicate);
+        }
+        for (Function function : model.getFunDeclList()) {
+            declarations.put(function.getName(), function);
+        }
+        Set<String> selected = new HashSet<>();
+        ArrayDeque<String> pending = new ArrayDeque<>();
+        pending.add(leftName);
+        pending.add(rightName);
+        while (!pending.isEmpty()) {
+            String name = pending.removeFirst();
+            if (!selected.add(name)) {
+                continue;
+            }
+            PredOrFun declaration = declarations.get(name);
+            if (declaration != null) {
+                collectCalledDeclarations(declaration, declarations, selected, pending);
+            }
+        }
+        return selected;
+    }
+
+    private static void collectCalledDeclarations(
+            Node node,
+            Map<String, PredOrFun> declarations,
+            Set<String> selected,
+            ArrayDeque<String> pending) {
+        if (node instanceof Call) {
+            String name = ((Call) node).getName();
+            if (declarations.containsKey(name) && !selected.contains(name)) {
+                pending.addLast(name);
+            }
+        }
+        for (Node child : DatasetConventions.rawAstChildren(node)) {
+            collectCalledDeclarations(child, declarations, selected, pending);
         }
     }
 
@@ -575,6 +679,9 @@ public class CanonicalBatchTest {
         writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
         writer.write("  \"fileCount\": " + fileCount + ",\n");
         writer.write("  \"threadCount\": " + options.threadCount + ",\n");
+        writer.write("  \"memoryIntensiveWorkerLimit\": "
+                + ExperimentMemoryBudget.effectiveWorkers(options.threadCount) + ",\n");
+        writer.write("  \"maximumHeapBytes\": " + Runtime.getRuntime().maxMemory() + ",\n");
         writer.write("  \"canonicalEngine\": \"CanonicalAlloyPipeline\",\n");
         writer.write("  \"certificateIntegratedEngine\": \"CanonicalAlloyPipeline\",\n");
         writer.write("  \"fastRewriteEngine\": \"Canonical/CanonicalDistance\",\n");
@@ -842,6 +949,9 @@ public class CanonicalBatchTest {
             writer.write("# Canonical Rewrite Distance Summary\n\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
             writer.write("- Thread count: " + options.threadCount + "\n");
+            writer.write("- Memory-intensive worker limit: "
+                    + ExperimentMemoryBudget.effectiveWorkers(options.threadCount) + "\n");
+            writer.write("- Maximum JVM heap bytes: " + Runtime.getRuntime().maxMemory() + "\n");
             writer.write("- Certificate-Integrated IR engine: `CanonicalAlloyPipeline` (`"
                     + CanonicalAlloyPipeline.PIPELINE_VERSION + "`)\n");
             writer.write("- Fast Rewrite IR engine: `Canonical` / `CanonicalDistance`\n");

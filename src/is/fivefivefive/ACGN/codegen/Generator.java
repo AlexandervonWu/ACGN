@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import is.fivefivefive.ACGN.alloy.MiddleSymbol;
+import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.PredRootSymbol;
 import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
@@ -124,6 +125,22 @@ public class Generator {
                         // This is a function/predicate call - just output the name
                         sb.append(root.getSymbol().getName());
                     }
+                    break;
+                case "CallSymbol":
+                    CallSymbol call = (CallSymbol) root.getSymbol();
+                    List<MASGEdge> callEdges = validatedCallEdges(graph, root, tov, call);
+                    sb.append(call.getSourceName()).append("[");
+                    for (int index = 0; index < call.getDeclaredArity(); index++) {
+                        AugmentedNode argument = callEdges.get(index + 1).getTarget();
+                        tovTracker.putIfAbsent(argument, 0);
+                        tovTracker.put(argument, tovTracker.get(argument) + 1);
+                        sb.append(toCode(
+                                graph, argument, tovTracker.get(argument), root));
+                        if (index + 1 < call.getDeclaredArity()) {
+                            sb.append(", ");
+                        }
+                    }
+                    sb.append("]");
                     break;
                 case "MiddleSymbol":
                     // multiple cases
@@ -260,27 +277,8 @@ public class Generator {
                             break;
                         case 7:
                         case -7:
-                            // CallExprOrFormula
-                            List<MASGEdge> downlinksCall = root.getDownlinksAtTimeOfVisit(graph, tov);
-                            AugmentedNode calledNode = downlinksCall.get(0).getTarget();
-                            tovTracker.putIfAbsent(calledNode, 0);
-                            tovTracker.put(calledNode, tovTracker.get(calledNode) + 1);
-                            int tovCalledNode = tovTracker.get(calledNode);
-                            sb.append(toCode(graph, calledNode, tovCalledNode, root));
-                            sb.append("[");
-                            for (int i = 1; i < downlinksCall.size(); ++i) {
-                                MASGEdge e = downlinksCall.get(i);
-                                AugmentedNode callParam = e.getTarget();
-                                tovTracker.putIfAbsent(callParam, 0);
-                                tovTracker.put(callParam, tovTracker.get(callParam) + 1);
-                                int tovCallParam = tovTracker.get(callParam);
-                                sb.append(toCode(graph, callParam, tovCallParam, root));
-                                if (i < downlinksCall.size() - 2) {
-                                    sb.append(", ");
-                                }
-                            }
-                            sb.append("]");
-                            break;
+                            throw new IllegalStateException(
+                                    "Generic syntactic CALL lacks CallSymbol metadata");
                         case 4:
                             switch ((int) Math.round(root.getSemantic())) {
                                 // ListExpr
@@ -892,5 +890,46 @@ public class Generator {
             throw e;
             // return "<ERROR>";
         }
+    }
+
+    private static List<MASGEdge> validatedCallEdges(
+            Multigraph graph,
+            AugmentedNode node,
+            int tov,
+            CallSymbol call) {
+        List<MASGEdge> edges = node.getDownlinksAtTimeOfVisit(graph, tov);
+        int expected = call.getDeclaredArity() + 2;
+        if (edges == null || edges.size() != expected) {
+            throw new IllegalStateException(
+                    "Cannot serialize incomplete CALL " + call + "@" + tov);
+        }
+        List<MASGEdge> ordered = new java.util.ArrayList<>(edges);
+        ordered.sort((left, right) -> Integer.compare(
+                left.getPosition(), right.getPosition()));
+        for (int index = 0; index < ordered.size(); index++) {
+            MASGEdge edge = ordered.get(index);
+            if (edge.getSource() != node
+                    || edge.getTimeOfVisit() != tov
+                    || edge.getPosition() != index + 1) {
+                throw new IllegalStateException(
+                        "Cannot serialize malformed CALL roles for " + call + "@" + tov);
+            }
+        }
+        if (!call.matchesTarget(ordered.get(0).getTarget().getSymbol())) {
+            throw new IllegalStateException(
+                    "Cannot serialize CALL with the wrong callee: " + call + "@" + tov);
+        }
+        for (int index = 1; index < expected - 1; index++) {
+            if (ordered.get(index).getTarget().getSymbol().isEndSymbol()) {
+                throw new IllegalStateException(
+                        "Cannot serialize CALL with END in an argument role: "
+                                + call + "@" + tov);
+            }
+        }
+        if (!ordered.get(expected - 1).getTarget().getSymbol().isEndSymbol()) {
+            throw new IllegalStateException(
+                    "Cannot serialize CALL without final END: " + call + "@" + tov);
+        }
+        return ordered;
     }
 }

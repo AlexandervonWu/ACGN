@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MANIFEST=${1:-"$ROOT/publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/run-manifest.json"}
+MANIFEST=${1:-"$ROOT/publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/run-manifest.json"}
 
 python3 - "$ROOT" "$MANIFEST" <<'PY'
 import hashlib
@@ -31,9 +31,9 @@ for artifact in manifest.get("artifacts", []):
     if relative.parts and relative.parts[0] in stage_roots:
         records.append((relative, artifact))
 
-if len(records) != 5804:
+if len(records) != 5808:
     raise SystemExit(
-        f"publication manifest selects {len(records)} imported stage files; expected 5804"
+        f"publication manifest selects {len(records)} imported stage files; expected 5808"
     )
 
 expected_paths = {relative.as_posix() for relative, _ in records}
@@ -83,5 +83,5 @@ for relative, artifact in records:
             f"got {actual_digest}"
         )
 
-print("VERIFIED imported publication snapshot: 5804 files")
+print("VERIFIED imported publication snapshot: 5808 files")
 PY

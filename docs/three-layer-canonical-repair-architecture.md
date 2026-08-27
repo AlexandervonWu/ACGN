@@ -1,10 +1,9 @@
 # Three-Layer Canonical Repair Architecture
 
-> **Historical measurement note.** The corpus measurements and augmented
-> truth-pool run below were produced on August 17, 2026 and are retained as
-> historical, unmanifested development evidence. The clean publication result
-> is run `dc368829-9623-4856-8bf1-b655aeaf59e0`, documented in
-> [`publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md`](../publication_runs/dc368829-9623-4856-8bf1-b655aeaf59e0/README.md).
+> **Measurement note.** Small development smokes below remain historical
+> evidence. The full-corpus table is from clean publication run
+> `6000d695-8b5e-4972-b0ea-3d9e55111245`, documented in
+> [`publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md`](../publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md).
 
 ## Architectural Rule
 
@@ -208,24 +207,24 @@ are diagnostic only.
 
 ## Full-Corpus Comparison
 
-The August 17 seven-arm run evaluated all 61,598 nontrivial student-oracle pairs
-at 32 workers. The Fast Rewrite IR and Certificate-Integrated IR produced:
+The August 27 seven-arm run evaluated all 61,598 nontrivial student-oracle pairs
+at 16 workers. The Fast Rewrite IR and Certificate-Integrated IR produced:
 
 | Measure | Fast Rewrite IR | Certificate-Integrated IR |
 | --- | ---: | ---: |
 | Successful pairs / failures | 61,598 / 0 | 61,598 / 0 |
-| Mean repair distance | 14.029027 | 14.041998 |
-| `CORRECT` zeroes | 2,316 | 2,317 |
+| Mean repair distance | 13.938342 | 14.021251 |
+| `CORRECT` zeroes | 4,074 | 4,088 |
 | Incorrect zeroes | 0 | 0 |
-| Mean representation units | 29.843 | 29.830 |
-| Process wall time | 18.470 s | 2,303.890 s |
-| Engine CPU time | 13.255 s | 47,451.149 s |
-| Maximum RSS | 3,529.023 MiB | 3,603.680 MiB |
+| Mean representation units | 29.999 | 29.540 |
+| Process wall time | 24.690 s | 2,730.160 s |
+| Engine CPU time | 68.050 s | 41,550.938 s |
+| Maximum RSS | 1,718.941 MiB | 8,925.242 MiB |
 
-The certificate-integrated zero set contains the complete Fast Rewrite IR zero set and one additional
-`CORRECT` pair. The small nonzero-distance divergence is retained for
+The certificate-integrated zero set contains the complete Fast Rewrite IR zero set and 14 additional
+`CORRECT` pairs. The nonzero-distance divergence is retained for
 pair-level classification in `minimum_distances.csv`; it is not hidden behind
-representative TED. The Certificate-Integrated IR's roughly 125x wall-time cost is construction
+representative TED. The Certificate-Integrated IR's roughly 111x wall-time cost is construction
 and certification overhead rather than a larger observation or a replacement
 distance geometry.
 
@@ -241,9 +240,9 @@ artifact's protection against unsound equality claims caused by scope capture,
 unlicensed permutations, malformed ports, or stale congruence state.
 
 That semantic assurance has an explicit cost. The current corpus shows roughly
-125x wall time and orders of magnitude more engine CPU for one additional
-certified `CORRECT` zero, while representation size and maximum RSS remain
-close. Accordingly, the Fast Rewrite IR remains an active production-quality
+111x wall time and substantially more engine CPU for 14 additional certified
+`CORRECT` zeroes. Representation size is slightly smaller, while measured
+maximum RSS is 5.192x higher. Accordingly, the Fast Rewrite IR remains an active production-quality
 research path, not a superseded implementation. The Certificate-Integrated IR
 is the validation and audit path when fail-closed behavior is more important
 than throughput. Bounded Alloy validation and the absence of incorrect merges
@@ -252,7 +251,9 @@ support this tradeoff claim but do not prove complete Alloy semantic soundness.
 The current augmented truth-pool run exercises a different minimization
 protocol: each of 42,386 incorrect predicates is compared with every
 AST-distinct correct truth in its invariant group. It completed without
-strict-kernel failures and reports mean nearest certified distance 10.865050.
+failures and reports mean nearest certified distance 11.562190. Its release
+gate found zero certified incorrect-to-truth zeroes; ten Fast Rewrite-only
+zeroes remain explicitly non-certifying.
 
 ## Migration Discrepancy Audit
 
@@ -280,18 +281,26 @@ the other 733 records preserve component parity.
 
 ## Regression Evidence
 
-- `QuotientRepairDistanceTest`: 13 checks covering sequence order, set/bag
+- `QuotientRepairDistanceTest`: 2,266 checks covering sequence order, set/bag
   assignment, declaration units, scope barriers, unequal-arity exact alpha
   minimization, proof presentation, temporal decomposition, and zero-kernel
   failure.
-- `CanonicalAlloyPipelineTest`: 185 checks covering real Alloy alpha and ACI discontinuity,
+- `CanonicalAlloyPipelineTest`: 1,428 checks covering real Alloy alpha and ACI discontinuity,
   certified symmetry invariance, canonical equality, scope legality, and
   negative discrimination, including unequal-arity alpha differential parity,
   heterogeneous binder order, guarded-domain ACI, and the documented local
   declaration-grouping correction, carrier-preserving guarded binders,
   fixed equality/inequality commutativity, named-reference identity, certified
   local-comprehension alpha alignment, one owner mapping across inherited
-  temporal phases, and post-permutation ACI normalization.
+  temporal phases, post-permutation ACI normalization, declaration-DAG
+  full-carrier absorption, exact relation-valued binders, guarded difference
+  and JOIN factoring, union-cardinality normalization, guarded left- and
+  right-nested difference laws, intersection/difference extraction, and the
+  exact one-coordinate boundary for Cartesian product difference factoring,
+  coordinatewise intersections of equal-length Cartesian products, exact
+  dependent-chain transfer across only certified ACI operand normalization,
+  converse-JOIN order reversal, and parser-authenticated domain/range
+  restriction coordinate algebra with diagonal and multi-difference barriers.
 - 100-file batch smoke: 100 successes, zero failures, zero incorrect zeroes,
   and 100/100 equality with the directly executed metric specification.
 - Exact replay of all 784 prior failures: 784 successes, zero failures, zero

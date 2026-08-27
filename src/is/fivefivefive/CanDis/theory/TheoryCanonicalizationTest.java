@@ -1,6 +1,7 @@
 package is.fivefivefive.CanDis.theory;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,23 +21,64 @@ public final class TheoryCanonicalizationTest {
     }
 
     public static void main(String[] args) {
-        testUncappedTypedRenamingEnumeration();
+        testBoundedTypedRenamingEnumeration();
+        testProductionCandidateWitnessTieAndRetention();
         testStructuralAlphaGroupoidAndBinders();
         testGraphRelativeRelationDistinctions();
         testContainerCanonicalizationAndGlobalSetRenaming();
         testLeaderNormalizationAndSymmetry();
         testBinderBlockQuotientFirst();
         testNestedBinderBlockQuotient();
+        testNestedSameDescriptorOccurrences();
+        testStabilizerTraversalDifferential();
         testGeneratedSymmetryDifferential();
         testGeneratedDifferentialCanonicalization();
         testDeterminismAndIdempotence();
+        testBooleanBottomAndMetrics();
         testDirtyRejectionAndSupportContraction();
         testCanonicalizerBoundary();
         System.out.println("TheoryCanonicalizationTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
     }
 
-    private static void testUncappedTypedRenamingEnumeration() {
+    private static void testProductionCandidateWitnessTieAndRetention() {
+        TypedSlot first = TypedSlot.canonicalFree(USER, 0);
+        TypedSlot second = TypedSlot.canonicalFree(USER, 1);
+        TypedSlotContext context = TypedSlotContext.of(first, second);
+        SeqPortSchema schema = new SeqPortSchema(new OnePortSchema(USER));
+        InstantiatedOperator operator = operator(
+                "producer-witness-tie", List.of(schema), GraphType.BOOL);
+        CanonicalShape shape = CanonicalShape.of(sequenceNode(
+                operator, schema, context, List.of(first, second)));
+        TypedRenaming identity = TypedRenaming.identity(context);
+        TypedRenaming swap = TypedRenaming.of(
+                context, context, mapOf(first, second, second, first));
+        check(ProductionGraphCanonicalizer.compareCandidatePairForTesting(
+                        shape, identity, shape, swap) < 0,
+                "Production equal-shape candidates use the canonical witness tie-break");
+        check(ProductionGraphCanonicalizer.compareCandidatePairForTesting(
+                        shape, swap, shape, identity) > 0,
+                "Production witness tie ordering is antisymmetric");
+
+        Class<?> bestCandidate = Arrays.stream(
+                        ProductionGraphCanonicalizer.class.getDeclaredClasses())
+                .filter(type -> "BestCandidate".equals(type.getSimpleName()))
+                .findFirst().orElseThrow();
+        List<Field> retainedState = Arrays.stream(bestCandidate.getDeclaredFields())
+                .filter(field -> !field.isSynthetic())
+                .filter(field -> !Modifier.isStatic(field.getModifiers()))
+                .toList();
+        check(retainedState.size() == 1
+                        && retainedState.get(0).getType() == LeastOption.class,
+                "Production BestCandidate retains only one explicit minimum option");
+        for (Field field : ProductionGraphCanonicalizer.class.getDeclaredFields()) {
+            check(!java.util.Collection.class.isAssignableFrom(field.getType())
+                            && !java.util.Map.class.isAssignableFrom(field.getType()),
+                    "Production canonicalizer has no persistent candidate collection field");
+        }
+    }
+
+    private static void testBoundedTypedRenamingEnumeration() {
         List<TypedSlot> sourceSlots = new ArrayList<>();
         for (int index = 0; index < 7; index++) {
             sourceSlots.add(TypedSlot.source(USER, index + 20));
@@ -58,6 +100,24 @@ public final class TheoryCanonicalizationTest {
                 ignored -> impossible[0]++);
         check(impossible[0] == 0L, "Cross-type contexts have no typed renaming");
 
+        String priorBound = System.getProperty("acgn.maxGlobalRenamings");
+        try {
+            System.setProperty("acgn.maxGlobalRenamings", "1");
+            TypedSlot first = TypedSlot.source(USER, 100);
+            TypedSlot second = TypedSlot.source(USER, 101);
+            TypedSlotContext repeated = TypedSlotContext.of(first, second);
+            expectThrows(
+                    CanonicalizationDomainException.class,
+                    () -> TypedRenamingEnumerator.forEach(
+                            repeated.canonicalFreeContext(), repeated, ignored -> { }));
+        } finally {
+            if (priorBound == null) {
+                System.clearProperty("acgn.maxGlobalRenamings");
+            } else {
+                System.setProperty("acgn.maxGlobalRenamings", priorBound);
+            }
+        }
+
         SeqPortSchema schema = new SeqPortSchema(new OnePortSchema(USER));
         InstantiatedOperator operator = operator(
                 "seven", Collections.singletonList(schema), GraphType.BOOL);
@@ -69,7 +129,11 @@ public final class TheoryCanonicalizationTest {
                 operator,
                 source,
                 Collections.singletonList(new SeqPort(schema, source, elements)));
-        assertDifferential(TypedSlottedPortEGraph.structuralFixture(), node);
+        CanonicalizationResult seven = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(), node);
+        check(seven.metrics().globalFreeRenamingCandidates() == 5_040L
+                        && seven.metrics().localQuotientWorkItems() == 35_280L,
+                "seven-slot metrics separate 7! global candidates from seven local leaves each");
     }
 
     private static void testStructuralAlphaGroupoidAndBinders() {
@@ -685,6 +749,18 @@ public final class TheoryCanonicalizationTest {
                 context, Arrays.asList(xy, yz));
         check(group.elements().size() == 6,
                 "Two adjacent swaps generate the full typed S3 orbit");
+        check(new java.util.LinkedHashSet<>(group.elements()).size() == 6,
+                "Stabilizer traversal emits every S3 element exactly once");
+        FinitePermutationTraversal.TraversalMetrics traversal =
+                FinitePermutationTraversal.metrics(
+                        context, group.generators(), TheoryKeys::embedding);
+        check(traversal.groupOrder() == 6L,
+                "Stabilizer-chain orbit order equals the emitted S3 cardinality");
+        check(traversal.levelCount() <= context.size()
+                        && traversal.maximumOrbitWidth() <= context.size(),
+                "Stabilizer traversal retains only context-bounded orbit transversals");
+        check(traversal.retainedTransversals() < traversal.groupOrder(),
+                "S3 traversal does not retain one visited entry per group element");
         TypedEClassInterface eclass = new TypedEClassInterface(
                 EClassId.of(250), GraphType.BOOL, context);
         TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
@@ -728,6 +804,227 @@ public final class TheoryCanonicalizationTest {
             check(result.verifyWitness(graph),
                     "Generated S3 symmetry witness replays");
         }
+    }
+
+    private static void testStabilizerTraversalDifferential() {
+        List<TypedSlot> slots = List.of(
+                TypedSlot.source(USER, 800),
+                TypedSlot.source(USER, 801),
+                TypedSlot.source(USER, 802),
+                TypedSlot.source(USER, 803));
+        TypedSlotContext context = TypedSlotContext.of(slots);
+        List<TypedPermutation> universe = new ArrayList<>();
+        TypedRenamingEnumerator.forEach(
+                context, context, renaming -> universe.add(renaming.asPermutation()));
+        check(universe.size() == 24,
+                "Four same-typed slots expose the complete S4 reference universe");
+
+        Random random = new Random(SEED ^ 0x6A6A6A6AL);
+        for (int trial = 0; trial < 96; trial++) {
+            List<TypedPermutation> generators = new ArrayList<>();
+            int generatorCount = trial % 5;
+            for (int index = 0; index < generatorCount; index++) {
+                generators.add(universe.get(random.nextInt(universe.size())));
+            }
+            java.util.Set<StructuralKey> expected = referencePermutationClosure(
+                    context, generators);
+            java.util.Set<StructuralKey> observed = new java.util.TreeSet<>();
+            long emitted = FinitePermutationTraversal.forEach(
+                    context,
+                    generators,
+                    TheoryKeys::embedding,
+                    permutation -> check(observed.add(TheoryKeys.embedding(permutation)),
+                            "Stabilizer traversal must not duplicate a subgroup element"));
+            check(emitted == observed.size(),
+                    "Stabilizer traversal count equals its unique emitted action count");
+            check(observed.equals(expected),
+                    "Stabilizer traversal equals the bounded materialized subgroup oracle");
+            java.util.Set<StructuralKey> searched = new java.util.TreeSet<>();
+            check(!FinitePermutationTraversal.anyMatch(
+                            context,
+                            generators,
+                            TheoryKeys::embedding,
+                            permutation -> {
+                                check(searched.add(TheoryKeys.embedding(permutation)),
+                                        "Any-match traversal must visit each action at most once");
+                                return false;
+                            }),
+                    "An all-false subgroup search reports no match");
+            check(searched.equals(expected),
+                    "Any-match traversal visits the same complete subgroup once");
+            FinitePermutationTraversal.TraversalMetrics metrics =
+                    FinitePermutationTraversal.metrics(
+                            context, generators, TheoryKeys::embedding);
+            check(metrics.groupOrder() == expected.size(),
+                    "Stabilizer-chain order equals the reference subgroup cardinality");
+            check(metrics.levelCount() <= context.size()
+                            && metrics.maximumOrbitWidth() <= context.size(),
+                    "Every retained stabilizer level is bounded by the slot context");
+        }
+
+        List<TypedSlot> sevenSlots = new ArrayList<>();
+        for (int index = 0; index < 7; index++) {
+            sevenSlots.add(TypedSlot.source(USER, 900 + index));
+        }
+        TypedSlotContext sevenContext = TypedSlotContext.of(sevenSlots);
+        List<TypedPermutation> adjacentSwaps = new ArrayList<>();
+        for (int index = 0; index + 1 < sevenSlots.size(); index++) {
+            Map<TypedSlot, TypedSlot> mapping = new LinkedHashMap<>();
+            for (TypedSlot slot : sevenSlots) {
+                mapping.put(slot, slot);
+            }
+            TypedSlot left = sevenSlots.get(index);
+            TypedSlot right = sevenSlots.get(index + 1);
+            mapping.put(left, right);
+            mapping.put(right, left);
+            adjacentSwaps.add(TypedPermutation.of(sevenContext, mapping));
+        }
+        FinitePermutationTraversal.TraversalMetrics sevenMetrics =
+                FinitePermutationTraversal.metrics(
+                        sevenContext, adjacentSwaps, TheoryKeys::embedding);
+        check(sevenMetrics.groupOrder() == 5_040L,
+                "Adjacent swaps generate the complete streamed S7 group");
+        check(sevenMetrics.maximumOrbitWidth() == 7
+                        && sevenMetrics.levelCount() == 6,
+                "S7 stabilizer state is bounded by seven orbit images and six levels");
+        check(sevenMetrics.retainedTransversals() < sevenMetrics.groupOrder(),
+                "S7 traversal does not retain one visited object per orbit candidate");
+        check(FinitePermutationTraversal.forEach(
+                        sevenContext, adjacentSwaps, TheoryKeys::embedding,
+                        ignored -> { }) == 5_040L,
+                "S7 stabilizer traversal streams every element exactly once");
+    }
+
+    private static java.util.Set<StructuralKey> referencePermutationClosure(
+            TypedSlotContext context,
+            List<? extends TypedPermutation> generators) {
+        List<TypedPermutation> steps = new ArrayList<>();
+        for (TypedPermutation generator : generators) {
+            steps.add(generator);
+            steps.add(generator.inverse());
+        }
+        steps.sort(java.util.Comparator.comparing(TheoryKeys::embedding));
+        java.util.Set<StructuralKey> seen = new java.util.TreeSet<>();
+        java.util.Deque<TypedPermutation> pending = new java.util.ArrayDeque<>();
+        TypedPermutation identity = TypedPermutation.identity(context);
+        seen.add(TheoryKeys.embedding(identity));
+        pending.add(identity);
+        while (!pending.isEmpty()) {
+            TypedPermutation current = pending.removeFirst();
+            for (TypedPermutation step : steps) {
+                TypedPermutation candidate = current.andThen(step);
+                if (seen.add(TheoryKeys.embedding(candidate))) {
+                    pending.addLast(candidate);
+                }
+            }
+        }
+        return seen;
+    }
+
+    private static void testNestedSameDescriptorOccurrences() {
+        StructuralKey domain = StructuralKey.leaf("binder-domain", "User");
+        TypedSlot coordinate = TypedSlot.canonicalBound(USER, 0);
+        BinderBlockDescriptor descriptor = new BinderBlockDescriptor(
+                List.of(new BinderCoordinateDescriptor(
+                        coordinate,
+                        domain,
+                        "ALL",
+                        "SET",
+                        BinderCoordinateDescriptor.NO_DISJOINTNESS_CLASS,
+                        TypedSlotContext.empty())),
+                List.of());
+        SeqPortSchema innerBodySchema = new SeqPortSchema(
+                new OnePortSchema(USER));
+        BindBlockPortSchema innerSchema = new BindBlockPortSchema(
+                descriptor, innerBodySchema);
+        BindBlockPortSchema outerSchema = new BindBlockPortSchema(
+                descriptor, innerSchema);
+
+        TypedSlot free = TypedSlot.source(USER, 690);
+        TypedSlotContext freeContext = TypedSlotContext.singleton(free);
+        TypedRenaming outerOccurrence = descriptor.freshOccurrenceRenaming(
+                freeContext);
+        TypedSlotContext outerBodyContext = freeContext.union(
+                outerOccurrence.codomain());
+        TypedRenaming innerOccurrence = descriptor.freshOccurrenceRenaming(
+                outerBodyContext);
+        check(!outerOccurrence.codomain().equals(innerOccurrence.codomain())
+                        && outerOccurrence.codomain().union(
+                                innerOccurrence.codomain()).size()
+                                == outerOccurrence.codomain().size()
+                                        + innerOccurrence.codomain().size(),
+                "Nested uses of one descriptor receive distinct fresh contexts");
+        TypedSlotContext innerBodyContext = outerBodyContext.union(
+                innerOccurrence.codomain());
+        BindBlockPort inner = new BindBlockPort(
+                innerSchema,
+                outerBodyContext,
+                innerOccurrence,
+                new SeqPort(
+                        innerBodySchema,
+                        innerBodyContext,
+                        List.of(
+                                OnePort.slot(innerBodyContext, free),
+                                OnePort.slot(
+                                        innerBodyContext,
+                                        outerOccurrence.apply(coordinate)),
+                                OnePort.slot(
+                                        innerBodyContext,
+                                        innerOccurrence.apply(coordinate)))));
+        BindBlockPort outer = new BindBlockPort(
+                outerSchema,
+                freeContext,
+                outerOccurrence,
+                inner);
+        InstantiatedOperator operator = operator(
+                "nested-same-descriptor",
+                List.of(outerSchema),
+                GraphType.BOOL);
+        TypedENode node = TypedENode.construct(
+                operator, freeContext, List.of(outer));
+        CanonicalizationResult result = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(), node);
+        BindBlockPort canonicalOuter = (BindBlockPort) result.shape()
+                .node().ports().get(0);
+        BindBlockPort canonicalInner = (BindBlockPort) canonicalOuter.body();
+        check(!canonicalOuter.descriptorToOccurrence().codomain().equals(
+                        canonicalInner.descriptorToOccurrence().codomain()),
+                "Canonicalization preserves nested occurrence identity");
+        check(canonicalOuter.schema().descriptor().equals(
+                        canonicalInner.schema().descriptor()),
+                "Nested occurrence identity does not alter the shared descriptor");
+
+        TypedSlot renamedFree = TypedSlot.source(USER, 691);
+        TypedRenaming alpha = TypedRenaming.of(
+                freeContext,
+                TypedSlotContext.singleton(renamedFree),
+                Map.of(free, renamedFree));
+        CanonicalizationResult renamed = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(), node.act(alpha));
+        check(result.shape().equals(renamed.shape()),
+                "Nested same-descriptor occurrences survive alpha comparison");
+    }
+
+    private static void testBooleanBottomAndMetrics() {
+        InstantiatedOperator bottom = operator(
+                "ALLOY/FALSE", List.of(), GraphType.BOOL);
+        TypedENode node = TypedENode.construct(
+                bottom, TypedSlotContext.empty(), List.of());
+        CanonicalizationResult result = assertDifferential(
+                TypedSlottedPortEGraph.structuralFixture(), node);
+        check(result.shape().node().equals(node),
+                "Boolean bottom is a valid selected canonical shape");
+        CanonicalizationMetrics metrics = result.metrics();
+        check(metrics.inputSerializedBytes() > 0
+                        && metrics.kernelSerializedBytes() > 0
+                        && metrics.globalFreeRenamingCandidates() == 1
+                        && metrics.localQuotientWorkItems() == 0,
+                "Canonicalization exposes deterministic size and orbit counters");
+        check(metrics.retainedTraceLength()
+                        == metrics.retainedFindOccurrences()
+                                + metrics.retainedParentSteps()
+                                + metrics.retainedContainerNormalizations(),
+                "Retained trace length is the exact counter decomposition");
     }
 
     private static void testDeterminismAndIdempotence() {
@@ -884,6 +1181,8 @@ public final class TheoryCanonicalizationTest {
                 .canonicalize(graph, node);
         check(reference.equals(production),
                 "Reference and production canon_G return the same shape and witness");
+        check(reference.metrics().equals(production.metrics()),
+                "Reference and production count the same global and local work units");
         check(production.equals(graph.canonicalize(node)),
                 "Graph canonicalization delegates to the production canon_G");
         return production;
@@ -967,15 +1266,15 @@ public final class TheoryCanonicalizationTest {
         PortSchema child = null;
         if (schema instanceof SeqPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.SEQ, true, false, false, true));
+                    ContainerLawDeclaration.Kind.SEQ, false, false, false, false));
             child = ((SeqPortSchema) schema).elementSchema();
         } else if (schema instanceof BagPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.BAG, true, true, false, true));
+                    ContainerLawDeclaration.Kind.BAG, false, true, false, false));
             child = ((BagPortSchema) schema).elementSchema();
         } else if (schema instanceof SetPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.SET, true, true, true, true));
+                    ContainerLawDeclaration.Kind.SET, false, true, true, false));
             child = ((SetPortSchema) schema).elementSchema();
         } else if (schema instanceof BindPortSchema) {
             child = ((BindPortSchema) schema).bodySchema();

@@ -190,6 +190,8 @@ public final class CapabilityBenchmark {
                 seeds.add(new SeedPredicate(
                         dataset.relativize(file).toString().replace('\\', '/'),
                         names[0], source));
+            } catch (VirtualMachineError error) {
+                throw error;
             } catch (Throwable ignored) {
                 // Unusable seeds are not generated cases; aggregate availability is reported.
             }
@@ -237,6 +239,8 @@ public final class CapabilityBenchmark {
                 return Validation.rejected("parser-ast-identical");
             }
             return Validation.accepted(astSize(left.getBody()), astSize(right.getBody()));
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable throwable) {
             return Validation.rejected("parse-or-type-error:" + throwable.getClass().getSimpleName());
         }
@@ -814,10 +818,11 @@ public final class CapabilityBenchmark {
                         return pair(i, "duplicate-or", p, "(" + p + " or " + p + ")",
                                 List.of("idempotence-or"), "P or P is equivalent to P");
                     case 4:
-                        return pair(i, "reassociate-join",
-                                "(some ((CapBenchA.capBenchR).capBenchR) and " + p + ")",
-                                "(some (CapBenchA.(capBenchR.capBenchR)) and " + p + ")",
-                                List.of("associativity-join"), "relational join is associative");
+                        return pair(i, "reassociate-intersection",
+                                "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and " + p + ")",
+                                "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and " + p + ")",
+                                List.of("associativity-intersection", "idempotence-intersection"),
+                                "relational intersection has the homogeneous ACI port certified by this profile");
                     default:
                         return pair(i, "flatten-unflatten-union",
                                 "(some ((CapBenchA + CapBenchB) + CapBenchA) and " + p + ")",

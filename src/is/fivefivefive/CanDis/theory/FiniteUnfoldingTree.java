@@ -406,18 +406,16 @@ public final class FiniteUnfoldingTree {
                 }
                 StructuralKey sourceBody = normalizePort(
                         block.body(), bodyEnvironment, binderDepth + 1, cursor);
-                StructuralKey body = null;
-                for (TypedPermutation permutation : descriptor.automorphisms().elements()) {
+                LeastOption<StructuralKey> bodies = new LeastOption<>(
+                        StructuralKey::compareTo);
+                descriptor.automorphisms().forEachElement(permutation -> {
                     StructuralKey candidate = permuteBlockCoordinates(
                             sourceBody, descriptor, binderDepth, permutation);
-                    if (body == null || candidate.compareTo(body) < 0) {
-                        body = candidate;
-                    }
-                }
-                if (body == null) {
-                    throw new IllegalStateException(
-                            "A binder automorphism group must contain identity");
-                }
+                    bodies.consider(candidate);
+                });
+                StructuralKey body = bodies.orElseThrow(() ->
+                        new IllegalStateException(
+                                "A binder automorphism group must contain identity"));
                 return StructuralKey.of(
                         "finite-term/bind-block",
                         Collections.emptyList(),

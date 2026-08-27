@@ -33,7 +33,7 @@ public final class TypedENode implements HasSlotSupport {
             if (!context.equals(port.context())) {
                 throw new IllegalArgumentException("Every node port must use the node caller context");
             }
-            rejectUncertifiedEmpty(PortPath.at(index), port);
+            rejectUnlicensedFlatEmpty(PortPath.at(index), port);
             computedSupport = computedSupport.union(port.support());
             copied.add(port);
         }
@@ -62,6 +62,13 @@ public final class TypedENode implements HasSlotSupport {
     public static TypedENode flatConstruct(
             FlatApplication source,
             NodeSealer sealer) {
+        requireStructuralFlatAuthority(Objects.requireNonNull(source, "source"));
+        return flattenVisible(source, sealer);
+    }
+
+    private static TypedENode flattenVisible(
+            FlatApplication source,
+            NodeSealer sealer) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(sealer, "sealer");
         InstantiatedOperator operator = source.operator();
@@ -74,6 +81,117 @@ public final class TypedENode implements HasSlotSupport {
         collectVisibleElements(source, operator, elementSchema, sealer, elements);
         PortValue container = makeContainer(containerSchema, source.context(), elements);
         return new TypedENode(operator, source.context(), Collections.singletonList(container));
+    }
+
+    public static CertifiedFlatConstruction flatConstructCertified(
+            FlatApplication source,
+            NodeSealer sealer,
+            SemanticProfile semanticProfile) {
+        TypedENode node = flattenVisible(source, sealer);
+        PortValue container = node.ports().get(
+                source.operator().flatLicense().path().portIndex());
+        if (container instanceof SetPort
+                && ((SetPort) container).elements().size() == 1) {
+            PortValue sole = ((SetPort) container).elements().get(0);
+            if (!(sole instanceof OnePort)) {
+                throw new IllegalStateException(
+                        "A flat singleton must inhabit the declared One element schema");
+            }
+            OnePort singleton = (OnePort) sole;
+            return new CertifiedFlatConstruction(
+                    singleton,
+                    FlatConstructionCertificate.createSingletonProduction(
+                            source, singleton, semanticProfile));
+        }
+        return new CertifiedFlatConstruction(
+                node,
+                FlatConstructionCertificate.createProduction(
+                        source, node, semanticProfile));
+    }
+
+    /** Constructs one nonflat container and retains its exact source occurrence order. */
+    public static CertifiedContainerConstruction constructContainerCertified(
+            InstantiatedOperator operator,
+            PortPath path,
+            TypedSlotContext context,
+            List<? extends PortValue> inputOccurrences,
+            SemanticProfile semanticProfile) {
+        Objects.requireNonNull(operator, "operator");
+        Objects.requireNonNull(path, "path");
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(inputOccurrences, "inputOccurrences");
+        if (operator.usesFlatConstruction()
+                || path.depth() != 0
+                || operator.portSchemas().size() != 1
+                || path.portIndex() != 0) {
+            throw new IllegalArgumentException(
+                    "Certified nonflat container construction requires one root container port");
+        }
+        PortSchema schema = operator.schemaAt(path);
+        PortValue container = makeContainer(
+                schema, context, new ArrayList<>(inputOccurrences));
+        TypedENode node = construct(
+                operator, context, Collections.singletonList(container));
+        return new CertifiedContainerConstruction(
+                node,
+                ContainerConstructionCertificate.createProduction(
+                        operator,
+                        path,
+                        context,
+                        inputOccurrences,
+                        node,
+                        semanticProfile));
+    }
+
+    public static CertifiedDependentChainConstruction constructDependentChainCertified(
+            DependentChainApplication source,
+            SemanticProfile semanticProfile) {
+        return constructDependentChainCertified(
+                source,
+                semanticProfile,
+                StructuralKey.branch(
+                        "dependent-chain-semantic-source-v1",
+                        List.of(source.structuralKey())));
+    }
+
+    public static CertifiedDependentChainConstruction constructDependentChainCertified(
+            DependentChainApplication source,
+            SemanticProfile semanticProfile,
+            StructuralKey sourceOccurrenceCommitment) {
+        Objects.requireNonNull(source, "source");
+        Objects.requireNonNull(semanticProfile, "semanticProfile");
+        Objects.requireNonNull(
+                sourceOccurrenceCommitment, "sourceOccurrenceCommitment");
+        List<PortSchema> elementSchemas = new ArrayList<>();
+        List<PortValue> elements = new ArrayList<>();
+        for (OnePort leaf : source.leaves()) {
+            elementSchemas.add(leaf.schema());
+            elements.add(leaf);
+        }
+        SeqPortSchema chainSchema = SeqPortSchema.dependent(elementSchemas);
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                source.kind().operatorIdentity(),
+                List.of(chainSchema),
+                source.outputType(),
+                Collections.singletonMap(
+                        PortPath.at(0), ContainerLawDeclaration.of(
+                                ContainerLawDeclaration.Kind.SEQ,
+                                false,
+                                false,
+                                false,
+                                false)),
+                null).instantiateMonomorphic();
+        TypedENode node = construct(
+                operator,
+                source.context(),
+                List.of(new SeqPort(chainSchema, source.context(), elements)));
+        return new CertifiedDependentChainConstruction(
+                node,
+                DependentChainCertificate.createProduction(
+                        source,
+                        node,
+                        semanticProfile,
+                        sourceOccurrenceCommitment));
     }
 
     private static void collectVisibleElements(
@@ -89,7 +207,7 @@ public final class TypedENode implements HasSlotSupport {
                     collectVisibleElements(application, rootOperator, elementSchema, sealer, output);
                     continue;
                 }
-                TypedENode nested = flatConstruct(application, sealer);
+                TypedENode nested = flattenVisible(application, sealer);
                 TypedInvocation invocation = Objects.requireNonNull(
                         sealer.seal(nested), "sealed invocation");
                 validateSealedInvocation(nested, invocation);
@@ -137,45 +255,53 @@ public final class TypedENode implements HasSlotSupport {
         throw new IllegalStateException("Flat operator port is not a container");
     }
 
-    private void rejectUncertifiedEmpty(PortPath path, PortValue port) {
+    private static void requireStructuralFlatAuthority(FlatApplication source) {
+        InstantiatedOperator operator = source.operator();
+        ContainerLawDeclaration declaration = operator.lawForPath(
+                operator.flatLicense().path());
+        for (ContainerLawCertificate certificate : declaration.certificates().values()) {
+            if (certificate.authority()
+                    == ContainerLawCertificate.Authority.ALLOY_PROFILE_THEORY) {
+                throw new IllegalArgumentException(
+                        "Production flat construction must retain its concrete certificate");
+            }
+        }
+        for (FlatInput input : source.operands()) {
+            if (input instanceof FlatApplication) {
+                requireStructuralFlatAuthority((FlatApplication) input);
+            }
+        }
+    }
+
+    private void rejectUnlicensedFlatEmpty(PortPath path, PortValue port) {
         boolean empty = (port instanceof SeqPort && ((SeqPort) port).isEmpty())
                 || (port instanceof BagPort && ((BagPort) port).isEmpty())
                 || (port instanceof SetPort && ((SetPort) port).isEmpty());
-        if (empty) {
-            ContainerEmptiness emptiness;
-            if (port instanceof SeqPort) {
-                emptiness = ((SeqPort) port).schema().emptiness();
-            } else if (port instanceof BagPort) {
-                emptiness = ((BagPort) port).schema().emptiness();
-            } else {
-                emptiness = ((SetPort) port).schema().emptiness();
-            }
-            if (!emptiness.admitsEmpty()) {
-                throw new IllegalArgumentException("Empty K+ port at " + path);
-            }
+        if (empty && operator.flatLicense().enabled()
+                && operator.flatLicense().path().equals(path)) {
             if (!operator.lawForPath(path).hasUnit()) {
                 throw new IllegalArgumentException(
-                        "Empty K0 port at " + path
-                                + " requires an explicit unit-law declaration");
+                        "Empty flat port at " + path
+                                + " requires an explicit unit license");
             }
         }
         PortPath childPath = path.child();
         if (port instanceof SeqPort) {
             for (PortValue element : ((SeqPort) port).elements()) {
-                rejectUncertifiedEmpty(childPath, element);
+                rejectUnlicensedFlatEmpty(childPath, element);
             }
         } else if (port instanceof BagPort) {
             for (PortValue element : ((BagPort) port).occurrences()) {
-                rejectUncertifiedEmpty(childPath, element);
+                rejectUnlicensedFlatEmpty(childPath, element);
             }
         } else if (port instanceof SetPort) {
             for (PortValue element : ((SetPort) port).elements()) {
-                rejectUncertifiedEmpty(childPath, element);
+                rejectUnlicensedFlatEmpty(childPath, element);
             }
         } else if (port instanceof BindPort) {
-            rejectUncertifiedEmpty(childPath, ((BindPort) port).body());
+            rejectUnlicensedFlatEmpty(childPath, ((BindPort) port).body());
         } else if (port instanceof BindBlockPort) {
-            rejectUncertifiedEmpty(childPath, ((BindBlockPort) port).body());
+            rejectUnlicensedFlatEmpty(childPath, ((BindBlockPort) port).body());
         }
     }
 

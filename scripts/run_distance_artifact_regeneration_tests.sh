@@ -33,23 +33,35 @@ from pathlib import Path
 payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
 metrics = payload["metrics"]
 expected = {
-    "Average Certificate-Integrated IR repair distance": "14.042096",
-    "Average Fast Rewrite IR distance": "14.029027",
-    "Average canonical representative TED baseline": "37.119533",
+    "Average Certificate-Integrated IR repair distance": "14.021251",
+    "Average Fast Rewrite IR distance": "13.938342",
+    "Average canonical representative TED baseline": "32.254732",
 }
 for key, value in expected.items():
     actual = metrics.get(key)
     if actual != value:
         raise SystemExit(f"{key}: expected {value}, got {actual}")
 correlations = payload["rewardCorrelations"]
-if correlations["available"]:
-    raise SystemExit("reward-disabled snapshot exposed measured correlations")
-if correlations["rewardsEnabled"] or correlations["rewardedFiles"] != 0:
-    raise SystemExit("reward-disabled snapshot metadata was parsed incorrectly")
-if correlations["sampleSize"] != 0 or correlations["values"]:
-    raise SystemExit("zero-sample snapshot retained correlation values")
-if any(key.startswith("Pearson correlation,") for key in metrics):
-    raise SystemExit("reward-disabled metrics retained false measured correlations")
+expected_correlations = {
+    "Pearson correlation, Certificate-Integrated IR distance vs candidate reward": "-0.063929",
+    "Pearson correlation, canonical representative TED vs candidate reward": "-0.059816",
+    "Pearson correlation, Fast Rewrite IR distance vs candidate reward": "-0.061337",
+    "Pearson correlation, Levenshtein vs candidate reward": "-0.090795",
+    "Pearson correlation, raw AST tree distance vs candidate reward": "-0.081877",
+    "Pearson correlation, normalized raw AST distance vs candidate reward": "-0.053464",
+    "Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward": "-0.080382",
+    "Pearson correlation, normalized canonical representative TED vs candidate reward": "-0.092118",
+    "Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward": "-0.062626",
+}
+if not correlations["available"] or not correlations["rewardsEnabled"]:
+    raise SystemExit("rewarded snapshot correlations were marked unavailable")
+if correlations["rewardedFiles"] != 61598 or correlations["sampleSize"] != 42386:
+    raise SystemExit("rewarded snapshot sample metadata differs")
+if correlations["values"] != expected_correlations:
+    raise SystemExit("rewarded snapshot correlations differ")
+for key, value in expected_correlations.items():
+    if metrics.get(key) != value:
+        raise SystemExit(f"rewarded snapshot metric {key}: expected {value}")
 
 lines = Path(sys.argv[2]).read_text(encoding="utf-8").splitlines()
 targets = {"Avg reward", "Corr(distance,reward)"}
@@ -73,9 +85,9 @@ while index < len(lines):
     for row in block[2:]:
         cells = [cell.strip() for cell in row.strip("|").split("|")]
         for column in columns:
-            if cells[column] != "N/A":
+            if cells[column] == "N/A":
                 raise SystemExit(
-                    f"unavailable {headers[column]} cell is {cells[column]!r}")
+                    f"available {headers[column]} cell is unexpectedly N/A")
 if found != targets:
     raise SystemExit(f"did not locate unavailable reward columns: {found!r}")
 if data_rows != 68:
@@ -83,9 +95,9 @@ if data_rows != 68:
 PY
 
 if ! grep -Fq \
-  'Reward correlations are unavailable because rewards were disabled and the Pearson correlation sample size is zero files.' \
+  '| Pearson correlation, Certificate-Integrated IR distance vs candidate reward | -0.063929 |' \
   "$work/paper_tables.md"; then
-  printf 'reward-disabled Markdown does not explain correlation availability\n' >&2
+  printf 'rewarded Markdown does not expose the bound correlation\n' >&2
   exit 1
 fi
 

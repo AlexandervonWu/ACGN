@@ -10,13 +10,72 @@ language, synthesizes typed equality judgments bottom-up, replays graph
 transitions, exhaustively reconstructs finite canonical orbits, and checks
 explicit finite `Rep` trees.
 
+Schema v10 retains the closed `WITNESS_UNFOLD` kernel rule. Given only a witness
+and a typed embedding, the verifier reconstructs the invocation and the acted
+witness definition internally; the rule has no premises and admits no theory
+axiom.
+
+Wire schema `acgncert-schema-v10` also has a dedicated dependent ordered-Seq
+construction for plain Alloy JOIN and ARROW. The verifier reconstructs the
+binary source association, independently checks every positional leaf's stored
+type and correlated relation-family DAG, structurally checks every supplied
+direct-parent path, independently normalizes each subtype antichain, replays
+the complete row-major alternative-pair matrix, derives every intermediate and
+result product, and then checks the ordered variadic target.
+This path is deliberately separate
+from homogeneous flat-container evidence and grants no commutativity,
+idempotency, permutation, or unit authority.
+ARROW takes the correlated Cartesian product and never widens independent
+columns. JOIN boundaries require exact identity, an explicit exact-signature
+subtype correspondence, or explicit divergent-branch disjointness reconstructed
+from two acyclic, single-parent paths to their first common ancestor. An
+explicit `univ` endpoint is a real relation column and may participate by exact
+identity or a concrete-to-`univ` subtype path; two divergent concrete branches
+that merely share `univ` remain disjoint. JOIN
+reassociation with more than two source operands is licensed only when each
+alternative of each interior operand has at least two relation columns; a unary interior keeps the
+source fixed binary because JOIN is not associative in that case. Subtype
+evidence never replaces an endpoint with an invented `univ`, and synthetic union/common-
+ancestor nodes never enter the nominal parent ledger. Because the standalone verifier does not
+reparse the Alloy source and has no independently pinned signature-hierarchy
+authority, a structurally valid nonexact subtype or disjoint-branch proof ends as
+`UNCHECKABLE / MISSING_EVIDENCE`; it never yields `VERIFIED`. Malformed,
+conflicting, cyclic, reversed, truncated, incomplete-matrix, or unrelated evidence is
+`REJECTED`. Exact-boundary chains do not need that external authority.
+
+Schema v10 retains the structural proof and binds it to one deterministic
+source path and one canonical source-content commitment; malformed or absent
+commitments are rejected rather than inferred from the typed target. Schema v9
+bytes are rejected as historical because v9 did not carry correlated DAGs and
+complete pair matrices.
+
+Schema v10 also retains the enclosing typed root as part of every
+binder-occurrence certificate identity and verifies the occurrence path from
+that root. Historical schemas are rejected as unsupported rather than silently
+reinterpreted. A provenance-only CALL ledger additionally binds parser
+occurrence IDs and deterministic source paths to qualified callees, call kinds,
+declared-arity authorities, contiguous roles, ordered argument endpoints, and
+the complete typed CALL endpoint without changing semantic operator equality.
+For every non-fixture semantic verification, the caller must additionally pin
+the complete CALL-occurrence set for the selected input scope. The scope key
+binds both the caller-owned input identifier and source SHA-256. Missing
+authority is `UNCHECKABLE / MISSING_EVIDENCE`; a supplied commitment that does
+not match the replayed wire records is `REJECTED / MISSING_EVIDENCE`.
+
 The checker and its closed schema implement all profiles below. The producer
-bridge is intentionally narrower. In addition to the original nullary case,
-it exports a rigid nonempty typed context, `ONE_SLOT` and recursively nested
-`ONE_TERM`, and one exact retained parent edge through a height-two unfolding.
-The parent-path slice has exactly two fresh leaves, one direct ground union,
-one quiescent rebuild completion, and one fresh wrapper insertion. This is a
-verified finite vertical slice, not a general producer-to-verifier pipeline.
+bridge is intentionally narrower. It exports either a nonempty bottom-up
+fresh-insertion history or one exact six-event parent-path history, including
+an explicit no-op rebuild-start boundary before completion. It
+requires a bounded typed free-renaming orbit and checked graph/support embeddings, a
+final quiescent snapshot, and exactly one complete root unfolding. Supported
+terms may recursively contain `ONE_SLOT`, `ONE_TERM`, homogeneous
+`Seq`/`Bag`/`Set`, `Bind`, `BindBlock`, and certified dependent JOIN/ARROW
+chains. Concrete construction and binder-occurrence evidence is mandatory.
+Insertion collisions, graph e-class symmetries, interface restriction,
+nonempty rebuild records, path compression, unsupported support contraction,
+indirect parent derivations, cycles, and multiple root
+unfoldings remain outside this bounded bridge. This is a verified finite
+vertical slice, not a general producer-to-verifier pipeline.
 
 ## Build And Test
 
@@ -36,8 +95,22 @@ The jar is written to
 java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
   --profile full \
   --theory-digest <pinned-sha256> \
+  --call-occurrence-commitment <subject-sha256>=<occurrence-sha256> \
   artifact.acgncert
 ```
+
+The CLI can format an **untrusted candidate** commitment from a bundle:
+
+```bash
+java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
+  --inspect-call-occurrences artifact.acgncert
+```
+
+That output becomes authority only after the caller independently retains or
+reviews it against the intended source scope. Feeding a producer bundle's own
+inspection result directly back into verification is circular and does not
+establish raw-source completeness. The current MVP does not include an
+independent Alloy parser inside the `java.base`-only verifier.
 
 Pair mode takes two independently exported bundles:
 
@@ -45,6 +118,8 @@ Pair mode takes two independently exported bundles:
 java -jar certificate-verifier/build/acgn-certificate-verifier.jar \
   --profile pair \
   --theory-digest <pinned-sha256> \
+  --call-occurrence-commitment <left-subject-sha256>=<left-occurrence-sha256> \
+  --call-occurrence-commitment <right-subject-sha256>=<right-occurrence-sha256> \
   left.acgncert right.acgncert
 ```
 
@@ -91,6 +166,12 @@ the supported bundles under `full`, and exercises both a manually constructed
 bundle-level PAIR and a real two-file parser -> MASG -> adapter -> writer PAIR.
 The latter asserts distinct source identities and content hashes before the
 standalone verifier accepts the pair under the static empty-theory pin.
+The producer test output subdirectory named `schema-v8-coverage` is retained
+only as a stable historical harness path; newly generated bundles in that
+directory use schema v10 and v9 payload roots are rejected.
+The harness's automatic CALL-candidate inspection is explicitly `TEST_ONLY`
+plumbing used to exercise replay. It is not an external source authority and
+does not support a production completeness claim.
 
 ## Producer Export Status
 
@@ -105,21 +186,27 @@ memory, writes a sibling temporary file, and atomically replaces the target
 only after successful encoding. Unsupported state throws
 `IOException("UNCHECKABLE: ...")`; a pre-existing target remains unchanged.
 
-The supported contexts contain at most one free slot of each type, so the
-complete type-preserving free-renaming orbit is rigid identity. Inclusion,
-sigma, omega, and shape witnesses are identity, with no support contraction
-or nontrivial symmetry. A parent edge must be a direct, correctly oriented
+The supported contexts have a complete type-preserving free-renaming orbit
+within the configured finite bound. Nonidentity free renaming is supported
+only for the explicit slot-only slice; other graph/support maps must satisfy
+the writer's checked identity/support restrictions. Nontrivial graph e-class
+symmetry remains unsupported. A parent edge must be a direct, correctly oriented
 ground input equation or rewrite; its axiom is registered by stable origin,
 then independently replayed through `PARENT_EDGE`, `CONGRUENCE`, and `TRANS`.
 
-The writer still refuses insertion collisions, symmetry/restriction/rebuild
-record/path-compression events, nonidentity alpha maps, repeated same-type
-free slots, support contraction, Seq/Bag/Set/Bind/BindBlock ports, indirect
-parent derivations, cyclic or multiple root unfoldings, and any retained
-history outside the exact one-event or five-event slices. The representative
-source census currently verifies its nullary predicate and classifies its
-slot-bearing and compound predicates as `UNCHECKABLE` because flexible
-container-law export is outside this bridge. These remain
+The writer recursively encodes `Seq`, `Bag`, `Set`, `Bind`, and `BindBlock`
+ports, including dependent positional `Seq` schemas, when the surrounding
+slice satisfies all other export restrictions. It still refuses insertion
+collisions, symmetry/restriction/nontrivial-rebuild record events,
+unsupported support contraction, indirect parent derivations, cyclic or
+multiple root unfoldings, and retained history outside the bottom-up
+fresh-insertion or exact six-event parent-path slices. Repeated same-type free
+slots are accepted only in the bounded
+slot-only orbit slice and are serialized with the complete finite renaming
+candidate set. The representative source census currently verifies its nullary
+predicate and classifies its slot-bearing and compound predicates as
+`UNCHECKABLE` because their shape witnesses retain redundant coordinates,
+which this bridge does not serialize. These remain
 `UNCHECKABLE`; they are not silently omitted or approximated. The harness
 requires the exact stable-code census `nullary=VERIFIED/NONE`,
 `slotBearing=UNCHECKABLE/EXPORT_UNSUPPORTED`,

@@ -161,13 +161,17 @@ public final class CertifiedInsertionResult {
     }
 
     public List<TypedEqualityCertificate> retainedSourceProofs() {
-        return Collections.unmodifiableList(java.util.Arrays.asList(
-                canonicalization.d(),
-                canonicalOrbit,
-                witnessDefinition,
-                shapeEquation,
-                sourceToInsertedClass,
-                sourceToReturnedInvocation));
+        List<TypedEqualityCertificate> retained = new ArrayList<>();
+        retained.add(canonicalization.d());
+        if (canonicalization.sourceConstruction().isPresent()) {
+            retained.add(canonicalization.sourceReplay());
+        }
+        retained.add(canonicalOrbit);
+        retained.add(witnessDefinition);
+        retained.add(shapeEquation);
+        retained.add(sourceToInsertedClass);
+        retained.add(sourceToReturnedInvocation);
+        return Collections.unmodifiableList(retained);
     }
 
     @Override

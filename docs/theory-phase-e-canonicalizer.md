@@ -130,7 +130,7 @@ fresh bound coordinates.
 | E2-F06 | Set behavior could not test the decisive `{b,pi.b}` block adversary | Added Set-collapse, Bag-multiplicity, identity-only, and nested-block differential cases | None structurally |
 | E2-F07 | The old result omitted `K`, `iota`, `omega`, and `xi` | `CanonicalizationResult` now exposes the complete structural tuple and formal aliases | Coherent `d^w` wrapper remains Phase F |
 | E2-F08 | Witness verification compared a shape directly with the original ambient source | Replay now compares `p` with exact `K` under `sigma`; source transport remains in `xi/iota` | Phase F supplies dependent source-to-kernel replay |
-| E2-F09 | Canonicalizer version identifiers still named the provisional algorithm | Versions are `canon-g-exhaustive-v2` and `canon-g-production-v2` | Phase I records them in manifests |
+| E2-F09 | Canonicalizer version identifiers still named the provisional algorithm | Versions are `canon-g-exhaustive-v4` and `canon-g-production-v4`; v4 additionally separates global free-renaming candidates from local quotient work | Phase I records them in manifests |
 | E2-F10 | Premature integration would invalidate empirical reproducibility artifacts | Exact Phase E remains isolated; no harness or terminal path changed | Phase I only |
 
 ## Theory Blockers

@@ -10,8 +10,11 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
     private final PortValue source;
     private final PortValue normalized;
     private final ContainerNormalizationTrace trace;
+    private final InstantiatedOperator operator;
+    private final PortPath path;
     private final ContainerLawDeclaration declaration;
     private final List<TypedEqualityCertificate> childCertificates;
+    private final boolean productionAuthorityRequired;
 
     private ContainerNormalizationCertificate(Build build) {
         super(
@@ -21,12 +24,20 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
                 build.premises,
                 java.util.Arrays.asList(
                         build.trace.structuralKey(),
+                        build.operator.structuralKey(),
+                        StructuralKey.leaf("port-path", build.path.toString()),
+                        StructuralKey.leaf(
+                                "production-authority-required",
+                                Boolean.toString(build.productionAuthorityRequired)),
                         build.declaration.structuralKey()));
         this.source = build.source;
         this.normalized = build.normalized;
         this.trace = build.trace;
+        this.operator = build.operator;
+        this.path = build.path;
         this.declaration = build.declaration;
         this.childCertificates = build.children;
+        this.productionAuthorityRequired = build.productionAuthorityRequired;
         verifyLocal();
     }
 
@@ -34,8 +45,10 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
             PortValue source,
             PortValue normalized,
             ContainerNormalizationTrace trace,
-            ContainerLawDeclaration declaration,
-            List<? extends TypedEqualityCertificate> childCertificates) {
+            InstantiatedOperator operator,
+            PortPath path,
+            List<? extends TypedEqualityCertificate> childCertificates,
+            boolean productionAuthorityRequired) {
         Objects.requireNonNull(source, "source");
         Objects.requireNonNull(normalized, "normalized");
         if (source.equals(normalized)) {
@@ -47,8 +60,10 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
                         source,
                         normalized,
                         trace,
-                        declaration,
-                        childCertificates));
+                        operator,
+                        path,
+                        childCertificates,
+                        productionAuthorityRequired));
         CertificateVerifier.verify(result);
         return result;
     }
@@ -57,12 +72,26 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
             PortValue source,
             PortValue normalized,
             ContainerNormalizationTrace trace,
-            ContainerLawDeclaration declaration,
-            List<? extends TypedEqualityCertificate> suppliedChildren) {
+            InstantiatedOperator operator,
+            PortPath path,
+            List<? extends TypedEqualityCertificate> suppliedChildren,
+            boolean productionAuthorityRequired) {
         Objects.requireNonNull(trace, "trace");
-        Objects.requireNonNull(declaration, "declaration");
+        Objects.requireNonNull(operator, "operator");
+        Objects.requireNonNull(path, "path");
+        ContainerLawDeclaration declaration = operator.lawForPath(path);
+        if (!operator.schemaAt(path).equals(source.schema())) {
+            throw new IllegalArgumentException(
+                    "Container replay schema does not match its operator path");
+        }
         declaration.validateAgainst(source.schema());
         declaration.requireCertified();
+        declaration.validateEvidenceFor(
+                operator.operator(),
+                operator.outputType(),
+                path,
+                source.schema(),
+                productionAuthorityRequired);
         if (!source.getClass().equals(normalized.getClass())
                 || !source.schema().equals(normalized.schema())
                 || !source.context().equals(normalized.context())) {
@@ -103,8 +132,11 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
                 source,
                 normalized,
                 trace,
+                operator,
+                path,
                 declaration,
                 Collections.unmodifiableList(children),
+                productionAuthorityRequired,
                 Collections.unmodifiableList(premises));
     }
 
@@ -158,6 +190,17 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
                     "Malformed concrete container-normalization certificate");
         }
         declaration.requireCertified();
+        if (!operator.lawForPath(path).equals(declaration)
+                || !operator.schemaAt(path).equals(source.schema())) {
+            throw new IllegalStateException(
+                    "Container normalization lost its exact operator/path binding");
+        }
+        declaration.validateEvidenceFor(
+                operator.operator(),
+                operator.outputType(),
+                path,
+                source.schema(),
+                productionAuthorityRequired);
         requireApplicableLaws(trace, declaration);
     }
 
@@ -165,22 +208,31 @@ public final class ContainerNormalizationCertificate extends TypedEqualityCertif
         private final PortValue source;
         private final PortValue normalized;
         private final ContainerNormalizationTrace trace;
+        private final InstantiatedOperator operator;
+        private final PortPath path;
         private final ContainerLawDeclaration declaration;
         private final List<TypedEqualityCertificate> children;
+        private final boolean productionAuthorityRequired;
         private final List<TypedEqualityCertificate> premises;
 
         private Build(
                 PortValue source,
                 PortValue normalized,
                 ContainerNormalizationTrace trace,
+                InstantiatedOperator operator,
+                PortPath path,
                 ContainerLawDeclaration declaration,
                 List<TypedEqualityCertificate> children,
+                boolean productionAuthorityRequired,
                 List<TypedEqualityCertificate> premises) {
             this.source = source;
             this.normalized = normalized;
             this.trace = trace;
+            this.operator = operator;
+            this.path = path;
             this.declaration = declaration;
             this.children = children;
+            this.productionAuthorityRequired = productionAuthorityRequired;
             this.premises = premises;
         }
     }

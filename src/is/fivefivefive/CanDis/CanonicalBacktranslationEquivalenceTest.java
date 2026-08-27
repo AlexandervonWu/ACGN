@@ -80,7 +80,8 @@ public final class CanonicalBacktranslationEquivalenceTest {
                 results.add(EquivalenceResult.failure(inputRoot, file, "<unknown>", "No X/XC predicate pair found."));
                 return results;
             }
-            Map<String, Multigraph> graphs = predicateGraphs(model);
+            Map<String, Multigraph> graphs = predicateGraphs(
+                    originalModule, model);
             checkPredicate(inputRoot, file, pair.leftName, graphs.get(pair.leftName), scope, results);
             checkPredicate(inputRoot, file, pair.rightName, graphs.get(pair.rightName), scope, results);
         } catch (Throwable t) {
@@ -152,8 +153,10 @@ public final class CanonicalBacktranslationEquivalenceTest {
         return predicates;
     }
 
-    private static Map<String, Multigraph> predicateGraphs(ModelUnit model) {
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+    private static Map<String, Multigraph> predicateGraphs(
+            CompModule module,
+            ModelUnit model) {
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(model, null);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Map<String, Multigraph> graphs = new HashMap<>();

@@ -15,7 +15,7 @@ public final class BagPort implements PortValue {
             List<? extends PortValue> occurrences) {
         this.schema = Objects.requireNonNull(schema, "schema");
         this.context = Objects.requireNonNull(context, "context");
-        PortValues.requireAdmissibleCardinality(schema.emptiness(), occurrences);
+        PortValues.requireAdmissibleCardinality(schema.arityPolicy(), occurrences);
         this.occurrences = PortValues.immutableBag(
                 schema.elementSchema(), context, occurrences);
     }

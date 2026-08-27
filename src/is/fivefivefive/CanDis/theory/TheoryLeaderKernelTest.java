@@ -466,15 +466,15 @@ public final class TheoryLeaderKernelTest {
         PortSchema child = null;
         if (schema instanceof SeqPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.SEQ, true, false, false, true));
+                    ContainerLawDeclaration.Kind.SEQ, false, false, false, false));
             child = ((SeqPortSchema) schema).elementSchema();
         } else if (schema instanceof BagPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.BAG, true, true, false, true));
+                    ContainerLawDeclaration.Kind.BAG, false, true, false, false));
             child = ((BagPortSchema) schema).elementSchema();
         } else if (schema instanceof SetPortSchema) {
             laws.put(path, ContainerLawDeclaration.of(
-                    ContainerLawDeclaration.Kind.SET, true, true, true, true));
+                    ContainerLawDeclaration.Kind.SET, false, true, true, false));
             child = ((SetPortSchema) schema).elementSchema();
         } else if (schema instanceof BindPortSchema) {
             child = ((BindPortSchema) schema).bodySchema();

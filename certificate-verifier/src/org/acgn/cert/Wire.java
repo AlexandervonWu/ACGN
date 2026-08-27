@@ -1,6 +1,5 @@
 package org.acgn.cert;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ public final class Wire {
     }
 
     public static String utf8Length(String value) {
-        return Integer.toString(value.getBytes(StandardCharsets.UTF_8).length);
+        return Integer.toString(Codec.encodeCanonicalUtf8(value).length);
     }
 
     /** Immutable tree with a total ordering identical to its canonical encoding. */
@@ -53,7 +52,7 @@ public final class Wire {
             Objects.requireNonNull(children, "children");
             List<String> scalarCopy = new ArrayList<>(scalars.size());
             for (String scalar : scalars) {
-                scalarCopy.add(Objects.requireNonNull(scalar, "scalar"));
+                scalarCopy.add(requireWellFormedUnicode(scalar, "scalar"));
             }
             List<Node> childCopy = new ArrayList<>(children.size());
             for (Node child : children) {
@@ -64,10 +63,16 @@ public final class Wire {
         }
 
         private static String requireText(String value, String name) {
-            Objects.requireNonNull(value, name);
+            requireWellFormedUnicode(value, name);
             if (value.isEmpty()) {
                 throw new IllegalArgumentException(name + " must not be empty");
             }
+            return value;
+        }
+
+        private static String requireWellFormedUnicode(String value, String name) {
+            Objects.requireNonNull(value, name);
+            Codec.encodeCanonicalUtf8(value);
             return value;
         }
 

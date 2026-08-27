@@ -1,0 +1,5 @@
+CanonicalBatchTest dataset=/home/augustus/ACGN/classified-data output=/home/augustus/acgn-publication-20260827T194941Z/distance_results threads=16 heap=8g rewardPool=100 limit=0
+Alloy4FunAugmenter dataset=/home/augustus/ACGN/classified-data output=/home/augustus/acgn-publication-20260827T194941Z/alloy4fun-augmented threads=16 heap=8g rewardPool=100 limit=0
+EGraphAblationSuite dataset=/home/augustus/ACGN/classified-data output=/home/augustus/acgn-publication-20260827T194941Z/egraph_ablation threads=16 heap=8g seed=55520260811 limit=0
+EGraphSemanticSoundnessCheck dataset=/home/augustus/ACGN/classified-data results=/home/augustus/acgn-publication-20260827T194941Z/egraph_ablation threads=16
+CapabilityBenchmark dataset=/home/augustus/ACGN/classified-data output=/home/augustus/acgn-publication-20260827T194941Z/capability_benchmark natural=/home/augustus/acgn-publication-20260827T194941Z/egraph_ablation target=500 threads=16 heap=8g seed=55520260811

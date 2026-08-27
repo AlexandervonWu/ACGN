@@ -40,7 +40,7 @@ import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.adapter.AlloyAstTermAdapter;
-import is.fivefivefive.CanDis.adapter.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
 import is.fivefivefive.CanDis.core.egraph.AblationEngine;
 import is.fivefivefive.CanDis.core.egraph.AlloyTerm;
 import is.fivefivefive.CanDis.core.egraph.EGraphStats;
@@ -116,8 +116,12 @@ public final class EGraphAblationStudy {
             CompletionService<IndexedFileResult> completion =
                     new ExecutorCompletionService<>(executor);
             Map<Future<IndexedFileResult>, Integer> active = new HashMap<>();
-            for (int index = 0; index < files.size(); index++) {
-                final int fileIndex = index;
+            int workers = Math.max(1, options.threads);
+            int maximumInFlight = workers > Integer.MAX_VALUE / 4
+                    ? Integer.MAX_VALUE : workers * 4;
+            int submitted = 0;
+            while (submitted < files.size() && active.size() < maximumInFlight) {
+                final int fileIndex = submitted++;
                 Future<IndexedFileResult> future = completion.submit(
                         () -> new IndexedFileResult(fileIndex,
                                 processFile(options, files.get(fileIndex))));
@@ -151,6 +155,9 @@ public final class EGraphAblationStudy {
                     results.set(indexed.index, indexed.result);
                 } catch (ExecutionException exception) {
                     Throwable cause = exception.getCause() == null ? exception : exception.getCause();
+                    if (cause instanceof VirtualMachineError) {
+                        throw (VirtualMachineError) cause;
+                    }
                     results.set(index, FileResult.failure(options.input, files.get(index),
                             cause.getClass().getSimpleName() + ": " + cause.getMessage()));
                 } catch (InterruptedException exception) {
@@ -158,6 +165,13 @@ public final class EGraphAblationStudy {
                     throw new IllegalStateException("Ablation run was interrupted", exception);
                 }
                 progress.update(++completed);
+                while (submitted < files.size() && active.size() < maximumInFlight) {
+                    final int fileIndex = submitted++;
+                    Future<IndexedFileResult> next = completion.submit(
+                            () -> new IndexedFileResult(fileIndex,
+                                    processFile(options, files.get(fileIndex))));
+                    active.put(next, fileIndex);
+                }
             }
             progress.finish(completed);
 
@@ -222,9 +236,9 @@ public final class EGraphAblationStudy {
             long engineStarted = System.nanoTime();
             long engineCpuStarted = currentThreadCpuNanos();
             if (options.engine == Engine.CANONICAL) {
-                runCanonical(model, pair, result);
+                runCanonical(module, model, pair, result);
             } else if (options.engine == Engine.TYPED_SLOTTED_PORT) {
-                runTypedSlottedPort(model, pair, result);
+                runTypedSlottedPort(module, model, pair, result);
             } else {
                 AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left);
                 AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right);
@@ -236,6 +250,8 @@ public final class EGraphAblationStudy {
             }
             result.engineNanos = System.nanoTime() - engineStarted;
             result.engineCpuNanos = elapsedThreadCpuNanos(engineCpuStarted);
+        } catch (VirtualMachineError error) {
+            throw error;
         } catch (Throwable throwable) {
             result.error = throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             if (options.verbose) {
@@ -267,8 +283,12 @@ public final class EGraphAblationStudy {
         return started < 0 || finished < 0 ? 0L : Math.max(0L, finished - started);
     }
 
-    private static void runCanonical(ModelUnit model, PredicatePair pair, FileResult result) {
-        MASGVisitor visitor = focusedVisitor(model, pair);
+    private static void runCanonical(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair,
+            FileResult result) {
+        MASGVisitor visitor = focusedVisitor(module, model, pair);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Integer leftId = visitor.getForestId(pair.leftName);
         Integer rightId = visitor.getForestId(pair.rightName);
@@ -291,10 +311,11 @@ public final class EGraphAblationStudy {
     }
 
     private static void runTypedSlottedPort(
+            CompModule module,
             ModelUnit model,
             PredicatePair pair,
             FileResult result) {
-        MASGVisitor visitor = focusedVisitor(model, pair);
+        MASGVisitor visitor = focusedVisitor(module, model, pair);
         DoubleMap<Integer, Multigraph> forest = visitor.getForest();
         Integer leftId = visitor.getForestId(pair.leftName);
         Integer rightId = visitor.getForestId(pair.rightName);
@@ -326,14 +347,18 @@ public final class EGraphAblationStudy {
                 leftPrepared.estimatedBytes() + rightPrepared.estimatedBytes());
     }
 
-    private static MASGVisitor focusedVisitor(ModelUnit model, PredicatePair pair) {
+    private static MASGVisitor focusedVisitor(
+            CompModule module,
+            ModelUnit model,
+            PredicatePair pair) {
         Set<String> callables = callableClosure(model, pair.leftName, pair.rightName);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), callables);
+        MASGVisitor visitor = new MASGVisitor(
+                new GlobalVariables(), callables, module);
         try {
             visitor.visit(model, null);
             return visitor;
         } catch (RuntimeException focusedFailure) {
-            MASGVisitor fallback = new MASGVisitor(new GlobalVariables());
+            MASGVisitor fallback = new MASGVisitor(new GlobalVariables(), module);
             fallback.visit(model, null);
             return fallback;
         }

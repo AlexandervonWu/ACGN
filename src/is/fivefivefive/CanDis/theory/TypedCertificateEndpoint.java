@@ -1,7 +1,9 @@
 package is.fivefivefive.CanDis.theory;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /** A machine-checkable context, sort, and expression endpoint for a certificate. */
@@ -11,6 +13,10 @@ public final class TypedCertificateEndpoint {
         INVOCATION,
         NODE,
         PORT,
+        ONE_TERM,
+        FLAT_APPLICATION,
+        DEPENDENT_CHAIN_APPLICATION,
+        CONTAINER_APPLICATION,
         CONTAINER_PATTERN,
         BINDER_PATTERN,
         RENAMED
@@ -96,6 +102,105 @@ public final class TypedCertificateEndpoint {
                         Collections.singletonList(port.structuralKey())));
     }
 
+    /** Interprets a One-port leaf as the term it denotes, not as port syntax. */
+    static TypedCertificateEndpoint oneTerm(OnePort port) {
+        Objects.requireNonNull(port, "port");
+        return new TypedCertificateEndpoint(
+                Kind.ONE_TERM,
+                port.context(),
+                CertificateSort.term(port.schema().type()),
+                port,
+                StructuralKey.branch(
+                        "certificate-term/one-port",
+                        Collections.singletonList(port.structuralKey())));
+    }
+
+    static TypedCertificateEndpoint flatApplication(
+            FlatApplication application,
+            SemanticProfile semanticProfile) {
+        Objects.requireNonNull(application, "application");
+        Objects.requireNonNull(semanticProfile, "semanticProfile");
+        return new TypedCertificateEndpoint(
+                Kind.FLAT_APPLICATION,
+                application.context(),
+                CertificateSort.term(application.outputType()),
+                application,
+                StructuralKey.of(
+                        "certificate-term/flat-application",
+                        Collections.emptyList(),
+                        Arrays.asList(
+                                semanticProfile.structuralKey(),
+                                application.structuralKey())));
+    }
+
+    static TypedCertificateEndpoint containerApplication(
+            InstantiatedOperator operator,
+            PortPath path,
+            TypedSlotContext context,
+            List<? extends PortValue> inputOccurrences,
+            SemanticProfile semanticProfile) {
+        Objects.requireNonNull(operator, "operator");
+        Objects.requireNonNull(path, "path");
+        Objects.requireNonNull(context, "context");
+        Objects.requireNonNull(inputOccurrences, "inputOccurrences");
+        Objects.requireNonNull(semanticProfile, "semanticProfile");
+        List<StructuralKey> children = new ArrayList<>(inputOccurrences.size() + 3);
+        children.add(semanticProfile.structuralKey());
+        children.add(operator.structuralKey());
+        children.add(StructuralKey.leaf("port-path", path.toString()));
+        for (int index = 0; index < inputOccurrences.size(); index++) {
+            PortValue occurrence = Objects.requireNonNull(
+                    inputOccurrences.get(index), "input occurrence");
+            if (!context.equals(occurrence.context())) {
+                throw new IllegalArgumentException(
+                        "Container source occurrence uses another caller context");
+            }
+            children.add(StructuralKey.of(
+                    "container-source-occurrence",
+                    Collections.singletonList(Integer.toString(index)),
+                    Collections.singletonList(occurrence.structuralKey())));
+        }
+        return new TypedCertificateEndpoint(
+                Kind.CONTAINER_APPLICATION,
+                context,
+                CertificateSort.term(operator.outputType()),
+                null,
+                StructuralKey.branch("certificate-term/container-application", children));
+    }
+
+    static TypedCertificateEndpoint dependentChainApplication(
+            DependentChainApplication application,
+            SemanticProfile semanticProfile) {
+        return dependentChainApplication(
+                application,
+                semanticProfile,
+                StructuralKey.branch(
+                        "dependent-chain-semantic-source-v1",
+                        Collections.singletonList(application.structuralKey())));
+    }
+
+    static TypedCertificateEndpoint dependentChainApplication(
+            DependentChainApplication application,
+            SemanticProfile semanticProfile,
+            StructuralKey sourceOccurrenceCommitment) {
+        Objects.requireNonNull(application, "application");
+        Objects.requireNonNull(semanticProfile, "semanticProfile");
+        Objects.requireNonNull(
+                sourceOccurrenceCommitment, "sourceOccurrenceCommitment");
+        return new TypedCertificateEndpoint(
+                Kind.DEPENDENT_CHAIN_APPLICATION,
+                application.context(),
+                CertificateSort.term(application.outputType()),
+                application,
+                StructuralKey.of(
+                        "certificate-term/dependent-chain-application-v1",
+                        Collections.emptyList(),
+                        Arrays.asList(
+                                semanticProfile.structuralKey(),
+                                application.structuralKey(),
+                                sourceOccurrenceCommitment)));
+    }
+
     public static TypedCertificateEndpoint restrictedWitness(
             TypedEClassInterface original,
             TypedSlotContext restrictedContext) {
@@ -113,9 +218,22 @@ public final class TypedCertificateEndpoint {
             PortSchema schema,
             ContainerLawCertificate.Law law,
             String side) {
+        return containerPattern(
+                schema,
+                law,
+                side,
+                StructuralKey.leaf("container-law-index", "legacy-test-only"));
+    }
+
+    static TypedCertificateEndpoint containerPattern(
+            PortSchema schema,
+            ContainerLawCertificate.Law law,
+            String side,
+            StructuralKey lawIndex) {
         Objects.requireNonNull(schema, "schema");
         Objects.requireNonNull(law, "law");
         Objects.requireNonNull(side, "side");
+        Objects.requireNonNull(lawIndex, "lawIndex");
         return new TypedCertificateEndpoint(
                 Kind.CONTAINER_PATTERN,
                 TypedSlotContext.empty(),
@@ -124,7 +242,7 @@ public final class TypedCertificateEndpoint {
                 StructuralKey.of(
                         "certificate-pattern/container-law",
                         Arrays.asList(law.name(), side),
-                        Collections.singletonList(schema.structuralKey())));
+                        Arrays.asList(schema.structuralKey(), lawIndex)));
     }
 
     static TypedCertificateEndpoint binderPattern(
@@ -167,6 +285,9 @@ public final class TypedCertificateEndpoint {
         }
         if (kind == Kind.PORT) {
             return port(((PortValue) payload).act(embedding));
+        }
+        if (kind == Kind.ONE_TERM) {
+            return oneTerm(((OnePort) payload).act(embedding));
         }
         if (kind == Kind.BINDER_PATTERN) {
             if (!embedding.isPermutation()) {

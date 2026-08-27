@@ -121,7 +121,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "ac_logical/CORRECT/generated_cap004619.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004620.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004621.als","CORRECT",0,0,0,0,0,0,0
-"ac_logical/CORRECT/generated_cap004622.als","CORRECT",0,0,0,0,0,0,0
+"ac_logical/CORRECT/generated_cap004622.als","CORRECT",0,0,0,0,0,5,5
 "ac_logical/CORRECT/generated_cap004623.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004624.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004625.als","CORRECT",0,0,0,0,0,0,0
@@ -297,7 +297,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "ac_logical/CORRECT/generated_cap004795.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004796.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004797.als","CORRECT",0,0,0,0,0,0,0
-"ac_logical/CORRECT/generated_cap004798.als","CORRECT",0,0,0,0,0,0,0
+"ac_logical/CORRECT/generated_cap004798.als","CORRECT",0,0,0,0,0,4,4
 "ac_logical/CORRECT/generated_cap004799.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004800.als","CORRECT",0,0,0,0,0,0,0
 "ac_logical/CORRECT/generated_cap004801.als","CORRECT",0,0,0,0,0,0,0
@@ -523,7 +523,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "aci/CORRECT/generated_cap000521.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000522.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000523.als","CORRECT",0,0,0,0,0,0,0
-"aci/CORRECT/generated_cap000524.als","CORRECT",0,0,0,0,0,0,0
+"aci/CORRECT/generated_cap000524.als","CORRECT",0,0,0,0,0,1,1
 "aci/CORRECT/generated_cap000525.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000526.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000527.als","CORRECT",0,0,0,0,0,0,0
@@ -555,7 +555,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "aci/CORRECT/generated_cap000553.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000554.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000555.als","CORRECT",0,0,0,0,0,0,0
-"aci/CORRECT/generated_cap000556.als","CORRECT",0,0,0,0,0,0,0
+"aci/CORRECT/generated_cap000556.als","CORRECT",0,0,0,0,0,4,4
 "aci/CORRECT/generated_cap000557.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000558.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000559.als","CORRECT",0,0,0,0,0,0,0
@@ -715,7 +715,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "aci/CORRECT/generated_cap000713.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000714.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000715.als","CORRECT",0,0,0,0,0,0,0
-"aci/CORRECT/generated_cap000716.als","CORRECT",0,0,0,0,0,0,0
+"aci/CORRECT/generated_cap000716.als","CORRECT",0,0,0,0,0,2,2
 "aci/CORRECT/generated_cap000717.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000718.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000719.als","CORRECT",0,0,0,0,0,0,0
@@ -734,7 +734,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "aci/CORRECT/generated_cap000732.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000733.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000734.als","CORRECT",0,0,0,0,0,0,0
-"aci/CORRECT/generated_cap000735.als","CORRECT",0,0,0,0,0,0,0
+"aci/CORRECT/generated_cap000735.als","CORRECT",0,0,0,0,0,5,5
 "aci/CORRECT/generated_cap000736.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000737.als","CORRECT",0,0,0,0,0,0,0
 "aci/CORRECT/generated_cap000738.als","CORRECT",0,0,0,0,0,0,0
@@ -4121,7 +4121,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "mixed/CORRECT/generated_cap005119.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005120.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005121.als","CORRECT",4,2,4,2,0,0,0
-"mixed/CORRECT/generated_cap005122.als","CORRECT",4,2,4,2,0,0,0
+"mixed/CORRECT/generated_cap005122.als","CORRECT",4,2,4,2,0,5,5
 "mixed/CORRECT/generated_cap005123.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005124.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005125.als","CORRECT",4,2,4,2,0,0,0
@@ -4297,7 +4297,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "mixed/CORRECT/generated_cap005295.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005296.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005297.als","CORRECT",4,2,4,2,0,0,0
-"mixed/CORRECT/generated_cap005298.als","CORRECT",4,2,4,2,0,0,0
+"mixed/CORRECT/generated_cap005298.als","CORRECT",4,2,4,2,0,4,4
 "mixed/CORRECT/generated_cap005299.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005300.als","CORRECT",4,2,4,2,0,0,0
 "mixed/CORRECT/generated_cap005301.als","CORRECT",4,2,4,2,0,0,0

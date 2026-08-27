@@ -5,12 +5,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import edu.mit.csail.sdg.parser.CompModule;
+import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.core.EGraphNode;
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.core.NormalForm;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
+import is.fivefivefive.ACGN.alloy.ExactAlloyType;
+import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
 
 public final class CanonicalBacktranslatorTest {
@@ -40,7 +47,8 @@ public final class CanonicalBacktranslatorTest {
                 CanonicalBacktranslator.predicate("canonical_quantified", normalForm));
         assertCompiles(module);
         assertContains(module, "pred canonical_quantified[]", "predicate header must be emitted");
-        assertContains(module, "all _q0: Person", "canonical quantified variable must be declared");
+        assertContains(module, "all _q0: one Person",
+                "canonical quantified variable must retain default-one cardinality");
         assertContains(module, "_q0 in Student", "alpha-normalized variable must be used in the matrix");
     }
 
@@ -58,29 +66,40 @@ public final class CanonicalBacktranslatorTest {
                 "sig S {}\n",
                 CanonicalBacktranslator.predicate("canonical_disj", normalForm));
         assertCompiles(module);
-        assertContains(module, "all disj _q0, _q1: S",
+        assertContains(module, "all disj _q0, _q1: one S",
                 "variables from the same disjointness class must be emitted as one disj declaration");
     }
 
     private static void testTemporalNormalFormCompiles() throws Exception {
-        NormalForm root = new NormalForm();
-        NormalForm after = new NormalForm(root, TemporalOp.AFTER, 99);
-        root.addTemporalChild(after);
-        after.addEClass(node(Opcode.IN, false, false, global("s"), global("S")));
-        EGraphNode reference = node(Opcode.REF, false, false);
-        reference.setSourceName("temporal[0:1]");
-        root.addEClass(node(
-                Opcode.OR,
-                true,
-                true,
-                node(Opcode.SOME, false, false, global("S")),
-                reference));
-        root.normalize();
-        after.normalize();
+        Path sourceDirectory = Files.createTempDirectory("canonical-temporal-source-");
+        Path sourcePath = sourceDirectory.resolve("temporal_source.als");
+        List<NormalForm> forms;
+        try {
+            Files.writeString(
+                    sourcePath,
+                    "module temporal_source\n"
+                            + "var sig S {}\n"
+                            + "one sig s in S {}\n"
+                            + "pred source { some S or after s in S }\n",
+                    StandardCharsets.UTF_8);
+            CompModule parsed = AlloyUtil.compileAlloyModule(sourcePath.toString());
+            ModelUnit model = new ModelUnit(null, parsed);
+            MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), parsed);
+            visitor.visit(model, null);
+            Integer forestId = visitor.getForestId("source");
+            if (forestId == null) {
+                throw new AssertionError("temporal source predicate is missing from the MASG");
+            }
+            Multigraph graph = visitor.getForest().get(forestId);
+            forms = Canonical.prepare(graph).normalizedForms();
+        } finally {
+            Files.deleteIfExists(sourcePath);
+            Files.deleteIfExists(sourceDirectory);
+        }
 
         String module = module("canonical_backtranslation_temporal",
                 "var sig S {}\none sig s in S {}\n",
-                CanonicalBacktranslator.predicate("canonical_temporal", Arrays.asList(root, after)));
+                CanonicalBacktranslator.predicate("canonical_temporal", forms));
         assertCompiles(module);
         assertContains(module, "after", "temporal child must be emitted with its temporal operator");
         if (module.contains("temporal[0:")) {

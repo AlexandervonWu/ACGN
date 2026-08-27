@@ -1,9 +1,9 @@
 # Phase F Typed Certificates
 
-> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 > Historical gate report. The PF3 replay blockers recorded here were resolved

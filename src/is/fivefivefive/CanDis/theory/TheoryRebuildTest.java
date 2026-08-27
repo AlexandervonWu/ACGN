@@ -1,10 +1,14 @@
 package is.fivefivefive.CanDis.theory;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Random;
 
 /** Deterministic Phase G rebuilding and mutation-trace gate. */
@@ -18,6 +22,9 @@ public final class TheoryRebuildTest {
 
     public static void main(String[] args) {
         testCertifiedCollisionRebuild();
+        testIncomparableCollisionBucket();
+        testSameRevisionWitnessChangeInvalidatesCollisionMemo();
+        testUnexpectedCollisionErrorDoesNotPoisonMemo();
         testCertifiedInterfaceRestriction();
         testRestrictionObligationIsNotInferred();
         testSymmetryStabilizerTransport();
@@ -29,6 +36,164 @@ public final class TheoryRebuildTest {
         testIllegalMutationRejection();
         System.out.println("TheoryRebuildTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
+    }
+
+    /** A changed occurrence witness invalidates a negative pair in the same rebuild. */
+    private static void testSameRevisionWitnessChangeInvalidatesCollisionMemo() {
+        TypedSlot left = TypedSlot.canonicalFree(GraphType.INT, 0);
+        TypedSlot right = TypedSlot.canonicalFree(GraphType.INT, 1);
+        TypedSlotContext ambient = TypedSlotContext.of(left, right);
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                "same-revision-collision-memo",
+                Arrays.asList(
+                        new OnePortSchema(GraphType.INT),
+                        new OnePortSchema(GraphType.INT)),
+                GraphType.BOOL,
+                Collections.emptyMap(),
+                null).instantiateMonomorphic();
+        CanonicalShape shape = CanonicalShape.of(TypedENode.construct(
+                operator,
+                ambient,
+                Arrays.asList(
+                        OnePort.slot(ambient, left),
+                        OnePort.slot(ambient, right))));
+        TypedEClassInterface leftOwner = new TypedEClassInterface(
+                EClassId.of(41000), GraphType.BOOL,
+                TypedSlotContext.singleton(left));
+        TypedEClassInterface rightOwner = new TypedEClassInterface(
+                EClassId.of(41001), GraphType.BOOL,
+                TypedSlotContext.singleton(right));
+        ShapeWitness identityLeft = new ShapeWitness(
+                ambient, ambient, leftOwner.exposedSlots(),
+                TypedRenaming.of(ambient, ambient, mapOf(left, left, right, right)));
+        ShapeWitness identityRight = new ShapeWitness(
+                ambient, ambient, rightOwner.exposedSlots(),
+                TypedRenaming.of(ambient, ambient, mapOf(left, left, right, right)));
+        ShapeWitness swappedRight = new ShapeWitness(
+                ambient, ambient, rightOwner.exposedSlots(),
+                TypedRenaming.of(ambient, ambient, mapOf(left, right, right, left)));
+
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        admitShape(graph, leftOwner, shape, identityLeft, "memo-left", 0);
+        admitShape(graph, rightOwner, shape, identityRight, "memo-right", 1);
+        check(invokeCollisionResolution(graph, shape) == 0,
+                "Initially incomparable witnesses populate the negative collision memo");
+
+        invokePrivate(
+                graph,
+                "removeStoredRecord",
+                new Class<?>[] {ParentRecordKey.class},
+                new ParentRecordKey(rightOwner.id(), shape));
+        invokePrivate(
+                graph,
+                "installStoredRecord",
+                new Class<?>[] {
+                    EClassId.class,
+                    CanonicalShape.class,
+                    ShapeWitness.class,
+                    TypedEqualityCertificate.class
+                },
+                rightOwner.id(),
+                shape,
+                swappedRight,
+                shapeEquation(rightOwner, shape, swappedRight, "memo-right-swapped", 2));
+
+        check(invokeCollisionResolution(graph, shape) == 1,
+                "A same-revision occurrence-witness change invalidates the negative memo");
+        graph.rebuild();
+        check(graph.hashBucketsSnapshot().get(shape).size() == 1,
+                "Fresh collision resolution prevents false quiescence");
+        graph.checkInvariants();
+    }
+
+    /** Only a proved no-embedding result may populate the negative memo. */
+    private static void testUnexpectedCollisionErrorDoesNotPoisonMemo() {
+        TypedSlot left = TypedSlot.canonicalFree(GraphType.INT, 0);
+        TypedSlot right = TypedSlot.canonicalFree(GraphType.INT, 1);
+        TypedSlotContext ambient = TypedSlotContext.of(left, right);
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                "unexpected-collision-error",
+                Arrays.asList(
+                        new OnePortSchema(GraphType.INT),
+                        new OnePortSchema(GraphType.INT)),
+                GraphType.BOOL,
+                Collections.emptyMap(),
+                null).instantiateMonomorphic();
+        CanonicalShape shape = CanonicalShape.of(TypedENode.construct(
+                operator,
+                ambient,
+                Arrays.asList(
+                        OnePort.slot(ambient, left),
+                        OnePort.slot(ambient, right))));
+        TypedEClassInterface leftOwner = new TypedEClassInterface(
+                EClassId.of(41010), GraphType.BOOL,
+                TypedSlotContext.singleton(left));
+        TypedEClassInterface rightOwner = new TypedEClassInterface(
+                EClassId.of(41011), GraphType.BOOL,
+                TypedSlotContext.singleton(right));
+        ShapeWitness leftWitness = new ShapeWitness(
+                ambient,
+                ambient,
+                leftOwner.exposedSlots(),
+                TypedRenaming.of(
+                        ambient, ambient, mapOf(left, left, right, right)));
+        ShapeWitness rightWitness = new ShapeWitness(
+                ambient,
+                ambient,
+                rightOwner.exposedSlots(),
+                TypedRenaming.of(
+                        ambient, ambient, mapOf(left, left, right, right)));
+        ShapeWitness swappedRight = new ShapeWitness(
+                ambient,
+                ambient,
+                rightOwner.exposedSlots(),
+                TypedRenaming.of(
+                        ambient, ambient, mapOf(left, right, right, left)));
+
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        admitShape(graph, leftOwner, shape, leftWitness, "error-left", 0);
+        admitShape(graph, rightOwner, shape, rightWitness, "error-right", 1);
+        ParentRecordKey leftKey = new ParentRecordKey(leftOwner.id(), shape);
+        ParentRecordKey rightKey = new ParentRecordKey(rightOwner.id(), shape);
+        invokePrivate(
+                graph,
+                "removeStoredRecord",
+                new Class<?>[] {ParentRecordKey.class},
+                rightKey);
+        invokePrivate(
+                graph,
+                "installStoredRecord",
+                new Class<?>[] {
+                    EClassId.class,
+                    CanonicalShape.class,
+                    ShapeWitness.class,
+                    TypedEqualityCertificate.class
+                },
+                rightOwner.id(),
+                shape,
+                swappedRight,
+                shapeEquation(
+                        rightOwner,
+                        shape,
+                        swappedRight,
+                        "error-right-swapped",
+                        2));
+        InputEquationCertificate validLeft = shapeEquation(
+                leftOwner, shape, leftWitness, "error-left-valid", 3);
+        InputEquationCertificate wrongOwner = shapeEquation(
+                rightOwner, shape, swappedRight, "error-wrong-owner", 4);
+        NavigableMap<ParentRecordKey, TypedEqualityCertificate> certificates =
+                privateMap(graph, "shapeCertificates");
+        certificates.put(leftKey, wrongOwner);
+
+        expectThrows(
+                IllegalArgumentException.class,
+                () -> invokeCollisionResolution(graph, shape));
+        certificates.put(leftKey, validLeft);
+        check(invokeCollisionResolution(graph, shape) == 1,
+                "An unexpected certificate error propagates without poisoning the memo");
+        graph.rebuild();
+        graph.checkInvariants();
     }
 
     /** Theorem 1(6): historical invocations are transported, then rebuilt. */
@@ -68,7 +233,10 @@ public final class TheoryRebuildTest {
                                 TypedCertificateEndpoint.invocation(historical)),
                 "Historical invocation metadata has a replayable restriction proof");
 
+        long hashRebuildsBefore = graph.hashIndexRebuildCount();
         graph.rebuild();
+        check(graph.hashIndexRebuildCount() == hashRebuildsBefore + 1,
+                "Interface-changing rebuild performs one observable exact hash-index rebuild");
         TypedEClassRecord rebuiltOwner = graph.eclass(owner.id());
         check(rebuiltOwner.shapeWitnesses().size() == 1
                         && rebuiltOwner.shapeWitnesses().firstKey()
@@ -220,7 +388,7 @@ public final class TheoryRebuildTest {
             TypedEClassInterface left = emptyClass(60 + kind.ordinal() * 10, GraphType.BOOL);
             TypedEClassInterface right = emptyClass(61 + kind.ordinal() * 10, GraphType.BOOL);
             TypedEClassInterface owner = emptyClass(62 + kind.ordinal() * 10, GraphType.BOOL);
-            TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+            TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.certifiedFixture();
             graph.registerEmptyClassForPhaseF(left);
             graph.registerEmptyClassForPhaseF(right);
             CanonicalShape shape = flatInvocationShape(
@@ -249,7 +417,7 @@ public final class TheoryRebuildTest {
         TypedEClassInterface hidden = emptyClass(501, GraphType.BOOL);
         TypedEClassInterface replacement = emptyClass(502, GraphType.BOOL);
         TypedEClassInterface outer = emptyClass(503, GraphType.BOOL);
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.certifiedFixture();
         graph.registerEmptyClassForPhaseF(atom);
         CanonicalShape hiddenShape = flatInvocationShape(
                 "opaque-flat", PortSchema.Kind.SET, atom, atom);
@@ -430,6 +598,7 @@ public final class TheoryRebuildTest {
                 "A child union enqueues exactly its affected parent record");
         expectThrows(IllegalStateException.class, () -> graph.hashOwner(rightShape));
 
+        long orientationAttempts = graph.collisionOrientationAttemptsForTesting();
         RebuildReport report = graph.rebuild();
         check(graph.status() == GraphStatus.QUIESCENT
                         && graph.dirtyParentCount() == 0,
@@ -438,6 +607,17 @@ public final class TheoryRebuildTest {
                         && report.collisions() == 1
                         && report.certifiedUnions() == 1,
                 "Canonical collision produces exactly one certified owner union");
+        check(graph.collisionOrientationAttemptsForTesting()
+                        - orientationAttempts == 2,
+                "A compatible exact-shape collision evaluates both directed orientations");
+        check(graph.retiredShapeRecordsSnapshot().size() == 1,
+                "The absorbed duplicate shape retains one owner-qualified retirement proof");
+        RetiredShapeRecordCertificate retirement = graph
+                .retiredShapeRecordsSnapshot().values().iterator().next();
+        retirement.verify();
+        check(retirement.retiredRecord().shape().equals(rightShape)
+                        && retirement.retainedRecord().shape().equals(rightShape),
+                "Retirement evidence binds the exact collided canonical shape");
         EClassId owner = graph.hashOwner(rightShape);
         check(owner != null && graph.isLeader(owner),
                 "Rebuilt canonical key has one leader owner");
@@ -448,6 +628,70 @@ public final class TheoryRebuildTest {
         check(repeated.processedRecords() == 0
                         && settled.equals(graph.stateStructuralKey()),
                 "Rebuild is idempotent at quiescence");
+    }
+
+    private static void testIncomparableCollisionBucket() {
+        TypedSlot integer = TypedSlot.canonicalFree(GraphType.INT, 0);
+        TypedSlot truth = TypedSlot.canonicalFree(GraphType.BOOL, 0);
+        TypedSlotContext ambient = TypedSlotContext.of(integer, truth);
+        InstantiatedOperator operator = OperatorDeclaration.monomorphic(
+                "incomparable-owner-shape",
+                Arrays.asList(
+                        new OnePortSchema(GraphType.INT),
+                        new OnePortSchema(GraphType.BOOL)),
+                GraphType.BOOL,
+                Collections.emptyMap(),
+                null).instantiateMonomorphic();
+        CanonicalShape shape = CanonicalShape.of(TypedENode.construct(
+                operator,
+                ambient,
+                Arrays.asList(
+                        OnePort.slot(ambient, integer),
+                        OnePort.slot(ambient, truth))));
+
+        TypedEClassInterface integerOwner = new TypedEClassInterface(
+                EClassId.of(12_000),
+                GraphType.BOOL,
+                TypedSlotContext.singleton(integer));
+        TypedEClassInterface booleanOwner = new TypedEClassInterface(
+                EClassId.of(12_001),
+                GraphType.BOOL,
+                TypedSlotContext.singleton(truth));
+        TypedRenaming identity = TypedRenaming.identity(ambient);
+        ShapeWitness integerWitness = new ShapeWitness(
+                ambient, ambient, integerOwner.exposedSlots(), identity);
+        ShapeWitness booleanWitness = new ShapeWitness(
+                ambient, ambient, booleanOwner.exposedSlots(), identity);
+
+        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        admitShape(graph, integerOwner, shape, integerWitness,
+                "incomparable-int-owner", 0);
+        admitShape(graph, booleanOwner, shape, booleanWitness,
+                "incomparable-bool-owner", 1);
+        check(graph.status() == GraphStatus.QUIESCENT
+                        && graph.hashBucketsSnapshot().get(shape).size() == 2,
+                "Equal shapes with incomparable typed interfaces coexist at quiescence");
+        check(graph.isLeader(integerOwner.id()) && graph.isLeader(booleanOwner.id()),
+                "An unproved shape collision does not install a union-find parent");
+        StructuralKey before = graph.stateStructuralKey();
+        RebuildReport report = graph.rebuild();
+        check(report.processedRecords() == 0
+                        && report.certifiedUnions() == 0
+                        && before.equals(graph.stateStructuralKey()),
+                "An incomparable ownership bucket reaches deterministic quiescence");
+        graph.restrictInterfaceCertified(restriction(
+                graph.eclass(integerOwner.id()),
+                TypedSlotContext.empty(),
+                "incomparable-owner-revision",
+                2));
+        RebuildReport afterRestriction = graph.rebuild();
+        check(afterRestriction.certifiedUnions() == 1
+                        && graph.hashBucketsSnapshot().get(shape).size() == 1,
+                "An incompatibility memo expires when a later coherence revision "
+                        + "makes one directed collision proof admissible");
+        check(graph.retiredShapeRecordsSnapshot().size() == 1,
+                "A later compatible union retires the duplicate owner record explicitly");
+        graph.checkInvariants();
     }
 
     private static TypedEClassInterface emptyClass(long id, GraphType type) {
@@ -523,7 +767,7 @@ public final class TheoryRebuildTest {
         CertificateOrigin origin = CertificateOrigin.containerLaw(
                 "phase-g", name, 0);
         for (ContainerLawCertificate.Law law : laws) {
-            certificates.add(new ContainerLawCertificate(schema, law, origin));
+            certificates.add(ContainerLawCertificate.testFixture(schema, law, origin));
         }
         Map<PortPath, ContainerLawDeclaration> declaration = new LinkedHashMap<>();
         declaration.put(
@@ -657,16 +901,71 @@ public final class TheoryRebuildTest {
                 owner,
                 Collections.singletonMap(shape, witness),
                 TypedSymmetryGroup.identity(owner.exposedSlots()));
+        InputEquationCertificate equation = shapeEquation(
+                owner, shape, witness, label, index);
+        graph.admitFixedBatchRecordCertified(
+                record, Collections.singletonMap(shape, equation));
+    }
+
+    private static InputEquationCertificate shapeEquation(
+            TypedEClassInterface owner,
+            CanonicalShape shape,
+            ShapeWitness witness,
+            String label,
+            int index) {
         TypedEmbedding ownerInAmbient = TypedEmbedding.inclusion(
                 owner.exposedSlots(), witness.ambientSupport());
-        InputEquationCertificate equation = new InputEquationCertificate(
+        return new InputEquationCertificate(
                 CertificateOrigin.inputEquation("phase-g", label, index),
                 TypedCertificateEndpoint.node(
                         shape.node().act(witness.instantiatingRenaming())),
                 TypedCertificateEndpoint.invocation(
                         new TypedInvocation(owner, ownerInAmbient)));
-        graph.admitFixedBatchRecordCertified(
-                record, Collections.singletonMap(shape, equation));
+    }
+
+    private static int invokeCollisionResolution(
+            TypedSlottedPortEGraph graph,
+            CanonicalShape shape) {
+        return (Integer) invokePrivate(
+                graph,
+                "resolveShapeCollisions",
+                new Class<?>[] {CanonicalShape.class},
+                shape);
+    }
+
+    private static Object invokePrivate(
+            Object receiver,
+            String name,
+            Class<?>[] parameterTypes,
+            Object... arguments) {
+        try {
+            Method method = receiver.getClass().getDeclaredMethod(name, parameterTypes);
+            method.setAccessible(true);
+            return method.invoke(receiver, arguments);
+        } catch (InvocationTargetException exception) {
+            Throwable cause = exception.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            }
+            throw new AssertionError("Private collision transition failed", cause);
+        } catch (ReflectiveOperationException exception) {
+            throw new AssertionError("Collision regression cannot reach its boundary", exception);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K, V> NavigableMap<K, V> privateMap(
+            Object receiver,
+            String name) {
+        try {
+            Field field = receiver.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return (NavigableMap<K, V>) field.get(receiver);
+        } catch (ReflectiveOperationException exception) {
+            throw new AssertionError(
+                    "Collision regression cannot inspect its memo boundary",
+                    exception);
+        }
     }
 
     private static InterfaceRestrictionCertificate restriction(

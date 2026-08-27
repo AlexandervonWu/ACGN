@@ -1,24 +1,24 @@
-EGraphAblationStudy/raw-egraph: processing 5,500 files with 32 workers.
-EGraphAblationStudy/raw-egraph: 275/5,500 complete (5.0%), 724.18 files/s, ETA 0m 07s.
-EGraphAblationStudy/raw-egraph: 550/5,500 complete (10.0%), 1067.53 files/s, ETA 0m 05s.
-EGraphAblationStudy/raw-egraph: 825/5,500 complete (15.0%), 1335.11 files/s, ETA 0m 04s.
-EGraphAblationStudy/raw-egraph: 1,100/5,500 complete (20.0%), 1529.90 files/s, ETA 0m 03s.
-EGraphAblationStudy/raw-egraph: 1,375/5,500 complete (25.0%), 1686.72 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph: 1,650/5,500 complete (30.0%), 1816.69 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph: 1,925/5,500 complete (35.0%), 1906.00 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph: 2,200/5,500 complete (40.0%), 2001.54 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph: 2,475/5,500 complete (45.0%), 2076.23 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 2,750/5,500 complete (50.0%), 2148.96 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 3,025/5,500 complete (55.0%), 2221.94 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 3,300/5,500 complete (60.0%), 2278.35 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 3,575/5,500 complete (65.0%), 2325.55 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 3,850/5,500 complete (70.0%), 2368.73 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 4,125/5,500 complete (75.0%), 2399.98 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph: 4,400/5,500 complete (80.0%), 2420.80 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph: 4,675/5,500 complete (85.0%), 2453.12 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph: 4,950/5,500 complete (90.0%), 2481.58 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph: 5,225/5,500 complete (95.0%), 2519.61 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph: 5,500/5,500 complete (100.0%), 2554.77 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph: processing 5,500 files with 16 workers.
+EGraphAblationStudy/raw-egraph: 275/5,500 complete (5.0%), 805.52 files/s, ETA 0m 06s.
+EGraphAblationStudy/raw-egraph: 550/5,500 complete (10.0%), 1110.96 files/s, ETA 0m 04s.
+EGraphAblationStudy/raw-egraph: 825/5,500 complete (15.0%), 1335.28 files/s, ETA 0m 04s.
+EGraphAblationStudy/raw-egraph: 1,100/5,500 complete (20.0%), 1506.15 files/s, ETA 0m 03s.
+EGraphAblationStudy/raw-egraph: 1,375/5,500 complete (25.0%), 1633.23 files/s, ETA 0m 03s.
+EGraphAblationStudy/raw-egraph: 1,650/5,500 complete (30.0%), 1730.76 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph: 1,925/5,500 complete (35.0%), 1802.17 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph: 2,200/5,500 complete (40.0%), 1882.11 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph: 2,475/5,500 complete (45.0%), 1945.55 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph: 2,750/5,500 complete (50.0%), 2010.08 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 3,025/5,500 complete (55.0%), 2074.92 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 3,300/5,500 complete (60.0%), 2124.54 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 3,575/5,500 complete (65.0%), 2163.92 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 3,850/5,500 complete (70.0%), 2196.12 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 4,125/5,500 complete (75.0%), 2224.91 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph: 4,400/5,500 complete (80.0%), 2240.33 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph: 4,675/5,500 complete (85.0%), 2261.51 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph: 4,950/5,500 complete (90.0%), 2292.55 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph: 5,225/5,500 complete (95.0%), 2319.15 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph: 5,500/5,500 complete (100.0%), 2341.70 files/s, ETA 0m 00s.
 EGraphAblationStudy/raw-egraph/retry: processing 0 files.
 EGraphAblationStudy/raw-egraph/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed raw-egraph on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.166 s.
+Completed raw-egraph on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.358 s.

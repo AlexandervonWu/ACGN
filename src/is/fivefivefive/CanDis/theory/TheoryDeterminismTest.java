@@ -117,7 +117,7 @@ public final class TheoryDeterminismTest {
     }
 
     private static Probe probe(boolean reverse) {
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.certifiedFixture();
         FixedRecord first = fixedConstant(10, "determinism/left");
         FixedRecord second = fixedConstant(11, "determinism/right");
         List<FixedRecord> records = reverse
@@ -137,12 +137,12 @@ public final class TheoryDeterminismTest {
         laws.put(PortPath.at(0), ContainerLawDeclaration.certified(
                 schema,
                 Arrays.asList(
-                        new ContainerLawCertificate(
+                        ContainerLawCertificate.testFixture(
                                 schema,
                                 ContainerLawCertificate.Law.ASSOCIATIVITY,
                                 CertificateOrigin.containerLaw(
                                         "determinism", "bag:A", 0)),
-                        new ContainerLawCertificate(
+                        ContainerLawCertificate.testFixture(
                                 schema,
                                 ContainerLawCertificate.Law.COMMUTATIVITY,
                                 CertificateOrigin.containerLaw(

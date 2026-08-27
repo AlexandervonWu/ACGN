@@ -161,7 +161,7 @@ public final class TypedAlphaEquivalence {
         BinderAutomorphismGroup group = graphRelative
                 ? graph.binderGroupForCanonicalization(left.schema().descriptor())
                 : left.schema().descriptor().automorphisms();
-        for (TypedPermutation automorphism : group.elements()) {
+        return group.anyMatch(automorphism -> {
             TypedRenaming boundAlignment = left.descriptorToOccurrence()
                     .inverse()
                     .andThen(automorphism)
@@ -177,8 +177,8 @@ public final class TypedAlphaEquivalence {
                     extended)) {
                 return true;
             }
-        }
-        return false;
+            return false;
+        });
     }
 
     private static boolean onePortsRelated(
@@ -214,13 +214,13 @@ public final class TypedAlphaEquivalence {
         TypedEmbedding renamedLeft = leftLeader.embedding().andThen(renaming);
         TypedSymmetryGroup group = graph.symmetryGroupForCanonicalization(
                 leftLeader.eclass());
-        for (TypedPermutation permutation : group.elements()) {
+        return group.anyMatch(permutation -> {
             TypedEmbedding permutedRight = permutation.andThen(rightLeader.embedding());
             if (renamedLeft.equals(permutedRight)) {
                 return true;
             }
-        }
-        return false;
+            return false;
+        });
     }
 
     private static boolean orderedRelated(

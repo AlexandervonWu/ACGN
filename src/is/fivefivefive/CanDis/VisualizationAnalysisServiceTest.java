@@ -8,7 +8,8 @@ public final class VisualizationAnalysisServiceTest {
     private static final String MODEL = String.join("\n",
             "sig User { follows: set User }",
             "fun neighbors[u: User]: set User { u.follows }",
-            "pred hasNeighbor[u: User] { some neighbors[u] }");
+            "pred hasNeighbor[u: User] { some neighbors[u] }",
+            "fun emptyPair : univ -> univ { none -> none }");
 
     private VisualizationAnalysisServiceTest() {
     }
@@ -17,19 +18,53 @@ public final class VisualizationAnalysisServiceTest {
         VisualizationAnalysisService service = new VisualizationAnalysisService();
         JSONObject inspection = service.inspect(MODEL);
         JSONArray callables = inspection.getJSONArray("callables");
-        if (callables.length() != 2) {
+        if (callables.length() != 3) {
             throw new AssertionError("Inspection leaked parser-internal callables: " + callables);
         }
         assertCallable(callables, "neighbors", "function");
         assertCallable(callables, "hasNeighbor", "predicate");
+        assertCallable(callables, "emptyPair", "function");
 
         assertAnalysis(service.analyze(MODEL, "neighbors", "function"), "neighbors", "function");
         assertAnalysis(service.analyze(MODEL, "hasNeighbor", "predicate"), "hasNeighbor", "predicate");
+        assertEmptyRelationArity(
+                service.analyze(MODEL, "emptyPair", "function"), 2);
         assertComparison(service.compare(
                 MODEL, "neighbors", "function", "hasNeighbor", "predicate"), false);
         assertComparison(service.compare(
                 MODEL, "neighbors", "function", "neighbors", "function"), true);
         System.out.println("VisualizationAnalysisServiceTest passed");
+    }
+
+    private static void assertEmptyRelationArity(
+            JSONObject analysis,
+            int expectedArity) {
+        JSONArray classes = analysis.getJSONObject("graph").getJSONArray("eclasses");
+        for (int classIndex = 0; classIndex < classes.length(); classIndex++) {
+            JSONObject eclass = classes.getJSONObject(classIndex);
+            if (isEmptyRelationOfArity(eclass.getJSONObject("type"), expectedArity)) {
+                return;
+            }
+            JSONArray nodes = eclass.getJSONArray("nodes");
+            for (int nodeIndex = 0; nodeIndex < nodes.length(); nodeIndex++) {
+                if (isEmptyRelationOfArity(
+                        nodes.getJSONObject(nodeIndex).getJSONObject("type"),
+                        expectedArity)) {
+                    return;
+                }
+            }
+        }
+        throw new AssertionError(
+                "Visualization omitted empty relation arity " + expectedArity
+                        + ": " + analysis);
+    }
+
+    private static boolean isEmptyRelationOfArity(
+            JSONObject type,
+            int expectedArity) {
+        return type.optBoolean("empty", false)
+                && type.optInt("arity", -1) == expectedArity
+                && type.getJSONArray("columns").length() == 0;
     }
 
     private static void assertCallable(JSONArray values, String name, String kind) {

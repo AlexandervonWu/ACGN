@@ -1,9 +1,9 @@
 # Theory-to-Artifact Architecture Map
 
-> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 This document began as the Phase A architecture audit for commit
@@ -184,8 +184,8 @@ proof construction, law validation, renaming orbits, rebuild, invariant
 checking, and finite observations. In return it fails closed when semantic
 admissibility cannot be certified and provides an auditable boundary against
 unsupported scope permutations or rewrite laws. The current 61,598-pair run
-measured 18.360 seconds versus 2,265.990 seconds wall time and 2,316 versus
-2,317 `CORRECT` zeroes, with no incorrect zeroes in either arm. Those corpus
+measured 24.690 seconds versus 2,730.160 seconds wall time and 4,074 versus
+4,088 `CORRECT` zeroes, with no paired incorrect zeroes in either arm. Those corpus
 labels and bounded Alloy checks are evidence, not an unbounded soundness proof.
 
 ## Formal State Mapping
@@ -199,7 +199,7 @@ labels and bounded Alloy checks are evidence, not an unbounded soundness proof.
 | Renaming/permutation | `theory.TypedRenaming`, `theory.TypedPermutation` | Sealed onto and same-context refinements | Phase B exact | Reuse in canonicalization and certified symmetry groups |
 | Invocation `m*a` | `theory.TypedInvocation` and `TypedEClassInterface` | Class interface plus validated embedding; caller context is codomain; graph registration rejects ID/metadata reuse | Phase B carrier and Phase D ownership exact | Preserve in certified transitions |
 | Port grammar | `theory.PortSchema` and `theory.PortValue`; Fast Rewrite child lists remain separate | Six sealed schema/value variants implement `One`, indexed Seq/Bag/Set, unary `Bind`, and descriptor-indexed `BindBlock`; strict consumption requires certified container laws and binder automorphisms | Phase C carrier and Phase F provenance gate exact | Preserve certificates during source insertion and later integration |
-| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; Fast Rewrite opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v7` named-reference, container, fixed-commutativity, and binder axioms |
+| Signature `Sigma(f)` | `theory.OperatorDeclaration` and `InstantiatedOperator`; Fast Rewrite opcode tables remain separate | Type parameters, recursive schemas, output, law declarations with structured certificates, and flat port form one immutable value | Phase C typed signature and Phase F law provenance exact | Adapter issues only `canonical-alloy-signature-v8` named-reference, container, fixed-commutativity, and binder axioms |
 | `U` | Exact `TypedRenamedUnionFind`; Fast Rewrite `RenamedIdUnionFind` remains separate | Total typed parent assignments, identity roots, formal-direction embeddings, retained primitive paths, historical restriction transport, and composed certificates | Phase D/F carrier plus Phase G transport exact | Preserve this boundary in the Alloy adapter |
 | `M(a).tau_a` | `TypedEClassRecord.interfaceView().outputType()` | Immutable graph-owned output type | Phase D exact | Preserve in all certified mutations |
 | `M(a).S_a` | `TypedEClassRecord.interfaceView().exposedSlots()` | Immutable graph-owned finite typed context replaced only by a prevalidated factorization transaction; fresh insertion exposes exactly `Delta_n` | Phase G restriction and certified source insertion exact | Adapter narrows source nodes to exact support and widens only returned invocations |
@@ -305,7 +305,7 @@ compression and reconstructs their transported transitive proof for the caller
 context.
 
 The exact graph exposes stable identifiers `typed-slotted-port-egraph`,
-`leader-kernel-trace-v1`, `canon-g-production-v2`, and
+`leader-kernel-trace-v1`, `canon-g-production-v4`, and
 `typed-certificate-algebra-v3`; Phase G additionally reports
 `typed-fixed-batch-rebuild-v1`, and Phase H reports
 `typed-finite-unfolding-oracle-v2`. Its public

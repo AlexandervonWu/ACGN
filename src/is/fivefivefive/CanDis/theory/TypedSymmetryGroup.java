@@ -9,14 +9,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /** Immutable finite typed subgroup with certificates for every generator. */
 public final class TypedSymmetryGroup {
     private final TypedSlotContext context;
     private final List<TypedPermutation> generators;
     private final List<SymmetryCertificate> generatorCertificates;
-    private final List<TypedPermutation> elements;
-    private final StructuralKey structuralKey;
+    private volatile StructuralKey structuralKey;
     // Positive memo only; the group and interface values are immutable.
     private final Set<TypedEClassInterface> certifiedInterfaces = new java.util.HashSet<>();
 
@@ -68,16 +69,6 @@ public final class TypedSymmetryGroup {
                     "A symmetry certificate does not name a retained nonidentity generator");
         }
         this.generatorCertificates = Collections.unmodifiableList(orderedCertificates);
-        this.elements = close(identity, generators);
-
-        List<StructuralKey> children = new ArrayList<>();
-        children.add(TheoryKeys.context(context));
-        for (TypedPermutation element : elements) {
-            children.add(StructuralKey.branch(
-                    "symmetry-element",
-                    Collections.singletonList(TheoryKeys.embedding(element))));
-        }
-        this.structuralKey = StructuralKey.branch("typed-symmetry-group", children);
     }
 
     public static TypedSymmetryGroup identity(TypedSlotContext context) {
@@ -146,14 +137,6 @@ public final class TypedSymmetryGroup {
                         "Symmetry certificate belongs to a different e-class");
             }
         }
-        Map<StructuralKey, TypedEqualityCertificate> derivations = deriveAll(eclass);
-        if (derivations.size() != elements.size()) {
-            throw new IllegalStateException(
-                    "Certified symmetry derivations and group closure differ");
-        }
-        for (TypedEqualityCertificate derivation : derivations.values()) {
-            CertificateVerifier.verify(derivation);
-        }
         certifiedInterfaces.add(eclass);
     }
 
@@ -162,14 +145,11 @@ public final class TypedSymmetryGroup {
             TypedEClassInterface eclass,
             TypedPermutation permutation) {
         requireCertifiedForWithoutClosure(eclass);
-        if (!contains(Objects.requireNonNull(permutation, "permutation"))) {
-            throw new IllegalArgumentException("Permutation is outside this symmetry group");
-        }
-        TypedEqualityCertificate result = deriveAll(eclass).get(
-                TheoryKeys.embedding(permutation));
+        TypedEqualityCertificate result = deriveOne(
+                eclass, Objects.requireNonNull(permutation, "permutation"));
         if (result == null) {
-            throw new IllegalStateException(
-                    "Certified generators did not reconstruct a stored group element");
+            throw new IllegalArgumentException(
+                    "Permutation is outside this symmetry group");
         }
         CertificateVerifier.verify(result);
         return result;
@@ -191,8 +171,12 @@ public final class TypedSymmetryGroup {
         }
     }
 
-    private Map<StructuralKey, TypedEqualityCertificate> deriveAll(
-            TypedEClassInterface eclass) {
+    private TypedEqualityCertificate deriveOne(
+            TypedEClassInterface eclass,
+            TypedPermutation target) {
+        if (!context.equals(target.source()) || !context.equals(target.codomain())) {
+            return null;
+        }
         TypedPermutation identity = TypedPermutation.identity(context);
         Map<StructuralKey, TypedEqualityCertificate> derivations = new TreeMap<>();
         Deque<TypedPermutation> pending = new ArrayDeque<>();
@@ -201,6 +185,7 @@ public final class TypedSymmetryGroup {
         StructuralKey identityKey = TheoryKeys.embedding(identity);
         derivations.put(identityKey, identityProof);
         pending.add(identity);
+        StructuralKey targetKey = TheoryKeys.embedding(target);
 
         List<CertifiedStep> steps = new ArrayList<>(generators.size() * 2);
         for (int index = 0; index < generators.size(); index++) {
@@ -213,8 +198,14 @@ public final class TypedSymmetryGroup {
             steps.add(new CertifiedStep(inverse, inverseProof));
         }
 
-        while (!pending.isEmpty()) {
+        long visited = 0;
+        while (!pending.isEmpty() && !derivations.containsKey(targetKey)) {
             TypedPermutation current = pending.removeFirst();
+            visited = Math.addExact(visited, 1L);
+            if (visited > FinitePermutationTraversal.maximumElements()) {
+                throw new CanonicalizationDomainException(
+                        "Symmetry proof search exceeds configured group bound");
+            }
             TypedEqualityCertificate currentProof = derivations.get(
                     TheoryKeys.embedding(current));
             for (CertifiedStep step : steps) {
@@ -231,50 +222,19 @@ public final class TypedSymmetryGroup {
                 pending.addLast(candidate);
             }
         }
-        for (TypedPermutation element : elements) {
-            TypedEqualityCertificate result = derivations.get(
-                    TheoryKeys.embedding(element));
-            TypedCertificateEndpoint expectedRight = TypedCertificateEndpoint.invocation(
-                    new TypedInvocation(eclass, element));
-            if (result == null
-                    || !result.leftEndpoint().equals(
-                            TypedCertificateEndpoint.eclassWitness(eclass))
-                    || !result.rightEndpoint().equals(expectedRight)) {
-                throw new IllegalStateException(
-                        "Reconstructed symmetry derivation has incorrect endpoints");
-            }
+        TypedEqualityCertificate result = derivations.get(targetKey);
+        if (result == null) {
+            return null;
         }
-        return derivations;
-    }
-
-    private List<TypedPermutation> close(
-            TypedPermutation identity,
-            List<TypedPermutation> sourceGenerators) {
-        Map<StructuralKey, TypedPermutation> closure = new TreeMap<>();
-        Deque<TypedPermutation> pending = new ArrayDeque<>();
-        putUnique(closure, identity);
-        pending.add(identity);
-
-        List<TypedPermutation> steps = new ArrayList<>(sourceGenerators.size() * 2);
-        for (TypedPermutation generator : sourceGenerators) {
-            steps.add(generator);
-            steps.add(generator.inverse());
+        TypedCertificateEndpoint expectedRight = TypedCertificateEndpoint.invocation(
+                new TypedInvocation(eclass, target));
+        if (!result.leftEndpoint().equals(
+                        TypedCertificateEndpoint.eclassWitness(eclass))
+                || !result.rightEndpoint().equals(expectedRight)) {
+            throw new IllegalStateException(
+                    "Reconstructed symmetry derivation has incorrect endpoints");
         }
-        while (!pending.isEmpty()) {
-            TypedPermutation current = pending.removeFirst();
-            for (TypedPermutation step : steps) {
-                TypedPermutation candidate = current.andThen(step);
-                StructuralKey key = TheoryKeys.embedding(candidate);
-                TypedPermutation prior = closure.putIfAbsent(key, candidate);
-                if (prior == null) {
-                    pending.addLast(candidate);
-                } else if (!prior.equals(candidate)) {
-                    throw new IllegalStateException(
-                            "Structural key collision between unequal typed permutations");
-                }
-            }
-        }
-        return Collections.unmodifiableList(new ArrayList<>(closure.values()));
+        return result;
     }
 
     private void requireContext(TypedPermutation permutation) {
@@ -312,8 +272,28 @@ public final class TypedSymmetryGroup {
         return generatorCertificates.size() == generators.size();
     }
 
+    public void forEachElement(Consumer<TypedPermutation> consumer) {
+        FinitePermutationTraversal.forEach(
+                context, generators, TheoryKeys::embedding, consumer::accept);
+    }
+
+    <E extends Exception> long forEachElementChecked(
+            FinitePermutationTraversal.CheckedConsumer<E> consumer) throws E {
+        return FinitePermutationTraversal.forEach(
+                context, generators, TheoryKeys::embedding, consumer);
+    }
+
+    public boolean anyMatch(Predicate<TypedPermutation> predicate) {
+        return FinitePermutationTraversal.anyMatch(
+                context, generators, TheoryKeys::embedding, predicate);
+    }
+
+    /** Explicit bounded snapshot retained for diagnostics and tests only. */
     public List<TypedPermutation> elements() {
-        return elements;
+        List<TypedPermutation> snapshot = new ArrayList<>();
+        forEachElement(snapshot::add);
+        snapshot.sort(java.util.Comparator.comparing(TheoryKeys::embedding));
+        return Collections.unmodifiableList(snapshot);
     }
 
     public boolean contains(TypedPermutation permutation) {
@@ -322,21 +302,32 @@ public final class TypedSymmetryGroup {
                 || !context.equals(permutation.codomain())) {
             return false;
         }
-        StructuralKey key = TheoryKeys.embedding(permutation);
-        for (TypedPermutation element : elements) {
-            int comparison = TheoryKeys.embedding(element).compareTo(key);
-            if (comparison == 0) {
-                return element.equals(permutation);
-            }
-            if (comparison > 0) {
-                return false;
-            }
-        }
-        return false;
+        return anyMatch(permutation::equals);
     }
 
     public StructuralKey structuralKey() {
-        return structuralKey;
+        StructuralKey cached = structuralKey;
+        if (cached != null) {
+            return cached;
+        }
+        synchronized (this) {
+            cached = structuralKey;
+            if (cached == null) {
+                List<StructuralKey> children = new ArrayList<>();
+                children.add(TheoryKeys.context(context));
+                for (TypedPermutation generator : CanonicalPermutationPresentation.of(
+                        context, generators, TheoryKeys::embedding)) {
+                    children.add(StructuralKey.branch(
+                            "symmetry-canonical-generator",
+                            Collections.singletonList(
+                                    TheoryKeys.embedding(generator))));
+                }
+                cached = StructuralKey.branch(
+                        "typed-symmetry-canonical-presentation-v1", children);
+                structuralKey = cached;
+            }
+            return cached;
+        }
     }
 
     @Override
@@ -345,18 +336,17 @@ public final class TypedSymmetryGroup {
             return false;
         }
         TypedSymmetryGroup group = (TypedSymmetryGroup) other;
-        return context.equals(group.context)
-                && elements.equals(group.elements);
+        return structuralKey().equals(group.structuralKey());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(context, elements);
+        return structuralKey().hashCode();
     }
 
     @Override
     public String toString() {
-        return "G(" + context + ")=" + elements;
+        return "G(" + context + ")=<" + generators + ">";
     }
 
     private static final class CertifiedStep {

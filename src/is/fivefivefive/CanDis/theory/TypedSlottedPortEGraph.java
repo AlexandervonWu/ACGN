@@ -20,9 +20,14 @@ public final class TypedSlottedPortEGraph {
     private static final String ENGINE_IDENTIFIER = "typed-slotted-port-egraph";
     private final NavigableMap<EClassId, TypedEClassRecord> classes = new TreeMap<>();
     private final TypedRenamedUnionFind unionFind = new TypedRenamedUnionFind();
-    private final NavigableMap<CanonicalShape, EClassId> hashCons = new TreeMap<>();
+    private final NavigableMap<CanonicalShape, NavigableSet<EClassId>> hashCons =
+            new TreeMap<>();
+    private final NavigableMap<CollisionPairKey, Long> incompatibleCollisions =
+            new TreeMap<>();
     private final NavigableMap<ParentRecordKey, TypedEqualityCertificate>
             shapeCertificates = new TreeMap<>();
+    private final NavigableMap<ParentRecordKey, RetiredShapeRecordCertificate>
+            retiredShapeRecords = new TreeMap<>();
     private final NavigableMap<EClassId, NavigableSet<ParentRecordKey>>
             parentUses = new TreeMap<>();
     private final NavigableSet<ParentRecordKey> dirtyParents = new TreeSet<>();
@@ -31,32 +36,67 @@ public final class TypedSlottedPortEGraph {
     private final NavigableMap<EClassId, CertifiedInsertionResult>
             insertionHistory = new TreeMap<>();
     private final GraphCertificateMode certificateMode;
+    private final SemanticProfile semanticProfile;
     private final CertificateTraceSink traceSink;
     private GraphStatus status = GraphStatus.QUIESCENT;
     private long coherenceRevision;
+    private long collisionOrientationAttempts;
+    private long hashIndexRebuilds;
     private long traceSequence;
     private boolean rebuildActive;
     private ParentRecordKey rebuildingRecord;
 
     public TypedSlottedPortEGraph() {
-        this(GraphCertificateMode.REQUIRED, NoOpCertificateTraceSink.instance());
+        this(
+                GraphCertificateMode.REQUIRED,
+                SemanticProfile.alloyOverflowForbidding(),
+                NoOpCertificateTraceSink.instance());
     }
 
     /** Explicit proof-retaining construction; ordinary callers use the no-op default. */
     public TypedSlottedPortEGraph(CertificateTraceSink traceSink) {
-        this(GraphCertificateMode.REQUIRED, traceSink);
+        this(
+                GraphCertificateMode.REQUIRED,
+                SemanticProfile.alloyOverflowForbidding(),
+                traceSink);
+    }
+
+    public TypedSlottedPortEGraph(
+            SemanticProfile semanticProfile,
+            CertificateTraceSink traceSink) {
+        this(GraphCertificateMode.REQUIRED, semanticProfile, traceSink);
     }
 
     private TypedSlottedPortEGraph(
             GraphCertificateMode certificateMode,
+            SemanticProfile semanticProfile,
             CertificateTraceSink traceSink) {
         this.certificateMode = Objects.requireNonNull(certificateMode, "certificateMode");
+        this.semanticProfile = semanticProfile;
+        if (certificateMode == GraphCertificateMode.REQUIRED) {
+            Objects.requireNonNull(semanticProfile, "semanticProfile");
+            if (!semanticProfile.isAdmissibleAlloyProfile()) {
+                throw new IllegalArgumentException(
+                        "A strict graph requires an admitted Alloy semantic profile");
+            }
+        } else if (semanticProfile != null) {
+            throw new IllegalArgumentException(
+                    "A structural fixture must not claim production profile authority");
+        }
         this.traceSink = Objects.requireNonNull(traceSink, "traceSink");
     }
 
     static TypedSlottedPortEGraph structuralFixture() {
         return new TypedSlottedPortEGraph(
                 GraphCertificateMode.STRUCTURAL_FIXTURE,
+                null,
+                NoOpCertificateTraceSink.instance());
+    }
+
+    static TypedSlottedPortEGraph certifiedFixture() {
+        return new TypedSlottedPortEGraph(
+                GraphCertificateMode.TEST_ONLY,
+                null,
                 NoOpCertificateTraceSink.instance());
     }
 
@@ -84,6 +124,14 @@ public final class TypedSlottedPortEGraph {
         return certificateMode;
     }
 
+    public SemanticProfile semanticProfile() {
+        if (semanticProfile == null) {
+            throw new IllegalStateException(
+                    "A structural fixture has no production semantic profile");
+        }
+        return semanticProfile;
+    }
+
     /**
      * Phase D setup primitive retained only for structural gate fixtures; the
      * strict graph uses the certified insertion path below.
@@ -95,7 +143,7 @@ public final class TypedSlottedPortEGraph {
 
     /** Empty-class setup for exercising the Phase F transition boundary before insertion. */
     synchronized void registerEmptyClassForPhaseF(TypedEClassInterface eclass) {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "Phase F setup requires certificate-enforcing graph mode");
         }
@@ -109,15 +157,24 @@ public final class TypedSlottedPortEGraph {
      * for every stored shape. This remains the fixed-batch counterpart of the
      * source-level insertion wrapper for witness-dependent {@code d_n^w}.
      */
-    public synchronized void admitFixedBatchRecordCertified(
+    synchronized void admitFixedBatchRecordCertified(
             TypedEClassRecord record,
             Map<CanonicalShape, ? extends TypedEqualityCertificate> certificates) {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        admitFixedBatchRecordCertified(
+                record, certificates, Collections.emptyMap());
+    }
+
+    synchronized void admitFixedBatchRecordCertified(
+            TypedEClassRecord record,
+            Map<CanonicalShape, ? extends TypedEqualityCertificate> certificates,
+            Map<CanonicalShape, ? extends TypedEqualityCertificate> constructions) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "Certified fixed-batch admission requires strict graph mode");
         }
         TypedEClassRecord checkedRecord = Objects.requireNonNull(record, "record");
         Objects.requireNonNull(certificates, "certificates");
+        Objects.requireNonNull(constructions, "constructions");
         if (status != GraphStatus.QUIESCENT) {
             throw new IllegalStateException(
                     "A fixed-batch record can be admitted only between rebuild epochs");
@@ -126,20 +183,42 @@ public final class TypedSlottedPortEGraph {
             throw new IllegalArgumentException(
                     "Certified admission requires exactly one equation per stored shape");
         }
+        java.util.Set<CanonicalShape> requiredConstructions = new java.util.TreeSet<>();
+        if (certificateMode == GraphCertificateMode.REQUIRED) {
+            for (CanonicalShape shape : checkedRecord.shapeWitnesses().keySet()) {
+                if (!shape.node().operator().containerLaws().isEmpty()) {
+                    requiredConstructions.add(shape);
+                }
+            }
+        }
+        if (!requiredConstructions.equals(constructions.keySet())) {
+            throw new IllegalArgumentException(
+                    "Fixed-batch source constructions must exactly cover law-bearing shapes");
+        }
         checkedRecord.symmetryGroup().requireCertifiedFor(
                 checkedRecord.interfaceView());
         validateStoredInvocations(checkedRecord);
         for (CanonicalShape shape : checkedRecord.shapeWitnesses().keySet()) {
             requireCertifiedNodeTheory(shape.node());
+            TypedEqualityCertificate construction = constructions.get(shape);
+            if (construction == null) {
+                requireConcreteConstruction(shape.node(), null);
+            } else {
+                TypedENode constructionTarget = concreteConstructionTarget(construction);
+                requireCertifiedNodeTheory(constructionTarget);
+                requireConcreteConstruction(constructionTarget, construction);
+                if (!canonicalizeWithConstructionReadOnly(
+                        constructionTarget, construction)
+                        .shape().equals(shape)) {
+                    throw new IllegalArgumentException(
+                            "Fixed-batch construction normalizes to another shape");
+                }
+            }
             for (EClassId child : invocationIds(shape.node())) {
                 if (!unionFind.isLeader(child)) {
                     throw new IllegalArgumentException(
                             "Fixed-batch admission is bottom-up and requires leader children");
                 }
-            }
-            if (hashCons.containsKey(shape)) {
-                throw new IllegalArgumentException(
-                        "Use certified collision union instead of admitting a duplicate key");
             }
             EffectiveShapeCollisionCertificate.orientShapeEquation(
                     shape,
@@ -161,8 +240,11 @@ public final class TypedSlottedPortEGraph {
                     checkedRecord,
                     checkedRecord.shapeWitnesses().get(shape),
                     certificates.get(shape)));
-            hashCons.put(shape, checkedRecord.id());
+            addHashOwner(shape, checkedRecord.id());
             indexRecord(key);
+        }
+        for (CanonicalShape shape : checkedRecord.shapeWitnesses().keySet()) {
+            resolveShapeCollisions(shape);
         }
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
@@ -177,18 +259,10 @@ public final class TypedSlottedPortEGraph {
             throw new IllegalArgumentException("Duplicate e-class id: " + record.id());
         }
         validateStoredInvocations(record);
-        for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
-            EClassId owner = hashCons.get(shape);
-            if (owner != null) {
-                throw new IllegalArgumentException(
-                        "Two quiescent leaders cannot own the same canonical shape: " + owner);
-            }
-        }
-
         unionFind.register(record.interfaceView());
         classes.put(record.id(), record);
         for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
-            hashCons.put(shape, record.id());
+            addHashOwner(shape, record.id());
             indexRecord(new ParentRecordKey(record.id(), shape));
         }
         checkInvariants();
@@ -222,14 +296,14 @@ public final class TypedSlottedPortEGraph {
                     "Certified union endpoints must be current distinct leaders");
         }
         CertificateTraceSnapshot before = traceSnapshot();
-        ParentStep step = unionCertifiedInternal(checked);
+        UnionMutation mutation = unionCertifiedInternal(checked);
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
         appendTrace(
                 CertificateTraceEvent.Kind.UNION,
                 before,
-                new CertificateTracePayload.Union(checked));
-        return step;
+                mutation.trace.withRevisionIncrement());
+        return mutation.step;
     }
 
     /** Adds one separately certified generator; endpoint equality alone is insufficient. */
@@ -304,7 +378,7 @@ public final class TypedSlottedPortEGraph {
     /** Performs the sole atomic interface-narrowing transition. */
     public synchronized void restrictInterfaceCertified(
             InterfaceRestrictionCertificate certificate) {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "Interface restriction requires strict certificate mode");
         }
@@ -361,7 +435,7 @@ public final class TypedSlottedPortEGraph {
                 Objects.requireNonNull(invocation, "invocation"), true);
         checkInvariants();
         if (traceSink.enabled()
-                && !before.stateKey().equals(stateStructuralKey())) {
+                && !before.stateKey().equals(traceSnapshot().stateKey())) {
             appendTrace(
                     CertificateTraceEvent.Kind.PATH_COMPRESSION,
                     before,
@@ -372,13 +446,59 @@ public final class TypedSlottedPortEGraph {
 
     /** Canonicalizes one exact-support flat node against this quiescent graph. */
     public synchronized CanonicalizationResult canonicalize(TypedENode node) {
+        return canonicalizeWithConstruction(
+                Objects.requireNonNull(node, "node"), null);
+    }
+
+    public synchronized CanonicalizationResult canonicalizeConstructed(
+            CertifiedFlatConstruction construction) {
+        Objects.requireNonNull(construction, "construction");
+        if (construction.collapsedToSingleton()) {
+            throw new IllegalArgumentException(
+                    "A smart-collapsed singleton has no operator node to canonicalize");
+        }
+        return canonicalizeWithConstruction(
+                construction.node(), construction.certificate());
+    }
+
+    public synchronized CanonicalizationResult canonicalizeConstructed(
+            CertifiedContainerConstruction construction) {
+        Objects.requireNonNull(construction, "construction");
+        return canonicalizeWithConstruction(
+                construction.node(), construction.certificate());
+    }
+
+    private CanonicalizationResult canonicalizeWithConstruction(
+            TypedENode node,
+            TypedEqualityCertificate construction) {
+        requireCertifiedNodeTheory(node);
+        requireConcreteConstruction(node, construction);
+        TypedENode exact = construction == null
+                ? node : node.inExactSupportContext();
+        return ProductionGraphCanonicalizer.instance().canonicalize(this, exact);
+    }
+
+    /** Validation-only canonicalization; rejected admissions must not compress paths. */
+    private CanonicalizationResult canonicalizeWithConstructionReadOnly(
+            TypedENode node,
+            TypedEqualityCertificate construction) {
+        requireCertifiedNodeTheory(node);
+        requireConcreteConstruction(node, construction);
+        TypedENode exact = construction == null
+                ? node : node.inExactSupportContext();
+        return ProductionGraphCanonicalizer.instance()
+                .canonicalizeWithoutCompression(this, exact);
+    }
+
+    /** Replays an already stored/proved target without claiming a new source occurrence. */
+    synchronized CanonicalizationResult canonicalizeStoredNode(TypedENode node) {
         requireCertifiedNodeTheory(Objects.requireNonNull(node, "node"));
         return ProductionGraphCanonicalizer.instance().canonicalize(this, node);
     }
 
     /** Captures the compact EC/PC/SC witness family of one quiescent prefix. */
     public synchronized CoherentWitnessFamily coherentWitnessFamily() {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "Coherent witnesses require the strict certificate graph");
         }
@@ -402,7 +522,7 @@ public final class TypedSlottedPortEGraph {
     }
 
     synchronized void requireCurrentWitnessFamily(CoherentWitnessFamily family) {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "Witness-dependent replay requires strict certificate mode");
         }
@@ -433,12 +553,42 @@ public final class TypedSlottedPortEGraph {
     public synchronized CertifiedCanonicalizationResult canonicalizeCertified(
             TypedENode node,
             CoherentWitnessFamily family) {
+        return canonicalizeCertifiedWithConstruction(node, family, null);
+    }
+
+    public synchronized CertifiedCanonicalizationResult
+            canonicalizeCertifiedConstructed(
+                    CertifiedFlatConstruction construction,
+                    CoherentWitnessFamily family) {
+        Objects.requireNonNull(construction, "construction");
+        if (construction.collapsedToSingleton()) {
+            throw new IllegalArgumentException(
+                    "A smart-collapsed singleton has no operator node to canonicalize");
+        }
+        return canonicalizeCertifiedWithConstruction(
+                construction.node(), family, construction.certificate());
+    }
+
+    public synchronized CertifiedCanonicalizationResult
+            canonicalizeCertifiedConstructed(
+                    CertifiedContainerConstruction construction,
+                    CoherentWitnessFamily family) {
+        Objects.requireNonNull(construction, "construction");
+        return canonicalizeCertifiedWithConstruction(
+                construction.node(), family, construction.certificate());
+    }
+
+    private CertifiedCanonicalizationResult canonicalizeCertifiedWithConstruction(
+            TypedENode node,
+            CoherentWitnessFamily family,
+            TypedEqualityCertificate construction) {
         requireCurrentWitnessFamily(Objects.requireNonNull(family, "family"));
-        CanonicalizationResult structural = canonicalize(
-                Objects.requireNonNull(node, "node"));
+        CanonicalizationResult structural = canonicalizeWithConstruction(
+                Objects.requireNonNull(node, "node"), construction);
         KernelReplayCertificate replay = KernelReplayCertificate.create(
                 this, family, structural.leaderKernel());
-        return new CertifiedCanonicalizationResult(structural, replay);
+        return new CertifiedCanonicalizationResult(
+                structural, replay, construction);
     }
 
     /**
@@ -449,6 +599,41 @@ public final class TypedSlottedPortEGraph {
     public synchronized CertifiedInsertionResult insertNode(
             TypedENode node,
             CoherentWitnessFamily family) {
+        return insertNodeWithConstruction(node, family, null);
+    }
+
+    public synchronized CertifiedInsertionResult insertNodeConstructed(
+            CertifiedFlatConstruction construction,
+            CoherentWitnessFamily family) {
+        Objects.requireNonNull(construction, "construction");
+        if (construction.collapsedToSingleton()) {
+            throw new IllegalArgumentException(
+                    "A smart-collapsed singleton has no operator node to insert");
+        }
+        return insertNodeWithConstruction(
+                construction.node(), family, construction.certificate());
+    }
+
+    public synchronized CertifiedInsertionResult insertNodeConstructed(
+            CertifiedContainerConstruction construction,
+            CoherentWitnessFamily family) {
+        Objects.requireNonNull(construction, "construction");
+        return insertNodeWithConstruction(
+                construction.node(), family, construction.certificate());
+    }
+
+    public synchronized CertifiedInsertionResult insertNodeConstructed(
+            CertifiedDependentChainConstruction construction,
+            CoherentWitnessFamily family) {
+        Objects.requireNonNull(construction, "construction");
+        return insertNodeWithConstruction(
+                construction.node(), family, construction.certificate());
+    }
+
+    private CertifiedInsertionResult insertNodeWithConstruction(
+            TypedENode node,
+            CoherentWitnessFamily family,
+            TypedEqualityCertificate construction) {
         CertificateTraceSnapshot before = traceSnapshot();
         TypedENode source = Objects.requireNonNull(node, "node");
         requireCurrentWitnessFamily(Objects.requireNonNull(family, "family"));
@@ -457,9 +642,11 @@ public final class TypedSlottedPortEGraph {
             validatePortInvocations(port, false);
         }
 
-        CertifiedCanonicalizationResult certified = canonicalizeCertified(
-                source, family);
+        CertifiedCanonicalizationResult certified =
+                canonicalizeCertifiedWithConstruction(
+                        source, family, construction);
         CanonicalizationResult structural = certified.structural();
+        source = structural.source();
         EClassId freshId = nextEClassId();
         TypedEClassInterface fresh = new TypedEClassInterface(
                 freshId,
@@ -496,32 +683,30 @@ public final class TypedSlottedPortEGraph {
                 TypedCertificateEndpoint.invocation(freshInSource));
         CertificateVerifier.verify(sourceToFresh);
 
-        EClassId existingOwner = hashCons.get(structural.shape());
-        ParentEdgeCertificate collision = null;
-        if (existingOwner != null) {
-            TypedEClassRecord existing = eclass(existingOwner);
-            collision = collisionParentEdge(
-                    structural.shape(),
-                    freshRecord,
-                    shapeEquation,
-                    existing,
-                    requireShapeCertificate(new ParentRecordKey(
-                            existing.id(), structural.shape())));
-        }
+        ParentEdgeCertificate collision = firstCollisionWithOwners(
+                structural.shape(), freshRecord, shapeEquation);
 
-        TypedInvocation expectedReturned = freshInSource;
-        TypedEqualityCertificate expectedSourceToReturned = sourceToFresh;
-        if (collision != null && collision.child().equals(fresh)) {
-            expectedReturned = collision.parentInvocation().act(
-                    structural.inclusion());
-            expectedSourceToReturned = EqualityCertificates.transitive(
-                    sourceToFresh,
-                    EqualityCertificates.rename(collision, structural.inclusion()));
-            CertificateVerifier.verify(expectedSourceToReturned);
-        } else if (collision != null && !collision.parent().equals(fresh)) {
-            throw new IllegalStateException(
-                    "A prospective insertion collision does not contain the fresh class");
+        unionFind.register(fresh);
+        classes.put(freshId, freshRecord);
+        ParentRecordKey freshKey = new ParentRecordKey(freshId, structural.shape());
+        shapeCertificates.put(freshKey, shapeEquation);
+        indexRecord(freshKey);
+        addHashOwner(structural.shape(), freshId);
+        List<CertificateTracePayload.Union> generatedUnions = new ArrayList<>();
+        if (collision != null) {
+            generatedUnions.add(unionCertifiedInternal(collision).trace);
         }
+        generatedUnions.addAll(resolveShapeCollisionsDetailed(
+                structural.shape(), false));
+
+        TypedFindResult returned = findNormalized(freshInSource, true);
+        compressAllParentPaths();
+        TypedEqualityCertificate sourceToReturned = returned.leaderInvocation()
+                        .equals(freshInSource)
+                ? sourceToFresh
+                : EqualityCertificates.transitive(
+                        sourceToFresh, returned.parentCertificate());
+        CertificateVerifier.verify(sourceToReturned);
         CertifiedInsertionResult insertion = new CertifiedInsertionResult(
                 certified,
                 fresh,
@@ -531,25 +716,8 @@ public final class TypedSlottedPortEGraph {
                 shapeEquation,
                 sourceToFresh,
                 collision,
-                expectedReturned,
-                expectedSourceToReturned);
-
-        unionFind.register(fresh);
-        classes.put(freshId, freshRecord);
-        ParentRecordKey freshKey = new ParentRecordKey(freshId, structural.shape());
-        shapeCertificates.put(freshKey, shapeEquation);
-        indexRecord(freshKey);
-        if (collision == null) {
-            hashCons.put(structural.shape(), freshId);
-        } else {
-            unionCertifiedInternal(collision);
-        }
-
-        TypedFindResult returned = findNormalized(freshInSource, true);
-        if (!returned.leaderInvocation().equals(expectedReturned)) {
-            throw new IllegalStateException(
-                    "Certified collision and union-find return different leaders");
-        }
+                returned.leaderInvocation(),
+                sourceToReturned);
         insertionHistory.put(freshId, insertion);
         coherenceRevision = Math.incrementExact(coherenceRevision);
         checkInvariants();
@@ -558,8 +726,84 @@ public final class TypedSlottedPortEGraph {
                         ? CertificateTraceEvent.Kind.INSERT_FRESH
                         : CertificateTraceEvent.Kind.INSERT_COLLISION,
                 before,
-                new CertificateTracePayload.Insertion(insertion));
+                new CertificateTracePayload.Insertion(insertion, generatedUnions));
         return insertion;
+    }
+
+    private void requireConcreteConstruction(
+            TypedENode node,
+            TypedEqualityCertificate construction) {
+        if (certificateMode != GraphCertificateMode.REQUIRED) {
+            return;
+        }
+        boolean requiresConstruction = !node.operator().containerLaws().isEmpty();
+        if (!requiresConstruction) {
+            if (construction != null) {
+                throw new IllegalArgumentException(
+                        "A law-free node must not carry container-normalization evidence");
+            }
+            return;
+        }
+        if (construction == null) {
+            throw new IllegalStateException(
+                    "A production law-bearing node requires concrete source construction evidence");
+        }
+        CertificateVerifier.verify(construction);
+        if (!TypedCertificateEndpoint.node(node).equals(
+                construction.rightEndpoint())) {
+            throw new IllegalArgumentException(
+                    "Concrete source construction proves another target node");
+        }
+        if (construction instanceof FlatConstructionCertificate) {
+            FlatConstructionCertificate flat =
+                    (FlatConstructionCertificate) construction;
+            if (flat.collapsedToSingleton()
+                    || !semanticProfile.equals(flat.semanticProfile())) {
+                throw new IllegalArgumentException(
+                        "Flat construction target or profile does not match this graph");
+            }
+            return;
+        }
+        if (construction instanceof ContainerConstructionCertificate) {
+            ContainerConstructionCertificate container =
+                    (ContainerConstructionCertificate) construction;
+            if (!semanticProfile.equals(container.semanticProfile())) {
+                throw new IllegalArgumentException(
+                        "Container construction uses another semantic profile");
+            }
+            return;
+        }
+        if (construction instanceof DependentChainCertificate) {
+            DependentChainCertificate chain =
+                    (DependentChainCertificate) construction;
+            if (!semanticProfile.equals(chain.semanticProfile())) {
+                throw new IllegalArgumentException(
+                        "Dependent-chain construction uses another semantic profile");
+            }
+            return;
+        }
+        throw new IllegalArgumentException(
+                "A production law-bearing node requires an admitted concrete construction");
+    }
+
+    private static TypedENode concreteConstructionTarget(
+            TypedEqualityCertificate construction) {
+        if (construction instanceof FlatConstructionCertificate) {
+            FlatConstructionCertificate flat = (FlatConstructionCertificate) construction;
+            if (flat.collapsedToSingleton()) {
+                throw new IllegalArgumentException(
+                        "A singleton collapse cannot own a fixed-batch operator shape");
+            }
+            return flat.target();
+        }
+        if (construction instanceof ContainerConstructionCertificate) {
+            return ((ContainerConstructionCertificate) construction).target();
+        }
+        if (construction instanceof DependentChainCertificate) {
+            return ((DependentChainCertificate) construction).target();
+        }
+        throw new IllegalArgumentException(
+                "Fixed-batch construction evidence has the wrong certificate family");
     }
 
     private EClassId nextEClassId() {
@@ -569,9 +813,15 @@ public final class TypedSlottedPortEGraph {
     }
 
     /** Extracts the Phase DA exact leader kernel and structural provenance. */
-    public synchronized LeaderKernelResult extractLeaderKernel(TypedENode node) {
+    synchronized LeaderKernelResult extractLeaderKernel(TypedENode node) {
         requireCertifiedNodeTheory(Objects.requireNonNull(node, "node"));
         return LeaderKernelExtractor.instance().extract(this, node);
+    }
+
+    synchronized LeaderKernelResult extractLeaderKernelWithoutCompression(
+            TypedENode node) {
+        requireCertifiedNodeTheory(Objects.requireNonNull(node, "node"));
+        return LeaderKernelExtractor.instance().extractWithoutCompression(this, node);
     }
 
     synchronized TypedFindResult findWithoutCompressionForTesting(TypedInvocation invocation) {
@@ -627,7 +877,7 @@ public final class TypedSlottedPortEGraph {
         if (!record.interfaceView().equals(eclass)) {
             throw new IllegalArgumentException("Stale e-class interface in canonicalization");
         }
-        if (certificateMode == GraphCertificateMode.REQUIRED) {
+        if (requiresCertificates()) {
             record.symmetryGroup().requireCertifiedFor(eclass);
         }
         return record.symmetryGroup();
@@ -636,7 +886,7 @@ public final class TypedSlottedPortEGraph {
     synchronized BinderAutomorphismGroup binderGroupForCanonicalization(
             BinderBlockDescriptor descriptor) {
         Objects.requireNonNull(descriptor, "descriptor");
-        if (certificateMode == GraphCertificateMode.REQUIRED
+        if (requiresCertificates()
                 && !descriptor.hasCertifiedAutomorphisms()) {
             throw new IllegalStateException(
                     "Canonicalization cannot use an uncertified binder automorphism");
@@ -645,11 +895,18 @@ public final class TypedSlottedPortEGraph {
     }
 
     synchronized TypedFindResult findForCanonicalization(TypedInvocation invocation) {
+        return findForCanonicalization(invocation, true);
+    }
+
+    synchronized TypedFindResult findForCanonicalization(
+            TypedInvocation invocation,
+            boolean allowCompression) {
         if (!rebuildActive) {
             requireQuiescent();
         }
         return findNormalized(
-                Objects.requireNonNull(invocation, "invocation"), !rebuildActive);
+                Objects.requireNonNull(invocation, "invocation"),
+                allowCompression && !rebuildActive);
     }
 
     /**
@@ -673,21 +930,50 @@ public final class TypedSlottedPortEGraph {
 
     public synchronized EClassId hashOwner(CanonicalShape shape) {
         requireQuiescent();
-        return hashCons.get(Objects.requireNonNull(shape, "shape"));
+        NavigableSet<EClassId> owners = hashCons.get(
+                Objects.requireNonNull(shape, "shape"));
+        return owners == null ? null : owners.first();
     }
 
+    /** Deterministic compatibility view selecting the least owner in each bucket. */
     public synchronized Map<CanonicalShape, EClassId> hashConsSnapshot() {
         requireQuiescent();
-        return Collections.unmodifiableMap(new LinkedHashMap<>(hashCons));
+        Map<CanonicalShape, EClassId> snapshot = new LinkedHashMap<>();
+        for (Map.Entry<CanonicalShape, NavigableSet<EClassId>> entry
+                : hashCons.entrySet()) {
+            snapshot.put(entry.getKey(), entry.getValue().first());
+        }
+        return Collections.unmodifiableMap(snapshot);
+    }
+
+    /** Total exact-shape ownership, including incomparable certified leaders. */
+    public synchronized Map<CanonicalShape, Set<EClassId>> hashBucketsSnapshot() {
+        requireQuiescent();
+        Map<CanonicalShape, Set<EClassId>> snapshot = new LinkedHashMap<>();
+        for (Map.Entry<CanonicalShape, NavigableSet<EClassId>> entry
+                : hashCons.entrySet()) {
+            snapshot.put(entry.getKey(), Collections.unmodifiableSet(
+                    new LinkedHashSet<>(entry.getValue())));
+        }
+        return Collections.unmodifiableMap(snapshot);
     }
 
     public synchronized int dirtyParentCount() {
         return dirtyParents.size();
     }
 
+    synchronized long collisionOrientationAttemptsForTesting() {
+        return collisionOrientationAttempts;
+    }
+
     public synchronized Map<ParentRecordKey, TypedEqualityCertificate>
             shapeCertificatesSnapshot() {
         return Collections.unmodifiableMap(new LinkedHashMap<>(shapeCertificates));
+    }
+
+    public synchronized Map<ParentRecordKey, RetiredShapeRecordCertificate>
+            retiredShapeRecordsSnapshot() {
+        return Collections.unmodifiableMap(new LinkedHashMap<>(retiredShapeRecords));
     }
 
     /** Source-level provenance retained independently of current leader ownership. */
@@ -716,7 +1002,7 @@ public final class TypedSlottedPortEGraph {
     }
 
     private RebuildReport rebuild(boolean reverseOrder) {
-        if (certificateMode != GraphCertificateMode.REQUIRED) {
+        if (!requiresCertificates()) {
             throw new IllegalStateException(
                     "The Phase G rebuild is available only in strict certificate mode");
         }
@@ -733,50 +1019,102 @@ public final class TypedSlottedPortEGraph {
         int collisions = 0;
         int unions = 0;
         int maximumDirty = dirtyParents.size();
+        List<CertificateTracePayload.Union> generatedUnions = new ArrayList<>();
+        List<CertificateTracePayload.RebuildRecord> processedTransitions =
+                new ArrayList<>();
+        long firstRebuildEvent = traceSequence;
+        if (traceSink.enabled()) {
+            CertificateTraceSnapshot beforeStart = traceSnapshot();
+            appendTrace(
+                    CertificateTraceEvent.Kind.REBUILD_START,
+                    beforeStart,
+                    new CertificateTracePayload.RebuildStart(
+                            beforeStart.stateKey()));
+        }
         rebuildActive = true;
         try {
-            while (!dirtyParents.isEmpty()) {
-                maximumDirty = Math.max(maximumDirty, dirtyParents.size());
-                ParentRecordKey key = reverseOrder
-                        ? dirtyParents.pollLast()
-                        : dirtyParents.pollFirst();
-                if (!recordExists(key)) {
-                    continue;
-                }
-                rebuildingRecord = key;
-                CertificateTraceSnapshot beforeRecord = traceSnapshot();
-                RebuildStepResult step;
-                try {
-                    step = rebuildRecord(key);
-                } catch (RuntimeException exception) {
-                    if (recordExists(key)) {
-                        dirtyParents.add(key);
+            while (true) {
+                while (!dirtyParents.isEmpty()) {
+                    maximumDirty = Math.max(maximumDirty, dirtyParents.size());
+                    ParentRecordKey key = reverseOrder
+                            ? dirtyParents.last()
+                            : dirtyParents.first();
+                    CertificateTraceSnapshot beforeRecord = traceSnapshot();
+                    dirtyParents.remove(key);
+                    if (!recordExists(key)) {
+                        throw new IllegalStateException(
+                                "Dirty queue lost its live parent record before rebuild");
                     }
-                    throw exception;
-                } finally {
-                    rebuildingRecord = null;
+                    rebuildingRecord = key;
+                    RebuildStepResult step;
+                    try {
+                        step = rebuildRecord(key);
+                    } catch (RuntimeException exception) {
+                        if (recordExists(key)) {
+                            dirtyParents.add(key);
+                        }
+                        throw exception;
+                    } finally {
+                        rebuildingRecord = null;
+                    }
+                    processed++;
+                    changed += step.changed ? 1 : 0;
+                    collisions = Math.addExact(
+                            collisions, step.generatedSubtransitions.size());
+                    unions = Math.addExact(
+                            unions, step.generatedSubtransitions.size());
+                    generatedUnions.addAll(step.generatedSubtransitions);
+                    processedTransitions.add(step.trace);
+                    checkInvariants();
+                    appendTrace(
+                            CertificateTraceEvent.Kind.REBUILD_RECORD,
+                            beforeRecord,
+                            step.trace);
                 }
-                processed++;
-                changed += step.changed ? 1 : 0;
-                collisions += step.collision ? 1 : 0;
-                unions += step.union ? 1 : 0;
-                checkInvariants();
-                appendTrace(
-                        CertificateTraceEvent.Kind.REBUILD_RECORD,
-                        beforeRecord,
-                        new CertificateTracePayload.RebuildRecord(
-                                key, step.changed, step.collision, step.union));
+                List<CertificateTracePayload.Union> resolvedTransitions =
+                        resolveAllShapeCollisionsDetailed(true);
+                int resolved = resolvedTransitions.size();
+                generatedUnions.addAll(resolvedTransitions);
+                collisions = Math.addExact(collisions, resolved);
+                unions = Math.addExact(unions, resolved);
+                if (resolved == 0 && dirtyParents.isEmpty()) {
+                    // Quiescence is certified from a fresh compatibility pass,
+                    // never solely from previously cached negative attempts.
+                    incompatibleCollisions.clear();
+                    List<CertificateTracePayload.Union> freshTransitions =
+                            resolveAllShapeCollisionsDetailed(true);
+                    int freshResolved = freshTransitions.size();
+                    generatedUnions.addAll(freshTransitions);
+                    collisions = Math.addExact(collisions, freshResolved);
+                    unions = Math.addExact(unions, freshResolved);
+                    if (freshResolved == 0 && dirtyParents.isEmpty()) {
+                        break;
+                    }
+                }
             }
-            requireCollisionFreeLeaderKeys();
+            requireHashBucketsExact();
             CertificateTraceSnapshot beforeCompletion = traceSnapshot();
+            // Reconstruct from the authoritative live records instead of
+            // trusting the incrementally maintained index at the boundary.
+            // This makes the final rebuild a semantic operation: omitting it
+            // leaves an observably incomplete owner index.
+            hashCons.clear();
             rebuildHashConsExactly();
+            requireHashBucketsExact();
             status = GraphStatus.QUIESCENT;
             if (changed != 0 || collisions != 0 || unions != 0) {
                 coherenceRevision = Math.incrementExact(coherenceRevision);
             }
             checkInvariants();
             RebuildReport report = new RebuildReport(
-                    processed, changed, collisions, unions, maximumDirty);
+                    processed,
+                    changed,
+                    collisions,
+                    unions,
+                    maximumDirty,
+                    generatedUnions,
+                    firstRebuildEvent,
+                    processedTransitions);
             appendTrace(
                     CertificateTraceEvent.Kind.REBUILD_COMPLETE,
                     beforeCompletion,
@@ -799,9 +1137,12 @@ public final class TypedSlottedPortEGraph {
         }
         ShapeWitness oldWitness = owner.shapeWitnesses().get(key.shape());
         if (oldWitness == null) {
-            return RebuildStepResult.unchanged();
+            throw new IllegalStateException(
+                    "A selected dirty record disappeared before canonicalization");
         }
         TypedEqualityCertificate oldEquation = requireShapeCertificate(key);
+        CertificateTracePayload.ShapeRecord oldRecord = shapeRecord(
+                key, owner, oldWitness, oldEquation);
         TypedENode source = key.shape().node().act(
                 oldWitness.instantiatingRenaming());
         CanonicalizationResult result = ProductionGraphCanonicalizer.instance()
@@ -835,51 +1176,179 @@ public final class TypedSlottedPortEGraph {
                 newOwner,
                 effectiveInOldAmbient);
 
-        EClassId prospectiveCollisionOwner = hashCons.get(result.shape());
-        ParentEdgeCertificate prospectiveCollision = null;
-        if (prospectiveCollisionOwner != null
-                && !prospectiveCollisionOwner.equals(owner.id())) {
-            TypedEClassRecord prospectiveOwner = owner.withoutStoredShape(key.shape());
-            TypedEqualityCertificate prospectiveEquation = newEquation;
-            if (prospectiveOwner.shapeWitnesses().containsKey(result.shape())) {
-                prospectiveEquation = requireShapeCertificate(
-                        new ParentRecordKey(owner.id(), result.shape()));
-            } else {
-                prospectiveOwner = prospectiveOwner.withStoredShape(
-                        result.shape(), newWitness);
-            }
-            TypedEClassRecord other = eclass(prospectiveCollisionOwner);
-            prospectiveCollision = collisionParentEdge(
-                    result.shape(),
-                    prospectiveOwner,
-                    prospectiveEquation,
-                    other,
-                    requireShapeCertificate(new ParentRecordKey(
-                            other.id(), result.shape())));
-        }
-
         removeStoredRecord(key);
         ParentRecordKey replacementKey = new ParentRecordKey(
                 owner.id(), result.shape());
         boolean duplicateInOwner = recordExists(replacementKey);
+        CertificateTracePayload.ShapeRecord replacement = shapeRecord(
+                replacementKey, owner, newWitness, newEquation);
+        RetiredShapeRecordCertificate retirement = null;
         if (!duplicateInOwner) {
             installStoredRecord(
                     owner.id(), result.shape(), newWitness, newEquation);
+            replacement = shapeRecord(
+                    replacementKey,
+                    eclass(owner.id()),
+                    eclass(owner.id()).shapeWitnesses().get(result.shape()),
+                    requireShapeCertificate(replacementKey));
+        } else {
+            CertificateTracePayload.ShapeRecord retained = shapeRecord(
+                    replacementKey,
+                    eclass(owner.id()),
+                    eclass(owner.id()).shapeWitnesses().get(result.shape()),
+                    requireShapeCertificate(replacementKey));
+            retirement = RetiredShapeRecordCertificate.rebuildDuplicate(
+                    oldRecord,
+                    replacement,
+                    retained,
+                    result,
+                    rebuildEquation);
+            RetiredShapeRecordCertificate prior = retiredShapeRecords.putIfAbsent(
+                    key, retirement);
+            if (prior != null && !prior.structuralKey().equals(
+                    retirement.structuralKey())) {
+                throw new IllegalStateException(
+                        "One rebuilt record has conflicting retirement evidence");
+            }
         }
         boolean changed = !key.shape().equals(result.shape())
                 || !oldWitness.equals(newWitness)
                 || duplicateInOwner;
+        List<CertificateTracePayload.Union> generatedUnions =
+                resolveShapeCollisionsDetailed(result.shape(), false);
+        int unions = generatedUnions.size();
+        CertificateTracePayload.RebuildRecord trace =
+                new CertificateTracePayload.RebuildRecord(
+                        oldRecord,
+                        result,
+                        rebuildEquation,
+                        duplicateInOwner ? null : replacement,
+                        retirement,
+                        generatedUnions,
+                        changed || unions != 0);
+        return new RebuildStepResult(
+                changed || unions != 0,
+                trace,
+                generatedUnions);
+    }
 
-        EClassId collisionOwner = hashCons.get(result.shape());
-        if (prospectiveCollision == null && collisionOwner == null) {
-            hashCons.put(result.shape(), owner.id());
-            return new RebuildStepResult(changed, false, false);
+    private ParentEdgeCertificate firstCollisionWithOwners(
+            CanonicalShape shape,
+            TypedEClassRecord candidate,
+            TypedEqualityCertificate candidateEquation) {
+        NavigableSet<EClassId> owners = hashCons.get(shape);
+        if (owners == null) {
+            return null;
         }
-        if (prospectiveCollision == null && collisionOwner.equals(owner.id())) {
-            return new RebuildStepResult(changed, false, false);
+        for (EClassId ownerId : new ArrayList<>(owners)) {
+            if (ownerId.equals(candidate.id()) || !unionFind.isLeader(ownerId)) {
+                continue;
+            }
+            TypedEClassRecord owner = eclass(ownerId);
+            if (!owner.shapeWitnesses().containsKey(shape)) {
+                continue;
+            }
+            ParentEdgeCertificate collision = collisionParentEdge(
+                    shape,
+                    candidate,
+                    candidateEquation,
+                    owner,
+                    requireShapeCertificate(new ParentRecordKey(ownerId, shape)));
+            if (collision != null) {
+                return collision;
+            }
         }
-        unionCertifiedInternal(prospectiveCollision);
-        return new RebuildStepResult(true, true, true);
+        return null;
+    }
+
+    /** Resolves every provable pair and leaves incomparable leaders in the bucket. */
+    private int resolveShapeCollisions(CanonicalShape shape) {
+        return resolveShapeCollisionsDetailed(shape, false).size();
+    }
+
+    private List<CertificateTracePayload.Union> resolveShapeCollisionsDetailed(
+            CanonicalShape shape,
+            boolean emitTraceEvents) {
+        List<CertificateTracePayload.Union> unions = new ArrayList<>();
+        while (true) {
+            NavigableSet<EClassId> owners = hashCons.get(shape);
+            if (owners == null || owners.size() < 2) {
+                return unions;
+            }
+            List<EClassId> ordered = new ArrayList<>(owners);
+            ParentEdgeCertificate collision = null;
+            for (int left = 0; left < ordered.size() && collision == null; left++) {
+                EClassId leftId = ordered.get(left);
+                if (!unionFind.isLeader(leftId)) {
+                    removeHashOwner(shape, leftId);
+                    continue;
+                }
+                TypedEClassRecord leftRecord = eclass(leftId);
+                if (!leftRecord.shapeWitnesses().containsKey(shape)) {
+                    removeHashOwner(shape, leftId);
+                    continue;
+                }
+                for (int right = left + 1; right < ordered.size(); right++) {
+                    EClassId rightId = ordered.get(right);
+                    if (!unionFind.isLeader(rightId)) {
+                        removeHashOwner(shape, rightId);
+                        continue;
+                    }
+                    TypedEClassRecord rightRecord = eclass(rightId);
+                    if (!rightRecord.shapeWitnesses().containsKey(shape)) {
+                        removeHashOwner(shape, rightId);
+                        continue;
+                    }
+                    collision = collisionParentEdge(
+                            shape,
+                            leftRecord,
+                            requireShapeCertificate(new ParentRecordKey(leftId, shape)),
+                            rightRecord,
+                            requireShapeCertificate(new ParentRecordKey(rightId, shape)));
+                    if (collision != null) {
+                        break;
+                    }
+                }
+            }
+            if (collision == null) {
+                return unions;
+            }
+            CertificateTraceSnapshot before = emitTraceEvents
+                    ? traceSnapshot() : null;
+            UnionMutation mutation = unionCertifiedInternal(collision);
+            unions.add(mutation.trace);
+            if (emitTraceEvents) {
+                checkInvariants();
+                appendTrace(
+                        CertificateTraceEvent.Kind.UNION,
+                        before,
+                        mutation.trace);
+            }
+        }
+    }
+
+    private List<CertificateTracePayload.Union> resolveAllShapeCollisionsDetailed(
+            boolean emitTraceEvents) {
+        List<CertificateTracePayload.Union> unions = new ArrayList<>();
+        for (CanonicalShape shape : new ArrayList<>(hashCons.keySet())) {
+            unions.addAll(resolveShapeCollisionsDetailed(shape, emitTraceEvents));
+        }
+        return unions;
+    }
+
+    private void addHashOwner(CanonicalShape shape, EClassId owner) {
+        hashCons.computeIfAbsent(shape, ignored -> new TreeSet<>()).add(owner);
+    }
+
+    private void removeHashOwner(CanonicalShape shape, EClassId owner) {
+        NavigableSet<EClassId> owners = hashCons.get(shape);
+        if (owners == null) {
+            return;
+        }
+        owners.remove(owner);
+        if (owners.isEmpty()) {
+            hashCons.remove(shape);
+        }
     }
 
     private ParentEdgeCertificate collisionParentEdge(
@@ -888,34 +1357,46 @@ public final class TypedSlottedPortEGraph {
             TypedEqualityCertificate firstEquation,
             TypedEClassRecord second,
             TypedEqualityCertificate secondEquation) {
+        CollisionPairKey pair = new CollisionPairKey(shape, first.id(), second.id());
+        Long rejectedAt = incompatibleCollisions.get(pair);
+        if (rejectedAt != null && rejectedAt.longValue() == coherenceRevision) {
+            return null;
+        }
         EClassId preferredParent = first.id().compareTo(second.id()) < 0
                 ? first.id() : second.id();
         EClassId preferredChild = preferredParent.equals(first.id())
                 ? second.id() : first.id();
-        IllegalArgumentException firstFailure;
+        ParentEdgeCertificate preferred = null;
+        ParentEdgeCertificate opposite = null;
         try {
-            return collisionParentEdgeOriented(
+            preferred = collisionParentEdgeOriented(
                     shape,
                     preferredChild.equals(first.id()) ? first : second,
                     preferredChild.equals(first.id()) ? firstEquation : secondEquation,
                     preferredParent.equals(first.id()) ? first : second,
                     preferredParent.equals(first.id()) ? firstEquation : secondEquation);
-        } catch (IllegalArgumentException exception) {
-            firstFailure = exception;
+        } catch (EffectiveShapeCollisionCertificate.IncompatibleInterfaces exception) {
+            // The preferred directed embedding is not inhabited.
         }
         try {
-            return collisionParentEdgeOriented(
+            opposite = collisionParentEdgeOriented(
                     shape,
                     preferredParent.equals(first.id()) ? first : second,
                     preferredParent.equals(first.id()) ? firstEquation : secondEquation,
                     preferredChild.equals(first.id()) ? first : second,
                     preferredChild.equals(first.id()) ? firstEquation : secondEquation);
-        } catch (IllegalArgumentException exception) {
-            exception.addSuppressed(firstFailure);
-            throw new IllegalStateException(
-                    "Colliding exact shapes have no typed interface embedding; "
-                            + "an explicit certified restriction is required",
-                    exception);
+        } catch (EffectiveShapeCollisionCertificate.IncompatibleInterfaces exception) {
+            // The opposite directed embedding is not inhabited.
+        }
+        if (preferred != null) {
+            return preferred;
+        }
+        if (opposite != null) {
+            return opposite;
+        }
+        {
+            incompatibleCollisions.put(pair, coherenceRevision);
+            return null;
         }
     }
 
@@ -925,6 +1406,8 @@ public final class TypedSlottedPortEGraph {
             TypedEqualityCertificate childEquation,
             TypedEClassRecord parent,
             TypedEqualityCertificate parentEquation) {
+        collisionOrientationAttempts = Math.addExact(
+                collisionOrientationAttempts, 1L);
         EffectiveShapeCollisionCertificate collision =
                 EffectiveShapeCollisionCertificate.create(
                         shape,
@@ -941,7 +1424,7 @@ public final class TypedSlottedPortEGraph {
                 collision);
     }
 
-    private ParentStep unionCertifiedInternal(ParentEdgeCertificate certificate) {
+    private UnionMutation unionCertifiedInternal(ParentEdgeCertificate certificate) {
         ParentEdgeCertificate checked = Objects.requireNonNull(
                 certificate, "certificate");
         CertificateVerifier.verifyParentEdge(checked);
@@ -959,33 +1442,71 @@ public final class TypedSlottedPortEGraph {
         TypedSymmetryGroup mergedGroup = mergeStabilizingSymmetries(
                 child, parent, checked);
         TypedEClassRecord updatedParent = parent.withSymmetryGroup(mergedGroup);
+        List<CertificateTracePayload.ShapeRehome> rehomes = new ArrayList<>();
+        List<RetiredShapeRecordCertificate> retirements = new ArrayList<>();
         List<CanonicalShape> childShapes = new ArrayList<>(
                 child.shapeWitnesses().keySet());
         for (CanonicalShape shape : childShapes) {
             ParentRecordKey oldKey = new ParentRecordKey(child.id(), shape);
+            ShapeWitness oldWitness = child.shapeWitnesses().get(shape);
+            TypedEqualityCertificate oldEquation = requireShapeCertificate(oldKey);
+            CertificateTracePayload.ShapeRecord oldRecord = shapeRecord(
+                    oldKey, child, oldWitness, oldEquation);
             boolean wasDirty = dirtyParents.remove(oldKey);
             TransferredShape transferred = transferShapeToParent(
                     shape,
                     child,
-                    child.shapeWitnesses().get(shape),
-                    requireShapeCertificate(oldKey),
+                    oldWitness,
+                    oldEquation,
                     parent,
                     checked);
             unindexRecord(oldKey);
             shapeCertificates.remove(oldKey);
-            hashCons.remove(shape, child.id());
+            removeHashOwner(shape, child.id());
 
+            ParentRecordKey newKey = new ParentRecordKey(parent.id(), shape);
+            CertificateTracePayload.ShapeRecord replacementRecord = shapeRecord(
+                    newKey,
+                    parent,
+                    transferred.witness,
+                    transferred.equation);
             if (!updatedParent.shapeWitnesses().containsKey(shape)) {
                 updatedParent = updatedParent.withStoredShape(
                         shape, transferred.witness);
-                ParentRecordKey newKey = new ParentRecordKey(parent.id(), shape);
                 shapeCertificates.put(newKey, transferred.equation);
                 indexRecord(newKey);
+                rehomes.add(new CertificateTracePayload.ShapeRehome(
+                        oldRecord,
+                        shapeRecord(
+                                newKey,
+                                updatedParent,
+                                transferred.witness,
+                                requireShapeCertificate(newKey))));
                 if (wasDirty) {
                     dirtyParents.add(newKey);
                 }
+            } else {
+                CertificateTracePayload.ShapeRecord retainedRecord = shapeRecord(
+                        newKey,
+                        updatedParent,
+                        updatedParent.shapeWitnesses().get(shape),
+                        requireShapeCertificate(newKey));
+                RetiredShapeRecordCertificate retirement =
+                        RetiredShapeRecordCertificate.ownerUnion(
+                                oldRecord,
+                                replacementRecord,
+                                retainedRecord,
+                                checked);
+                RetiredShapeRecordCertificate prior = retiredShapeRecords.putIfAbsent(
+                        oldKey, retirement);
+                if (prior != null && !prior.structuralKey().equals(
+                        retirement.structuralKey())) {
+                    throw new IllegalStateException(
+                            "One owner-qualified record has conflicting retirement evidence");
+                }
+                retirements.add(retirement);
             }
-            hashCons.put(shape, parent.id());
+            addHashOwner(shape, parent.id());
         }
 
         classes.put(parent.id(), updatedParent);
@@ -997,7 +1518,10 @@ public final class TypedSlottedPortEGraph {
             markParentsDirty(parent.id());
         }
         status = GraphStatus.DIRTY;
-        return step;
+        return new UnionMutation(
+                step,
+                new CertificateTracePayload.Union(
+                        checked, rehomes, retirements));
     }
 
     private TransferredShape transferShapeToParent(
@@ -1073,19 +1597,18 @@ public final class TypedSlottedPortEGraph {
         return TypedSlot.of(type, SlotAlphabet.SOURCE, ordinal);
     }
 
-    private TypedSymmetryGroup mergeStabilizingSymmetries(
+    static TypedSymmetryGroup mergeStabilizingSymmetries(
             TypedEClassRecord child,
             TypedEClassRecord parent,
             ParentEdgeCertificate edge) {
-        TypedSymmetryGroup result = parent.symmetryGroup();
-        for (TypedPermutation childPermutation
-                : child.symmetryGroup().elements()) {
+        TypedSymmetryGroup[] result = {parent.symmetryGroup()};
+        child.symmetryGroup().forEachElement(childPermutation -> {
             TypedPermutation induced = inducedPermutation(
                     edge.embedding(), childPermutation);
             if (induced == null
                     || induced.equals(TypedPermutation.identity(parent.exposedSlots()))
-                    || result.contains(induced)) {
-                continue;
+                    || result[0].contains(induced)) {
+                return;
             }
             TypedEqualityCertificate childSymmetry = child.symmetryGroup()
                     .derivationFor(child.interfaceView(), childPermutation);
@@ -1103,24 +1626,31 @@ public final class TypedSlottedPortEGraph {
                     TypedInvocation.identity(parent.interfaceView()),
                     new TypedInvocation(parent.interfaceView(), induced),
                     restricted);
-            result = result.withCertifiedGenerator(
+            result[0] = result[0].withCertifiedGenerator(
                     parent.interfaceView(), transported);
-        }
-        return result;
+        });
+        return result[0];
     }
 
-    private TypedSymmetryGroup restrictSymmetryGroup(
+    private void compressAllParentPaths() {
+        for (EClassId id : new ArrayList<>(classes.keySet())) {
+            unionFind.findWithProvenance(
+                    TypedInvocation.identity(eclass(id).interfaceView()));
+        }
+    }
+
+    static TypedSymmetryGroup restrictSymmetryGroup(
             TypedEClassRecord original,
             InterfaceRestrictionCertificate restriction) {
         List<SymmetryCertificate> certificates = new ArrayList<>();
         TypedEClassInterface replacement = restriction.restrictedInterface();
-        for (TypedPermutation permutation : original.symmetryGroup().elements()) {
+        original.symmetryGroup().forEachElement(permutation -> {
             TypedPermutation induced = inducedPermutation(
                     restriction.inclusion(), permutation);
             if (induced == null
                     || induced.equals(TypedPermutation.identity(
                             replacement.exposedSlots()))) {
-                continue;
+                return;
             }
             TypedEqualityCertificate oldSymmetry = original.symmetryGroup()
                     .derivationFor(original.interfaceView(), permutation);
@@ -1140,7 +1670,7 @@ public final class TypedSlottedPortEGraph {
                     TypedInvocation.identity(replacement),
                     new TypedInvocation(replacement, induced),
                     restricted));
-        }
+        });
         return TypedSymmetryGroup.certified(replacement, certificates);
     }
 
@@ -1174,6 +1704,18 @@ public final class TypedSlottedPortEGraph {
         return certificate;
     }
 
+    private static CertificateTracePayload.ShapeRecord shapeRecord(
+            ParentRecordKey key,
+            TypedEClassRecord owner,
+            ShapeWitness witness,
+            TypedEqualityCertificate equation) {
+        return new CertificateTracePayload.ShapeRecord(
+                key,
+                owner.interfaceView(),
+                witness,
+                equation);
+    }
+
     private boolean recordExists(ParentRecordKey key) {
         TypedEClassRecord record = classes.get(key.owner());
         return record != null && record.shapeWitnesses().containsKey(key.shape());
@@ -1184,7 +1726,8 @@ public final class TypedSlottedPortEGraph {
         if (!owner.shapeWitnesses().containsKey(key.shape())) {
             return;
         }
-        hashCons.remove(key.shape(), key.owner());
+        invalidateCollisionMemo(key);
+        removeHashOwner(key.shape(), key.owner());
         unindexRecord(key);
         shapeCertificates.remove(key);
         classes.put(owner.id(), owner.withoutStoredShape(key.shape()));
@@ -1200,13 +1743,22 @@ public final class TypedSlottedPortEGraph {
         if (owner.shapeWitnesses().containsKey(shape)) {
             throw new IllegalArgumentException("Duplicate stored record key: " + key);
         }
+        invalidateCollisionMemo(key);
         TypedEClassRecord updated = owner.withStoredShape(shape, witness);
         TypedEqualityCertificate oriented =
                 EffectiveShapeCollisionCertificate.orientShapeEquation(
                         shape, updated, witness, equation);
         classes.put(ownerId, updated);
         shapeCertificates.put(key, oriented);
+        addHashOwner(shape, ownerId);
         indexRecord(key);
+    }
+
+    private void invalidateCollisionMemo(ParentRecordKey changed) {
+        incompatibleCollisions.keySet().removeIf(pair ->
+                pair.shape.equals(changed.shape())
+                        && (pair.first.equals(changed.owner())
+                                || pair.second.equals(changed.owner())));
     }
 
     private void indexRecord(ParentRecordKey key) {
@@ -1334,19 +1886,20 @@ public final class TypedSlottedPortEGraph {
         return new InvocationNormalization(current, proof);
     }
 
-    private void requireCollisionFreeLeaderKeys() {
-        NavigableMap<CanonicalShape, EClassId> seen = new TreeMap<>();
+    private void requireHashBucketsExact() {
+        NavigableMap<CanonicalShape, NavigableSet<EClassId>> expected = new TreeMap<>();
         for (TypedEClassRecord record : classes.values()) {
             if (!unionFind.isLeader(record.id())) {
                 continue;
             }
             for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
-                EClassId prior = seen.putIfAbsent(shape, record.id());
-                if (prior != null && !prior.equals(record.id())) {
-                    throw new IllegalStateException(
-                            "Rebuild ended with an unprocessed leader collision");
-                }
+                expected.computeIfAbsent(shape, ignored -> new TreeSet<>())
+                        .add(record.id());
             }
+        }
+        if (!expected.equals(hashCons)) {
+            throw new IllegalStateException(
+                    "Hash buckets do not exactly match live leader ownership");
         }
     }
 
@@ -1357,9 +1910,14 @@ public final class TypedSlottedPortEGraph {
                 continue;
             }
             for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
-                hashCons.put(shape, record.id());
+                addHashOwner(shape, record.id());
             }
         }
+        hashIndexRebuilds = Math.incrementExact(hashIndexRebuilds);
+    }
+
+    synchronized long hashIndexRebuildCount() {
+        return hashIndexRebuilds;
     }
 
     public synchronized StructuralKey stateStructuralKey() {
@@ -1367,6 +1925,9 @@ public final class TypedSlottedPortEGraph {
         children.add(StructuralKey.leaf("graph-status", status.name()));
         children.add(StructuralKey.leaf(
                 "graph-certificate-mode", certificateMode.name()));
+        children.add(semanticProfile == null
+                ? StructuralKey.leaf("semantic-profile", "structural-fixture")
+                : semanticProfile.structuralKey());
         children.add(StructuralKey.leaf(
                 "coherence-revision", Long.toString(coherenceRevision)));
         for (TypedEClassRecord record : classes.values()) {
@@ -1375,16 +1936,27 @@ public final class TypedSlottedPortEGraph {
         for (ParentAssignment assignment : unionFind.assignments().values()) {
             children.add(assignment.structuralKey());
         }
-        for (Map.Entry<CanonicalShape, EClassId> entry : hashCons.entrySet()) {
-            children.add(StructuralKey.of(
-                    "hash-owner",
-                    Collections.singletonList(Long.toString(entry.getValue().value())),
-                    Collections.singletonList(entry.getKey().structuralKey())));
+        for (Map.Entry<CanonicalShape, NavigableSet<EClassId>> entry
+                : hashCons.entrySet()) {
+            for (EClassId owner : entry.getValue()) {
+                children.add(StructuralKey.of(
+                        "hash-owner",
+                        Collections.singletonList(Long.toString(owner.value())),
+                        Collections.singletonList(entry.getKey().structuralKey())));
+            }
         }
         for (Map.Entry<ParentRecordKey, TypedEqualityCertificate> entry
                 : shapeCertificates.entrySet()) {
             children.add(StructuralKey.branch(
                     "shape-equation",
+                    java.util.Arrays.asList(
+                            entry.getKey().structuralKey(),
+                            entry.getValue().structuralKey())));
+        }
+        for (Map.Entry<ParentRecordKey, RetiredShapeRecordCertificate> entry
+                : retiredShapeRecords.entrySet()) {
+            children.add(StructuralKey.branch(
+                    "retired-shape-record",
                     java.util.Arrays.asList(
                             entry.getKey().structuralKey(),
                             entry.getValue().structuralKey())));
@@ -1441,11 +2013,11 @@ public final class TypedSlottedPortEGraph {
                 unionFind.assignments(),
                 hashCons,
                 shapeCertificates,
+                retiredShapeRecords,
                 useCopies,
                 dirtyParents,
                 restrictionHistory,
-                insertionHistory,
-                stateStructuralKey());
+                insertionHistory);
     }
 
     private void appendTrace(
@@ -1459,6 +2031,7 @@ public final class TypedSlottedPortEGraph {
             throw new IllegalStateException("Enabled certificate trace has no pre-state");
         }
         CertificateTraceSnapshot after = traceSnapshot();
+        before.verifyConservationTo(after, payload);
         traceSink.append(new CertificateTraceEvent(
                 traceSequence++, kind, before, after, payload));
     }
@@ -1479,13 +2052,13 @@ public final class TypedSlottedPortEGraph {
             if (!entry.getValue().interfaceView().equals(registered)) {
                 throw new IllegalStateException("U and M disagree on an e-class interface");
             }
-            if (certificateMode == GraphCertificateMode.REQUIRED
+            if (requiresCertificates()
                     && !unionFind.isLeader(entry.getKey())
                     && !entry.getValue().shapeWitnesses().isEmpty()) {
                 throw new IllegalStateException(
                         "A strict nonleader may not retain stored shapes");
             }
-            if (certificateMode == GraphCertificateMode.REQUIRED) {
+            if (requiresCertificates()) {
                 entry.getValue().symmetryGroup().requireCertifiedFor(
                         entry.getValue().interfaceView());
             }
@@ -1499,7 +2072,7 @@ public final class TypedSlottedPortEGraph {
                     expectedUses.computeIfAbsent(
                             child, ignored -> new TreeSet<>()).add(key);
                 }
-                if (certificateMode == GraphCertificateMode.REQUIRED) {
+                if (requiresCertificates()) {
                     requireCertifiedNodeTheory(shape.node());
                     TypedEqualityCertificate equation = requireShapeCertificate(key);
                     EffectiveShapeCollisionCertificate.orientShapeEquation(
@@ -1507,10 +2080,25 @@ public final class TypedSlottedPortEGraph {
                 }
             }
         }
-        if (certificateMode == GraphCertificateMode.REQUIRED
+        if (requiresCertificates()
                 && !expectedShapeKeys.equals(shapeCertificates.navigableKeySet())) {
             throw new IllegalStateException(
                     "Strict shape records and exact shape equations differ");
+        }
+        for (Map.Entry<ParentRecordKey, RetiredShapeRecordCertificate> entry
+                : retiredShapeRecords.entrySet()) {
+            RetiredShapeRecordCertificate retirement = entry.getValue();
+            retirement.verify();
+            if (!entry.getKey().equals(retirement.retiredRecord())
+                    || (retirement.cause()
+                                    == RetiredShapeRecordCertificate.Cause.OWNER_UNION
+                            && unionFind.isLeader(retirement.retiredRecord().owner()))
+                    || (retirement.cause()
+                                    == RetiredShapeRecordCertificate.Cause.REBUILD_DUPLICATE
+                            && recordExists(retirement.retiredRecord()))) {
+                throw new IllegalStateException(
+                        "Retirement ledger contains a live or mismatched old record");
+            }
         }
         if (!expectedUses.equals(parentUses)) {
             throw new IllegalStateException(
@@ -1522,7 +2110,7 @@ public final class TypedSlottedPortEGraph {
                         "Dirty queue references a missing parent record");
             }
         }
-        if (certificateMode == GraphCertificateMode.REQUIRED) {
+        if (requiresCertificates()) {
             for (ParentAssignment assignment : unionFind.assignments().values()) {
                 if (!assignment.provenancePath().hasCertificates()) {
                     throw new IllegalStateException(
@@ -1555,22 +2143,20 @@ public final class TypedSlottedPortEGraph {
                 throw new IllegalStateException(
                         "A quiescent graph cannot retain dirty parent records");
             }
-            NavigableMap<CanonicalShape, EClassId> expected = new TreeMap<>();
+            NavigableMap<CanonicalShape, NavigableSet<EClassId>> expected =
+                    new TreeMap<>();
             for (TypedEClassRecord record : classes.values()) {
                 if (!unionFind.isLeader(record.id())) {
                     continue;
                 }
                 for (CanonicalShape shape : record.shapeWitnesses().keySet()) {
-                    EClassId prior = expected.putIfAbsent(shape, record.id());
-                    if (prior != null && !prior.equals(record.id())) {
-                        throw new IllegalStateException(
-                                "Two leaders own one canonical shape at quiescence");
-                    }
+                    expected.computeIfAbsent(shape, ignored -> new TreeSet<>())
+                            .add(record.id());
                 }
             }
             if (!expected.equals(hashCons)) {
                 throw new IllegalStateException(
-                        "Quiescent hash-cons does not exactly match leader-owned shapes");
+                        "Quiescent hash buckets do not exactly match leader-owned shapes");
             }
         }
     }
@@ -1614,8 +2200,18 @@ public final class TypedSlottedPortEGraph {
 
     private void requireCertifiedNodeTheory(TypedENode node) {
         if (certificateMode == GraphCertificateMode.REQUIRED) {
+            CertificateVerifier.requireProductionNodeTheory(node, semanticProfile);
+        } else if (certificateMode == GraphCertificateMode.TEST_ONLY) {
             CertificateVerifier.requireCertifiedNodeTheory(node);
         }
+    }
+
+    private boolean requiresCertificates() {
+        return certificateMode != GraphCertificateMode.STRUCTURAL_FIXTURE;
+    }
+
+    boolean requiresProductionTheoryAuthority() {
+        return certificateMode == GraphCertificateMode.REQUIRED;
     }
 
     private void requireRecord(TypedEClassInterface eclass) {
@@ -1740,6 +2336,55 @@ public final class TypedSlottedPortEGraph {
         }
     }
 
+    /** One exact-shape owner pair, canonicalized independently of orientation. */
+    private static final class CollisionPairKey
+            implements Comparable<CollisionPairKey> {
+        private final CanonicalShape shape;
+        private final EClassId first;
+        private final EClassId second;
+
+        private CollisionPairKey(
+                CanonicalShape shape, EClassId left, EClassId right) {
+            this.shape = Objects.requireNonNull(shape, "shape");
+            EClassId checkedLeft = Objects.requireNonNull(left, "left");
+            EClassId checkedRight = Objects.requireNonNull(right, "right");
+            if (checkedLeft.equals(checkedRight)) {
+                throw new IllegalArgumentException(
+                        "A collision pair requires distinct owners");
+            }
+            this.first = checkedLeft.compareTo(checkedRight) < 0
+                    ? checkedLeft : checkedRight;
+            this.second = checkedLeft.compareTo(checkedRight) < 0
+                    ? checkedRight : checkedLeft;
+        }
+
+        @Override
+        public int compareTo(CollisionPairKey other) {
+            int shapeOrder = shape.compareTo(other.shape);
+            if (shapeOrder != 0) {
+                return shapeOrder;
+            }
+            int firstOrder = first.compareTo(other.first);
+            return firstOrder != 0 ? firstOrder : second.compareTo(other.second);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            if (!(other instanceof CollisionPairKey)) {
+                return false;
+            }
+            CollisionPairKey key = (CollisionPairKey) other;
+            return shape.equals(key.shape)
+                    && first.equals(key.first)
+                    && second.equals(key.second);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(shape, first, second);
+        }
+    }
+
     private static final class InvocationNormalization {
         private final TypedInvocation invocation;
         private final TypedEqualityCertificate certificate;
@@ -1764,22 +2409,32 @@ public final class TypedSlottedPortEGraph {
         }
     }
 
+    private static final class UnionMutation {
+        private final ParentStep step;
+        private final CertificateTracePayload.Union trace;
+
+        private UnionMutation(
+                ParentStep step,
+                CertificateTracePayload.Union trace) {
+            this.step = Objects.requireNonNull(step, "step");
+            this.trace = Objects.requireNonNull(trace, "trace");
+        }
+    }
+
     private static final class RebuildStepResult {
         private final boolean changed;
-        private final boolean collision;
-        private final boolean union;
+        private final CertificateTracePayload.RebuildRecord trace;
+        private final List<CertificateTracePayload.Union> generatedSubtransitions;
 
         private RebuildStepResult(
                 boolean changed,
-                boolean collision,
-                boolean union) {
+                CertificateTracePayload.RebuildRecord trace,
+                List<CertificateTracePayload.Union> generatedSubtransitions) {
             this.changed = changed;
-            this.collision = collision;
-            this.union = union;
+            this.trace = Objects.requireNonNull(trace, "trace");
+            this.generatedSubtransitions = Collections.unmodifiableList(
+                    new ArrayList<>(generatedSubtransitions));
         }
 
-        private static RebuildStepResult unchanged() {
-            return new RebuildStepResult(false, false, false);
-        }
     }
 }

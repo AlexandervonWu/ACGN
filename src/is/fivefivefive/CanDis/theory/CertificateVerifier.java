@@ -2,6 +2,7 @@ package is.fivefivefive.CanDis.theory;
 
 import java.util.Collections;
 import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -125,6 +126,36 @@ public final class CertificateVerifier {
         }
     }
 
+    static void requireProductionNodeTheory(
+            TypedENode node,
+            SemanticProfile semanticProfile) {
+        Objects.requireNonNull(node, "node");
+        Objects.requireNonNull(semanticProfile, "semanticProfile");
+        OperatorDeclaration operator = node.operator().declaration();
+        for (Map.Entry<PortPath, ContainerLawDeclaration> entry
+                : operator.containerLaws().entrySet()) {
+            ContainerLawDeclaration declaration = entry.getValue();
+            declaration.requireCertified();
+            declaration.validateEvidenceFor(
+                    operator.operator(),
+                    node.outputType(),
+                    entry.getKey(),
+                    operator.schemaAt(entry.getKey()),
+                    true);
+            for (ContainerLawCertificate certificate
+                    : declaration.certificates().values()) {
+                if (!semanticProfile.equals(certificate.semanticProfile())) {
+                    throw new IllegalStateException(
+                            "Node theory certificate uses another semantic profile");
+                }
+                verifyContainerLaw(certificate);
+            }
+        }
+        for (PortSchema schema : node.operator().portSchemas()) {
+            requireCertifiedSchema(schema);
+        }
+    }
+
     static void requireCertifiedAlphaNode(TypedENode node) {
         Objects.requireNonNull(node, "node");
         for (PortValue port : node.ports()) {
@@ -185,7 +216,14 @@ public final class CertificateVerifier {
             return;
         }
         if (schema instanceof SeqPortSchema) {
-            requireCertifiedSchema(((SeqPortSchema) schema).elementSchema());
+            SeqPortSchema sequence = (SeqPortSchema) schema;
+            if (sequence.isDependent()) {
+                for (PortSchema positional : sequence.positionalElementSchemas()) {
+                    requireCertifiedSchema(positional);
+                }
+            } else {
+                requireCertifiedSchema(sequence.elementSchema());
+            }
             return;
         }
         if (schema instanceof BagPortSchema) {

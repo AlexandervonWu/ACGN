@@ -1,9 +1,9 @@
 # Phase I Artifact Integration
 
-> **Publication superseding note (2026-08-19):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `dc368829-9623-4856-8bf1-b655aeaf59e0` from source commit `f1bb1607`, verified
+> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 ## Scope
@@ -106,19 +106,71 @@ The exact arm is selected directly with
 | I-F25 | A full 66,080-file batch reported 737 missing-law failures: 732 `GENERICRELDECL` Bags, four empty `AND` Sets, and one normalized-away `OR` Set. `RepairProjection` had reconstructed its law registry only from selected finite unfoldings, so source operators consumed into binder blocks or erased by normalization were absent | Record every flexible source operator's signature-certified A/AC/ACI declaration before construction, carry the immutable registry in `CertifiedSemanticArtifact`, and require that registry during repair projection. Zero-operand operators are certified even when no flat occurrence is emitted |
 | I-F26 | The same run reported 47 zero-kernel failures. Independent heterogeneous binders retained source coordinate order, and guarded binders used an order-sensitive syntactic approximation (`Protected` versus `Trash`) instead of Alloy's annotated least-parent primitive type | Canonically order independent phase coordinates within preserved exchange classes, retain an explicit source-index-to-coordinate permutation for readable repair tuples, and obtain each primitive type from Alloy's annotation. Complex guards remain only in the ACI-normalized matrix |
 | I-F27 | Once I-F25 was removed, `{x:S, y:S | P}` versus `{x,y:S | P}` exposed a certified-equality/nonzero-distance contradiction. The certificate-integrated local `BinderBlockDescriptor` erases declaration grouping, while Fast Rewrite matrix syntax charged five edits for that presentation difference | Treat this as a demonstrated Fast Rewrite admissible-space ambiguity: merge only adjacent, non-disjoint local declarations with identical projected domains, and only when that exact source binder has a certified local descriptor. Disjointness classes and dependency order remain barriers. This is an intentional semantic correction, not an approximate metric change |
-| I-F28 | The adapter used `carrierTypeName` as the slot's alpha color. Unsafe strict prenexing legitimately uses nonempty `univ` as an operational quantifier carrier, but this collapsed the original primitive colors; at corpus progress 16,668, `coursesOld/both/qYmq7gitNeA9qJSbg_inv15.als` therefore exposed ten same-colored coordinates and attempted an artificial `10!` orbit | Separate the two fields: `typeName` is the Alloy-annotated least-parent primitive alpha color and repair-tuple type, while `carrierTypeName` records the operational quantifier domain (`univ` only where the prenex equivalence requires it). Descriptor slots use the former and descriptor domain payloads use the latter; syntactic type inference is fallback only |
+| I-F28 | The adapter used `carrierTypeName` as the slot's alpha color, while an earlier unsafe prenex path could assign synthetic `univ`; at corpus progress 16,668 this collapsed ten primitive colors and attempted an artificial `10!` orbit | Preserve `typeName` and `carrierTypeName` as the Alloy-annotated least-parent primitive type. Complex declaration domains remain explicit matrix guards, and a quantifier stays local whenever moving it would require an unavailable carrier-inhabitation proof. The dead synthetic-`univ` producer path has been removed |
 | I-F29 | Finite-term binder minimization acted on a body whose Bag/Set operands had already been normalized, but did not normalize those containers again after permuting their bound-coordinate markers. Nested and grouped subtype binders could therefore have repair distance zero but different canonical keys | Every binder-automorphism candidate now re-sorts Bag operands and re-sorts plus deduplicates Set operands after the coordinate action. The strict zero kernel remains enabled, and the nested/grouped `Entry`/`Exit` regression has one byte-identical canonical observation |
 | I-F30 | The next full run had one remaining zero-kernel failure: `trash_ltl/correct/WCmW6XqHcDpTMcHzX_inv16.als`. Implication elimination plus primitive-domain guarding produced the same `NOT_IN(f, Protected)` operand twice under an ACI `OR`. One copy retained the parser-only source label `BOP_IN`, so frontend saturation failed to deduplicate it; Layer 1 ignored that nonsemantic label and correctly deduplicated the Set, while `RepairProjection` copied both occurrences and charged three matrix edits | Clear parser provenance whenever normalization changes an opcode, so the repaired NormalForm itself restores ACI idempotence; also project certified `SET` containers idempotently as a boundary invariant. This is a metric-port bug fix: Set idempotence was already part of the established quotient semantics. Bag multiplicity and Seq order are unchanged. Both the Fast Rewrite metric and certificate-integrated temporal/quantifier/matrix components are now zero |
 | I-F31 | The I-F30 temporal fixture exposed a pre-existing backtranslation contradiction: matrix `REF` leaves such as `temporal[0:1]` were emitted literally as Alloy source and temporal children were appended conjunctively, losing the reference's Boolean position | Render direct temporal children first, bind each unary/binary child to its exact `temporal[index:arity]` key, and substitute each `REF` in place while retaining an explicit fallback only for manually assembled unreferenced children. Unresolved references fail closed. The connective-embedded temporal regression compiles, and bounded equivalence of both predicates in the I-F30 file has zero mismatches and failures |
 | I-F32 | Corpus-scale augmentation, ablation, memory, capability, semantic-soundness, and backtranslation runners had inconsistent or absent progress output; several parallel collectors also waited in submission order, so one slow early task made productive runs appear stuck | Add one shared `ExperimentProgress` reporter with bounded checkpoints, throughput, ETA, and 30-second no-completion heartbeats. Parallel collectors consume completion order but restore results by source index, preserving deterministic artifacts. Runners that suppress noisy global output retain the original `stderr` for progress, and the process-isolated suite reports both arm completion and the currently running child log |
 | I-F33 | `Alloy4FunAugmenter` retained each proof-heavy `CertifiedSemanticArtifact` after extracting its canonical observation and repair view. At parse completion 19,282 the live 8 GiB heap held 8,044,742 / 8,052,736 KiB, RSS was 8.9 GiB, and G1 workers had consumed most elapsed CPU; the nearby source files were not pathological. It also queued all 66,080 parse futures at once | Keep full `Prepared` values as the replayable default, but add an explicit comparison compaction that retains the certified observation, repair view, and scalar statistics while releasing construction-only graph witnesses. Augmentation caches use only this compact form. Simultaneous certificate-integrated construction is bounded by the configured heap and capped at 16, while parsing and distance work retain requested parallelism. Parsing keeps at most four tasks per worker in flight, and stall heartbeats identify the earliest unresolved source path |
-| I-F34 | The strict correct-pool audit found a zero repair distance with unequal certified observations for `classroom_fol/inv11`. A safely relativized `some v: Teacher` retained operational carrier `univ` although an earlier direct `Person` prefix binder already guaranteed the primitive carrier was inhabited; the comparison formula used `Person` directly | After prenexing, propagate only guaranteed prefix-carrier witnesses. A later `univ` carrier may narrow to its primitive type only when a preceding direct binder of that type witnesses nonemptiness. The subtype guard remains in the matrix, so empty-domain semantics and the quantifier repair tuple are preserved |
+| I-F34 | The strict correct-pool audit found a zero repair distance with unequal certified observations for `classroom_fol/inv11`; the then-current synthetic-`univ` operational carrier disagreed with the primitive comparison carrier | The current producer no longer fabricates an operational `univ` carrier. It moves a guarded quantifier only under a connective-specific rule with any required inhabited-carrier witness, keeps the primitive tuple type, and retains the subtype guard in the matrix; otherwise the quantifier remains local |
 | I-F35 | The same audit exposed `classroom_fol/inv3`: `p != q` and `q != p` had repair distance zero under a certified binder swap, but the exact signature represented `NOT_EQUALS` with ordered child ports and therefore rejected its intrinsic commutativity | Represent fixed commutative `IFF`, `EQUALS`, and `NOT_EQUALS` operands through a certified ordinary `BagPort`. This certifies operand exchange without incorrectly flattening equality into an associative operator; relational equality operands are coerced before entering the homogeneous Bag |
 | I-F36 | The final strict-kernel contradiction was `lts/inv7`. Local comprehension variables had no prenex binding index, so `RepairProjection` retained parser alpha labels such as `_q1` while the exact layer correctly used the local binder descriptor and its permutation group | Carry each local binder's source-name-to-certified-coordinate map out of `TheoryAlloyAdapter`. Project local variables to depth-qualified coordinates and minimize pairwise only over the descriptor's certified automorphism elements. Nested depths prevent capture, readable aliases remain presentation data, and no symmetry is inferred from type or names |
 | I-F37 | The I-F36 round-trip fixture exposed a separate backtranslation failure: `COMPREHENSION` was rendered with the default existential keyword, so closure received a Boolean expression such as `^(some s1,s2: State | P)` | Render local comprehensions as Alloy set comprehensions `{s1,s2: State | P}`. The targeted six-file bounded check now compiles and proves all 12 backtranslated predicates with zero mismatches and zero failures |
 | I-F38 | Incorrect-predicate ranking exposed a false certified equality in `coursesOld/inv13`: `ordering/first` and `ordering/last` differed by one repair edit, but every non-temporal `REF` leaf had the same exact operator head | Include the normalized source identity in every non-temporal `REF` signature head. Temporal normal-form references are resolved before node construction and remain structural phase invocations. The concrete pair now has unequal observations and exactly one matrix edit |
 | I-F39 | `trash_ltl/inv8` exposed the opposite failure. The repaired formula compared `eventually f2 in Trash` with `eventually f1 in Trash`; phase-local minimization chose identity for the implication phase and a swap for its temporal child, although both phases refer to one owning binder. This was a Fast Rewrite admissible-space ambiguity proved too broad by the certificate-integrated owner coordinates | Perform one exact maximum-cardinality alpha minimization over owner-coordinate identities across all aligned temporal phases, then reuse that mapping at every inherited occurrence. A declaration-modification fallback aligns only the same owner coordinate and cannot reuse a certified target, preserving the established one-unit quantifier edit. Consistently permuted temporal formulas remain distance zero; inconsistent targets cost one |
 | I-F40 | Adding the exact arm to semantic-soundness probes exposed an invalid local automorphism: every local binder coordinate used exchange class 0, so `{x,y:S | y in x.r}` could be identified with `{x,y:S | x in y.r}` even though comprehension coordinates are ordered result columns | Assign each comprehension coordinate its positional exchange class. Alpha-renaming still acts positionwise, while formula and summation binders retain their certified exchange groups. The repaired 185-check pipeline suite distinguishes the pair, and the refreshed bounded run checks 2,320 current union claims with 0 counterexamples, 0 errors, and all four negative probes rejected by all seven arms |
+| I-F41 | The refreshed correct pool exposed 14 strict-kernel contradictions, all on predicates labeled `CORRECT`: stale lexical paths blocked certified prenex alignment for `LONE`, while Boolean neutral-element reduction happened after the certified snapshot. Adversarial rounds then found name-only Boolean literals, missing container/arena/operand/opcode guards, implicit path-erasure authority, incomplete orbit ledgers, descendant-CALL admission bypasses through both Boolean absorption and temporal dualization, omitted alternatives in reachable union components, generic `Bool` metadata acting as operator provenance, caller-supplied raw observation authority, malformed binding indices, and under-scoped formal exchange maps | Compare prenexed bindings through certified owner/exchange/dependency/orbit payloads only when both sides carry explicit prenex path-erasure authority; otherwise retain source-path equality. Require complete owner-scoped orbit partitions and preserve same-orbit relations under zero-cost alpha mappings; scope injective, monotone exchange maps by role and temporal owner; apply Boolean laws before cloning the certificate-facing matrix; require concordant literal/container/formula-opcode/operand type plus arena/profile evidence; traverse every alternative in every reachable union component and every temporal phase before rewriting; distinguish parser-concordant or internally derived operator authority from generic Boolean typing; and accept public kernel checks only for sealed certified projections. Exact witnesses, forged-type/provenance regressions, owner/orbit Lean obligations, a 2,266-check bounded alpha differential, and a fresh 11-file reproduction complete with zero violations; `CORRECT` remains metadata rather than proof authority, unbounded candidate refinement stays open, and a full-corpus rerun remains required |
+| I-F42 | The post-lowering arena cleanup treated every registered e-class as reachable. A disconnected registered union component therefore remained strongly referenced even when no retained NormalForm root could reach it. | Compute the retained closure from roots through child edges and only the union components reached by that traversal, then remove every other registered class. The deterministic regression removes exactly two disconnected classes, preserves a reachable union peer, and reports zero removals on a second cleanup; the finite Lean model distinguishes registration from child/union reachability. |
+| I-F43 | Live temporal evidence required its source and exact edge occurrence to remain in the Multigraph, but did not require each downlink target to remain a graph vertex. Removing only a child vertex therefore left the occurrence admissible. | Require exact target-vertex membership for every recorded downlink until the owner-bound claim is sealed. Child-only removal now rejects at NormalForm admission and direct adaptation, restoring the child restores admission, and the finite Lean model records child-target liveness independently. |
+| I-F44 | A retained root-to-temporal-source edge could keep path continuity valid after the non-temporal captured graph root itself was removed from the vertex set. | Require exact captured-root membership in addition to stable graph-root identity until sealing. A nested temporal fixture rejects root-only removal at both public boundaries and admits again after exact restoration; Lean tracks graph-root liveness independently. |
+| I-F45 | Recursive saturation checked arena mutability only for its entry root. A second unfrozen parent could therefore rewrite a shared descendant already frozen through a certified parent, and detection of a later frozen sibling could follow a partial rewrite of an earlier mutable sibling. | Under the arena monitor, preflight mutability over the complete reachable child/union closure before the first rewrite and recheck each recursively visited node. A direct shared-child fixture requires both frozen and mutable descendants to remain unchanged after rejection; Lean models all-reachable admission and no partial result on failed preflight. |
+| I-F46 | Temporal-reference completeness compared observed references only with issued authorities. A temporal child attached without any authority made both sets empty and crossed admission/freezing unreferenced. | Partition every temporal child index by exactly one in-bounds, identity-exact, nonoverlapping owner-issued authority range, require a matrix and authority ledger whenever children exist, and retain per-matrix authority coverage. Direct admission/freeze regressions and Lean missing/exact/overlap cases pin the boundary. |
+| I-F47 | Nodes synthesized while rewriting an existing graph selected the executing thread's `CURRENT_ARENA`; cross-thread saturation therefore created foreign-arena children. Snapshot construction also transiently consulted that unrelated arena. | Make node arena ownership final. Public graph construction may select the thread-local builder, but derived rewrite and snapshot nodes explicitly inherit the existing source graph arena. Cross-thread IMPLIES saturation now completes, and Lean distinguishes source-arena inheritance from executing-thread selection. |
+| I-F48 | Rejected fixed-arity child mutations changed the child list before reporting the arity failure, and invalid CALL metadata could revoke provenance before rejecting. | Precompute compatible child invocations and validate prospective arity and metadata before the commit point. Replacement, append, invocation append, occurrence-id, and declared-arity regressions now require byte-for-byte semantic state preservation on rejection; Lean models the transaction boundary. |
+| I-F49 | Retained-arena cleanup interpreted an empty root list as a no-op and left both registered classes and union-find bookkeeping live. | Treat no roots as the empty reachability closure and prune both storage layers under the arena monitor. The two-class union regression removes two classes and is stable on repetition; Lean retains no class whose child/union reachability flags are both false. |
+| I-F50 | Pruning erased registered storage but did not retire escaped e-class handles, allowing a later canonical lookup to dereference an erased union leader. | Give every pruned class a permanent retired lifecycle state and reject its reuse at invocation, canonicalization, union, traversal, admission, and mutation boundaries. The stale two-class handle now fails deliberately rather than re-registering or producing null. |
+| I-F51 | NormalForm-generated copies selected the executing thread's arena, and temporal dualization changed the temporal operation before matrix construction had succeeded. | Construct every clone and synthetic node in its source arena. Stage temporal child operations and matrices together with both rewritten parent matrices, saturate the staged parent, and commit only after all fallible work succeeds. The parser-backed cross-thread fixture preserves a coherent temporal phase. |
+| I-F52 | The central admitted-graph traversal did not consult the retired lifecycle flag and could admit a pruned root using its residual node list. | Require liveness before every admission visit and union-component expansion. The stale handle now rejects at the public admission boundary before any semantic occurrence is consumed. |
+| I-F53 | A retired class tombstone still strongly held nodes, child references, shapes, symmetries, and slots. | Clear every semantic/cache payload during retirement, retaining only the class identity and retired flag needed for deterministic rejection. The bounded formal model records zero retained payload without making GC-scheduling claims. |
+| I-F54 | Temporal rewrite staging and certification freeze used distinct NormalForm monitors, so a child could freeze after its mutability check but before staged operation/matrix publication. | Share one lifecycle monitor across the complete temporal tree and use it for construction, normalization, rewrite, admission, and recursive freeze. Derived e-node creation checks owner mutability under the arena monitor. A parser-backed two-thread regression admits only the two serialized outcomes, and the Lean model records the same finite outcome set. |
+| I-F55 | Reachability cleanup distinguished an empty root list from a nonempty list whose entries were all null, retaining the whole current arena in the latter case. | Apply empty-closure cleanup after filtering null roots as well as before iteration. The direct union-component fixture and finite Lean root model both require zero retained roots. |
+| I-F56 | A certified ACI identity could be visible to Layer 1 and the post-snapshot repair projection but unavailable to an earlier enclosing source rule. The valid pair `some (S + S) or not (some S)` and `no none` therefore reached the public kernel with zero repair distance and unequal producer observations; a Boolean ACI singleton over bound slots exposed the same transition mismatch. | Give complement and self-difference a read-only view of the exact typed/profile-indexed ACI quotient before the snapshot. Same-operator flat operands compose slot maps, only Set quotients deduplicate, and a quotient singleton is exposed before duality; distinct operators remain barriers. Parser-backed A/C/I, bound-slot, self-difference, and near-miss regressions pass, while standalone Lean proves the underlying relation ACI and equality-transport obligations. |
+| I-F57 | An initial diagnostic inferred arithmetic from exact `INT` result carrier. | Superseded by I-F62 after direct Alloy execution established that parser `PLUS`/`MINUS` retain relational set semantics over `Int`. |
+| I-F58 | Rewinding a shared binary-symbol visit after nested same-operator traversal erased the distinction between source occurrences and could publish an empty operator. | Retain each nested occurrence's monotone visit while connecting the parent through its separately saved visit. |
+| I-F59 | Dual complement comparison was positional even for certified commutative equality operators. | Compare certified composed child multisets only under the declared C quotient; keep ordered duals ordered. |
+| I-F60 | A parser-authenticated nested relational union could not flatten when its inferred intermediate result was a strict subfamily of the outer result carrier. | Admit only same-module, same-arity `PLUS` subfamily widening and represent each leaf-to-outer conversion explicitly. |
+| I-F61 | Nested ITE traversal rewound the shared symbol's occurrence counter and could publish a valid source ITE with zero children at the advertised visit. | Preserve monotonically allocated child occurrence visits and connect the ternary parent through its separately saved visit. Parser-backed formula and expression nesting now pass fixed-arity admission. |
+| I-F62 | The adapter candidate relabeled valid relational `PLUS`/`MINUS` whenever their exact carrier was `INT`. | Preserve parser operator identity and let the certified container schema distinguish the unary-Int relation Set from integer arithmetic. Direct solver, parser, producer-equality, and repair-kernel checks cover the supported transition. |
+| I-F63 | Structurally equal integer literal nodes shared IRAgent's visit count, disconnecting the second literal from its exact parser type. | Use identity-keyed occurrence accounting during MASG-to-IR lowering. Repeated/nested arithmetic, cardinality, subtraction, and negative literals now reach the certificate-integrated representation. |
+| I-F64 | Alloy's `Type.is_int()` reported Int participation for `Int + S`, and the adapter-facing exact type erased the heterogeneous signature alternative before certification. | Require the full parser product family to be exactly unary built-in Int before assigning `GraphType.INT`; preserve mixed Int/signature alternatives as a correlated relation family. |
+| I-F65 | Literal alternative containment made relational PLUS associativity depend on grouping when a nested exact type used a subtype and the outer result used its parent. | Consume same-module parser ancestry per correlated product column when proving nested-family inclusion; keep reverse, sibling, arity, module, and operator barriers explicit. |
+| I-F66 | Set identities involving authenticated `univ` and relational difference were applied only after the certificate-facing source snapshot, allowing producer equality to disagree with the repair quotient. | Close the five exact identities in the guarded pre-snapshot pass and retain the same reductions in saturation. Built-in recognition remains authority-gated, and direct Alloy, parser-backed pipeline, and Lean evidence cover the supported transition. |
+| I-F67 | The certificate-facing source pass retained a relational subfamily even when its union contained the actual full parent signature, and its first contextual repair could fail to publish a same-arity child replacement. | Authenticate the full signature leaf by parser identity, exact unary family, and same-module ancestry; eliminate every proved subrelation through the surrounding relational-PLUS association and compare child identities rather than only list lengths when committing the rewrite. Keep merely parent-typed expressions and unrelated families outside the carrier authority. |
+| I-F68 | A named subset carrier was indistinguishable from its primitive parent in exact Alloy `Type`, so declaration-chain absorption stopped one level too early. | Preserve runtime parser declaration authority on actual signature leaves and use the same-module signature DAG for named-carrier containment; keep primitive exact-family fallback narrowly scoped. |
+| I-F69 | The certified source pass omitted the same-arity law `none in R` and its `not in` dual. | Gate the rule by authenticated empty-set identity and exact relation-arity equality, and mirror it in saturation. |
+| I-F70 | Plain relation product/composition did not propagate an authenticated empty operand before certification. | Derive exact-result-arity `none` for relation-valued `ARROW`/`JOIN` annihilation, with direct Alloy, producer, and Lean coverage. |
+| I-F71 | Alloy's convenience descendant query over-approximated containment for a subset declaration with multiple union parents. | Use an explicit all-parent declaration-DAG proof; a common ancestor is admissible, but no individual union branch receives carrier authority. |
+| I-F72 | The source adapter preserved abstract declaration metadata in the parser but did not consume Alloy's generated cover fact, leaving a semantically equal complete child union outside the quotient. | Derive abstract covers only from live same-module direct `extends` declarations, recurse across abstract child covers, require complete branch coverage and operand containment, and normalize singleton abstract chains to one deterministic highest carrier. |
+| I-F73 | The integrated source pass had no authority-bearing representation of Alloy `iden`, so valid JOIN identity pairs remained outside the certified quotient. | Add parser-only identity authority, preserve it through trusted exact cloning, and apply two-sided identity elimination before the certificate snapshot with a mirrored saturation rule. |
+| I-F74 | Certified observations retained redundant transpose layers and unreversed ARROW products. | Admit exact-binary transpose involution and binary-product reversal before snapshot creation; preserve order for every unsupported operator shape. |
+| I-F75 | Certified observations retained redundant nested CLOSURE/RCLOSURE combinations. | Normalize the four exact-binary closure fixed points before the snapshot and mirror them in saturation, while preserving the semantic distinction between transitive and reflexive-transitive closure. |
+| I-F76 | Enum coverage was not an explicit integration obligation. | Add parser, solver, certified-equality, zero-distance, and Lean coverage for a complete enum atom family. |
+| I-F77 | Abstract-cover candidate derivation and final operand admission were tested separately but lacked one end-to-end case showing that an unrelated terminal blocks the proposed carrier. | Preserve the existing all-terminal containment gate and pin it with parser-backed positive-distance, direct Alloy SAT, and standalone outside-witness proof evidence. |
+| I-F78 | The integrated source pass could reconstruct an abstract unary carrier but could not lift that proof through a Cartesian product, despite preserving the required dependent factor evidence. | Add a one-coordinate full-cover product rewrite with parser-derived Cartesian exact type; retain slot, diagonal-grid, unrelated-alternative, operator, and module barriers. |
+| I-F79 | The integrated unary relation pass omitted the identity fixed points for transpose, transitive closure, and reflexive-transitive closure. | Adopt only an authenticated `iden` child with the same exact occurrence type, before the certificate snapshot and in mirrored saturation. |
+| I-F80 | The integrated abstract-product rule was binary-only even though certified ARROW observations use ordered variadic dependent chains, and it could not close complete Cartesian grids spanning multiple cover coordinates. | Analyze a plain binary source tree as a factor sequence without changing its committed syntax; perform parser-certified subgroup cover reductions to a fixed point; rebuild binary source nodes with independent exact product proofs. Require complete grids and retain partial/diagonal barriers. |
+| I-F81 | Exact `Int` occurrences deliberately used a scalar kind to protect integer operator dispatch, but that representation also prevented valid relational-product proofs and caused a production exception. | Keep scalar dispatch unchanged while binding parser-origin Int to transient module authority; permit only that authority to reinterpret the occurrence as one unary set column inside Cartesian type derivation. |
+| I-F82 | The integrated source quotient retained converse outside relational composition even though exact binary semantics require `~(r.s)=(~s).(~r)`. | Reverse the parser-authenticated ordered JOIN sequence and transpose every operand, deriving the exact result profile independently; keep wrong-order and synthetic-evidence cases outside the rule. |
+| I-F83 | Domain/range restriction remained structural across sound coordinate homomorphisms, nested restrictions, opposite-side commutation, and complete union grids. The first generalized implementation also assigned inconsistent source identities to generated lattice nodes and failed to converge on a four-cell grid. | Normalize authenticated restriction coordinates before certification, factor only complete covers or one-coordinate differences, preserve correlated exact types and composed slots, and give generated relational operators canonical source identities. Retain diagonal and multi-coordinate barriers. |
+| I-F84 | A first JOIN-chain union factorization could expose another sound factorization, but the guarded source pass cloned the certificate matrix before reaching that fixed point and valid middle/initial-coordinate inputs failed certificate transfer. | Recursively close parser-authenticated JOIN union factoring before the certificate snapshot. Preserve the ordered sequence, exact dependent boundaries, and slot maps; retain intersection and synthetic-evidence barriers. |
+| I-F85 | Converse remained outside transitive/reflexive closure and domain/range restriction. | Commute converse through either exact closure without changing its kind, and swap authenticated DOMAIN/RANGE while transposing only the relation coordinate. Derive each result profile independently and retain authority and near-miss barriers. |
+| I-F86 | Restriction retained a proved full endpoint carrier and failed to propagate an authenticated empty restrictor or relation coordinate. | Eliminate only built-in univ or a closed primitive carrier whose parser-derived restriction profile is exactly the relation profile; derive arity-preserving none from either authenticated empty coordinate. Keep variable and incomplete carriers explicit. |
+| I-F87 | Typed empty binary relations remained structural under converse and closure. | Derive empty for TRANSPOSE/CLOSURE and authenticated iden for RCLOSURE, preserving exact result arity/profile and rejecting forged empty spellings. |
+| I-F88 | Endpoint and internal restrictions remained structural across relational composition even though their guards constrain the same source, target, or shared existential JOIN coordinate. | Lift first/last endpoint guards outward and transfer an internal range guard to the adjacent domain under exact parser-derived JOIN/restriction types, ordered operands, and composed slot invocations. Keep wrong-side, wrong-guard, and synthetic evidence outside the rule. |
+| I-F89 | The first contextual-restriction implementation confused a unary operand's only coordinate with a surviving output endpoint, although JOIN eliminates it as the shared existential boundary. | Gate endpoint lifting on underlying operand arity at least two. Preserve unary/internal guards at the boundary and orient them onto the right operand; prove and test both unary directions and their SAT-inequivalent endpoint-lift controls. |
+| I-F90 | Direct unary domain and range restrictions remained separate structural operators even though a unary tuple has only one coordinate. | Under parser-authenticated exact arity one, orient RANGE to DOMAIN. Retain separate roles for higher arity and reject synthetic type-only authorization. |
+| I-F91 | Reflexive relation subset/equality atoms and their explicit negations remained structural even when both operands denoted one certified ACI invocation. | Fold the four atoms only with parser-authenticated set-family evidence and equality in the certified operand quotient. Preserve distinct invocations and reject synthetic relation labels. |
+| I-F92 | Structural relation containment and the exact subset/lattice adjunctions remained outside the integrated quotient, leaving elementary subset truths and conjunction expansions at positive distance. | Prove containment recursively through authenticated union, intersection, difference, and restriction; expand a union only on the subset's left and an intersection only on its right, with NOT_IN dualization. Preserve the two unsound opposite directions and synthetic evidence as barriers. |
 
 ## Performance Diagnosis
 
@@ -148,11 +200,12 @@ exhausting the heap. This optimization is semantic scope coloring, not a cap:
 a genuine eight-coordinate declaration still denotes the full `S_8` orbit and
 remains intrinsically expensive.
 
-A third trigger appeared in ordered progress near 16,668. Relativizing a
-guarded declaration legitimately selected nonempty `univ` as its operational
-quantifier carrier, but the adapter incorrectly reused that field as the alpha
-color and collapsed ten primitive colors into one artificial `S_10` orbit.
-Using the Alloy-annotated primitive type as the independent slot color reduces the isolated predicate
+A third trigger appeared in ordered progress near 16,668. The former
+relativization path assigned synthetic `univ` to a guarded declaration and the
+adapter reused that field as the alpha color, collapsing ten primitive colors
+into one artificial `S_10` orbit. That carrier assignment is not sound without
+an independently checked inhabitation premise and has been removed. Using the
+Alloy-annotated primitive type as the slot color reduces the isolated predicate
 to Course x2, Person x2, Grade x4, and Project x1, whose largest admissible
 orbit is 96 rather than `10!`. The formerly blocking file now completes in
 5.55 seconds. A 171-file window centered on the frontier completes 171/171 in
@@ -173,13 +226,13 @@ heap, 16 workers were faster on the allocation-heavy exact arm and avoided the
 is a separate potentially dominant phase; use `--skip-rewards` for structural
 reproduction, then run rewarded measurements deliberately.
 
-The completed seven-arm natural-corpus run makes the remaining exact-engine
-cost concrete. At 32 workers and `-Xmx3g`, the Fast Rewrite IR arm finished
-61,598 eligible pairs in 18.470 seconds with 13.255 engine CPU seconds; the
-exact arm required 2,303.890 seconds and 47,451.149 engine CPU seconds. Exact
-per-pair latency was 555.391 ms at p50 and 4,394.306 ms at p95. Maximum RSS was
-similar, 3,529.023 MiB for Fast Rewrite and 3,603.680 MiB for certificate-integrated execution, and the exact
-observation was not larger: 29.830 average units versus 29.843. This confirms
+The completed clean seven-arm natural-corpus run makes the remaining exact-engine
+cost concrete. At 16 workers and `-Xmx8g`, the Fast Rewrite IR arm finished
+61,598 eligible pairs in 24.690 seconds with 68.050 engine CPU seconds; the
+exact arm required 2,730.160 seconds and 41,550.938 engine CPU seconds. Exact
+per-pair latency was 320.451 ms at p50 and 2,376.936 ms at p95. Maximum RSS was
+1,718.941 MiB for Fast Rewrite and 8,925.242 MiB for certificate-integrated execution, while the exact
+observation remained slightly smaller: 29.540 average units versus 29.999. This confirms
 that certificate-bearing state transitions, orbit minimization, strict
 invariant checking, rebuild, and finite unfolding dominate; output size and the
 Layer-3 repair recurrence do not explain the wall-time gap.
@@ -216,20 +269,31 @@ settings, and SHA-256 hashes of generated outputs.
 before producing combined files. It does not silently combine an old six-arm
 run with the new exact arm.
 
-## Validation
+## Historical Validation Chronology
 
-The Phase I build and focused checks were refreshed on 2026-08-17:
+The individual bullets in this section retain the developmental measurements
+that led to the current implementation. The superseding clean publication
+measurement is stated at the end of the chronology.
+
+The Phase I build and focused checks were refreshed on 2026-08-26:
 
 - all sources compile against `lib/*`;
-- `CanonicalAlloyPipelineTest`: 185 checks covering mixed-carrier typed adaptation,
+- `CanonicalAlloyPipelineTest`: 1,428 checks covering mixed-carrier typed adaptation,
   same-descriptor permutation, shadow-safe alpha-equivalence, ACI, descriptor
   discrimination, scoped maximum arity, nested-scope separation,
   `ALL/SOME/ALL` barriers, temporal alias inheritance, temporal separation,
   negative discrimination, heterogeneous binder-order equality, guarded-domain
   ACI, post-permutation Bag/Set normalization, nested-versus-grouped subtype
   binders, certified local-declaration regrouping, statistics, digest shape,
-  and determinism;
-- `QuotientRepairDistanceTest`: 13 focused checks covering Seq order, Set/Bag
+  guarded relational factoring, exact relation-valued binder arity, full-carrier
+  subtype absorption, union cardinality, left- and right-nested difference
+  normalization, intersection/difference extraction, one-coordinate Cartesian
+  product difference factoring, its multi-coordinate barrier, coordinatewise
+  product intersection, dependent-chain ACI transfer through JOIN and ARROW
+  with union/intersection order and duplicate coverage, converse-JOIN reversal,
+  domain/range restriction coordinate algebra and its diagonal/multi-difference
+  barriers, and determinism;
+- `QuotientRepairDistanceTest`: 2,266 focused checks covering Seq order, Set/Bag
   assignment, one-unit declarations, proof presentation, scope barriers,
   unequal-arity exact alpha minimization, temporal decomposition, and the
   fail-closed zero kernel;
@@ -316,11 +380,79 @@ The Phase I build and focused checks were refreshed on 2026-08-17:
   bounded subtype checks had 0 conclusive non-temporal failures and 6 temporal
   checks explicitly marked inconclusive.
 
-The generated seven-arm directories are now full-corpus measurements, not
-smokes. Their manifests record source SHA
-`cc53042333fa3a1c820eb5715aa3b124e03d0ff1` with a dirty tree, so the manifest
-source/output hashes are authoritative. A clean, tagged archival rerun remains
-a release-provenance task.
+The bullets above retain the developmental replay chronology. The current
+checked-in empirical trees supersede those measurements: clean publication run
+`6000d695-8b5e-4972-b0ea-3d9e55111245` at source `ebce8743` completed all
+61,598 eligible paired evaluations, all 42,386 incorrect-to-truth rankings,
+all seven ablation arms, and all 5,500 capability pairs. It reported zero stage
+failures, 4,088 certificate-integrated `CORRECT` paired zeroes, zero paired
+incorrect zeroes, and zero certified incorrect-to-truth zeroes. The Fast
+Rewrite path reported 4,074 paired `CORRECT` zeroes and ten non-certifying
+incorrect-to-truth zeroes. The bounded natural-corpus checker found no
+counterexample in the union of 4,088 claimed equalities. Capability recovery
+was 5,500/5,500 for slotted and 5,492/5,500 for each canonical arm; the two
+canonical arms agreed on all generated pairs.
+
+## Post-Integration Distribution Repair
+
+Pipeline `canonical-alloy-pipeline-v38-phase-local-bindings` includes the guarded semantic
+families found by the Round-63 through Round-73 staged reviews. Relational converse now
+distributes through exact binary union, intersection, and difference, using a
+parser-authenticated correlated-column reversal proof. Ordinary Cartesian
+products now factor coordinate unions without requiring an abstract carrier;
+subgroup factoring and complete-grid checks still prevent diagonal or partial
+grids from inventing missing tuples, and composed bound-slot invocations are
+retained throughout that proof. Boolean `AND`/`OR` and relational
+`INTERSECT`/`PLUS` additionally normalize the two absorption and two
+distributive laws toward a factored representative. Every derived relational
+intermediate receives its own parser-authenticated exact union/intersection
+type, including an arity-bearing empty overlap. These rules run before the
+certified snapshot and are mirrored in saturation. Parser-backed equality/distance
+regressions, direct Alloy SAT/UNSAT matrices, authority-loss controls, and
+standalone Lean cover the admitted schemas. Full-carrier containment now also
+uses declaration-DAG subtype evidence, with `A+B+P=P` and `A&P=A` admitted
+only when the named carrier is parser-authenticated. Four set-difference
+factorizations, JOIN distribution over union, and `some`/`no` over union are
+likewise normalized under exact type guards. Relation-valued binders retain
+their complete parser-derived arity in both certified and repair views.
+Cartesian product differences additionally factor through exactly one changed
+coordinate in an equal-length chain; a two-coordinate change remains explicit.
+Intersections of equal-length Cartesian products factor coordinatewise across
+every participating product, including n-ary and ternary chains, while
+nonproduct residual operands remain outside the factored subgroup. A dependent
+JOIN/ARROW certificate retains its exact pre-ACI source commitment and may bind
+the frozen repair occurrence only after a separate lineage-, type-, slot-, and
+certified-ACI-quotient check.
+Converse additionally reverses exact binary JOIN sequences while transposing
+every operand. Parser-authenticated domain and range restrictions normalize as
+two-coordinate operations: lattice homomorphisms, repeated restrictions,
+opposite-side commutation, and complete union grids close, while diagonal grids
+and differences changing both coordinates remain explicit.
+JOIN distribution over union closes at every coordinate of an ordered
+composition chain before certification. Converse also commutes with transitive
+and reflexive-transitive closure without changing the closure kind, and swaps
+domain with range restriction while retaining the restrictor.
+Restrictions additionally consume a proved full endpoint carrier and propagate
+an authenticated empty coordinate. Typed empty binary relations remain empty
+under converse and transitive closure, while reflexive-transitive closure
+becomes authenticated `iden`.
+Left-nested difference chains accumulate their removal operands in one
+parser-certified union; right-nested difference expands by its separate
+pointwise law; and intersections collect kept and removed operands into one
+difference. Left and right nesting remain semantically distinct. The
+Round-63 through Round-73 snapshots and all earlier ballots on those bytes are
+invalidated; a wholly fresh review ladder is required.
+
+The v23 source quotient additionally consumes a parser-certified full carrier
+on either side of the relational lattice: `R + C` becomes `C`, and `R & C`
+becomes `R`, only when declaration evidence or correlated exact ancestry proves
+`R in C`. Composite carriers are closed products or unions of primitive full
+signature leaves; a subset signature uses its declaration DAG because Alloy's
+static type can erase that boundary. Mutual containment keeps one stable ACI
+representative. Parser-backed subtype, subset, field, and product cases close,
+while same-typed fields, sibling subsets, and proper sub-products remain
+distinct. Round 65 was invalidated by this discovery and contributes no review
+credit.
 
 ## Quick Reproduction
 

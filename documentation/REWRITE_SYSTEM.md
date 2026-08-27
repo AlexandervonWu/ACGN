@@ -18,6 +18,18 @@ The rewrite relation is intentionally incomplete. Two predicates at canonical
 distance zero are equal under the rules below; CanDis does not claim that every
 pair of semantically equivalent Alloy predicates rewrites to distance zero.
 
+## Frozen bootstrap and adaptive misses
+
+The rules in this document now form immutable bootstrap theory `R0` for the
+adaptive equivalence layer. Do not extend this inventory when a later corpus
+pair is semantically equivalent but remains at positive repair distance.
+Instead, submit that pair to the optional in-flight augmenter described in
+[`docs/adaptive-equivalence-augmentation.md`](../docs/adaptive-equivalence-augmentation.md).
+It records exact local evidence, proposes guarded anti-unified schemas from at
+least two witnesses, requires independent Alloy and Lean validation, and keeps
+equality admission separate from rewrite orientation. The default canonical
+pipeline remains R0-only.
+
 ## Canonical Object
 
 For an input predicate `P`, canonicalization produces:
@@ -317,6 +329,73 @@ R & R                -> R
 The last two rules follow from the ACI/SET representation. They do not apply to
 AC/BAG arithmetic operators.
 
+### Parser-certified restriction and composition laws
+
+The following relational laws run only when the parser-authenticated exact
+occurrence types independently validate every source and constructed node.
+They preserve JOIN sequence order and composed slot invocations:
+
+```text
+univ <: R             -> R
+Carrier <: R          -> R       when exact restriction typing proves no narrowing
+R :> univ             -> R
+R :> Carrier          -> R       under the same exact endpoint proof
+none <: R             -> none
+R :> none             -> none
+D <: none             -> none
+none :> C             -> none
+
+(D <: R).S            -> D <: (R.S)    when arity(R) >= 2
+R.(S :> C)            -> (R.S) :> C    when arity(S) >= 2
+(R :> M).S            -> R.(M <: S)
+(M <: R1).S           -> R1.(M <: S)   when arity(R1) = 1
+R.(S1 :> M)           -> R.(M <: S1)   when arity(S1) = 1
+R1 :> M               -> M <: R1       when arity(R1) = 1
+```
+
+The schemas orient surviving endpoint guards outward and a guard on an
+existentially eliminated JOIN boundary onto the right adjacent operand. A
+unary operand's only coordinate is such a boundary, not a surviving endpoint.
+JOIN associativity extends the rules through a longer chain. Moving a guard to
+the opposite endpoint, changing the guard invocation, reordering JOIN operands,
+or relying on synthetic type labels is not admitted.
+
+For an authenticated empty binary relation `E`, `~E` and `^E` normalize to
+typed empty while `*E` normalizes to authenticated `iden`.
+
+Parser-authenticated relation comparisons also close under certified operand
+identity, including identity already established by an ACI container:
+
+```text
+R in R                 -> true
+R = R                  -> true
+R not in R             -> false
+R != R                 -> false
+```
+
+The two operands must have the same certified invocation. Merely sharing a
+surface spelling, type label, or ordered-container payload does not authorize
+the rule.
+
+For parser-authenticated equal-arity relation expressions, structural subset
+proofs and the two lattice adjunctions are also normalized:
+
+```text
+R in R + S                    -> true
+R & S in R                    -> true
+R - S in R                    -> true
+(D <: R) in R                 -> true
+(R :> C) in R                 -> true
+(R1 + ... + Rn) in T          -> (R1 in T) and ... and (Rn in T)
+R in (T1 & ... & Tn)          -> (R in T1) and ... and (R in Tn)
+(R1 + ... + Rn) not in T      -> (R1 not in T) or ... or (Rn not in T)
+R not in (T1 & ... & Tn)      -> (R not in T1) or ... or (R not in Tn)
+```
+
+The structural proof composes these inclusions recursively. The opposite
+directions are not rules: `R in S + T` is not generally `(R in S) or
+(R in T)`, and `R & S in T` is not generally `(R in T) or (S in T)`.
+
 ### Derived implication identities
 
 Implication is normally eliminated earlier. The saturation layer also handles
@@ -397,7 +476,8 @@ primitive type, cardinality, or disjointness class at unit cost.
 - Shared ablation rules: [`AlloyRewriteSystem.java`](../src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java)
 - Distance extraction: [`CanonicalDistance.java`](../src/is/fivefivefive/CanDis/core/CanonicalDistance.java)
 
-The shared ablation rule set is versioned as `canonical-equivalences-v2`. The
+The shared ablation rule set is versioned as
+`canonical-equivalences-v3-explicit-laws`. The
 production canonicalizer adds temporal partitioning, strict phase-local
 prenexing, binding tuples, renamed slots, and permutation groups around that
 core equivalence vocabulary.

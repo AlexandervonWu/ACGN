@@ -85,7 +85,7 @@ public final class TheoryFiniteUnfoldingTest {
     }
 
     private static void testCertifiedSymmetryReachability() {
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.certifiedFixture();
         TypedSlot x = TypedSlot.source(GraphType.BOOL, 0);
         TypedSlot y = TypedSlot.source(GraphType.BOOL, 1);
         TypedSlotContext context = TypedSlotContext.of(x, y);
@@ -403,7 +403,7 @@ public final class TheoryFiniteUnfoldingTest {
     }
 
     private static BooleanGraph booleanGraph(String label) {
-        TypedSlottedPortEGraph graph = new TypedSlottedPortEGraph();
+        TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.certifiedFixture();
         TypedEClassInterface falseClass = insert(
                 graph, constantNode("h/false/" + label, false)).insertedClass();
         TypedEClassInterface trueClass = insert(
@@ -500,11 +500,11 @@ public final class TheoryFiniteUnfoldingTest {
             String name,
             BagPortSchema schema) {
         List<ContainerLawCertificate> certificates = Arrays.asList(
-                new ContainerLawCertificate(
+                ContainerLawCertificate.testFixture(
                         schema,
                         ContainerLawCertificate.Law.ASSOCIATIVITY,
                         CertificateOrigin.containerLaw(name, "0:A", 0)),
-                new ContainerLawCertificate(
+                ContainerLawCertificate.testFixture(
                         schema,
                         ContainerLawCertificate.Law.COMMUTATIVITY,
                         CertificateOrigin.containerLaw(name, "0:C", 1)));

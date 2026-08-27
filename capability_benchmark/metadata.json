@@ -5,7 +5,7 @@
   "schemaVersion": "candis-capability-benchmark-v1",
   "targetPerFamily": 500,
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "generatedAt": "2026-08-19T18:09:34.568112681Z",
+  "generatedAt": "2026-08-27T22:20:40.530979715Z",
   "realSeedPredicates": 256,
   "generatedPairs": 5500,
   "pairs": [
@@ -9574,18 +9574,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and some CapBenchA) or some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and some CapBenchA) or some CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and some CapBenchA) or some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and some CapBenchA) or some CapBenchA)))",
       "seedPath": "coursesOld/correct/pXTu4HX5JPZ9vqmtk_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000504.als",
       "seedSourceSha256": "559562478e46c6907008b543ae499020d246b077e228a593c99ab7a24aa8bb4a",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -9673,18 +9676,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some CapBenchB) and some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some CapBenchB) and some CapBenchA)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some CapBenchB) and some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some CapBenchB) and some CapBenchA)))",
       "seedPath": "coursesOld/correct/pXTu4HX5JPZ9vqmtk_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000510.als",
       "seedSourceSha256": "559562478e46c6907008b543ae499020d246b077e228a593c99ab7a24aa8bb4a",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -9772,18 +9778,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv10 and ((some CapBenchA and no CapBenchA) or some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv10 and ((some CapBenchA and no CapBenchA) or some CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv10 and ((some CapBenchA and no CapBenchA) or some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv10 and ((some CapBenchA and no CapBenchA) or some CapBenchA)))",
       "seedPath": "classroom_rl/correct/mQ65Y7f2x47Synx25_inv10.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv10",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000516.als",
       "seedSourceSha256": "7b4ba83702ad894764f70f1a3d6e5cd328377824c050fa1c868f4df3dbdea885",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -9871,18 +9880,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and some CapBenchA)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and some CapBenchA)))",
       "seedPath": "trash_rl/correct/cSAyQxL83MDKuN6RP_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000522.als",
       "seedSourceSha256": "c4f3051f26a765fdf92fa36c1fd29b0026dfba28f956f316d1d4bdf204efcaa2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -9970,18 +9982,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((some capBenchR and no CapBenchB) or some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((some capBenchR and no CapBenchB) or some CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((some capBenchR and no CapBenchB) or some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((some capBenchR and no CapBenchB) or some CapBenchA)))",
       "seedPath": "socialMedia/correct/fRYDzMi5GXKyaNS6n_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000528.als",
       "seedSourceSha256": "a47809240ff8be3b0857ae92b09d3d3084e0ebd6d49e1d5ba185aab1db1eb5dc",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10069,18 +10084,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((no CapBenchA and some capBenchR) and some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((no CapBenchA and some capBenchR) and some CapBenchA)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((no CapBenchA and some capBenchR) and some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((no CapBenchA and some capBenchR) and some CapBenchA)))",
       "seedPath": "trash_rl/correct/sxkZydENRrJzQcLZY_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000534.als",
       "seedSourceSha256": "80f7aa0e2a37d4d6f59d1c2bf508656cd86d54a6e3c64d274db7093397050a99",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10168,18 +10186,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((some CapBenchA and some capBenchS) or some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((some CapBenchA and some capBenchS) or some CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((some CapBenchA and some capBenchS) or some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((some CapBenchA and some capBenchS) or some CapBenchA)))",
       "seedPath": "trash_ltl/correct/JDpwmghorzvAyX6m8_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000540.als",
       "seedSourceSha256": "66cde15f77de478a8fa89240cbf07a090d5dbb511eb092892caff6e0f0ef737b",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10267,18 +10288,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and some CapBenchA)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and some CapBenchA)))",
       "seedPath": "classroom_rl/correct/eHYLgNF2ZmZWBBJD2_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000546.als",
       "seedSourceSha256": "22be5e1d2f0090acfa9fb7b1c6c4f94da3b83a7407ca1d58061a72989eede38c",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10366,18 +10390,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchA)))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchA)))",
       "seedPath": "trash_rl/correct/cSAyQxL83MDKuN6RP_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000552.als",
       "seedSourceSha256": "c4f3051f26a765fdf92fa36c1fd29b0026dfba28f956f316d1d4bdf204efcaa2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10465,18 +10492,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 27,
-      "leftAstSize": 26,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and some CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and some CapBenchA)))",
+      "rightAstSize": 29,
+      "leftAstSize": 29,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and some CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and some CapBenchA)))",
       "seedPath": "trash_ltl/correct/mFPY8XCBj8o2awxwt_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000558.als",
       "seedSourceSha256": "9ecb8a48afe0274ec245a290611105aa05691dff23062a532bc8e22fbff03286",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10564,18 +10594,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some CapBenchA and some CapBenchA) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some CapBenchA and some CapBenchA) or some CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some CapBenchA and some CapBenchA) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some CapBenchA and some CapBenchA) or some CapBenchB)))",
       "seedPath": "trash_ltl/correct/tsJuZhvRxL6BFN2cs_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000564.als",
       "seedSourceSha256": "c536b2f37e655cde883f3eb213a0235a3fe39dcb28290cb7b6c8d56783cf6807",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10663,18 +10696,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some CapBenchB)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some CapBenchB)))",
       "seedPath": "lts/correct/YLcj6DCarxs2wgtxD_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000570.als",
       "seedSourceSha256": "708be1de885a700003d747b89f01ce3c1636d1e37e4d9554f94c121805729c39",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10762,18 +10798,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((some capBenchR and some CapBenchB) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((some capBenchR and some CapBenchB) or some CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((some capBenchR and some CapBenchB) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((some capBenchR and some CapBenchB) or some CapBenchB)))",
       "seedPath": "productionLine_v2/correct/2hza2FXzpbkYp52CD_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000576.als",
       "seedSourceSha256": "89165bab65013388cf4a79eb3396aa7af683d185c40199c342b40638a1cd1689",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10861,18 +10900,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((no CapBenchA and no CapBenchA) and some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((no CapBenchA and no CapBenchA) and some CapBenchB)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((no CapBenchA and no CapBenchA) and some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((no CapBenchA and no CapBenchA) and some CapBenchB)))",
       "seedPath": "trainStationNew/correct/2Bbxn8ERt9iHpoWFc_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000582.als",
       "seedSourceSha256": "2f5756fc0d6d0a682ac200f3dd12fb955c48fba775f6362e6e3302f1511ff99d",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -10960,18 +11002,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv7 and ((some CapBenchA and no CapBenchB) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv7 and ((some CapBenchA and no CapBenchB) or some CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv7 and ((some CapBenchA and no CapBenchB) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv7 and ((some CapBenchA and no CapBenchB) or some CapBenchB)))",
       "seedPath": "trash_fol/correct/CAKbS2CR7SChR8cXy_inv7.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv7",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000588.als",
       "seedSourceSha256": "f072bc3417ecd06e1ec67fd490cc2a4f5b540400001b2ab8315bc3e1e3dafff5",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11059,18 +11104,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some CapBenchB)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some CapBenchB)))",
       "seedPath": "trash_ltl/correct/JDpwmghorzvAyX6m8_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000594.als",
       "seedSourceSha256": "66cde15f77de478a8fa89240cbf07a090d5dbb511eb092892caff6e0f0ef737b",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11158,18 +11206,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and some capBenchR) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and some capBenchR) or some CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and some capBenchR) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and some capBenchR) or some CapBenchB)))",
       "seedPath": "socialMedia/correct/b9NNWyhoTfFwaHX99_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000600.als",
       "seedSourceSha256": "655dd97644ff084ad637bde817e7ebabbc6c6ced3ca2c8444162954b362bfd61",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11257,18 +11308,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some capBenchS) and some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some capBenchS) and some CapBenchB)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some capBenchS) and some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some capBenchS) and some CapBenchB)))",
       "seedPath": "socialMedia/correct/hQdLgX6CoEjqBpERM_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000606.als",
       "seedSourceSha256": "78657d2e5a69dc85d27710ba492f6372b32331229f2822a9e1a116d81096454b",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11356,18 +11410,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv7 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv7 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchB)))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv7 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv7 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some CapBenchB)))",
       "seedPath": "classroom_rl/correct/KNDHz5ZREY7hdvHo2_inv7.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv7",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000612.als",
       "seedSourceSha256": "9200cb100f9c4ac9fdc654993501796d2e020d8182ce3064680c4742285811e1",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11455,18 +11512,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 34,
-      "leftAstSize": 33,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB)))",
+      "rightAstSize": 36,
+      "leftAstSize": 36,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some CapBenchB)))",
       "seedPath": "trash_rl/correct/G9tkL59GuWhWixjnZ_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000618.als",
       "seedSourceSha256": "415dbf3603268bcc1e0a8e4685390216a2a59f66a0f8533afc9c07427f7bc598",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11554,18 +11614,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some CapBenchB)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some CapBenchB)))",
       "seedPath": "cv_v1/correct/WrZYLWP2n4P5ddAMM_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000624.als",
       "seedSourceSha256": "8743867dd6ca920d98eb9b979dd8e97274099e1f227929ebc0dd0516fee100e2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11653,18 +11716,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((no CapBenchA and some CapBenchA) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((no CapBenchA and some CapBenchA) and no CapBenchA)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((no CapBenchA and some CapBenchA) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((no CapBenchA and some CapBenchA) and no CapBenchA)))",
       "seedPath": "graphs/correct/PEXWErpagRpuKDjQJ_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000630.als",
       "seedSourceSha256": "3327a60fe2960d51ed41a6b486838f350d31e585b4eaaa5d4170acb8b4902109",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11752,18 +11818,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some CapBenchA and some CapBenchB) or no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some CapBenchA and some CapBenchB) or no CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some CapBenchA and some CapBenchB) or no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some CapBenchA and some CapBenchB) or no CapBenchA)))",
       "seedPath": "trash_fol/correct/6DKtAmPwEbYfuKbez_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000636.als",
       "seedSourceSha256": "a3ab364e0a998731a0af456a0e4748ea5a7926f326d9194b8711f2f017b105d2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11851,18 +11920,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv13 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv13 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchA)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv13 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv13 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and no CapBenchA)))",
       "seedPath": "classroom_rl/correct/SbgfWkbs7guk836zW_inv13.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv13",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000642.als",
       "seedSourceSha256": "8c9a8ec00b77f3c857afd7bd2917859499043d13eabdc38c0b8144c59cf6ced0",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -11950,18 +12022,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((some capBenchR and no CapBenchA) or no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((some capBenchR and no CapBenchA) or no CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((some capBenchR and no CapBenchA) or no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((some capBenchR and no CapBenchA) or no CapBenchA)))",
       "seedPath": "trainStationNew/correct/NyLkgGQYC8X2csWdg_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000648.als",
       "seedSourceSha256": "46eea099904c5b01318dbf1e765bf4f096189ea2ccbd16bf34e6a9b2567dd34a",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12049,18 +12124,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv5 and ((no CapBenchA and no CapBenchB) and no CapBenchA)))",
       "seedPath": "trash_rl/correct/yAtgta8oMFwNy9mPn_inv5.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv5",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000654.als",
       "seedSourceSha256": "d7bb10cafe38511b870a567900d149d7da3f6411d6937400b250e42017f114d2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12148,18 +12226,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((some CapBenchA and some capBenchR) or no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((some CapBenchA and some capBenchR) or no CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((some CapBenchA and some capBenchR) or no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((some CapBenchA and some capBenchR) or no CapBenchA)))",
       "seedPath": "trainStationNew/correct/Gku6SNYx8cQss3Jeg_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000660.als",
       "seedSourceSha256": "e89721844c85e0fc4ea62af214cac74f6e810643bb277a696b08d404decc980f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12247,18 +12328,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and no CapBenchA)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and no CapBenchA)))",
       "seedPath": "coursesNew/correct/gFk2adc6JM7PGenKc_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000666.als",
       "seedSourceSha256": "e14ec67d31275f3a609fc0c4537e677c8b5f016f2036c4a23f0916af3444a450",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12346,18 +12430,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((some capBenchR and some capBenchS) or no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((some capBenchR and some capBenchS) or no CapBenchA)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((some capBenchR and some capBenchS) or no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((some capBenchR and some capBenchS) or no CapBenchA)))",
       "seedPath": "coursesOld/correct/7SMfdmMLtHuyzjKZT_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000672.als",
       "seedSourceSha256": "7cabfff5be9542277a0f260e13baed9a57666804622c07c6627d94246d222d45",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12445,18 +12532,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and no CapBenchA)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and no CapBenchA)))",
       "seedPath": "productionLineNew/correct/NBbr8fJqCsbP6eMk9_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000678.als",
       "seedSourceSha256": "29b536e8ed6dde440ac91a6014024828a34ebae5c8367a36fa0e88bc641cfc35",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12544,18 +12634,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or no CapBenchA)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or no CapBenchA)))",
       "seedPath": "classroom_rl/correct/4N3jMYo2pTqfwbEwZ_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000684.als",
       "seedSourceSha256": "ba1feea0f030437e5fb03bd0b920720d0eb464aea74a26a5036a178bbdf4c0cd",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12643,18 +12736,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 33,
-      "leftAstSize": 32,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and no CapBenchA)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and no CapBenchA)))",
+      "rightAstSize": 35,
+      "leftAstSize": 35,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and no CapBenchA)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and no CapBenchA)))",
       "seedPath": "trash_ltl/correct/kv3NBH5DHKpxdBeHD_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000690.als",
       "seedSourceSha256": "6a232f2bc308711d9b66a296034866429fd0288ff8b66a2813e83c353494a480",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12742,18 +12838,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((some capBenchR and some CapBenchA) or no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((some capBenchR and some CapBenchA) or no CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((some capBenchR and some CapBenchA) or no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((some capBenchR and some CapBenchA) or no CapBenchB)))",
       "seedPath": "productionLine_v2/correct/pGT4qXMKYiXnsePBN_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000696.als",
       "seedSourceSha256": "eeb796569d69dc57587d8fc484ef1410da9ffbf6bf000c4d56e6d6b1097b8700",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12841,18 +12940,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some CapBenchB) and no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some CapBenchB) and no CapBenchB)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some CapBenchB) and no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some CapBenchB) and no CapBenchB)))",
       "seedPath": "coursesOld/correct/3mnw5t724PdWv7SK2_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000702.als",
       "seedSourceSha256": "ef05ba5495e71ab1c00beedee44d39e19b1fb80715892f836a24927da9dc8f9c",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -12940,18 +13042,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv5 and ((some CapBenchA and no CapBenchA) or no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv5 and ((some CapBenchA and no CapBenchA) or no CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv5 and ((some CapBenchA and no CapBenchA) or no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv5 and ((some CapBenchA and no CapBenchA) or no CapBenchB)))",
       "seedPath": "trainStationNew/correct/ZMGTvTePBTnyqYj85_inv5.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv5",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000708.als",
       "seedSourceSha256": "e0fa594e1f0dc78424a34b97dd05c3e47432878a9911be192d7db2958cac37ac",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13039,18 +13144,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and no CapBenchB)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and no CapBenchB)))",
       "seedPath": "trash_rl/correct/ghZpkKBpJdXSJtYDh_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000714.als",
       "seedSourceSha256": "a3ab364e0a998731a0af456a0e4748ea5a7926f326d9194b8711f2f017b105d2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13138,18 +13246,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some capBenchR and no CapBenchB) or no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some capBenchR and no CapBenchB) or no CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some capBenchR and no CapBenchB) or no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some capBenchR and no CapBenchB) or no CapBenchB)))",
       "seedPath": "classroom_fol/correct/mx3oXbxCvZM8hug7g_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000720.als",
       "seedSourceSha256": "251431bd00a616a75227d53a6b3f0868062b0ca6646bec1bfa9477ee4f87df58",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13237,18 +13348,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some capBenchR) and no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some capBenchR) and no CapBenchB)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some capBenchR) and no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some capBenchR) and no CapBenchB)))",
       "seedPath": "productionLine_v2/correct/BwWe92sbvpgk5dDyC_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000726.als",
       "seedSourceSha256": "573cb27984072af0487f4a05f239e43cdbf62d3d5bc9394af0a0282bc11a4980",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13336,18 +13450,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some CapBenchA and some capBenchS) or no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some CapBenchA and some capBenchS) or no CapBenchB)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some CapBenchA and some capBenchS) or no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some CapBenchA and some capBenchS) or no CapBenchB)))",
       "seedPath": "coursesOld/correct/3mnw5t724PdWv7SK2_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000732.als",
       "seedSourceSha256": "ef05ba5495e71ab1c00beedee44d39e19b1fb80715892f836a24927da9dc8f9c",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13435,18 +13552,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and no CapBenchB)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and no CapBenchB)))",
       "seedPath": "coursesNew/correct/GmZ2fsLWb8ZEqLYkL_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000738.als",
       "seedSourceSha256": "b4c3dd3bd0046a872f6ab2c3e0093599242180bb000f984cf67af363fabbb49f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13534,18 +13654,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or no CapBenchB)))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or no CapBenchB)))",
       "seedPath": "coursesOld/correct/gqjZH9fCPvAoSJmpw_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000744.als",
       "seedSourceSha256": "b4f96ca77711c3d65ce9c1618c9e2021b9e85a90a6a4a9a642cd6c7240ab3018",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13633,18 +13756,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 27,
-      "leftAstSize": 26,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv6 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and no CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv6 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and no CapBenchB)))",
+      "rightAstSize": 29,
+      "leftAstSize": 29,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv6 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and no CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv6 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and no CapBenchB)))",
       "seedPath": "trash_fol/correct/xEr2ftLxua3JF8reg_inv6.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv6",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000750.als",
       "seedSourceSha256": "15a9c33f514e51ac1fd866fa2a4f4f0c0b4c2ebc00a907c45d199b0ac3831ec9",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13732,18 +13858,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((some CapBenchA and some CapBenchA) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((some CapBenchA and some CapBenchA) or some capBenchR)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((some CapBenchA and some CapBenchA) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((some CapBenchA and some CapBenchA) or some capBenchR)))",
       "seedPath": "productionLine_v2/correct/4WdhuC8Y5sEPKWn3z_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000756.als",
       "seedSourceSha256": "c0b9f9f2ee6a6e996343495defd100cf3c5b3cc4f13e318324c6b8b6ca214560",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13831,18 +13960,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some capBenchR)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and some capBenchR)))",
       "seedPath": "trash_ltl/correct/tsJuZhvRxL6BFN2cs_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000762.als",
       "seedSourceSha256": "c536b2f37e655cde883f3eb213a0235a3fe39dcb28290cb7b6c8d56783cf6807",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -13930,18 +14062,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((some capBenchR and some CapBenchB) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((some capBenchR and some CapBenchB) or some capBenchR)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((some capBenchR and some CapBenchB) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((some capBenchR and some CapBenchB) or some capBenchR)))",
       "seedPath": "trash_ltl/correct/JDpwmghorzvAyX6m8_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000768.als",
       "seedSourceSha256": "66cde15f77de478a8fa89240cbf07a090d5dbb511eb092892caff6e0f0ef737b",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14029,18 +14164,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((no CapBenchA and no CapBenchA) and some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((no CapBenchA and no CapBenchA) and some capBenchR)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((no CapBenchA and no CapBenchA) and some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((no CapBenchA and no CapBenchA) and some capBenchR)))",
       "seedPath": "classroom_rl/correct/43HYKirMKB7FJvwqT_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000774.als",
       "seedSourceSha256": "8327fd5d25ff7c99928d48d264ad77c0f102bdfb4aacc1cae86eb795e53971b9",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14128,18 +14266,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((some CapBenchA and no CapBenchB) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((some CapBenchA and no CapBenchB) or some capBenchR)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((some CapBenchA and no CapBenchB) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((some CapBenchA and no CapBenchB) or some capBenchR)))",
       "seedPath": "trash_ltl/correct/kv3NBH5DHKpxdBeHD_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000780.als",
       "seedSourceSha256": "6a232f2bc308711d9b66a296034866429fd0288ff8b66a2813e83c353494a480",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14227,18 +14368,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some capBenchR)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and some capBenchR)))",
       "seedPath": "productionLineNew/correct/XjEupprbc376P2CD8_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000786.als",
       "seedSourceSha256": "c923695abf9aa98b6e5528219639bf4130ca63753f1e6a322a845271cec90953",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14326,18 +14470,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv13 and ((some capBenchR and some capBenchR) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv13 and ((some capBenchR and some capBenchR) or some capBenchR)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv13 and ((some capBenchR and some capBenchR) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv13 and ((some capBenchR and some capBenchR) or some capBenchR)))",
       "seedPath": "trash_ltl/correct/sqjermYutcw9vh8RS_inv13.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv13",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000792.als",
       "seedSourceSha256": "65cdbc083ab3862accbdd9d8ce6a7b85d0a8e21e2a020bb107358355fecdd57d",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14425,18 +14572,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some capBenchS) and some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some capBenchS) and some capBenchR)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some capBenchS) and some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some capBenchS) and some capBenchR)))",
       "seedPath": "coursesNew/correct/yHJNs44NC64ddQAno_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000798.als",
       "seedSourceSha256": "08ae1872318b58123270d10f5688937dca0b17b45d6116ab20b09c52927c6558",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14524,18 +14674,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv10 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv10 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR)))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv10 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv10 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or some capBenchR)))",
       "seedPath": "classroom_fol/correct/HhjKvbquPXBCxvAAR_inv10.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv10",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000804.als",
       "seedSourceSha256": "7b4ba83702ad894764f70f1a3d6e5cd328377824c050fa1c868f4df3dbdea885",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14623,18 +14776,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 34,
-      "leftAstSize": 33,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchR)))",
+      "rightAstSize": 36,
+      "leftAstSize": 36,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((capBenchR in (CapBenchA -> CapBenchA) and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchR)))",
       "seedPath": "trainStationNew/correct/FJcWdWKde929DuokN_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000810.als",
       "seedSourceSha256": "23bad100732c6ab6244fd63bb4fa288a13bb586cff44d20c9139bae50eefa44f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14722,18 +14878,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some capBenchR)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some capBenchR)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some capBenchR)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and CapBenchA in CapBenchA + CapBenchB) or some capBenchR)))",
       "seedPath": "coursesOld/correct/WavPeyiqTJ4sKtiKg_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000816.als",
       "seedSourceSha256": "84a6ecb167bdd52ca7c420dc947050f626f544f6bd4fc720d972a0dbdec689a7",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14821,18 +14980,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((no CapBenchA and some CapBenchA) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((no CapBenchA and some CapBenchA) and some capBenchS)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((no CapBenchA and some CapBenchA) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((no CapBenchA and some CapBenchA) and some capBenchS)))",
       "seedPath": "trash_ltl/correct/q6SLDscxk3qaL4yY8_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000822.als",
       "seedSourceSha256": "9d5d1e0590e3d78b791a54ef61c2ba0455107d86c53dab2d3c43b179a981a998",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -14920,18 +15082,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some CapBenchA and some CapBenchB) or some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some CapBenchA and some CapBenchB) or some capBenchS)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some CapBenchA and some CapBenchB) or some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some CapBenchA and some CapBenchB) or some capBenchS)))",
       "seedPath": "productionLineNew/correct/XjEupprbc376P2CD8_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000828.als",
       "seedSourceSha256": "c923695abf9aa98b6e5528219639bf4130ca63753f1e6a322a845271cec90953",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15019,18 +15184,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv18 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv18 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and some capBenchS)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv18 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv18 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchB) and some capBenchS)))",
       "seedPath": "trash_ltl/correct/Z4mZgn8j8MZpG4HgL_inv18.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv18",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000834.als",
       "seedSourceSha256": "e29b487bb5b49578874b4d8db4fc2e286e57364fa563f8b1b167be97a599e215",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15118,18 +15286,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((some capBenchR and no CapBenchA) or some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((some capBenchR and no CapBenchA) or some capBenchS)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((some capBenchR and no CapBenchA) or some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((some capBenchR and no CapBenchA) or some capBenchS)))",
       "seedPath": "trash_fol/correct/u9HAHHm389FuiqEga_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000840.als",
       "seedSourceSha256": "17f671f6ef1f68d3d4285559b00bc91967119b1bf66c4b790c3935dccf6cdfce",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15217,18 +15388,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 22,
-      "leftAstSize": 21,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((no CapBenchA and no CapBenchB) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((no CapBenchA and no CapBenchB) and some capBenchS)))",
+      "rightAstSize": 24,
+      "leftAstSize": 24,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((no CapBenchA and no CapBenchB) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((no CapBenchA and no CapBenchB) and some capBenchS)))",
       "seedPath": "trash_ltl/correct/HtECphvZ8iWhezvRx_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000846.als",
       "seedSourceSha256": "ad554f3105451f210985398f27bffe1108d99cc2ef97141ddc1bef3da3980111",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15316,18 +15490,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv8 and ((some CapBenchA and some capBenchR) or some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv8 and ((some CapBenchA and some capBenchR) or some capBenchS)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv8 and ((some CapBenchA and some capBenchR) or some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv8 and ((some CapBenchA and some capBenchR) or some capBenchS)))",
       "seedPath": "graphs/correct/EdFn4uPy7jJsQhNBc_inv8.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv8",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000852.als",
       "seedSourceSha256": "160d5e3aa11e98d02f8d665e087581e4cbc48c75c5bf9fb62b4dc83782401195",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15415,18 +15592,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv19 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv19 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and some capBenchS)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv19 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv19 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchR) and some capBenchS)))",
       "seedPath": "trash_ltl/correct/joBZfzb9c955N5E8h_inv19.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv19",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000858.als",
       "seedSourceSha256": "deea995087bec251a9241a64a2be867a656a1f0efa1294358868dd8379601f3f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15514,18 +15694,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 24,
-      "leftAstSize": 23,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and some capBenchS) or some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and some capBenchS) or some capBenchS)))",
+      "rightAstSize": 26,
+      "leftAstSize": 26,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and some capBenchS) or some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and some capBenchS) or some capBenchS)))",
       "seedPath": "trainStationNew/correct/oR7MAa2XhASZN8E75_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000864.als",
       "seedSourceSha256": "fbcda81400b0f02bc9ccbbb5b30699f95abd2da7bac4130963ea21599c13cdf3",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15613,18 +15796,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchS)))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) and some capBenchS)))",
       "seedPath": "trash_fol/correct/q63B3oRHqBxWFcJSj_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000870.als",
       "seedSourceSha256": "63656517db478256ce89768bc0858fe0901173eff4ecaae8bdb3e70fc5b1f0e5",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15712,18 +15898,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv5 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv5 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or some capBenchS)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv5 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv5 and ((some CapBenchA and CapBenchA in CapBenchA + CapBenchB) or some capBenchS)))",
       "seedPath": "classroom_fol/correct/CKRkct6MCPADorHNP_inv5.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv5",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000876.als",
       "seedSourceSha256": "5b67d28dc2b9bdfcf622bbd420f4878708773ceb60a71c35b64378f847e8d7c8",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15811,18 +16000,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 33,
-      "leftAstSize": 32,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv6 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and some capBenchS)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv6 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and some capBenchS)))",
+      "rightAstSize": 35,
+      "leftAstSize": 35,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv6 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and some capBenchS)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv6 and ((capBenchR in (CapBenchA -> CapBenchA) and CapBenchA in CapBenchA + CapBenchB) and some capBenchS)))",
       "seedPath": "trainStationNew/correct/sEWidL45E8Gw8k6kg_inv6.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv6",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000882.als",
       "seedSourceSha256": "b70070f06acac04cdedb48527e3cc83b82cd2e86102c7c1c64aa921417abbbe4",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -15910,18 +16102,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and some CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and some CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and some CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and some CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "coursesOld/correct/nmhpxv5N4AwkNapvZ_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000888.als",
       "seedSourceSha256": "b262eedc1aa4f0892f17aa336b61f0885f06a3013b1f6f92b97a868ced493c60",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16009,18 +16204,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((no CapBenchA and some CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((no CapBenchA and some CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((no CapBenchA and some CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((no CapBenchA and some CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "productionLine_v1/correct/DsJWGznkxKn82RCMt_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000894.als",
       "seedSourceSha256": "656e25e424274363e21eb9f46cac2d1e7e92166e93c2920b1d95dddaba0c637e",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16108,18 +16306,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv7 and ((some CapBenchA and no CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv7 and ((some CapBenchA and no CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv7 and ((some CapBenchA and no CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv7 and ((some CapBenchA and no CapBenchA) or capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "classroom_rl/correct/KNDHz5ZREY7hdvHo2_inv7.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv7",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000900.als",
       "seedSourceSha256": "9200cb100f9c4ac9fdc654993501796d2e020d8182ce3064680c4742285811e1",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16207,18 +16408,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 34,
-      "leftAstSize": 33,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 36,
+      "leftAstSize": 36,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchA) and capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "trash_fol/correct/WhucEYN7ycYGHiLe3_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000906.als",
       "seedSourceSha256": "787ee624eda573f240b90be71ee40e595a2f52be4f57a6b438c6d3bbd19811c1",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16306,18 +16510,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((some capBenchR and no CapBenchB) or capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((some capBenchR and no CapBenchB) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((some capBenchR and no CapBenchB) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((some capBenchR and no CapBenchB) or capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "coursesNew/correct/GmZ2fsLWb8ZEqLYkL_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000912.als",
       "seedSourceSha256": "b4c3dd3bd0046a872f6ab2c3e0093599242180bb000f984cf67af363fabbb49f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16405,18 +16612,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 28,
-      "leftAstSize": 27,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((no CapBenchA and some capBenchR) and capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((no CapBenchA and some capBenchR) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 30,
+      "leftAstSize": 30,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((no CapBenchA and some capBenchR) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((no CapBenchA and some capBenchR) and capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "trash_fol/correct/Y8eSpC4L2SG29BJxF_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000918.als",
       "seedSourceSha256": "1c2a9107192d82d89b0e7df045f7d96eaccde601e8592700c1ba8ce696c85bf2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16504,18 +16714,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 30,
-      "leftAstSize": 29,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some CapBenchA and some capBenchS) or capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some CapBenchA and some capBenchS) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 32,
+      "leftAstSize": 32,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some CapBenchA and some capBenchS) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some CapBenchA and some capBenchS) or capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "trash_rl/correct/jMXv6TxstZfaThkbh_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000924.als",
       "seedSourceSha256": "a3ab364e0a998731a0af456a0e4748ea5a7926f326d9194b8711f2f017b105d2",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16603,18 +16816,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 34,
-      "leftAstSize": 33,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 36,
+      "leftAstSize": 36,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((capBenchR in (CapBenchA -> CapBenchA) and some capBenchS) and capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "coursesOld/correct/ysGuz5Edapr6mG6p6_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000930.als",
       "seedSourceSha256": "bb8375ec719b7eb8238ee5f3a4a2ebc490c7bc7a80fc69dc6083a1989679180a",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16702,18 +16918,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 36,
-      "leftAstSize": 35,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv3 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv3 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 38,
+      "leftAstSize": 38,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv3 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv3 and ((some capBenchR and capBenchR in (CapBenchA -> CapBenchA)) or capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "socialMedia/correct/5jRwp3MFvtqqP8r6o_inv3.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv3",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000936.als",
       "seedSourceSha256": "bd0d1f820b82d5bd4f31f37a05bc622710a0b704a6efe7b5de5eff366943424b",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16801,18 +17020,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 33,
-      "leftAstSize": 32,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv2 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv2 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "rightAstSize": 35,
+      "leftAstSize": 35,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv2 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv2 and ((no CapBenchA and CapBenchA in CapBenchA + CapBenchB) and capBenchR in (CapBenchA -> CapBenchA))))",
       "seedPath": "classroom_fol/correct/TGahc7yGWBm2XRhvZ_inv2.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv2",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000942.als",
       "seedSourceSha256": "c757e28c549905e26f567d92aeacdebea9b685e4a517326ffdcacc8515fd5760",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16900,18 +17122,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv13 and ((some CapBenchA and some CapBenchA) or CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv13 and ((some CapBenchA and some CapBenchA) or CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv13 and ((some CapBenchA and some CapBenchA) or CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv13 and ((some CapBenchA and some CapBenchA) or CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "trainStationOld/correct/YKCHzjNhrJFEWxvK7_inv13.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv13",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000948.als",
       "seedSourceSha256": "02d4c888bfd34861f3d132aa72827f78239c98aed8dfa978325530b818888855",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -16999,18 +17224,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 33,
-      "leftAstSize": 32,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 35,
+      "leftAstSize": 35,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv9 and ((capBenchR in (CapBenchA -> CapBenchA) and some CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "productionLine_v2/correct/uxq5yStmhBo5xzEys_inv9.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv9",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000954.als",
       "seedSourceSha256": "1acfabce26441bcd3f73c888b92469a26d544e394751fa41475681cf47850c89",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17098,18 +17326,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv11 and ((some capBenchR and some CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv11 and ((some capBenchR and some CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv11 and ((some capBenchR and some CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv11 and ((some capBenchR and some CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "coursesOld/correct/7SMfdmMLtHuyzjKZT_inv11.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv11",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000960.als",
       "seedSourceSha256": "7cabfff5be9542277a0f260e13baed9a57666804622c07c6627d94246d222d45",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17197,18 +17428,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 27,
-      "leftAstSize": 26,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((no CapBenchA and no CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((no CapBenchA and no CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 29,
+      "leftAstSize": 29,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((no CapBenchA and no CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((no CapBenchA and no CapBenchA) and CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "trash_fol/correct/u9HAHHm389FuiqEga_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000966.als",
       "seedSourceSha256": "17f671f6ef1f68d3d4285559b00bc91967119b1bf66c4b790c3935dccf6cdfce",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17296,18 +17530,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((some CapBenchA and no CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((some CapBenchA and no CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((some CapBenchA and no CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((some CapBenchA and no CapBenchB) or CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "trash_ltl/correct/kv3NBH5DHKpxdBeHD_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000972.als",
       "seedSourceSha256": "6a232f2bc308711d9b66a296034866429fd0288ff8b66a2813e83c353494a480",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17395,18 +17632,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 33,
-      "leftAstSize": 32,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 35,
+      "leftAstSize": 35,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv4 and ((capBenchR in (CapBenchA -> CapBenchA) and no CapBenchB) and CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "socialMedia/correct/8ZKZgfXgW5tXjDhBP_inv4.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv4",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000978.als",
       "seedSourceSha256": "29ebe5e8fa570fd816494c0810764dc85ef31cf42069ced829375137c8e47723",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17494,18 +17734,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 29,
-      "leftAstSize": 28,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv6 and ((some capBenchR and some capBenchR) or CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv6 and ((some capBenchR and some capBenchR) or CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 31,
+      "leftAstSize": 31,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv6 and ((some capBenchR and some capBenchR) or CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv6 and ((some capBenchR and some capBenchR) or CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "socialMedia/correct/n5EaFZyQRijHZ6Erw_inv6.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv6",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000984.als",
       "seedSourceSha256": "8295dfd981987433a0f3df56c901665326b7000794458b9700dabd5a6e1744a6",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17593,18 +17836,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 27,
-      "leftAstSize": 26,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv1 and ((no CapBenchA and some capBenchS) and CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv1 and ((no CapBenchA and some capBenchS) and CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 29,
+      "leftAstSize": 29,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv1 and ((no CapBenchA and some capBenchS) and CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv1 and ((no CapBenchA and some capBenchS) and CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "classroom_rl/correct/CKW88ST7NskWD8o8H_inv1.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv1",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000990.als",
       "seedSourceSha256": "eb49e82e2cabf2b2871a62b0168d117945147bbe8fc6f9526993f0bc8628e881",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },
@@ -17692,18 +17938,21 @@
       "family": "aci"
     },
     {
-      "rightAstSize": 35,
-      "leftAstSize": 34,
-      "leftFormula": "(some ((CapBenchA.capBenchR).capBenchR) and (inv6 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or CapBenchA in CapBenchA + CapBenchB)))",
-      "soundnessCondition": "relational join is associative",
-      "rightFormula": "(some (CapBenchA.(capBenchR.capBenchR)) and (inv6 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or CapBenchA in CapBenchA + CapBenchB)))",
+      "rightAstSize": 37,
+      "leftAstSize": 37,
+      "leftFormula": "(some (((CapBenchA + CapBenchB) & CapBenchA) & CapBenchA) and (inv6 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or CapBenchA in CapBenchA + CapBenchB)))",
+      "soundnessCondition": "relational intersection has the homogeneous ACI port certified by this profile",
+      "rightFormula": "(some ((CapBenchA + CapBenchB) & (CapBenchA & CapBenchA)) and (inv6 and ((some CapBenchA and capBenchR in (CapBenchA -> CapBenchA)) or CapBenchA in CapBenchA + CapBenchB)))",
       "seedPath": "trainStationNew/correct/i4AX322BZd6yjdnsr_inv6.als",
       "groundTruth": "equivalence-by-construction",
       "seedPredicate": "inv6",
-      "subtype": "reassociate-join",
+      "subtype": "reassociate-intersection",
       "relativePath": "aci/CORRECT/generated_cap000996.als",
       "seedSourceSha256": "be56b69981a2a8c2b75304dc1d88d13e73e5f7717e54abfee1fd757ee805528f",
-      "transformations": ["associativity-join"],
+      "transformations": [
+        "associativity-intersection",
+        "idempotence-intersection"
+      ],
       "expectedFirstCapable": "raw-egraph",
       "family": "aci"
     },

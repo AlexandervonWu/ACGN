@@ -13,12 +13,14 @@ public class ScopeTreeNode {
     private List<ScopeTreeNode> children;
     private ScopeTreeNode parent;
     private Multigraph affliation;
+    private int nextBindingSlot;
     public ScopeTreeNode(int id, ScopeTreeNode parent, Multigraph affl) {
         this.id = id;
         symbols = new HashMap<>();
         children = new LinkedList<>();
         this.parent = parent;
         affliation = affl;
+        nextBindingSlot = 0;
         if (parent != null) {
             parent.addChildren(this);
         }
@@ -32,6 +34,7 @@ public class ScopeTreeNode {
         children = new LinkedList<>();
         this.parent = parent;
         affliation = affl;
+        nextBindingSlot = 0;
         if (parent != null) {
             parent.addChildren(this);
         }
@@ -101,6 +104,9 @@ public class ScopeTreeNode {
     }
     public int size() {
         return symbols.size();
+    }
+    public int allocateBindingSlot() {
+        return nextBindingSlot++;
     }
     public void resetChildren() {
         this.children = new LinkedList<>();

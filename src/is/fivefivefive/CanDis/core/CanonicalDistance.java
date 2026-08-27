@@ -17,6 +17,18 @@ import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
  */
 public final class CanonicalDistance {
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
+    private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
+            new OrderedTreeEditDistance.Adapter<>() {
+                @Override
+                public String label(TemporalTree node) {
+                    return node.label;
+                }
+
+                @Override
+                public List<? extends TemporalTree> children(TemporalTree node) {
+                    return node.children;
+                }
+            };
 
     private CanonicalDistance() {
     }
@@ -109,7 +121,33 @@ public final class CanonicalDistance {
             throw new IllegalArgumentException("Normal forms cannot be null");
         }
         List<NormalForm> snapshot = new ArrayList<>(normalForms);
+        validateCalls(snapshot);
+        for (NormalForm normalForm : snapshot) {
+            if (normalForm != null) {
+                normalForm.freezeForCertification();
+            }
+        }
         return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
+    }
+
+    private static void validateCalls(List<NormalForm> normalForms) {
+        Set<EGraphNode> seen = java.util.Collections.newSetFromMap(new IdentityHashMap<>());
+        java.util.ArrayDeque<EGraphNode> pending = new java.util.ArrayDeque<>();
+        for (NormalForm normalForm : normalForms) {
+            if (normalForm != null && normalForm.getMatrixEGraph() != null) {
+                pending.add(normalForm.getMatrixEGraph());
+            }
+        }
+        while (!pending.isEmpty()) {
+            EGraphNode node = pending.removeFirst();
+            if (!seen.add(node)) {
+                continue;
+            }
+            if (node.getOpcode() == EGraphNode.Opcode.CALL) {
+                CallMetadata.require(node);
+            }
+            pending.addAll(node.getChildren());
+        }
     }
 
     private static int canonicalFormSize(List<NormalForm> nfs) {
@@ -622,6 +660,7 @@ public final class CanonicalDistance {
         addBindings(bindings, nf.getParams(), BindingRole.PARAMETER);
         addBindings(bindings, nf.getMatrixQuantiVars(), BindingRole.MATRIX);
         addBindings(bindings, nf.getInheritedQuantiVars(), BindingRole.INHERITED);
+        addBindings(bindings, nf.getLocalQuantiVars(), BindingRole.LOCAL);
         return bindings;
     }
 
@@ -798,8 +837,10 @@ public final class CanonicalDistance {
         if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             String name = variableName(node);
             key.append(variableMapping.getOrDefault(name, name));
+        } else if (node.getOpcode() == EGraphNode.Opcode.CALL) {
+            key.append(callIdentity(node));
         } else if (node.getSourceName() != null) {
-            key.append(node.getSourceName());
+            key.append(atomIdentity(node));
         }
         key.append('[');
         List<EGraphNode> children = new ArrayList<>(node.getChildren());
@@ -851,9 +892,22 @@ public final class CanonicalDistance {
         if (left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
                 || left.getOpcode() == EGraphNode.Opcode.CONSTANT
                 || left.getOpcode() == EGraphNode.Opcode.REF) {
-            return safeEquals(left.getSourceName(), right.getSourceName()) ? 0 : 1;
+            return safeEquals(atomIdentity(left), atomIdentity(right)) ? 0 : 1;
+        }
+        if (left.getOpcode() == EGraphNode.Opcode.CALL) {
+            return safeEquals(callIdentity(left), callIdentity(right)) ? 0 : 1;
         }
         return 0;
+    }
+
+    private static String callIdentity(EGraphNode node) {
+        return CallMetadata.semanticKey(node);
+    }
+
+    private static String atomIdentity(EGraphNode node) {
+        return node.getSemanticIdentity() == null
+                ? node.getSourceName()
+                : node.getSemanticIdentity();
     }
 
     private static final class EGraphMetadata {
@@ -931,7 +985,7 @@ public final class CanonicalDistance {
             }
             int leftSize = left.size();
             int rightSize = right.size();
-            int dimension = leftSize + rightSize;
+            int dimension = Math.addExact(leftSize, rightSize);
             int[][] costs = intMatrix(dimension, dimension);
             for (int i = 0; i < dimension; i++) {
                 for (int j = 0; j < dimension; j++) {
@@ -949,27 +1003,42 @@ public final class CanonicalDistance {
 
         private static int minimumAssignmentCost(int[][] costs) {
             int size = costs.length;
-            int[] rowPotential = intArray(size + 1);
-            int[] columnPotential = intArray(size + 1);
-            int[] columnMatch = intArray(size + 1);
-            int[] predecessor = intArray(size + 1);
+            for (int row = 0; row < size; row++) {
+                if (costs[row] == null || costs[row].length != size) {
+                    throw new IllegalArgumentException(
+                            "Assignment cost matrix must be square");
+                }
+                for (int cost : costs[row]) {
+                    if (cost < 0) {
+                        throw new IllegalArgumentException(
+                                "Assignment costs must be non-negative");
+                    }
+                }
+            }
+            long[] rowPotential = new long[Math.addExact(size, 1)];
+            long[] columnPotential = new long[Math.addExact(size, 1)];
+            int[] columnMatch = intArray(Math.addExact(size, 1));
+            int[] predecessor = intArray(Math.addExact(size, 1));
             for (int row = 1; row <= size; row++) {
                 columnMatch[0] = row;
                 int column = 0;
-                int[] minimum = intArray(size + 1);
-                java.util.Arrays.fill(minimum, Integer.MAX_VALUE);
-                boolean[] used = booleanArray(size + 1);
+                long[] minimum = new long[Math.addExact(size, 1)];
+                java.util.Arrays.fill(minimum, Long.MAX_VALUE);
+                boolean[] used = booleanArray(Math.addExact(size, 1));
                 do {
                     used[column] = true;
                     int matchedRow = columnMatch[column];
-                    int delta = Integer.MAX_VALUE;
+                    long delta = Long.MAX_VALUE;
                     int nextColumn = 0;
                     for (int candidate = 1; candidate <= size; candidate++) {
                         if (used[candidate]) {
                             continue;
                         }
-                        int reduced = costs[matchedRow - 1][candidate - 1]
-                                - rowPotential[matchedRow] - columnPotential[candidate];
+                        long reduced = Math.subtractExact(
+                                Math.subtractExact(
+                                        (long) costs[matchedRow - 1][candidate - 1],
+                                        rowPotential[matchedRow]),
+                                columnPotential[candidate]);
                         if (reduced < minimum[candidate]) {
                             minimum[candidate] = reduced;
                             predecessor[candidate] = column;
@@ -981,10 +1050,13 @@ public final class CanonicalDistance {
                     }
                     for (int candidate = 0; candidate <= size; candidate++) {
                         if (used[candidate]) {
-                            rowPotential[columnMatch[candidate]] += delta;
-                            columnPotential[candidate] -= delta;
-                        } else {
-                            minimum[candidate] -= delta;
+                            rowPotential[columnMatch[candidate]] = Math.addExact(
+                                    rowPotential[columnMatch[candidate]], delta);
+                            columnPotential[candidate] = Math.subtractExact(
+                                    columnPotential[candidate], delta);
+                        } else if (minimum[candidate] != Long.MAX_VALUE) {
+                            minimum[candidate] = Math.subtractExact(
+                                    minimum[candidate], delta);
                         }
                     }
                     column = nextColumn;
@@ -995,21 +1067,23 @@ public final class CanonicalDistance {
                     column = previous;
                 } while (column != 0);
             }
-            return -columnPotential[0];
+            return Math.toIntExact(Math.negateExact(columnPotential[0]));
         }
 
         private int childDistance(List<EGraphNode> left, List<EGraphNode> right) {
             if (left.isEmpty()) {
                 int distance = 0;
                 for (int i = 0; i < right.size(); i++) {
-                    distance += nodeSize(right.get(i), false);
+                    distance = Math.addExact(
+                            distance, nodeSize(right.get(i), false));
                 }
                 return distance;
             }
             if (right.isEmpty()) {
                 int distance = 0;
                 for (int i = 0; i < left.size(); i++) {
-                    distance += nodeSize(left.get(i), true);
+                    distance = Math.addExact(
+                            distance, nodeSize(left.get(i), true));
                 }
                 return distance;
             }
@@ -1020,14 +1094,20 @@ public final class CanonicalDistance {
             int[] previous = intArray(right.size() + 1);
             int[] current = intArray(right.size() + 1);
             for (int j = 1; j <= right.size(); j++) {
-                previous[j] = previous[j - 1] + nodeSize(right.get(j - 1), false);
+                previous[j] = Math.addExact(
+                        previous[j - 1], nodeSize(right.get(j - 1), false));
             }
             for (int i = 1; i <= left.size(); i++) {
-                current[0] = previous[0] + nodeSize(left.get(i - 1), true);
+                current[0] = Math.addExact(
+                        previous[0], nodeSize(left.get(i - 1), true));
                 for (int j = 1; j <= right.size(); j++) {
-                    int delete = previous[j] + nodeSize(left.get(i - 1), true);
-                    int insert = current[j - 1] + nodeSize(right.get(j - 1), false);
-                    int update = previous[j - 1] + distance(left.get(i - 1), right.get(j - 1));
+                    int delete = Math.addExact(
+                            previous[j], nodeSize(left.get(i - 1), true));
+                    int insert = Math.addExact(
+                            current[j - 1], nodeSize(right.get(j - 1), false));
+                    int update = Math.addExact(
+                            previous[j - 1],
+                            distance(left.get(i - 1), right.get(j - 1)));
                     current[j] = Math.min(update, Math.min(delete, insert));
                 }
                 int[] swap = previous;
@@ -1132,23 +1212,7 @@ public final class CanonicalDistance {
     }
 
     private static int treeDistance(TemporalTree left, TemporalTree right) {
-        int cost = safeEquals(left.label, right.label) ? 0 : 1;
-        int[][] dp = intMatrix(left.children.size() + 1, right.children.size() + 1);
-        for (int i = 1; i <= left.children.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + temporalSize(left.children.get(i - 1));
-        }
-        for (int j = 1; j <= right.children.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + temporalSize(right.children.get(j - 1));
-        }
-        for (int i = 1; i <= left.children.size(); i++) {
-            for (int j = 1; j <= right.children.size(); j++) {
-                int delete = dp[i - 1][j] + temporalSize(left.children.get(i - 1));
-                int insert = dp[i][j - 1] + temporalSize(right.children.get(j - 1));
-                int update = dp[i - 1][j - 1] + treeDistance(left.children.get(i - 1), right.children.get(j - 1));
-                dp[i][j] = Math.min(update, Math.min(delete, insert));
-            }
-        }
-        return cost + dp[left.children.size()][right.children.size()];
+        return OrderedTreeEditDistance.distance(left, right, TEMPORAL_ADAPTER);
     }
 
     private static int temporalSize(TemporalTree node) {
@@ -1389,6 +1453,9 @@ public final class CanonicalDistance {
                 return infixFormula(node, "triggered");
             case ITE:
                 return iteFormula(node);
+            case CALL:
+                CallMetadata.require(node);
+                return operatorFormula(node);
             default:
                 return operatorFormula(node);
         }
@@ -1546,7 +1613,8 @@ public final class CanonicalDistance {
     private enum BindingRole {
         PARAMETER,
         MATRIX,
-        INHERITED
+        INHERITED,
+        LOCAL
     }
 
     private static final class BindingDescriptor {

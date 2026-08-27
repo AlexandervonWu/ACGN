@@ -25,6 +25,7 @@ public final class TheoryStateTest {
     public static void main(String[] args) {
         testCanonicalShapesAndWitnesses();
         testTypedSymmetryCarrier();
+        testLazyGroupClosureBoundary();
         testParentDirectionAndCompression();
         testGeneratedRenamedFindProperties();
         testGeneratedBranchingForests();
@@ -169,6 +170,32 @@ public final class TheoryStateTest {
         expectThrows(IllegalArgumentException.class,
                 () -> TypedSymmetryGroup.generatedForPhaseD(
                         context, Collections.singletonList(otherSwap)));
+    }
+
+    private static void testLazyGroupClosureBoundary() {
+        TypedSlot x = TypedSlot.source(USER, 80);
+        TypedSlot y = TypedSlot.source(USER, 81);
+        TypedSlotContext context = TypedSlotContext.of(x, y);
+        TypedPermutation swap = TypedPermutation.of(context, mapOf(x, y, y, x));
+        String prior = System.getProperty("acgn.maxGroupElements");
+        try {
+            System.setProperty("acgn.maxGroupElements", "1");
+            TypedSymmetryGroup group = TypedSymmetryGroup.generatedForPhaseD(
+                    context, Collections.singletonList(swap));
+            check(group.generators().size() == 1,
+                    "group construction retains generators without traversing closure");
+            check(group.contains(TypedPermutation.identity(context)),
+                    "bounded membership returns immediately for the identity");
+            expectThrows(CanonicalizationDomainException.class,
+                    () -> group.contains(swap));
+            expectThrows(CanonicalizationDomainException.class, group::elements);
+        } finally {
+            if (prior == null) {
+                System.clearProperty("acgn.maxGroupElements");
+            } else {
+                System.setProperty("acgn.maxGroupElements", prior);
+            }
+        }
     }
 
     private static void testParentDirectionAndCompression() {
@@ -400,6 +427,11 @@ public final class TheoryStateTest {
 
     private static void testGraphOwnershipAndQuiescence() {
         ShapeFixture fixture = shapeFixture(EClassId.of(300));
+        TypedSlottedPortEGraph empty = TypedSlottedPortEGraph.structuralFixture();
+        check(empty.hashOwner(fixture.shape) == null
+                        && empty.hashBucketsSnapshot().isEmpty(),
+                "A shape with no live owner has no ownership bucket");
+
         TypedSlottedPortEGraph graph = TypedSlottedPortEGraph.structuralFixture();
         graph.registerRecordForPhaseD(fixture.record);
         check(graph.status() == GraphStatus.QUIESCENT,
@@ -418,10 +450,16 @@ public final class TheoryStateTest {
                 duplicateInterface,
                 Collections.singletonMap(fixture.shape, fixture.witness),
                 TypedSymmetryGroup.identity(fixture.exposedContext));
-        expectThrows(IllegalArgumentException.class,
-                () -> graph.registerRecordForPhaseD(duplicate));
-        check(graph.classes().size() == 1,
-                "Rejected hash collision does not partially register an e-class");
+        graph.registerRecordForPhaseD(duplicate);
+        check(graph.classes().size() == 2
+                        && graph.hashBucketsSnapshot().get(fixture.shape).equals(
+                                new java.util.TreeSet<>(Arrays.asList(
+                                        fixture.record.id(), duplicate.id()))),
+                "Equal-shape leaders coexist in one deterministic ownership bucket");
+        check(!graph.hashBucketsSnapshot().get(fixture.shape).isEmpty()
+                        && graph.hashBucketsSnapshot().get(fixture.shape).stream()
+                                .allMatch(graph::isLeader),
+                "Every stored ownership bucket is nonempty and contains live leaders");
 
         TypedEClassInterface parentInterface = new TypedEClassInterface(
                 EClassId.of(302), USER_PAIR, TypedSlotContext.empty());
@@ -430,6 +468,7 @@ public final class TheoryStateTest {
 
         TypedSlottedPortEGraph reverseOrder = TypedSlottedPortEGraph.structuralFixture();
         reverseOrder.registerRecordForPhaseD(parentRecord);
+        reverseOrder.registerRecordForPhaseD(duplicate);
         reverseOrder.registerRecordForPhaseD(fixture.record);
         check(graph.stateStructuralKey().equals(reverseOrder.stateStructuralKey()),
                 "Quiescent state key is independent of record insertion order");

@@ -5,13 +5,17 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.security.MessageDigest;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HexFormat;
 import java.util.List;
 
 import edu.mit.csail.sdg.parser.CompModule;
 import is.fivefivefive.ACGN.asg.Multigraph;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
+import is.fivefivefive.CanDis.theory.IndependentCertificateVerifier;
 import is.fivefivefive.alloyasg.etc.DoubleMap;
 import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
@@ -102,7 +106,7 @@ public final class CertificateVerifierExportSmoke {
         Path bundle = output.resolve(testCase.name + ".acgncert");
         try {
             CanonicalAlloyPipeline.Prepared prepared =
-                    CanonicalAlloyPipeline.prepareForVerification(
+                    CanonicalAlloyPipeline.prepareCompatibilityForVerification(
                             graph,
                             "certificate-smoke.als#" + testCase.name,
                             SOURCE.getBytes(StandardCharsets.UTF_8));
@@ -144,13 +148,13 @@ public final class CertificateVerifierExportSmoke {
         Files.writeString(rightSource, PAIR_RIGHT_SOURCE, StandardCharsets.UTF_8);
         Path leftBundle = output.resolve("parsed-pair-left.acgncert");
         Path rightBundle = output.resolve("parsed-pair-right.acgncert");
-        exportParsedSource(
+        CanonicalAlloyPipeline.Prepared leftPrepared = exportParsedSource(
                 parseSource(leftSource),
                 "left",
                 "fixture/parsed-pair-left.als#left",
                 Files.readAllBytes(leftSource),
                 leftBundle);
-        exportParsedSource(
+        CanonicalAlloyPipeline.Prepared rightPrepared = exportParsedSource(
                 parseSource(rightSource),
                 "right",
                 "fixture/parsed-pair-right.als#right",
@@ -164,9 +168,57 @@ public final class CertificateVerifierExportSmoke {
             throw new IllegalStateException(
                     "parsed source PAIR did not verify: " + compact(result.output));
         }
+
+        String verifierDigest = sha256(Files.readAllBytes(verifierJar));
+        IndependentCertificateVerifier.Policy policy =
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        verifierDigest,
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        true,
+                        callCommitments(verifierJar, leftBundle, rightBundle));
+        CanonicalAlloyPipeline.StandaloneReplayDistance checked =
+                CanonicalAlloyPipeline.distanceEvaluationWithStandaloneReplay(
+                        leftPrepared, rightPrepared, policy);
+        if (checked.metric().distance() != 0
+                || checked.scope()
+                        != CanonicalAlloyPipeline.StandaloneReplayScope
+                                .TEST_ONLY_NORMALIZED_IR_ZERO_KERNEL
+                || !checked.pairResult().verified()) {
+            throw new IllegalStateException(
+                    "independent distance boundary did not certify the parsed zero pair");
+        }
+        expectIndependentFailure(
+                leftPrepared,
+                rightPrepared,
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        verifierDigest,
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        false,
+                        callCommitments(verifierJar, leftBundle, rightBundle)),
+                "rejects test-only evidence");
+        expectIndependentFailure(
+                leftPrepared,
+                rightPrepared,
+                new IndependentCertificateVerifier.Policy(
+                        verifierJar,
+                        "0".repeat(64),
+                        trustedTheoryDigest,
+                        Duration.ofSeconds(30),
+                        16L * 1024L * 1024L,
+                        64 * 1024,
+                        true),
+                "digest");
     }
 
-    private static void exportParsedSource(
+    private static CanonicalAlloyPipeline.Prepared exportParsedSource(
             Parsed parsed,
             String predicate,
             String inputIdentifier,
@@ -178,8 +230,30 @@ public final class CertificateVerifierExportSmoke {
         if (graph == null) {
             throw new IOException("parsed source fixture lacks predicate " + predicate);
         }
-        CanonicalAlloyPipeline.prepareForVerification(
-                graph, inputIdentifier, source).certificateExportSession().write(output);
+        CanonicalAlloyPipeline.Prepared prepared =
+                CanonicalAlloyPipeline.prepareCompatibilityForVerification(
+                        graph, inputIdentifier, source);
+        prepared.certificateExportSession().write(output);
+        return prepared;
+    }
+
+    private static void expectIndependentFailure(
+            CanonicalAlloyPipeline.Prepared left,
+            CanonicalAlloyPipeline.Prepared right,
+            IndependentCertificateVerifier.Policy policy,
+            String expected) throws Exception {
+        try {
+            CanonicalAlloyPipeline.distanceEvaluationWithStandaloneReplay(
+                    left, right, policy);
+            throw new AssertionError("Expected independent verification failure: " + expected);
+        } catch (IllegalArgumentException | IOException exception) {
+            if (!exception.getMessage().contains(expected)) {
+                throw new AssertionError(
+                        "Expected failure containing '" + expected + "' but found: "
+                                + exception.getMessage(),
+                        exception);
+            }
+        }
     }
 
     private static Parsed parseRepresentativeModel() throws Exception {
@@ -200,7 +274,7 @@ public final class CertificateVerifierExportSmoke {
             throw new IllegalStateException("Alloy rejected source fixture " + source);
         }
         ModelUnit model = new ModelUnit(null, module);
-        MASGVisitor visitor = new MASGVisitor(new GlobalVariables());
+        MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
         visitor.visit(model, null);
         return new Parsed(visitor);
     }
@@ -222,9 +296,11 @@ public final class CertificateVerifierExportSmoke {
             Path verifierJar,
             Path bundle,
             String trustedTheoryDigest) throws IOException {
+        String commitment = inspectCallCommitment(verifierJar, bundle);
         return runVerifier(new ProcessBuilder(
                 javaExecutable(), "-jar", verifierJar.toString(),
                 "--profile", "full", "--theory-digest", trustedTheoryDigest,
+                "--call-occurrence-commitment", commitment,
                 bundle.toString()));
     }
 
@@ -233,10 +309,60 @@ public final class CertificateVerifierExportSmoke {
             Path left,
             Path right,
             String trustedTheoryDigest) throws IOException {
+        String leftCommitment = inspectCallCommitment(verifierJar, left);
+        String rightCommitment = inspectCallCommitment(verifierJar, right);
         return runVerifier(new ProcessBuilder(
                 javaExecutable(), "-jar", verifierJar.toString(),
                 "--profile", "pair", "--theory-digest", trustedTheoryDigest,
+                "--call-occurrence-commitment", leftCommitment,
+                "--call-occurrence-commitment", rightCommitment,
                 left.toString(), right.toString()));
+    }
+
+    /** TEST_ONLY smoke plumbing; inspected bundle data is not production authority. */
+    private static java.util.Map<String, String> callCommitments(
+            Path verifierJar,
+            Path... bundles) throws IOException {
+        java.util.Map<String, String> result = new java.util.LinkedHashMap<>();
+        for (Path bundle : bundles) {
+            String assignment = inspectCallCommitment(verifierJar, bundle);
+            int separator = assignment.indexOf('=');
+            String subject = assignment.substring(0, separator);
+            String digest = assignment.substring(separator + 1);
+            String prior = result.putIfAbsent(subject, digest);
+            if (prior != null && !prior.equals(digest)) {
+                throw new IOException(
+                        "TEST_ONLY fixtures conflict on one CALL commitment subject");
+            }
+        }
+        return java.util.Map.copyOf(result);
+    }
+
+    private static String inspectCallCommitment(
+            Path verifierJar,
+            Path bundle) throws IOException {
+        Process process = new ProcessBuilder(
+                javaExecutable(), "-jar", verifierJar.toString(),
+                "--inspect-call-occurrences", bundle.toString())
+                .redirectErrorStream(true)
+                .start();
+        try {
+            String output = new String(
+                    process.getInputStream().readAllBytes(),
+                    StandardCharsets.UTF_8).trim();
+            if (process.waitFor() != 0
+                    || !output.matches("[0-9a-f]{64}=[0-9a-f]{64}")) {
+                throw new IOException(
+                        "TEST_ONLY CALL commitment inspection failed: "
+                                + compact(output));
+            }
+            return output;
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new IOException(
+                    "TEST_ONLY CALL commitment inspection was interrupted",
+                    exception);
+        }
     }
 
     private static ProcessResult runVerifier(ProcessBuilder builder) throws IOException {
@@ -312,6 +438,11 @@ public final class CertificateVerifierExportSmoke {
             return "no detail";
         }
         return value.replace('\n', ' ').replace('\r', ' ').trim();
+    }
+
+    private static String sha256(byte[] value) throws Exception {
+        return HexFormat.of().formatHex(
+                MessageDigest.getInstance("SHA-256").digest(value));
     }
 
     private record Parsed(MASGVisitor visitor) {

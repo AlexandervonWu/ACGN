@@ -7,7 +7,7 @@ import java.util.Set;
 
 /** Schema {@code Set^epsilon(kappa)}. */
 public final class SetPortSchema implements PortSchema {
-    private final ContainerEmptiness emptiness;
+    private final ArityPolicy arityPolicy;
     private final PortSchema elementSchema;
 
     /** Shorthand for the nonempty schema {@code Set+(kappa)}. */
@@ -16,12 +16,28 @@ public final class SetPortSchema implements PortSchema {
     }
 
     public SetPortSchema(ContainerEmptiness emptiness, PortSchema elementSchema) {
-        this.emptiness = Objects.requireNonNull(emptiness, "emptiness");
+        this(Objects.requireNonNull(emptiness, "emptiness").admitsEmpty()
+                ? ArityPolicy.zeroOrMore()
+                : ArityPolicy.nonemptyVariadic(), elementSchema);
+    }
+
+    public SetPortSchema(ArityPolicy arityPolicy, PortSchema elementSchema) {
+        this.arityPolicy = Objects.requireNonNull(arityPolicy, "arityPolicy");
+        this.arityPolicy.requirePositiveDownwardClosure("A set port");
         this.elementSchema = Objects.requireNonNull(elementSchema, "elementSchema");
     }
 
     public ContainerEmptiness emptiness() {
-        return emptiness;
+        return arityPolicy.admitsZero()
+                ? ContainerEmptiness.K_ZERO : ContainerEmptiness.K_PLUS;
+    }
+
+    public ArityPolicy arityPolicy() {
+        return arityPolicy;
+    }
+
+    public SiblingQuotient siblingQuotient() {
+        return SiblingQuotient.COMMUTATIVE_IDEMPOTENT_SET;
     }
 
     public PortSchema elementSchema() {
@@ -40,31 +56,32 @@ public final class SetPortSchema implements PortSchema {
 
     @Override
     public SetPortSchema substitute(Map<String, GraphType> substitution) {
-        return new SetPortSchema(emptiness, elementSchema.substitute(substitution));
+        return new SetPortSchema(arityPolicy, elementSchema.substitute(substitution));
     }
 
     @Override
     public StructuralKey structuralKey() {
         return StructuralKey.of(
                 "schema/set",
-                Collections.singletonList(emptiness.name()),
-                Collections.singletonList(elementSchema.structuralKey()));
+                Collections.singletonList(siblingQuotient().name()),
+                java.util.Arrays.asList(
+                        arityPolicy.structuralKey(), elementSchema.structuralKey()));
     }
 
     @Override
     public boolean equals(Object other) {
         return other instanceof SetPortSchema
-                && emptiness == ((SetPortSchema) other).emptiness
+                && arityPolicy.equals(((SetPortSchema) other).arityPolicy)
                 && elementSchema.equals(((SetPortSchema) other).elementSchema);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(kind(), emptiness, elementSchema);
+        return Objects.hash(kind(), arityPolicy, elementSchema);
     }
 
     @Override
     public String toString() {
-        return "Set" + emptiness.symbol() + "(" + elementSchema + ")";
+        return "Set" + arityPolicy + "(" + elementSchema + ")";
     }
 }

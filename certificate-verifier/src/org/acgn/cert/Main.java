@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /** Minimal command-line interface for the standalone verifier jar. */
 public final class Main {
@@ -26,8 +28,17 @@ public final class Main {
 
     static int run(String[] args) throws IOException {
         Arguments parsed = Arguments.parse(args);
+        if (parsed.inspectBundle != null) {
+            CallOccurrenceCommitment commitment = CallOccurrenceCommitment.inspect(
+                    Files.readAllBytes(parsed.inspectBundle), Limits.defaults());
+            System.out.println(commitment.assignment());
+            return 0;
+        }
         IndependentVerifier verifier = new IndependentVerifier();
-        VerificationPolicy policy = VerificationPolicy.trust(parsed.theoryDigest);
+        VerificationPolicy policy = new VerificationPolicy(
+                java.util.Set.of(parsed.theoryDigest),
+                Limits.defaults(),
+                parsed.callOccurrenceCommitments);
         VerificationResult result;
         if (parsed.profile == Profile.PAIR) {
             result = verifier.verifyPair(
@@ -59,17 +70,28 @@ public final class Main {
         private final Profile profile;
         private final String theoryDigest;
         private final List<Path> files;
+        private final Map<String, String> callOccurrenceCommitments;
+        private final Path inspectBundle;
 
-        private Arguments(Profile profile, String theoryDigest, List<Path> files) {
+        private Arguments(
+                Profile profile,
+                String theoryDigest,
+                List<Path> files,
+                Map<String, String> callOccurrenceCommitments,
+                Path inspectBundle) {
             this.profile = profile;
             this.theoryDigest = theoryDigest;
             this.files = files;
+            this.callOccurrenceCommitments = callOccurrenceCommitments;
+            this.inspectBundle = inspectBundle;
         }
 
         private static Arguments parse(String[] args) {
             Profile profile = Profile.FULL;
             String digest = null;
             List<Path> files = new ArrayList<>();
+            Map<String, String> commitments = new LinkedHashMap<>();
+            Path inspectBundle = null;
             for (int index = 0; index < args.length; index++) {
                 switch (args[index]) {
                     case "--profile" -> {
@@ -85,8 +107,39 @@ public final class Main {
                         }
                         digest = args[index];
                     }
+                    case "--call-occurrence-commitment" -> {
+                        if (++index >= args.length) {
+                            throw new IllegalArgumentException(
+                                    "--call-occurrence-commitment needs a value");
+                        }
+                        CallOccurrenceCommitment commitment =
+                                CallOccurrenceCommitment.parseAssignment(args[index]);
+                        String prior = commitments.putIfAbsent(
+                                commitment.subjectDigest(),
+                                commitment.occurrenceDigest());
+                        if (prior != null
+                                && !prior.equals(commitment.occurrenceDigest())) {
+                            throw new IllegalArgumentException(
+                                    "conflicting CALL occurrence commitments");
+                        }
+                    }
+                    case "--inspect-call-occurrences" -> {
+                        if (++index >= args.length || inspectBundle != null) {
+                            throw new IllegalArgumentException(
+                                    "--inspect-call-occurrences needs one bundle");
+                        }
+                        inspectBundle = Path.of(args[index]);
+                    }
                     default -> files.add(Path.of(args[index]));
                 }
+            }
+            if (inspectBundle != null) {
+                if (digest != null || !files.isEmpty() || !commitments.isEmpty()) {
+                    throw new IllegalArgumentException(
+                            "CALL occurrence inspection cannot be combined with verification");
+                }
+                return new Arguments(
+                        profile, null, List.of(), Map.of(), inspectBundle);
             }
             if (digest == null || digest.isEmpty()) {
                 throw new IllegalArgumentException("--theory-digest is required");
@@ -96,7 +149,12 @@ public final class Main {
                 throw new IllegalArgumentException(
                         profile + " requires " + expectedFiles + " bundle file(s)");
             }
-            return new Arguments(profile, digest, List.copyOf(files));
+            return new Arguments(
+                    profile,
+                    digest,
+                    List.copyOf(files),
+                    Map.copyOf(commitments),
+                    null);
         }
     }
 }

@@ -5,8 +5,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import is.fivefivefive.CanDis.canonical.CanonicalObservation;
+import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.theory.StructuralKey;
+
 /**
- * Immutable repair-domain observation of a certified, repaired normal form.
+ * Immutable repair-domain observation. Production values are sealed by
+ * {@link RepairProjection} from a matching frozen certified adapter result;
+ * package-local constructors create unsealed bounded-test fixtures only. This
+ * value is not independent replay authority: replay happens outside the
+ * producer process.
  * Temporal topology, phase quantifiers, and matrices remain separate because
  * that decomposition is part of the established {@code CanonicalDistance}
  * semantics. Certificate-derived scope data is metadata, never an edit node.
@@ -22,7 +30,8 @@ public final class RepairView {
     public enum BindingRole {
         PARAMETER,
         MATRIX,
-        INHERITED
+        INHERITED,
+        LOCAL_INHERITED
     }
 
     public static final class TemporalNode {
@@ -30,7 +39,7 @@ public final class RepairView {
         private final List<TemporalNode> children;
         private final int size;
 
-        public TemporalNode(String label, List<? extends TemporalNode> children) {
+        TemporalNode(String label, List<? extends TemporalNode> children) {
             this.label = requireText(label, "temporal label");
             this.children = immutable(children, "temporal child");
             int computed = 1;
@@ -63,7 +72,7 @@ public final class RepairView {
         private final int exchangeClass;
         private final List<Integer> dependencies;
 
-        public Declaration(
+        Declaration(
                 String quantifier,
                 String type,
                 String cardinality,
@@ -132,16 +141,41 @@ public final class RepairView {
         private final int coordinate;
         private final Declaration declaration;
         private final String bindingPath;
+        private final String ownerContext;
         private final List<Integer> certifiedOrbit;
+        private final boolean prenexPathErasureCertified;
 
-        public Binding(
+        Binding(
                 BindingRole role,
                 int ordinal,
                 int ownerPhase,
                 int coordinate,
                 Declaration declaration,
                 String bindingPath,
-                List<Integer> certifiedOrbit) {
+                List<Integer> certifiedOrbit,
+                boolean prenexPathErasureCertified) {
+            this(
+                    role,
+                    ordinal,
+                    ownerPhase,
+                    coordinate,
+                    declaration,
+                    bindingPath,
+                    "",
+                    certifiedOrbit,
+                    prenexPathErasureCertified);
+        }
+
+        Binding(
+                BindingRole role,
+                int ordinal,
+                int ownerPhase,
+                int coordinate,
+                Declaration declaration,
+                String bindingPath,
+                String ownerContext,
+                List<Integer> certifiedOrbit,
+                boolean prenexPathErasureCertified) {
             this.role = Objects.requireNonNull(role, "role");
             if (ordinal < 0) {
                 throw new IllegalArgumentException("Binding ordinal must be non-negative");
@@ -151,16 +185,48 @@ public final class RepairView {
             this.coordinate = coordinate;
             this.declaration = Objects.requireNonNull(declaration, "declaration");
             this.bindingPath = bindingPath == null ? "" : bindingPath;
+            this.ownerContext = ownerContext == null ? "" : ownerContext;
             this.certifiedOrbit = immutableIntegers(certifiedOrbit);
+            this.prenexPathErasureCertified = prenexPathErasureCertified;
+            for (int index = 0; index < this.certifiedOrbit.size(); index++) {
+                int value = this.certifiedOrbit.get(index);
+                if (value < 0 || index > 0
+                        && this.certifiedOrbit.get(index - 1) >= value) {
+                    throw new IllegalArgumentException(
+                            "A certified binder orbit must be strictly increasing");
+                }
+            }
             if (role == BindingRole.PARAMETER && (ownerPhase != -1 || coordinate != -1)) {
                 throw new IllegalArgumentException(
                         "Parameter bindings cannot claim a binder coordinate");
+            }
+            if (role == BindingRole.PARAMETER && prenexPathErasureCertified) {
+                throw new IllegalArgumentException(
+                        "Parameter bindings cannot claim prenex path-erasure authority");
+            }
+            if (role == BindingRole.PARAMETER && !this.certifiedOrbit.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Parameter bindings cannot claim a binder orbit");
+            }
+            if (role == BindingRole.LOCAL_INHERITED && this.ownerContext.isBlank()) {
+                throw new IllegalArgumentException(
+                        "A phase-local inherited binding requires its owner context");
+            }
+            if (role != BindingRole.LOCAL_INHERITED && !this.ownerContext.isEmpty()) {
+                throw new IllegalArgumentException(
+                        "Only phase-local inherited bindings may carry a local owner context");
             }
             if (role != BindingRole.PARAMETER
                     && (ownerPhase < 0 || coordinate < 0
                             || !this.certifiedOrbit.contains(coordinate))) {
                 throw new IllegalArgumentException(
                         "Quantified bindings require a certified owner coordinate and orbit");
+            }
+            if (role != BindingRole.PARAMETER
+                    && !prenexPathErasureCertified
+                    && this.bindingPath.isBlank()) {
+                throw new IllegalArgumentException(
+                        "An uncertified quantified binding must retain its lexical path");
             }
         }
 
@@ -188,8 +254,16 @@ public final class RepairView {
             return bindingPath;
         }
 
+        public String ownerContext() {
+            return ownerContext;
+        }
+
         public List<Integer> certifiedOrbit() {
             return certifiedOrbit;
+        }
+
+        public boolean prenexPathErasureCertified() {
+            return prenexPathErasureCertified;
         }
     }
 
@@ -197,15 +271,16 @@ public final class RepairView {
     public static final class Node {
         private final String operator;
         private final String payload;
+        private final String semanticPayload;
         private final String lexicalVariable;
         private final int bindingIndex;
         private final ContainerKind containerKind;
         private final boolean orderInsensitive;
         private final List<Node> children;
-        private final List<Node> alphaAlternatives;
+        private final List<Node> certifiedAlternatives;
         private final int size;
 
-        public Node(
+        Node(
                 String operator,
                 String payload,
                 String lexicalVariable,
@@ -216,6 +291,7 @@ public final class RepairView {
             this(
                     operator,
                     payload,
+                    payload,
                     lexicalVariable,
                     bindingIndex,
                     containerKind,
@@ -224,7 +300,7 @@ public final class RepairView {
                     Collections.emptyList());
         }
 
-        public Node(
+        Node(
                 String operator,
                 String payload,
                 String lexicalVariable,
@@ -232,20 +308,68 @@ public final class RepairView {
                 ContainerKind containerKind,
                 boolean orderInsensitive,
                 List<? extends Node> children,
-                List<? extends Node> alphaAlternatives) {
+                List<? extends Node> certifiedAlternatives) {
+            this(
+                    operator,
+                    payload,
+                    payload,
+                    lexicalVariable,
+                    bindingIndex,
+                    containerKind,
+                    orderInsensitive,
+                    children,
+                    certifiedAlternatives);
+        }
+
+        Node(
+                String operator,
+                String payload,
+                String semanticPayload,
+                String lexicalVariable,
+                int bindingIndex,
+                ContainerKind containerKind,
+                boolean orderInsensitive,
+                List<? extends Node> children) {
+            this(
+                    operator,
+                    payload,
+                    semanticPayload,
+                    lexicalVariable,
+                    bindingIndex,
+                    containerKind,
+                    orderInsensitive,
+                    children,
+                    Collections.emptyList());
+        }
+
+        Node(
+                String operator,
+                String payload,
+                String semanticPayload,
+                String lexicalVariable,
+                int bindingIndex,
+                ContainerKind containerKind,
+                boolean orderInsensitive,
+                List<? extends Node> children,
+                List<? extends Node> certifiedAlternatives) {
             this.operator = requireText(operator, "operator");
             this.payload = payload;
+            this.semanticPayload = semanticPayload;
             this.lexicalVariable = lexicalVariable;
             this.bindingIndex = bindingIndex;
             this.containerKind = Objects.requireNonNull(containerKind, "containerKind");
             this.orderInsensitive = orderInsensitive;
             this.children = immutable(children, "matrix child");
-            this.alphaAlternatives = immutable(
-                    alphaAlternatives, "matrix alpha alternative");
+            this.certifiedAlternatives = immutable(
+                    certifiedAlternatives, "matrix certified alternative");
             if ("VARIABLE".equals(operator)) {
                 if (lexicalVariable == null) {
                     throw new IllegalArgumentException(
                             "A variable must retain its readable lexical identity");
+                }
+                if (bindingIndex < -1) {
+                    throw new IllegalArgumentException(
+                            "A variable binding index must be -1 or non-negative");
                 }
             } else if (bindingIndex >= 0 || lexicalVariable != null) {
                 throw new IllegalArgumentException(
@@ -256,13 +380,6 @@ public final class RepairView {
                 computed = Math.addExact(computed, child.size);
             }
             this.size = computed;
-            for (Node alternative : this.alphaAlternatives) {
-                if (!operator.equals(alternative.operator)
-                        || computed != alternative.size) {
-                    throw new IllegalArgumentException(
-                            "A local alpha alternative must preserve operator and size");
-                }
-            }
         }
 
         public String operator() {
@@ -271,6 +388,11 @@ public final class RepairView {
 
         public String payload() {
             return payload;
+        }
+
+        /** Hidden certified identity used for edit equality; payload stays readable. */
+        public String semanticPayload() {
+            return semanticPayload;
         }
 
         public boolean isVariable() {
@@ -297,9 +419,21 @@ public final class RepairView {
             return children;
         }
 
-        /** Certified local-binder orbit representatives, excluding this wrapper. */
-        public List<Node> alphaAlternatives() {
-            return alphaAlternatives;
+        /** Certified quotient representatives, excluding this wrapper. */
+        public List<Node> certifiedAlternatives() {
+            return certifiedAlternatives;
+        }
+
+        public int minimumRepresentativeSize() {
+            if (certifiedAlternatives.isEmpty()) {
+                return size;
+            }
+            int minimum = Integer.MAX_VALUE;
+            for (Node alternative : certifiedAlternatives) {
+                minimum = Math.min(
+                        minimum, alternative.minimumRepresentativeSize());
+            }
+            return minimum;
         }
 
         public int size() {
@@ -312,13 +446,30 @@ public final class RepairView {
         private final List<Binding> bindings;
         private final Node matrix;
 
-        public Phase(
+        Phase(
                 List<? extends Declaration> quantifiers,
                 List<? extends Binding> bindings,
                 Node matrix) {
             this.quantifiers = immutable(quantifiers, "quantifier");
             this.bindings = immutable(bindings, "binding");
             this.matrix = matrix;
+            requireBindingIndices(matrix, this.bindings.size());
+        }
+
+        private static void requireBindingIndices(Node node, int bindingCount) {
+            if (node == null) {
+                return;
+            }
+            if (node.isVariable() && node.bindingIndex >= bindingCount) {
+                throw new IllegalArgumentException(
+                        "A matrix variable references an absent phase binding");
+            }
+            for (Node child : node.children) {
+                requireBindingIndices(child, bindingCount);
+            }
+            for (Node alternative : node.certifiedAlternatives) {
+                requireBindingIndices(alternative, bindingCount);
+            }
         }
 
         public List<Declaration> quantifiers() {
@@ -336,17 +487,40 @@ public final class RepairView {
 
     private final TemporalNode temporalRoot;
     private final List<Phase> phases;
-    private final String certifiedArtifactDigest;
+    private final SemanticProfile semanticProfile;
+    private final StructuralKey producerObservationKey;
+    private final String producerObservationDigest;
+    private final boolean certifiedProjection;
     private final int semanticSize;
 
-    public RepairView(
+    RepairView(
             TemporalNode temporalRoot,
             List<? extends Phase> phases,
-            String certifiedArtifactDigest) {
+            SemanticProfile semanticProfile,
+            StructuralKey producerObservationKey) {
+        this(
+                temporalRoot,
+                phases,
+                semanticProfile,
+                producerObservationKey,
+                false);
+    }
+
+    private RepairView(
+            TemporalNode temporalRoot,
+            List<? extends Phase> phases,
+            SemanticProfile semanticProfile,
+            StructuralKey producerObservationKey,
+            boolean certifiedProjection) {
         this.temporalRoot = Objects.requireNonNull(temporalRoot, "temporalRoot");
         this.phases = immutable(phases, "phase");
-        this.certifiedArtifactDigest = requireText(
-                certifiedArtifactDigest, "certifiedArtifactDigest");
+        this.semanticProfile = Objects.requireNonNull(
+                semanticProfile, "semanticProfile");
+        this.producerObservationKey = Objects.requireNonNull(
+                producerObservationKey, "producerObservationKey");
+        this.producerObservationDigest = new CanonicalObservation(
+                this.producerObservationKey).digest();
+        this.certifiedProjection = certifiedProjection;
         int computed = this.phases.size();
         for (Phase phase : this.phases) {
             computed = Math.addExact(computed, phase.quantifiers.size());
@@ -357,6 +531,16 @@ public final class RepairView {
         this.semanticSize = computed;
     }
 
+    static RepairView fromCertifiedProjection(RepairProjection.Projection projection) {
+        Objects.requireNonNull(projection, "projection");
+        return new RepairView(
+                projection.temporalRoot,
+                projection.phases,
+                projection.semanticProfile,
+                projection.producerObservationKey,
+                true);
+    }
+
     public TemporalNode temporalRoot() {
         return temporalRoot;
     }
@@ -365,8 +549,33 @@ public final class RepairView {
         return phases;
     }
 
-    public String certifiedArtifactDigest() {
-        return certifiedArtifactDigest;
+    public SemanticProfile semanticProfile() {
+        return semanticProfile;
+    }
+
+    public String producerObservationDigest() {
+        return producerObservationDigest;
+    }
+
+    boolean hasSameProducerObservation(RepairView other) {
+        return other != null
+                && certifiedProjection
+                && other.certifiedProjection
+                && semanticProfile.equals(other.semanticProfile)
+                && producerObservationKey.equals(other.producerObservationKey);
+    }
+
+    boolean hasSameClaimedProducerObservationForTesting(RepairView other) {
+        return other != null
+                && semanticProfile.equals(other.semanticProfile)
+                && producerObservationKey.equals(other.producerObservationKey);
+    }
+
+    void requireCertifiedProjection() {
+        if (!certifiedProjection) {
+            throw new IllegalStateException(
+                    "Kernel-checked repair evaluation requires certified projections");
+        }
     }
 
     /** Exactly the established normal-form representation-size denominator. */

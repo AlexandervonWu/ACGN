@@ -1,4 +1,10 @@
 relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debruijn,slotted-egraph,canonical,typed-slotted-port-egraph
+"ac_logical/CORRECT/generated_cap004622.als","CORRECT",true,true,true,true,true,false,false
+"ac_logical/CORRECT/generated_cap004798.als","CORRECT",true,true,true,true,true,false,false
+"aci/CORRECT/generated_cap000524.als","CORRECT",true,true,true,true,true,false,false
+"aci/CORRECT/generated_cap000556.als","CORRECT",true,true,true,true,true,false,false
+"aci/CORRECT/generated_cap000716.als","CORRECT",true,true,true,true,true,false,false
+"aci/CORRECT/generated_cap000735.als","CORRECT",true,true,true,true,true,false,false
 "alpha/CORRECT/generated_cap000000.als","CORRECT",false,true,false,true,true,true,true
 "alpha/CORRECT/generated_cap000001.als","CORRECT",false,true,false,true,true,true,true
 "alpha/CORRECT/generated_cap000002.als","CORRECT",false,true,false,true,true,true,true
@@ -2573,7 +2579,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "mixed/CORRECT/generated_cap005119.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005120.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005121.als","CORRECT",false,false,false,false,true,true,true
-"mixed/CORRECT/generated_cap005122.als","CORRECT",false,false,false,false,true,true,true
+"mixed/CORRECT/generated_cap005122.als","CORRECT",false,false,false,false,true,false,false
 "mixed/CORRECT/generated_cap005123.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005124.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005125.als","CORRECT",false,false,false,false,true,true,true
@@ -2740,7 +2746,7 @@ relativePath,status,raw-egraph,raw-egraph-debruijn,java-egglog,java-egglog-debru
 "mixed/CORRECT/generated_cap005295.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005296.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005297.als","CORRECT",false,false,false,false,true,true,true
-"mixed/CORRECT/generated_cap005298.als","CORRECT",false,false,false,false,true,true,true
+"mixed/CORRECT/generated_cap005298.als","CORRECT",false,false,false,false,true,false,false
 "mixed/CORRECT/generated_cap005299.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005300.als","CORRECT",false,false,false,false,true,true,true
 "mixed/CORRECT/generated_cap005301.als","CORRECT",false,false,false,false,true,true,true
