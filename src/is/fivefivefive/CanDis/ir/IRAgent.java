@@ -14,6 +14,7 @@ import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.ConstSymbol;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 import is.fivefivefive.ACGN.alloy.SigSymbol;
+import is.fivefivefive.ACGN.alloy.VarSymbol;
 import is.fivefivefive.ACGN.asg.AugmentedNode;
 import is.fivefivefive.ACGN.asg.MASGEdge;
 import is.fivefivefive.ACGN.asg.Multigraph;
@@ -898,7 +899,13 @@ public class IRAgent {
         eGraphNode.setSourceType(symbol.getType());
         eGraphNode.setExactAlloyType(exactType);
         if (eGraphNode.getOpcode() == Opcode.VARIABLE) {
-            eGraphNode.setAlphaName(symbol.getName());
+            if (symbol instanceof VarSymbol) {
+                String lexicalIdentity = ((VarSymbol) symbol).getHashName();
+                eGraphNode.setSemanticIdentity(lexicalIdentity);
+                eGraphNode.setAlphaName(lexicalIdentity);
+            } else {
+                eGraphNode.setAlphaName(symbol.getName());
+            }
         }
         if (symbol instanceof SigSymbol
                 && ((SigSymbol) symbol).hasParserSignatureAuthority()) {

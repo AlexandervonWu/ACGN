@@ -6755,6 +6755,8 @@ public final class EGraphNode {
                 .append(node.getUnitLicense()).append("}:");
         if (node.opcode == Opcode.CALL) {
             output.append(CallMetadata.semanticKey(node));
+        } else if (node.opcode == Opcode.VARIABLE && node.alphaName != null) {
+            output.append(node.alphaName);
         } else if (node.semanticIdentity != null) {
             output.append(node.semanticIdentity);
         } else if (node.alphaName != null) {

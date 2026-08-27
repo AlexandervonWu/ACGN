@@ -75,6 +75,32 @@ def letValue (bound : β) (body : β -> γ) : γ := body bound
 
 theorem let_identity (value : β) : letValue value (fun bound => bound) = value := rfl
 
+abbrev LexicalBinderId := Nat
+
+def shadowBinder
+    (environment : LexicalBinderId → β)
+    (binder : LexicalBinderId)
+    (value : β) : LexicalBinderId → β :=
+  fun queried => if queried = binder then value else environment queried
+
+theorem distinct_lexical_binder_survives_shadow
+    (environment : LexicalBinderId → β)
+    (outer inner : LexicalBinderId)
+    (innerValue : β)
+    (distinct : outer ≠ inner) :
+    shadowBinder environment inner innerValue outer = environment outer := by
+  simp [shadowBinder, distinct]
+
+theorem let_substitution_uses_lexical_identity
+    (environment : LexicalBinderId → β)
+    (outer inner : LexicalBinderId)
+    (innerValue : β)
+    (distinct : outer ≠ inner) :
+    letValue (environment outer)
+      (fun bound => (bound, shadowBinder environment inner innerValue outer)) =
+      (environment outer, environment outer) := by
+  simp [letValue, shadowBinder, distinct]
+
 theorem boolean_and_true_identity (proposition : Prop) :
     (proposition ∧ True) ↔ proposition := by
   simp

@@ -4,10 +4,10 @@
 
 ## Current Summary
 
-- Scoped claims: 190
-- Matrix rows: 190
+- Scoped claims: 191
+- Matrix rows: 191
 - Fully ready rows: 41
-- Open diagnostics: 211
+- Open diagnostics: 212
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -2896,13 +2896,30 @@ Every claim follows the same bounded process:
 - Claim-specific process/limits: All six unary and all four binary temporal operators are covered in Lean and parser-backed regressions exercise sibling once/always reuse, alpha renaming, changed use, repeated snapshots, and malformed provenance; complete source-to-verifier refinement remains open
 - Current proof state: `INCOMPLETE`
 
+### P5-44
+
+**Claim.** A beta-rewritten LET occurrence is resolved by its parser lexical binder identity before readable spelling, so a same-spelled nested binder cannot capture an outer substituted occurrence while alpha-renamed equivalents remain equal.
+
+- Class: `U/I/P`
+- Claim SHA-256: `6c5a88bcbf77e3e606257d56c3d81c5c91692da1211e9984c7274343d3ddd552`
+- Ledger line: 251
+- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
+- Lean declarations: `distinct_lexical_binder_survives_shadow;let_substitution_uses_lexical_identity`
+- Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#attachSourceMetadata;src/is/fivefivefive/CanDis/core/NormalForm.java#alphaRenameBoundVariables;src/is/fivefivefive/CanDis/core/NormalForm.java#alphaRenameRelDecl;src/is/fivefivefive/CanDis/core/NormalForm.java#bindingKey`
+- Bounded test references: `src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java#main;src/is/fivefivefive/CanDis/EGraphSemanticSoundnessCheck.java#main`
+- Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT-BOUNDED`
+- Claim-specific process/limits: Lean proves identity-keyed shadow preservation and substitution over distinct lexical binder IDs; Java binds those IDs to parser VarSymbol hash names and tests alpha-renamed equality plus a direct Alloy counterexample control, while a complete parser-to-Lean refinement remains open
+- Current proof state: `INCOMPLETE`
+
 ### P6-01
 
 **Claim.** Minimum selection has explicit unset state; Boolean bottom is a valid ordinary candidate.
 
 - Class: `U/I`
 - Claim SHA-256: `e625a3fff5e8782c07ad6244c747ac604a4d7d38a8d00826deeab4a69fd8da4f`
-- Ledger line: 256
+- Ledger line: 257
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `empty_minimum_is_unset;bottom_is_an_ordinary_minimum;first_candidate_is_present`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/LeastOption.java#consider;src/is/fivefivefive/CanDis/theory/LeastOption.java#orElseThrow;src/is/fivefivefive/CanDis/theory/LeastOption.java#isPresent`
@@ -2919,7 +2936,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `142c38ccfab12180e1ded0709fd6b76e62d31ba3024ec6525001f9ee71abefb0`
-- Ledger line: 257
+- Ledger line: 258
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `fold_minimum_exact;stream_summary_retains_only_minimum_and_count;streamed_cartesian_count_is_exact;s7_stabilizer_state_is_strictly_smaller_than_orbit`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyRigidProducerOrbit`
@@ -2936,7 +2953,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `45f999c757b05feda276c39aefd8c3cd7a5941e1516d0d1ef3377bc0e54a4c92`
-- Ledger line: 258
+- Ledger line: 259
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `candidate_key_order_is_total;producer_and_verifier_candidate_orders_are_identical;shared_candidate_key_is_injective;complete_permutation_action_key_is_injective;larger_witness_loses_equal_shape_tie`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
@@ -2953,7 +2970,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `7b0dee34e7f1ce3e1774ef70661ff0249a5f8cb0ac81f3a0b6c96860099f471d`
-- Ledger line: 259
+- Ledger line: 260
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `occurrence_coordinate_injective;directly_nested_occurrences_are_disjoint;descriptor_occurrence_round_trip`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderBlockDescriptor.java#freshOccurrenceRenaming;src/is/fivefivefive/CanDis/theory/BindBlockPort.java#descriptorToOccurrence;src/is/fivefivefive/CanDis/theory/BinderOccurrenceProofs.java#collect`
@@ -2970,7 +2987,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `b34e6b29a65b25d7df3172e4cbe2616823eddba0802a3fb025b956d81d5cbee9`
-- Ledger line: 260
+- Ledger line: 261
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `alignment_replay_preserves_complete_occurrence;action_alpha_canonical_serialization_commutes`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#appliesTo;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#quotientBlock;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyBinderOccurrence`
@@ -2987,7 +3004,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `27a44c285ef9c3d94f0192e868dbdef31b75f30b437c4302d01f45855bf948fb`
-- Ledger line: 261
+- Ledger line: 262
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `extended_action_fixes_caller_slot;map_caller_layer_is_capture_avoiding;nested_caller_layers_are_capture_avoiding`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#act;src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#build;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#binderBodyAction;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#actedPortKey`
@@ -3004,7 +3021,7 @@ Every claim follows the same bounded process:
 
 - Class: `F/I`
 - Claim SHA-256: `ae07e21c44f6e74f8dba90cf18facc04a64364d71692260af160b77098267802`
-- Ledger line: 262
+- Ledger line: 263
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `trace_length_decomposition;counter_tuple_is_injective;certificate_byte_count_is_encoded_length`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalizationMetrics.java#retainedTraceLength;src/is/fivefivefive/CanDis/theory/CertificateWriteMetrics.java#CertificateWriteMetrics;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#serializedCanonicalOrbitCandidates`
@@ -3021,7 +3038,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `93da2981342fe07d284f85505347dc6f6eee76234b4fb95cd0d4498ea7c5560f`
-- Ledger line: 263
+- Ledger line: 264
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `certificate_byte_count_is_encoded_length;byte_identical_runs_have_identical_derived_counters`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#write;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#replaceAtomically`
@@ -3038,7 +3055,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `6a274f121f2919d837dbc11d0f4e7aa20981d1512883b4ef1baa8a963e87e48a`
-- Ledger line: 264
+- Ledger line: 265
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `distinct_roots_collide_under_rootless_key;rootless_key_is_not_injective;rooted_key_is_injective`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java#create;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderRoot;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#binderOccurrence;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#derivedBinderOccurrenceKey`
@@ -3055,7 +3072,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `27490ad0179b6c1b991380cda7a4a6d698d969eee454f90920862b4c16c64761`
-- Ledger line: 265
+- Ledger line: 266
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `stream_summary_retains_only_minimum_and_count;s7_stabilizer_state_is_strictly_smaller_than_orbit`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedRenamingEnumerator.java#forEachChecked;src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java#forEach;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#orbitSummary;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#producerOrbitSummary`
@@ -3072,7 +3089,7 @@ Every claim follows the same bounded process:
 
 - Class: `P`
 - Claim SHA-256: `e7ebd891d005c44dbaa58c5b4684fc9862849738159688111f38f8c1a7c09f8d`
-- Ledger line: 266
+- Ledger line: 267
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `schema_v10_admits_complete_contract;only_schema_v10_admits_complete_contract;historical_and_future_schemas_reject_complete_contract;rooted_key_is_injective;witness_unfold_is_definitional`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#SCHEMA_VERSION;certificate-verifier/src/org/acgn/cert/Bundle.java#parse;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verify`
@@ -3089,7 +3106,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I/P`
 - Claim SHA-256: `81348c205914caa38cb968d9ae5d8003ee87f20b7ae4540d6b1f8a5b74c21e0b`
-- Ledger line: 267
+- Ledger line: 268
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `producer_and_verifier_candidate_orders_are_identical;candidate_key_order_is_total;equal_complete_candidate_sets_have_equal_ordered_keys`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java#orbitCandidateOrder;src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java#considerRenaming;certificate-verifier/src/org/acgn/cert/CanonicalProfileVerifier.java#compareCandidates;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyProducerOrbitOrders`
@@ -3106,7 +3123,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/P`
 - Claim SHA-256: `8a84a56322463d2907cad93c9d40a45df948b23fbdb49071c19c3de9a52bb849`
-- Ledger line: 268
+- Ledger line: 269
 - Lean file: `docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean`
 - Lean declarations: `pair_comparison_preserves_separate_derivation_owners;pair_result_compares_exact_least_shapes`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#verifyPair;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#commonKernelEndpoint;certificate-verifier/src/org/acgn/cert/IndependentVerifier.java#requireCompatibleVocabulary`
@@ -3123,7 +3140,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `411f909cf04e36c7cf147a39e439a8ac4e1f125648ac8bc49ff04e7641f52fb0`
-- Ledger line: 274
+- Ledger line: 275
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `decomposition_is_additive`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate`
@@ -3140,7 +3157,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `7a030f495ce3d5c53c5a03316e4471ec0ec56136f0dbad8f568610e31259412c`
-- Ledger line: 275
+- Ledger line: 276
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `equal_quantifier_tuple_costs_zero;unequal_quantifier_tuple_costs_one;every_quantifier_edit_is_one_unit;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;selected_positional_parameter_diagonal_does_not_authorize_coordinate;paid_correspondence_has_no_duplicate_left;paid_correspondence_has_no_duplicate_right`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#sameRepairTuple;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantificationAlignmentSpace;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#QuantifierEditComponent;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence`
@@ -3157,7 +3174,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `153d1ab1172fc03481af938c9ec7933e2c021a0e8fa37d1179b351bb7630cb0d`
-- Ledger line: 276
+- Ledger line: 277
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `equal_fixture_keys_do_not_authorize_a_kernel_check;certified_projection_pair_authorizes_a_kernel_check;alpha_distance_is_exact_pairwise_minimum;singleton_alignment_is_compatible;nonmaximum_empty_alignment_is_not_admissible;same_coordinate_without_paid_edit_is_not_authorized;paid_parameter_modification_authorizes_its_exact_pair;selected_positional_parameter_diagonal_authorizes_its_exact_pair;bound_and_same_spelled_free_variables_cost_one_both_directions;parameter_evidence_cannot_claim_orbit_or_prenex_authority;uncertified_matrix_evidence_retains_nonempty_path;certified_prenex_compatibility_ignores_obsolete_source_path;uncertified_prenex_paths_are_not_erased;certified_prenex_compatibility_requires_explicit_exchange_alignment;parameter_compatibility_requires_its_coordinate;repeated_coordinate_requires_one_orbit;crossing_exchange_blocks_are_rejected;distinct_owners_separate_equal_local_exchange_ids;all_and_some_ignore_presentation_path;nonexchangeable_quantifiers_split_distinct_paths;nonexchangeable_distinct_path_advances_exchange_class;continuous_all_run_preserves_exchange_class;maximum_scoped_matching_uses_only_owned_compatible_bindings;maximum_scoped_matching_preserves_certified_orbits;split_target_orbits_block_a_dynamic_pairing;scoped_problem_contains_one_entry_per_global_identity;maximum_scoped_matching_has_maximum_cardinality;optimal_scoped_matching_minimizes_matrix_cost_among_maximum;repeated_temporal_owner_occurrences_share_one_mapping;coherent_phase_reindex_preserves_repeated_owner_identity;canonical_phase_reindex_is_injective_on_matrix_identities;complete_two_coordinate_orbit_ledger_is_accepted;split_two_coordinate_orbit_ledger_is_rejected;bounded_three_coordinate_enumerator_is_complete;every_bounded_three_coordinate_candidate_is_evaluated`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#fromCertifiedProjection;src/is/fivefivefive/CanDis/metric/RepairView.java#requireCertifiedProjection;src/is/fivefivefive/CanDis/metric/RepairView.java#prenexPathErasureCertified;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectComponents;src/is/fivefivefive/CanDis/metric/RepairProjection.java#reindexPhase;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#forEachGlobalScopeAlignment;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#maximumGlobalCompatibleMatches;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#searchGlobalMappings;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#preservesCertifiedOrbitRelations;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#globalBaseCompatible;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#GlobalBindingIndex;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#addInjectiveCorrespondence;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sameExchangeRun`
@@ -3174,7 +3191,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `daafd9ba0fbc0819031fb1db0713ab6e57f11a2d46b43e65334a707aa5c24620`
-- Ledger line: 277
+- Ledger line: 278
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `aci_distance_is_exact_minimum_cost_assignment;exact_minimum_does_not_use_positional_choice;assignment_minimization_can_choose_crossed_pairs;two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#minimumAssignmentCost`
@@ -3191,7 +3208,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `ae25f1591bf2444e4a790eecefc661e0d7fb664f85f4489880e5ff3fd4df71e5`
-- Ledger line: 278
+- Ledger line: 279
 - Lean file: `docs/section3-repair-audit/formal/OrderedTreeEditDistance.lean`
 - Lean declarations: `ordered_forest_recurrence;empty_forest_insert_cost_is_node_count;empty_forest_delete_cost_is_node_count;deleting_internal_unary_node_costs_one;inserting_internal_unary_node_costs_one`
 - Implementation references: `src/is/fivefivefive/CanDis/core/OrderedTreeEditDistance.java#computeForestDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#temporalDistance;src/is/fivefivefive/CanDis/core/CanonicalDistance.java#treeDistance`
@@ -3208,7 +3225,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `78c9f0d452f13eabb45b8498cb31675eae64bc22b1ba03b500ecae11f5626b35`
-- Ledger line: 279
+- Ledger line: 280
 - Lean file: `docs/section3-repair-audit/formal/ConcreteRepairMetric.lean`
 - Lean declarations: `boundedVectorExpectations;profileMismatchIsFirst;temporalQuantifierMatrixCompositionIsAdditive;matrixOperandDeletionRemovesTheWholeSubtree`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#sequenceDistance;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#unorderedDistance;src/is/fivefivefive/CanDis/metric/RepairView.java#size`
@@ -3225,7 +3242,7 @@ Every claim follows the same bounded process:
 
 - Class: `U/I`
 - Claim SHA-256: `30b8d68cd64575f4f43092267b09821ce508aa0acf5aa17d714ee089dfd1b8bc`
-- Ledger line: 280
+- Ledger line: 281
 - Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
 - Lean declarations: `readable_spelling_is_not_an_edit;exact_type_change_is_one_edit`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/RepairView.java#semanticPayload;src/is/fivefivefive/CanDis/metric/RepairView.java#lexicalVariable;src/is/fivefivefive/CanDis/metric/RepairProjection.java#projectNode;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#updateCost`
@@ -3242,7 +3259,7 @@ Every claim follows the same bounded process:
 
 - Class: `I`
 - Claim SHA-256: `49ce4ec35da6198f8a0d4d474bb1285a9036dfd0fb679f18e74acc339d701e71`
-- Ledger line: 281
+- Ledger line: 282
 - Lean file: `docs/section3-repair-audit/formal/RepairMetricSemantics.lean`
 - Lean declarations: `two_maximum_java_int_costs_do_not_fit_java_int;checked_assignment_boundary_must_reject_two_maximum_costs;same_coordinate_without_paid_edit_is_not_authorized`
 - Implementation references: `src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#evaluate;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#MutableStats;src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java#ResourceLimitException`

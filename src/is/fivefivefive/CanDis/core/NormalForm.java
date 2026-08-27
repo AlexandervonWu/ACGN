@@ -1169,7 +1169,10 @@ public class NormalForm {
         if (node.getOpcode() == Opcode.VARIABLE
                 || (node.getOpcode() == Opcode.LET && node.getChildren().isEmpty())) {
             EGraphNode renamed = copyShallow(node, node.getOpcode());
-            String alphaName = scope.get(node.getSourceName());
+            String alphaName = scope.get(bindingKey(node));
+            if (alphaName == null) {
+                alphaName = scope.get(node.getSourceName());
+            }
             if (alphaName != null) {
                 renamed.setAlphaName(alphaName);
             }
@@ -1233,7 +1236,11 @@ public class NormalForm {
             String alphaName = "@bind:" + nextBinderId[0]++;
             variable.setAlphaName(alphaName);
             renamed.addNormalizedChild(variable);
-            if (child.getSourceName() != null) {
+            String lexicalKey = bindingKey(child);
+            if (lexicalKey != null) {
+                bodyScope.put(lexicalKey, alphaName);
+            }
+            if (child.getSourceName() != null && lexicalKey == null) {
                 bodyScope.put(child.getSourceName(), alphaName);
             }
         }
@@ -2034,6 +2041,7 @@ public class NormalForm {
                 String alphaName = "_l" + localId;
                 String varType = primitiveVarType(candidate.getSourceType());
                 QuantiVar qv = new QuantiVar(localId, alphaName, originalName, varType);
+                qv.addOriginalName(candidate.getSemanticIdentity());
                 qv.mergeExactAlloyType(bindingTypeEvidence(candidate, typeEGraph));
                 qv.setQuantifier(quantifierOf(quantifierOpcode, negated));
                 qv.setCardinality(domain.cardinality);
@@ -2317,6 +2325,7 @@ public class NormalForm {
             String alphaName = "_q" + nextVarId[0];
             String varType = primitiveVarType(candidate.getSourceType());
             QuantiVar qv = new QuantiVar(nextVarId[0], alphaName, originalName, varType);
+            qv.addOriginalName(candidate.getSemanticIdentity());
             qv.mergeExactAlloyType(bindingTypeEvidence(candidate, typeEGraph));
             qv.setQuantifier(quantifier);
             qv.setCardinality(domain.cardinality);
@@ -3948,6 +3957,9 @@ public class NormalForm {
                 .append(node.getUnitLicense()).append("}:");
         if (node.getOpcode() == Opcode.CALL) {
             sb.append(CallMetadata.semanticKey(node));
+        } else if (node.getOpcode() == Opcode.VARIABLE
+                && node.getAlphaName() != null) {
+            sb.append(node.getAlphaName());
         } else if (node.getSemanticIdentity() != null) {
             sb.append(node.getSemanticIdentity());
         } else if (node.getAlphaName() != null) {

@@ -137,9 +137,9 @@ public final class Section3AssuranceTraceabilityTest {
                     .toAbsolutePath().normalize();
             Section3AssuranceTraceability.Assessment repository =
                     Section3AssuranceTraceability.assess(realRoot);
-            check(repository.requirements() == 190,
-                    "repository matrix enumerates all 190 scoped requirements");
-            check(repository.rows() == 190,
+            check(repository.requirements() == 191,
+                    "repository matrix enumerates all 191 scoped requirements");
+            check(repository.rows() == 191,
                     "repository has exactly one row per scoped requirement");
             check(repository.ready() >= 0
                             && repository.ready() <= repository.requirements(),

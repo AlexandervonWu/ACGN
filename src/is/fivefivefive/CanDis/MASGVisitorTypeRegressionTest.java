@@ -69,6 +69,15 @@ public final class MASGVisitorTypeRegressionTest {
                 "pred nestedLetRenamed {",
                 "  let outer = File | (let inner = none | no inner) and some outer",
                 "}",
+                "pred letOuterBinding {",
+                "  all y: File | let x = y | some y: File | x != y",
+                "}",
+                "pred letOuterBindingRenamed {",
+                "  all outer: File | let x = outer | some inner: File | x != inner",
+                "}",
+                "pred letCapturedReference {",
+                "  all y: File | some y: File | y != y",
+                "}",
                 "sig A_B {}",
                 "pred delimiterCollision {",
                 "  all C: A_B, B_C: this/A | no C and no B_C",
@@ -113,6 +122,9 @@ public final class MASGVisitorTypeRegressionTest {
         Multigraph nestedQuantifierRenamed = graph(visitor, "nestedQuantifierRenamed");
         Multigraph nestedLetShadow = graph(visitor, "nestedLetShadow");
         Multigraph nestedLetRenamed = graph(visitor, "nestedLetRenamed");
+        Multigraph letOuterBinding = graph(visitor, "letOuterBinding");
+        Multigraph letOuterBindingRenamed = graph(visitor, "letOuterBindingRenamed");
+        Multigraph letCapturedReference = graph(visitor, "letCapturedReference");
         Multigraph delimiterCollision = graph(visitor, "delimiterCollision");
         Multigraph delimiterRenamed = graph(visitor, "delimiterRenamed");
         Multigraph duplicateBinder = graph(visitor, "duplicateBinder");
@@ -211,6 +223,18 @@ public final class MASGVisitorTypeRegressionTest {
                         CanonicalAlloyPipeline.prepare(nestedLetRenamed))) {
             throw new AssertionError(
                     "A nested same-spelled let captured the outer occurrence");
+        }
+        if (Canonical.distance(letOuterBinding, letOuterBindingRenamed) != 0
+                || !CanonicalAlloyPipeline.prepare(letOuterBinding).equivalentTo(
+                        CanonicalAlloyPipeline.prepare(letOuterBindingRenamed))) {
+            throw new AssertionError(
+                    "LET substitution lost alpha-equivalence across lexical renaming");
+        }
+        if (Canonical.distance(letOuterBinding, letCapturedReference) == 0
+                || CanonicalAlloyPipeline.prepare(letOuterBinding).equivalentTo(
+                        CanonicalAlloyPipeline.prepare(letCapturedReference))) {
+            throw new AssertionError(
+                    "LET substitution captured an outer variable under a same-spelled binder");
         }
         if (Canonical.distance(delimiterCollision, delimiterRenamed) != 0
                 || !CanonicalAlloyPipeline.prepare(delimiterCollision).equivalentTo(
