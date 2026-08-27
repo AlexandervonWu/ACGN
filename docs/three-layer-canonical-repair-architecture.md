@@ -306,9 +306,13 @@ the other 733 records preserve component parity.
 - Exact replay of all 784 prior failures: 784 successes, zero failures, zero
   incorrect zeroes, and no unclassified discrepancy.
 - Full seven-arm corpus: 61,598 successes per arm, zero failures, zero incorrect
-  zeroes, and certificate-integrated transition `+1/-0` from the Fast Rewrite IR zero set.
-- Full generated capability matrix: Certificate-Integrated IR, slotted, and Fast Rewrite IR each
-  recover 5,500/5,500 pairs; all 11 expected capability boundaries match.
+  paired-oracle zeroes, and certificate-integrated transition `+14/-0` from
+  the Fast Rewrite IR zero set.
+- Full generated capability matrix: slotted recovers 5,500/5,500 pairs;
+  Certificate-Integrated IR and Fast Rewrite IR each recover 5,492/5,500.
+  The two canonical arms share eight misses (four ACI, two composed
+  AC/logical, and two mixed cases), while all 11 expected first-capable
+  boundaries match.
 
 ## Reproduction
 
