@@ -3,10 +3,10 @@
 ACGN is a research codebase for Alloy program representation, generation, and
 repair analysis. Its current evaluation stack, **CanDis**, converts Alloy
 predicates into temporal prenex normal forms backed by slotted, variadic
-e-graphs. It now separates certified semantic legality, deterministic canonical
-equality, and the established repair metric on the certified quotient instead
-of treating tree edit distance between canonical representatives as the repair
-metric.
+e-graphs. It separates certificate-checked legality, deterministic canonical
+equality, and the implemented repair metric on the certificate-integrated
+quotient instead of treating tree edit distance between canonical representatives
+as the repair metric.
 
 The repository contains:
 
@@ -28,6 +28,19 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
+### Assurance status
+
+This repository establishes no general assurance of implementation correctness
+or faithfulness to the paper or Lean model. In particular, it does not establish
+complete paper-to-Java refinement, whole-artifact correctness, or end-to-end
+semantic correctness. Its evidence is limited to the specifically documented
+Lean results, certificate checks, invariants, bounded tests, bounded Alloy
+analyses, mutation checks, and published experimental observations; each
+supports only its stated scope. Terms such as *certificate-integrated*,
+*certified*, and *proof-bearing* below name mechanisms or checked evidence
+objects within those bounded scopes, not a proof that the Java implementation
+is correct or faithful as a whole.
+
 ## Headline Results
 
 The checked-in experimental snapshot was regenerated on August 28, 2026. It
@@ -46,7 +59,8 @@ into typed slotted ports, admits only certificate-backed laws and symmetries,
 checks graph invariants, and evaluates the same repair geometry on the
 certified quotient. Neither path is deprecated: the Fast Rewrite IR is the
 efficient reference implementation of the metric, while the
-Certificate-Integrated IR is the fail-closed semantic-assurance path.
+Certificate-Integrated IR is the fail-closed certificate-checking path within
+the implemented boundary.
 
 The three-layer Certificate-Integrated IR treats `CanonicalDistance` as the
 repair-metric specification and retains canonical-representative TED as an
@@ -69,7 +83,7 @@ diagnostics.
 
 | Property | Fast Rewrite IR | Certificate-Integrated IR |
 | --- | --- | --- |
-| Intended use | Large-corpus ranking, iteration, and direct repair-metric evaluation | Audited equality, certified admissibility, and high-assurance validation |
+| Intended use | Large-corpus ranking, iteration, and direct repair-metric evaluation | Fail-closed certificate and invariant validation within the implemented boundary |
 | Rewrite/equality authority | Implemented rewrite rules and repaired IR invariants | Typed signatures, explicit ports, structured certificates, strict graph invariants, and certified finite observations |
 | Failure policy | Assumes the directly encoded rewrite and scope machinery is valid | Rejects missing, stale, ill-typed, or uncertified semantic evidence |
 | Metric | Direct `CanonicalDistance` | The same edit algebra restricted by certified scope and symmetry information |
@@ -79,10 +93,12 @@ diagnostics.
 | `CORRECT` paired-oracle zeroes / incorrect zeroes | 4,074 / 0 | 4,088 / 0 |
 | Incorrect-to-any-truth zeroes | 10, diagnostic only | 0, release-gated |
 
-The measured speed difference is about 110x in wall time. It buys stronger
-semantic assurance, not a different repair objective: the
-Certificate-Integrated IR validates law provenance, scope legality,
-congruence, and quiescence before accepting equality. The Fast Rewrite IR
+The measured speed difference is about 110x in wall time. It pays for additional
+certificate and invariant checks, not a different repair objective: the
+Certificate-Integrated IR checks law provenance, scope legality, congruence,
+and quiescence before accepting equality within the implemented boundary.
+Those checks do not establish correctness of their Java implementation or
+faithfulness of that implementation to the paper or Lean model. The Fast Rewrite IR
 remains the practical choice for broad exploratory experiments. The
 Certificate-Integrated IR is appropriate when fail-closed handling of
 unsupported transformations and auditable proof carriers matter. The zero
@@ -821,8 +837,14 @@ asset candidate; its SHA-256 is
 
 ## Interpretation and Limits
 
-- Canonical zero is sound only relative to the implemented rewrite system; it
-  is not complete for Alloy equivalence.
+- No complete paper-to-Java refinement or whole-artifact correctness result is
+  established. The Java implementation has no general correctness or
+  faithfulness assurance beyond the specifically bounded evidence identified
+  in this README and its linked records.
+- Canonical zero denotes equality accepted by the implemented rewrite system;
+  the repository does not establish that every such acceptance is semantically
+  sound for unbounded Alloy, and the rewrite system is not complete for Alloy
+  equivalence.
 - Dataset `CORRECT` labels come from SAT-based classification and are not
   produced by the distance engine.
 - Semantic validation is bounded by each model's command scope and temporal
