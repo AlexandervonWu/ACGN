@@ -86,6 +86,244 @@ def noop (value : α) : α := value
 theorem operator_alias_preserves_denotation (value : α) :
     operatorAlias value = value := rfl
 
+/- The active parser-head alias table is modeled explicitly rather than by the
+generic payload identity above.  The raw-string model supplies the total
+dispatch semantics; `ParserHead.other` is used only under the explicit
+`isExactlyModeled` or failed-lookup side conditions below. -/
+
+inductive ParserOperatorFamily where
+  | booleanAnd
+  | booleanOr
+  | booleanImplies
+  | booleanIff
+  | booleanNot
+  | relationUnion
+  | relationIntersection
+  | relationDifference
+  | relationJoin
+  | relationArrow
+  | integerMultiplication
+  | integerAddition
+  | listDisjoint
+  | uninterpreted (head : String)
+  deriving DecidableEq, Repr
+
+inductive ParserHead where
+  | bfAnd
+  | lfAnd
+  | boolAnd
+  | bfOr
+  | lfOr
+  | boolOr
+  | bfImplies
+  | boolImplies
+  | bfIff
+  | boolIff
+  | ufNot
+  | boolNot
+  | bePlus
+  | relPlus
+  | beIntersect
+  | relIntersect
+  | beMinus
+  | relMinus
+  | beJoin
+  | relJoin
+  | beArrow
+  | relArrow
+  | beMul
+  | arithMul
+  | beIplus
+  | arithPlus
+  | leDisjoint
+  | listDisjoint
+  | other (head : String)
+  deriving DecidableEq, Repr
+
+def ParserHead.spelling : ParserHead → String
+  | .bfAnd => "BF/AND"
+  | .lfAnd => "LF/AND"
+  | .boolAnd => "BOOL/AND"
+  | .bfOr => "BF/OR"
+  | .lfOr => "LF/OR"
+  | .boolOr => "BOOL/OR"
+  | .bfImplies => "BF/IMPLIES"
+  | .boolImplies => "BOOL/IMPLIES"
+  | .bfIff => "BF/IFF"
+  | .boolIff => "BOOL/IFF"
+  | .ufNot => "UF/NOT"
+  | .boolNot => "BOOL/NOT"
+  | .bePlus => "BE/PLUS"
+  | .relPlus => "REL/PLUS"
+  | .beIntersect => "BE/INTERSECT"
+  | .relIntersect => "REL/INTERSECT"
+  | .beMinus => "BE/MINUS"
+  | .relMinus => "REL/MINUS"
+  | .beJoin => "BE/JOIN"
+  | .relJoin => "REL/JOIN"
+  | .beArrow => "BE/ARROW"
+  | .relArrow => "REL/ARROW"
+  | .beMul => "BE/MUL"
+  | .arithMul => "ARITH/MUL"
+  | .beIplus => "BE/IPLUS"
+  | .arithPlus => "ARITH/PLUS"
+  | .leDisjoint => "LE/DISJOINT"
+  | .listDisjoint => "LIST/DISJOINT"
+  | .other head => head
+
+def ParserHead.canonical : ParserHead → ParserHead
+  | .bfAnd => .boolAnd
+  | .lfAnd => .boolAnd
+  | .bfOr => .boolOr
+  | .lfOr => .boolOr
+  | .bfImplies => .boolImplies
+  | .bfIff => .boolIff
+  | .ufNot => .boolNot
+  | .bePlus => .relPlus
+  | .beIntersect => .relIntersect
+  | .beMinus => .relMinus
+  | .beJoin => .relJoin
+  | .beArrow => .relArrow
+  | .beMul => .arithMul
+  | .beIplus => .arithPlus
+  | .leDisjoint => .listDisjoint
+  | head => head
+
+def ParserHead.family : ParserHead → ParserOperatorFamily
+  | .bfAnd => .booleanAnd
+  | .lfAnd => .booleanAnd
+  | .boolAnd => .booleanAnd
+  | .bfOr => .booleanOr
+  | .lfOr => .booleanOr
+  | .boolOr => .booleanOr
+  | .bfImplies => .booleanImplies
+  | .boolImplies => .booleanImplies
+  | .bfIff => .booleanIff
+  | .boolIff => .booleanIff
+  | .ufNot => .booleanNot
+  | .boolNot => .booleanNot
+  | .bePlus => .relationUnion
+  | .relPlus => .relationUnion
+  | .beIntersect => .relationIntersection
+  | .relIntersect => .relationIntersection
+  | .beMinus => .relationDifference
+  | .relMinus => .relationDifference
+  | .beJoin => .relationJoin
+  | .relJoin => .relationJoin
+  | .beArrow => .relationArrow
+  | .relArrow => .relationArrow
+  | .beMul => .integerMultiplication
+  | .arithMul => .integerMultiplication
+  | .beIplus => .integerAddition
+  | .arithPlus => .integerAddition
+  | .leDisjoint => .listDisjoint
+  | .listDisjoint => .listDisjoint
+  | .other head => .uninterpreted head
+
+def activeJavaCanonicalHeadTable : List (String × String) := [
+  ("BF/AND", "BOOL/AND"),
+  ("LF/AND", "BOOL/AND"),
+  ("BF/OR", "BOOL/OR"),
+  ("LF/OR", "BOOL/OR"),
+  ("BF/IMPLIES", "BOOL/IMPLIES"),
+  ("BF/IFF", "BOOL/IFF"),
+  ("UF/NOT", "BOOL/NOT"),
+  ("BE/PLUS", "REL/PLUS"),
+  ("BE/INTERSECT", "REL/INTERSECT"),
+  ("BE/MINUS", "REL/MINUS"),
+  ("BE/JOIN", "REL/JOIN"),
+  ("BE/ARROW", "REL/ARROW"),
+  ("BE/MUL", "ARITH/MUL"),
+  ("BE/IPLUS", "ARITH/PLUS"),
+  ("LE/DISJOINT", "LIST/DISJOINT")
+]
+
+def lookupCanonicalHead
+    (head : String) : List (String × String) → Option String
+  | [] => none
+  | (source, target) :: remaining =>
+      if head = source then some target
+      else lookupCanonicalHead head remaining
+
+def canonicalRawParserHead (head : String) : String :=
+  match lookupCanonicalHead head activeJavaCanonicalHeadTable with
+  | some canonical => canonical
+  | none => head
+
+def rawModeledParserHeadAliasTable : List (String × String) :=
+  activeJavaCanonicalHeadTable.map
+    (fun entry => (entry.1, canonicalRawParserHead entry.1))
+
+def modeledParserHeadAliasTable : List (String × String) := [
+  (ParserHead.spelling .bfAnd,
+    ParserHead.spelling (ParserHead.canonical .bfAnd)),
+  (ParserHead.spelling .lfAnd,
+    ParserHead.spelling (ParserHead.canonical .lfAnd)),
+  (ParserHead.spelling .bfOr,
+    ParserHead.spelling (ParserHead.canonical .bfOr)),
+  (ParserHead.spelling .lfOr,
+    ParserHead.spelling (ParserHead.canonical .lfOr)),
+  (ParserHead.spelling .bfImplies,
+    ParserHead.spelling (ParserHead.canonical .bfImplies)),
+  (ParserHead.spelling .bfIff,
+    ParserHead.spelling (ParserHead.canonical .bfIff)),
+  (ParserHead.spelling .ufNot,
+    ParserHead.spelling (ParserHead.canonical .ufNot)),
+  (ParserHead.spelling .bePlus,
+    ParserHead.spelling (ParserHead.canonical .bePlus)),
+  (ParserHead.spelling .beIntersect,
+    ParserHead.spelling (ParserHead.canonical .beIntersect)),
+  (ParserHead.spelling .beMinus,
+    ParserHead.spelling (ParserHead.canonical .beMinus)),
+  (ParserHead.spelling .beJoin,
+    ParserHead.spelling (ParserHead.canonical .beJoin)),
+  (ParserHead.spelling .beArrow,
+    ParserHead.spelling (ParserHead.canonical .beArrow)),
+  (ParserHead.spelling .beMul,
+    ParserHead.spelling (ParserHead.canonical .beMul)),
+  (ParserHead.spelling .beIplus,
+    ParserHead.spelling (ParserHead.canonical .beIplus)),
+  (ParserHead.spelling .leDisjoint,
+    ParserHead.spelling (ParserHead.canonical .leDisjoint))
+]
+
+theorem typed_parser_head_matches_active_alias_table :
+    modeledParserHeadAliasTable = activeJavaCanonicalHeadTable := rfl
+
+theorem canonical_parser_head_matches_active_alias_table :
+    rawModeledParserHeadAliasTable = activeJavaCanonicalHeadTable := by
+  decide
+
+/- Retained constructor-level facts for the earlier typed model.  They do not
+identify an arbitrary `.other` payload with the corresponding raw Java head. -/
+
+theorem typed_parser_head_constructor_preserves_operator_family
+    (head : ParserHead) :
+    ParserHead.family (ParserHead.canonical head) = ParserHead.family head := by
+  cases head <;> rfl
+
+theorem typed_other_parser_head_constructor_is_unchanged (head : String) :
+    ParserHead.canonical (.other head) = .other head := rfl
+
+def ParserHead.isExactlyModeled : ParserHead → Prop
+  | .other _ => False
+  | _ => True
+
+theorem canonical_parser_head_preserves_operator_family
+    (head : ParserHead)
+    (exact : ParserHead.isExactlyModeled head) :
+    ParserHead.family (ParserHead.canonical head) = ParserHead.family head := by
+  cases head <;>
+    simp [ParserHead.isExactlyModeled, ParserHead.canonical,
+      ParserHead.family] at *
+
+theorem unlisted_parser_head_is_unchanged
+    (head : String)
+    (absent :
+      lookupCanonicalHead head activeJavaCanonicalHeadTable = none) :
+    canonicalRawParserHead head = head := by
+  simp [canonicalRawParserHead, absent]
+
 theorem noop_elimination (value : α) : noop value = value := rfl
 
 theorem let_beta_reduction (value : β) (body : β → γ) :
@@ -161,6 +399,252 @@ theorem negated_int_lt_is_gte (left right : Int) :
 
 theorem negated_int_lte_is_gt (left right : Int) :
     (¬ left ≤ right) ↔ left > right := by omega
+
+/- Alloy's explicit `!>`, `!>=`, `!<`, and `!<=` parser constructors denote
+negated comparisons.  The dual table below models the outer-negation dispatch
+used by both active normalization paths. -/
+
+inductive IntComparisonOpcode where
+  | gt
+  | gte
+  | lt
+  | lte
+  | notGt
+  | notGte
+  | notLt
+  | notLte
+  deriving DecidableEq, Repr
+
+def IntComparisonOpcode.spelling : IntComparisonOpcode → String
+  | .gt => "GT"
+  | .gte => "GTE"
+  | .lt => "LT"
+  | .lte => "LTE"
+  | .notGt => "NOT_GT"
+  | .notGte => "NOT_GTE"
+  | .notLt => "NOT_LT"
+  | .notLte => "NOT_LTE"
+
+def IntComparisonOpcode.denote :
+    IntComparisonOpcode → Int → Int → Prop
+  | .gt => fun left right => left > right
+  | .gte => fun left right => left ≥ right
+  | .lt => fun left right => left < right
+  | .lte => fun left right => left ≤ right
+  | .notGt => fun left right => ¬ (left > right)
+  | .notGte => fun left right => ¬ (left ≥ right)
+  | .notLt => fun left right => ¬ (left < right)
+  | .notLte => fun left right => ¬ (left ≤ right)
+
+def IntComparisonOpcode.negationDual :
+    IntComparisonOpcode → IntComparisonOpcode
+  | .gt => .lte
+  | .gte => .lt
+  | .lt => .gte
+  | .lte => .gt
+  | .notGt => .gt
+  | .notGte => .gte
+  | .notLt => .lt
+  | .notLte => .lte
+
+inductive AtomicNegationOpcode where
+  | equals
+  | notEquals
+  | gt
+  | gte
+  | subset
+  | lt
+  | lte
+  | notGt
+  | notGte
+  | notSubset
+  | notLt
+  | notLte
+  | someRelation
+  | noRelation
+  deriving DecidableEq, Repr
+
+def AtomicNegationOpcode.spelling : AtomicNegationOpcode → String
+  | .equals => "BF/EQUALS"
+  | .notEquals => "BF/NOT_EQUALS"
+  | .gt => "BF/GT"
+  | .gte => "BF/GTE"
+  | .subset => "BF/IN"
+  | .lt => "BF/LT"
+  | .lte => "BF/LTE"
+  | .notGt => "BF/NOT_GT"
+  | .notGte => "BF/NOT_GTE"
+  | .notSubset => "BF/NOT_IN"
+  | .notLt => "BF/NOT_LT"
+  | .notLte => "BF/NOT_LTE"
+  | .someRelation => "UF/SOME"
+  | .noRelation => "UF/NO"
+
+def AtomicNegationOpcode.dual :
+    AtomicNegationOpcode → AtomicNegationOpcode
+  | .equals => .notEquals
+  | .notEquals => .equals
+  | .gt => .lte
+  | .gte => .lt
+  | .subset => .notSubset
+  | .lt => .gte
+  | .lte => .gt
+  | .notGt => .gt
+  | .notGte => .gte
+  | .notSubset => .subset
+  | .notLt => .lt
+  | .notLte => .lte
+  | .someRelation => .noRelation
+  | .noRelation => .someRelation
+
+def activeJavaAtomicNegationDualTable : List (String × String) := [
+  ("BF/EQUALS", "BF/NOT_EQUALS"),
+  ("BF/NOT_EQUALS", "BF/EQUALS"),
+  ("BF/GT", "BF/LTE"),
+  ("BF/GTE", "BF/LT"),
+  ("BF/IN", "BF/NOT_IN"),
+  ("BF/LT", "BF/GTE"),
+  ("BF/LTE", "BF/GT"),
+  ("BF/NOT_GT", "BF/GT"),
+  ("BF/NOT_GTE", "BF/GTE"),
+  ("BF/NOT_IN", "BF/IN"),
+  ("BF/NOT_LT", "BF/LT"),
+  ("BF/NOT_LTE", "BF/LTE"),
+  ("UF/SOME", "UF/NO"),
+  ("UF/NO", "UF/SOME")
+]
+
+def modeledAtomicNegationDualTable : List (String × String) := [
+  (AtomicNegationOpcode.spelling .equals,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .equals)),
+  (AtomicNegationOpcode.spelling .notEquals,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notEquals)),
+  (AtomicNegationOpcode.spelling .gt,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .gt)),
+  (AtomicNegationOpcode.spelling .gte,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .gte)),
+  (AtomicNegationOpcode.spelling .subset,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .subset)),
+  (AtomicNegationOpcode.spelling .lt,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .lt)),
+  (AtomicNegationOpcode.spelling .lte,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .lte)),
+  (AtomicNegationOpcode.spelling .notGt,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notGt)),
+  (AtomicNegationOpcode.spelling .notGte,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notGte)),
+  (AtomicNegationOpcode.spelling .notSubset,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notSubset)),
+  (AtomicNegationOpcode.spelling .notLt,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notLt)),
+  (AtomicNegationOpcode.spelling .notLte,
+    AtomicNegationOpcode.spelling (AtomicNegationOpcode.dual .notLte)),
+  (AtomicNegationOpcode.spelling .someRelation,
+    AtomicNegationOpcode.spelling
+      (AtomicNegationOpcode.dual .someRelation)),
+  (AtomicNegationOpcode.spelling .noRelation,
+    AtomicNegationOpcode.spelling
+      (AtomicNegationOpcode.dual .noRelation))
+]
+
+theorem active_java_atomic_negation_dual_table_matches_model :
+    modeledAtomicNegationDualTable = activeJavaAtomicNegationDualTable := rfl
+
+def activeJavaNegatedComparisonTable : List (String × String) := [
+  ("NOT_GT", "GT"),
+  ("NOT_GTE", "GTE"),
+  ("NOT_LT", "LT"),
+  ("NOT_LTE", "LTE")
+]
+
+def modeledNegatedComparisonTable : List (String × String) := [
+  (IntComparisonOpcode.spelling .notGt,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .notGt)),
+  (IntComparisonOpcode.spelling .notGte,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .notGte)),
+  (IntComparisonOpcode.spelling .notLt,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .notLt)),
+  (IntComparisonOpcode.spelling .notLte,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .notLte))
+]
+
+theorem active_java_negated_comparison_table_matches_model :
+    modeledNegatedComparisonTable = activeJavaNegatedComparisonTable := rfl
+
+def activeJavaEGraphComparisonDualTable : List (String × String) := [
+  ("GT", "LTE"),
+  ("LTE", "GT"),
+  ("GTE", "LT"),
+  ("LT", "GTE")
+]
+
+def modeledEGraphComparisonDualTable : List (String × String) := [
+  (IntComparisonOpcode.spelling .gt,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .gt)),
+  (IntComparisonOpcode.spelling .lte,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .lte)),
+  (IntComparisonOpcode.spelling .gte,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .gte)),
+  (IntComparisonOpcode.spelling .lt,
+    IntComparisonOpcode.spelling
+      (IntComparisonOpcode.negationDual .lt))
+]
+
+theorem active_java_egraph_comparison_dual_table_matches_model :
+    modeledEGraphComparisonDualTable =
+      activeJavaEGraphComparisonDualTable := rfl
+
+def comparisonDualTableHasSource
+    (table : List (String × String)) (source : String) : Bool :=
+  table.any (fun entry => entry.1 == source)
+
+theorem explicit_negated_comparisons_are_outside_egraph_dual_table :
+    comparisonDualTableHasSource
+        activeJavaEGraphComparisonDualTable "NOT_GT" = false ∧
+      comparisonDualTableHasSource
+        activeJavaEGraphComparisonDualTable "NOT_GTE" = false ∧
+      comparisonDualTableHasSource
+        activeJavaEGraphComparisonDualTable "NOT_LT" = false ∧
+      comparisonDualTableHasSource
+        activeJavaEGraphComparisonDualTable "NOT_LTE" = false := by
+  decide
+
+theorem int_comparison_negation_dual_sound
+    (opcode : IntComparisonOpcode)
+    (left right : Int) :
+    IntComparisonOpcode.denote
+        (IntComparisonOpcode.negationDual opcode) left right ↔
+      ¬ IntComparisonOpcode.denote opcode left right := by
+  cases opcode <;>
+    simp [IntComparisonOpcode.denote, IntComparisonOpcode.negationDual] <;>
+    omega
+
+theorem negated_not_gt_opcode_is_gt (left right : Int) :
+    (¬ IntComparisonOpcode.denote .notGt left right) ↔
+      IntComparisonOpcode.denote .gt left right :=
+  (int_comparison_negation_dual_sound .notGt left right).symm
+
+theorem negated_not_gte_opcode_is_gte (left right : Int) :
+    (¬ IntComparisonOpcode.denote .notGte left right) ↔
+      IntComparisonOpcode.denote .gte left right :=
+  (int_comparison_negation_dual_sound .notGte left right).symm
+
+theorem negated_not_lt_opcode_is_lt (left right : Int) :
+    (¬ IntComparisonOpcode.denote .notLt left right) ↔
+      IntComparisonOpcode.denote .lt left right :=
+  (int_comparison_negation_dual_sound .notLt left right).symm
+
+theorem negated_not_lte_opcode_is_lte (left right : Int) :
+    (¬ IntComparisonOpcode.denote .notLte left right) ↔
+      IntComparisonOpcode.denote .lte left right :=
+  (int_comparison_negation_dual_sound .notLte left right).symm
 
 theorem negated_subset_is_not_subset (left right : Rel α) :
     (¬ subset left right) ↔ (¬ subset left right) := Iff.rfl
@@ -889,7 +1373,7 @@ def absorbingParentContainingMalformedCall : SourceAdmissionTree :=
 
 theorem malformed_descendant_call_blocks_the_whole_rewrite_graph :
     graphRewriteGate absorbingParentContainingMalformedCall = .rejected := by
-  native_decide
+  decide
 
 theorem every_descendant_is_checked_before_rewrite
     (parentEvidence childEvidence : CallAdmissionEvidence)
@@ -921,7 +1405,7 @@ def componentWithHiddenMalformedAlternative : SourceUnionComponent :=
 theorem malformed_union_alternative_blocks_component_admission :
     unionComponentRewriteGate componentWithHiddenMalformedAlternative =
       .rejected := by
-  native_decide
+  decide
 
 inductive TemporalAdmissionTree where
   | phase
@@ -950,7 +1434,7 @@ def temporalParentWithMalformedDescendant : TemporalAdmissionTree :=
 
 theorem malformed_temporal_descendant_blocks_parent_rewrite :
     temporalRewriteGate temporalParentWithMalformedDescendant = .rejected := by
-  native_decide
+  decide
 
 structure TemporalReferenceEvidence where
   isReference : Bool
@@ -1437,19 +1921,19 @@ def parserSetIdentity (sourceName : String) : ParsedSetIdentity :=
 
 theorem exact_none_spelling_is_builtin :
     parserSetIdentity "none" = .builtinNone := by
-  native_decide
+  decide
 
 theorem exact_univ_spelling_is_builtin :
     parserSetIdentity "univ" = .builtinUniv := by
-  native_decide
+  decide
 
 theorem capitalized_none_is_a_user_signature :
     parserSetIdentity "None" = .userSignature "None" := by
-  native_decide
+  decide
 
 theorem capitalized_univ_is_a_user_signature :
     parserSetIdentity "Univ" = .userSignature "Univ" := by
-  native_decide
+  decide
 
 theorem every_nonreserved_name_is_a_user_signature
     (sourceName : String)

@@ -1,61 +1,70 @@
-# Rewrite Rule Lean/Java Closure
+# Rewrite Rule Catalog Reference Record
 
 ## Scope
 
-This record covers the immutable `R0` semantic rewrite vocabulary used by the
-Fast Rewrite IR and the shared e-graph ablation engines. It does not claim that
-Lean has verified Java bytecode. It establishes a checked correspondence among
-the semantic law, its independently compiled Lean theorem, the Java producer
-method that applies it, and a bounded executable regression.
+This record covers the cataloged `R0` identifiers used by the Fast Rewrite IR
+and the shared e-graph ablation engines. It records that each catalog row names
+present Lean theorem or lemma declarations, compiled Java methods carrying the
+same row identifier, and source-level regression entry points. It does not
+compare a Lean theorem type with Java behavior, prove Java--Lean refinement, or
+establish an exhaustive census of executable rewrite branches.
 
 The authoritative inventory is
 `docs/section3-repair-audit/rewrite-rule-traceability.tsv`:
 
-- 61 semantic rule families;
-- 24 shared bootstrap rules, exactly equal to `JavaEgglog.ruleNames()`;
-- 37 production-only alpha, binder, and relational rule families;
-- 243 referenced Lean declarations, 64 Java methods, and 32 regression entry
-  points;
-- status `PROVED_AND_CONNECTED` on every row.
+- 61 cataloged rule families;
+- 24 shared bootstrap names, exactly equal to `JavaEgglog.ruleNames()`;
+- 37 production-only alpha, binder, and relational catalog rows;
+- explicit Lean, Java, and regression references on every row;
+- legacy checker status `PROVED_AND_CONNECTED` on every row. In this record,
+  that token means only that the catalog-selected references passed the
+  implemented connectivity checks; it is not a Java-refinement result.
 
 ## Located Gap
 
 The claim-level requirements matrix grouped many source normalizations under
-large Phase 5 obligations. That was enough to locate supporting formal files,
-but it did not provide a one-rule-family reverse check. In particular, a Java
-method could be named by a broad requirement without declaring which exact
-equations it implemented, and the 24 runtime ablation rule names were not
-compared mechanically with the formal inventory.
+large Phase 5 obligations. The rewrite catalog makes method-level identifiers
+and supporting declaration names inspectable, and it mechanically compares the
+24 runtime ablation names with the catalog. That is still not a completeness
+or refinement check. The reverse annotation pass visits methods in classes
+reached from catalog rows and therefore cannot discover an unannotated method
+or branch outside that starting inventory. The Lean resolver checks declaration
+kind and name, not whether the declaration's type matches a Java branch.
 
-No new semantic rewrite was admitted while closing this gap. The change is a
-direct inventory and executable connection for the existing rules, plus
-foundational Lean theorems where a Java family previously relied only on a
-larger derived theorem.
+No Java semantic rewrite is admitted by this metadata. The alias and negated
+comparison dispatch tables are modeled explicitly in Lean and independently
+cross-checked for literal table parity; those checks do not establish semantic
+Java refinement. A third live path, `EGraphNode.dualOf`, participates in
+saturation complement folding. Among comparison opcodes, its switch contains
+the four ordinary comparison pairs and no `NOT_*` inputs. That comparison slice
+is censused, but no checked reachability invariant establishes that the omitted
+opcodes cannot arrive there. The absence check locks the audited Java snapshot;
+a future Java repair must update the Lean table and parity expectation in the
+same change.
 
-## Repair
+## Checks
 
-1. `LeanVerifiedRewrite` attaches stable `R0-*` identifiers to each governed
-   Java rewrite method.
-2. `RewriteRuleTraceability` parses the TSV catalog, resolves every Lean
-   theorem, Java declaration, annotation, and regression method, and performs
-   the reverse annotation check.
+1. `LeanVerifiedRewrite` records stable `R0-*` catalog identifiers on named
+   Java methods; the annotation carries no proof claim.
+2. `RewriteRuleTraceability` parses the TSV catalog, checks referenced Lean
+   theorem or lemma names, resolves compiled Java methods and matching
+   annotations, checks named regression entry points, and reverse-checks the
+   annotations found in catalog-reached classes.
 3. The checker requires exact equality between the catalog's 24 bootstrap
    names and the names exported by `JavaEgglog`.
-4. The Section 3 assurance runner executes the checker as an independent step
-   and runs `RewriteRuleTraceabilityTest` in its Java suite.
-5. `Phase5SourceRules.lean` now states the foundational Boolean, temporal,
-   quantifier, prenex, ACI, relational-difference, guard, END-erasure, and
-   exact single-membership laws used by the catalog.
+4. The bounded checks execute the catalog gate, its Java test, the exact
+   dispatch-parity script, and the catalog-referenced Lean files.
+5. `Phase5SourceRules.lean` states independent mathematical obligations and
+   explicit models of the active alias and negated-comparison dispatch tables.
 
-The first integrated run exposed a source-audit parser defect: a Java
-declaration preceded by an annotation array was reported as absent even though
-reflection resolved the compiled method. `Section3AssuranceTraceability` now
-erases balanced Java annotations before declaration matching, and its fixture
-checks an annotation containing both an array and a nested call.
+The earlier source-audit parser repair remains relevant: balanced Java
+annotations are erased before source declaration matching so an annotation
+array is not mistaken for the declaration itself. This is a syntactic source
+check only.
 
-## Verification
+## Verification Meaning
 
-The focused closure run produced:
+A successful catalog-reference gate reports:
 
 ```text
 R0 rewrite-rule traceability
@@ -64,30 +73,35 @@ baselineRules=24
 failures=0
 ```
 
-Lean 4.33.0 compiles `Phase5SourceRules.lean`, and the governed formal tree has
-no `sorry`, `admit`, `axiom`, or `unsafe` token. The focused Java run passes:
+The output labels are retained for compatibility. They establish only that the
+catalog's referenced names, annotations, and baseline list passed the
+implemented presence checks. Lean 4.33.0 must separately compile the referenced
+formal files, and the parity script must separately compare the explicitly
+modeled dispatch tables. The bounded regression inventory includes:
 
-- `AlloySourceRuleRegressionTest`: 332 checks;
+- `AlloySourceRuleRegressionTest`;
 - `EGraphSaturationTest`;
 - `CanonicalAlloyPipelineTest`;
 - `MASGVisitorTypeRegressionTest`;
 - `EGraphAblationTest`;
-- `RewriteRuleTraceabilityTest`: 61 families, 24 bootstrap rules, zero
-  correspondence failures.
+- `RewriteRuleTraceabilityTest`: 61 families, 24 bootstrap names, and a legacy
+  output label of zero "correspondence failures" whose implemented meaning is
+  catalog-reference connectivity only.
 
-The complete bounded assurance runner then executed 64 steps with zero
-executable failures. Its outcome remains `INCOMPLETE`, not `PASS`, because the
-pre-existing broader Section 3 matrix deliberately reports 212 open
-traceability diagnostics outside this rewrite-rule closure. Evidence is under
-`/tmp/acgn-rewrite-rule-assurance-20260827-v3` for this working-tree run; it is
-not a publication result directory.
+The unchanged Java class comment also uses the legacy phrase "Lean/Java rewrite
+correspondence." It has the same catalog-connectivity meaning here; it is not a
+refinement or executable-branch-completeness claim.
+
+Passing these checks does not change the broader Section 3 assurance state,
+which remains `INCOMPLETE` while its separately recorded diagnostics remain
+open.
 
 ## Exact Claim Boundary
 
-The Lean theorems prove the equations under their stated mathematical
-assumptions. The annotation/catalog gate proves that the named Java and test
-declarations are present and mutually linked. Parser-backed positive and
-negative regressions test the Java guards on bounded witnesses. This evidence
-does not constitute a proof that arbitrary Java execution refines Lean, nor
-does it close unrelated open diagnostics in the broader Section 3 assurance
-matrix. Those obligations remain visible instead of being silently promoted.
+The Lean declarations prove only their stated mathematical propositions. The
+catalog gate checks reference and annotation presence; it neither interprets
+the theorem types against Java nor proves that the named method implements
+them. Bounded regressions and table-parity checks provide separate finite
+evidence. None of these mechanisms proves Java--Lean refinement, inventories
+every executable rewrite branch, or closes unrelated diagnostics in the
+broader Section 3 assurance matrix.

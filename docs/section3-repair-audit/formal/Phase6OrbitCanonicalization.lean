@@ -157,8 +157,8 @@ def factorial : Nat -> Nat
 def globalCandidates (typedClassSizes : List Nat) : Nat :=
   typedClassSizes.foldl (fun total size => total * factorial size) 1
 
-example : globalCandidates [7] = 5040 := by native_decide
-example : globalCandidates [] = 1 := by native_decide
+example : globalCandidates [7] = 5040 := by decide
+example : globalCandidates [] = 1 := by decide
 
 structure Summary where
   minimum : LeastState Nat
@@ -212,7 +212,7 @@ def materializedPairs (left right : List Nat) : List Nat :=
 example :
     streamPairs [3, 1] [8, 0, 5] =
       streamSummary (materializedPairs [3, 1] [8, 0, 5]) := by
-  native_decide
+  decide
 
 theorem inner_stream_count
     (x : Nat) (right : List Nat) (initial : Summary) :
@@ -272,7 +272,7 @@ def s7StabilizerOrbitWidths : List Nat := [7, 6, 5, 4, 3, 2]
 theorem s7_stabilizer_state_is_strictly_smaller_than_orbit :
     s7StabilizerOrbitWidths.sum = 27 ∧ factorial 7 = 5040 ∧
       s7StabilizerOrbitWidths.sum < factorial 7 := by
-  native_decide
+  decide
 
 /- This equality proves a bounded extensional traversal fact, not a Java heap
    bound. Retained-object nonmaterialization remains an implementation gate. -/
