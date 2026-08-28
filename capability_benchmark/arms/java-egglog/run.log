@@ -1,24 +1,24 @@
 EGraphAblationStudy/java-egglog: processing 5,500 files with 16 workers.
-EGraphAblationStudy/java-egglog: 275/5,500 complete (5.0%), 837.70 files/s, ETA 0m 06s.
-EGraphAblationStudy/java-egglog: 550/5,500 complete (10.0%), 1165.13 files/s, ETA 0m 04s.
-EGraphAblationStudy/java-egglog: 825/5,500 complete (15.0%), 1407.24 files/s, ETA 0m 03s.
-EGraphAblationStudy/java-egglog: 1,100/5,500 complete (20.0%), 1567.71 files/s, ETA 0m 03s.
-EGraphAblationStudy/java-egglog: 1,375/5,500 complete (25.0%), 1704.14 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog: 1,650/5,500 complete (30.0%), 1810.89 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog: 1,925/5,500 complete (35.0%), 1871.74 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog: 2,200/5,500 complete (40.0%), 1941.85 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog: 2,475/5,500 complete (45.0%), 1999.76 files/s, ETA 0m 02s.
-EGraphAblationStudy/java-egglog: 2,750/5,500 complete (50.0%), 2054.93 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 3,025/5,500 complete (55.0%), 2115.89 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 3,300/5,500 complete (60.0%), 2161.54 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 3,575/5,500 complete (65.0%), 2200.12 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 3,850/5,500 complete (70.0%), 2231.66 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 4,125/5,500 complete (75.0%), 2254.17 files/s, ETA 0m 01s.
-EGraphAblationStudy/java-egglog: 4,400/5,500 complete (80.0%), 2267.18 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog: 4,675/5,500 complete (85.0%), 2291.62 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog: 4,950/5,500 complete (90.0%), 2316.01 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog: 5,225/5,500 complete (95.0%), 2344.25 files/s, ETA 0m 00s.
-EGraphAblationStudy/java-egglog: 5,500/5,500 complete (100.0%), 2369.60 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog: 275/5,500 complete (5.0%), 852.18 files/s, ETA 0m 06s.
+EGraphAblationStudy/java-egglog: 550/5,500 complete (10.0%), 1149.33 files/s, ETA 0m 04s.
+EGraphAblationStudy/java-egglog: 825/5,500 complete (15.0%), 1384.55 files/s, ETA 0m 03s.
+EGraphAblationStudy/java-egglog: 1,100/5,500 complete (20.0%), 1549.45 files/s, ETA 0m 03s.
+EGraphAblationStudy/java-egglog: 1,375/5,500 complete (25.0%), 1671.05 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog: 1,650/5,500 complete (30.0%), 1764.43 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog: 1,925/5,500 complete (35.0%), 1826.33 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog: 2,200/5,500 complete (40.0%), 1907.35 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog: 2,475/5,500 complete (45.0%), 1974.69 files/s, ETA 0m 02s.
+EGraphAblationStudy/java-egglog: 2,750/5,500 complete (50.0%), 2038.03 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 3,025/5,500 complete (55.0%), 2099.75 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 3,300/5,500 complete (60.0%), 2156.17 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 3,575/5,500 complete (65.0%), 2193.09 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 3,850/5,500 complete (70.0%), 2236.15 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 4,125/5,500 complete (75.0%), 2262.26 files/s, ETA 0m 01s.
+EGraphAblationStudy/java-egglog: 4,400/5,500 complete (80.0%), 2280.84 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog: 4,675/5,500 complete (85.0%), 2300.07 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog: 4,950/5,500 complete (90.0%), 2322.86 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog: 5,225/5,500 complete (95.0%), 2357.53 files/s, ETA 0m 00s.
+EGraphAblationStudy/java-egglog: 5,500/5,500 complete (100.0%), 2388.78 files/s, ETA 0m 00s.
 EGraphAblationStudy/java-egglog/retry: processing 0 files.
 EGraphAblationStudy/java-egglog/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed java-egglog on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.330 s.
+Completed java-egglog on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.311 s.

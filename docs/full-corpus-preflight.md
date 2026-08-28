@@ -1,6 +1,6 @@
 # Full-Corpus Experiment Preflight
 
-Date: 2026-08-27
+Date: 2026-08-28
 
 This inspection was performed before another 66,080-file experimental run.
 It is a bounded source-to-runner preflight, not a claim that every possible
@@ -22,6 +22,7 @@ Alloy model is supported. Existing result directories were not modified.
 | PF-F10 | Seven files failed their first parallel augmenter parse but passed the immediate retry | Replacing a successful retry erased the original failure path and message, leaving no durable way to reproduce transient parser/canonical-builder behavior. | Preserve the first error on the successful retry record and always emit `parse_retries.csv` with path, initial error, final status, and final error. Final corpus accounting continues to use the retry outcome. |
 | PF-F11 | Six `trainStationOld/inv3` and `trash_ltl/inv12` files, minimized as `all f: File | once f in Trash implies always f in Trash`; the first full replay then exposed five IFF-expanded repeated-reference cases | The source binder remained local because unconditional global lifting was not sound, but temporal phase extraction detached its uses without importing the active lexical scope. Exact adaptation correctly rejected the resulting apparently free leaf. The first repair then rejected a second visit to the same child even when IFF normalization had repeated the exact `REF` under the same scope. | Snapshot every active local binder at each temporal reference and import it into the child by exact source-binder lineage, owner/target phase paths, binder context, local coordinate, slot, and graph type. The adapter resolves the child only while that owner frame is active. Repair projection records the distinct `LOCAL_INHERITED` role. An exact repeated snapshot is idempotent; any changed provenance field rejects as conflicting scope. Branches remain phase-distinct and same-spelled or unrelated binders reject. |
 | PF-F12 | Rewarded full-corpus run at 62,144/66,080 with 32 workers, 4 GiB heap, and reward pool 100 | Eighteen concurrent Rewarder/SAT workers and thirteen certificate-preparation workers filled old generation. Over a 212-second diagnostic interval, full-GC time consumed 98.4% of wall time and only 17 files completed. | Share one heap-derived permit budget between exact preparation and Rewarder and place preparation in a helper scope that releases proof graphs before reward allocation. The 32-thread scheduler admits nine memory-intensive phases at 4 GiB; the augmenter's reward-only executor uses the same limit. This changes scheduling only; all semantic and metric operations remain unchanged. |
+| PF-F13 | Capability witnesses `generated_cap002147.als` and `generated_cap002411.als`, each combining IFF expansion with a nested duplicate Boolean operand | The certification snapshot named the pre-saturation Set operand, but idempotence later adopted a semantically equal child representative and replaced the node's mutable source lineage. Exact Set-fiber replay then found the right repaired occurrence under the wrong lineage and rejected both pairs. | Retain a separate checkpoint occurrence lineage across clone and representative adoption. Set-partition transfer uses this immutable carrier while all semantic-origin lineage, operator, Set policy, arity, multiplicity, and unmatched-input checks remain fail closed. The exact two-file replay is 2/2 at certified distance zero. Capability reporting now throws unless the certificate-integrated arm closes every generated pair. No equality or rewrite rule was added. |
 
 ## Formal Obligations
 
@@ -44,6 +45,8 @@ obligations used by these repairs:
 - repair distance takes the minimum across the exact representatives named by
   one certified quotient fiber;
 - source-lineage remapping preserves every member of an exact quotient fiber;
+- certification cloning and equivalent representative adoption preserve the
+  checkpoint occurrence used by exact Set-fiber replay;
   and
 - an exactly duplicated temporal operand has one occurrence under the certified
   idempotent Set quotient;
@@ -72,6 +75,9 @@ from spelling.
 - `CanonicalAlloyPipelineTest` reproduces both PF-F09 cases: reordered prenex
   guards retain their correct temporal reference, and a duplicate temporal
   operand removes its redundant repair phase at zero distance.
+- `CanonicalAlloyPipelineTest` reproduces PF-F13 with an IFF-expanded formula
+  containing nested idempotent `AND` and `OR` operands and requires certified
+  equality and repair distance zero against its explicit expansion.
 - `CanonicalAlloyPipelineTest` reproduces PF-F11 with `ONCE` and `ALWAYS`
   sibling phases. Alpha renaming remains distance zero, while changing the
   imported temporal use remains nonzero. A separate IFF case repeats the same
@@ -101,14 +107,17 @@ seven ablation arms, and the capability benchmark with zero preparation,
 ranking, batch, or conclusive soundness failures.
 
 The final clean publication replay used 16 workers, an 8 GiB heap, and reward
-pool 100. Publication run `6000d695-8b5e-4972-b0ea-3d9e55111245` completed all
-four stages from source `ebce874382c87108a32874149008842a7b0fa528`:
+pool 100. Publication run `57f5a2d8-f501-494d-81d5-b3f1396dbe18` completed all
+four stages from source `88363ea23728329948ccc9d5cdad690cc5787ca5`:
 CanonicalBatchTest produced 61,598 successes, 4,482 AST skips, and 0 failures;
 Alloy4FunAugmenter ranked and rewarded all 42,386 incorrect predicates with 0
 failures and 0 certified incorrect-to-truth zeroes; all seven ablation arms
 completed 61,598 pairs with 0 failures; and the capability benchmark generated
-and evaluated 5,500 valid pairs. This replay is the checked-in empirical
-snapshot.
+and evaluated 5,500 valid pairs. The slotted, Fast Rewrite IR, and
+Certificate-Integrated IR arms each recovered 5,500/5,500. The bounded semantic
+checker found no counterexample among 4,088 claimed-equivalent natural-corpus
+pairs, and all four targeted negative controls remained unmerged. This replay
+is the checked-in empirical snapshot.
 
 ## Intentional Stop Conditions
 

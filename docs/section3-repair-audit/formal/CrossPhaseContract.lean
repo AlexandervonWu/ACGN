@@ -30,11 +30,15 @@ structure SemanticProfile where
   deriving DecidableEq, Repr
 
 structure EvidenceIndex where
+  authority : Nat
   profile : SemanticProfile
   operator : Nat
   schemaPath : List Nat
   carrier : Nat
   admittedArities : List Nat
+  law : Law
+  sourceTheoryDigest : Nat
+  schema : List Nat
   lawParameter : List Nat
   sourceEndpoint : Nat
   targetEndpoint : Nat
@@ -86,11 +90,15 @@ theorem accepted_at_retains_the_complete_index
     (expected : EvidenceIndex)
     (certificate : Certificate)
     (accepted : CertificateAcceptedAt theory expected certificate) :
+    certificate.index.authority = expected.authority /\
     certificate.index.profile = expected.profile /\
     certificate.index.operator = expected.operator /\
     certificate.index.schemaPath = expected.schemaPath /\
     certificate.index.carrier = expected.carrier /\
     certificate.index.admittedArities = expected.admittedArities /\
+    certificate.index.law = expected.law /\
+    certificate.index.sourceTheoryDigest = expected.sourceTheoryDigest /\
+    certificate.index.schema = expected.schema /\
     certificate.index.lawParameter = expected.lawParameter /\
     certificate.index.sourceEndpoint = expected.sourceEndpoint /\
     certificate.index.targetEndpoint = expected.targetEndpoint := by
@@ -157,6 +165,40 @@ theorem policy_fields_are_independently_observable
       · exact Or.inr (Or.inr (Or.inl flat))
     · exact Or.inr (Or.inl quotient)
   · exact Or.inl arity
+
+def basePolicy : PortPolicy := ⟨1, .seq, none, none⟩
+
+theorem arity_policy_is_not_implied_by_other_policy_fields :
+    let changed : PortPolicy := { basePolicy with arityPolicy := 2 }
+    changed.arityPolicy ≠ basePolicy.arityPolicy ∧
+      changed.siblingQuotient = basePolicy.siblingQuotient ∧
+      changed.flatLicense = basePolicy.flatLicense ∧
+      changed.unitLicense = basePolicy.unitLicense := by
+  decide
+
+theorem sibling_quotient_is_not_implied_by_other_policy_fields :
+    let changed : PortPolicy := { basePolicy with siblingQuotient := .bag }
+    changed.siblingQuotient ≠ basePolicy.siblingQuotient ∧
+      changed.arityPolicy = basePolicy.arityPolicy ∧
+      changed.flatLicense = basePolicy.flatLicense ∧
+      changed.unitLicense = basePolicy.unitLicense := by
+  decide
+
+theorem flat_license_is_not_implied_by_other_policy_fields :
+    let changed : PortPolicy := { basePolicy with flatLicense := some 0 }
+    changed.flatLicense ≠ basePolicy.flatLicense ∧
+      changed.arityPolicy = basePolicy.arityPolicy ∧
+      changed.siblingQuotient = basePolicy.siblingQuotient ∧
+      changed.unitLicense = basePolicy.unitLicense := by
+  decide
+
+theorem unit_license_is_not_implied_by_other_policy_fields :
+    let changed : PortPolicy := { basePolicy with unitLicense := some 0 }
+    changed.unitLicense ≠ basePolicy.unitLicense ∧
+      changed.arityPolicy = basePolicy.arityPolicy ∧
+      changed.siblingQuotient = basePolicy.siblingQuotient ∧
+      changed.flatLicense = basePolicy.flatLicense := by
+  decide
 
 structure SourceOccurrence where
   path : List Nat

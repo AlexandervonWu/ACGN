@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import is.fivefivefive.CanDis.core.RenamedIdUnionFind.RenamedId;
 import is.fivefivefive.CanDis.theory.ArityPolicy;
 import is.fivefivefive.CanDis.theory.FlatLicense;
+import is.fivefivefive.CanDis.theory.LeanVerifiedRewrite;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.theory.SiblingQuotient;
 import is.fivefivefive.CanDis.theory.UnitLicense;
@@ -62,6 +63,12 @@ public final class EGraphNode {
     private SigSymbol parserSignatureEvidence;
     /* Transfer-only identity: never participates in semantic keys or serialization. */
     private long sourceOccurrenceLineage;
+    /*
+     * Immutable checkpoint occurrence used to transfer pre-saturation evidence.
+     * Unlike sourceOccurrenceLineage, adoption of an equivalent representative
+     * must not replace this carrier identity.
+     */
+    private long certificationOccurrenceLineage;
     /* A bound relation value imported from an enclosing temporal phase. */
     private boolean temporalSnapshotBinding;
     /* Parser-owned CALL provenance; excluded from semantic keys and repair cost. */
@@ -266,6 +273,7 @@ public final class EGraphNode {
         this.semanticProfile = java.util.Objects.requireNonNull(
                 semanticProfile, "semanticProfile");
         this.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
+        this.certificationOccurrenceLineage = sourceOccurrenceLineage;
         if (children != null) {
             for (EGraphNode child : children) {
                 appendChildReference(child);
@@ -1231,6 +1239,12 @@ public final class EGraphNode {
         return sourceOccurrenceLineage;
     }
 
+    /** Exact pre-saturation occurrence carrier for certificate transfer only. */
+    public long getCertificationOccurrenceLineage() {
+        requireLiveNode();
+        return certificationOccurrenceLineage;
+    }
+
     /** Permanently closes semantic mutation of this source e-graph arena. */
     public void freezeForCertification() {
         arena.freezeForCertification(this);
@@ -1376,11 +1390,14 @@ public final class EGraphNode {
 
     void preserveSourceOccurrenceLineageFrom(EGraphNode source) {
         arena.mutate(this, () -> {
-            if (source == null || source.sourceOccurrenceLineage <= 0L) {
+            if (source == null || source.sourceOccurrenceLineage <= 0L
+                    || source.certificationOccurrenceLineage <= 0L) {
                 throw new IllegalArgumentException(
                         "A source occurrence lineage must be positive");
             }
             sourceOccurrenceLineage = source.sourceOccurrenceLineage;
+            certificationOccurrenceLineage =
+                    source.certificationOccurrenceLineage;
         });
     }
 
@@ -1394,7 +1411,9 @@ public final class EGraphNode {
                 if (!visited.add(node)) {
                     continue;
                 }
-                node.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
+                long lineage = nextSourceOccurrenceLineage();
+                node.sourceOccurrenceLineage = lineage;
+                node.certificationOccurrenceLineage = lineage;
                 pending.addAll(node.getChildren());
             }
         });
@@ -1475,6 +1494,11 @@ public final class EGraphNode {
         active.remove(eClass.getId());
     }
 
+    @LeanVerifiedRewrite({
+            "R0-CORE-004", "R0-CORE-007", "R0-CORE-008", "R0-CORE-017",
+            "R0-CORE-018", "R0-CORE-019", "R0-CORE-020", "R0-CORE-021",
+            "R0-CORE-022", "R0-CORE-023", "R0-CORE-024", "R0-REL-034"
+    })
     private boolean saturateOnce() {
         List<EClassRef> canonicalChildren = null;
         for (int i = 0; i < childClasses.size(); i++) {
@@ -2112,6 +2136,7 @@ public final class EGraphNode {
         return false;
     }
 
+    @LeanVerifiedRewrite({"R0-REL-007", "R0-REL-033"})
     private boolean saturateRelationalUnaryRule() {
         if ((opcode == Opcode.SOME || opcode == Opcode.NO)
                 && childClasses.size() == 1) {
@@ -2321,6 +2346,7 @@ public final class EGraphNode {
         return false;
     }
 
+    @LeanVerifiedRewrite("R0-REL-001")
     private EGraphNode distributeTransposeThroughContainer(
             EClassRef containerInvocation,
             EGraphNode container) {
@@ -2459,6 +2485,7 @@ public final class EGraphNode {
      * converse. JOIN remains an ordered sequence; only its traversal direction
      * and the converse of each binary operand change.
      */
+    @LeanVerifiedRewrite("R0-REL-015")
     static EGraphNode parserCertifiedTransposeJoinReversal(
             EGraphNode owner,
             EClassRef joinInvocation) {
@@ -2528,6 +2555,7 @@ public final class EGraphNode {
     }
 
     /** Moves converse through an exact transitive or reflexive closure. */
+    @LeanVerifiedRewrite("R0-REL-016")
     static EGraphNode parserCertifiedTransposeClosureCommutation(
             EGraphNode owner,
             EClassRef closureInvocation) {
@@ -2580,6 +2608,7 @@ public final class EGraphNode {
     }
 
     /** Converse swaps exact domain and range restriction. */
+    @LeanVerifiedRewrite("R0-REL-017")
     static EGraphNode parserCertifiedTransposeRestrictionSwap(
             EGraphNode owner,
             EClassRef restrictionInvocation) {
@@ -2618,6 +2647,7 @@ public final class EGraphNode {
     }
 
     /** Applies the zero and full-carrier identities of a valid restriction. */
+    @LeanVerifiedRewrite("R0-REL-018")
     static EGraphNode parserCertifiedRestrictionIdentityOrZero(
             EGraphNode owner,
             EClassRef restrictionInvocation) {
@@ -2656,6 +2686,7 @@ public final class EGraphNode {
      * The orientation lifts outer endpoint guards and places a shared middle
      * guard on the right operand, so none of the three rules can cycle.
      */
+    @LeanVerifiedRewrite("R0-REL-019")
     static EGraphNode parserCertifiedJoinRestrictionNormalization(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -2764,6 +2795,7 @@ public final class EGraphNode {
     }
 
     /** Resolves reflexive relation comparison atoms under source authority. */
+    @LeanVerifiedRewrite("R0-REL-020")
     static Boolean parserCertifiedReflexiveComparison(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -2807,6 +2839,7 @@ public final class EGraphNode {
     }
 
     /** Proves supported structural subset facts and their explicit negations. */
+    @LeanVerifiedRewrite("R0-REL-021")
     static Boolean parserCertifiedStructuralSubsetComparison(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -2831,6 +2864,7 @@ public final class EGraphNode {
      * NOT_IN uses the De Morgan dual. The two coordinates may both expand,
      * yielding their complete Cartesian family of subset obligations.
      */
+    @LeanVerifiedRewrite("R0-REL-022")
     static EGraphNode parserCertifiedSubsetLatticeExpansion(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -2900,6 +2934,7 @@ public final class EGraphNode {
     }
 
     /** Converts subset comparison with typed none into relation cardinality. */
+    @LeanVerifiedRewrite("R0-REL-023")
     static EGraphNode parserCertifiedEmptyRightSubsetExpansion(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -2922,6 +2957,7 @@ public final class EGraphNode {
     }
 
     /** Removes lattice operands already covered by a certified structural order. */
+    @LeanVerifiedRewrite("R0-REL-024")
     static EGraphNode parserCertifiedStructuralLatticeAbsorption(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -2983,6 +3019,7 @@ public final class EGraphNode {
     }
 
     /** Resolves an intersection containing a difference and one of its removals. */
+    @LeanVerifiedRewrite("R0-REL-025")
     static EGraphNode parserCertifiedDifferenceDisjointness(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -3021,6 +3058,7 @@ public final class EGraphNode {
     }
 
     /** Recombines the Boolean partition {@code (A-B) + (A&B) = A}. */
+    @LeanVerifiedRewrite("R0-REL-026")
     static EGraphNode parserCertifiedDifferencePartitionRecombination(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -3097,6 +3135,7 @@ public final class EGraphNode {
     }
 
     /** Normalizes the two exact Boolean partitions headed by relation difference. */
+    @LeanVerifiedRewrite("R0-REL-027")
     static EGraphNode parserCertifiedDifferencePartitionNormalization(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -3175,6 +3214,7 @@ public final class EGraphNode {
     }
 
     /** Converts emptiness/nonemptiness of a difference into exact subset atoms. */
+    @LeanVerifiedRewrite("R0-REL-028")
     static EGraphNode parserCertifiedDifferenceCardinalityExpansion(
             EGraphNode owner,
             EClassRef relationInvocation) {
@@ -3255,6 +3295,7 @@ public final class EGraphNode {
      * proves that the declaration has exactly one binder and that the binder
      * occurs only as the comparison's left operand.
      */
+    @LeanVerifiedRewrite("R0-BIND-002")
     static EGraphNode parserCertifiedMembershipQuantifierElimination(
             EGraphNode owner,
             Opcode quantifier,
@@ -3670,6 +3711,7 @@ public final class EGraphNode {
     }
 
     /** Unary restriction has only one coordinate; orient RANGE to DOMAIN. */
+    @LeanVerifiedRewrite("R0-REL-029")
     static EGraphNode parserCertifiedUnaryRestrictionOrientation(
             EGraphNode owner,
             EClassRef restrictionInvocation) {
@@ -3704,6 +3746,7 @@ public final class EGraphNode {
     }
 
     /** Normalizes converse/closure over an authenticated empty binary relation. */
+    @LeanVerifiedRewrite("R0-REL-030")
     static EGraphNode parserCertifiedEmptyRelationalUnaryIdentity(
             EGraphNode owner,
             EClassRef childInvocation) {
@@ -4251,6 +4294,7 @@ public final class EGraphNode {
      * cover every direct extension branch and every union operand is certified
      * below that carrier.
      */
+    @LeanVerifiedRewrite("R0-REL-031")
     static EGraphNode parserCertifiedAbstractUnionCarrier(
             EGraphNode owner,
             List<EGraphNode> operands) {
@@ -4293,6 +4337,7 @@ public final class EGraphNode {
      * while parser-certified subtype and abstract covers may choose a smaller
      * proven carrier. Diagonal and partial grids cannot synthesize cross terms.
      */
+    @LeanVerifiedRewrite("R0-REL-002")
     static EGraphNode parserCertifiedProductUnionCarrier(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -4406,6 +4451,7 @@ public final class EGraphNode {
      * needs no complete Cartesian grid: tuple membership is conjunctive in
      * every product and every source branch.
      */
+    @LeanVerifiedRewrite("R0-REL-003")
     static EGraphNode parserCertifiedProductIntersectionFactoring(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -4482,6 +4528,7 @@ public final class EGraphNode {
      * repeated applications therefore factor a complete grid without ever
      * inventing diagonal cross terms. Intersection is coordinatewise.
      */
+    @LeanVerifiedRewrite("R0-REL-012")
     static EGraphNode parserCertifiedRestrictionLatticeFactoring(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -4657,6 +4704,7 @@ public final class EGraphNode {
     }
 
     /** Factors a restriction difference only when exactly one coordinate changes. */
+    @LeanVerifiedRewrite("R0-REL-013")
     static EGraphNode parserCertifiedRestrictionDifferenceFactoring(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -4717,6 +4765,7 @@ public final class EGraphNode {
      * Combines nested same-side restrictions and chooses RANGE(DOMAIN(R)) as
      * the unique orientation for commuting opposite-side restrictions.
      */
+    @LeanVerifiedRewrite("R0-REL-014")
     static EGraphNode parserCertifiedNestedRestriction(
             EGraphNode owner,
             EClassRef firstChild,
@@ -4872,6 +4921,7 @@ public final class EGraphNode {
      * are oriented toward a factored form, which strictly reduces duplicated
      * common operands and therefore cannot alternate with expansion.
      */
+    @LeanVerifiedRewrite("R0-REL-004")
     static EGraphNode parserCertifiedLatticeNormalForm(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -4909,7 +4959,26 @@ public final class EGraphNode {
                     EGraphNode identityRepresentative =
                             identityInvocationRepresentative(candidate);
                     if (identityRepresentative != null) {
-                        return identityRepresentative;
+                        // Absorption removes only the matched dual container.
+                        List<EClassRef> retained = new ArrayList<>(
+                                operands.size() - 1);
+                        for (int operandIndex = 0;
+                                operandIndex < operands.size();
+                                operandIndex++) {
+                            if (operandIndex != containerIndex) {
+                                retained.add(operands.get(operandIndex).canonical());
+                            }
+                        }
+                        if (retained.size() == 1) {
+                            return identityRepresentative;
+                        }
+                        EGraphNode result = buildDerivedLatticeContainer(
+                                owner,
+                                owner,
+                                owner.opcode,
+                                retained);
+                        result.preserveSourceOccurrenceLineageFrom(owner);
+                        return result;
                     }
                 }
             }
@@ -4980,6 +5049,7 @@ public final class EGraphNode {
     }
 
     /** Factors the four Boolean-algebra distributivity laws for set difference. */
+    @LeanVerifiedRewrite("R0-REL-005")
     static EGraphNode parserCertifiedDifferenceFactoring(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -5016,6 +5086,7 @@ public final class EGraphNode {
      * subtracting one product does not subtract the Cartesian product of all
      * coordinate differences.
      */
+    @LeanVerifiedRewrite("R0-REL-011")
     static EGraphNode parserCertifiedProductDifferenceFactoring(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -5159,6 +5230,7 @@ public final class EGraphNode {
     }
 
     /** Accumulates a left-nested difference into one certified removal union. */
+    @LeanVerifiedRewrite("R0-REL-008")
     static EGraphNode parserCertifiedLeftNestedDifference(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -5206,6 +5278,7 @@ public final class EGraphNode {
     }
 
     /** Expands a right-nested difference by its pointwise Boolean identity. */
+    @LeanVerifiedRewrite("R0-REL-009")
     static EGraphNode parserCertifiedRightNestedDifference(
             EGraphNode owner,
             EClassRef leftInvocation,
@@ -5262,6 +5335,7 @@ public final class EGraphNode {
     }
 
     /** Extracts every difference branch from one certified intersection. */
+    @LeanVerifiedRewrite("R0-REL-010")
     static EGraphNode parserCertifiedIntersectionDifferenceExtraction(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -5439,6 +5513,7 @@ public final class EGraphNode {
     }
 
     /** Factors relational composition over a same-side union. */
+    @LeanVerifiedRewrite("R0-REL-006")
     static EGraphNode parserCertifiedJoinUnionFactoring(
             EGraphNode owner,
             List<EClassRef> operands) {
@@ -5534,6 +5609,7 @@ public final class EGraphNode {
     }
 
     /** Distributes relational-union nonemptiness/emptiness into Boolean ACI form. */
+    @LeanVerifiedRewrite("R0-REL-007")
     static EGraphNode parserCertifiedUnionCardinalityExpansion(
             EGraphNode owner,
             EClassRef relationInvocation) {
@@ -5840,6 +5916,7 @@ public final class EGraphNode {
                 "Unsupported derived lattice opcode: " + opcode);
     }
 
+    @LeanVerifiedRewrite("R0-REL-002")
     private static EGraphNode parserCertifiedProductSubgroupReduction(
             EGraphNode owner,
             List<EClassRef> products,
@@ -6112,6 +6189,7 @@ public final class EGraphNode {
         return distinct;
     }
 
+    @LeanVerifiedRewrite("R0-REL-032")
     private static EGraphNode parserCertifiedDominantSignature(
             List<EGraphNode> factors) {
         EGraphNode best = null;
@@ -6932,6 +7010,7 @@ public final class EGraphNode {
         copy.builtinConstantKind = builtinConstantKind;
         copy.parserSignatureEvidence = parserSignatureEvidence;
         copy.sourceOccurrenceLineage = sourceOccurrenceLineage;
+        copy.certificationOccurrenceLineage = certificationOccurrenceLineage;
         copy.callOccurrenceId = callOccurrenceId;
         copy.declaredArity = declaredArity;
         copy.callArityAuthority = callArityAuthority;
@@ -6966,6 +7045,7 @@ public final class EGraphNode {
         builtinConstantKind = null;
         parserSignatureEvidence = null;
         sourceOccurrenceLineage = 0L;
+        certificationOccurrenceLineage = 0L;
         callOccurrenceId = -1L;
         declaredArity = -1;
         callArityAuthority = null;

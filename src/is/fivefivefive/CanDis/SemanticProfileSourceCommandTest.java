@@ -12,9 +12,13 @@ import java.util.Set;
 import edu.mit.csail.sdg.ast.Command;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.translator.A4Options;
+import is.fivefivefive.ACGN.asg.Multigraph;
+import is.fivefivefive.ACGN.util.GlobalVariables;
+import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.theory.AlloySemanticProfileFactory;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.theory.StructuralKey;
+import parser.ast.nodes.ModelUnit;
 import parser.util.AlloyUtil;
 
 /** Bounded parser-owned command/options profile extraction tests. */
@@ -96,6 +100,26 @@ public final class SemanticProfileSourceCommandTest {
                     "different execution unroll bounds must not share a profile");
             check(!profile(formulaA, modular).equals(profile(formulaB, modular)),
                     "different selected command formulae must not share a profile");
+
+            SemanticProfile formulaAProfile = profile(formulaA, modular);
+            MASGVisitor profileVisitor = new MASGVisitor(
+                    new GlobalVariables(), formulaA);
+            profileVisitor.visit(new ModelUnit(null, formulaA), null);
+            Integer targetId = profileVisitor.getForestId("target");
+            Multigraph target = targetId == null
+                    ? null : profileVisitor.getForest().get(targetId);
+            check(target != null, "source-command profile fixture must retain target");
+            CanonicalAlloyPipeline.Prepared prepared =
+                    CanonicalAlloyPipeline.prepare(target, formulaAProfile);
+            check(prepared.semanticProfile().equals(formulaAProfile)
+                            && prepared.semanticArtifact().semanticProfile()
+                                    .equals(formulaAProfile),
+                    "parser-owned profile must survive normalization and certification");
+            expectFailure(() -> CanonicalAlloyPipeline.distance(
+                            prepared,
+                            CanonicalAlloyPipeline.prepare(
+                                    target, profile(formulaB, modular))),
+                    "cross-command canonical comparison must reject");
 
             Set<String> publicOptions = new HashSet<>();
             for (java.lang.reflect.Field field : A4Options.class.getFields()) {

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-27T21:02:48.855370065Z",
+  "generatedAt": "2026-08-28T07:59:01.387964583Z",
   "inputRoot": "/home/augustus/ACGN/classified-data",
-  "outputRoot": "/home/augustus/acgn-publication-20260827T194941Z/alloy4fun-augmented",
+  "outputRoot": "/home/augustus/acgn-publication-v2.1-20260828T064537Z/alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and Certificate-Integrated IR distance is zero.",
   "pairCount": 11382,
   "pairs": [

@@ -3,7 +3,7 @@
 > **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
+> `57f5a2d8-f501-494d-81d5-b3f1396dbe18` from source commit `88363ea2`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 This document began as the Phase A architecture audit for commit
@@ -184,7 +184,7 @@ proof construction, law validation, renaming orbits, rebuild, invariant
 checking, and finite observations. In return it fails closed when semantic
 admissibility cannot be certified and provides an auditable boundary against
 unsupported scope permutations or rewrite laws. The current 61,598-pair run
-measured 24.690 seconds versus 2,730.160 seconds wall time and 4,074 versus
+measured 24.710 seconds versus 2,708.920 seconds wall time and 4,074 versus
 4,088 `CORRECT` zeroes, with no paired incorrect zeroes in either arm. Those corpus
 labels and bounded Alloy checks are evidence, not an unbounded soundness proof.
 

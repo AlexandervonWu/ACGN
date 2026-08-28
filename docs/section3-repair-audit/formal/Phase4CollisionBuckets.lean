@@ -467,6 +467,47 @@ theorem admitted_merge_strictly_decreases_positive_leaders
   simp [mergeLeaderCount, positive]
   omega
 
+/- Rebuild runs over a fixed finite record batch. A record step without a
+   union consumes dirty work. A certified union may dirty every record again,
+   but it strictly consumes one leader. This mixed-radix rank therefore
+   decreases on either production transition. -/
+def rebuildRank (recordCount leaderCount dirtyCount : Nat) : Nat :=
+  leaderCount * (recordCount + 1) + dirtyCount
+
+theorem rebuild_record_step_strictly_decreases_rank
+    {recordCount leaderCount dirtyBefore dirtyAfter : Nat}
+    (decreases : dirtyAfter < dirtyBefore) :
+    rebuildRank recordCount leaderCount dirtyAfter <
+      rebuildRank recordCount leaderCount dirtyBefore := by
+  simp only [rebuildRank]
+  omega
+
+theorem rebuild_union_step_strictly_decreases_rank
+    {recordCount leaderCount dirtyBefore dirtyAfter : Nat}
+    (positive : 0 < leaderCount)
+    (bounded : dirtyAfter ≤ recordCount) :
+    rebuildRank recordCount (leaderCount - 1) dirtyAfter <
+      rebuildRank recordCount leaderCount dirtyBefore := by
+  have leaderStep : leaderCount = (leaderCount - 1) + 1 := by omega
+  rw [leaderStep]
+  simp [rebuildRank, Nat.add_mul]
+  omega
+
+def rebuildProcessingBudget
+    (initialDirty recordCount leaderCount : Nat) : Nat :=
+  initialDirty + recordCount * (leaderCount - 1)
+
+theorem fixed_batch_processing_budget_covers_all_union_epochs
+    {initialDirty recordCount leaderCount unionCount processed : Nat}
+    (unionBound : unionCount ≤ leaderCount - 1)
+    (processedBound : processed ≤ initialDirty + recordCount * unionCount) :
+    processed ≤ rebuildProcessingBudget initialDirty recordCount leaderCount := by
+  unfold rebuildProcessingBudget
+  exact Nat.le_trans processedBound
+    (Nat.add_le_add_left (Nat.mul_le_mul_left recordCount unionBound) initialDirty)
+
+example : rebuildProcessingBudget 3 5 4 = 18 := by decide
+
 structure ParentRecordKey where
   owner : Owner
   shape : Nat

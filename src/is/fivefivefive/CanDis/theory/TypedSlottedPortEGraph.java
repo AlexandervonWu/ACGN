@@ -1019,6 +1019,11 @@ public final class TypedSlottedPortEGraph {
         int collisions = 0;
         int unions = 0;
         int maximumDirty = dirtyParents.size();
+        int initialRecordCount = shapeCertificates.size();
+        int initialLeaderCount = liveLeaderCount();
+        long processingBudget = rebuildProcessingBudget(
+                maximumDirty, initialRecordCount, initialLeaderCount);
+        int maximumUnions = Math.max(0, initialLeaderCount - 1);
         List<CertificateTracePayload.Union> generatedUnions = new ArrayList<>();
         List<CertificateTracePayload.RebuildRecord> processedTransitions =
                 new ArrayList<>();
@@ -1035,6 +1040,10 @@ public final class TypedSlottedPortEGraph {
         try {
             while (true) {
                 while (!dirtyParents.isEmpty()) {
+                    if ((long) processed >= processingBudget) {
+                        throw new IllegalStateException(
+                                "Rebuild exceeded its finite record-processing budget");
+                    }
                     maximumDirty = Math.max(maximumDirty, dirtyParents.size());
                     ParentRecordKey key = reverseOrder
                             ? dirtyParents.last()
@@ -1057,12 +1066,13 @@ public final class TypedSlottedPortEGraph {
                     } finally {
                         rebuildingRecord = null;
                     }
-                    processed++;
-                    changed += step.changed ? 1 : 0;
+                    processed = Math.incrementExact(processed);
+                    changed = Math.addExact(changed, step.changed ? 1 : 0);
                     collisions = Math.addExact(
                             collisions, step.generatedSubtransitions.size());
                     unions = Math.addExact(
                             unions, step.generatedSubtransitions.size());
+                    requireUnionBudget(unions, maximumUnions);
                     generatedUnions.addAll(step.generatedSubtransitions);
                     processedTransitions.add(step.trace);
                     checkInvariants();
@@ -1077,6 +1087,7 @@ public final class TypedSlottedPortEGraph {
                 generatedUnions.addAll(resolvedTransitions);
                 collisions = Math.addExact(collisions, resolved);
                 unions = Math.addExact(unions, resolved);
+                requireUnionBudget(unions, maximumUnions);
                 if (resolved == 0 && dirtyParents.isEmpty()) {
                     // Quiescence is certified from a fresh compatibility pass,
                     // never solely from previously cached negative attempts.
@@ -1087,6 +1098,7 @@ public final class TypedSlottedPortEGraph {
                     generatedUnions.addAll(freshTransitions);
                     collisions = Math.addExact(collisions, freshResolved);
                     unions = Math.addExact(unions, freshResolved);
+                    requireUnionBudget(unions, maximumUnions);
                     if (freshResolved == 0 && dirtyParents.isEmpty()) {
                         break;
                     }
@@ -1127,6 +1139,39 @@ public final class TypedSlottedPortEGraph {
             rebuildingRecord = null;
             rebuildActive = false;
         }
+    }
+
+    /** Finite fixed-batch bound: each union can re-dirty at most every live record. */
+    static long rebuildProcessingBudget(
+            int initialDirty,
+            int recordCount,
+            int leaderCount) {
+        if (initialDirty < 0 || recordCount < 0 || leaderCount < 0
+                || initialDirty > recordCount) {
+            throw new IllegalArgumentException(
+                    "Rebuild counts must be nonnegative and dirty work must be live");
+        }
+        long unionBudget = Math.max(0L, (long) leaderCount - 1L);
+        return Math.addExact(
+                initialDirty,
+                Math.multiplyExact((long) recordCount, unionBudget));
+    }
+
+    private static void requireUnionBudget(int unions, int maximumUnions) {
+        if (unions > maximumUnions) {
+            throw new IllegalStateException(
+                    "Rebuild exceeded the strictly decreasing leader budget");
+        }
+    }
+
+    private int liveLeaderCount() {
+        int leaders = 0;
+        for (EClassId id : classes.keySet()) {
+            if (unionFind.isLeader(id)) {
+                leaders = Math.incrementExact(leaders);
+            }
+        }
+        return leaders;
     }
 
     private RebuildStepResult rebuildRecord(ParentRecordKey key) {

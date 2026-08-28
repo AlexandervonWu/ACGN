@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "3c44480601dd1aed08224b79201ecc65c0615afbfdeb894f57da729f70ea4cf7",
-      "sizeBytes": 11232242
+      "sha256": "db1651f77436a72791ba7529bb73d2038616b0a96d16781b45f6da7c43bbcd1e",
+      "sizeBytes": 11230864
     },
     {
       "path": "summary.json",
-      "sha256": "9266be97516ab83258bfa76afb4952ad5a5ca303652296d15d01a0bab6817c05",
-      "sizeBytes": 81307
+      "sha256": "167ca4c30125b4a84eb57b1d454bbfcbc008231551cb1130cbc0e00f4bfe0d0e",
+      "sizeBytes": 81309
     },
     {
       "path": "metrics.properties",
-      "sha256": "714132eb71caf498647644f87817537fd663e28b7f2f6b06912cc2b6246b0579",
-      "sizeBytes": 1504
+      "sha256": "6c3745704a273d3e607e76380ace1afbf3e363754e3dce53c125ef9919716fff",
+      "sizeBytes": 1505
     },
     {
       "path": "run.log",
-      "sha256": "df7e47faf2346febed67e19e0742f9bddbd9a574bbe85fa14373c72418a74888",
+      "sha256": "d89e4c4f9a141eace5f5bbaf22bace30406408d70861a035df2a1eb3f2a766ae",
       "sizeBytes": 7174
     },
     {
       "path": "process.time",
-      "sha256": "3930fd8c0e8c1df9fdedc35cd5f09338d6fe0400386fae29732615a665adf8d2",
-      "sizeBytes": 1383
+      "sha256": "b416129866aa373dd6cce93da1a943c98fd47b730d8a0ea77e985beeb94f94c9",
+      "sizeBytes": 1393
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-27T21:32:40.272516843Z",
-  "javaSourceSha256": "2bd306e5a2f573d9e41e67bc842a5a86190fc0fbfe7f2de1674383b04a8ad4c4",
+  "startedAt": "2026-08-28T08:28:32.132674509Z",
+  "javaSourceSha256": "e807003dc6d77ccc8facbdc8ec4edbab052d1b6793f743649549ab9fcadd8055",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -76,7 +76,7 @@
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "ebce874382c87108a32874149008842a7b0fa528",
+  "gitSha": "88363ea23728329948ccc9d5cdad690cc5787ca5",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "4e612dc7-5e3a-497c-8ee1-30c8fad7c869"
+  "runId": "6d3cd13e-e9e4-4c8b-984a-7f9842a12707"
 }

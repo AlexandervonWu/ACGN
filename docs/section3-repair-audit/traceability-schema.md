@@ -11,6 +11,11 @@ set and `claim-ledger.md` to Lean, implementation, and bounded test evidence.
 It is generated initially by `Section3AssuranceTraceability --init` and then
 reviewed and completed manually.
 
+The final `State` cell of every requirement row in `claim-ledger.md` is a
+readable mirror of `formal_status/conformance_status`. The checker rejects a
+missing, duplicated, stale, or otherwise different ledger state; the matrix
+remains the source of the two component values.
+
 `Section3AssuranceTraceability --write-markdown` regenerates
 `docs/section3-assurance-claims.md`, which documents every claim and its proof
 process from these same bytes. The generated Markdown is never an independent
@@ -28,7 +33,7 @@ The columns are:
 | `test_refs` | Semicolon-separated `path#symbol` references to bounded executable evidence. |
 | `test_classes` | `+`-separated test classes; every row requires `NOMINAL+BOUNDARY+ROBUSTNESS`. |
 | `formal_status` | `PROVED` only after the mapped Lean file compiles under the pinned toolchain and the statement matches the claim. |
-| `conformance_status` | `DIRECT` only when bounded tests reach the actual implementation boundary; an abstract model alone is not direct. |
+| `conformance_status` | `DIRECT` only when bounded tests reach the actual implementation boundary; an abstract model alone is not direct. `DIRECT` is inherently bounded and there is no separate `DIRECT-BOUNDED` state. |
 | `notes` | Assumptions, limits, counterexamples, and evidence identifiers. |
 
 Report mode lists all gaps and exits zero so an incomplete matrix can be
@@ -47,4 +52,6 @@ mappings to definitions instead of named
 admissions, missing test classes, duplicate rows, and extra or missing
 requirement IDs. Symbol presence validates mapping integrity only; the
 independent review and bounded test execution establish whether that symbol
-actually reaches the claimed semantic boundary.
+actually reaches the claimed semantic boundary. The execution-coverage gate
+also requires every `DIRECT` Java test owner to run from a governed entry point
+and every named non-`main` test method to be called by that owner's `main`.

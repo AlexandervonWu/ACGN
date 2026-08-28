@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-MANIFEST=${1:-"$ROOT/publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/run-manifest.json"}
+MANIFEST=${1:-"$ROOT/publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18/run-manifest.json"}
 
 python3 - "$ROOT" "$MANIFEST" <<'PY'
 import hashlib

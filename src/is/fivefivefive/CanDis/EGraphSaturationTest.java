@@ -34,6 +34,7 @@ public final class EGraphSaturationTest {
         testSetOperatorsUseSetFlexibleArity();
         testRenamedIdUnionFind();
         testDoubleNegationAndIdempotence();
+        testVariadicAbsorptionPreservesUnrelatedOperands();
         testAllNoNotQuantifierEquivalence();
         testBooleanIdentitySaturation();
         testBooleanIdentityRequiresExactBooleanType();
@@ -246,6 +247,82 @@ public final class EGraphSaturationTest {
         EGraphNode intersection = node(Opcode.INTERSECT, true, true, duplicateIntersection, duplicateIntersection);
         intersection.saturate();
         assertEquals(Opcode.VARIABLE, intersection.getOpcode(), "A & A must collapse to A");
+    }
+
+    private static void testVariadicAbsorptionPreservesUnrelatedOperands() {
+        EGraphNode andLeft = predicate("andContextLeft");
+        EGraphNode andAbsorbed = predicate("andContextAbsorbed");
+        EGraphNode andAlternative = predicate("andContextAlternative");
+        EGraphNode andRight = predicate("andContextRight");
+        EGraphNode conjunction = node(
+                Opcode.AND,
+                true,
+                true,
+                andLeft,
+                andAbsorbed,
+                node(Opcode.OR, true, true, andAbsorbed, andAlternative),
+                andRight);
+
+        conjunction.saturate();
+
+        assertEquals(Opcode.AND, conjunction.getOpcode(),
+                "variadic AND absorption must retain its enclosing operator");
+        assertEquals(3, conjunction.getChildren().size(),
+                "AND absorption must remove only the covered OR operand");
+        assertCallChildren(
+                conjunction,
+                "andContextAbsorbed",
+                "andContextLeft",
+                "andContextRight");
+
+        EGraphNode orLeft = predicate("orContextLeft");
+        EGraphNode orAbsorbed = predicate("orContextAbsorbed");
+        EGraphNode orAlternative = predicate("orContextAlternative");
+        EGraphNode orRight = predicate("orContextRight");
+        EGraphNode disjunction = node(
+                Opcode.OR,
+                true,
+                true,
+                orLeft,
+                orAbsorbed,
+                node(Opcode.AND, true, true, orAbsorbed, orAlternative),
+                orRight);
+
+        disjunction.saturate();
+
+        assertEquals(Opcode.OR, disjunction.getOpcode(),
+                "variadic OR absorption must retain its enclosing operator");
+        assertEquals(3, disjunction.getChildren().size(),
+                "OR absorption must remove only the covered AND operand");
+        assertCallChildren(
+                disjunction,
+                "orContextAbsorbed",
+                "orContextLeft",
+                "orContextRight");
+
+        EGraphNode unrelatedLeft = predicate("unrelatedLeft");
+        EGraphNode unrelatedCandidate = predicate("unrelatedCandidate");
+        EGraphNode unrelatedAlternative = predicate("unrelatedAlternative");
+        EGraphNode nearMiss = node(
+                Opcode.AND,
+                true,
+                true,
+                unrelatedLeft,
+                andAbsorbed,
+                node(Opcode.OR, true, true,
+                        unrelatedCandidate, unrelatedAlternative),
+                andRight);
+
+        nearMiss.saturate();
+
+        assertEquals(Opcode.AND, nearMiss.getOpcode(),
+                "an unrelated dual container must not trigger absorption");
+        assertEquals(4, nearMiss.getChildren().size(),
+                "an absorption near miss must retain every owner operand");
+        assertTrue(nearMiss.getChildren().stream()
+                        .anyMatch(child -> child.getOpcode() == Opcode.OR),
+                "an unmatched OR operand must remain in the AND container");
+
     }
 
     private static void testAllNoNotQuantifierEquivalence() {
@@ -2792,6 +2869,27 @@ public final class EGraphSaturationTest {
             }
         }
         return names;
+    }
+
+    private static void assertCallChildren(
+            EGraphNode owner,
+            String... expectedNames) {
+        for (EGraphNode child : owner.getChildren()) {
+            assertEquals(Opcode.CALL, child.getOpcode(),
+                    "Boolean absorption must retain complete call operands");
+        }
+        assertSourceChildren(owner, expectedNames);
+    }
+
+    private static void assertSourceChildren(
+            EGraphNode owner,
+            String... expectedNames) {
+        List<String> actual = new ArrayList<>();
+        for (EGraphNode child : owner.getChildren()) {
+            actual.add(child.getSourceName());
+        }
+        assertEquals(Arrays.asList(expectedNames), actual,
+                "absorption must preserve every unrelated sibling");
     }
 
     private static void assertTrue(boolean value, String message) {

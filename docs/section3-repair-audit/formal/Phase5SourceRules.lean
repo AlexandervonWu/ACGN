@@ -1,3 +1,5 @@
+import Std
+
 /-
 Independent Phase 5 model.  It imports no producer definitions, certificates,
 or fixtures.  Relations are predicates, Alloy `in` is relational subset, and
@@ -74,6 +76,508 @@ def exactlyOne (relation : Rel α) : Prop :=
 def letValue (bound : β) (body : β -> γ) : γ := body bound
 
 theorem let_identity (value : β) : letValue value (fun bound => bound) = value := rfl
+
+/- Core R0 formula rewrites.  These declarations deliberately state each
+source-level equation independently of the Java representation. -/
+
+def operatorAlias (value : α) : α := value
+def noop (value : α) : α := value
+
+theorem operator_alias_preserves_denotation (value : α) :
+    operatorAlias value = value := rfl
+
+theorem noop_elimination (value : α) : noop value = value := rfl
+
+theorem let_beta_reduction (value : β) (body : β → γ) :
+    letValue value body = body value := rfl
+
+theorem implication_elimination (left right : Prop) :
+    (left → right) ↔ (¬ left ∨ right) := by
+  classical
+  constructor
+  · intro implication
+    by_cases member : left
+    · exact Or.inr (implication member)
+    · exact Or.inl member
+  · intro disjunction member
+    cases disjunction with
+    | inl absent => exact False.elim (absent member)
+    | inr present => exact present
+
+theorem iff_elimination (left right : Prop) :
+    (left ↔ right) ↔
+      ((¬ left ∨ right) ∧ (¬ right ∨ left)) := by
+  constructor
+  · intro equivalent
+    exact ⟨(implication_elimination left right).mp equivalent.mp,
+      (implication_elimination right left).mp equivalent.mpr⟩
+  · intro branches
+    exact ⟨(implication_elimination left right).mpr branches.1,
+      (implication_elimination right left).mpr branches.2⟩
+
+theorem formula_ite_elimination (condition thenBranch elseBranch : Prop)
+    [Decidable condition] :
+    (if condition then thenBranch else elseBranch) ↔
+      ((condition ∧ thenBranch) ∨ (¬ condition ∧ elseBranch)) := by
+  classical
+  by_cases active : condition <;> simp [active]
+
+theorem double_negation_elimination (proposition : Prop) :
+    (¬ ¬ proposition) ↔ proposition := by
+  classical
+  simp
+
+theorem de_morgan_conjunction (left right : Prop) :
+    (¬ (left ∧ right)) ↔ (¬ left ∨ ¬ right) := by
+  classical
+  by_cases leftMember : left <;> by_cases rightMember : right <;>
+    simp [leftMember, rightMember]
+
+theorem de_morgan_disjunction (left right : Prop) :
+    (¬ (left ∨ right)) ↔ (¬ left ∧ ¬ right) := by
+  classical
+  by_cases leftMember : left <;> by_cases rightMember : right <;>
+    simp [leftMember, rightMember]
+
+theorem negated_true_is_false : (¬ True) ↔ False := by simp
+theorem negated_false_is_true : (¬ False) ↔ True := by simp
+
+theorem negated_equality_is_inequality (left right : α) :
+    (¬ left = right) ↔ left ≠ right := Iff.rfl
+
+theorem negated_inequality_is_equality (left right : α) :
+    (¬ left ≠ right) ↔ left = right := by
+  classical
+  simp
+
+theorem negated_int_gt_is_lte (left right : Int) :
+    (¬ left > right) ↔ left ≤ right := by omega
+
+theorem negated_int_gte_is_lt (left right : Int) :
+    (¬ left ≥ right) ↔ left < right := by omega
+
+theorem negated_int_lt_is_gte (left right : Int) :
+    (¬ left < right) ↔ left ≥ right := by omega
+
+theorem negated_int_lte_is_gt (left right : Int) :
+    (¬ left ≤ right) ↔ left > right := by omega
+
+theorem negated_subset_is_not_subset (left right : Rel α) :
+    (¬ subset left right) ↔ (¬ subset left right) := Iff.rfl
+
+theorem negated_not_subset_is_subset (left right : Rel α) :
+    (¬ (¬ subset left right)) ↔ subset left right := by
+  classical
+  simp
+
+def someOf (predicate : α → Prop) : Prop := ∃ value, predicate value
+def noOf (predicate : α → Prop) : Prop := ¬ someOf predicate
+def oneOf (predicate : α → Prop) : Prop := exactlyOne predicate
+def loneOf (predicate : α → Prop) : Prop := atMostOne predicate
+def notOneOf (predicate : α → Prop) : Prop := ¬ oneOf predicate
+def notLoneOf (predicate : α → Prop) : Prop := ¬ loneOf predicate
+
+theorem negated_some_is_no (predicate : α → Prop) :
+    (¬ someOf predicate) ↔ noOf predicate := Iff.rfl
+
+theorem negated_no_is_some (predicate : α → Prop) :
+    (¬ noOf predicate) ↔ someOf predicate := by
+  classical
+  simp [noOf]
+
+theorem negated_one_is_notone (predicate : α → Prop) :
+    (¬ oneOf predicate) ↔ notOneOf predicate := Iff.rfl
+
+theorem negated_lone_is_notlone (predicate : α → Prop) :
+    (¬ loneOf predicate) ↔ notLoneOf predicate := Iff.rfl
+
+theorem negated_notone_is_one (predicate : α → Prop) :
+    (¬ notOneOf predicate) ↔ oneOf predicate := by
+  classical
+  simp [notOneOf]
+
+theorem negated_notlone_is_lone (predicate : α → Prop) :
+    (¬ notLoneOf predicate) ↔ loneOf predicate := by
+  classical
+  simp [notLoneOf]
+
+theorem all_true_body : (∀ _value : α, True) := by
+  intro
+  trivial
+
+theorem some_false_body_is_false : ¬ (∃ _value : α, False) := by
+  rintro ⟨_, impossible⟩
+  exact impossible
+
+theorem no_false_body_is_true : noOf (fun _value : α => False) := by
+  exact some_false_body_is_false
+
+theorem one_false_body_is_false :
+    ¬ oneOf (fun _value : α => False) := by
+  rintro ⟨⟨_, impossible⟩, _⟩
+  exact impossible
+
+theorem lone_false_body_is_true :
+    loneOf (fun _value : α => False) := by
+  intro left right leftMember
+  exact False.elim leftMember
+
+theorem notone_false_body_is_true :
+    notOneOf (fun _value : α => False) := by
+  exact one_false_body_is_false
+
+theorem notlone_false_body_is_false :
+    ¬ notLoneOf (fun _value : α => False) := by
+  intro notLone
+  exact notLone lone_false_body_is_true
+
+/- Temporal operators are interpreted directly over discrete traces.  Release
+and triggered use their universal witness semantics rather than being aliases
+for the duality being proved. -/
+
+def futureAlways (predicate : Nat → Prop) (now : Nat) : Prop :=
+  ∀ instant, now ≤ instant → predicate instant
+
+def futureEventually (predicate : Nat → Prop) (now : Nat) : Prop :=
+  ∃ instant, now ≤ instant ∧ predicate instant
+
+def pastHistorically (predicate : Nat → Prop) (now : Nat) : Prop :=
+  ∀ instant, instant ≤ now → predicate instant
+
+def pastOnce (predicate : Nat → Prop) (now : Nat) : Prop :=
+  ∃ instant, instant ≤ now ∧ predicate instant
+
+def futureUntil
+    (left right : Nat → Prop) (now : Nat) : Prop :=
+  ∃ stop, now ≤ stop ∧ right stop ∧
+    ∀ instant, now ≤ instant → instant < stop → left instant
+
+def futureRelease
+    (left right : Nat → Prop) (now : Nat) : Prop :=
+  ∀ stop, now ≤ stop →
+    right stop ∨
+      ∃ instant, now ≤ instant ∧ instant < stop ∧ left instant
+
+def pastSince
+    (left right : Nat → Prop) (now : Nat) : Prop :=
+  ∃ start, start ≤ now ∧ right start ∧
+    ∀ instant, start < instant → instant ≤ now → left instant
+
+def pastTriggered
+    (left right : Nat → Prop) (now : Nat) : Prop :=
+  ∀ start, start ≤ now →
+    right start ∨
+      ∃ instant, start < instant ∧ instant ≤ now ∧ left instant
+
+theorem negated_always_is_eventually_not
+    (predicate : Nat → Prop) (now : Nat) :
+    (¬ futureAlways predicate now) ↔
+      futureEventually (fun instant => ¬ predicate instant) now := by
+  classical
+  simp [futureAlways, futureEventually]
+
+theorem negated_eventually_is_always_not
+    (predicate : Nat → Prop) (now : Nat) :
+    (¬ futureEventually predicate now) ↔
+      futureAlways (fun instant => ¬ predicate instant) now := by
+  classical
+  simp [futureAlways, futureEventually]
+
+theorem negated_historically_is_once_not
+    (predicate : Nat → Prop) (now : Nat) :
+    (¬ pastHistorically predicate now) ↔
+      pastOnce (fun instant => ¬ predicate instant) now := by
+  classical
+  simp [pastHistorically, pastOnce]
+
+theorem negated_once_is_historically_not
+    (predicate : Nat → Prop) (now : Nat) :
+    (¬ pastOnce predicate now) ↔
+      pastHistorically (fun instant => ¬ predicate instant) now := by
+  classical
+  simp [pastHistorically, pastOnce]
+
+theorem negated_until_is_release_not
+    (left right : Nat → Prop) (now : Nat) :
+    (¬ futureUntil left right now) ↔
+      futureRelease (fun instant => ¬ left instant)
+        (fun instant => ¬ right instant) now := by
+  classical
+  constructor
+  · intro absent stop afterNow
+    by_cases rightAbsent : ¬ right stop
+    · exact Or.inl rightAbsent
+    · right
+      have rightPresent : right stop := Classical.not_not.mp rightAbsent
+      apply Classical.byContradiction
+      intro noCounterexample
+      have allLeft : ∀ instant, now ≤ instant → instant < stop →
+          left instant := by
+        intro instant lower upper
+        apply Classical.byContradiction
+        intro leftAbsent
+        exact noCounterexample ⟨instant, lower, upper, leftAbsent⟩
+      exact absent ⟨stop, afterNow, rightPresent, allLeft⟩
+  · intro released untilWitness
+    rcases untilWitness with ⟨stop, afterNow, rightPresent, allLeft⟩
+    rcases released stop afterNow with rightAbsent | counterexample
+    · exact rightAbsent rightPresent
+    · rcases counterexample with ⟨instant, lower, upper, leftAbsent⟩
+      exact leftAbsent (allLeft instant lower upper)
+
+theorem negated_release_is_until_not
+    (left right : Nat → Prop) (now : Nat) :
+    (¬ futureRelease left right now) ↔
+      futureUntil (fun instant => ¬ left instant)
+        (fun instant => ¬ right instant) now := by
+  classical
+  constructor
+  · intro absent
+    obtain ⟨stop, rejected⟩ := Classical.not_forall.mp absent
+    have afterNow : now ≤ stop := Classical.byContradiction (fun beforeNow =>
+      rejected (fun impossible => False.elim (beforeNow impossible)))
+    have rejectedClause : ¬ (right stop ∨
+        ∃ instant, now ≤ instant ∧ instant < stop ∧ left instant) := by
+      intro clause
+      exact rejected (fun _ => clause)
+    have rightAbsent : ¬ right stop := by
+      intro present
+      exact rejectedClause (Or.inl present)
+    have allLeftAbsent : ∀ instant, now ≤ instant → instant < stop →
+        ¬ left instant := by
+      intro instant lower upper present
+      exact rejectedClause (Or.inr ⟨instant, lower, upper, present⟩)
+    exact ⟨stop, afterNow, rightAbsent, allLeftAbsent⟩
+  · rintro ⟨stop, afterNow, rightAbsent, allLeftAbsent⟩ released
+    rcases released stop afterNow with rightPresent | witness
+    · exact rightAbsent rightPresent
+    · rcases witness with ⟨instant, lower, upper, leftPresent⟩
+      exact allLeftAbsent instant lower upper leftPresent
+
+theorem negated_since_is_triggered_not
+    (left right : Nat → Prop) (now : Nat) :
+    (¬ pastSince left right now) ↔
+      pastTriggered (fun instant => ¬ left instant)
+        (fun instant => ¬ right instant) now := by
+  classical
+  constructor
+  · intro absent start beforeNow
+    by_cases rightAbsent : ¬ right start
+    · exact Or.inl rightAbsent
+    · right
+      have rightPresent : right start := Classical.not_not.mp rightAbsent
+      apply Classical.byContradiction
+      intro noCounterexample
+      have allLeft : ∀ instant, start < instant → instant ≤ now →
+          left instant := by
+        intro instant lower upper
+        apply Classical.byContradiction
+        intro leftAbsent
+        exact noCounterexample ⟨instant, lower, upper, leftAbsent⟩
+      exact absent ⟨start, beforeNow, rightPresent, allLeft⟩
+  · intro triggered sinceWitness
+    rcases sinceWitness with ⟨start, beforeNow, rightPresent, allLeft⟩
+    rcases triggered start beforeNow with rightAbsent | counterexample
+    · exact rightAbsent rightPresent
+    · rcases counterexample with ⟨instant, lower, upper, leftAbsent⟩
+      exact leftAbsent (allLeft instant lower upper)
+
+theorem negated_triggered_is_since_not
+    (left right : Nat → Prop) (now : Nat) :
+    (¬ pastTriggered left right now) ↔
+      pastSince (fun instant => ¬ left instant)
+        (fun instant => ¬ right instant) now := by
+  classical
+  constructor
+  · intro absent
+    obtain ⟨start, rejected⟩ := Classical.not_forall.mp absent
+    have beforeNow : start ≤ now := Classical.byContradiction (fun afterNow =>
+      rejected (fun impossible => False.elim (afterNow impossible)))
+    have rejectedClause : ¬ (right start ∨
+        ∃ instant, start < instant ∧ instant ≤ now ∧ left instant) := by
+      intro clause
+      exact rejected (fun _ => clause)
+    have rightAbsent : ¬ right start := by
+      intro present
+      exact rejectedClause (Or.inl present)
+    have allLeftAbsent : ∀ instant, start < instant → instant ≤ now →
+        ¬ left instant := by
+      intro instant lower upper present
+      exact rejectedClause (Or.inr ⟨instant, lower, upper, present⟩)
+    exact ⟨start, beforeNow, rightAbsent, allLeftAbsent⟩
+  · rintro ⟨start, beforeNow, rightAbsent, allLeftAbsent⟩ triggered
+    rcases triggered start beforeNow with rightPresent | witness
+    · exact rightAbsent rightPresent
+    · rcases witness with ⟨instant, lower, upper, leftPresent⟩
+      exact allLeftAbsent instant lower upper leftPresent
+
+theorem negated_forall_is_exists_not (predicate : α → Prop) :
+    (¬ ∀ value, predicate value) ↔ ∃ value, ¬ predicate value := by
+  classical
+  simp
+
+theorem negated_exists_is_forall_not (predicate : α → Prop) :
+    (¬ ∃ value, predicate value) ↔ ∀ value, ¬ predicate value := by
+  classical
+  simp
+
+theorem no_quantifier_is_all_not (predicate : α → Prop) :
+    noOf predicate ↔ ∀ value, ¬ predicate value := by
+  classical
+  simp [noOf, someOf]
+
+theorem negated_no_quantifier_is_some (predicate : α → Prop) :
+    (¬ noOf predicate) ↔ ∃ value, predicate value := by
+  classical
+  simp [noOf, someOf]
+
+theorem safe_exists_conjunction_prenex
+    (predicate : α → Prop) (outside : Prop) :
+    ((∃ value, predicate value) ∧ outside) ↔
+      ∃ value, predicate value ∧ outside := by
+  constructor
+  · rintro ⟨⟨value, member⟩, external⟩
+    exact ⟨value, member, external⟩
+  · rintro ⟨value, member, external⟩
+    exact ⟨⟨value, member⟩, external⟩
+
+theorem safe_forall_disjunction_prenex
+    (predicate : α → Prop) (outside : Prop) :
+    ((∀ value, predicate value) ∨ outside) ↔
+      ∀ value, predicate value ∨ outside := by
+  classical
+  constructor
+  · intro source value
+    cases source with
+    | inl universal => exact Or.inl (universal value)
+    | inr external => exact Or.inr external
+  · intro pointwise
+    by_cases external : outside
+    · exact Or.inr external
+    · left
+      intro value
+      rcases pointwise value with member | impossible
+      · exact member
+      · exact False.elim (external impossible)
+
+theorem boolean_and_associative (left middle right : Prop) :
+    ((left ∧ middle) ∧ right) ↔ (left ∧ (middle ∧ right)) := by
+  constructor
+  · rintro ⟨⟨leftMember, middleMember⟩, rightMember⟩
+    exact ⟨leftMember, middleMember, rightMember⟩
+  · rintro ⟨leftMember, middleMember, rightMember⟩
+    exact ⟨⟨leftMember, middleMember⟩, rightMember⟩
+
+theorem boolean_and_commutative (left right : Prop) :
+    (left ∧ right) ↔ (right ∧ left) := by simp [and_comm]
+
+theorem boolean_and_idempotent (proposition : Prop) :
+    (proposition ∧ proposition) ↔ proposition := by simp
+
+theorem boolean_or_associative (left middle right : Prop) :
+    ((left ∨ middle) ∨ right) ↔ (left ∨ (middle ∨ right)) := by
+  constructor
+  · intro source
+    rcases source with (leftMember | middleMember) | rightMember
+    · exact Or.inl leftMember
+    · exact Or.inr (Or.inl middleMember)
+    · exact Or.inr (Or.inr rightMember)
+  · intro source
+    rcases source with leftMember | middleMember | rightMember
+    · exact Or.inl (Or.inl leftMember)
+    · exact Or.inl (Or.inr middleMember)
+    · exact Or.inr rightMember
+
+theorem boolean_or_commutative (left right : Prop) :
+    (left ∨ right) ↔ (right ∨ left) := by simp [or_comm]
+
+theorem boolean_or_idempotent (proposition : Prop) :
+    (proposition ∨ proposition) ↔ proposition := by simp
+
+theorem integer_addition_associative (left middle right : Int) :
+    (left + middle) + right = left + (middle + right) := by omega
+
+theorem integer_addition_commutative (left right : Int) :
+    left + right = right + left := by omega
+
+theorem integer_multiplication_associative (left middle right : Int) :
+    (left * middle) * right = left * (middle * right) := by
+  exact Int.mul_assoc left middle right
+
+theorem integer_multiplication_commutative (left right : Int) :
+    left * right = right * left := by
+  exact Int.mul_comm left right
+
+theorem equality_commutative (left right : α) :
+    (left = right) ↔ (right = left) := by
+  constructor <;> intro equal <;> exact equal.symm
+
+theorem inequality_commutative (left right : α) :
+    (left ≠ right) ↔ (right ≠ left) := by
+  constructor
+  · intro different equal
+    exact different equal.symm
+  · intro different equal
+    exact different equal.symm
+
+theorem iff_commutative (left right : Prop) :
+    (left ↔ right) ↔ (right ↔ left) := by
+  constructor <;> intro equivalent <;> exact equivalent.symm
+
+theorem implication_false_antecedent (proposition : Prop) :
+    (False → proposition) ↔ True := by simp
+
+theorem implication_true_antecedent (proposition : Prop) :
+    (True → proposition) ↔ proposition := by simp
+
+theorem implication_true_consequent (proposition : Prop) :
+    (proposition → True) ↔ True := by simp
+
+theorem implication_false_consequent (proposition : Prop) :
+    (proposition → False) ↔ ¬ proposition := Iff.rfl
+
+def boundedForall (domain body : α → Prop) : Prop :=
+  ∀ value, domain value → body value
+
+def boundedExists (domain body : α → Prop) : Prop :=
+  ∃ value, domain value ∧ body value
+
+def boundedNo (domain body : α → Prop) : Prop :=
+  ¬ boundedExists domain body
+
+theorem universal_complex_domain_guard
+    (domain body : α → Prop) :
+    boundedForall domain body ↔
+      ∀ value, domain value → body value := Iff.rfl
+
+theorem existential_complex_domain_guard
+    (domain body : α → Prop) :
+    boundedExists domain body ↔
+      ∃ value, domain value ∧ body value := Iff.rfl
+
+theorem no_complex_domain_guard
+    (domain body : α → Prop) :
+    boundedNo domain body ↔
+      ¬ ∃ value, domain value ∧ body value := Iff.rfl
+
+inductive SkeletonPart (α : Type) where
+  | payload (value : α)
+  | endMarker
+  deriving DecidableEq
+
+def eraseEndMarkers : List (SkeletonPart α) → List α
+  | [] => []
+  | .payload value :: rest => value :: eraseEndMarkers rest
+  | .endMarker :: rest => eraseEndMarkers rest
+
+theorem end_marker_elimination_preserves_payload
+    (before after : List (SkeletonPart α)) :
+    eraseEndMarkers (before ++ .endMarker :: after) =
+      eraseEndMarkers before ++ eraseEndMarkers after := by
+  induction before with
+  | nil => rfl
+  | cons head tail inductionHypothesis =>
+      cases head <;> simp [eraseEndMarkers, inductionHypothesis]
 
 abbrev LexicalBinderId := Nat
 
@@ -1194,6 +1698,33 @@ theorem boolean_or_absorbs_and
   · exact fun member => member.elim id (fun nested => nested.1)
   · exact Or.inl
 
+theorem boolean_and_absorption_preserves_context
+    (left proposition alternative right : Prop) :
+    (((left ∧ proposition) ∧ (proposition ∨ alternative)) ∧ right) ↔
+      ((left ∧ proposition) ∧ right) := by
+  constructor
+  · rintro ⟨⟨⟨leftMember, propositionMember⟩, _⟩, rightMember⟩
+    exact ⟨⟨leftMember, propositionMember⟩, rightMember⟩
+  · rintro ⟨⟨leftMember, propositionMember⟩, rightMember⟩
+    exact ⟨⟨⟨leftMember, propositionMember⟩,
+      Or.inl propositionMember⟩, rightMember⟩
+
+theorem boolean_or_absorption_preserves_context
+    (left proposition alternative right : Prop) :
+    (((left ∨ proposition) ∨ (proposition ∧ alternative)) ∨ right) ↔
+      ((left ∨ proposition) ∨ right) := by
+  constructor
+  · intro member
+    rcases member with prior | rightMember
+    · rcases prior with prior | nested
+      · exact Or.inl prior
+      · exact Or.inl (Or.inr nested.1)
+    · exact Or.inr rightMember
+  · intro member
+    rcases member with prior | rightMember
+    · exact Or.inl (Or.inl prior)
+    · exact Or.inr rightMember
+
 theorem boolean_and_distributes_over_or
     (proposition left right : Prop) :
     (proposition ∧ (left ∨ right)) ↔
@@ -1237,6 +1768,26 @@ theorem relation_union_absorbs_intersection
   funext atom
   exact propext (boolean_or_absorbs_and
     (relation atom) (alternative atom))
+
+theorem relation_intersection_absorption_preserves_context
+    (left relation alternative right : Rel α) :
+    intersection
+        (intersection (intersection left relation) (union relation alternative))
+        right =
+      intersection (intersection left relation) right := by
+  funext atom
+  exact propext (boolean_and_absorption_preserves_context
+    (left atom) (relation atom) (alternative atom) (right atom))
+
+theorem relation_union_absorption_preserves_context
+    (left relation alternative right : Rel α) :
+    union
+        (union (union left relation) (intersection relation alternative))
+        right =
+      union (union left relation) right := by
+  funext atom
+  exact propext (boolean_or_absorption_preserves_context
+    (left atom) (relation atom) (alternative atom) (right atom))
 
 theorem relation_intersection_distributes_over_union
     (relation left right : Rel α) :
@@ -1837,6 +2388,374 @@ theorem positive_one_over_none_intersection_has_no_binding
 
 def difference (left right : Rel α) : Rel α :=
   fun atom => left atom ∧ ¬ right atom
+
+theorem subset_none_iff_no_members
+    (relation : Rel α) :
+    subset relation noneRel ↔ ¬ relNonempty relation := by
+  constructor
+  · intro contained ⟨atom, member⟩
+    exact contained atom member
+  · intro empty atom member
+    exact empty ⟨atom, member⟩
+
+theorem not_subset_none_iff_some_member
+    (relation : Rel α) :
+    (¬ subset relation noneRel) ↔ relNonempty relation := by
+  classical
+  constructor
+  · intro notContained
+    by_cases nonempty : relNonempty relation
+    · exact nonempty
+    · exact False.elim (notContained ((subset_none_iff_no_members relation).2 nonempty))
+  · rintro ⟨atom, member⟩ contained
+    exact contained atom member
+
+theorem subset_union_absorption
+    (smaller larger : Rel α)
+    (contained : subset smaller larger) :
+    union smaller larger = larger := by
+  funext atom
+  apply propext
+  constructor
+  · intro member
+    exact member.elim (contained atom) id
+  · exact Or.inr
+
+theorem subset_intersection_absorption
+    (smaller larger : Rel α)
+    (contained : subset smaller larger) :
+    intersection smaller larger = smaller := by
+  funext atom
+  apply propext
+  constructor
+  · exact fun member => member.1
+  · intro member
+    exact ⟨member, contained atom member⟩
+
+theorem difference_disjoint_from_removed_subrelation
+    (kept removed subrelation : Rel α)
+    (contained : subset subrelation removed) :
+    intersection (difference kept removed) subrelation = noneRel := by
+  funext atom
+  apply propext
+  constructor
+  · rintro ⟨⟨_, notRemoved⟩, subMember⟩
+    exact notRemoved (contained atom subMember)
+  · intro impossible
+    exact False.elim impossible
+
+theorem difference_partition_recombines
+    (kept removed : Rel α) :
+    union (difference kept removed) (intersection kept removed) = kept := by
+  funext atom
+  apply propext
+  by_cases keptMember : kept atom <;>
+    by_cases removedMember : removed atom <;>
+    simp [difference, union, intersection, keptMember, removedMember]
+
+theorem difference_subrelation_partition_recombines
+    (kept removed : Rel α)
+    (contained : subset removed kept) :
+    union (difference kept removed) removed = kept := by
+  funext atom
+  apply propext
+  constructor
+  · intro member
+    rcases member with differenceMember | removedMember
+    · exact differenceMember.1
+    · exact contained atom removedMember
+  · intro keptMember
+    by_cases removedMember : removed atom
+    · exact Or.inr removedMember
+    · exact Or.inl ⟨keptMember, removedMember⟩
+
+theorem difference_of_superrelation_is_none
+    (kept removed : Rel α)
+    (contained : subset kept removed) :
+    difference kept removed = noneRel := by
+  funext atom
+  apply propext
+  constructor
+  · intro member
+    exact member.2 (contained atom member.1)
+  · intro impossible
+    exact False.elim impossible
+
+theorem difference_intersection_removal
+    (kept removed : Rel α) :
+    difference kept (intersection kept removed) = difference kept removed := by
+  funext atom
+  apply propext
+  by_cases keptMember : kept atom <;>
+    by_cases removedMember : removed atom <;>
+    simp [difference, intersection, keptMember, removedMember]
+
+theorem difference_of_difference_restores_intersection
+    (kept removed : Rel α) :
+    difference kept (difference kept removed) = intersection kept removed := by
+  funext atom
+  apply propext
+  by_cases keptMember : kept atom <;>
+    by_cases removedMember : removed atom <;>
+    simp [difference, intersection, keptMember, removedMember]
+
+theorem no_difference_iff_subset
+    (kept removed : Rel α) :
+    (¬ relNonempty (difference kept removed)) ↔ subset kept removed := by
+  classical
+  constructor
+  · intro noDifference atom keptMember
+    apply Classical.byContradiction
+    intro removedAbsent
+    exact noDifference ⟨atom, keptMember, removedAbsent⟩
+  · intro contained witness
+    rcases witness with ⟨atom, keptMember, removedAbsent⟩
+    exact removedAbsent (contained atom keptMember)
+
+theorem some_difference_iff_not_subset
+    (kept removed : Rel α) :
+    relNonempty (difference kept removed) ↔ ¬ subset kept removed := by
+  classical
+  constructor
+  · rintro ⟨atom, keptMember, removedAbsent⟩ contained
+    exact removedAbsent (contained atom keptMember)
+  · intro notContained
+    by_cases nonempty : relNonempty (difference kept removed)
+    · exact nonempty
+    · exact False.elim (notContained ((no_difference_iff_subset kept removed).1 nonempty))
+
+/- Exact semantics of the single-membership quantified-formula eliminator. -/
+
+def singletonRel (value : α) : Rel α := fun candidate => candidate = value
+
+theorem singleton_subset
+    (domain : Rel α) (value : α) (member : domain value) :
+    subset (singletonRel value) domain := by
+  intro candidate equal
+  rw [show candidate = value from equal]
+  exact member
+
+theorem singleton_at_most_one (value : α) :
+    atMostOne (singletonRel value) := by
+  intro left right leftEqual rightEqual
+  simpa [singletonRel] using leftEqual.trans rightEqual.symm
+
+theorem singleton_exactly_one (value : α) :
+    exactlyOne (singletonRel value) := by
+  exact ⟨⟨value, rfl⟩, singleton_at_most_one value⟩
+
+theorem singleton_admitted_for_every_nonexact_multiplicity
+    (multiplicity : Multiplicity)
+    (domain : Rel α)
+    (value : α)
+    (member : domain value)
+    (nonexact : multiplicity ≠ .exactly) :
+    admits multiplicity domain (singletonRel value) := by
+  cases multiplicity with
+  | set => exact ⟨singleton_subset domain value member, True.intro⟩
+  | lone => exact ⟨singleton_subset domain value member,
+      singleton_at_most_one value⟩
+  | some => exact ⟨singleton_subset domain value member, ⟨value, rfl⟩⟩
+  | one => exact ⟨singleton_subset domain value member,
+      singleton_exactly_one value⟩
+  | exactly => exact False.elim (nonexact rfl)
+
+theorem admitted_nonexact_implies_subset
+    (multiplicity : Multiplicity)
+    (domain candidate : Rel α)
+    (admitted : admits multiplicity domain candidate)
+    (nonexact : multiplicity ≠ .exactly) :
+    subset candidate domain := by
+  cases multiplicity with
+  | set => exact admitted.1
+  | lone => exact admitted.1
+  | some => exact admitted.1
+  | one => exact admitted.1
+  | exactly => exact False.elim (nonexact rfl)
+
+theorem empty_relation_admitted_by_set (domain : Rel α) :
+    admits .set domain noneRel := by
+  exact ⟨none_subset domain, True.intro⟩
+
+theorem empty_relation_admitted_by_lone (domain : Rel α) :
+    admits .lone domain noneRel := by
+  exact ⟨none_subset domain, empty_at_most_one⟩
+
+theorem all_admitted_positive_membership_iff_domain_subset
+    (multiplicity : Multiplicity)
+    (domain target : Rel α)
+    (nonexact : multiplicity ≠ .exactly) :
+    (∀ candidate, admits multiplicity domain candidate →
+      subset candidate target) ↔ subset domain target := by
+  constructor
+  · intro allCandidates atom domainMember
+    have admitted := singleton_admitted_for_every_nonexact_multiplicity
+      multiplicity domain atom domainMember nonexact
+    exact allCandidates (singletonRel atom) admitted atom rfl
+  · intro domainSubset candidate admitted atom candidateMember
+    exact domainSubset atom ((admitted_nonexact_implies_subset
+      multiplicity domain candidate admitted nonexact) atom candidateMember)
+
+theorem some_set_positive_membership_is_true
+    (domain target : Rel α) :
+    ∃ candidate, admits .set domain candidate ∧ subset candidate target := by
+  exact ⟨noneRel, empty_relation_admitted_by_set domain, none_subset target⟩
+
+theorem some_lone_positive_membership_is_true
+    (domain target : Rel α) :
+    ∃ candidate, admits .lone domain candidate ∧ subset candidate target := by
+  exact ⟨noneRel, empty_relation_admitted_by_lone domain, none_subset target⟩
+
+theorem some_some_positive_membership_iff_intersection_nonempty
+    (domain target : Rel α) :
+    (∃ candidate, admits .some domain candidate ∧ subset candidate target) ↔
+      relNonempty (intersection domain target) := by
+  constructor
+  · rintro ⟨candidate, admitted, contained⟩
+    rcases admitted.2 with ⟨atom, member⟩
+    exact ⟨atom, admitted.1 atom member, contained atom member⟩
+  · rintro ⟨atom, domainMember, targetMember⟩
+    exact ⟨singletonRel atom,
+      singleton_admitted_for_every_nonexact_multiplicity
+        .some domain atom domainMember (by decide),
+      singleton_subset target atom targetMember⟩
+
+theorem some_one_positive_membership_iff_intersection_nonempty
+    (domain target : Rel α) :
+    (∃ candidate, admits .one domain candidate ∧ subset candidate target) ↔
+      relNonempty (intersection domain target) := by
+  constructor
+  · rintro ⟨candidate, admitted, contained⟩
+    rcases admitted.2.1 with ⟨atom, member⟩
+    exact ⟨atom, admitted.1 atom member, contained atom member⟩
+  · rintro ⟨atom, domainMember, targetMember⟩
+    exact ⟨singletonRel atom,
+      singleton_admitted_for_every_nonexact_multiplicity
+        .one domain atom domainMember (by decide),
+      singleton_subset target atom targetMember⟩
+
+theorem no_set_positive_membership_is_false
+    (domain target : Rel α) :
+    ¬ (¬ ∃ candidate,
+      admits .set domain candidate ∧ subset candidate target) := by
+  intro absent
+  exact absent (some_set_positive_membership_is_true domain target)
+
+theorem no_lone_positive_membership_is_false
+    (domain target : Rel α) :
+    ¬ (¬ ∃ candidate,
+      admits .lone domain candidate ∧ subset candidate target) := by
+  intro absent
+  exact absent (some_lone_positive_membership_is_true domain target)
+
+theorem no_some_positive_membership_iff_intersection_empty
+    (domain target : Rel α) :
+    (¬ ∃ candidate, admits .some domain candidate ∧
+      subset candidate target) ↔
+      ¬ relNonempty (intersection domain target) := by
+  rw [some_some_positive_membership_iff_intersection_nonempty]
+
+theorem no_one_positive_membership_iff_intersection_empty
+    (domain target : Rel α) :
+    (¬ ∃ candidate, admits .one domain candidate ∧
+      subset candidate target) ↔
+      ¬ relNonempty (intersection domain target) := by
+  rw [some_one_positive_membership_iff_intersection_nonempty]
+
+theorem no_negative_membership_iff_domain_subset
+    (multiplicity : Multiplicity)
+    (domain target : Rel α)
+    (nonexact : multiplicity ≠ .exactly) :
+    (¬ ∃ candidate, admits multiplicity domain candidate ∧
+      ¬ subset candidate target) ↔ subset domain target := by
+  classical
+  constructor
+  · intro noCounterexample atom domainMember
+    apply Classical.byContradiction
+    intro targetAbsent
+    have admitted := singleton_admitted_for_every_nonexact_multiplicity
+      multiplicity domain atom domainMember nonexact
+    have notContained : ¬ subset (singletonRel atom) target := by
+      intro contained
+      exact targetAbsent (contained atom rfl)
+    exact noCounterexample ⟨singletonRel atom, admitted, notContained⟩
+  · intro domainSubset ⟨candidate, admitted, notContained⟩
+    exact notContained (fun atom member =>
+      domainSubset atom ((admitted_nonexact_implies_subset
+        multiplicity domain candidate admitted nonexact) atom member))
+
+theorem some_negative_membership_iff_difference_nonempty
+    (multiplicity : Multiplicity)
+    (domain target : Rel α)
+    (nonexact : multiplicity ≠ .exactly) :
+    (∃ candidate, admits multiplicity domain candidate ∧
+      ¬ subset candidate target) ↔
+      relNonempty (difference domain target) := by
+  classical
+  constructor
+  · rintro ⟨candidate, admitted, notContained⟩
+    by_cases witness : relNonempty (difference domain target)
+    · exact witness
+    · have domainSubset : subset domain target :=
+        (no_difference_iff_subset domain target).1 witness
+      exact False.elim (notContained (fun atom member =>
+        domainSubset atom ((admitted_nonexact_implies_subset
+          multiplicity domain candidate admitted nonexact) atom member)))
+  · rintro ⟨atom, domainMember, targetAbsent⟩
+    have admitted := singleton_admitted_for_every_nonexact_multiplicity
+      multiplicity domain atom domainMember nonexact
+    have notContained : ¬ subset (singletonRel atom) target := by
+      intro contained
+      exact targetAbsent (contained atom rfl)
+    exact ⟨singletonRel atom, admitted, notContained⟩
+
+theorem all_set_negative_membership_is_false
+    (domain target : Rel α) :
+    ¬ (∀ candidate, admits .set domain candidate →
+      ¬ subset candidate target) := by
+  intro allCandidates
+  exact allCandidates noneRel (empty_relation_admitted_by_set domain)
+    (none_subset target)
+
+theorem all_lone_negative_membership_is_false
+    (domain target : Rel α) :
+    ¬ (∀ candidate, admits .lone domain candidate →
+      ¬ subset candidate target) := by
+  intro allCandidates
+  exact allCandidates noneRel (empty_relation_admitted_by_lone domain)
+    (none_subset target)
+
+theorem all_some_negative_membership_iff_intersection_empty
+    (domain target : Rel α) :
+    (∀ candidate, admits .some domain candidate →
+      ¬ subset candidate target) ↔
+      ¬ relNonempty (intersection domain target) := by
+  classical
+  constructor
+  · intro allCandidates ⟨atom, domainMember, targetMember⟩
+    have admitted := singleton_admitted_for_every_nonexact_multiplicity
+      .some domain atom domainMember (by decide)
+    exact allCandidates (singletonRel atom) admitted
+      (singleton_subset target atom targetMember)
+  · intro emptyIntersection candidate admitted contained
+    rcases admitted.2 with ⟨atom, member⟩
+    exact emptyIntersection ⟨atom, admitted.1 atom member, contained atom member⟩
+
+theorem all_one_negative_membership_iff_intersection_empty
+    (domain target : Rel α) :
+    (∀ candidate, admits .one domain candidate →
+      ¬ subset candidate target) ↔
+      ¬ relNonempty (intersection domain target) := by
+  classical
+  constructor
+  · intro allCandidates ⟨atom, domainMember, targetMember⟩
+    have admitted := singleton_admitted_for_every_nonexact_multiplicity
+      .one domain atom domainMember (by decide)
+    exact allCandidates (singletonRel atom) admitted
+      (singleton_subset target atom targetMember)
+  · intro emptyIntersection candidate admitted contained
+    rcases admitted.2.1 with ⟨atom, member⟩
+    exact emptyIntersection ⟨atom, admitted.1 atom member, contained atom member⟩
 
 theorem subset_union_left (left right : Rel α) :
     subset left (union left right) := by

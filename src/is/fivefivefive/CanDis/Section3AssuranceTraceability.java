@@ -186,10 +186,19 @@ public final class Section3AssuranceTraceability {
                 }
                 continue;
             }
+            if (cells.length != 8) {
+                throw new IllegalStateException(
+                        "Requirement ledger row " + lineNumber
+                                + " must have exactly 6 columns; found "
+                                + (cells.length - 2));
+            }
             String claimClass = cells[2].trim();
             String claim = cells[3].trim();
+            String declaredState = stripCode(cells[6].trim());
             Requirement previous = requirements.put(id,
-                    new Requirement(id, claimClass, claim, sha256(claim), lineNumber));
+                    new Requirement(
+                            id, claimClass, claim, sha256(claim),
+                            declaredState, lineNumber));
             if (previous != null) {
                 throw new IllegalStateException(
                         "Duplicate requirement " + id + " at ledger line " + lineNumber);
@@ -352,6 +361,11 @@ public final class Section3AssuranceTraceability {
                 failures.add(requirement.id + " claim hash mismatch: ledger="
                         + requirement.claimSha256 + " matrix=" + row.claimSha256);
             }
+            String matrixState = row.formalStatus + "/" + row.conformanceStatus;
+            if (!matrixState.equals(requirement.declaredState)) {
+                failures.add(requirement.id + " ledger state is "
+                        + requirement.declaredState + "; matrix state is " + matrixState);
+            }
 
             validateFormal(root, requirement, row, failures);
             validateReferences(root, requirement.id, "implementation", row.implementationRefs,
@@ -440,7 +454,9 @@ public final class Section3AssuranceTraceability {
                     if (!JAVA_IDENTIFIER.matcher(symbol).matches()) {
                         failures.add(requirementId + " " + kind
                                 + " reference is not an exact Java identifier: " + reference);
-                    } else if (!declaresJavaSymbol(source, symbol)) {
+                    } else if ("test".equals(kind)
+                            ? !declaresJavaCallable(source, symbol)
+                            : !declaresJavaSymbol(source, symbol)) {
                         failures.add(requirementId + " " + kind
                                 + " Java declaration not found: " + reference);
                     }
@@ -457,19 +473,15 @@ public final class Section3AssuranceTraceability {
      * not a substitute for the assurance runner's compiled-symbol evidence.
      */
     private static boolean declaresJavaSymbol(String source, String symbol) {
-        String code = eraseCommentsAndLiterals(source, true);
+        String code = eraseJavaAnnotations(
+                eraseCommentsAndLiterals(source, true));
         String quoted = Pattern.quote(symbol);
         Pattern type = Pattern.compile(
                 "\\b(?:class|interface|enum|record)\\s+" + quoted + "\\b");
         if (type.matcher(code).find()) {
             return true;
         }
-        Pattern callable = Pattern.compile(
-                "(?s)(?:^|[;{}])\\s*(?:(?:public|protected|private|static|final|"
-                        + "abstract|synchronized|native|strictfp|default)\\s+)*"
-                        + "(?:<[^;{}()]+>\\s+)?(?:[A-Za-z_$][A-Za-z0-9_$.<>?\\[\\], ]*\\s+)?"
-                        + quoted + "\\s*\\([^;{}]*\\)\\s*(?:throws\\s+[^{};]+)?\\{");
-        if (callable.matcher(code).find()) {
+        if (declaresJavaCallableInCode(code, quoted)) {
             return true;
         }
         Pattern member = Pattern.compile(
@@ -477,6 +489,78 @@ public final class Section3AssuranceTraceability {
                         + "volatile|transient)\\s+)*(?:[A-Za-z_$][A-Za-z0-9_$.<>?\\[\\], ]*\\s+)"
                         + quoted + "\\s*(?:=|;)");
         return member.matcher(code).find();
+    }
+
+    private static boolean declaresJavaCallable(String source, String symbol) {
+        String code = eraseJavaAnnotations(
+                eraseCommentsAndLiterals(source, true));
+        return declaresJavaCallableInCode(code, Pattern.quote(symbol));
+    }
+
+    private static boolean declaresJavaCallableInCode(String code, String quoted) {
+        Pattern callable = Pattern.compile(
+                "(?s)(?:^|[;{}])\\s*(?:(?:public|protected|private|static|final|"
+                        + "abstract|synchronized|native|strictfp|default)\\s+)*"
+                        + "(?:<[^;{}()]+>\\s+)?(?:[A-Za-z_$][A-Za-z0-9_$.<>?\\[\\], ]*\\s+)?"
+                        + quoted + "\\s*\\([^;{}]*\\)\\s*(?:throws\\s+[^{};]+)?\\{");
+        return callable.matcher(code).find();
+    }
+
+    /**
+     * Removes declaration annotations while preserving offsets and line breaks.
+     * Annotation arguments may contain nested calls and array initializers.
+     */
+    private static String eraseJavaAnnotations(String source) {
+        StringBuilder result = new StringBuilder(source);
+        int index = 0;
+        while (index < result.length()) {
+            if (result.charAt(index) != '@') {
+                index++;
+                continue;
+            }
+            int cursor = index + 1;
+            if (cursor >= result.length()
+                    || !Character.isJavaIdentifierStart(result.charAt(cursor))) {
+                index++;
+                continue;
+            }
+            int identifierStart = cursor;
+            while (cursor < result.length()) {
+                char current = result.charAt(cursor);
+                if (Character.isJavaIdentifierPart(current) || current == '.') {
+                    cursor++;
+                } else {
+                    break;
+                }
+            }
+            if ("interface".contentEquals(
+                    result.subSequence(identifierStart, cursor))) {
+                index++;
+                continue;
+            }
+            while (cursor < result.length()
+                    && Character.isWhitespace(result.charAt(cursor))) {
+                cursor++;
+            }
+            if (cursor < result.length() && result.charAt(cursor) == '(') {
+                int depth = 0;
+                do {
+                    char current = result.charAt(cursor++);
+                    if (current == '(') {
+                        depth++;
+                    } else if (current == ')') {
+                        depth--;
+                    }
+                } while (cursor < result.length() && depth > 0);
+            }
+            for (int erased = index; erased < cursor; erased++) {
+                if (result.charAt(erased) != '\n') {
+                    result.setCharAt(erased, ' ');
+                }
+            }
+            index = cursor;
+        }
+        return result.toString();
     }
 
     /** Preserves line structure while erasing comments and quoted literals. */
@@ -640,6 +724,13 @@ public final class Section3AssuranceTraceability {
         return value == null || value.isBlank() || "MISSING".equals(value);
     }
 
+    private static String stripCode(String value) {
+        if (value.length() >= 2 && value.startsWith("`") && value.endsWith("`")) {
+            return value.substring(1, value.length() - 1).trim();
+        }
+        return value.trim();
+    }
+
     private static String sha256(String value) {
         try {
             byte[] digest = MessageDigest.getInstance("SHA-256").digest(
@@ -659,6 +750,7 @@ public final class Section3AssuranceTraceability {
             String claimClass,
             String claim,
             String claimSha256,
+            String declaredState,
             int ledgerLine) {
     }
 

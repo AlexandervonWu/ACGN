@@ -1,24 +1,24 @@
 EGraphAblationStudy/canonical: processing 5,500 files with 16 workers.
-EGraphAblationStudy/canonical: 275/5,500 complete (5.0%), 447.98 files/s, ETA 0m 12s.
-EGraphAblationStudy/canonical: 550/5,500 complete (10.0%), 669.07 files/s, ETA 0m 07s.
-EGraphAblationStudy/canonical: 825/5,500 complete (15.0%), 839.23 files/s, ETA 0m 06s.
-EGraphAblationStudy/canonical: 1,100/5,500 complete (20.0%), 886.12 files/s, ETA 0m 05s.
-EGraphAblationStudy/canonical: 1,375/5,500 complete (25.0%), 958.07 files/s, ETA 0m 04s.
-EGraphAblationStudy/canonical: 1,650/5,500 complete (30.0%), 1041.40 files/s, ETA 0m 04s.
-EGraphAblationStudy/canonical: 1,925/5,500 complete (35.0%), 1100.11 files/s, ETA 0m 03s.
-EGraphAblationStudy/canonical: 2,200/5,500 complete (40.0%), 1161.11 files/s, ETA 0m 03s.
-EGraphAblationStudy/canonical: 2,475/5,500 complete (45.0%), 1215.82 files/s, ETA 0m 02s.
-EGraphAblationStudy/canonical: 2,750/5,500 complete (50.0%), 1269.21 files/s, ETA 0m 02s.
-EGraphAblationStudy/canonical: 3,025/5,500 complete (55.0%), 1321.36 files/s, ETA 0m 02s.
-EGraphAblationStudy/canonical: 3,300/5,500 complete (60.0%), 1367.47 files/s, ETA 0m 02s.
-EGraphAblationStudy/canonical: 3,575/5,500 complete (65.0%), 1403.57 files/s, ETA 0m 01s.
-EGraphAblationStudy/canonical: 3,850/5,500 complete (70.0%), 1435.21 files/s, ETA 0m 01s.
-EGraphAblationStudy/canonical: 4,125/5,500 complete (75.0%), 1462.18 files/s, ETA 0m 01s.
-EGraphAblationStudy/canonical: 4,400/5,500 complete (80.0%), 1482.96 files/s, ETA 0m 01s.
-EGraphAblationStudy/canonical: 4,675/5,500 complete (85.0%), 1507.94 files/s, ETA 0m 01s.
-EGraphAblationStudy/canonical: 4,950/5,500 complete (90.0%), 1535.34 files/s, ETA 0m 00s.
-EGraphAblationStudy/canonical: 5,225/5,500 complete (95.0%), 1556.59 files/s, ETA 0m 00s.
-EGraphAblationStudy/canonical: 5,500/5,500 complete (100.0%), 1582.99 files/s, ETA 0m 00s.
+EGraphAblationStudy/canonical: 275/5,500 complete (5.0%), 451.85 files/s, ETA 0m 12s.
+EGraphAblationStudy/canonical: 550/5,500 complete (10.0%), 655.85 files/s, ETA 0m 08s.
+EGraphAblationStudy/canonical: 825/5,500 complete (15.0%), 821.54 files/s, ETA 0m 06s.
+EGraphAblationStudy/canonical: 1,100/5,500 complete (20.0%), 872.90 files/s, ETA 0m 05s.
+EGraphAblationStudy/canonical: 1,375/5,500 complete (25.0%), 964.45 files/s, ETA 0m 04s.
+EGraphAblationStudy/canonical: 1,650/5,500 complete (30.0%), 1042.96 files/s, ETA 0m 04s.
+EGraphAblationStudy/canonical: 1,925/5,500 complete (35.0%), 1104.49 files/s, ETA 0m 03s.
+EGraphAblationStudy/canonical: 2,200/5,500 complete (40.0%), 1166.67 files/s, ETA 0m 03s.
+EGraphAblationStudy/canonical: 2,475/5,500 complete (45.0%), 1224.24 files/s, ETA 0m 02s.
+EGraphAblationStudy/canonical: 2,750/5,500 complete (50.0%), 1277.35 files/s, ETA 0m 02s.
+EGraphAblationStudy/canonical: 3,025/5,500 complete (55.0%), 1327.61 files/s, ETA 0m 02s.
+EGraphAblationStudy/canonical: 3,300/5,500 complete (60.0%), 1374.49 files/s, ETA 0m 02s.
+EGraphAblationStudy/canonical: 3,575/5,500 complete (65.0%), 1418.90 files/s, ETA 0m 01s.
+EGraphAblationStudy/canonical: 3,850/5,500 complete (70.0%), 1445.81 files/s, ETA 0m 01s.
+EGraphAblationStudy/canonical: 4,125/5,500 complete (75.0%), 1470.91 files/s, ETA 0m 01s.
+EGraphAblationStudy/canonical: 4,400/5,500 complete (80.0%), 1489.32 files/s, ETA 0m 01s.
+EGraphAblationStudy/canonical: 4,675/5,500 complete (85.0%), 1516.04 files/s, ETA 0m 01s.
+EGraphAblationStudy/canonical: 4,950/5,500 complete (90.0%), 1542.75 files/s, ETA 0m 00s.
+EGraphAblationStudy/canonical: 5,225/5,500 complete (95.0%), 1560.50 files/s, ETA 0m 00s.
+EGraphAblationStudy/canonical: 5,500/5,500 complete (100.0%), 1586.32 files/s, ETA 0m 00s.
 EGraphAblationStudy/canonical/retry: processing 0 files.
 EGraphAblationStudy/canonical/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed canonical on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 3.481 s.
+Completed canonical on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 3.475 s.

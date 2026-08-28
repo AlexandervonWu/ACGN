@@ -295,7 +295,7 @@ public final class TheoryAlloyAdapter {
                 throw new IllegalArgumentException(
                         "Only a certified Set trace defines an idempotent partition");
             }
-            sourceOccurrenceLineage = source.getSourceOccurrenceLineage();
+            sourceOccurrenceLineage = source.getCertificationOccurrenceLineage();
             if (sourceOccurrenceLineage <= 0L) {
                 throw new IllegalArgumentException(
                         "A certified Set partition requires positive source lineage");
@@ -311,7 +311,7 @@ public final class TheoryAlloyAdapter {
             }
             List<Long> sourceLineages = new ArrayList<>(sourceInputs.size());
             for (EGraphNode input : sourceInputs) {
-                long lineage = input.getSourceOccurrenceLineage();
+                long lineage = input.getCertificationOccurrenceLineage();
                 if (lineage <= 0L) {
                     throw new IllegalStateException(
                             "A certified Set input requires positive source lineage");
@@ -364,7 +364,7 @@ public final class TheoryAlloyAdapter {
 
         public List<List<Integer>> inputFibers(EGraphNode repairedSource) {
             Objects.requireNonNull(repairedSource, "repairedSource");
-            if (repairedSource.getSourceOccurrenceLineage()
+            if (repairedSource.getCertificationOccurrenceLineage()
                             != sourceOccurrenceLineage
                     || repairedSource.getOpcode() != sourceOpcode
                     || !repairedSource.isSetFlexibleArity()
@@ -381,7 +381,8 @@ public final class TheoryAlloyAdapter {
             Map<Long, ArrayDeque<Integer>> repairedByLineage = new LinkedHashMap<>();
             List<EGraphNode> repairedInputs = repairedSource.getChildren();
             for (int index = 0; index < repairedInputs.size(); index++) {
-                long lineage = repairedInputs.get(index).getSourceOccurrenceLineage();
+                long lineage = repairedInputs.get(index)
+                        .getCertificationOccurrenceLineage();
                 if (lineage <= 0L) {
                     throw new IllegalStateException(
                             "A repaired Set input requires positive source lineage");
@@ -395,7 +396,15 @@ public final class TheoryAlloyAdapter {
                 ArrayDeque<Integer> candidates = repairedByLineage.get(lineage);
                 if (candidates == null || candidates.isEmpty()) {
                     throw new IllegalStateException(
-                            "A repaired Set input cannot be matched to its certified source lineage");
+                            "A repaired Set input cannot be matched to its certified source lineage"
+                                    + " (sourceIndex=" + sourceIndex
+                                    + ", missingLineage=" + lineage
+                                    + ", certifiedLineages=" + inputSourceLineages
+                                    + ", repairedLineages="
+                                    + repairedInputs.stream()
+                                            .map(EGraphNode::getCertificationOccurrenceLineage)
+                                            .collect(java.util.stream.Collectors.toList())
+                                    + ")");
                 }
                 repairedIndex[sourceIndex] = candidates.removeFirst();
             }
@@ -1101,7 +1110,7 @@ public final class TheoryAlloyAdapter {
             }
             CertifiedSetOperandPartition candidate =
                     new CertifiedSetOperandPartition(source, trace);
-            long lineage = source.getSourceOccurrenceLineage();
+            long lineage = source.getCertificationOccurrenceLineage();
             if (nonuniformSetPartitionLineages.contains(lineage)) {
                 return;
             }
@@ -1134,7 +1143,7 @@ public final class TheoryAlloyAdapter {
                 }
                 CertifiedSetOperandPartition partition =
                         certifiedSetPartitionsByLineage.get(
-                                candidate.getSourceOccurrenceLineage());
+                                candidate.getCertificationOccurrenceLineage());
                 if (partition != null
                         && partition.deduplicated()
                         && candidate.getOpcode() == partition.sourceOpcode
