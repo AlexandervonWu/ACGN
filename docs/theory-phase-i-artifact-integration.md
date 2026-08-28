@@ -3,7 +3,7 @@
 > **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `6000d695-8b5e-4972-b0ea-3d9e55111245` from source commit `ebce8743`, verified
+> `57f5a2d8-f501-494d-81d5-b3f1396dbe18` from source commit `88363ea2`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 ## Scope
@@ -228,11 +228,11 @@ reproduction, then run rewarded measurements deliberately.
 
 The completed clean seven-arm natural-corpus run makes the remaining exact-engine
 cost concrete. At 16 workers and `-Xmx8g`, the Fast Rewrite IR arm finished
-61,598 eligible pairs in 24.690 seconds with 68.050 engine CPU seconds; the
-exact arm required 2,730.160 seconds and 41,550.938 engine CPU seconds. Exact
-per-pair latency was 320.451 ms at p50 and 2,376.936 ms at p95. Maximum RSS was
-1,718.941 MiB for Fast Rewrite and 8,925.242 MiB for certificate-integrated execution, while the exact
-observation remained slightly smaller: 29.540 average units versus 29.999. This confirms
+61,598 eligible pairs in 24.710 seconds with 72.573 engine CPU seconds; the
+exact arm required 2,708.920 seconds and 41,253.576 engine CPU seconds. Exact
+per-pair latency was 318.125 ms at p50 and 2,348.612 ms at p95. Maximum RSS was
+1,837.043 MiB for Fast Rewrite and 8,947.977 MiB for certificate-integrated execution, while the exact
+observation remained slightly smaller: 29.541 average units versus 30.001. This confirms
 that certificate-bearing state transitions, orbit minimization, strict
 invariant checking, rebuild, and finite unfolding dominate; output size and the
 Layer-3 repair recurrence do not explain the wall-time gap.
@@ -382,7 +382,7 @@ The Phase I build and focused checks were refreshed on 2026-08-26:
 
 The bullets above retain the developmental replay chronology. The current
 checked-in empirical trees supersede those measurements: clean publication run
-`6000d695-8b5e-4972-b0ea-3d9e55111245` at source `ebce8743` completed all
+`57f5a2d8-f501-494d-81d5-b3f1396dbe18` at source `88363ea2` completed all
 61,598 eligible paired evaluations, all 42,386 incorrect-to-truth rankings,
 all seven ablation arms, and all 5,500 capability pairs. It reported zero stage
 failures, 4,088 certificate-integrated `CORRECT` paired zeroes, zero paired
@@ -390,8 +390,8 @@ incorrect zeroes, and zero certified incorrect-to-truth zeroes. The Fast
 Rewrite path reported 4,074 paired `CORRECT` zeroes and ten non-certifying
 incorrect-to-truth zeroes. The bounded natural-corpus checker found no
 counterexample in the union of 4,088 claimed equalities. Capability recovery
-was 5,500/5,500 for slotted and 5,492/5,500 for each canonical arm; the two
-canonical arms agreed on all generated pairs.
+was 5,500/5,500 for slotted and both canonical arms; the two canonical arms
+agreed on all generated pairs.
 
 ## Post-Integration Distribution Repair
 

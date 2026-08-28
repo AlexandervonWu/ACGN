@@ -22,6 +22,13 @@ remaining Fast Rewrite zeroes are retained in
 `alloy4fun-augmented/incorrect_nearest_zero_distances.csv` as non-certifying
 diagnostics.
 
+The August 28 v2.1 replay supersedes that empirical snapshot without changing
+this incident's repair: publication run
+`57f5a2d8-f501-494d-81d5-b3f1396dbe18` at source
+`88363ea23728329948ccc9d5cdad690cc5787ca5` again completed 61,598 paired
+evaluations and all 42,386 incorrect-to-truth rankings with zero failures and
+zero certificate-integrated incorrect nearest-distance zeroes.
+
 ## Fault 1: Guarded Nested Quantifiers
 
 The minimum family is:

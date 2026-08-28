@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-27T21:02:48.890454949Z",
+  "generatedAt": "2026-08-28T07:59:01.423461294Z",
   "inputRoot": "/home/augustus/ACGN/classified-data",
-  "outputRoot": "/home/augustus/acgn-publication-20260827T194941Z/alloy4fun-augmented",
+  "outputRoot": "/home/augustus/acgn-publication-v2.1-20260828T064537Z/alloy4fun-augmented",
   "criterion": "Pairs within each augmented correct pool whose raw AST distance is greater than zero and Fast Rewrite IR distance is zero.",
   "pairCount": 10934,
   "pairs": [

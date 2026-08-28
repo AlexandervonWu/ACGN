@@ -14,25 +14,25 @@
 - Successful distances: 61598
 - Skipped identical raw AST predicate pairs: 4482
 - Failures: 0
-- Average Certificate-Integrated IR repair distance: 14.021251
-- Average canonical representative TED baseline: 32.254732
-- Average Fast Rewrite IR distance: 13.938342
+- Average Certificate-Integrated IR repair distance: 14.021721
+- Average canonical representative TED baseline: 32.255544
+- Average Fast Rewrite IR distance: 13.938829
 - Average predicate-body Levenshtein distance: 39.261064
 - Average raw AST tree distance: 22.841358
 - Average raw AST size: 26.787315
-- Average Certificate-Integrated IR repair observation size: 17.989285
-- Average canonical representative tree size: 33.198204
-- Average Fast Rewrite IR NormalForm size: 18.195169
+- Average Certificate-Integrated IR repair observation size: 17.990130
+- Average canonical representative tree size: 33.198773
+- Average Fast Rewrite IR NormalForm size: 18.195980
 - Average normalized predicate-body Levenshtein distance: 0.547644
 - Average normalized raw AST distance: 0.811451
-- Average normalized Certificate-Integrated IR distance: 0.711525
-- Average normalized canonical representative TED: 0.916517
-- Average normalized Fast Rewrite IR distance: 0.696300
+- Average normalized Certificate-Integrated IR distance: 0.711513
+- Average normalized canonical representative TED: 0.916525
+- Average normalized Fast Rewrite IR distance: 0.696288
 - CORRECT models with canonical distance 0 and raw AST distance > 0: 4088
 - Incorrect zero-distance merges: 0
 - Inexact alpha searches: 0
-- Average certified repair metric time: 0.107564 ms
-- Average canonical representative TED time: 0.364594 ms
+- Average certified repair metric time: 0.116701 ms
+- Average canonical representative TED time: 0.357658 ms
 - Min distance: 0
 - Max distance: 180
 
@@ -42,7 +42,7 @@ Compression rate is `100 * (raw AST size - repair observation size) / raw AST si
 
 | Problem class | Correctness division | Models | Avg raw AST size | Avg repair observation size | Compression rate |
 | --- | --- | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1696 | 33.897406 | 22.303656 | 34.202470% |
+| classroom_fol | BOTH | 1696 | 33.897406 | 22.311321 | 34.179857% |
 | classroom_fol | CORRECT | 1613 | 24.099814 | 14.990081 | 37.800015% |
 | classroom_fol | OVERCONSTRAINED | 383 | 26.671018 | 17.295039 | 35.154185% |
 | classroom_fol | UNDERCONSTRAINED | 311 | 35.546624 | 21.350482 | 39.936680% |
@@ -86,14 +86,14 @@ Compression rate is `100 * (raw AST size - repair observation size) / raw AST si
 | productionLine_v2 | CORRECT | 1124 | 27.223310 | 17.920819 | 34.171051% |
 | productionLine_v2 | OVERCONSTRAINED | 638 | 29.799373 | 19.713166 | 33.847044% |
 | productionLine_v2 | UNDERCONSTRAINED | 737 | 27.697422 | 17.552239 | 36.628619% |
-| socialMedia | BOTH | 4982 | 32.315937 | 20.299679 | 37.183692% |
+| socialMedia | BOTH | 4982 | 32.315937 | 20.309514 | 37.153257% |
 | socialMedia | CORRECT | 4550 | 25.487912 | 15.376923 | 39.669742% |
-| socialMedia | OVERCONSTRAINED | 1597 | 32.652473 | 21.385723 | 34.505044% |
-| socialMedia | UNDERCONSTRAINED | 2871 | 29.847092 | 18.578544 | 37.754257% |
+| socialMedia | OVERCONSTRAINED | 1597 | 32.652473 | 21.380088 | 34.522303% |
+| socialMedia | UNDERCONSTRAINED | 2871 | 29.847092 | 18.579937 | 37.749589% |
 | trainStationNew | BOTH | 2325 | 27.021935 | 19.093333 | 29.341355% |
 | trainStationNew | CORRECT | 1601 | 21.845097 | 16.439101 | 24.746955% |
-| trainStationNew | OVERCONSTRAINED | 689 | 24.709724 | 17.301887 | 29.979442% |
-| trainStationNew | UNDERCONSTRAINED | 1302 | 19.366359 | 12.692012 | 34.463613% |
+| trainStationNew | OVERCONSTRAINED | 689 | 24.709724 | 17.310595 | 29.944200% |
+| trainStationNew | UNDERCONSTRAINED | 1302 | 19.366359 | 12.703533 | 34.404125% |
 | trainStationOld | BOTH | 357 | 28.591036 | 21.829132 | 23.650436% |
 | trainStationOld | CORRECT | 111 | 19.981982 | 15.585586 | 22.001803% |
 | trainStationOld | OVERCONSTRAINED | 201 | 19.741294 | 16.149254 | 18.195565% |
@@ -117,8 +117,8 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 
 | Problem class | Semantic correctness class | Comparisons | Avg Levenshtein | Avg raw AST | Avg Fast Rewrite IR | Avg representative TED | Avg Certificate-Integrated IR | Avg relative Levenshtein | Avg relative raw AST | Avg relative Fast Rewrite IR | Avg relative representative TED | Avg relative Certificate-Integrated IR |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| **All problem classes** | **All statuses** | **61598** | **39.261064** | **22.841358** | **13.938342** | **32.254732** | **14.021251** | **0.547644** | **0.811451** | **0.696300** | **0.916517** | **0.711525** |
-| classroom_fol | BOTH | 1696 | 54.403302 | 29.843750 | 19.874410 | 38.955189 | 19.291863 | 0.624351 | 0.860807 | 0.826010 | 0.989074 | 0.827951 |
+| **All problem classes** | **All statuses** | **61598** | **39.261064** | **22.841358** | **13.938829** | **32.255544** | **14.021721** | **0.547644** | **0.811451** | **0.696288** | **0.916525** | **0.711513** |
+| classroom_fol | BOTH | 1696 | 54.403302 | 29.843750 | 19.881486 | 38.972877 | 19.299528 | 0.624351 | 0.860807 | 0.825987 | 0.989098 | 0.827986 |
 | classroom_fol | CORRECT | 1613 | 34.698078 | 19.522009 | 10.632362 | 23.610663 | 10.207688 | 0.537345 | 0.811881 | 0.588401 | 0.806334 | 0.579809 |
 | classroom_fol | OVERCONSTRAINED | 383 | 44.506527 | 23.219321 | 15.120104 | 31.211488 | 14.960836 | 0.596239 | 0.824708 | 0.781317 | 0.977595 | 0.789224 |
 | classroom_fol | UNDERCONSTRAINED | 311 | 56.729904 | 29.591640 | 17.768489 | 36.971061 | 16.797428 | 0.606512 | 0.816431 | 0.773383 | 0.946592 | 0.756786 |
@@ -130,7 +130,7 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 | coursesNew | CORRECT | 1338 | 38.111360 | 21.863229 | 12.516442 | 27.192825 | 12.709268 | 0.589369 | 0.890632 | 0.776092 | 1.044557 | 0.794218 |
 | coursesNew | OVERCONSTRAINED | 327 | 43.134557 | 23.553517 | 12.923547 | 29.486239 | 13.003058 | 0.664941 | 0.924123 | 0.794712 | 1.058538 | 0.804409 |
 | coursesNew | UNDERCONSTRAINED | 1453 | 44.737784 | 27.038541 | 16.860977 | 40.235375 | 17.481074 | 0.528858 | 0.871782 | 0.803099 | 1.018515 | 0.837698 |
-| coursesOld | BOTH | 4001 | 57.329168 | 31.169958 | 20.457886 | 47.451387 | 20.319670 | 0.614074 | 0.913088 | 0.857775 | 1.081313 | 0.866641 |
+| coursesOld | BOTH | 4001 | 57.329168 | 31.169958 | 20.457886 | 47.440890 | 20.319670 | 0.614074 | 0.913088 | 0.857775 | 1.081314 | 0.866641 |
 | coursesOld | CORRECT | 2148 | 38.013501 | 20.067970 | 10.431564 | 23.313315 | 10.611732 | 0.591233 | 0.867271 | 0.718857 | 0.993930 | 0.734742 |
 | coursesOld | OVERCONSTRAINED | 763 | 46.423329 | 24.905636 | 14.222805 | 34.258191 | 14.331586 | 0.647316 | 0.908805 | 0.761153 | 1.054668 | 0.774542 |
 | coursesOld | UNDERCONSTRAINED | 2576 | 47.348602 | 25.468556 | 16.547748 | 38.813276 | 16.769022 | 0.531564 | 0.805671 | 0.801676 | 1.020833 | 0.826837 |
@@ -161,15 +161,15 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 | productionLine_v2 | BOTH | 870 | 44.462069 | 27.693103 | 16.719540 | 37.977011 | 16.741379 | 0.499213 | 0.849087 | 0.753965 | 0.955483 | 0.763661 |
 | productionLine_v2 | CORRECT | 1124 | 40.614769 | 23.161922 | 13.351423 | 29.012456 | 13.230427 | 0.477882 | 0.749846 | 0.595507 | 0.833628 | 0.596238 |
 | productionLine_v2 | OVERCONSTRAINED | 638 | 45.692790 | 26.752351 | 16.738245 | 37.858934 | 16.702194 | 0.495962 | 0.818031 | 0.746278 | 0.941565 | 0.752203 |
-| productionLine_v2 | UNDERCONSTRAINED | 737 | 46.293080 | 28.146540 | 17.172320 | 35.575305 | 17.142469 | 0.540061 | 0.880043 | 0.754579 | 0.931319 | 0.755666 |
-| socialMedia | BOTH | 4982 | 50.487756 | 29.238659 | 17.425532 | 42.067644 | 17.630269 | 0.581993 | 0.839846 | 0.766795 | 1.024589 | 0.787528 |
+| productionLine_v2 | UNDERCONSTRAINED | 737 | 46.293080 | 28.146540 | 17.172320 | 35.559023 | 17.142469 | 0.540061 | 0.880043 | 0.754579 | 0.931339 | 0.755666 |
+| socialMedia | BOTH | 4982 | 50.487756 | 29.238659 | 17.432959 | 42.090124 | 17.638499 | 0.581993 | 0.839846 | 0.766869 | 1.024772 | 0.787641 |
 | socialMedia | CORRECT | 4550 | 28.614945 | 19.426813 | 9.679560 | 23.990330 | 10.034286 | 0.419222 | 0.659936 | 0.485388 | 0.680160 | 0.520622 |
-| socialMedia | OVERCONSTRAINED | 1597 | 46.153413 | 29.633062 | 18.345648 | 43.613651 | 18.638698 | 0.543362 | 0.821751 | 0.744176 | 1.007083 | 0.771795 |
-| socialMedia | UNDERCONSTRAINED | 2871 | 43.909091 | 24.183211 | 15.910484 | 40.969349 | 16.168234 | 0.533680 | 0.756691 | 0.767079 | 1.050125 | 0.795164 |
+| socialMedia | OVERCONSTRAINED | 1597 | 46.153413 | 29.633062 | 18.334377 | 43.599249 | 18.623669 | 0.543362 | 0.821751 | 0.743640 | 1.007011 | 0.771043 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 43.909091 | 24.183211 | 15.911877 | 40.969349 | 16.169627 | 0.533680 | 0.756691 | 0.767098 | 1.050125 | 0.795181 |
 | trainStationNew | BOTH | 2325 | 43.576774 | 22.907527 | 17.245591 | 40.547097 | 17.323441 | 0.588892 | 0.783639 | 0.779987 | 0.939888 | 0.786138 |
 | trainStationNew | CORRECT | 1601 | 25.845097 | 15.271081 | 7.274204 | 18.062461 | 7.404747 | 0.461784 | 0.637859 | 0.379462 | 0.517705 | 0.392190 |
-| trainStationNew | OVERCONSTRAINED | 689 | 33.788099 | 20.496372 | 11.320755 | 29.104499 | 11.587808 | 0.506348 | 0.735398 | 0.557704 | 0.779636 | 0.575543 |
-| trainStationNew | UNDERCONSTRAINED | 1302 | 27.489247 | 13.814900 | 15.927803 | 35.921659 | 15.966206 | 0.509954 | 0.624067 | 0.805487 | 0.899760 | 0.810868 |
+| trainStationNew | OVERCONSTRAINED | 689 | 33.788099 | 20.496372 | 11.317852 | 29.104499 | 11.584906 | 0.506348 | 0.735398 | 0.557559 | 0.779636 | 0.575398 |
+| trainStationNew | UNDERCONSTRAINED | 1302 | 27.489247 | 13.814900 | 15.925499 | 35.910138 | 15.963902 | 0.509954 | 0.624067 | 0.805372 | 0.899485 | 0.810753 |
 | trainStationOld | BOTH | 357 | 56.574230 | 39.745098 | 28.495798 | 60.492997 | 28.151261 | 0.629920 | 1.044956 | 0.902933 | 1.024048 | 0.911120 |
 | trainStationOld | CORRECT | 111 | 29.864865 | 17.909910 | 8.225225 | 21.612613 | 8.738739 | 0.531537 | 0.853222 | 0.461189 | 0.711739 | 0.491552 |
 | trainStationOld | OVERCONSTRAINED | 201 | 37.885572 | 23.398010 | 15.368159 | 33.975124 | 15.636816 | 0.570660 | 0.985240 | 0.726474 | 0.979846 | 0.749935 |
@@ -197,25 +197,25 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 - Average ground-truth self reward: 1.000000
 - Average reward gap: 0.445399
 - Pearson correlation sample: non-CORRECT rewarded predicates (42386 files)
-- Pearson correlation, Certificate-Integrated IR distance vs candidate reward: -0.063929
+- Pearson correlation, Certificate-Integrated IR distance vs candidate reward: -0.063966
 
-- Pearson correlation, canonical representative TED vs candidate reward: -0.059816
-- Pearson correlation, Fast Rewrite IR distance vs candidate reward: -0.061337
+- Pearson correlation, canonical representative TED vs candidate reward: -0.059931
+- Pearson correlation, Fast Rewrite IR distance vs candidate reward: -0.061375
 - Pearson correlation, Levenshtein vs candidate reward: -0.090795
 - Pearson correlation, raw AST tree distance vs candidate reward: -0.081877
 
 - Pearson correlation, normalized raw AST distance vs candidate reward: -0.053464
-- Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: -0.080382
+- Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward: -0.080314
 
-- Pearson correlation, normalized canonical representative TED vs candidate reward: -0.092118
+- Pearson correlation, normalized canonical representative TED vs candidate reward: -0.092155
 
-- Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: -0.062626
+- Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward: -0.062566
 
 ## By Problem Class And Status
 
 | Problem class | Status | Files | Successes | Skipped | Failures | Avg distance | Avg reward | Corr(distance,reward) | Min | Max |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| classroom_fol | BOTH | 1696 | 1696 | 0 | 0 | 19.291863 | 0.221406 | -0.084104 | 1 | 79 |
+| classroom_fol | BOTH | 1696 | 1696 | 0 | 0 | 19.299528 | 0.221406 | -0.084690 | 1 | 79 |
 | classroom_fol | CORRECT | 1884 | 1613 | 271 | 0 | 10.207688 | 1.000000 | 0.000000 | 0 | 39 |
 | classroom_fol | OVERCONSTRAINED | 383 | 383 | 0 | 0 | 14.960836 | 0.418354 | 0.130057 | 1 | 60 |
 | classroom_fol | UNDERCONSTRAINED | 311 | 311 | 0 | 0 | 16.797428 | 0.275754 | 0.394211 | 1 | 43 |
@@ -259,14 +259,14 @@ Raw columns use edit-distance units. Relative columns divide each distance by th
 | productionLine_v2 | CORRECT | 1326 | 1124 | 202 | 0 | 13.230427 | 1.000000 | 0.000000 | 0 | 105 |
 | productionLine_v2 | OVERCONSTRAINED | 638 | 638 | 0 | 0 | 16.702194 | 0.352790 | -0.316445 | 1 | 68 |
 | productionLine_v2 | UNDERCONSTRAINED | 737 | 737 | 0 | 0 | 17.142469 | 0.693635 | -0.019596 | 1 | 75 |
-| socialMedia | BOTH | 4982 | 4982 | 0 | 0 | 17.630269 | 0.187684 | 0.003132 | 1 | 115 |
+| socialMedia | BOTH | 4982 | 4982 | 0 | 0 | 17.638499 | 0.187684 | 0.002815 | 1 | 115 |
 | socialMedia | CORRECT | 4945 | 4550 | 395 | 0 | 10.034286 | 0.999560 | 0.000000 | 0 | 124 |
-| socialMedia | OVERCONSTRAINED | 1597 | 1597 | 0 | 0 | 18.638698 | 0.108430 | 0.020451 | 1 | 117 |
-| socialMedia | UNDERCONSTRAINED | 2871 | 2871 | 0 | 0 | 16.168234 | 0.645759 | 0.221857 | 1 | 86 |
+| socialMedia | OVERCONSTRAINED | 1597 | 1597 | 0 | 0 | 18.623669 | 0.108430 | 0.020826 | 1 | 117 |
+| socialMedia | UNDERCONSTRAINED | 2871 | 2871 | 0 | 0 | 16.169627 | 0.645759 | 0.221956 | 1 | 86 |
 | trainStationNew | BOTH | 2325 | 2325 | 0 | 0 | 17.323441 | 0.372981 | 0.038100 | 1 | 97 |
 | trainStationNew | CORRECT | 1953 | 1601 | 352 | 0 | 7.404747 | 1.000000 | 0.000000 | 0 | 102 |
-| trainStationNew | OVERCONSTRAINED | 689 | 689 | 0 | 0 | 11.587808 | 0.796660 | -0.080757 | 1 | 53 |
-| trainStationNew | UNDERCONSTRAINED | 1302 | 1302 | 0 | 0 | 15.966206 | 0.648703 | -0.091984 | 1 | 50 |
+| trainStationNew | OVERCONSTRAINED | 689 | 689 | 0 | 0 | 11.584906 | 0.796660 | -0.080971 | 1 | 53 |
+| trainStationNew | UNDERCONSTRAINED | 1302 | 1302 | 0 | 0 | 15.963902 | 0.648703 | -0.091404 | 1 | 50 |
 | trainStationOld | BOTH | 357 | 357 | 0 | 0 | 28.151261 | 0.276158 | 0.136281 | 2 | 94 |
 | trainStationOld | CORRECT | 185 | 111 | 74 | 0 | 8.738739 | 0.999996 | 0.000000 | 0 | 33 |
 | trainStationOld | OVERCONSTRAINED | 201 | 201 | 0 | 0 | 15.636816 | 0.550904 | -0.054113 | 1 | 61 |

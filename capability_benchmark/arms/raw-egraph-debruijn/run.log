@@ -1,24 +1,24 @@
 EGraphAblationStudy/raw-egraph-debruijn: processing 5,500 files with 16 workers.
-EGraphAblationStudy/raw-egraph-debruijn: 275/5,500 complete (5.0%), 743.76 files/s, ETA 0m 07s.
-EGraphAblationStudy/raw-egraph-debruijn: 550/5,500 complete (10.0%), 1081.01 files/s, ETA 0m 05s.
-EGraphAblationStudy/raw-egraph-debruijn: 825/5,500 complete (15.0%), 1314.12 files/s, ETA 0m 04s.
-EGraphAblationStudy/raw-egraph-debruijn: 1,100/5,500 complete (20.0%), 1487.46 files/s, ETA 0m 03s.
-EGraphAblationStudy/raw-egraph-debruijn: 1,375/5,500 complete (25.0%), 1611.76 files/s, ETA 0m 03s.
-EGraphAblationStudy/raw-egraph-debruijn: 1,650/5,500 complete (30.0%), 1701.85 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph-debruijn: 1,925/5,500 complete (35.0%), 1762.36 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph-debruijn: 2,200/5,500 complete (40.0%), 1838.33 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph-debruijn: 2,475/5,500 complete (45.0%), 1900.00 files/s, ETA 0m 02s.
-EGraphAblationStudy/raw-egraph-debruijn: 2,750/5,500 complete (50.0%), 1957.25 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 3,025/5,500 complete (55.0%), 2019.14 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 3,300/5,500 complete (60.0%), 2068.74 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 3,575/5,500 complete (65.0%), 2114.22 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 3,850/5,500 complete (70.0%), 2148.54 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 4,125/5,500 complete (75.0%), 2177.91 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 4,400/5,500 complete (80.0%), 2199.52 files/s, ETA 0m 01s.
-EGraphAblationStudy/raw-egraph-debruijn: 4,675/5,500 complete (85.0%), 2227.04 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph-debruijn: 4,950/5,500 complete (90.0%), 2258.84 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph-debruijn: 5,225/5,500 complete (95.0%), 2283.89 files/s, ETA 0m 00s.
-EGraphAblationStudy/raw-egraph-debruijn: 5,500/5,500 complete (100.0%), 2309.81 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph-debruijn: 275/5,500 complete (5.0%), 759.39 files/s, ETA 0m 07s.
+EGraphAblationStudy/raw-egraph-debruijn: 550/5,500 complete (10.0%), 1102.89 files/s, ETA 0m 04s.
+EGraphAblationStudy/raw-egraph-debruijn: 825/5,500 complete (15.0%), 1327.96 files/s, ETA 0m 04s.
+EGraphAblationStudy/raw-egraph-debruijn: 1,100/5,500 complete (20.0%), 1491.51 files/s, ETA 0m 03s.
+EGraphAblationStudy/raw-egraph-debruijn: 1,375/5,500 complete (25.0%), 1632.76 files/s, ETA 0m 03s.
+EGraphAblationStudy/raw-egraph-debruijn: 1,650/5,500 complete (30.0%), 1727.78 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph-debruijn: 1,925/5,500 complete (35.0%), 1784.43 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph-debruijn: 2,200/5,500 complete (40.0%), 1858.67 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph-debruijn: 2,475/5,500 complete (45.0%), 1929.92 files/s, ETA 0m 02s.
+EGraphAblationStudy/raw-egraph-debruijn: 2,750/5,500 complete (50.0%), 1993.26 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 3,025/5,500 complete (55.0%), 2054.34 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 3,300/5,500 complete (60.0%), 2106.20 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 3,575/5,500 complete (65.0%), 2147.16 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 3,850/5,500 complete (70.0%), 2183.98 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 4,125/5,500 complete (75.0%), 2210.62 files/s, ETA 0m 01s.
+EGraphAblationStudy/raw-egraph-debruijn: 4,400/5,500 complete (80.0%), 2226.77 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph-debruijn: 4,675/5,500 complete (85.0%), 2256.03 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph-debruijn: 4,950/5,500 complete (90.0%), 2283.43 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph-debruijn: 5,225/5,500 complete (95.0%), 2319.67 files/s, ETA 0m 00s.
+EGraphAblationStudy/raw-egraph-debruijn: 5,500/5,500 complete (100.0%), 2352.57 files/s, ETA 0m 00s.
 EGraphAblationStudy/raw-egraph-debruijn/retry: processing 0 files.
 EGraphAblationStudy/raw-egraph-debruijn/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed raw-egraph-debruijn on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.389 s.
+Completed raw-egraph-debruijn on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 2.346 s.

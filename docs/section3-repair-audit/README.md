@@ -52,7 +52,7 @@ means `INCOMPLETE`, never `PASS`.
 
 The prior archived publication run remains intact. The four current empirical
 result trees were intentionally refreshed from clean publication run
-`6000d695-8b5e-4972-b0ea-3d9e55111245` and are checked against its 5,808
+`57f5a2d8-f501-494d-81d5-b3f1396dbe18` and are checked against its 5,808
 manifest-selected stage artifacts. Reproduction programs were not altered by
 the experiment itself; the snapshot verifier and result-regeneration test were
 advanced only to recognize the newly imported run.

@@ -121,7 +121,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "ac_logical/CORRECT/generated_cap004619.als","ac_logical","de-morgan-reorder","raw-egraph","classroom_fol/correct/R3A6HoFPa2nngaKnx_inv8.als","inv8",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004620.als","ac_logical","de-morgan-reorder","raw-egraph","trash_rl/correct/QoED5FMqTsWsHyfAr_inv5.als","inv5",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004621.als","ac_logical","de-morgan-reorder","raw-egraph","classroom_rl/correct/8AjQtoaqrt98Y9BtY_inv5.als","inv5",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"ac_logical/CORRECT/generated_cap004622.als","ac_logical","de-morgan-reorder","raw-egraph","trash_ltl/correct/EtvtqtxGH72PMh5TW_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,5,false,5,false
+"ac_logical/CORRECT/generated_cap004622.als","ac_logical","de-morgan-reorder","raw-egraph","trash_ltl/correct/EtvtqtxGH72PMh5TW_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004623.als","ac_logical","de-morgan-reorder","raw-egraph","graphs/correct/Djqomxy4hwWbLM8DM_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004624.als","ac_logical","de-morgan-reorder","raw-egraph","trash_fol/correct/CAKbS2CR7SChR8cXy_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004625.als","ac_logical","de-morgan-reorder","raw-egraph","lts/correct/d2NfLaSNRE82RyDTH_inv6.als","inv6",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -297,7 +297,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "ac_logical/CORRECT/generated_cap004795.als","ac_logical","de-morgan-reorder","raw-egraph","classroom_fol/correct/2i9Rzk44XsRjsfmky_inv11.als","inv11",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004796.als","ac_logical","de-morgan-reorder","raw-egraph","socialMedia/correct/fRYDzMi5GXKyaNS6n_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004797.als","ac_logical","de-morgan-reorder","raw-egraph","socialMedia/correct/fRYDzMi5GXKyaNS6n_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"ac_logical/CORRECT/generated_cap004798.als","ac_logical","de-morgan-reorder","raw-egraph","classroom_rl/correct/8Bt4ckoPiDhHPhYnR_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,4,false,4,false
+"ac_logical/CORRECT/generated_cap004798.als","ac_logical","de-morgan-reorder","raw-egraph","classroom_rl/correct/8Bt4ckoPiDhHPhYnR_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004799.als","ac_logical","de-morgan-reorder","raw-egraph","trash_rl/correct/jMXv6TxstZfaThkbh_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004800.als","ac_logical","de-morgan-reorder","raw-egraph","trash_fol/correct/JYqwPZ7kzsiMvuyGN_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "ac_logical/CORRECT/generated_cap004801.als","ac_logical","de-morgan-reorder","raw-egraph","trash_fol/correct/6DKtAmPwEbYfuKbez_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -523,7 +523,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "aci/CORRECT/generated_cap000521.als","aci","duplicate-or","raw-egraph","trainStationNew/correct/T7gnL8Lf7MptJ3m8v_inv9.als","inv9",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000522.als","aci","reassociate-intersection","raw-egraph","trash_rl/correct/cSAyQxL83MDKuN6RP_inv8.als","inv8",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000523.als","aci","flatten-unflatten-union","raw-egraph","trainStationNew/correct/2Bbxn8ERt9iHpoWFc_inv9.als","inv9",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"aci/CORRECT/generated_cap000524.als","aci","reorder-and","raw-egraph","coursesOld/correct/DmWh6xLavdigPaTws_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,1,false,1,false
+"aci/CORRECT/generated_cap000524.als","aci","reorder-and","raw-egraph","coursesOld/correct/DmWh6xLavdigPaTws_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000525.als","aci","reorder-or","raw-egraph","graphs/correct/EdFn4uPy7jJsQhNBc_inv8.als","inv8",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000526.als","aci","duplicate-and","raw-egraph","socialMedia/correct/k2Nah3P7ukBro5tBY_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000527.als","aci","duplicate-or","raw-egraph","socialMedia/correct/k2Nah3P7ukBro5tBY_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -555,7 +555,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "aci/CORRECT/generated_cap000553.als","aci","flatten-unflatten-union","raw-egraph","trash_rl/correct/cSAyQxL83MDKuN6RP_inv8.als","inv8",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000554.als","aci","reorder-and","raw-egraph","classroom_fol/correct/9JhoyMLQnWtZStmgW_inv8.als","inv8",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000555.als","aci","reorder-or","raw-egraph","socialMedia/correct/835n3tRSPxYyXPs8A_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"aci/CORRECT/generated_cap000556.als","aci","duplicate-and","raw-egraph","graphs/correct/eyAfGvKE32ps5kyov_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,4,false,4,false
+"aci/CORRECT/generated_cap000556.als","aci","duplicate-and","raw-egraph","graphs/correct/eyAfGvKE32ps5kyov_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000557.als","aci","duplicate-or","raw-egraph","trainStationNew/correct/4ZWuEyQZHaHgDKyfm_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000558.als","aci","reassociate-intersection","raw-egraph","trash_ltl/correct/mFPY8XCBj8o2awxwt_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000559.als","aci","flatten-unflatten-union","raw-egraph","productionLineNew/correct/QHXoiCNXtPWN4Xkum_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -715,7 +715,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "aci/CORRECT/generated_cap000713.als","aci","duplicate-or","raw-egraph","socialMedia/correct/YGqwK3BhN9dxdcsuP_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000714.als","aci","reassociate-intersection","raw-egraph","trash_rl/correct/ghZpkKBpJdXSJtYDh_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000715.als","aci","flatten-unflatten-union","raw-egraph","socialMedia/correct/WZQe7LFt6ZzDoku3n_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"aci/CORRECT/generated_cap000716.als","aci","reorder-and","raw-egraph","classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als","inv11",0,true,0,true,0,true,0,true,0,true,2,false,2,false
+"aci/CORRECT/generated_cap000716.als","aci","reorder-and","raw-egraph","classroom_rl/correct/yWLwhhi4KwZdsAnXQ_inv11.als","inv11",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000717.als","aci","reorder-or","raw-egraph","trainStationNew/correct/sEWidL45E8Gw8k6kg_inv6.als","inv6",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000718.als","aci","duplicate-and","raw-egraph","trash_rl/correct/mftTufbW26ocEoeEj_inv3.als","inv3",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000719.als","aci","duplicate-or","raw-egraph","trainStationNew/correct/xb2tvFZTxDcWf4ww4_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -734,7 +734,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "aci/CORRECT/generated_cap000732.als","aci","reassociate-intersection","raw-egraph","coursesOld/correct/3mnw5t724PdWv7SK2_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000733.als","aci","flatten-unflatten-union","raw-egraph","productionLine_v2/correct/2hza2FXzpbkYp52CD_inv2.als","inv2",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000734.als","aci","reorder-and","raw-egraph","trash_ltl/correct/joBZfzb9c955N5E8h_inv19.als","inv19",0,true,0,true,0,true,0,true,0,true,0,true,0,true
-"aci/CORRECT/generated_cap000735.als","aci","reorder-or","raw-egraph","socialMedia/correct/3hRRNPrgAap4KXvKd_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,5,false,5,false
+"aci/CORRECT/generated_cap000735.als","aci","reorder-or","raw-egraph","socialMedia/correct/3hRRNPrgAap4KXvKd_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000736.als","aci","duplicate-and","raw-egraph","socialMedia/correct/XRuCzbqikeZqdzui3_inv4.als","inv4",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000737.als","aci","duplicate-or","raw-egraph","graphs/correct/eyAfGvKE32ps5kyov_inv7.als","inv7",0,true,0,true,0,true,0,true,0,true,0,true,0,true
 "aci/CORRECT/generated_cap000738.als","aci","reassociate-intersection","raw-egraph","coursesNew/correct/GmZ2fsLWb8ZEqLYkL_inv1.als","inv1",0,true,0,true,0,true,0,true,0,true,0,true,0,true
@@ -4121,7 +4121,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "mixed/CORRECT/generated_cap005119.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","trainStationNew/correct/znrbzZ4jnmtnG6jFj_inv2.als","inv2",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005120.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","classroom_fol/correct/HhjKvbquPXBCxvAAR_inv10.als","inv10",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005121.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","graphs/correct/5q9xZCcQHzYs69tMz_inv5.als","inv5",4,false,2,false,4,false,2,false,0,true,0,true,0,true
-"mixed/CORRECT/generated_cap005122.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","trash_ltl/correct/3jzZRpySdp6WwKJXa_inv12.als","inv12",4,false,2,false,4,false,2,false,0,true,5,false,5,false
+"mixed/CORRECT/generated_cap005122.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","trash_ltl/correct/3jzZRpySdp6WwKJXa_inv12.als","inv12",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005123.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","trash_rl/correct/ghZpkKBpJdXSJtYDh_inv3.als","inv3",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005124.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/GDsgW3SkzGWwER6EJ_inv2.als","inv2",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005125.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/XRuCzbqikeZqdzui3_inv4.als","inv4",4,false,2,false,4,false,2,false,0,true,0,true,0,true
@@ -4297,7 +4297,7 @@ relativePath,family,subtype,expectedFirstCapable,seedPath,seedPredicate,raw-egra
 "mixed/CORRECT/generated_cap005295.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","classroom_rl/correct/2f93c9YJTSSaH5dGf_inv11.als","inv11",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005296.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/xEvPP2NPRcWFnrPkW_inv2.als","inv2",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005297.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/vX7dgEHioYQc7vnYA_inv5.als","inv5",4,false,2,false,4,false,2,false,0,true,0,true,0,true
-"mixed/CORRECT/generated_cap005298.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/zMHEREfsCvusR8J6p_inv3.als","inv3",4,false,2,false,4,false,2,false,0,true,4,false,4,false
+"mixed/CORRECT/generated_cap005298.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","socialMedia/correct/zMHEREfsCvusR8J6p_inv3.als","inv3",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005299.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","classroom_rl/correct/CKW88ST7NskWD8o8H_inv1.als","inv1",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005300.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","coursesOld/correct/jqdtJcJbSRwcJ89Fx_inv1.als","inv1",4,false,2,false,4,false,2,false,0,true,0,true,0,true
 "mixed/CORRECT/generated_cap005301.als","mixed","negation-quantifier-prenex-permutation","slotted-egraph","productionLine_v2/correct/4WdhuC8Y5sEPKWn3z_inv9.als","inv9",4,false,2,false,4,false,2,false,0,true,0,true,0,true

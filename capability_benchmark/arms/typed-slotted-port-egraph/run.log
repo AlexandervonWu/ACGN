@@ -1,24 +1,25 @@
 EGraphAblationStudy/typed-slotted-port-egraph: processing 5,500 files with 16 workers.
-EGraphAblationStudy/typed-slotted-port-egraph: 275/5,500 complete (5.0%), 18.34 files/s, ETA 4m 45s.
-EGraphAblationStudy/typed-slotted-port-egraph: 550/5,500 complete (10.0%), 19.03 files/s, ETA 4m 20s.
-EGraphAblationStudy/typed-slotted-port-egraph: 825/5,500 complete (15.0%), 22.55 files/s, ETA 3m 27s.
-EGraphAblationStudy/typed-slotted-port-egraph: 1,100/5,500 complete (20.0%), 23.45 files/s, ETA 3m 08s.
-EGraphAblationStudy/typed-slotted-port-egraph: 1,375/5,500 complete (25.0%), 24.43 files/s, ETA 2m 49s.
-EGraphAblationStudy/typed-slotted-port-egraph: 1,650/5,500 complete (30.0%), 24.30 files/s, ETA 2m 38s.
-EGraphAblationStudy/typed-slotted-port-egraph: 1,925/5,500 complete (35.0%), 23.57 files/s, ETA 2m 32s.
-EGraphAblationStudy/typed-slotted-port-egraph: 2,200/5,500 complete (40.0%), 23.84 files/s, ETA 2m 18s.
-EGraphAblationStudy/typed-slotted-port-egraph: 2,475/5,500 complete (45.0%), 23.91 files/s, ETA 2m 07s.
-EGraphAblationStudy/typed-slotted-port-egraph: 2,750/5,500 complete (50.0%), 22.17 files/s, ETA 2m 04s.
-EGraphAblationStudy/typed-slotted-port-egraph: 3,025/5,500 complete (55.0%), 20.59 files/s, ETA 2m 00s.
-EGraphAblationStudy/typed-slotted-port-egraph: 3,300/5,500 complete (60.0%), 21.03 files/s, ETA 1m 45s.
-EGraphAblationStudy/typed-slotted-port-egraph: 3,575/5,500 complete (65.0%), 21.22 files/s, ETA 1m 31s.
-EGraphAblationStudy/typed-slotted-port-egraph: 3,850/5,500 complete (70.0%), 20.40 files/s, ETA 1m 21s.
-EGraphAblationStudy/typed-slotted-port-egraph: 4,125/5,500 complete (75.0%), 19.35 files/s, ETA 1m 11s.
-EGraphAblationStudy/typed-slotted-port-egraph: 4,400/5,500 complete (80.0%), 18.28 files/s, ETA 1m 00s.
-EGraphAblationStudy/typed-slotted-port-egraph: 4,675/5,500 complete (85.0%), 18.25 files/s, ETA 0m 45s.
-EGraphAblationStudy/typed-slotted-port-egraph: 4,950/5,500 complete (90.0%), 18.65 files/s, ETA 0m 29s.
-EGraphAblationStudy/typed-slotted-port-egraph: 5,225/5,500 complete (95.0%), 18.96 files/s, ETA 0m 15s.
-EGraphAblationStudy/typed-slotted-port-egraph: 5,500/5,500 complete (100.0%), 18.77 files/s, ETA 0m 00s.
+EGraphAblationStudy/typed-slotted-port-egraph: 275/5,500 complete (5.0%), 16.04 files/s, ETA 5m 26s.
+EGraphAblationStudy/typed-slotted-port-egraph: 550/5,500 complete (10.0%), 16.30 files/s, ETA 5m 04s.
+EGraphAblationStudy/typed-slotted-port-egraph: 825/5,500 complete (15.0%), 19.10 files/s, ETA 4m 05s.
+EGraphAblationStudy/typed-slotted-port-egraph: 1,100/5,500 complete (20.0%), 20.17 files/s, ETA 3m 38s.
+EGraphAblationStudy/typed-slotted-port-egraph: 1,375/5,500 complete (25.0%), 21.45 files/s, ETA 3m 12s.
+EGraphAblationStudy/typed-slotted-port-egraph: 1,650/5,500 complete (30.0%), 21.57 files/s, ETA 2m 58s.
+EGraphAblationStudy/typed-slotted-port-egraph: 1,925/5,500 complete (35.0%), 20.85 files/s, ETA 2m 51s.
+EGraphAblationStudy/typed-slotted-port-egraph: 2,200/5,500 complete (40.0%), 21.36 files/s, ETA 2m 34s.
+EGraphAblationStudy/typed-slotted-port-egraph: 2,475/5,500 complete (45.0%), 21.65 files/s, ETA 2m 20s.
+EGraphAblationStudy/typed-slotted-port-egraph: 2,750/5,500 complete (50.0%), 20.31 files/s, ETA 2m 15s.
+EGraphAblationStudy/typed-slotted-port-egraph: 3,025/5,500 complete (55.0%), 19.08 files/s, ETA 2m 10s.
+EGraphAblationStudy/typed-slotted-port-egraph: 3,300/5,500 complete (60.0%), 19.57 files/s, ETA 1m 52s.
+EGraphAblationStudy/typed-slotted-port-egraph: 3,575/5,500 complete (65.0%), 19.78 files/s, ETA 1m 37s.
+EGraphAblationStudy/typed-slotted-port-egraph: 3,850/5,500 complete (70.0%), 19.03 files/s, ETA 1m 27s.
+EGraphAblationStudy/typed-slotted-port-egraph: 4,125/5,500 complete (75.0%), 18.05 files/s, ETA 1m 16s.
+EGraphAblationStudy/typed-slotted-port-egraph: 4,366/5,500 complete (79.4%), 16.89 files/s, ETA 1m 07s.
+EGraphAblationStudy/typed-slotted-port-egraph: 4,400/5,500 complete (80.0%), 16.77 files/s, ETA 1m 06s.
+EGraphAblationStudy/typed-slotted-port-egraph: 4,675/5,500 complete (85.0%), 16.74 files/s, ETA 0m 49s.
+EGraphAblationStudy/typed-slotted-port-egraph: 4,950/5,500 complete (90.0%), 17.15 files/s, ETA 0m 32s.
+EGraphAblationStudy/typed-slotted-port-egraph: 5,225/5,500 complete (95.0%), 17.48 files/s, ETA 0m 16s.
+EGraphAblationStudy/typed-slotted-port-egraph: 5,500/5,500 complete (100.0%), 17.39 files/s, ETA 0m 00s.
 EGraphAblationStudy/typed-slotted-port-egraph/retry: processing 0 files.
 EGraphAblationStudy/typed-slotted-port-egraph/retry: 0/0 complete (100.0%), 0.00 files/s, ETA 0m 00s.
-Completed typed-slotted-port-egraph on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 293.035 s.
+Completed typed-slotted-port-egraph on 5500/5500 predicate pairs (skipped 0 AST-identical pairs) in 316.321 s.

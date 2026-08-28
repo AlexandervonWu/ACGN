@@ -33,9 +33,9 @@ from pathlib import Path
 payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
 metrics = payload["metrics"]
 expected = {
-    "Average Certificate-Integrated IR repair distance": "14.021251",
-    "Average Fast Rewrite IR distance": "13.938342",
-    "Average canonical representative TED baseline": "32.254732",
+    "Average Certificate-Integrated IR repair distance": "14.021721",
+    "Average Fast Rewrite IR distance": "13.938829",
+    "Average canonical representative TED baseline": "32.255544",
 }
 for key, value in expected.items():
     actual = metrics.get(key)
@@ -43,15 +43,15 @@ for key, value in expected.items():
         raise SystemExit(f"{key}: expected {value}, got {actual}")
 correlations = payload["rewardCorrelations"]
 expected_correlations = {
-    "Pearson correlation, Certificate-Integrated IR distance vs candidate reward": "-0.063929",
-    "Pearson correlation, canonical representative TED vs candidate reward": "-0.059816",
-    "Pearson correlation, Fast Rewrite IR distance vs candidate reward": "-0.061337",
+    "Pearson correlation, Certificate-Integrated IR distance vs candidate reward": "-0.063966",
+    "Pearson correlation, canonical representative TED vs candidate reward": "-0.059931",
+    "Pearson correlation, Fast Rewrite IR distance vs candidate reward": "-0.061375",
     "Pearson correlation, Levenshtein vs candidate reward": "-0.090795",
     "Pearson correlation, raw AST tree distance vs candidate reward": "-0.081877",
     "Pearson correlation, normalized raw AST distance vs candidate reward": "-0.053464",
-    "Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward": "-0.080382",
-    "Pearson correlation, normalized canonical representative TED vs candidate reward": "-0.092118",
-    "Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward": "-0.062626",
+    "Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward": "-0.080314",
+    "Pearson correlation, normalized canonical representative TED vs candidate reward": "-0.092155",
+    "Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward": "-0.062566",
 }
 if not correlations["available"] or not correlations["rewardsEnabled"]:
     raise SystemExit("rewarded snapshot correlations were marked unavailable")
@@ -95,7 +95,7 @@ if data_rows != 68:
 PY
 
 if ! grep -Fq \
-  '| Pearson correlation, Certificate-Integrated IR distance vs candidate reward | -0.063929 |' \
+  '| Pearson correlation, Certificate-Integrated IR distance vs candidate reward | -0.063966 |' \
   "$work/paper_tables.md"; then
   printf 'rewarded Markdown does not expose the bound correlation\n' >&2
   exit 1

@@ -2,8 +2,8 @@
 
 > **Measurement note.** Small development smokes below remain historical
 > evidence. The full-corpus table is from clean publication run
-> `6000d695-8b5e-4972-b0ea-3d9e55111245`, documented in
-> [`publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md`](../publication_runs/6000d695-8b5e-4972-b0ea-3d9e55111245/README.md).
+> `57f5a2d8-f501-494d-81d5-b3f1396dbe18`, documented in
+> [`publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18/README.md`](../publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18/README.md).
 
 ## Architectural Rule
 
@@ -213,18 +213,18 @@ at 16 workers. The Fast Rewrite IR and Certificate-Integrated IR produced:
 | Measure | Fast Rewrite IR | Certificate-Integrated IR |
 | --- | ---: | ---: |
 | Successful pairs / failures | 61,598 / 0 | 61,598 / 0 |
-| Mean repair distance | 13.938342 | 14.021251 |
+| Mean repair distance | 13.938829 | 14.021721 |
 | `CORRECT` zeroes | 4,074 | 4,088 |
 | Incorrect zeroes | 0 | 0 |
-| Mean representation units | 29.999 | 29.540 |
-| Process wall time | 24.690 s | 2,730.160 s |
-| Engine CPU time | 68.050 s | 41,550.938 s |
-| Maximum RSS | 1,718.941 MiB | 8,925.242 MiB |
+| Mean representation units | 30.001 | 29.541 |
+| Process wall time | 24.710 s | 2,708.920 s |
+| Engine CPU time | 72.573 s | 41,253.576 s |
+| Maximum RSS | 1,837.043 MiB | 8,947.977 MiB |
 
 The certificate-integrated zero set contains the complete Fast Rewrite IR zero set and 14 additional
 `CORRECT` pairs. The nonzero-distance divergence is retained for
 pair-level classification in `minimum_distances.csv`; it is not hidden behind
-representative TED. The Certificate-Integrated IR's roughly 111x wall-time cost is construction
+representative TED. The Certificate-Integrated IR's roughly 110x wall-time cost is construction
 and certification overhead rather than a larger observation or a replacement
 distance geometry.
 
@@ -240,7 +240,7 @@ artifact's protection against unsound equality claims caused by scope capture,
 unlicensed permutations, malformed ports, or stale congruence state.
 
 That semantic assurance has an explicit cost. The current corpus shows roughly
-111x wall time and substantially more engine CPU for 14 additional certified
+110x wall time and substantially more engine CPU for 14 additional certified
 `CORRECT` zeroes. Representation size is slightly smaller, while measured
 maximum RSS is 5.192x higher. Accordingly, the Fast Rewrite IR remains an active production-quality
 research path, not a superseded implementation. The Certificate-Integrated IR
@@ -251,7 +251,7 @@ support this tradeoff claim but do not prove complete Alloy semantic soundness.
 The current augmented truth-pool run exercises a different minimization
 protocol: each of 42,386 incorrect predicates is compared with every
 AST-distinct correct truth in its invariant group. It completed without
-failures and reports mean nearest certified distance 11.562190. Its release
+failures and reports mean nearest certified distance 11.562709. Its release
 gate found zero certified incorrect-to-truth zeroes; ten Fast Rewrite-only
 zeroes remain explicitly non-certifying.
 

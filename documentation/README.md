@@ -48,22 +48,22 @@ complete theorem prover for arbitrary Alloy semantics.
 
 ## Current Experimental Snapshot
 
-The August 27, 2026 snapshot uses 66,080 source files. Every runner excludes
+The August 28, 2026 snapshot uses 66,080 source files. Every runner excludes
 4,482 student-oracle pairs with identical parser ASTs before pool construction,
 leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 
 | Evaluation | Headline result |
 | --- | --- |
-| Paired student-oracle (`pipeline-v38`, metric v12) | 61,598 successes, 0 failures; mean certified repair distance 14.021251; 4,088 `CORRECT` zeroes; 0 incorrect zeroes |
-| Nearest correct pool (`pipeline-v38`, metric v12) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 11.562190; 0 certified incorrect zeroes |
+| Paired student-oracle (`pipeline-v38`, metric v12) | 61,598 successes, 0 failures; mean certified repair distance 14.021721; 4,088 `CORRECT` zeroes; 0 incorrect zeroes |
+| Nearest correct pool (`pipeline-v38`, metric v12) | 42,386 incorrect predicates ranked, 0 failures; mean nearest certified distance 11.562709; 0 certified incorrect zeroes |
 | Truth-pool diversity | 19,393 oracle-plus-student truths, 4,496 AST-distinct truths, 2,101 certified components, 11,382 AST-different certified zero pairs |
 | Seven-arm natural corpus | Certificate-Integrated IR retained 4,074 Fast Rewrite IR zeroes and added 14; both paired-oracle canonical paths had 0 incorrect zeroes |
-| Generated capability matrix | slotted recovered 5,500/5,500; Fast Rewrite and Certificate-Integrated IR each recovered 5,492/5,500; all 11 expected capability boundaries matched |
+| Generated capability matrix | slotted, Fast Rewrite, and Certificate-Integrated IR each recovered 5,500/5,500; all 11 expected capability boundaries matched |
 
-The certificate-integrated arm averaged 29.540 representation units, 18.442
-reachable e-classes, and 16.148 reachable e-nodes, but required 2,730.160
-seconds wall time versus 24.690 seconds for the Fast Rewrite IR arm. Maximum
-RSS was 8,925.242 versus 1,718.941 MiB. Its cost is dominated by certificate-bearing construction,
+The certificate-integrated arm averaged 29.541 representation units, 18.443
+reachable e-classes, and 16.148 reachable e-nodes, but required 2,708.920
+seconds wall time versus 24.710 seconds for the Fast Rewrite IR arm. Maximum
+RSS was 8,947.977 versus 1,837.043 MiB. Its cost is dominated by certificate-bearing construction,
 renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
 not by larger output terms or the final repair-distance recurrence.
 
@@ -76,7 +76,7 @@ a stronger semantic-assurance boundary at substantial runtime cost; neither
 the bounded checks nor the dataset labels constitute an unbounded Alloy proof.
 
 The publication, ablation, and capability manifests record a clean source tree
-at Git SHA `ebce874382c87108a32874149008842a7b0fa528`. Their source, dataset,
+at Git SHA `88363ea23728329948ccc9d5cdad690cc5787ca5`. Their source, dataset,
 and output hashes are the exact provenance for these results.
 
 ## Architecture
@@ -673,18 +673,18 @@ The current full-corpus result is:
 
 | Arm | `CORRECT` zeroes | Mean distance | Wall s | Engine CPU s | Max RSS MiB |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `raw-egraph` | 820 | 18.364 | 19.130 | 4.233 | 1,645.855 |
-| `raw-egraph-debruijn` | 2,160 | 17.911 | 19.220 | 5.126 | 1,548.828 |
-| `java-egglog` | 820 | 18.147 | 19.330 | 4.090 | 1,561.074 |
-| `java-egglog-debruijn` | 2,160 | 17.690 | 19.140 | 4.814 | 1,488.988 |
-| `slotted-egraph` | 2,159 | 17.824 | 19.340 | 15.947 | 1,656.031 |
-| `canonical` | 4,074 | 13.938 | 24.690 | 68.050 | 1,718.941 |
-| `typed-slotted-port-egraph` | 4,088 | 14.021 | 2,730.160 | 41,550.938 | 8,925.242 |
+| `raw-egraph` | 820 | 18.364 | 18.930 | 4.345 | 1,434.855 |
+| `raw-egraph-debruijn` | 2,160 | 17.911 | 19.060 | 5.087 | 1,501.480 |
+| `java-egglog` | 820 | 18.147 | 19.210 | 4.108 | 1,431.375 |
+| `java-egglog-debruijn` | 2,160 | 17.690 | 19.260 | 4.871 | 1,598.816 |
+| `slotted-egraph` | 2,159 | 17.824 | 19.340 | 15.336 | 1,509.496 |
+| `canonical` | 4,074 | 13.939 | 24.710 | 72.573 | 1,837.043 |
+| `typed-slotted-port-egraph` | 4,088 | 14.022 | 2,708.920 | 41,253.576 | 8,947.977 |
 
 All arms completed all 61,598 eligible pairs with zero failures and zero
 incorrect paired-oracle zero-distance merges. Pair-level transitions show
 `+14/-0` from the Fast Rewrite IR to the Certificate-Integrated IR. The latter's
-p50 and p95 engine latencies were 320.451 and 2,376.936 ms. Consult the generated report for per-pair transitions,
+p50 and p95 engine latencies were 318.125 and 2,348.612 ms. Consult the generated report for per-pair transitions,
 representation counts, and process metadata rather than copying this summary
 into a paper table by hand.
 
@@ -717,8 +717,8 @@ subtype by default (`--soundness-per-subtype N`) and labels that evidence as a
 bounded sanity check rather than proof.
 
 In the current 5,500-pair run, raw and Java egglog each recovered 47.00%; their
-De Bruijn variants recovered 65.96%; slotted recovered 100.00%; and Fast Rewrite
-IR and Certificate-Integrated IR each recovered 99.85% (5,492/5,500). Every
+De Bruijn variants recovered 65.96%; and slotted, Fast Rewrite IR, and
+Certificate-Integrated IR each recovered 100.00% (5,500/5,500). Every
 expected first-capable boundary matched. The 29
 bounded checks had zero conclusive non-temporal failures; six temporal checks
 remain explicitly inconclusive because no temporal backend was available.

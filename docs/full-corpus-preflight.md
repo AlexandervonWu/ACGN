@@ -1,6 +1,6 @@
 # Full-Corpus Experiment Preflight
 
-Date: 2026-08-27
+Date: 2026-08-28
 
 This inspection was performed before another 66,080-file experimental run.
 It is a bounded source-to-runner preflight, not a claim that every possible
@@ -107,14 +107,17 @@ seven ablation arms, and the capability benchmark with zero preparation,
 ranking, batch, or conclusive soundness failures.
 
 The final clean publication replay used 16 workers, an 8 GiB heap, and reward
-pool 100. Publication run `6000d695-8b5e-4972-b0ea-3d9e55111245` completed all
-four stages from source `ebce874382c87108a32874149008842a7b0fa528`:
+pool 100. Publication run `57f5a2d8-f501-494d-81d5-b3f1396dbe18` completed all
+four stages from source `88363ea23728329948ccc9d5cdad690cc5787ca5`:
 CanonicalBatchTest produced 61,598 successes, 4,482 AST skips, and 0 failures;
 Alloy4FunAugmenter ranked and rewarded all 42,386 incorrect predicates with 0
 failures and 0 certified incorrect-to-truth zeroes; all seven ablation arms
 completed 61,598 pairs with 0 failures; and the capability benchmark generated
-and evaluated 5,500 valid pairs. This replay is the checked-in empirical
-snapshot.
+and evaluated 5,500 valid pairs. The slotted, Fast Rewrite IR, and
+Certificate-Integrated IR arms each recovered 5,500/5,500. The bounded semantic
+checker found no counterexample among 4,088 claimed-equivalent natural-corpus
+pairs, and all four targeted negative controls remained unmerged. This replay
+is the checked-in empirical snapshot.
 
 ## Intentional Stop Conditions
 
