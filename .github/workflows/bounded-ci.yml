@@ -17,6 +17,13 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - name: Install pinned Lean toolchain
+        uses: leanprover/lean-action@v1
+        with:
+          auto-config: false
+          use-github-cache: false
+      - name: Compile and audit cataloged rewrite obligations
+        run: ./scripts/run_rewrite_rule_lean_checks.sh
       - name: Compile and run bounded Java tests
         run: ./scripts/run_bounded_ci_java_tests.sh
       - name: Run clean producer and standalone verifier harness

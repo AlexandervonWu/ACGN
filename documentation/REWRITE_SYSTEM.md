@@ -516,25 +516,36 @@ production canonicalizer adds temporal partitioning, strict phase-local
 prenexing, binding tuples, renamed slots, and permutation groups around that
 core equivalence vocabulary.
 
-## Proof Connectivity
+## Catalog Reference Connectivity
 
 The immutable `R0` rewrite inventory is governed directly by
 [`rewrite-rule-traceability.tsv`](../docs/section3-repair-audit/rewrite-rule-traceability.tsv).
-It contains 61 semantic rule families: all 24 rules exported by the shared
-ablation rewrite system and 37 production-only binder, alpha, and relational
-families. Every row names at least one independent Lean theorem, every Java
-method that realizes the family, and at least one executable regression entry
-point.
+It contains 61 catalog rows: all 24 names exported by the shared ablation
+rewrite system and 37 production-only binder, alpha, and relational rows. Each
+row names at least one Lean theorem or lemma declaration, one or more Java
+methods, and at least one source-level regression entry point. Those references
+are catalog metadata; they are not an exhaustive inventory of every executable
+rewrite method or branch.
 
-The Java declarations carry `@LeanVerifiedRewrite` rule IDs.
-`RewriteRuleTraceability` checks the connection in both directions: every
-catalog Java reference must have the matching annotation, and every annotation
-must point back to a catalog row. It also rejects a missing Lean theorem, a
-definition substituted for a theorem, a missing test method, a non-approved
-row, any forbidden Lean proof escape, or disagreement between the 24 catalog
-bootstrap names and `JavaEgglog.ruleNames()`. The bounded assurance runner
-executes this gate before the semantic regressions and compiles every governed
-Lean file.
+The named Java declarations carry `@LeanVerifiedRewrite` rule IDs.
+`RewriteRuleTraceability` checks that every catalog Java reference has the
+matching annotation and that annotations found in catalog-reached classes
+point back to catalog rows. It rejects a missing Lean theorem or lemma name, a
+definition substituted for a theorem, a missing named test entry point, a row
+whose status is not the legacy token `PROVED_AND_CONNECTED`, a forbidden Lean
+proof escape, or disagreement between the 24 catalog bootstrap names and
+`JavaEgglog.ruleNames()`. It does not inspect theorem types against Java
+behavior, prove Java--Lean refinement, or discover unannotated executable
+branches outside its catalog-derived class inventory.
+
+The active parser-alias and negated-comparison switch tables additionally have
+explicit Lean models and an independent literal parity check. The live
+`EGraphNode.dualOf` saturation helper is checked through a separate, narrower
+comparison slice: it contains the ordinary comparison duals but not the four
+`NOT_*` opcodes, and no checked reachability invariant currently justifies
+their absence. These finite table comparisons detect dispatch drift; they are
+not semantic refinement proofs. A future Java repair must update the Lean table
+and parity expectation in the same change.
 
 The broader claim-level obligations remain in
 [`requirements-traceability.tsv`](../docs/section3-repair-audit/requirements-traceability.tsv).
@@ -542,13 +553,13 @@ The broader claim-level obligations remain in
 implementation and test declarations, evidence classes, and exact formal-file
 inventory.
 
-This connection has a deliberately exact claim boundary. `PROVED` means the
-listed semantic equation or finite obligation was proved in Lean without
-`sorry`, `admit`, `axiom`, or `unsafe`. `DIRECT` means the named Java
-path was exercised through its parser/type/provenance guards. It does not mean
-Lean verified Java bytecode or that every possible Alloy parser input has been
-exhausted. Open broader refinement diagnostics remain open in the generated
-assurance catalog rather than being promoted by a rewrite-level proof.
+At the rewrite-catalog level, the legacy `PROVED_AND_CONNECTED` token means only
+that the implemented name, annotation, and source-reference checks passed. The
+separate requirements matrix defines its own `PROVED` and `DIRECT` statuses.
+Neither those statuses nor the rewrite catalog mean Lean verified Java
+bytecode, that a theorem type was matched to Java behavior, or that every
+parser input and executable branch was exhausted. Open refinement diagnostics
+remain open.
 
 ## Executable Checks
 
