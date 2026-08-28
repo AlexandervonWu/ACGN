@@ -379,6 +379,32 @@ public final class CapabilityBenchmark {
         writeReportJson(options, reports, pairs.values(), natural);
         writeReportMarkdown(options, reports, pairs.values(), natural);
         System.out.println("Wrote " + options.output.resolve("REPORT.md"));
+        requireTypedCapabilityClosure(options, pairs.values());
+    }
+
+    private static void requireTypedCapabilityClosure(
+            Options options,
+            Iterable<PairRecord> pairs) {
+        int generated = 0;
+        int closed = 0;
+        int errors = 0;
+        for (PairRecord pair : pairs) {
+            generated++;
+            Outcome outcome = pair.outcomes.get("typed-slotted-port-egraph");
+            if (outcome != null && outcome.success && outcome.zero) {
+                closed++;
+            } else {
+                errors++;
+            }
+        }
+        int expected = Math.multiplyExact(Family.values().length, options.target);
+        if (generated != expected || closed != expected || errors != 0) {
+            throw new IllegalStateException(
+                    "Certificate-integrated capability closure failed: "
+                            + closed + "/" + expected
+                            + " zero-distance pairs (generated=" + generated
+                            + ", failures=" + errors + ")");
+        }
     }
 
     private static void writeCapabilityCsv(Path path, Map<String, FamilyReport> reports) throws IOException {

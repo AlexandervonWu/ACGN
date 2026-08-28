@@ -2864,19 +2864,19 @@ Every claim follows the same bounded process:
 
 ### P5-42
 
-**Claim.** Full-corpus preflight preserves the exact Int and integer-next relation views, temporal beta substitution, operator-and-carrier law keys, sequence/bag multiplicity, pairwise-minimum comparison, and lineage remapping, and removes only certified duplicate or unreachable temporal occurrences.
+**Claim.** Full-corpus preflight preserves the exact Int and integer-next relation views, temporal beta substitution, operator-and-carrier law keys, sequence/bag multiplicity, pairwise-minimum comparison, lineage remapping, and the checkpoint occurrence carrier across equivalent representative adoption, and removes only certified duplicate or unreachable temporal occurrences.
 
 - Class: `U/I/P`
-- Claim SHA-256: `5f94a037dacafe0bdd3d74c6a654938c8ea054ac0d98046437b9ad64b93db52e`
+- Claim SHA-256: `9c6449a98f43c1351f2d164ceb3cb1e8560f6fd83c404991b8a8e188c2678454`
 - Ledger line: 249
 - Lean file: `docs/section3-repair-audit/formal/FullCorpusPreflight.lean`
-- Lean declarations: `integer_next_is_zero_arity;integer_next_returns_binary_int_relation;primitive_int_has_unary_relation_view;unary_int_join_integer_next_is_unary_int;stored_int_and_join_result_share_the_certified_relation_view;a_mismatched_join_boundary_is_rejected;beta_substitution_reaches_an_after_phase;beta_substitution_reaches_each_temporal_use;repaired_occurrence_cannot_change_the_authorized_law;another_carrier_cannot_receive_the_authorized_law;certified_eclass_equality_licenses_set_idempotence;idempotent_operation_respects_certified_eclass_equality;ordered_or_bag_occurrences_are_not_removed_by_the_set_step;certified_representatives_are_compared_by_pairwise_minimum;lineage_remapping_preserves_exact_fiber_membership;certified_duplicate_temporal_phase_has_one_repair_occurrence;complementary_guard_makes_temporal_or_branch_unreachable;unreachable_temporal_branch_has_no_observable_occurrence`
-- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/CanDis/core/NormalForm.java#betaRewriteLet;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/CanonicalDistance.java#variableBindings;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#mirrorCertifiedSourcePlansToRepairMatrices`
+- Lean declarations: `integer_next_is_zero_arity;integer_next_returns_binary_int_relation;primitive_int_has_unary_relation_view;unary_int_join_integer_next_is_unary_int;stored_int_and_join_result_share_the_certified_relation_view;a_mismatched_join_boundary_is_rejected;beta_substitution_reaches_an_after_phase;beta_substitution_reaches_each_temporal_use;repaired_occurrence_cannot_change_the_authorized_law;another_carrier_cannot_receive_the_authorized_law;certified_eclass_equality_licenses_set_idempotence;idempotent_operation_respects_certified_eclass_equality;ordered_or_bag_occurrences_are_not_removed_by_the_set_step;certified_representatives_are_compared_by_pairwise_minimum;lineage_remapping_preserves_exact_fiber_membership;certification_clone_preserves_checkpoint_lineage;equivalent_adoption_preserves_checkpoint_lineage;set_partition_match_survives_equivalent_adoption;certified_duplicate_temporal_phase_has_one_repair_occurrence;complementary_guard_makes_temporal_or_branch_unreachable;unreachable_temporal_branch_has_no_observable_occurrence`
+- Implementation references: `src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java#require;src/is/fivefivefive/CanDis/core/NormalForm.java#betaRewriteLet;src/is/fivefivefive/CanDis/core/NormalForm.java#normalizeGuardedSourceRules;src/is/fivefivefive/CanDis/core/EGraphNode.java#getCertificationOccurrenceLineage;src/is/fivefivefive/CanDis/core/CanonicalDistance.java#variableBindings;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#mirrorCertifiedSetPartitionsToRepairMatrices`
 - Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The preflight suite covers the listed exact-type, substitution, law-key, quotient-container, alignment, lineage, and temporal-reachability cases; universal parser and Java refinement remains open
+- Claim-specific process/limits: The preflight suite covers exact-type, substitution, law-key, quotient-container, alignment, temporal reachability, and checkpoint-lineage preservation across certified cloning and equivalent representative adoption; universal parser and Java refinement remains open
 - Current proof state: `READY`
 
 ### P5-43

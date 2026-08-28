@@ -63,6 +63,12 @@ public final class EGraphNode {
     private SigSymbol parserSignatureEvidence;
     /* Transfer-only identity: never participates in semantic keys or serialization. */
     private long sourceOccurrenceLineage;
+    /*
+     * Immutable checkpoint occurrence used to transfer pre-saturation evidence.
+     * Unlike sourceOccurrenceLineage, adoption of an equivalent representative
+     * must not replace this carrier identity.
+     */
+    private long certificationOccurrenceLineage;
     /* A bound relation value imported from an enclosing temporal phase. */
     private boolean temporalSnapshotBinding;
     /* Parser-owned CALL provenance; excluded from semantic keys and repair cost. */
@@ -267,6 +273,7 @@ public final class EGraphNode {
         this.semanticProfile = java.util.Objects.requireNonNull(
                 semanticProfile, "semanticProfile");
         this.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
+        this.certificationOccurrenceLineage = sourceOccurrenceLineage;
         if (children != null) {
             for (EGraphNode child : children) {
                 appendChildReference(child);
@@ -1232,6 +1239,12 @@ public final class EGraphNode {
         return sourceOccurrenceLineage;
     }
 
+    /** Exact pre-saturation occurrence carrier for certificate transfer only. */
+    public long getCertificationOccurrenceLineage() {
+        requireLiveNode();
+        return certificationOccurrenceLineage;
+    }
+
     /** Permanently closes semantic mutation of this source e-graph arena. */
     public void freezeForCertification() {
         arena.freezeForCertification(this);
@@ -1377,11 +1390,14 @@ public final class EGraphNode {
 
     void preserveSourceOccurrenceLineageFrom(EGraphNode source) {
         arena.mutate(this, () -> {
-            if (source == null || source.sourceOccurrenceLineage <= 0L) {
+            if (source == null || source.sourceOccurrenceLineage <= 0L
+                    || source.certificationOccurrenceLineage <= 0L) {
                 throw new IllegalArgumentException(
                         "A source occurrence lineage must be positive");
             }
             sourceOccurrenceLineage = source.sourceOccurrenceLineage;
+            certificationOccurrenceLineage =
+                    source.certificationOccurrenceLineage;
         });
     }
 
@@ -1395,7 +1411,9 @@ public final class EGraphNode {
                 if (!visited.add(node)) {
                     continue;
                 }
-                node.sourceOccurrenceLineage = nextSourceOccurrenceLineage();
+                long lineage = nextSourceOccurrenceLineage();
+                node.sourceOccurrenceLineage = lineage;
+                node.certificationOccurrenceLineage = lineage;
                 pending.addAll(node.getChildren());
             }
         });
@@ -6992,6 +7010,7 @@ public final class EGraphNode {
         copy.builtinConstantKind = builtinConstantKind;
         copy.parserSignatureEvidence = parserSignatureEvidence;
         copy.sourceOccurrenceLineage = sourceOccurrenceLineage;
+        copy.certificationOccurrenceLineage = certificationOccurrenceLineage;
         copy.callOccurrenceId = callOccurrenceId;
         copy.declaredArity = declaredArity;
         copy.callArityAuthority = callArityAuthority;
@@ -7026,6 +7045,7 @@ public final class EGraphNode {
         builtinConstantKind = null;
         parserSignatureEvidence = null;
         sourceOccurrenceLineage = 0L;
+        certificationOccurrenceLineage = 0L;
         callOccurrenceId = -1L;
         declaredArity = -1;
         callArityAuthority = null;

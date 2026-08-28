@@ -166,6 +166,36 @@ theorem lineage_remapping_preserves_exact_fiber_membership
         sourceToRepaired certifiedSource = repaired := by
   simp [remapFiber]
 
+structure RewriteOccurrence where
+  checkpointLineage : Nat
+  representativeLineage : Nat
+  deriving DecidableEq, Repr
+
+def cloneOccurrence (source : RewriteOccurrence) : RewriteOccurrence := source
+
+def adoptEquivalentRepresentative
+    (carrier replacement : RewriteOccurrence) : RewriteOccurrence :=
+  { checkpointLineage := carrier.checkpointLineage
+    representativeLineage := replacement.representativeLineage }
+
+theorem certification_clone_preserves_checkpoint_lineage
+    (source : RewriteOccurrence) :
+    (cloneOccurrence source).checkpointLineage = source.checkpointLineage := by
+  rfl
+
+theorem equivalent_adoption_preserves_checkpoint_lineage
+    (carrier replacement : RewriteOccurrence) :
+    (adoptEquivalentRepresentative carrier replacement).checkpointLineage =
+      carrier.checkpointLineage := by
+  rfl
+
+theorem set_partition_match_survives_equivalent_adoption
+    (certified carrier replacement : RewriteOccurrence)
+    (sameCheckpoint : certified.checkpointLineage = carrier.checkpointLineage) :
+    certified.checkpointLineage =
+      (adoptEquivalentRepresentative carrier replacement).checkpointLineage := by
+  simpa [adoptEquivalentRepresentative] using sameCheckpoint
+
 theorem certified_duplicate_temporal_phase_has_one_repair_occurrence
     {α : Type} [DecidableEq α] (phase : α) :
     quotientSetPair phase phase = [phase] := by

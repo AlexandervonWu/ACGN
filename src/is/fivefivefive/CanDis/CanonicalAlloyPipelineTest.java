@@ -130,6 +130,10 @@ public final class CanonicalAlloyPipelineTest {
             CanonicalAlloyPipeline.Prepared orDuplicate =
                     prepare(visitor, "orDuplicate");
             CanonicalAlloyPipeline.Prepared orBare = prepare(visitor, "orBare");
+            CanonicalAlloyPipeline.Prepared iffNestedDuplicate =
+                    prepare(visitor, "iffNestedDuplicate");
+            CanonicalAlloyPipeline.Prepared iffNestedExpanded =
+                    prepare(visitor, "iffNestedExpanded");
             CanonicalAlloyPipeline.Prepared unionDuplicate =
                     prepare(visitor, "unionDuplicate");
             CanonicalAlloyPipeline.Prepared unionBare = prepare(visitor, "unionBare");
@@ -686,6 +690,11 @@ public final class CanonicalAlloyPipelineTest {
                                 .anyMatch(FlatConstructionCertificate::collapsedToSingleton),
                         "ACI singleton collapse must retain exact idempotency evidence");
             }
+            check(iffNestedDuplicate.equivalentTo(iffNestedExpanded)
+                            && CanonicalAlloyPipeline.distance(
+                                    iffNestedDuplicate, iffNestedExpanded) == 0,
+                    "IFF expansion must retain the pre-saturation occurrence carrier "
+                            + "when a nested Set operand adopts its idempotent representative");
             check(quotientDuplicate.equivalentTo(quotientBare),
                     "the certified quotient must equate the contextual duplicate witness");
             check(CanonicalAlloyPipeline.distance(
@@ -3978,6 +3987,16 @@ public final class CanonicalAlloyPipelineTest {
                 + "pred quotientBare { no Trash }\n"
                 + "pred orDuplicate { (some S) or (some S) }\n"
                 + "pred orBare { some S }\n"
+                + "pred iffNestedDuplicate {\n"
+                + "  (some S and ((no T or no S) and no S)) iff "
+                + "((some S and some S) or some T)\n"
+                + "}\n"
+                + "pred iffNestedExpanded {\n"
+                + "  (not (some S and ((no T or no S) and no S)) or "
+                + "((some S and some S) or some T)) and\n"
+                + "  (not ((some S and some S) or some T) or "
+                + "(some S and ((no T or no S) and no S)))\n"
+                + "}\n"
                 + "pred unionDuplicate { some (S + S) }\n"
                 + "pred unionBare { some S }\n"
                 + "pred intersectDuplicate { some (S & S) }\n"
