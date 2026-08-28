@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import is.fivefivefive.CanDis.theory.LeanVerifiedRewrite;
+
 /** Shared, terminating orientation of the Alloy equivalences used by the baselines. */
 final class AlloyRewriteSystem {
     static final int MAX_ITERATIONS = 32;
@@ -168,6 +170,13 @@ final class AlloyRewriteSystem {
                 || !head.startsWith("UE/");
     }
 
+    @LeanVerifiedRewrite({
+            "R0-CORE-001", "R0-CORE-002", "R0-CORE-003", "R0-CORE-004",
+            "R0-CORE-005", "R0-CORE-006", "R0-CORE-013", "R0-CORE-014",
+            "R0-CORE-015", "R0-CORE-016", "R0-CORE-017", "R0-CORE-018",
+            "R0-CORE-019", "R0-CORE-020", "R0-CORE-021", "R0-CORE-022",
+            "R0-CORE-023", "R0-CORE-024"
+    })
     private static AlloyTerm rewriteNode(
             AlloyTerm input,
             ArityMode arityMode,
@@ -331,6 +340,10 @@ final class AlloyRewriteSystem {
         return encodeArity(current, arityMode);
     }
 
+    @LeanVerifiedRewrite({
+            "R0-CORE-007", "R0-CORE-008", "R0-CORE-009", "R0-CORE-010",
+            "R0-CORE-011"
+    })
     private static AlloyTerm rewriteNot(AlloyTerm child) {
         if (isConstant(child, "true")) {
             return bool(false);
@@ -442,6 +455,7 @@ final class AlloyRewriteSystem {
         }
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-011", "R0-CORE-012", "R0-CORE-013", "R0-CORE-014"})
     private static AlloyTerm rewriteQuantifier(AlloyTerm quantifier, String head, boolean negateBody) {
         List<AlloyTerm> children = new ArrayList<>(quantifier.children());
         if (!children.isEmpty() && negateBody) {
@@ -732,6 +746,7 @@ final class AlloyRewriteSystem {
         return names;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-017")
     private static void flatten(String head, AlloyTerm term, List<AlloyTerm> output) {
         if (head.equals(term.head())) {
             for (AlloyTerm child : term.children()) {

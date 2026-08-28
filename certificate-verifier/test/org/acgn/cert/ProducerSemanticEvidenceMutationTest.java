@@ -129,6 +129,7 @@ public final class ProducerSemanticEvidenceMutationTest {
         assertDependentEmptyInteriorShape(relationEmptyInterior);
         assertDistinctBinderOwners(dualBinder);
         assertNestedSameDescriptorOccurrences(nestedBinder);
+        assertLawRecordOneFieldMutations(verifier, container);
 
         for (int scalar = 1; scalar <= 7; scalar++) {
             final int field = scalar;
@@ -864,6 +865,50 @@ public final class ProducerSemanticEvidenceMutationTest {
                         && !first.scalar(6).equals(second.scalar(6))
                         && !first.scalar(7).equals(second.scalar(7)),
                 "nested descriptor occurrences must retain distinct evidence and endpoints");
+    }
+
+    private static void assertLawRecordOneFieldMutations(
+            IndependentVerifier verifier,
+            byte[] container) {
+        Wire.Node root = Codec.decode(container, Limits.defaults());
+        Wire.Node laws = root.child(1).child(1).child(3).child(0);
+        check(laws.children().size() == 1,
+                "container fixture must carry exactly one fixed law record");
+        Wire.Node record = laws.child(0);
+        check(record.tag().equals("law-certificate")
+                        && record.scalars().size() == 17,
+                "fixed law record must expose its complete seventeen-field index");
+        for (int scalar = 0; scalar < record.scalars().size(); scalar++) {
+            final int field = scalar;
+            assertRejected(
+                    verifier,
+                    mutateRecord(container, 0, current -> {
+                        List<String> scalars = new ArrayList<>(current.scalars());
+                        scalars.set(field, mutatedLawScalar(current, field));
+                        return Wire.node(current.tag(), scalars, current.children());
+                    }),
+                    FailureCode.THEORY_MISMATCH,
+                    "law-certificate scalar mutation " + field);
+        }
+    }
+
+    private static String mutatedLawScalar(Wire.Node record, int field) {
+        return switch (field) {
+            case 0 -> record.scalar(9);
+            case 1 -> "TEST_ONLY";
+            case 2, 3, 4, 8, 14, 15 -> record.scalar(field) + "-mutated";
+            case 5 -> record.scalar(5).equals("1") ? "0" : "1";
+            case 6 -> record.scalar(6).equals("ASSOCIATIVITY")
+                    ? "COMMUTATIVITY" : "ASSOCIATIVITY";
+            case 7 -> "0".repeat(64);
+            case 9 -> record.scalar(10);
+            case 10 -> record.scalar(9);
+            case 11 -> record.scalar(12);
+            case 12 -> record.scalar(11);
+            case 13 -> "BINDER_OCCURRENCE";
+            case 16 -> record.scalar(16).equals("0") ? "1" : "0";
+            default -> throw new AssertionError(field);
+        };
     }
 
     private static void assertVerified(

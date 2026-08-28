@@ -12,10 +12,16 @@ javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
   -d "$classes" "${sources[@]}"
 
 tests=(
+  is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest
+  is.fivefivefive.CanDis.RequiredPolicyCoverageTest
+  is.fivefivefive.CanDis.CallExtractionRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest
+  is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
+  is.fivefivefive.CanDis.SemanticProfileSourceCommandTest
+  is.fivefivefive.CanDis.TheoryLawPolicyRegressionTest
   is.fivefivefive.CanDis.VisualizationAnalysisServiceTest
   is.fivefivefive.CanDis.VisualizationProcessRunnerTest
   is.fivefivefive.CanDis.ablation.EGraphAblationTest
@@ -28,6 +34,7 @@ tests=(
   is.fivefivefive.CanDis.theory.TheoryCertificatesTest
   is.fivefivefive.CanDis.theory.TheoryCoherentInsertionTest
   is.fivefivefive.CanDis.theory.TheoryRebuildTest
+  is.fivefivefive.CanDis.theory.Phase4ProducerTransitionEvidenceTest
   is.fivefivefive.CanDis.theory.TheoryFiniteUnfoldingTest
   is.fivefivefive.CanDis.theory.TheoryDeterminismTest
   is.fivefivefive.CanDis.theory.CertificateProvenanceTest

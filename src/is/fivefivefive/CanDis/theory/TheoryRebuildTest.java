@@ -21,6 +21,7 @@ public final class TheoryRebuildTest {
     }
 
     public static void main(String[] args) {
+        testFiniteRebuildProcessingBound();
         testCertifiedCollisionRebuild();
         testIncomparableCollisionBucket();
         testSameRevisionWitnessChangeInvalidatesCollisionMemo();
@@ -36,6 +37,24 @@ public final class TheoryRebuildTest {
         testIllegalMutationRejection();
         System.out.println("TheoryRebuildTest passed: " + checks
                 + " checks; deterministic seed=" + SEED);
+    }
+
+    private static void testFiniteRebuildProcessingBound() {
+        for (int records = 0; records <= 8; records++) {
+            for (int dirty = 0; dirty <= records; dirty++) {
+                for (int leaders = 0; leaders <= 8; leaders++) {
+                    long expected = dirty + (long) records
+                            * Math.max(0, leaders - 1);
+                    check(TypedSlottedPortEGraph.rebuildProcessingBudget(
+                                    dirty, records, leaders) == expected,
+                            "rebuild budget follows the finite record/leader measure");
+                }
+            }
+        }
+        expectThrows(IllegalArgumentException.class,
+                () -> TypedSlottedPortEGraph.rebuildProcessingBudget(2, 1, 1));
+        expectThrows(IllegalArgumentException.class,
+                () -> TypedSlottedPortEGraph.rebuildProcessingBudget(-1, 0, 0));
     }
 
     /** A changed occurrence witness invalidates a negative pair in the same rebuild. */

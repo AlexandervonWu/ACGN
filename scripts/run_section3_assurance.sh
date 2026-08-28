@@ -26,6 +26,7 @@ fi
 
 mkdir -p "$OUTPUT/logs" "$OUTPUT/classes" "$OUTPUT/verifier-classes" \
   "$OUTPUT/verifier-test-classes" "$OUTPUT/certificate-fixtures" \
+  "$OUTPUT/certificate-fixtures-replay" \
   "$OUTPUT/phase6-semantic-order"
 
 failures=0
@@ -66,11 +67,13 @@ printf 'step\tresult\tdetail\n' >"$OUTPUT/step-results.tsv"
 } >"$OUTPUT/run-context.tsv"
 
 input_roots=(
+  .github/workflows/bounded-ci.yml
   certificate-verifier
   docs/section3-assurance-claims.md
   docs/section3-repair-audit
+  lean-toolchain
   lib
-  scripts/run_section3_assurance.sh
+  scripts
   src
 )
 
@@ -139,6 +142,10 @@ run_step package-verifier "$JAVA_TIMEOUT" \
   jar --create --file "$OUTPUT/acgn-certificate-verifier.jar" \
   --main-class org.acgn.cert.Main -C "$OUTPUT/verifier-classes" .
 
+run_step rewrite-rule-traceability "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \
+  is.fivefivefive.CanDis.RewriteRuleTraceability "$ROOT"
+
 run_step traceability-catalog-fresh "$JAVA_TIMEOUT" \
   bash -c '
     set -euo pipefail
@@ -149,7 +156,10 @@ run_step traceability-catalog-fresh "$JAVA_TIMEOUT" \
     "$OUTPUT/generated-section3-assurance-claims.md"
 
 java_tests=(
+  is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest
+  is.fivefivefive.CanDis.RequiredPolicyCoverageTest
   is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
+  is.fivefivefive.CanDis.RewriteRuleTraceabilityTest
   is.fivefivefive.CanDis.SemanticProfileSourceCommandTest
   is.fivefivefive.CanDis.CallExtractionRegressionTest
   is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
@@ -157,8 +167,11 @@ java_tests=(
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.EGraphSaturationTest
+  is.fivefivefive.CanDis.FullCorpusNonTemporalP0RegressionTest
+  is.fivefivefive.CanDis.VisualizationAnalysisServiceTest
   is.fivefivefive.CanDis.TheoryLawPolicyRegressionTest
   is.fivefivefive.CanDis.ablation.EGraphAblationTest
+  is.fivefivefive.CanDis.augmentation.EquivalenceAugmenterTest
   is.fivefivefive.CanDis.metric.QuotientRepairDistanceTest
   is.fivefivefive.CanDis.theory.TheoryPortsTest
   is.fivefivefive.CanDis.theory.TheoryStateTest
@@ -167,6 +180,7 @@ java_tests=(
   is.fivefivefive.CanDis.theory.TheoryCertificatesTest
   is.fivefivefive.CanDis.theory.TheoryCoherentInsertionTest
   is.fivefivefive.CanDis.theory.TheoryRebuildTest
+  is.fivefivefive.CanDis.theory.Phase4ProducerTransitionEvidenceTest
   is.fivefivefive.CanDis.theory.TheoryFiniteUnfoldingTest
   is.fivefivefive.CanDis.theory.TheoryDeterminismTest
   is.fivefivefive.CanDis.theory.TheoryDependentChainTest
@@ -197,6 +211,24 @@ run_step producer-certificate-fixtures "$JAVA_TIMEOUT" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.theory.CertificateBundleWriterTest \
   "$OUTPUT/certificate-fixtures"
+run_step producer-certificate-fixtures-replay "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
+  -cp "$OUTPUT/classes:$ROOT/lib/*" \
+  is.fivefivefive.CanDis.theory.CertificateBundleWriterTest \
+  "$OUTPUT/certificate-fixtures-replay"
+run_step producer-certificate-fixtures-deterministic "$JAVA_TIMEOUT" \
+  bash -c '
+    set -euo pipefail
+    first="$1"
+    second="$2"
+    mapfile -t first_names < <(find "$first" -mindepth 1 -maxdepth 1 -type f -printf "%f\n" | sort)
+    mapfile -t second_names < <(find "$second" -mindepth 1 -maxdepth 1 -type f -printf "%f\n" | sort)
+    [[ "${first_names[*]}" == "${second_names[*]}" ]]
+    for name in "${first_names[@]}"; do
+      cmp "$first/$name" "$second/$name"
+    done
+  ' certificate-determinism "$OUTPUT/certificate-fixtures" \
+    "$OUTPUT/certificate-fixtures-replay"
 run_step producer-Phase6SemanticOrderProducerRegressionTest "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" "${provenance_options[@]}" \
   -cp "$OUTPUT/classes:$ROOT/lib/*" \
@@ -225,6 +257,38 @@ run_step verifier-Phase6SemanticOrderVerifierRegressionTest "$JAVA_TIMEOUT" \
   "$OUTPUT/phase6-semantic-order/polymorphic.acgncert" \
   "$OUTPUT/phase6-semantic-order/monomorphic.acgncert" \
   "$OUTPUT/phase6-semantic-order"
+
+empty_theory_digest=9acf2f195da2b489ddf1537bc42c933b569f35390e248682802240a713334f6c
+parent_theory_digest=0901e1ee21d8f82c128ebc93f0e5f1e0b421f7a6833ec16cf5473df3b222b147
+run_step verifier-ProducerBundleInspectionTest "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" \
+  -cp "$OUTPUT/verifier-classes:$OUTPUT/verifier-test-classes" \
+  org.acgn.cert.ProducerBundleInspectionTest \
+  "$OUTPUT/certificate-fixtures/nullary-a.acgncert" \
+  "$OUTPUT/certificate-fixtures-replay/nullary-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/slot-only-a.acgncert" \
+  "$OUTPUT/certificate-fixtures-replay/slot-only-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/parent-path-a.acgncert" \
+  "$OUTPUT/certificate-fixtures-replay/parent-path-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/pair-equivalent-left.acgncert" \
+  "$OUTPUT/certificate-fixtures-replay/pair-equivalent-right.acgncert" \
+  "$OUTPUT/certificate-fixtures-replay/pair-non-equivalent.acgncert" \
+  "$ROOT" "$OUTPUT/acgn-producer.jar" \
+  "$OUTPUT/acgn-certificate-verifier.jar" \
+  "$empty_theory_digest" "$parent_theory_digest"
+run_step verifier-TrustedTheoryPinsTest "$JAVA_TIMEOUT" \
+  java -ea -Xmx"$JAVA_HEAP" \
+  -cp "$OUTPUT/verifier-classes:$OUTPUT/verifier-test-classes" \
+  org.acgn.cert.TrustedTheoryPinsTest \
+  "$ROOT/certificate-verifier/trusted/theory-pins.tsv" \
+  "$OUTPUT/certificate-fixtures/nullary-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/slot-only-a.acgncert" \
+  "$OUTPUT/certificate-fixtures/parent-path-a.acgncert"
+
+run_step publication-manifest-contracts "$JAVA_TIMEOUT" \
+  "$ROOT/scripts/run_publication_manifest_tests.sh"
+run_step imported-publication-snapshot "$JAVA_TIMEOUT" \
+  "$ROOT/scripts/verify_imported_publication_snapshot.sh"
 
 mapfile -t mapped_lean_files < <(
   awk -F '\t' 'NR > 1 && $3 != "" && $3 != "MISSING" { print $3 }' \
@@ -260,6 +324,9 @@ run_step java-ConcreteRepairMetricRefinementTest "$JAVA_TIMEOUT" \
 run_step lean-forbidden-token-scan "$LEAN_TIMEOUT" \
   bash -c '! rg -n '\''\b(sorry|admit|axiom|unsafe)\b'\'' "$1" --glob '\''*.lean'\''' \
   assurance-scan "$ROOT/docs/section3-repair-audit/formal"
+run_step lean-explicit-assumption-inventory "$LEAN_TIMEOUT" \
+  python3 "$ROOT/scripts/audit_lean_assumptions.py" \
+  --root "$ROOT" --output "$OUTPUT/lean-assumptions" --lean "$LEAN_BIN"
 
 run_step traceability-tests "$JAVA_TIMEOUT" \
   java -ea -Xmx"$JAVA_HEAP" -cp "$OUTPUT/classes:$ROOT/lib/*" \

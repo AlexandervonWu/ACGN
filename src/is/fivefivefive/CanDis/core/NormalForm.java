@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
+import is.fivefivefive.CanDis.theory.LeanVerifiedRewrite;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.ir.IRAgent;
 import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
@@ -676,6 +677,7 @@ public class NormalForm {
         }
     }
 
+    @LeanVerifiedRewrite("R0-CORE-010")
     public void pushTemporalNegations() {
         synchronized (lifecycleLock) {
         requireMutable();
@@ -1159,6 +1161,7 @@ public class NormalForm {
         }
     }
 
+    @LeanVerifiedRewrite("R0-STRUCT-001")
     private static EGraphNode alphaRenameBoundVariables(
             EGraphNode node,
             Map<String, String> scope,
@@ -1217,6 +1220,7 @@ public class NormalForm {
         return renamed;
     }
 
+    @LeanVerifiedRewrite("R0-STRUCT-001")
     private static EGraphNode alphaRenameRelDecl(
             EGraphNode declaration,
             Map<String, String> bodyScope,
@@ -1306,6 +1310,7 @@ public class NormalForm {
                 || quantifier == Quantifier.NOTLONE;
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-004", "R0-CORE-005", "R0-CORE-006"})
     private static EGraphNode rewriteBranchConnectives(EGraphNode node) {
         if (node == null) {
             return null;
@@ -1372,6 +1377,7 @@ public class NormalForm {
         return rewritten;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-003")
     private static EGraphNode betaRewriteLet(EGraphNode node, Map<String, EGraphNode> bindings) {
         if (node == null) {
             return null;
@@ -1460,6 +1466,10 @@ public class NormalForm {
                 canLiftSome, canLiftAll, globalLift, slots, null);
     }
 
+    @LeanVerifiedRewrite({
+            "R0-CORE-011", "R0-CORE-012", "R0-CORE-013", "R0-CORE-015",
+            "R0-CORE-016"
+    })
     private EGraphNode prenexWithBoundaryAllowance(
             EGraphNode node,
             Map<String, QuantiVar> env,
@@ -1680,6 +1690,7 @@ public class NormalForm {
         return node;
     }
 
+    @LeanVerifiedRewrite("R0-BIND-002")
     private static EGraphNode eliminateSingleMembershipQuantifier(
             EGraphNode quantifier) {
         Opcode quantifierOpcode = quantifier.getOpcode();
@@ -1810,6 +1821,7 @@ public class NormalForm {
         return false;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-008")
     private EGraphNode prenexNegatedNonQuantifier(
             EGraphNode node,
             Map<String, QuantiVar> env,
@@ -2317,6 +2329,7 @@ public class NormalForm {
         return false;
     }
 
+    @LeanVerifiedRewrite("R0-BIND-001")
     private RelDeclResult prenexRelDecl(
             Opcode quantifierOpcode,
             EGraphNode relDecl,
@@ -2401,6 +2414,7 @@ public class NormalForm {
         }
     }
 
+    @LeanVerifiedRewrite("R0-CORE-013")
     private static Boolean emptyTupleDomainValue(
             EGraphNode quantifierNode,
             Quantifier quantifier) {
@@ -2420,6 +2434,7 @@ public class NormalForm {
         return null;
     }
 
+    @LeanVerifiedRewrite("R0-BIND-001")
     private static EGraphNode applyDomainConstraints(EGraphNode body, List<EGraphNode> constraints, Quantifier quantifier) {
         if (constraints.isEmpty()) {
             return body;
@@ -2498,6 +2513,10 @@ public class NormalForm {
         }
     }
 
+    @LeanVerifiedRewrite({
+            "R0-CORE-007", "R0-CORE-020", "R0-CORE-021", "R0-CORE-022",
+            "R0-CORE-023", "R0-CORE-024", "R0-REL-004", "R0-REL-034"
+    })
     private static EGraphNode normalizeGuardedSourceRules(
             EGraphNode node,
             Map<String, QuantiVar> bindings) {
@@ -2579,7 +2598,7 @@ public class NormalForm {
             EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
                     node, node.getChildClasses());
             if (lattice != null) {
-                return lattice;
+                return normalizeGuardedSourceRules(lattice, bindings);
             }
         }
 
@@ -2647,7 +2666,7 @@ public class NormalForm {
             EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
                     node, node.getChildClasses());
             if (lattice != null) {
-                return lattice;
+                return normalizeGuardedSourceRules(lattice, bindings);
             }
             EGraphNode abstractCarrier =
                     EGraphNode.parserCertifiedAbstractUnionCarrier(
@@ -2733,7 +2752,7 @@ public class NormalForm {
             EGraphNode lattice = EGraphNode.parserCertifiedLatticeNormalForm(
                     node, node.getChildClasses());
             if (lattice != null) {
-                return lattice;
+                return normalizeGuardedSourceRules(lattice, bindings);
             }
         }
 
@@ -2910,6 +2929,7 @@ public class NormalForm {
         return EGraphNode.isSetConstant(node, "univ");
     }
 
+    @LeanVerifiedRewrite({"R0-REL-028", "R0-REL-033"})
     private static EGraphNode normalizeRelationalUnaryAndIdentityRules(
             EGraphNode node,
             List<EGraphNode> rewritten,
@@ -3080,6 +3100,7 @@ public class NormalForm {
         return node;
     }
 
+    @LeanVerifiedRewrite("R0-REL-001")
     private static EGraphNode distributeTransposeThroughContainer(
             EGraphNode transpose,
             EGraphNode container) {
@@ -3202,6 +3223,7 @@ public class NormalForm {
                 && leftType.sameOccurrenceEvidenceAs(rightType);
     }
 
+    @LeanVerifiedRewrite("R0-REL-032")
     private static List<EGraphNode> removeSubrelationsCoveredByFullCarriers(
             List<EGraphNode> children) {
         List<EGraphNode> retained = new ArrayList<>(children.size());
@@ -3302,6 +3324,7 @@ public class NormalForm {
         return false;
     }
 
+    @LeanVerifiedRewrite("R0-REL-032")
     private static List<EGraphNode> removeFullCarriersContainingSubrelations(
             List<EGraphNode> children) {
         List<EGraphNode> retained = new ArrayList<>(children.size());
@@ -3510,6 +3533,7 @@ public class NormalForm {
         return constraint;
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-007", "R0-CORE-008", "R0-CORE-009"})
     private static EGraphNode toNNF(EGraphNode node, boolean negated) {
         if (node == null) {
             return null;
@@ -3633,6 +3657,7 @@ public class NormalForm {
         return rewritten;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-002")
     private static EGraphNode removeEndNodes(EGraphNode node) {
         if (node == null || node.getOpcode() == Opcode.END) {
             return null;
@@ -3747,6 +3772,7 @@ public class NormalForm {
         }
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-017", "R0-CORE-018", "R0-CORE-019"})
     private static EGraphNode normalizeAssociativeCommutative(EGraphNode node) {
         if (node == null) {
             return null;
@@ -3775,6 +3801,7 @@ public class NormalForm {
      * applying commutativity or idempotence before certification. Quantifier,
      * temporal, and all other operator nodes remain explicit barriers.
      */
+    @LeanVerifiedRewrite("R0-CORE-017")
     private static EGraphNode flattenBooleanAssociationForPrenex(
             EGraphNode node) {
         if (node == null) {
@@ -3797,6 +3824,7 @@ public class NormalForm {
         return flattened;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-005")
     private static EGraphNode expandIff(EGraphNode node, boolean negated) {
         EGraphNode left = node.getChildren().get(0);
         EGraphNode right = node.getChildren().get(1);
@@ -3829,6 +3857,7 @@ public class NormalForm {
         return conjunction;
     }
 
+    @LeanVerifiedRewrite("R0-CORE-006")
     private static EGraphNode expandIte(EGraphNode node, boolean negated) {
         EGraphNode condition = node.getChildren().get(0);
         EGraphNode thenBranch = node.getChildren().get(1);
@@ -4013,6 +4042,7 @@ public class NormalForm {
         return opcode == Opcode.AND ? Opcode.OR : Opcode.AND;
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-009", "R0-CORE-010"})
     private static Opcode dualOpcode(Opcode opcode) {
         switch (opcode) {
             case EQUALS:
@@ -4183,6 +4213,7 @@ public class NormalForm {
         return opcode == Opcode.DISJ || opcode == Opcode.DISJVAR;
     }
 
+    @LeanVerifiedRewrite({"R0-CORE-011", "R0-CORE-012"})
     private static Quantifier quantifierOf(Opcode opcode, boolean negated) {
         switch (opcode) {
             case FORALL:

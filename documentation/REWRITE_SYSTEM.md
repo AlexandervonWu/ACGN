@@ -329,6 +329,40 @@ R & R                -> R
 The last two rules follow from the ACI/SET representation. They do not apply to
 AC/BAG arithmetic operators.
 
+### Boolean and relational lattice normalization
+
+The Boolean and relational ACI lattices use the same four absorption schemas:
+
+```text
+A and (A or B)       -> A
+A or (A and B)       -> A
+R & (R + S)          -> R
+R + (R & S)          -> R
+```
+
+For a flexible-arity owner, each schema is a local submultiset rewrite. It
+removes only the matched dual-container operand and retains every unrelated
+sibling:
+
+```text
+X and A and (A or B) and Y  ->  X and A and Y
+X + R + (R & S) + Y         ->  X + R + Y
+```
+
+The source-rule pass repeats this strictly reducing step before the certified
+matrix snapshot. This matters when one variadic parent contains multiple
+independent absorption redexes. Distributive expansions are oriented in the
+factored direction so the same pass cannot oscillate:
+
+```text
+(A and B) or (A and C)  ->  A and (B or C)
+(R & S) + (R & T)       ->  R & (S + T)
+```
+
+The dual Boolean and relational directions are admitted under the same exact
+operator/type guards. See the P0 incident record in
+[`docs/section3-repair-audit/p0-variadic-absorption-incident.md`](../docs/section3-repair-audit/p0-variadic-absorption-incident.md).
+
 ### Parser-certified restriction and composition laws
 
 The following relational laws run only when the parser-authenticated exact
@@ -482,6 +516,40 @@ production canonicalizer adds temporal partitioning, strict phase-local
 prenexing, binding tuples, renamed slots, and permutation groups around that
 core equivalence vocabulary.
 
+## Proof Connectivity
+
+The immutable `R0` rewrite inventory is governed directly by
+[`rewrite-rule-traceability.tsv`](../docs/section3-repair-audit/rewrite-rule-traceability.tsv).
+It contains 61 semantic rule families: all 24 rules exported by the shared
+ablation rewrite system and 37 production-only binder, alpha, and relational
+families. Every row names at least one independent Lean theorem, every Java
+method that realizes the family, and at least one executable regression entry
+point.
+
+The Java declarations carry `@LeanVerifiedRewrite` rule IDs.
+`RewriteRuleTraceability` checks the connection in both directions: every
+catalog Java reference must have the matching annotation, and every annotation
+must point back to a catalog row. It also rejects a missing Lean theorem, a
+definition substituted for a theorem, a missing test method, a non-approved
+row, any forbidden Lean proof escape, or disagreement between the 24 catalog
+bootstrap names and `JavaEgglog.ruleNames()`. The bounded assurance runner
+executes this gate before the semantic regressions and compiles every governed
+Lean file.
+
+The broader claim-level obligations remain in
+[`requirements-traceability.tsv`](../docs/section3-repair-audit/requirements-traceability.tsv).
+`Section3AssuranceTraceability` additionally checks their claim hashes,
+implementation and test declarations, evidence classes, and exact formal-file
+inventory.
+
+This connection has a deliberately exact claim boundary. `PROVED` means the
+listed semantic equation or finite obligation was proved in Lean without
+`sorry`, `admit`, `axiom`, or `unsafe`. `DIRECT` means the named Java
+path was exercised through its parser/type/provenance guards. It does not mean
+Lean verified Java bytecode or that every possible Alloy parser input has been
+exhausted. Open broader refinement diagnostics remain open in the generated
+assurance catalog rather than being promoted by a rewrite-level proof.
+
 ## Executable Checks
 
 The principal regression suites are:
@@ -490,6 +558,7 @@ The principal regression suites are:
 java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.EGraphSaturationTest
 java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.ablation.EGraphAblationTest
 java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.CanonicalBacktranslatorTest
+java -cp '/tmp/acgn-build:lib/*' is.fivefivefive.CanDis.RewriteRuleTraceability .
 ```
 
 `EGraphSaturationTest` and `EGraphAblationTest` cover branch negation,

@@ -603,18 +603,18 @@ public final class CanonicalAlloyPipelineTest {
             CanonicalAlloyPipeline.Prepared modularIntegerPlusBare =
                     prepare(visitor, "integerPlusBare", modularProfile);
             check(modularAlpha.semanticArtifact().semanticProfile().equals(modularProfile),
-                    "Explicit production profile reaches the certified artifact");
+                    "Explicit compatibility profile reaches the internal artifact");
             modularAlpha.semanticArtifact().containerLaws().forEach((operator, declarations) ->
                     declarations.forEach(declaration ->
                             declaration.certificates().values().forEach(certificate -> {
                                 check(certificate.authority()
                                                 == ContainerLawCertificate.Authority
                                                         .ALLOY_PROFILE_THEORY,
-                                        "Production artifacts reject fixture law authority");
+                                        "Internal artifacts reject fixture law authority");
                                 check(certificate.semanticProfile().equals(modularProfile),
-                                        "Every production law is indexed by the selected profile");
+                                        "Every law is indexed by the selected compatibility profile");
                                 check(certificate.operatorIdentity().equals(operator),
-                                        "Every production law is indexed by its exact operator");
+                                        "Every internal law is indexed by its exact operator");
                             })));
 
             CanonicalAlloyPipeline.Prepared compactPositive =
@@ -1645,6 +1645,20 @@ public final class CanonicalAlloyPipelineTest {
                 "  (some p) or ((some p) and (some q))",
                 "}",
                 "pred boolAbsorbOrExpected[p,q:set U] { some p }",
+                "pred boolAbsorbAndContext[p,q,r,s:set U] {",
+                "  (some p) and (some q) and ((some q) or (some r)) and",
+                "    (some s) and ((some s) or (some p))",
+                "}",
+                "pred boolAbsorbAndContextExpected[p,q,r,s:set U] {",
+                "  (some p) and (some q) and (some s)",
+                "}",
+                "pred boolAbsorbOrContext[p,q,r,s:set U] {",
+                "  (some p) or (some q) or ((some q) and (some r)) or",
+                "    (some s) or ((some s) and (some p))",
+                "}",
+                "pred boolAbsorbOrContextExpected[p,q,r,s:set U] {",
+                "  (some p) or (some q) or (some s)",
+                "}",
                 "pred boolDistributeAnd[p,q,r:set U] {",
                 "  (some p) and ((some q) or (some r))",
                 "}",
@@ -1665,6 +1679,18 @@ public final class CanonicalAlloyPipelineTest {
                 "  some (p + (p & q))",
                 "}",
                 "pred relationAbsorbUnionExpected[p,q:set U] { some p }",
+                "pred relationAbsorbIntersectContext[p,q,r,s:set U] {",
+                "  some (p & q & (q + r) & s & (s + p))",
+                "}",
+                "pred relationAbsorbIntersectContextExpected[p,q,r,s:set U] {",
+                "  some (p & q & s)",
+                "}",
+                "pred relationAbsorbUnionContext[p,q,r,s:set U] {",
+                "  some (p + q + (q & r) + s + (s & p))",
+                "}",
+                "pred relationAbsorbUnionContextExpected[p,q,r,s:set U] {",
+                "  some (p + q + s)",
+                "}",
                 "pred relationDistributeIntersect[p,q,r:set U] {",
                 "  some (p & (q + r))",
                 "}",
@@ -1702,6 +1728,12 @@ public final class CanonicalAlloyPipelineTest {
                 "  boolAbsorbAnd[p,q] iff boolAbsorbAndExpected[p,q] }",
                 "assert BooleanAbsorbOr { all p,q:set U |",
                 "  boolAbsorbOr[p,q] iff boolAbsorbOrExpected[p,q] }",
+                "assert BooleanAbsorbAndContext { all p,q,r,s:set U |",
+                "  boolAbsorbAndContext[p,q,r,s] iff",
+                "    boolAbsorbAndContextExpected[p,q,r,s] }",
+                "assert BooleanAbsorbOrContext { all p,q,r,s:set U |",
+                "  boolAbsorbOrContext[p,q,r,s] iff",
+                "    boolAbsorbOrContextExpected[p,q,r,s] }",
                 "assert BooleanDistributeAnd { all p,q,r:set U |",
                 "  boolDistributeAnd[p,q,r] iff boolDistributeAndExpected[p,q,r] }",
                 "assert BooleanDistributeOr { all p,q,r:set U |",
@@ -1710,6 +1742,10 @@ public final class CanonicalAlloyPipelineTest {
                 "  p & (p + q) = p }",
                 "assert RelationAbsorbUnion { all p,q:set U |",
                 "  p + (p & q) = p }",
+                "assert RelationAbsorbIntersectContext { all p,q,r,s:set U |",
+                "  p & q & (q + r) & s = p & q & s }",
+                "assert RelationAbsorbUnionContext { all p,q,r,s:set U |",
+                "  p + q + (q & r) + s = p + q + s }",
                 "assert RelationDistributeIntersect { all p,q,r:set U |",
                 "  p & (q + r) = (p & q) + (p & r) }",
                 "assert RelationDistributeUnion { all p,q,r:set U |",
@@ -1723,10 +1759,14 @@ public final class CanonicalAlloyPipelineTest {
                 "    = (p + q) -> (p + q) }",
                 "check BooleanAbsorbAnd for 3",
                 "check BooleanAbsorbOr for 3",
+                "check BooleanAbsorbAndContext for 3",
+                "check BooleanAbsorbOrContext for 3",
                 "check BooleanDistributeAnd for 3",
                 "check BooleanDistributeOr for 3",
                 "check RelationAbsorbIntersect for 3",
                 "check RelationAbsorbUnion for 3",
+                "check RelationAbsorbIntersectContext for 3",
+                "check RelationAbsorbUnionContext for 3",
                 "check RelationDistributeIntersect for 3",
                 "check RelationDistributeUnion for 3",
                 "check ProductRightSlot for 3",
@@ -1743,10 +1783,16 @@ public final class CanonicalAlloyPipelineTest {
         String[][] equivalentPairs = {
                 {"boolAbsorbAnd", "boolAbsorbAndExpected"},
                 {"boolAbsorbOr", "boolAbsorbOrExpected"},
+                {"boolAbsorbAndContext", "boolAbsorbAndContextExpected"},
+                {"boolAbsorbOrContext", "boolAbsorbOrContextExpected"},
                 {"boolDistributeAnd", "boolDistributeAndExpected"},
                 {"boolDistributeOr", "boolDistributeOrExpected"},
                 {"relationAbsorbIntersect", "relationAbsorbIntersectExpected"},
                 {"relationAbsorbUnion", "relationAbsorbUnionExpected"},
+                {"relationAbsorbIntersectContext",
+                        "relationAbsorbIntersectContextExpected"},
+                {"relationAbsorbUnionContext",
+                        "relationAbsorbUnionContextExpected"},
                 {"relationDistributeIntersect", "relationDistributeIntersectExpected"},
                 {"relationDistributeUnion", "relationDistributeUnionExpected"},
                 {"productRightSlot", "productRightSlotExpected"},

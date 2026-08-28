@@ -62,6 +62,8 @@ public final class CallExtractionRegressionTest {
                 "CALL instrumentation must count visited parser occurrences");
         check(extractionStats.containingCalls() >= 2,
                 "CALL instrumentation must count nested and mixed calls");
+        check(extractionStats.capturedVisits() == extractionStats.occurrences(),
+                "every parser CALL must be captured before graph registration");
         check(extractionStats.validatedVisits() == extractionStats.occurrences(),
                 "every counted parser CALL must have one validated visit");
 

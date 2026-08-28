@@ -26,6 +26,22 @@ public final class Section3AssuranceTraceabilityTest {
             check(valid.ready() == 1, "complete synthetic row is ready");
             check(valid.failures().isEmpty(), "complete synthetic row has no failures");
 
+            Path annotatedImplementation = root.resolve("src/Boundary.java");
+            String plainImplementation = Files.readString(
+                    annotatedImplementation, StandardCharsets.UTF_8);
+            Files.writeString(annotatedImplementation,
+                    "final class Boundary {\n"
+                            + "  @Marker({\"R0-A\", nested(\"R0-B\")})\n"
+                            + "  void rejectMissing() {}\n"
+                            + "}\n",
+                    StandardCharsets.UTF_8);
+            Section3AssuranceTraceability.Assessment annotated =
+                    Section3AssuranceTraceability.assess(root);
+            check(annotated.failures().isEmpty(),
+                    "balanced Java annotations do not hide declarations");
+            Files.writeString(annotatedImplementation, plainImplementation,
+                    StandardCharsets.UTF_8);
+
             mutateAndExpect(root, 1, "claim hash mismatch",
                     row -> replaceCell(row, 1, "0".repeat(64)));
             mutateAndExpect(root, 1, "formal file does not exist",
@@ -42,6 +58,13 @@ public final class Section3AssuranceTraceabilityTest {
                     row -> replaceCell(row, 5, "MISSING"));
             mutateAndExpect(root, 1, "test Java declaration not found",
                     row -> replaceCell(row, 5, "src/BoundaryTest.java#absentTest"));
+            Path callableTest = root.resolve("src/BoundaryTest.java");
+            String callableSource = Files.readString(callableTest, StandardCharsets.UTF_8);
+            Files.writeString(callableTest,
+                    "final class BoundaryTest { int missingEvidenceRejects; }\n",
+                    StandardCharsets.UTF_8);
+            expectFailure(root, "test Java declaration not found");
+            Files.writeString(callableTest, callableSource, StandardCharsets.UTF_8);
             mutateAndExpect(root, 1, "not an exact Java identifier",
                     row -> replaceCell(row, 4, "src/Boundary.java#reject missing"));
             mutateAndExpect(root, 1, "lacks ROBUSTNESS",
@@ -128,6 +151,19 @@ public final class Section3AssuranceTraceabilityTest {
                     "docs/section3-repair-audit/claim-ledger.md");
             String originalLedger = Files.readString(ledger, StandardCharsets.UTF_8);
             Files.writeString(ledger,
+                    originalLedger.replace("`PROVED/DIRECT`", "`BLOCKED`"),
+                    StandardCharsets.UTF_8);
+            expectFailure(root, "ledger state is BLOCKED; matrix state is PROVED/DIRECT");
+            Files.writeString(ledger, originalLedger, StandardCharsets.UTF_8);
+
+            Files.writeString(ledger,
+                    originalLedger.replace(
+                            "`PROVED/DIRECT` |", "`PROVED/DIRECT` | `BLOCKED` |"),
+                    StandardCharsets.UTF_8);
+            expectThrows(root, "must have exactly 6 columns");
+            Files.writeString(ledger, originalLedger, StandardCharsets.UTF_8);
+
+            Files.writeString(ledger,
                     originalLedger.replace("| A-01 |", "| A-1 |"),
                     StandardCharsets.UTF_8);
             expectThrows(root, "Malformed requirement ID");
@@ -160,7 +196,7 @@ public final class Section3AssuranceTraceabilityTest {
                 "| ID | Class | Atomic claim | Formal obligation | Evidence | State |\n"
                         + "| --- | --- | --- | --- | --- | --- |\n"
                         + "| A-01 | F/I | " + claim
-                        + " | theorem | test | `BLOCKED` |\n",
+                        + " | theorem | test | `PROVED/DIRECT` |\n",
                 StandardCharsets.UTF_8);
         Files.writeString(audit.resolve("assurance-scope.tsv"),
                 "requirement_id\tclaim_class\tclaim_sha256\n"

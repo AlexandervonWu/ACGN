@@ -136,7 +136,10 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     private long nextCallOccurrenceId;
     private long callOccurrences;
     private long callsContainingCalls;
+    private long capturedCallVisits;
     private long validatedCallVisits;
+    private final Map<AugmentedNode, CallVisitCapture> callVisitCaptures =
+            new java.util.IdentityHashMap<>();
     private Set<String> selectedCallables;
     private AugmentedNode overallRoot;
     private Map<String, SigSymbol> unfoundSigs;
@@ -267,7 +270,8 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     }
     public CallExtractionStats callExtractionStats() {
         return new CallExtractionStats(
-                callOccurrences, callsContainingCalls, validatedCallVisits);
+                callOccurrences, callsContainingCalls,
+                capturedCallVisits, validatedCallVisits);
     }
     // visits, all non-predicates are discarded. 
     // consider AAME into it. 
@@ -316,7 +320,9 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         callOccurrences = 0;
         callsContainingCalls = 0;
+        capturedCallVisits = 0;
         validatedCallVisits = 0;
+        callVisitCaptures.clear();
         nextCallOccurrenceId = 0;
         indexReachableGlobalRelations();
         indexCallableDeclarations(n);
@@ -1161,7 +1167,13 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
                 descriptor.arity,
                 nextCallOccurrenceId++,
                 descriptor.arityAuthority);
-        AugmentedNode callNode = new AugmentedNode(syntactic, uniqueNode.size(), callSymbol);
+        CallVisitCapture capture = new CallVisitCapture(
+                syntactic, uniqueNode.size(), callSymbol);
+        AugmentedNode callNode = capture.node();
+        if (callVisitCaptures.put(callNode, capture) != null) {
+            throw new IllegalStateException("A CALL node was captured more than once");
+        }
+        capturedCallVisits++;
         callNode.setMaxDownlinks(callSymbol.getMaxDownlinks());
         uniqueNode.put(callSymbol, callNode);
         if (arguments.size() != callSymbol.getDeclaredArity()) {
@@ -1214,6 +1226,11 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             iter++;
         }
         visitAndConnectAt(callNode, endNode, iter, arg, callTov);
+        if (!capture.matches(callNode, callSymbol)
+                || callVisitCaptures.get(callNode) != capture) {
+            throw new IllegalStateException(
+                    "A CALL visit no longer matches its creation-time capture");
+        }
         validateCompletedCallVisit(callNode, callSymbol, localGraph, callTov);
         validatedCallVisits++;
         return callNode;
@@ -1242,14 +1259,17 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     public static final class CallExtractionStats {
         private final long occurrences;
         private final long containingCalls;
+        private final long capturedVisits;
         private final long validatedVisits;
 
         private CallExtractionStats(
                 long occurrences,
                 long containingCalls,
+                long capturedVisits,
                 long validatedVisits) {
             this.occurrences = occurrences;
             this.containingCalls = containingCalls;
+            this.capturedVisits = capturedVisits;
             this.validatedVisits = validatedVisits;
         }
 
@@ -1261,8 +1281,39 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             return containingCalls;
         }
 
+        public long capturedVisits() {
+            return capturedVisits;
+        }
+
         public long validatedVisits() {
             return validatedVisits;
+        }
+    }
+
+    /** A CALL node and its parser-owned identity captured in one construction step. */
+    private static final class CallVisitCapture {
+        private final AugmentedNode node;
+        private final CallSymbol symbol;
+        private final long occurrenceId;
+
+        private CallVisitCapture(
+                int syntactic,
+                int semantic,
+                CallSymbol symbol) {
+            this.symbol = java.util.Objects.requireNonNull(symbol, "CALL symbol");
+            this.occurrenceId = symbol.getOccurrenceId();
+            this.node = new AugmentedNode(syntactic, semantic, symbol);
+        }
+
+        private AugmentedNode node() {
+            return node;
+        }
+
+        private boolean matches(AugmentedNode candidate, CallSymbol candidateSymbol) {
+            return candidate == node
+                    && candidateSymbol == symbol
+                    && candidate.getSymbol() == symbol
+                    && candidateSymbol.getOccurrenceId() == occurrenceId;
         }
     }
 
