@@ -7,8 +7,8 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CATALOG="$ROOT/docs/section3-repair-audit/rewrite-rule-traceability.tsv"
 EXPECTED_TOOLCHAIN="leanprover/lean4:v4.33.0"
 
-if ! command -v rg >/dev/null 2>&1; then
-  printf 'ripgrep is required for fail-closed proof-escape scanning\n' >&2
+if ! command -v grep >/dev/null 2>&1; then
+  printf 'grep is required for fail-closed proof-escape scanning\n' >&2
   exit 1
 fi
 
@@ -90,7 +90,7 @@ if [[ "${#mapped_lean_files[@]}" -eq 0 ]]; then
 fi
 
 formal_root="$(realpath -e "$ROOT/docs/section3-repair-audit/formal")"
-forbidden_lean='\b(sorry|sorryAx|admit|axiom|unsafe|native_decide|extern|partial|implemented_by)\b|\bLean\.ofReduceBool\b'
+forbidden_lean='(^|[^[:alnum:]_])(sorry|sorryAx|admit|axiom|unsafe|native_decide|extern|partial|implemented_by)([^[:alnum:]_]|$)|(^|[^[:alnum:]_])Lean\.ofReduceBool([^[:alnum:]_]|$)'
 for relative_lean_file in "${mapped_lean_files[@]}"; do
   if [[ "$relative_lean_file" != docs/section3-repair-audit/formal/*.lean ]]; then
     printf 'rewrite Lean source is outside the governed directory: %s\n' \
@@ -108,7 +108,7 @@ for relative_lean_file in "${mapped_lean_files[@]}"; do
     exit 1
   fi
   scan_status=0
-  rg -n "$forbidden_lean" "$resolved" || scan_status=$?
+  grep -En -- "$forbidden_lean" "$resolved" || scan_status=$?
   case "$scan_status" in
     0)
       printf 'rewrite Lean source contains a forbidden proof escape: %s\n' \
@@ -133,8 +133,9 @@ python3 "$ROOT/scripts/audit_lean_assumptions.py" \
   --rewrite-only
 
 scan_status=0
-rg -n '\b(sorryAx|Lean\.ofReduceBool)\b' \
-  "$work/assumptions" --glob '*.log' || scan_status=$?
+grep -REn --include='*.log' -- \
+  '(^|[^[:alnum:]_])(sorryAx|Lean\.ofReduceBool)([^[:alnum:]_]|$)' \
+  "$work/assumptions" || scan_status=$?
 case "$scan_status" in
   0)
     printf 'Lean assumption inventory contains a forbidden proof axiom\n' >&2
