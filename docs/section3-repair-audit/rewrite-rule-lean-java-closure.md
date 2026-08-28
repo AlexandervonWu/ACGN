@@ -9,8 +9,10 @@ same row identifier, and source-level regression entry points. It does not
 compare a Lean theorem type with Java behavior, prove Java--Lean refinement, or
 establish an exhaustive census of executable rewrite branches.
 
-The authoritative inventory is
-`docs/section3-repair-audit/rewrite-rule-traceability.tsv`:
+The authoritative inventory is the
+[rewrite-rule traceability table](rewrite-rule-traceability.tsv). Its named
+Lean declarations are in the [formal proof tree](formal/), principally
+[Phase5SourceRules.lean](formal/Phase5SourceRules.lean) for this catalog:
 
 - 61 cataloged rule families;
 - 24 shared bootstrap names, exactly equal to `JavaEgglog.ruleNames()`;
@@ -54,8 +56,9 @@ same change.
    names and the names exported by `JavaEgglog`.
 4. The bounded checks execute the catalog gate, its Java test, the exact
    dispatch-parity script, and the catalog-referenced Lean files.
-5. `Phase5SourceRules.lean` states independent mathematical obligations and
-   explicit models of the active alias and negated-comparison dispatch tables.
+5. [`Phase5SourceRules.lean`](formal/Phase5SourceRules.lean) states independent
+   mathematical obligations and explicit models of the active alias and
+   negated-comparison dispatch tables.
 
 The earlier source-audit parser repair remains relevant: balanced Java
 annotations are erased before source declaration matching so an annotation
