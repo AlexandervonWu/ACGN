@@ -39,7 +39,18 @@ claim. The current assurance state is `INCOMPLETE`.
 - [Prenex ACI scheduling](prenex-aci-scheduling-proof-process.md)
 - [Repair metric assurance record](repair-metric-assurance.md)
 - [Phase 6 streaming and occurrence audit](phase-6-streaming-occurrences.md)
-- [Formal Lean sources](formal/)
+- [Formal Lean source tree](formal/), including the
+  [claim-traceability model](formal/AssuranceTraceability.lean) and the
+  claim-specific files named by the
+  [requirements matrix](requirements-traceability.tsv).
+- [Rewrite-rule catalog boundary](rewrite-rule-lean-java-closure.md), its
+  [rule-to-proof reference table](rewrite-rule-traceability.tsv), and the
+  catalog's [Lean source-rule obligations](formal/Phase5SourceRules.lean).
+
+These are cross-references to bounded evidence only. A compiled Lean declaration
+proves its stated proposition; neither its presence here nor a traceability row
+establishes general Java--Lean refinement, whole-artifact correctness, or a
+complete executable-branch census.
 
 ## Current Machine State
 
