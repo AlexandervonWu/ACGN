@@ -39,7 +39,14 @@ analyses, mutation checks, and published experimental observations; each
 supports only its stated scope. Terms such as *certificate-integrated*,
 *certified*, and *proof-bearing* below name mechanisms or checked evidence
 objects within those bounded scopes, not a proof that the Java implementation
-is correct or faithful as a whole.
+is correct or faithful as a whole. The bounded evidence is indexed in the
+[Section 3 assurance records](docs/section3-repair-audit/README.md), with the
+[Lean source tree](docs/section3-repair-audit/formal/), the
+[requirements traceability matrix](docs/section3-repair-audit/requirements-traceability.tsv),
+and the separate
+[rewrite-rule catalog](docs/section3-repair-audit/rewrite-rule-traceability.tsv)
+available for direct inspection. These links identify evidence; they do not
+enlarge any proof or assurance claim.
 
 ## Headline Results
 
