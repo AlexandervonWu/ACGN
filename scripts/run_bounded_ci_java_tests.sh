@@ -12,6 +12,8 @@ javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
   -d "$classes" "${sources[@]}"
 
 printf 'Running %s\n' is.fivefivefive.CanDis.RewriteRuleTraceability
+printf '%s\n' \
+  'Traceability scope: catalog reference presence only; this gate does not establish Java-Lean refinement or exhaustive executable-branch coverage.'
 java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceability "$ROOT"
 printf 'Running %s\n' is.fivefivefive.CanDis.RewriteRuleTraceabilityTest
