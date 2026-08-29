@@ -1,0 +1,76 @@
+{
+  "schema_version": "2.0",
+  "computed_at_phase": "PDF_QA_PASSED",
+  "inputs": {
+    "paper_registry": "formal/formal-units.yaml",
+    "paper_registry_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b",
+    "formal_source_sha256": "1ee980165520906477f21d527631463639833c3bd9f601854a8c74c5982d6299",
+    "artifact_bridge": "formal/artifact-refinement-map.json",
+    "edge_cases": "formal/edge-case-closure.json",
+    "foundation_profile": "STANDARD_LEAN_EXPLICIT_TCB",
+    "source_tag_gate": {
+      "status": "PASS_EXACT_BIJECTION_REGENERATED_CANDIDATE",
+      "tag_count": 146,
+      "unique_active_id_count": 146,
+      "unique_exact_declaration_count": 146,
+      "files": [
+        "foundations_compressed.tex",
+        "appendixC_vmcai_stage1.tex"
+      ]
+    },
+    "active_manuscript_graph_sha256": "17a1ed53bafabdfbe9fdfda4c28ced12d6fc2de38e5cd663f8d55b05fb7ad183",
+    "correspondence_reviewed_manuscript_graph_sha256": "e5ed4bb73d6b1ca664b5428ad22a5d36b460ef67bca180f261d894c2c647203c",
+    "normalization_contract_sha256": "9b4a84e6b492a65bed6c9446b1c3c9e255e21277caba9cc9d8c31d713c873bc6",
+    "paper_dependency_graph_sha256": "1e85f5d91f7a9478ca1b1573f64e88483bbadd3211442fd1503e453d68d874ec",
+    "compiler_dependency_graph_sha256": "1e430b523cb6dcd8e5db7f22295f2380a6d632ea191d967083ed1c96e094075e",
+    "correspondence_review_sha256": "841a624aa36f87b8a0f66b2cc8c277716292a2699afd65c06bd630b04b3d2332",
+    "clean_build_summary_sha256": "1ae7b4bf23e493eed8a89cdd6cdec3d95b7092a6da52edaf58a0a7d5e019229d",
+    "pdf_qa_report": "formal/pdf-qa-report.json",
+    "pdf_qa_report_sha256": "dd6c601016dcf2836e6c07184b32b62121fa690851c508a4aacbb6da2ea952b5",
+    "pdf_repair_report": "formal/pdf-repair-report.json",
+    "pdf_repair_report_sha256": "9564e03544718a7fea87432e6daf2df487aad68c48e384756af9029786d53f6b",
+    "pdf_qa_post_repair_report": "formal/pdf-qa-post-repair-report.json",
+    "pdf_qa_post_repair_report_sha256": "2a22d232a1c95afce24c1356f28885183fd14da4a154e15e391f3a7c43b982a5"
+  },
+  "registry_metrics": {
+    "active": 146,
+    "mapped_distinct": 146,
+    "uncovered": 0,
+    "unproved": 0,
+    "observed_axiom_union": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ]
+  },
+  "statuses": {
+    "PAPER_FORMAL_CLOSURE": "CLOSED",
+    "PAPER_LEAN_CORRESPONDENCE_CLOSURE": "CLOSED",
+    "ABSTRACT_KERNEL_CLOSURE": "CLOSED",
+    "ARTIFACT_REFINEMENT_CLOSURE": "PARTIAL",
+    "EXPERIMENTAL_REPLAY_CLOSURE": "PARTIAL",
+    "LEAN_GITHUB_PUBLICATION": "OUT_OF_SCOPE_CURRENT_TASK",
+    "PERMITTED_PUBLIC_LABEL": "NO_FORMAL_CLOSURE_CLAIM"
+  },
+  "reasons": {
+    "PAPER_FORMAL_CLOSURE": [
+      "Fresh all-page PDF QA passed on the unchanged post-repair author-source graph. One independent clean LaTeX build passes; all 43 rendered pages were reviewed; the main text occupies pages 1--16, references start on page 17, and appendices start on page 19. PDF-CITE-001, PDF-FLOAT-001, PDF-FLOAT-002, and PDF-FIGURE-001 are closed."
+    ],
+    "PAPER_LEAN_CORRESPONDENCE_CLOSURE": [
+      "Two fresh independent round-2 reviewers unanimously passed all 146 ACTIVE mappings and all 27 named environments on the correspondence-reviewed snapshot. The PDF repair changed only five presentation inputs; foundations_compressed.tex and appendixC_vmcai_stage1.tex remain byte-identical, and no formal statement span or Lean declaration changed."
+    ],
+    "ABSTRACT_KERNEL_CLOSURE": [
+      "All 146 mapped declarations, 83 proof-bearing axiom checks, and two isolated Lean 4.33.0 clean builds pass on the frozen formal source/config graph."
+    ],
+    "ARTIFACT_REFINEMENT_CLOSURE": [
+      "Six theorem-critical Java bridge rows remain OPEN; no Lean refinement proof or Lean-checked implementation trace exists."
+    ],
+    "EXPERIMENTAL_REPLAY_CLOSURE": [
+      "Raw-source normalization and theorem-relevant experiment traces are not Lean-replayed."
+    ],
+    "LEAN_GITHUB_PUBLICATION": [
+      "GitHub publication is outside the current bounded authorization."
+    ]
+  },
+  "label_rule_result": "The local frozen paper/formal snapshot is closed, but no FORMALLY_CLOSED-family public label is issued in this round because packaging and GitHub publication were explicitly not authorized or executed. Artifact refinement and experimental replay remain separately PARTIAL."
+}
