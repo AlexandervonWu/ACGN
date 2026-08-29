@@ -1,9 +1,10 @@
 # Fast Rewrite and Certificate-Integrated Equality Disagreements
 
-This note characterizes both observed directions of disagreement between the
-Fast Rewrite IR and Certificate-Integrated IR. It is tied to publication run
-`57f5a2d8-f501-494d-81d5-b3f1396dbe18` and natural-corpus ablation run
-`6d3cd13e-e9e4-4c8b-9842a12707`.
+This note characterizes the current disagreement between the Fast Rewrite IR
+and Certificate-Integrated IR and retains the preceding false-zero incident as
+historical evidence. Current measurements are tied to publication run
+`df4d8d4c-6265-4fe7-88d5-3aceee60398b` and natural-corpus ablation run
+`f46b5647-7373-4cd7-ac3d-f8fd9b802db6`.
 
 The two measurements use different populations:
 
@@ -13,15 +14,13 @@ The two measurements use different populations:
   The latter adds 14 and loses none on this paired population.
 - The augmenter compares each of 42,386 incorrect predicates with every
   AST-distinct truth available for that question, including the oracle and
-  AST-unique correct student predicates. Fast Rewrite finds ten predicates
-  whose minimum distance to that larger pool is zero. Certificate-Integrated
-  gives the same selected pairs positive distances and has no incorrect
-  nearest-truth zeroes.
+  AST-unique correct student predicates. Both Fast Rewrite and
+  Certificate-Integrated now have zero incorrect nearest-truth zeroes.
 
-Consequently, the paired result does not establish global containment between
-the two equality relations. It establishes containment only on the evaluated
-paired-oracle rows. The nearest-truth experiment exposes Fast Rewrite zeroes
-that do not occur in that paired comparison.
+Consequently, the current observed Fast Rewrite zero set is contained in the
+Certificate-Integrated zero set on paired-oracle rows, and neither path admits
+an incorrect zero in the larger nearest-truth experiment. These are empirical
+claims over the evaluated populations, not a global containment theorem.
 
 ## Meaning of Zero
 
@@ -102,7 +101,12 @@ These 14 rows are completeness gains: Certificate-Integrated equality admits
 sound quotient steps that the Fast Rewrite representative and metric do not
 fully expose as zero on these inputs.
 
-## Ten Fast-Rewrite-Only Incorrect Nearest-Truth Zeroes
+## Historical Ten Fast-Rewrite-Only Incorrect Nearest-Truth Zeroes
+
+This section records the defect exposed by the preceding clean snapshot,
+publication run `57f5a2d8-f501-494d-81d5-b3f1396dbe18`. It is retained as an
+incident analysis; these rows are no longer zero under Fast Rewrite in the
+current snapshot.
 
 All ten rows are labeled `BOTH`. For each row, both metrics select the same
 correct reference, so the disagreement is not an artifact of different
@@ -176,6 +180,26 @@ Certificate-Integrated temporal imports retain the owner coordinate through
 one coherent binder automorphism across the enclosing and inherited temporal
 occurrences. The endpoint mismatch therefore costs one edit rather than zero.
 
+## Current Full-Corpus Closure
+
+The source repairs were exercised by the complete four-stage run rather than
+only by focused witnesses. The nine field-owner rows now have nearest Fast
+Rewrite distance 1; their Certificate-Integrated distances remain 2 or 3. The
+temporal endpoint row has distance 1 under both paths. Both metrics select the
+same truth references shown above.
+
+| Historical family | Rows | Historical Fast zeroes | Current Fast zeroes | Current certified zeroes |
+| --- | ---: | ---: | ---: | ---: |
+| Field-owner loss | 9 | 9 | 0 | 0 |
+| Temporal binder incoherence | 1 | 1 | 0 | 0 |
+| **Total** | **10** | **10** | **0** | **0** |
+
+The current augmenter reports 42,386 ranked and rewarded incorrect predicates,
+zero preparation/ranking/reward failures, zero Fast Rewrite nearest-truth
+zeroes, and zero Certificate-Integrated nearest-truth zeroes. The natural
+paired-oracle ablation still reports the 14 certificate-only `CORRECT` zeroes
+and no Fast-only zeroes.
+
 ## Interpretation
 
 The two directions reveal different properties of the implementations:
@@ -183,9 +207,10 @@ The two directions reveal different properties of the implementations:
 1. The 14 certified-only paired zeroes show additional completeness from
    certified recursive quotienting, dependent JOIN associativity, and scoped
    alpha-equivalence.
-2. The ten Fast-only nearest-truth zeroes expose two places where the Fast
-   representation admits too much: nine owner-erasing field projections and
-   one phase-incoherent variable alignment.
+2. The historical ten Fast-only nearest-truth zeroes exposed two places where
+   the Fast comparator admitted too much: nine owner-erasing field projections
+   and one phase-incoherent variable alignment. Both are repaired in the
+   current run.
 3. Certificate integration is not merely a stricter version of the same
    representative. It can recognize more equality where evidence exists and
    reject equality where the fast projection discarded evidence needed to
@@ -195,16 +220,17 @@ The two directions reveal different properties of the implementations:
    observation; this table should not be described as standalone replay of an
    exported proof for every row.
 
-The 14 additions and ten refusals are therefore compatible. On the paired
-`CORRECT` population, Certificate-Integrated equality is more complete. On the
-larger incorrect-to-any-truth search, its retained owner and scope information
-prevents ten false Fast Rewrite zeroes.
+The 14 additions and historical ten refusals are compatible. On the paired
+`CORRECT` population, Certificate-Integrated equality remains more complete.
+The owner and temporal-scope evidence that originally let the certificate path
+refuse ten unsupported Fast zeroes has now been ported into the Fast
+comparator, so the current nearest-truth experiment has no disagreement at
+zero.
 
-## Current Source Repair
+## Implemented Repair
 
-The empirical tables above remain an immutable account of publication run
-`57f5a2d8-f501-494d-81d5-b3f1396dbe18`. The current source repairs both Fast
-Rewrite defects without modifying the Certificate-Integrated pathway:
+The current source repairs both Fast Rewrite defects without modifying the
+Certificate-Integrated pathway:
 
 1. A parser field atom without an explicit semantic identity is compared by
    the pair `(source name, exact Alloy relation type)`. Readable spelling is
@@ -225,11 +251,9 @@ coherent whole-block temporal permutation.
 
 The 14 Certificate-Integrated-only paired zeroes were replayed after the
 repair. Their Fast Rewrite distances are unchanged and their certified
-distances and digests remain zero/equal. Thus this patch narrows only the two
-unsupported Fast Rewrite alignments; it does not remove the certified
-completeness gains described above. Generated corpus reports are intentionally
-not rewritten by this bounded repair and require a subsequent full experiment
-run.
+distances and digests remain zero/equal. The full-corpus run confirms that this
+patch narrows only the two unsupported Fast Rewrite alignments; it does not
+remove the certified completeness gains described above.
 
 ## Reproduction Queries
 
@@ -244,8 +268,7 @@ awk -F, 'NR == 1 || ($8 != 0 && $9 == 0)' \
   egraph_ablation/minimum_distances.csv
 ```
 
-The ten nearest-truth disagreements are selected directly from the augmented
-dataset index:
+The current query for a Fast-only incorrect nearest-truth zero returns no rows:
 
 ```bash
 jq '.incorrectNearest[] |
@@ -253,3 +276,7 @@ jq '.incorrectNearest[] |
            .nearestCanonical.distance > 0)' \
   alloy4fun-augmented/index.json
 ```
+
+The historical ten paths and their minimized current distances remain listed
+in this document so the repair can be audited without relying on a stale result
+tree.

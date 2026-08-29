@@ -40,7 +40,7 @@ claim. The current assurance state is `INCOMPLETE`.
 - [Repair metric assurance record](repair-metric-assurance.md)
 - [Fast Rewrite and Certificate-Integrated equality disagreements](../fast-rewrite-certificate-equality-disagreements.md):
   source-level characterization of the 14 certified-only paired zeroes and
-  the ten Fast-only incorrect-to-truth zeroes.
+  the repaired historical ten Fast-only incorrect-to-truth zeroes.
 - [Phase 6 streaming and occurrence audit](phase-6-streaming-occurrences.md)
 - [Formal Lean source tree](formal/), including the
   [claim-traceability model](formal/AssuranceTraceability.lean) and the
@@ -66,7 +66,7 @@ means `INCOMPLETE`, never `PASS`.
 
 The prior archived publication run remains intact. The four current empirical
 result trees were intentionally refreshed from clean publication run
-`57f5a2d8-f501-494d-81d5-b3f1396dbe18` and are checked against its 5,808
+`df4d8d4c-6265-4fe7-88d5-3aceee60398b` and are checked against its 5,808
 manifest-selected stage artifacts. Reproduction programs were not altered by
 the experiment itself; the snapshot verifier and result-regeneration test were
 advanced only to recognize the newly imported run.

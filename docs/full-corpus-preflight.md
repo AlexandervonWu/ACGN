@@ -107,11 +107,11 @@ seven ablation arms, and the capability benchmark with zero preparation,
 ranking, batch, or conclusive soundness failures.
 
 The final clean publication replay used 16 workers, an 8 GiB heap, and reward
-pool 100. Publication run `57f5a2d8-f501-494d-81d5-b3f1396dbe18` completed all
-four stages from source `88363ea23728329948ccc9d5cdad690cc5787ca5`:
+pool 100. Publication run `df4d8d4c-6265-4fe7-88d5-3aceee60398b` completed all
+four stages from source `fbd9b1497a9036c55780da777f56581bc1c6bcec`:
 CanonicalBatchTest produced 61,598 successes, 4,482 AST skips, and 0 failures;
 Alloy4FunAugmenter ranked and rewarded all 42,386 incorrect predicates with 0
-failures and 0 certified incorrect-to-truth zeroes; all seven ablation arms
+failures and 0 incorrect-to-truth zeroes in either canonical path; all seven ablation arms
 completed 61,598 pairs with 0 failures; and the capability benchmark generated
 and evaluated 5,500 valid pairs. The slotted, Fast Rewrite IR, and
 Certificate-Integrated IR arms each recovered 5,500/5,500. The bounded semantic

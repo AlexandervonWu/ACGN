@@ -462,7 +462,7 @@ Every claim follows the same bounded process:
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `REFUTED`
-- Claim-specific process/limits: Clean publication run 57f5a2d8-f501-494d-81d5-b3f1396dbe18 hash-binds the current generated trees, but no complete statement-to-manifest registry proves the literal every-empirical-claim assertion
+- Claim-specific process/limits: Clean publication run df4d8d4c-6265-4fe7-88d5-3aceee60398b hash-binds the current generated trees, but no complete statement-to-manifest registry proves the literal every-empirical-claim assertion
 - Current proof state: `INCOMPLETE`
 
 ### G-14
@@ -479,7 +479,7 @@ Every claim follows the same bounded process:
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The four imported result trees exactly match the 5808 stage artifacts in clean publication run 57f5a2d8-f501-494d-81d5-b3f1396dbe18; this is bounded path-set evidence, not universal external-asset identity
+- Claim-specific process/limits: The four imported result trees exactly match the 5808 stage artifacts in clean publication run df4d8d4c-6265-4fe7-88d5-3aceee60398b; this is bounded path-set evidence, not universal external-asset identity
 - Current proof state: `INCOMPLETE`
 
 ### G-15
@@ -3269,4 +3269,3 @@ Every claim follows the same bounded process:
 - Conformance status: `PARTIAL`
 - Claim-specific process/limits: Checked arithmetic and declared exact-search bounds fail closed in Java and bounded counterexamples pass; complete pruning/candidate-generation refinement remains open
 - Current proof state: `INCOMPLETE`
-

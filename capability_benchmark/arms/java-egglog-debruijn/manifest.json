@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "6d22f78d4d9bfa3eb5c904492c3c53ae9222c74d46223944fce629825f6e09a6",
-      "sizeBytes": 1065542
+      "sha256": "6ad61c0891c13b809ee90a7f8f70d3a3c11caf720d5a75a5e35be40343a1d789",
+      "sizeBytes": 1065503
     },
     {
       "path": "summary.json",
-      "sha256": "dd13be4773c8554ed4f9ec16f226ec935ce2e9ea0ee9857d2e3fb765cd4dd9e5",
-      "sizeBytes": 14223
+      "sha256": "e4b4ea5f3d113b9a4798e75be108ccfaa0f8546852174d416aeae5d9dfeb9bae",
+      "sizeBytes": 14228
     },
     {
       "path": "metrics.properties",
-      "sha256": "5dabc829fdaeb002b119c71d3b8d5e308ed4e4f5c405a48fc4ed09a89652469f",
-      "sizeBytes": 1538
+      "sha256": "8f718dc46cb37fbd4bda68b37146d6cfa1e2c2bb3d707af79e10d1b7f0e53e76",
+      "sizeBytes": 1540
     },
     {
       "path": "run.log",
-      "sha256": "d2e845af5b0a428d79b4870555fa3a96b19d01497bc662507b912e07e96c8cf5",
+      "sha256": "68a5d80436672bd67a671484f5938181050cbb5677c5eb5e913daa4d24153a85",
       "sizeBytes": 2364
     },
     {
       "path": "process.time",
-      "sha256": "56f338b68e903dd0ce06d98dba7a818166c1a474d50faef04e7a7657ace00da5",
-      "sizeBytes": 1447
+      "sha256": "2086cd7a1333d55f1ecaa4350b930f98d8de7ade5a71bd47d39cdd04b8efb299",
+      "sizeBytes": 1460
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-28T09:16:11.599458790Z",
-  "javaSourceSha256": "e807003dc6d77ccc8facbdc8ec4edbab052d1b6793f743649549ab9fcadd8055",
+  "startedAt": "2026-08-29T23:24:34.566091375Z",
+  "javaSourceSha256": "0f566e6ba63266385075bafa989b1e535118dccadacef06a761bf3f8641043ca",
   "result": {
     "failures": 0,
     "successes": 5500,
@@ -75,8 +75,8 @@
   "osName": "Linux",
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
-  "datasetRoot": "/home/augustus/acgn-publication-v2.1-20260828T064537Z/capability_benchmark/models",
-  "gitSha": "88363ea23728329948ccc9d5cdad690cc5787ca5",
+  "datasetRoot": "/home/augustus/acgn-codex-supervised-20260829T205326Z/run/capability_benchmark/models",
+  "gitSha": "fbd9b1497a9036c55780da777f56581bc1c6bcec",
   "datasetByteCount": 5315709,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "36c4a62b-6aff-4fe9-a38c-180eeb83fcbf"
+  "runId": "2a27663f-28d6-4f42-b841-5cc7a5d5a488"
 }

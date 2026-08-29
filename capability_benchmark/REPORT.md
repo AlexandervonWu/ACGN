@@ -1,6 +1,6 @@
 # Targeted Equivalence Capability Benchmark
 
-- Generated at: `2026-08-28T09:21:45.619180418Z`
+- Generated at: `2026-08-29T23:30:18.458040842Z`
 - RNG seed: `55520260811`
 - Valid, parser-AST-different pairs: 5500
 - Ground truth: equivalence by construction using only the implemented rule set
@@ -55,7 +55,7 @@ The generated benchmark isolates specific capabilities; the natural corpus refle
 | java-egglog | 61598 | 820 / 19212 (4.27%) | 0 | 18.146514 |
 | java-egglog-debruijn | 61598 | 2160 / 19212 (11.24%) | 0 | 17.690039 |
 | slotted-egraph | 61598 | 2159 / 19212 (11.24%) | 0 | 17.824231 |
-| canonical | 61598 | 4074 / 19212 (21.21%) | 0 | 13.938829 |
+| canonical | 61598 | 4074 / 19212 (21.21%) | 0 | 13.943342 |
 | typed-slotted-port-egraph | 61598 | 4088 / 19212 (21.28%) | 0 | 14.021721 |
 
 ## Bounded Soundness Sanity Check
@@ -73,83 +73,83 @@ Wall time below is aggregate per-pair engine latency; CPU is summed worker-threa
 
 | Family | Arm | Avg / P50 / P95 distance | Engine CPU s | Aggregate engine wall s | Avg representation units | Avg estimated bytes |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
-| alpha | raw-egraph | 3.868000 / 4 / 4 | 0.078721 | 0.081872 | 65.858000 | 10978.056000 |
-| alpha | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.065406 | 0.068250 | 43.030000 | 7110.832000 |
-| alpha | java-egglog | 3.868000 / 4 / 4 | 0.071614 | 0.072834 | 64.074000 | 10690.948000 |
-| alpha | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.067505 | 0.070989 | 41.422000 | 6847.380000 |
-| alpha | slotted-egraph | 0.000000 / 0 / 0 | 0.241651 | 0.259096 | 39.422000 | 10671.244000 |
-| alpha | canonical | 0.000000 / 0 / 0 | 3.770877 | 4.059754 | 31.072000 | 1988.608000 |
-| alpha | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 266.178090 | 284.311739 | 31.072000 | 3942.592000 |
-| aci | raw-egraph | 0.000000 / 0 / 0 | 0.035370 | 0.035457 | 33.240000 | 5393.508000 |
-| aci | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.038740 | 0.040355 | 33.240000 | 5393.508000 |
-| aci | java-egglog | 0.000000 / 0 / 0 | 0.033802 | 0.035368 | 31.448000 | 5100.620000 |
-| aci | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.033197 | 0.033229 | 31.448000 | 5100.620000 |
-| aci | slotted-egraph | 0.000000 / 0 / 0 | 0.073905 | 0.080847 | 29.444000 | 7658.012000 |
-| aci | canonical | 0.000000 / 0 / 0 | 2.466785 | 2.788756 | 22.444000 | 1436.416000 |
-| aci | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 285.545536 | 301.283855 | 22.424000 | 3158.528000 |
-| binder_permutation | raw-egraph | 5.402000 / 4 / 7 | 0.035838 | 0.035853 | 64.090000 | 10605.892000 |
-| binder_permutation | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.038887 | 0.039785 | 60.466000 | 9947.932000 |
-| binder_permutation | java-egglog | 5.402000 / 4 / 7 | 0.034248 | 0.034331 | 61.310000 | 10155.440000 |
-| binder_permutation | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.038087 | 0.038958 | 57.686000 | 9497.480000 |
-| binder_permutation | slotted-egraph | 0.000000 / 0 / 0 | 0.114161 | 0.116802 | 35.502000 | 9795.084000 |
-| binder_permutation | canonical | 0.000000 / 0 / 0 | 0.766859 | 1.203706 | 37.052000 | 2371.328000 |
-| binder_permutation | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 643.415494 | 684.677130 | 37.052000 | 4293.184000 |
-| safe_prenex | raw-egraph | 0.000000 / 0 / 0 | 0.029626 | 0.029635 | 47.232000 | 7687.500000 |
-| safe_prenex | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.032366 | 0.033483 | 48.232000 | 7865.500000 |
-| safe_prenex | java-egglog | 0.000000 / 0 / 0 | 0.026949 | 0.028051 | 46.080000 | 7498.832000 |
-| safe_prenex | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.032814 | 0.033842 | 47.080000 | 7676.832000 |
-| safe_prenex | slotted-egraph | 0.000000 / 0 / 0 | 0.056544 | 0.057663 | 41.300000 | 10940.208000 |
-| safe_prenex | canonical | 0.000000 / 0 / 0 | 0.620227 | 1.059548 | 29.872000 | 1911.808000 |
-| safe_prenex | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 238.862756 | 246.074346 | 29.872000 | 3898.688000 |
-| logical_normalization | raw-egraph | 0.000000 / 0 / 0 | 0.073695 | 0.074321 | 72.306000 | 11612.312000 |
-| logical_normalization | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.078759 | 0.080038 | 72.638000 | 11671.408000 |
-| logical_normalization | java-egglog | 0.000000 / 0 / 0 | 0.057506 | 0.060573 | 60.278000 | 9707.192000 |
-| logical_normalization | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.078520 | 0.078763 | 60.610000 | 9766.288000 |
-| logical_normalization | slotted-egraph | 0.000000 / 0 / 0 | 0.131226 | 0.132294 | 60.264000 | 15625.348000 |
-| logical_normalization | canonical | 0.000000 / 0 / 0 | 1.075661 | 1.568735 | 34.504000 | 2208.256000 |
-| logical_normalization | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 615.347699 | 650.425858 | 34.432000 | 4799.168000 |
-| temporal_normalization | raw-egraph | 0.000000 / 0 / 0 | 0.041499 | 0.042592 | 61.776000 | 9916.500000 |
-| temporal_normalization | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.046829 | 0.047966 | 61.776000 | 9916.500000 |
-| temporal_normalization | java-egglog | 0.000000 / 0 / 0 | 0.035146 | 0.036379 | 56.152000 | 9018.832000 |
-| temporal_normalization | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.040046 | 0.041176 | 56.152000 | 9018.832000 |
-| temporal_normalization | slotted-egraph | 0.000000 / 0 / 0 | 0.073136 | 0.073119 | 56.152000 | 14214.400000 |
-| temporal_normalization | canonical | 0.000000 / 0 / 0 | 1.454230 | 1.738538 | 35.964000 | 2301.696000 |
-| temporal_normalization | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 398.812072 | 412.690579 | 35.964000 | 5014.720000 |
-| alpha_ac | raw-egraph | 2.752000 / 3 / 3 | 0.054420 | 0.056288 | 63.214000 | 10485.252000 |
-| alpha_ac | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.056615 | 0.059007 | 51.402000 | 8458.852000 |
-| alpha_ac | java-egglog | 2.752000 / 3 / 3 | 0.054688 | 0.054713 | 60.056000 | 9977.044000 |
-| alpha_ac | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.042877 | 0.044995 | 48.552000 | 7991.932000 |
-| alpha_ac | slotted-egraph | 0.000000 / 0 / 0 | 0.082690 | 0.087863 | 42.552000 | 11426.660000 |
-| alpha_ac | canonical | 0.000000 / 0 / 0 | 1.163204 | 1.643348 | 34.228000 | 2190.592000 |
-| alpha_ac | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 402.748039 | 426.039893 | 34.228000 | 4511.360000 |
-| alpha_binder_permutation | raw-egraph | 3.912000 / 4 / 4 | 0.030930 | 0.031269 | 57.118000 | 9470.688000 |
-| alpha_binder_permutation | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.044214 | 0.045484 | 53.986000 | 8867.304000 |
-| alpha_binder_permutation | java-egglog | 3.912000 / 4 / 4 | 0.031917 | 0.032836 | 55.334000 | 9183.580000 |
-| alpha_binder_permutation | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.038251 | 0.039403 | 52.202000 | 8580.196000 |
-| alpha_binder_permutation | slotted-egraph | 0.000000 / 0 / 0 | 0.114465 | 0.118279 | 35.510000 | 9683.604000 |
-| alpha_binder_permutation | canonical | 0.000000 / 0 / 0 | 0.759150 | 1.172734 | 31.072000 | 1988.608000 |
-| alpha_binder_permutation | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 288.831000 | 303.685867 | 31.072000 | 3942.592000 |
-| binder_permutation_prenex | raw-egraph | 3.824000 / 4 / 4 | 0.054711 | 0.055723 | 61.546000 | 10132.760000 |
-| binder_permutation_prenex | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.142975 | 0.144372 | 58.590000 | 9580.528000 |
-| binder_permutation_prenex | java-egglog | 3.824000 / 4 / 4 | 0.057615 | 0.061375 | 59.762000 | 9845.652000 |
-| binder_permutation_prenex | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.058798 | 0.058822 | 56.806000 | 9293.420000 |
-| binder_permutation_prenex | slotted-egraph | 0.000000 / 0 / 0 | 0.085530 | 0.086345 | 40.334000 | 10948.028000 |
-| binder_permutation_prenex | canonical | 0.000000 / 0 / 0 | 0.636754 | 1.003859 | 31.072000 | 1988.608000 |
-| binder_permutation_prenex | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 288.566638 | 304.405822 | 31.072000 | 3942.592000 |
-| ac_logical | raw-egraph | 0.000000 / 0 / 0 | 0.367572 | 0.404570 | 79.138000 | 12664.080000 |
-| ac_logical | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.356811 | 0.437552 | 79.138000 | 12664.080000 |
-| ac_logical | java-egglog | 0.000000 / 0 / 0 | 0.224923 | 0.266369 | 61.130000 | 9810.204000 |
-| ac_logical | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.259149 | 0.322526 | 61.130000 | 9810.204000 |
-| ac_logical | slotted-egraph | 0.000000 / 0 / 0 | 0.442876 | 0.533971 | 61.130000 | 15749.724000 |
-| ac_logical | canonical | 0.000000 / 0 / 0 | 6.248567 | 7.227904 | 32.028000 | 2049.792000 |
-| ac_logical | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 480.719773 | 512.104826 | 32.028000 | 4704.704000 |
-| mixed | raw-egraph | 3.504000 / 4 / 4 | 0.330552 | 0.342885 | 143.228000 | 23171.416000 |
-| mixed | raw-egraph-debruijn | 1.752000 / 2 / 2 | 0.472669 | 0.478282 | 140.352000 | 22636.944000 |
-| mixed | java-egglog | 3.504000 / 4 / 4 | 0.222240 | 0.225801 | 110.878000 | 18037.080000 |
-| mixed | java-egglog-debruijn | 1.752000 / 2 / 2 | 0.390574 | 0.396048 | 108.002000 | 17502.608000 |
-| mixed | slotted-egraph | 0.000000 / 0 / 0 | 0.242747 | 0.246935 | 93.760000 | 25364.872000 |
-| mixed | canonical | 0.000000 / 0 / 0 | 1.104357 | 1.656078 | 44.728000 | 2862.592000 |
-| mixed | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 842.830202 | 903.441407 | 44.728000 | 6147.776000 |
+| alpha | raw-egraph | 3.868000 / 4 / 4 | 0.082305 | 0.087440 | 65.858000 | 10978.056000 |
+| alpha | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.075310 | 0.078628 | 43.030000 | 7110.832000 |
+| alpha | java-egglog | 3.868000 / 4 / 4 | 0.068125 | 0.071620 | 64.074000 | 10690.948000 |
+| alpha | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.065410 | 0.069707 | 41.422000 | 6847.380000 |
+| alpha | slotted-egraph | 0.000000 / 0 / 0 | 0.272627 | 0.280342 | 39.422000 | 10671.244000 |
+| alpha | canonical | 0.000000 / 0 / 0 | 4.395858 | 4.711239 | 31.072000 | 1988.608000 |
+| alpha | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 270.894086 | 290.365207 | 31.072000 | 3942.592000 |
+| aci | raw-egraph | 0.000000 / 0 / 0 | 0.034069 | 0.036673 | 33.240000 | 5393.508000 |
+| aci | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.042454 | 0.044256 | 33.240000 | 5393.508000 |
+| aci | java-egglog | 0.000000 / 0 / 0 | 0.038526 | 0.039577 | 31.448000 | 5100.620000 |
+| aci | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.039983 | 0.041872 | 31.448000 | 5100.620000 |
+| aci | slotted-egraph | 0.000000 / 0 / 0 | 0.086806 | 0.088223 | 29.444000 | 7658.012000 |
+| aci | canonical | 0.000000 / 0 / 0 | 2.421181 | 2.761654 | 22.444000 | 1436.416000 |
+| aci | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 288.522483 | 305.530870 | 22.424000 | 3158.528000 |
+| binder_permutation | raw-egraph | 5.402000 / 4 / 7 | 0.036551 | 0.036614 | 64.090000 | 10605.892000 |
+| binder_permutation | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.045145 | 0.045166 | 60.466000 | 9947.932000 |
+| binder_permutation | java-egglog | 5.402000 / 4 / 7 | 0.035921 | 0.037739 | 61.310000 | 10155.440000 |
+| binder_permutation | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.039224 | 0.040327 | 57.686000 | 9497.480000 |
+| binder_permutation | slotted-egraph | 0.000000 / 0 / 0 | 0.117022 | 0.123695 | 35.502000 | 9795.084000 |
+| binder_permutation | canonical | 0.000000 / 0 / 0 | 0.830248 | 1.240855 | 37.052000 | 2371.328000 |
+| binder_permutation | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 660.386300 | 704.449667 | 37.052000 | 4293.184000 |
+| safe_prenex | raw-egraph | 0.000000 / 0 / 0 | 0.035117 | 0.035127 | 47.232000 | 7687.500000 |
+| safe_prenex | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.032138 | 0.033276 | 48.232000 | 7865.500000 |
+| safe_prenex | java-egglog | 0.000000 / 0 / 0 | 0.034375 | 0.034688 | 46.080000 | 7498.832000 |
+| safe_prenex | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.030449 | 0.030492 | 47.080000 | 7676.832000 |
+| safe_prenex | slotted-egraph | 0.000000 / 0 / 0 | 0.062275 | 0.064310 | 41.300000 | 10940.208000 |
+| safe_prenex | canonical | 0.000000 / 0 / 0 | 0.591946 | 0.983948 | 29.872000 | 1911.808000 |
+| safe_prenex | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 244.366168 | 252.975135 | 29.872000 | 3898.688000 |
+| logical_normalization | raw-egraph | 0.000000 / 0 / 0 | 0.070115 | 0.072592 | 72.306000 | 11612.312000 |
+| logical_normalization | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.096944 | 0.102690 | 72.638000 | 11671.408000 |
+| logical_normalization | java-egglog | 0.000000 / 0 / 0 | 0.056664 | 0.057497 | 60.278000 | 9707.192000 |
+| logical_normalization | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.062975 | 0.063325 | 60.610000 | 9766.288000 |
+| logical_normalization | slotted-egraph | 0.000000 / 0 / 0 | 0.119880 | 0.121170 | 60.264000 | 15625.348000 |
+| logical_normalization | canonical | 0.000000 / 0 / 0 | 1.323093 | 1.749860 | 34.504000 | 2208.256000 |
+| logical_normalization | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 644.770456 | 683.424045 | 34.432000 | 4799.168000 |
+| temporal_normalization | raw-egraph | 0.000000 / 0 / 0 | 0.040206 | 0.040209 | 61.776000 | 9916.500000 |
+| temporal_normalization | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.044678 | 0.044690 | 61.776000 | 9916.500000 |
+| temporal_normalization | java-egglog | 0.000000 / 0 / 0 | 0.034165 | 0.035060 | 56.152000 | 9018.832000 |
+| temporal_normalization | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.036099 | 0.036423 | 56.152000 | 9018.832000 |
+| temporal_normalization | slotted-egraph | 0.000000 / 0 / 0 | 0.074549 | 0.076982 | 56.152000 | 14214.400000 |
+| temporal_normalization | canonical | 0.000000 / 0 / 0 | 1.422280 | 1.729339 | 35.964000 | 2301.696000 |
+| temporal_normalization | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 409.846545 | 425.311533 | 35.964000 | 5014.720000 |
+| alpha_ac | raw-egraph | 2.752000 / 3 / 3 | 0.054438 | 0.056436 | 63.214000 | 10485.252000 |
+| alpha_ac | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.062576 | 0.064863 | 51.402000 | 8458.852000 |
+| alpha_ac | java-egglog | 2.752000 / 3 / 3 | 0.057724 | 0.058351 | 60.056000 | 9977.044000 |
+| alpha_ac | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.054518 | 0.054685 | 48.552000 | 7991.932000 |
+| alpha_ac | slotted-egraph | 0.000000 / 0 / 0 | 0.105361 | 0.111064 | 42.552000 | 11426.660000 |
+| alpha_ac | canonical | 0.000000 / 0 / 0 | 1.584036 | 2.033636 | 34.228000 | 2190.592000 |
+| alpha_ac | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 407.039318 | 431.324124 | 34.228000 | 4511.360000 |
+| alpha_binder_permutation | raw-egraph | 3.912000 / 4 / 4 | 0.031867 | 0.034654 | 57.118000 | 9470.688000 |
+| alpha_binder_permutation | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.044597 | 0.046939 | 53.986000 | 8867.304000 |
+| alpha_binder_permutation | java-egglog | 3.912000 / 4 / 4 | 0.031598 | 0.031740 | 55.334000 | 9183.580000 |
+| alpha_binder_permutation | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.041409 | 0.041855 | 52.202000 | 8580.196000 |
+| alpha_binder_permutation | slotted-egraph | 0.000000 / 0 / 0 | 0.121380 | 0.124237 | 35.510000 | 9683.604000 |
+| alpha_binder_permutation | canonical | 0.000000 / 0 / 0 | 0.844287 | 1.234387 | 31.072000 | 1988.608000 |
+| alpha_binder_permutation | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 293.221147 | 308.676676 | 31.072000 | 3942.592000 |
+| binder_permutation_prenex | raw-egraph | 3.824000 / 4 / 4 | 0.055166 | 0.055326 | 61.546000 | 10132.760000 |
+| binder_permutation_prenex | raw-egraph-debruijn | 1.912000 / 2 / 2 | 0.162790 | 0.165160 | 58.590000 | 9580.528000 |
+| binder_permutation_prenex | java-egglog | 3.824000 / 4 / 4 | 0.056240 | 0.056288 | 59.762000 | 9845.652000 |
+| binder_permutation_prenex | java-egglog-debruijn | 1.912000 / 2 / 2 | 0.057395 | 0.057507 | 56.806000 | 9293.420000 |
+| binder_permutation_prenex | slotted-egraph | 0.000000 / 0 / 0 | 0.078434 | 0.080753 | 40.334000 | 10948.028000 |
+| binder_permutation_prenex | canonical | 0.000000 / 0 / 0 | 0.686012 | 1.104275 | 31.072000 | 1988.608000 |
+| binder_permutation_prenex | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 300.273583 | 317.751487 | 31.072000 | 3942.592000 |
+| ac_logical | raw-egraph | 0.000000 / 0 / 0 | 0.359536 | 0.422302 | 79.138000 | 12664.080000 |
+| ac_logical | raw-egraph-debruijn | 0.000000 / 0 / 0 | 0.351037 | 0.441503 | 79.138000 | 12664.080000 |
+| ac_logical | java-egglog | 0.000000 / 0 / 0 | 0.232605 | 0.290227 | 61.130000 | 9810.204000 |
+| ac_logical | java-egglog-debruijn | 0.000000 / 0 / 0 | 0.262556 | 0.338933 | 61.130000 | 9810.204000 |
+| ac_logical | slotted-egraph | 0.000000 / 0 / 0 | 0.450079 | 0.537463 | 61.130000 | 15749.724000 |
+| ac_logical | canonical | 0.000000 / 0 / 0 | 6.246690 | 7.433256 | 32.028000 | 2049.792000 |
+| ac_logical | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 494.388521 | 528.486384 | 32.028000 | 4704.704000 |
+| mixed | raw-egraph | 3.504000 / 4 / 4 | 0.591461 | 0.598975 | 143.228000 | 23171.416000 |
+| mixed | raw-egraph-debruijn | 1.752000 / 2 / 2 | 0.453267 | 0.466182 | 140.352000 | 22636.944000 |
+| mixed | java-egglog | 3.504000 / 4 / 4 | 0.245002 | 0.248734 | 110.878000 | 18037.080000 |
+| mixed | java-egglog-debruijn | 1.752000 / 2 / 2 | 0.199483 | 0.203532 | 108.002000 | 17502.608000 |
+| mixed | slotted-egraph | 0.000000 / 0 / 0 | 0.208571 | 0.212285 | 93.760000 | 25364.872000 |
+| mixed | canonical | 0.000000 / 0 / 0 | 1.104194 | 1.613142 | 44.728000 | 2862.592000 |
+| mixed | typed-slotted-port-egraph | 0.000000 / 0 / 0 | 869.352884 | 932.103061 | 44.728000 | 6147.776000 |
 
 ## Pair-Level Transitions
 

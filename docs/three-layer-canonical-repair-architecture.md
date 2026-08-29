@@ -2,8 +2,8 @@
 
 > **Measurement note.** Small development smokes below remain historical
 > evidence. The full-corpus table is from clean publication run
-> `57f5a2d8-f501-494d-81d5-b3f1396dbe18`, documented in
-> [`publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18/README.md`](../publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18/README.md).
+> `df4d8d4c-6265-4fe7-88d5-3aceee60398b`, documented in
+> [`publication_runs/df4d8d4c-6265-4fe7-88d5-3aceee60398b/README.md`](../publication_runs/df4d8d4c-6265-4fe7-88d5-3aceee60398b/README.md).
 
 ## Architectural Rule
 
@@ -207,26 +207,26 @@ are diagnostic only.
 
 ## Full-Corpus Comparison
 
-The August 27 seven-arm run evaluated all 61,598 nontrivial student-oracle pairs
+The August 29 seven-arm run evaluated all 61,598 nontrivial student-oracle pairs
 at 16 workers. The Fast Rewrite IR and Certificate-Integrated IR produced:
 
 | Measure | Fast Rewrite IR | Certificate-Integrated IR |
 | --- | ---: | ---: |
 | Successful pairs / failures | 61,598 / 0 | 61,598 / 0 |
-| Mean repair distance | 13.938829 | 14.021721 |
+| Mean repair distance | 13.943342 | 14.021721 |
 | `CORRECT` zeroes | 4,074 | 4,088 |
 | Incorrect zeroes | 0 | 0 |
 | Mean representation units | 30.001 | 29.541 |
-| Process wall time | 24.710 s | 2,708.920 s |
-| Engine CPU time | 72.573 s | 41,253.576 s |
-| Maximum RSS | 1,837.043 MiB | 8,947.977 MiB |
+| Process wall time | 23.860 s | 2,775.650 s |
+| Engine CPU time | 73.605 s | 42,224.753 s |
+| Maximum RSS | 1,840.508 MiB | 8,912.141 MiB |
 
 On this paired-oracle population, the certificate-integrated zero set contains
 the complete Fast Rewrite IR zero set and 14 additional `CORRECT` pairs. This
 population-scoped containment does not extend to the augmenter's
 incorrect-to-any-truth search. The nonzero-distance divergence is retained for
 pair-level classification in `minimum_distances.csv`; it is not hidden behind
-representative TED. The Certificate-Integrated IR's roughly 110x wall-time cost is construction
+representative TED. The Certificate-Integrated IR's roughly 116x wall-time cost is construction
 and certification overhead rather than a larger observation or a replacement
 distance geometry.
 
@@ -242,9 +242,9 @@ artifact's protection against unsound equality claims caused by scope capture,
 unlicensed permutations, malformed ports, or stale congruence state.
 
 That semantic assurance has an explicit cost. The current corpus shows roughly
-110x wall time and substantially more engine CPU for 14 additional certified
+116x wall time and substantially more engine CPU for 14 additional certified
 `CORRECT` zeroes. Representation size is slightly smaller, while measured
-maximum RSS is 5.192x higher. Accordingly, the Fast Rewrite IR remains an active production-quality
+maximum RSS is 4.842x higher. Accordingly, the Fast Rewrite IR remains an active production-quality
 research path, not a superseded implementation. The Certificate-Integrated IR
 is the validation and audit path when fail-closed behavior is more important
 than throughput. Bounded Alloy validation and the absence of incorrect merges
@@ -254,10 +254,10 @@ The current augmented truth-pool run exercises a different minimization
 protocol: each of 42,386 incorrect predicates is compared with every
 AST-distinct correct truth in its invariant group. It completed without
 failures and reports mean nearest certified distance 11.562709. Its release
-gate found zero certified incorrect-to-truth zeroes; ten Fast Rewrite-only
-zeroes were recorded in that archived run. Current source repairs their
-field-identity and cross-phase-alignment causes, pending a full corpus
-regeneration. The source-level mechanisms in both directions are cataloged in
+gate found zero incorrect-to-truth zeroes in both canonical paths. The ten
+Fast Rewrite-only zeroes in the preceding snapshot were removed by the full
+corpus regeneration after repairing their field-identity and
+cross-phase-alignment causes. The source-level mechanisms in both directions are cataloged in
 [Fast Rewrite and Certificate-Integrated Equality Disagreements](fast-rewrite-certificate-equality-disagreements.md).
 
 ## Migration Discrepancy Audit

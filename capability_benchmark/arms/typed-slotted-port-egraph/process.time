@@ -1,21 +1,21 @@
-	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx8g -cp /home/augustus/acgn-publication-v2.1-20260828T064537Z/build/acgn-experiments.jar:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/acgn-publication-v2.1-20260828T064537Z/capability_benchmark/models --output /home/augustus/acgn-publication-v2.1-20260828T064537Z/capability_benchmark/arms/typed-slotted-port-egraph --engine typed-slotted-port-egraph --threads 16"
-	User time (seconds): 5196.54
-	System time (seconds): 9.48
+	Command being timed: "/usr/lib/jvm/java-17-openjdk-amd64/bin/java -Xms32m -Xmx8g -cp /home/augustus/acgn-codex-supervised-20260829T205326Z/run/build/acgn-experiments.jar:/home/augustus/ACGN/lib/AlloyASG-Release.jar:/home/augustus/ACGN/lib/commons-cli-1.4.jar:/home/augustus/ACGN/lib/json-java.jar:/home/augustus/ACGN/lib/AlloyParser.jar:/home/augustus/ACGN/lib/AlloyASG.jar:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar:/home/augustus/ACGN/lib/alloy.jar is.fivefivefive.CanDis.EGraphAblationStudy --input /home/augustus/acgn-codex-supervised-20260829T205326Z/run/capability_benchmark/models --output /home/augustus/acgn-codex-supervised-20260829T205326Z/run/capability_benchmark/arms/typed-slotted-port-egraph --engine typed-slotted-port-egraph --threads 16"
+	User time (seconds): 5353.15
+	System time (seconds): 10.02
 	Percent of CPU this job got: 1644%
-	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:16.63
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:26.17
 	Average shared text size (kbytes): 0
 	Average unshared data size (kbytes): 0
 	Average stack size (kbytes): 0
 	Average total size (kbytes): 0
-	Maximum resident set size (kbytes): 9054556
+	Maximum resident set size (kbytes): 9071104
 	Average resident set size (kbytes): 0
 	Major (requiring I/O) page faults: 0
-	Minor (reclaiming a frame) page faults: 2323688
-	Voluntary context switches: 1016314
-	Involuntary context switches: 21884
+	Minor (reclaiming a frame) page faults: 2319576
+	Voluntary context switches: 981939
+	Involuntary context switches: 48296
 	Swaps: 0
 	File system inputs: 0
-	File system outputs: 2680
+	File system outputs: 2688
 	Socket messages sent: 0
 	Socket messages received: 0
 	Signals delivered: 0

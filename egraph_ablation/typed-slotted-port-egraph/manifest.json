@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "17c0867795b669745a7c35db17ff10370a0139bea1227c55aaf33223f9ef5008",
-      "sizeBytes": 11854197
+      "sha256": "518ec1b611db9e03c267b9f52378e26262b7c631f2c75ec3d6d0500e91b38f5d",
+      "sizeBytes": 11856362
     },
     {
       "path": "summary.json",
-      "sha256": "f02909e39f792237a85500c428066b956d3e145ae7c3b704a1b012ca4afa8490",
-      "sizeBytes": 80748
+      "sha256": "c2cd3a9de796690d71a35989884b37e730aa55a1ceb0c1b03b8f088cdf882098",
+      "sizeBytes": 80756
     },
     {
       "path": "metrics.properties",
-      "sha256": "e6248ed358928ee497c18986028ffd999088215416646cbf0f86f74b58df84c5",
+      "sha256": "e44c52f7dbe8ff8564f4b0197d4c1efb780911becff5a29bf976979dd0b40644",
       "sizeBytes": 1691
     },
     {
       "path": "run.log",
-      "sha256": "edfb9c2f01a3c2331199e5651b35f793d51bbee42d839d6c23ce3e61bb77b431",
-      "sizeBytes": 13606
+      "sha256": "7ae3890fbf757313483118055a240bcc1b69e2590b5d593a70b54737d1e44c24",
+      "sizeBytes": 13926
     },
     {
       "path": "process.time",
-      "sha256": "644be2f375c2cdcca8bb99e8263a396f9c40b4d4fecd275692bc250c88f6c801",
-      "sizeBytes": 1412
+      "sha256": "4262774610da8e81ccf8b160b164e67e28ab54dbf2b3513512e93dc168d5d937",
+      "sizeBytes": 1420
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-28T08:28:32.132674509Z",
-  "javaSourceSha256": "e807003dc6d77ccc8facbdc8ec4edbab052d1b6793f743649549ab9fcadd8055",
+  "startedAt": "2026-08-29T22:35:48.367483531Z",
+  "javaSourceSha256": "0f566e6ba63266385075bafa989b1e535118dccadacef06a761bf3f8641043ca",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -76,7 +76,7 @@
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "88363ea23728329948ccc9d5cdad690cc5787ca5",
+  "gitSha": "fbd9b1497a9036c55780da777f56581bc1c6bcec",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "6d3cd13e-e9e4-4c8b-984a-7f9842a12707"
+  "runId": "f46b5647-7373-4cd7-ac3d-f8fd9b802db6"
 }

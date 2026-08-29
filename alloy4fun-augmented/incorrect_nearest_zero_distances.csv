@@ -1,11 +1,1 @@
 metric,relativePath,questionSet,statusFolder,invariantId,referenceName,referenceKind,referenceSource,distance
-"fast-rewrite","coursesNew/both/xT7fmCyXRAv38zbG7_inv4.als","coursesNew","BOTH","inv4","inv4_correct_2","correct-student","coursesNew/correct/2ahzaJ9AgN9ukD4kt_inv4.als",0
-"fast-rewrite","coursesOld/both/4eqsRijCmEQSkCdnn_inv5.als","coursesOld","BOTH","inv5","inv5_correct_23","correct-student","coursesOld/correct/5pcZ6C6yzCZ34zXZM_inv5.als",0
-"fast-rewrite","coursesOld/both/4oGQ9xsb3Yt7nnNR6_inv4.als","coursesOld","BOTH","inv4","inv4_correct_6","correct-student","coursesOld/correct/3j9uZWDLpybLZAJLC_inv4.als",0
-"fast-rewrite","coursesOld/both/BRxDwiXZRDSqWwaMH_inv5.als","coursesOld","BOTH","inv5","inv5_correct_23","correct-student","coursesOld/correct/5pcZ6C6yzCZ34zXZM_inv5.als",0
-"fast-rewrite","coursesOld/both/DzLsxBgpZviTAEpEC_inv5.als","coursesOld","BOTH","inv5","inv5_correct_144","correct-student","coursesOld/correct/ofcoPS2MrsRG5js2r_inv5.als",0
-"fast-rewrite","coursesOld/both/EtFytpSuzQ9wqXt9k_inv5.als","coursesOld","BOTH","inv5","inv5_correct_116","correct-student","coursesOld/correct/a2cEgE7g3SAFJhHML_inv5.als",0
-"fast-rewrite","coursesOld/both/bHZCYFmX7iTCqHoKw_inv5.als","coursesOld","BOTH","inv5","inv5_correct_63","correct-student","coursesOld/correct/GDANXupGbwonf47iX_inv5.als",0
-"fast-rewrite","coursesOld/both/fLctzhA9H7EWbYyzS_inv5.als","coursesOld","BOTH","inv5","inv5_correct_63","correct-student","coursesOld/correct/GDANXupGbwonf47iX_inv5.als",0
-"fast-rewrite","coursesOld/both/tHdp2ZvFNwyuQjxRc_inv5.als","coursesOld","BOTH","inv5","inv5_correct_116","correct-student","coursesOld/correct/a2cEgE7g3SAFJhHML_inv5.als",0
-"fast-rewrite","trash_ltl/both/7GaRScrfGLJtSRDo9_inv8.als","trash_ltl","BOTH","inv8","inv8_correct_1","correct-student","trash_ltl/correct/89pzjDpv7Srmd4ntF_inv8.als",0

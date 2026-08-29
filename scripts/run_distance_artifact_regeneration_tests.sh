@@ -34,7 +34,7 @@ payload = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
 metrics = payload["metrics"]
 expected = {
     "Average Certificate-Integrated IR repair distance": "14.021721",
-    "Average Fast Rewrite IR distance": "13.938829",
+    "Average Fast Rewrite IR distance": "13.943342",
     "Average canonical representative TED baseline": "32.255544",
 }
 for key, value in expected.items():
@@ -45,13 +45,13 @@ correlations = payload["rewardCorrelations"]
 expected_correlations = {
     "Pearson correlation, Certificate-Integrated IR distance vs candidate reward": "-0.063966",
     "Pearson correlation, canonical representative TED vs candidate reward": "-0.059931",
-    "Pearson correlation, Fast Rewrite IR distance vs candidate reward": "-0.061375",
+    "Pearson correlation, Fast Rewrite IR distance vs candidate reward": "-0.061647",
     "Pearson correlation, Levenshtein vs candidate reward": "-0.090795",
     "Pearson correlation, raw AST tree distance vs candidate reward": "-0.081877",
     "Pearson correlation, normalized raw AST distance vs candidate reward": "-0.053464",
     "Pearson correlation, normalized Certificate-Integrated IR distance vs candidate reward": "-0.080314",
     "Pearson correlation, normalized canonical representative TED vs candidate reward": "-0.092155",
-    "Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward": "-0.062566",
+    "Pearson correlation, normalized Fast Rewrite IR distance vs candidate reward": "-0.063168",
 }
 if not correlations["available"] or not correlations["rewardsEnabled"]:
     raise SystemExit("rewarded snapshot correlations were marked unavailable")

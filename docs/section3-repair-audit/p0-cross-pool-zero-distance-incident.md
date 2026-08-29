@@ -29,6 +29,15 @@ this incident's repair: publication run
 evaluations and all 42,386 incorrect-to-truth rankings with zero failures and
 zero certificate-integrated incorrect nearest-distance zeroes.
 
+The August 29 replay closes the remaining Fast Rewrite diagnostic. Publication
+run `df4d8d4c-6265-4fe7-88d5-3aceee60398b` at source
+`fbd9b1497a9036c55780da777f56581bc1c6bcec` completed the same populations
+with zero failures and zero incorrect nearest-distance zeroes in both the Fast
+Rewrite and Certificate-Integrated paths. The nine field-owner witnesses now
+cost one Fast Rewrite edit, and the inherited-temporal witness costs one edit
+under both paths. The old rows remain documented as incident evidence but are
+absent from the current `incorrect_nearest_zero_distances.csv`.
+
 ## Fault 1: Guarded Nested Quantifiers
 
 The minimum family is:

@@ -1,9 +1,9 @@
 # Phase DA Leader-Kernel Extraction Report
 
-> **Publication superseding note (2026-08-27):** Dirty-worktree and earlier
+> **Publication superseding note (2026-08-29):** Dirty-worktree and earlier
 > run identities below are retained as historical phase provenance. The current
 > authoritative empirical snapshot is clean publication run
-> `57f5a2d8-f501-494d-81d5-b3f1396dbe18` from source commit `88363ea2`, verified
+> `df4d8d4c-6265-4fe7-88d5-3aceee60398b` from source commit `fbd9b149`, verified
 > by `scripts/verify_imported_publication_snapshot.sh`.
 
 > **Later status (2026-08-16):** Phase E now consumes this result, accepts
