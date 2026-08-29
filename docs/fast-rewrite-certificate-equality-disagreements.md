@@ -138,12 +138,12 @@ all p: Project | #((Person <: projects).p) = 1
 all p: Project | #((Course <: projects).p) = 1
 ```
 
-These formulas constrain different relations. In the affected Fast Rewrite
-projection, domain restriction is normalized away and the overloaded field is
-retained under the unqualified payload `projects`. The owner-resolved field
-identity and restriction carrier are therefore lost, and both expressions can
-reach the same Fast Rewrite normal form. Other rows exhibit the same defect
-through transpose or existential coverage, for example
+These formulas constrain different relations. The Fast Rewrite normal form
+retained each field's exact relation type, including its declaring owner, but
+the distance comparator projected both atoms to the unqualified payload
+`projects`. The comparator therefore ignored information already present in
+the IR. Other rows exhibit the same defect through transpose or existential
+coverage, for example
 `p.~(Person <: projects)` versus `p.~(Course <: projects)`.
 
 The Certificate-Integrated path retains the parser-resolved field declaration,
@@ -199,6 +199,37 @@ The 14 additions and ten refusals are therefore compatible. On the paired
 `CORRECT` population, Certificate-Integrated equality is more complete. On the
 larger incorrect-to-any-truth search, its retained owner and scope information
 prevents ten false Fast Rewrite zeroes.
+
+## Current Source Repair
+
+The empirical tables above remain an immutable account of publication run
+`57f5a2d8-f501-494d-81d5-b3f1396dbe18`. The current source repairs both Fast
+Rewrite defects without modifying the Certificate-Integrated pathway:
+
+1. A parser field atom without an explicit semantic identity is compared by
+   the pair `(source name, exact Alloy relation type)`. Readable spelling is
+   still used only in edit rendering. This preserves same-owner alpha cases
+   while distinguishing `Person.projects` from `Course.projects`.
+2. A quantified slot used in more than one temporal normal form participates
+   in one jointly minimized alpha mapping across those phases. Other slots in
+   each phase retain the established phase-local exact minimization. A legal
+   whole-block permutation therefore remains zero, while independently
+   remapping the inherited endpoint costs one.
+
+All nine archived field-owner witnesses now have Fast Rewrite distance 1. The
+archived temporal witness also has Fast Rewrite distance 1. Their
+Certificate-Integrated distances remain, respectively, 2 or 3 and 1, and all
+observations remain unequal. Source-level positive controls retain zero for a
+same-owner field alpha rename, a coherent temporal alpha rename, and a
+coherent whole-block temporal permutation.
+
+The 14 Certificate-Integrated-only paired zeroes were replayed after the
+repair. Their Fast Rewrite distances are unchanged and their certified
+distances and digests remain zero/equal. Thus this patch narrows only the two
+unsupported Fast Rewrite alignments; it does not remove the certified
+completeness gains described above. Generated corpus reports are intentionally
+not rewritten by this bounded repair and require a subsequent full experiment
+run.
 
 ## Reproduction Queries
 

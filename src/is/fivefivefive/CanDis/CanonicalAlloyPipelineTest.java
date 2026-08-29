@@ -115,6 +115,7 @@ public final class CanonicalAlloyPipelineTest {
             MASGVisitor visitor = new MASGVisitor(new GlobalVariables(), module);
             visitor.visit(model, null);
             checkTemporalReferenceAuthorityIsolation(visitor);
+            checkFastRewriteRepairBoundaries(visitor);
 
             CanonicalAlloyPipeline.Prepared alphaLeft = prepare(visitor, "alphaLeft");
             CanonicalAlloyPipeline.Prepared alphaRight = prepare(visitor, "alphaRight");
@@ -1634,11 +1635,51 @@ public final class CanonicalAlloyPipelineTest {
     private static CanonicalAlloyPipeline.Prepared prepare(
             MASGVisitor visitor,
             String predicate) {
+        return CanonicalAlloyPipeline.prepare(prepareFast(visitor, predicate));
+    }
+
+    private static Canonical.Prepared prepareFast(
+            MASGVisitor visitor,
+            String predicate) {
         Integer id = visitor.getForestId(predicate);
         check(id != null, "missing MASG predicate " + predicate);
         Multigraph graph = visitor.getForest().get(id);
         check(graph != null, "missing MASG graph " + predicate);
-        return CanonicalAlloyPipeline.prepare(graph);
+        return Canonical.prepare(graph);
+    }
+
+    private static void checkFastRewriteRepairBoundaries(MASGVisitor visitor) {
+        Canonical.Prepared fieldLeft = prepareFast(visitor, "fastFieldLeft");
+        Canonical.Prepared fieldAlpha = prepareFast(visitor, "fastFieldAlpha");
+        Canonical.Prepared fieldWrongOwner = prepareFast(
+                visitor, "fastFieldWrongOwner");
+        check(Canonical.distance(fieldLeft, fieldAlpha) == 0,
+                "Fast Rewrite field identity must preserve alpha-equivalence");
+        check(Canonical.distance(fieldLeft, fieldWrongOwner) == 1,
+                "Fast Rewrite must distinguish same-spelled fields owned by different signatures");
+        check(CanonicalAlloyPipeline.distance(
+                        CanonicalAlloyPipeline.prepare(fieldLeft),
+                        CanonicalAlloyPipeline.prepare(fieldWrongOwner)) == 2,
+                "the field-identity repair must not alter certificate-integrated geometry");
+
+        Canonical.Prepared temporalLeft = prepareFast(
+                visitor, "fastTemporalLeft");
+        Canonical.Prepared temporalAlpha = prepareFast(
+                visitor, "fastTemporalAlpha");
+        Canonical.Prepared temporalPermutation = prepareFast(
+                visitor, "fastTemporalPermutation");
+        Canonical.Prepared temporalWrongEndpoint = prepareFast(
+                visitor, "fastTemporalWrongEndpoint");
+        check(Canonical.distance(temporalLeft, temporalAlpha) == 0,
+                "Fast Rewrite must retain coherent temporal alpha-equivalence");
+        check(Canonical.distance(temporalLeft, temporalPermutation) == 0,
+                "Fast Rewrite must retain a whole-block permutation across temporal phases");
+        check(Canonical.distance(temporalLeft, temporalWrongEndpoint) == 1,
+                "Fast Rewrite must reject an independently remapped inherited temporal slot");
+        check(CanonicalAlloyPipeline.distance(
+                        CanonicalAlloyPipeline.prepare(temporalLeft),
+                        CanonicalAlloyPipeline.prepare(temporalWrongEndpoint)) == 1,
+                "temporal coherence repair must preserve certificate-integrated geometry");
     }
 
     private static void checkCertifiedDistributiveLattices()
@@ -3962,6 +4003,9 @@ public final class CanonicalAlloyPipelineTest {
                 + "sig FamilyA, FamilyB extends FamilyParent {}\n"
                 + "sig FamilyC {}\n"
                 + "sig FamilyHolder { chosen: set FamilyParent }\n"
+                + "sig FastProject {}\n"
+                + "sig FastOwnerA { sharedProjects: set FastProject }\n"
+                + "sig FastOwnerB { sharedProjects: set FastProject }\n"
                 + "abstract sig AbstractParent {}\n"
                 + "sig AbstractA, AbstractB extends AbstractParent {}\n"
                 + "sig AbstractHolder { absChosen: set AbstractParent }\n"
@@ -4015,6 +4059,27 @@ public final class CanonicalAlloyPipelineTest {
                 + "pred temporalBare { always some S }\n"
                 + "pred temporalGuardDuplicate { always all s: S | after s in S or s not in S }\n"
                 + "pred temporalEliminated { (some S) or (no S) or (always some S) }\n"
+                + "pred fastFieldLeft {\n"
+                + "  all p: FastProject | #((FastOwnerA <: sharedProjects).p) = 1\n"
+                + "}\n"
+                + "pred fastFieldAlpha {\n"
+                + "  all q: FastProject | #((FastOwnerA <: sharedProjects).q) = 1\n"
+                + "}\n"
+                + "pred fastFieldWrongOwner {\n"
+                + "  all p: FastProject | #((FastOwnerB <: sharedProjects).p) = 1\n"
+                + "}\n"
+                + "pred fastTemporalLeft {\n"
+                + "  always all x, y: S | y in x.r implies eventually y in Trash\n"
+                + "}\n"
+                + "pred fastTemporalAlpha {\n"
+                + "  always all a, b: S | b in a.r implies eventually b in Trash\n"
+                + "}\n"
+                + "pred fastTemporalPermutation {\n"
+                + "  always all a, b: S | a in b.r implies eventually a in Trash\n"
+                + "}\n"
+                + "pred fastTemporalWrongEndpoint {\n"
+                + "  always all a, b: S | b in a.r implies eventually a in Trash\n"
+                + "}\n"
                 + "pred tautology { no none }\n"
                 + "pred mixedCarrierLeft { all x: S, y: T | x in S and y in T }\n"
                 + "pred mixedCarrierRight { all a: S, b: T | a in S and b in T }\n"

@@ -378,6 +378,18 @@ public final class CanonicalDistance {
             List<NormalForm> right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
+        return bestCoherentMatrixAlignment(
+                left, right, leftMetadata, rightMetadata).distance;
+    }
+
+    private static int matrixDistanceWithFixedMapping(
+            List<NormalForm> left,
+            List<NormalForm> right,
+            Map<String, String> fixedMapping,
+            Set<String> lockedLeftNames,
+            Set<String> lockedRightNames,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
         int size = Math.max(left.size(), right.size());
         int distance = 0;
         for (int i = 0; i < size; i++) {
@@ -386,10 +398,289 @@ public final class CanonicalDistance {
             } else if (i >= right.size()) {
                 distance += eGraphSize(left.get(i).getMatrixEGraph(), leftMetadata);
             } else {
-                distance += matrixDistance(left.get(i), right.get(i), leftMetadata, rightMetadata);
+                distance += matrixDistance(
+                        left.get(i),
+                        right.get(i),
+                        fixedMapping,
+                        lockedLeftNames,
+                        lockedRightNames,
+                        leftMetadata,
+                        rightMetadata);
             }
         }
         return distance;
+    }
+
+    private static MatrixAlignment bestCoherentMatrixAlignment(
+            List<NormalForm> left,
+            List<NormalForm> right,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
+        // One source binder imported into several temporal phases must consume
+        // one alpha mapping; phase-local binders remain independently aligned.
+        CoherentVariableSpace leftSpace = coherentVariableSpace(left);
+        CoherentVariableSpace rightSpace = coherentVariableSpace(right);
+        Set<String> lockedLeftNames = leftSpace.coherentNames();
+        Set<String> lockedRightNames = rightSpace.coherentNames();
+        closeCoherentCandidateRegion(
+                lockedLeftNames,
+                lockedRightNames,
+                leftSpace,
+                rightSpace);
+        List<String> leftNames = new ArrayList<>(lockedLeftNames);
+        List<String> rightNames = new ArrayList<>(lockedRightNames);
+        rightNames.sort(String::compareTo);
+        leftNames.sort((a, b) -> {
+            int comparison = Integer.compare(
+                    coherentCandidateCount(
+                            leftSpace.variables.get(a), rightNames, rightSpace),
+                    coherentCandidateCount(
+                            leftSpace.variables.get(b), rightNames, rightSpace));
+            return comparison != 0 ? comparison : a.compareTo(b);
+        });
+        int requiredMatches = maximumCoherentMatches(
+                leftNames, rightNames, leftSpace, rightSpace);
+        BestCoherentMapping best = new BestCoherentMapping();
+        searchBestCoherentMapping(
+                left,
+                right,
+                leftNames,
+                rightNames,
+                leftSpace,
+                rightSpace,
+                new HashMap<>(),
+                new HashSet<>(),
+                0,
+                0,
+                requiredMatches,
+                lockedLeftNames,
+                lockedRightNames,
+                leftMetadata,
+                rightMetadata,
+                best);
+        if (best.distance == Integer.MAX_VALUE) {
+            throw new IllegalStateException(
+                    "No admissible coherent temporal variable alignment was evaluated");
+        }
+        return new MatrixAlignment(
+                best.distance,
+                best.mapping,
+                lockedLeftNames,
+                lockedRightNames);
+    }
+
+    private static void closeCoherentCandidateRegion(
+            Set<String> leftNames,
+            Set<String> rightNames,
+            CoherentVariableSpace leftSpace,
+            CoherentVariableSpace rightSpace) {
+        boolean changed;
+        do {
+            changed = false;
+            for (Map.Entry<String, CoherentVariable> entry
+                    : rightSpace.variables.entrySet()) {
+                if (rightNames.contains(entry.getKey())) {
+                    continue;
+                }
+                for (String leftName : leftNames) {
+                    if (leftSpace.variables.get(leftName)
+                            .compatibleWith(entry.getValue())) {
+                        rightNames.add(entry.getKey());
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+            for (Map.Entry<String, CoherentVariable> entry
+                    : leftSpace.variables.entrySet()) {
+                if (leftNames.contains(entry.getKey())) {
+                    continue;
+                }
+                for (String rightName : rightNames) {
+                    if (entry.getValue().compatibleWith(
+                            rightSpace.variables.get(rightName))) {
+                        leftNames.add(entry.getKey());
+                        changed = true;
+                        break;
+                    }
+                }
+            }
+        } while (changed);
+    }
+
+    private static void searchBestCoherentMapping(
+            List<NormalForm> left,
+            List<NormalForm> right,
+            List<String> leftNames,
+            List<String> rightNames,
+            CoherentVariableSpace leftSpace,
+            CoherentVariableSpace rightSpace,
+            Map<String, String> mapping,
+            Set<String> usedRightNames,
+            int index,
+            int matched,
+            int requiredMatches,
+            Set<String> lockedLeftNames,
+            Set<String> lockedRightNames,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata,
+            BestCoherentMapping best) {
+        if (index == leftNames.size()) {
+            if (matched != requiredMatches) {
+                return;
+            }
+            int distance = matrixDistanceWithFixedMapping(
+                    left,
+                    right,
+                    mapping,
+                    lockedLeftNames,
+                    lockedRightNames,
+                    leftMetadata,
+                    rightMetadata);
+            if (distance < best.distance) {
+                best.distance = distance;
+                best.mapping = new HashMap<>(mapping);
+            }
+            return;
+        }
+        String leftName = leftNames.get(index);
+        CoherentVariable leftVariable = leftSpace.variables.get(leftName);
+        boolean mapped = false;
+        for (String rightName : rightNames) {
+            if (usedRightNames.contains(rightName)
+                    || !leftVariable.compatibleWith(
+                            rightSpace.variables.get(rightName))) {
+                continue;
+            }
+            mapped = true;
+            mapping.put(leftName, rightName);
+            usedRightNames.add(rightName);
+            searchBestCoherentMapping(
+                    left,
+                    right,
+                    leftNames,
+                    rightNames,
+                    leftSpace,
+                    rightSpace,
+                    mapping,
+                    usedRightNames,
+                    index + 1,
+                    matched + 1,
+                    requiredMatches,
+                    lockedLeftNames,
+                    lockedRightNames,
+                    leftMetadata,
+                    rightMetadata,
+                    best);
+            usedRightNames.remove(rightName);
+            mapping.remove(leftName);
+            if (best.distance == 0) {
+                return;
+            }
+        }
+        if (!mapped || matched + leftNames.size() - index - 1 >= requiredMatches) {
+            searchBestCoherentMapping(
+                    left,
+                    right,
+                    leftNames,
+                    rightNames,
+                    leftSpace,
+                    rightSpace,
+                    mapping,
+                    usedRightNames,
+                    index + 1,
+                    matched,
+                    requiredMatches,
+                    lockedLeftNames,
+                    lockedRightNames,
+                    leftMetadata,
+                    rightMetadata,
+                    best);
+        }
+    }
+
+    private static int coherentCandidateCount(
+            CoherentVariable left,
+            List<String> rightNames,
+            CoherentVariableSpace rightSpace) {
+        int count = 0;
+        for (String rightName : rightNames) {
+            if (left.compatibleWith(rightSpace.variables.get(rightName))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static int maximumCoherentMatches(
+            List<String> leftNames,
+            List<String> rightNames,
+            CoherentVariableSpace leftSpace,
+            CoherentVariableSpace rightSpace) {
+        Map<String, String> matchedLeftByRight = new HashMap<>();
+        int result = 0;
+        for (String leftName : leftNames) {
+            if (augmentCoherentMatching(
+                    leftName,
+                    rightNames,
+                    leftSpace,
+                    rightSpace,
+                    matchedLeftByRight,
+                    new HashSet<>())) {
+                result++;
+            }
+        }
+        return result;
+    }
+
+    private static boolean augmentCoherentMatching(
+            String leftName,
+            List<String> rightNames,
+            CoherentVariableSpace leftSpace,
+            CoherentVariableSpace rightSpace,
+            Map<String, String> matchedLeftByRight,
+            Set<String> visitedRight) {
+        CoherentVariable left = leftSpace.variables.get(leftName);
+        for (String rightName : rightNames) {
+            if (!visitedRight.add(rightName)
+                    || !left.compatibleWith(
+                            rightSpace.variables.get(rightName))) {
+                continue;
+            }
+            String previousLeft = matchedLeftByRight.get(rightName);
+            if (previousLeft == null
+                    || augmentCoherentMatching(
+                            previousLeft,
+                            rightNames,
+                            leftSpace,
+                            rightSpace,
+                            matchedLeftByRight,
+                            visitedRight)) {
+                matchedLeftByRight.put(rightName, leftName);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static CoherentVariableSpace coherentVariableSpace(
+            List<NormalForm> normalForms) {
+        Map<String, CoherentVariable> all = new HashMap<>();
+        for (int phase = 0; phase < normalForms.size(); phase++) {
+            NormalForm normalForm = normalForms.get(phase);
+            Map<String, BindingDescriptor> bindings = variableBindings(normalForm);
+            for (String name : matrixVariableNames(normalForm.getMatrixEGraph())) {
+                BindingDescriptor descriptor = bindings.get(name);
+                if (descriptor == null) {
+                    continue;
+                }
+                CoherentVariable variable = all.computeIfAbsent(
+                        name, ignored -> new CoherentVariable(descriptor));
+                variable.observe(descriptor, phase);
+            }
+        }
+        all.entrySet().removeIf(entry -> entry.getValue().ambiguous);
+        return new CoherentVariableSpace(all);
     }
 
     private static int matrixDistance(NormalForm left, NormalForm right) {
@@ -401,15 +692,35 @@ public final class CanonicalDistance {
             NormalForm right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
+        return matrixDistance(
+                left,
+                right,
+                java.util.Collections.emptyMap(),
+                java.util.Collections.emptySet(),
+                java.util.Collections.emptySet(),
+                leftMetadata,
+                rightMetadata);
+    }
+
+    private static int matrixDistance(
+            NormalForm left,
+            NormalForm right,
+            Map<String, String> fixedMapping,
+            Set<String> lockedLeftNames,
+            Set<String> lockedRightNames,
+            EGraphMetadata leftMetadata,
+            EGraphMetadata rightMetadata) {
         Map<String, BindingDescriptor> leftBindings = variableBindings(left);
         Map<String, BindingDescriptor> rightBindings = variableBindings(right);
         leftBindings.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
         rightBindings.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
+        leftBindings.keySet().removeAll(lockedLeftNames);
+        rightBindings.keySet().removeAll(lockedRightNames);
         List<String> leftNames = new ArrayList<>(leftBindings.keySet());
         leftNames.sort((a, b) -> Integer.compare(
                 candidateCount(a, leftBindings, rightBindings),
                 candidateCount(b, leftBindings, rightBindings)));
-        Map<String, String> mapping = new HashMap<>();
+        Map<String, String> mapping = new HashMap<>(fixedMapping);
         int requiredMatches = maximumCompatibleMatches(
                 leftNames, leftBindings, rightBindings);
         return bestMappedDistance(
@@ -419,7 +730,7 @@ public final class CanonicalDistance {
                 leftBindings,
                 rightBindings,
                 mapping,
-                new HashSet<>(),
+                new HashSet<>(lockedRightNames),
                 0,
                 0,
                 requiredMatches,
@@ -429,6 +740,8 @@ public final class CanonicalDistance {
     }
 
     private static void matrixEdits(List<NormalForm> left, List<NormalForm> right, List<String> edits) {
+        MatrixAlignment alignment = bestCoherentMatrixAlignment(
+                left, right, null, null);
         int size = Math.max(left.size(), right.size());
         for (int i = 0; i < size; i++) {
             NormalForm pathSource = i < left.size() ? left.get(i) : right.get(i);
@@ -438,21 +751,52 @@ public final class CanonicalDistance {
             } else if (i >= right.size()) {
                 collectDeletedEGraph(left.get(i).getMatrixEGraph(), path, edits);
             } else {
-                matrixEdits(left.get(i), right.get(i), path, edits);
+                matrixEdits(
+                        left.get(i), right.get(i), path, edits, alignment);
             }
         }
     }
 
     private static void matrixEdits(NormalForm left, NormalForm right, String path, List<String> edits) {
-        Map<String, String> mapping = bestVariableMapping(left, right);
+        matrixEdits(left, right, path, edits, MatrixAlignment.empty());
+    }
+
+    private static void matrixEdits(
+            NormalForm left,
+            NormalForm right,
+            String path,
+            List<String> edits,
+            MatrixAlignment alignment) {
+        Map<String, String> mapping = bestVariableMapping(
+                left,
+                right,
+                alignment.mapping,
+                alignment.lockedLeftNames,
+                alignment.lockedRightNames);
         eGraphEdits(left.getMatrixEGraph(), right.getMatrixEGraph(), mapping, path, edits);
     }
 
     private static Map<String, String> bestVariableMapping(NormalForm left, NormalForm right) {
+        return bestVariableMapping(
+                left,
+                right,
+                java.util.Collections.emptyMap(),
+                java.util.Collections.emptySet(),
+                java.util.Collections.emptySet());
+    }
+
+    private static Map<String, String> bestVariableMapping(
+            NormalForm left,
+            NormalForm right,
+            Map<String, String> fixedMapping,
+            Set<String> lockedLeftNames,
+            Set<String> lockedRightNames) {
         Map<String, BindingDescriptor> leftBindings = variableBindings(left);
         Map<String, BindingDescriptor> rightBindings = variableBindings(right);
         leftBindings.keySet().retainAll(matrixVariableNames(left.getMatrixEGraph()));
         rightBindings.keySet().retainAll(matrixVariableNames(right.getMatrixEGraph()));
+        leftBindings.keySet().removeAll(lockedLeftNames);
+        rightBindings.keySet().removeAll(lockedRightNames);
         List<String> leftNames = new ArrayList<>(leftBindings.keySet());
         leftNames.sort((a, b) -> Integer.compare(
                 candidateCount(a, leftBindings, rightBindings),
@@ -466,8 +810,8 @@ public final class CanonicalDistance {
                 leftNames,
                 leftBindings,
                 rightBindings,
-                new HashMap<>(),
-                new HashSet<>(),
+                new HashMap<>(fixedMapping),
+                new HashSet<>(lockedRightNames),
                 0,
                 0,
                 requiredMatches,
@@ -726,8 +1070,9 @@ public final class CanonicalDistance {
         } else if ((left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
                 || left.getOpcode() == EGraphNode.Opcode.CONSTANT
                 || left.getOpcode() == EGraphNode.Opcode.REF)
-                && !safeEquals(left.getSourceName(), right.getSourceName())) {
-            edits.add(path + ": replace binding " + display(left.getSourceName()) + " -> " + display(right.getSourceName()));
+                && !safeEquals(atomIdentity(left), atomIdentity(right))) {
+            edits.add(path + ": replace binding " + atomDisplay(left)
+                    + " -> " + atomDisplay(right));
         }
         List<EGraphNode> leftChildren = left.getChildren();
         List<EGraphNode> rightChildren = right.getChildren();
@@ -905,9 +1250,32 @@ public final class CanonicalDistance {
     }
 
     private static String atomIdentity(EGraphNode node) {
-        return node.getSemanticIdentity() == null
-                ? node.getSourceName()
-                : node.getSemanticIdentity();
+        if (node.getSemanticIdentity() != null) {
+            return node.getSemanticIdentity();
+        }
+        if (node.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
+                && node.getSourceType() != null
+                && node.getSourceType().startsWith("FieldRelation")
+                && node.getExactAlloyType() != null) {
+            String name = node.getSourceName() == null
+                    ? "" : node.getSourceName();
+            // Some parser field leaves predate semanticIdentity. Their exact
+            // relation type retains the declaring owner erased from spelling.
+            return "alloy/field/" + name.length() + ":" + name + "/"
+                    + node.getExactAlloyType().stableString();
+        }
+        return node.getSourceName();
+    }
+
+    private static String atomDisplay(EGraphNode node) {
+        if (node.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
+                && node.getSourceType() != null
+                && node.getSourceType().startsWith("FieldRelation")
+                && node.getExactAlloyType() != null) {
+            return display(node.getSourceName()) + " : "
+                    + node.getExactAlloyType().stableString();
+        }
+        return display(node.getSourceName());
     }
 
     private static final class EGraphMetadata {
@@ -1648,6 +2016,107 @@ public final class CanonicalDistance {
                 return true;
             }
             return safeEquals(variable.getBindingPath(), other.variable.getBindingPath());
+        }
+
+        private int ownershipPriority() {
+            switch (role) {
+                case PARAMETER:
+                    return 0;
+                case MATRIX:
+                    return 1;
+                case LOCAL:
+                    return 2;
+                case INHERITED:
+                default:
+                    return 3;
+            }
+        }
+    }
+
+    private static final class CoherentVariable {
+        private BindingDescriptor descriptor;
+        private final Set<Integer> phases = new HashSet<>();
+        private int ownerPhase = Integer.MAX_VALUE;
+        private boolean ambiguous;
+
+        private CoherentVariable(BindingDescriptor descriptor) {
+            this.descriptor = descriptor;
+        }
+
+        private void observe(BindingDescriptor observed, int phase) {
+            if (descriptor.variable != observed.variable) {
+                ambiguous = true;
+                return;
+            }
+            if (observed.ownershipPriority() < descriptor.ownershipPriority()) {
+                descriptor = observed;
+                ownerPhase = phase;
+            } else if (observed.ownershipPriority()
+                    == descriptor.ownershipPriority()) {
+                ownerPhase = Math.min(ownerPhase, phase);
+            }
+            phases.add(phase);
+        }
+
+        private boolean compatibleWith(CoherentVariable other) {
+            return other != null
+                    && !ambiguous
+                    && !other.ambiguous
+                    && ownerPhase == other.ownerPhase
+                    && descriptor.compatibleWith(other.descriptor);
+        }
+
+        private boolean isCoherent() {
+            return phases.size() > 1;
+        }
+    }
+
+    private static final class CoherentVariableSpace {
+        private final Map<String, CoherentVariable> variables;
+
+        private CoherentVariableSpace(Map<String, CoherentVariable> variables) {
+            this.variables = variables;
+        }
+
+        private Set<String> coherentNames() {
+            Set<String> names = new HashSet<>();
+            for (Map.Entry<String, CoherentVariable> entry : variables.entrySet()) {
+                if (entry.getValue().isCoherent()) {
+                    names.add(entry.getKey());
+                }
+            }
+            return names;
+        }
+    }
+
+    private static final class BestCoherentMapping {
+        private int distance = Integer.MAX_VALUE;
+        private Map<String, String> mapping = new HashMap<>();
+    }
+
+    private static final class MatrixAlignment {
+        private final int distance;
+        private final Map<String, String> mapping;
+        private final Set<String> lockedLeftNames;
+        private final Set<String> lockedRightNames;
+
+        private MatrixAlignment(
+                int distance,
+                Map<String, String> mapping,
+                Set<String> lockedLeftNames,
+                Set<String> lockedRightNames) {
+            this.distance = distance;
+            this.mapping = new HashMap<>(mapping);
+            this.lockedLeftNames = new HashSet<>(lockedLeftNames);
+            this.lockedRightNames = new HashSet<>(lockedRightNames);
+        }
+
+        private static MatrixAlignment empty() {
+            return new MatrixAlignment(
+                    0,
+                    java.util.Collections.emptyMap(),
+                    java.util.Collections.emptySet(),
+                    java.util.Collections.emptySet());
         }
     }
 

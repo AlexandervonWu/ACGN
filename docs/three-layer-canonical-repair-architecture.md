@@ -255,8 +255,9 @@ protocol: each of 42,386 incorrect predicates is compared with every
 AST-distinct correct truth in its invariant group. It completed without
 failures and reports mean nearest certified distance 11.562709. Its release
 gate found zero certified incorrect-to-truth zeroes; ten Fast Rewrite-only
-zeroes remain explicitly non-certifying. The source-level mechanisms in both
-directions are cataloged in
+zeroes were recorded in that archived run. Current source repairs their
+field-identity and cross-phase-alignment causes, pending a full corpus
+regeneration. The source-level mechanisms in both directions are cataloged in
 [Fast Rewrite and Certificate-Integrated Equality Disagreements](fast-rewrite-certificate-equality-disagreements.md).
 
 ## Migration Discrepancy Audit

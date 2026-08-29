@@ -57,6 +57,21 @@ that selected diagonal, reject bound/free spelling conflation symmetrically,
 and pass an independent 1,156-case edit-plan oracle. That failed review remains
 fault provenance, not current approval.
 
+The August 29 disagreement audit found two further Fast Rewrite comparator
+defects. Nine corpus witnesses compared overloaded fields by unqualified
+spelling despite retaining distinct exact owner types, and one temporal witness
+selected independent alpha mappings for two occurrences of the same inherited
+binder. `CanonicalDistance.atomIdentity` now consumes the retained exact field
+type, and its matrix minimization applies one mapping to every temporal use of
+an inherited slot. The existing Lean obligations
+`exact_type_change_is_one_edit`,
+`repeated_temporal_owner_occurrences_share_one_mapping`, and
+`alpha_distance_is_exact_pairwise_minimum` justify these metric constraints.
+Parser-backed regressions cover the two counterexamples, same-owner/alpha
+positive controls, and a legal coherent whole-block permutation. No
+Certificate-Integrated producer, projection, observation, or metric class was
+changed.
+
 ## Resource Contract
 
 The exact evaluator recognizes these positive system properties:
