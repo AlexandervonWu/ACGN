@@ -221,8 +221,10 @@ at 16 workers. The Fast Rewrite IR and Certificate-Integrated IR produced:
 | Engine CPU time | 72.573 s | 41,253.576 s |
 | Maximum RSS | 1,837.043 MiB | 8,947.977 MiB |
 
-The certificate-integrated zero set contains the complete Fast Rewrite IR zero set and 14 additional
-`CORRECT` pairs. The nonzero-distance divergence is retained for
+On this paired-oracle population, the certificate-integrated zero set contains
+the complete Fast Rewrite IR zero set and 14 additional `CORRECT` pairs. This
+population-scoped containment does not extend to the augmenter's
+incorrect-to-any-truth search. The nonzero-distance divergence is retained for
 pair-level classification in `minimum_distances.csv`; it is not hidden behind
 representative TED. The Certificate-Integrated IR's roughly 110x wall-time cost is construction
 and certification overhead rather than a larger observation or a replacement
@@ -253,7 +255,9 @@ protocol: each of 42,386 incorrect predicates is compared with every
 AST-distinct correct truth in its invariant group. It completed without
 failures and reports mean nearest certified distance 11.562709. Its release
 gate found zero certified incorrect-to-truth zeroes; ten Fast Rewrite-only
-zeroes remain explicitly non-certifying.
+zeroes remain explicitly non-certifying. The source-level mechanisms in both
+directions are cataloged in
+[Fast Rewrite and Certificate-Integrated Equality Disagreements](fast-rewrite-certificate-equality-disagreements.md).
 
 ## Migration Discrepancy Audit
 

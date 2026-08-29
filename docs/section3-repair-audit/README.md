@@ -38,6 +38,9 @@ claim. The current assurance state is `INCOMPLETE`.
 - [Quiescent collision buckets](collision-bucket-proof-process.md)
 - [Prenex ACI scheduling](prenex-aci-scheduling-proof-process.md)
 - [Repair metric assurance record](repair-metric-assurance.md)
+- [Fast Rewrite and Certificate-Integrated equality disagreements](../fast-rewrite-certificate-equality-disagreements.md):
+  source-level characterization of the 14 certified-only paired zeroes and
+  the ten Fast-only incorrect-to-truth zeroes.
 - [Phase 6 streaming and occurrence audit](phase-6-streaming-occurrences.md)
 - [Formal Lean source tree](formal/), including the
   [claim-traceability model](formal/AssuranceTraceability.lean) and the
