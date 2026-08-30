@@ -17,6 +17,7 @@ roots = [
   "TypedSlottedEGraphsPaper.ACClosureCounts",
   "TypedSlottedEGraphsPaper.StructuralSemantics",
   "TypedSlottedEGraphsPaper.TraceSemantics",
+  "TypedSlottedEGraphsPaper.TraceEnvelopeWitness",
   "TypedSlottedEGraphsPaper.ContextGraph",
   "TypedSlottedEGraphsPaper.AtomicLedger",
   "TypedSlottedEGraphsPaper.ProfileRules",

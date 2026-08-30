@@ -26,6 +26,22 @@ Alloy model is supported. Existing result directories were not modified.
 
 ## Formal Obligations
 
+### Trace-envelope inhabitation obligation
+
+The acceptance-blocking uncertainty about whether the trace envelope has any
+nontrivial inhabitant is discharged by the standalone Lean witness
+`paper-claims/formal/TypedSlottedEGraphsPaper/TraceEnvelopeWitness.lean`.
+Its machine-checked indexed trace contains AC reassociation, an explicit
+two-slot binder mapping, union insertion, rebuild, and forward congruence
+restoration.  `d1_trace_obligation` proves D1 by constructing the exact
+adjacent trace, and `d2_trace_obligation` proves D2 by replaying every local
+semantic equality through `ProfileRules.replayTrace`.  The focused Lean 4.33.0
+build is `lake build TypedSlottedEGraphsPaper.TraceEnvelopeWitness`; it uses no
+`sorry`, `axiom`, `unsafe`, or unchecked correspondence premise.
+
+This is an inhabitation result only: it does not claim completeness, general
+implementation faithfulness, or coverage of other trace shapes.
+
 `docs/section3-repair-audit/formal/FullCorpusPreflight.lean` is a standalone
 Lean 4.33.0 model with no `sorry`, `axiom`, or `unsafe`. It proves the bounded
 obligations used by these repairs:
