@@ -6,8 +6,8 @@
     "historical_matrix": "docs/theory-artifact-matrix.md",
     "controlling_boundary": "The historical EXACT labels are inventory only; the current closed-world refinement gate is not passed.",
     "audited_commit": "676480899dc2ed29253d00c59beaf116ebd2c675",
-    "experiment_source_commit": "88363ea23728329948ccc9d5cdad690cc5787ca5",
-    "formal_registry_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b"
+    "experiment_source_commit": "fbd9b1497a9036c55780da777f56581bc1c6bcec",
+    "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a"
   },
   "closure_status": "PARTIAL",
   "entries": [
@@ -356,7 +356,7 @@
         "TypedSlottedEGraphsPaper.ProfileRules.tsgScope001_zeroCanonicalDistanceBoundary"
       ],
       "bridge evidence class": "PURE_JAVA_BEHAVIOR",
-      "certificate or proof location": "publication_runs/57f5a2d8-f501-494d-81d5-b3f1396dbe18; docs/theory-artifact-matrix.md row INT-03",
+      "certificate or proof location": "publication_runs/df4d8d4c-6265-4fe7-88d5-3aceee60398b; docs/theory-artifact-matrix.md row INT-03",
       "ledger row identifiers": [
         "INT-03",
         "MET-01",
@@ -382,5 +382,11 @@
     "theorem_critical_open": 6,
     "theorem_critical_partially_repaired": 0,
     "closure_inference": "None of the exact Lean specification declarations proves the listed Java code refines that specification."
+  },
+  "metadata_rebinding": {
+    "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
+    "java_changes": 0,
+    "experimental_result_changes": 0,
+    "closure_status_preserved": "PARTIAL"
   }
 }

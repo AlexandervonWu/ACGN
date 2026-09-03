@@ -257,11 +257,16 @@
       }
     }
   ],
-  "formal_registry_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b",
+  "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
   "summary": {
     "abstract_rows_with_formal_claims": 7,
     "abstract_formal_failures": 0,
     "artifact_or_experiment_open_or_bounded": 9,
     "interpretation": "Abstract Lean closure does not imply Java refinement; Java openness does not negate the proved narrow abstract facts."
+  },
+  "metadata_rebinding": {
+    "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
+    "claim_changes": 0,
+    "status_changes": 0
   }
 }

@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0",
-  "audit_status": "MECHANICALLY_REGENERATED_CORRESPONDENCE_CANDIDATE",
-  "formal_registry_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b",
+  "audit_status": "CURRENT_PROOF_AND_HYPOTHESIS_METADATA_REBOUND_PENDING_FRESH_REVIEW",
+  "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
   "entry_count": 19,
   "entries": [
     {
@@ -515,5 +515,9 @@
     "registry_paper_direct_dependencies": "Exact curated direct_dependencies copied mechanically from formal-units.yaml.",
     "proof_sketch_principal_paper_dependencies": "The smaller narrative path emphasized by the appendix proof sketch; it is not asserted to equal the registry graph.",
     "principal_lean_dependencies": "Named Lean declarations emphasized by the proof sketch; compiler-used ACTIVE edges live in compiler-dependency-graph.json."
+  },
+  "regeneration_provenance": {
+    "paper_fields_regenerated": true,
+    "Lean_proof_fields_carried_forward_by_exact_file_hash": true
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "2.0",
-  "status": "CURRENT_AXIOM_EVIDENCE_BOUND_TO_REGENERATED_REGISTRY",
+  "status": "CURRENT_REGISTRY_BOUND_TO_PRIOR_AXIOM_OUTPUT_BY_EXACT_LEAN_FILE_HASH",
   "foundation_profile": "STANDARD_LEAN_EXPLICIT_TCB",
   "allowed_axioms": [
     "propext",
@@ -18,7 +18,7 @@
   "lean_version": "Lean (version 4.33.0, x86_64-unknown-linux-gnu, commit d8b18978322de05a8f3dba51ef03cf5461676c17, Release)",
   "paper_index": "formal/PaperIndex.lean",
   "paper_index_sha256": "dc10d182fd5e4249b8c67f92cb69b5057ca9a90f8dc82aa8e9ecd299c891fdcb",
-  "formal_units_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b",
+  "formal_units_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
   "entries": [
     {
       "formal_id": "TSG-FND-001",
@@ -908,5 +908,10 @@
       "paper_index_direct_sentinel": true
     }
   ],
-  "normalization_contract_sha256": "9b4a84e6b492a65bed6c9446b1c3c9e255e21277caba9cc9d8c31d713c873bc6"
+  "normalization_contract_sha256": "9b4a84e6b492a65bed6c9446b1c3c9e255e21277caba9cc9d8c31d713c873bc6",
+  "regeneration_provenance": {
+    "fresh_axiom_commands_executed": false,
+    "mapped_lean_file_hashes_verified": 146,
+    "next_clean_build_gate_pending": true
+  }
 }

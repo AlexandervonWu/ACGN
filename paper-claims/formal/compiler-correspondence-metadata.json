@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "status": "MECHANICALLY_REGENERATED_TWICE_BYTE_IDENTICAL",
+  "status": "CURRENT_PAPER_REBOUND_TO_HASH_VERIFIED_LEAN_4_33_PROJECTION",
   "normalization_contract": "formal/normalization-contract.json",
   "normalization_contract_sha256": "9b4a84e6b492a65bed6c9446b1c3c9e255e21277caba9cc9d8c31d713c873bc6",
   "lean_version": "4.33.0",
@@ -61,10 +61,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 477,
         "line_end": 484,
-        "excerpt_sha256": "9afb0e76b108feb0fd0ca1682d1f01f2228373875af129cfd77f81915662b24f"
+        "excerpt_sha256": "b50e326126cb666c72eed9c55eabf30316e5cacee0b7ef24f6ac4e8ec1bebffd"
       },
-      "paper_source_normal": "\\ell(s)&=\\operatorname{ceilLog2}(2+s),\\\\ B_T(n)&=S_{\\rm in}\\ell(S_{\\rm in})+L+ P_Q(n)S_K\\ell(S_K). \\end{align*} Here the executable natural-number function is zero at inputs $0$ and $1$. For every $k$, it satisfies $\\operatorname{ceilLog2}(k+2)=\\operatorname{Nat.log2}(k+1)+1$.",
-      "paper_source_normal_sha256": "20d3ab3a15b95321671316d02d9737663db6500a96d980224efff8cdd2986e44",
+      "paper_source_normal": "\\ell(s)&=\\operatorname{ceilLog2}(2+s),\\\\ B_T(n)&=S_{\\rm in}\\ell(S_{\\rm in})+L+ P_Q(n)S_K\\ell(S_K). \\end{align*} Here the executable natural-number function is zero at inputs $0$ and $1$. For every $k$, it satisfies $\\ell(k)=\\lfloor\\log_2(k+1)\\rfloor+1$.",
+      "paper_source_normal_sha256": "df261062a2ceb7d9a40a0263a2275899ccab3b36de05b0476bcc43b732dccdcb",
       "explicit_telescope": [
         {
           "index": 1,
@@ -480,10 +480,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 494,
         "line_end": 500,
-        "excerpt_sha256": "8ef6cb4afd8a0b0b62a5619d2e7c05fbf027c193b983a4a8ce65242bdbbc209f"
+        "excerpt_sha256": "fae428eaf164ae01a5cc3a033dc935eb10b4d3b7c69b45ce0f4034bf12077ff9"
       },
-      "paper_source_normal": "\\leanref{TSG-ALG-004}{TypedSlottedEGraphsPaper.ClaimLedger.TSGALG004CertificatePreservingRebuildContract} The intended producer allocates $\\Delta_n$, gates collision union on the two source-to-kernel certificates and a directed (PC) certificate, and treats support shrinkage as an explicit interface restriction. These are producer obligations: F27 sees only certified obligation additions, rekeys, compositions, and removals, not allocation, hashing, or a dirty-set algorithm.",
-      "paper_source_normal_sha256": "dac85df311cb621554bf405ead55a4974f6b6c401ab1a4f9dadc2d06e37d0854",
+      "paper_source_normal": "\\leanref{TSG-ALG-004}{TypedSlottedEGraphsPaper.ClaimLedger.TSGALG004CertificatePreservingRebuildContract} The intended producer allocates $\\Delta_n$, gates collision union on the two source-to-kernel certificates and a directed (PC) certificate, and treats support shrinkage as an explicit interface restriction. These are producer obligations: the trace theorem consumes only certified obligation additions, rekeys, compositions, and removals, not allocation, hashing, or a dirty-set algorithm.",
+      "paper_source_normal_sha256": "16b85549a826fad48c4689a5719d9c0629aca4ae25e9a5a60071d53fba158a8e",
       "explicit_telescope": [
         {
           "index": 3,
@@ -566,10 +566,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 495,
         "line_end": 500,
-        "excerpt_sha256": "2be20a5057b2e76485339f3ec2436010319e00b24c56fb36cd2c4fe7411a785f"
+        "excerpt_sha256": "6e706c6e2bec59d433d2b45467de6ab8cf0f76c5ff83434cb979026f7a118a01"
       },
-      "paper_source_normal": "The intended producer allocates $\\Delta_n$, gates collision union on the two source-to-kernel certificates and a directed (PC) certificate, and treats support shrinkage as an explicit interface restriction. These are producer obligations: F27 sees only certified obligation additions, rekeys, compositions, and removals, not allocation, hashing, or a dirty-set algorithm.",
-      "paper_source_normal_sha256": "c5806900104c9a0294cf11febb055ef97e260216d10687d32249e0503655d483",
+      "paper_source_normal": "The intended producer allocates $\\Delta_n$, gates collision union on the two source-to-kernel certificates and a directed (PC) certificate, and treats support shrinkage as an explicit interface restriction. These are producer obligations: the trace theorem consumes only certified obligation additions, rekeys, compositions, and removals, not allocation, hashing, or a dirty-set algorithm.",
+      "paper_source_normal_sha256": "7928173ea615fe0e7826d22554dbc7516433be5652d00b2ec11ab5c52a5e1b02",
       "explicit_telescope": [
         {
           "index": 3,
@@ -1246,10 +1246,10 @@
         "file": "appendixC_vmcai_stage1.tex",
         "line_start": 60,
         "line_end": 70,
-        "excerpt_sha256": "624fb6cfa83147d0316093b78e4f3bdad5f348cdebf90c8bc0ee4d2bb50f1362"
+        "excerpt_sha256": "b965b84b808270dfaa3d98fcfefec5179f597a48726e44562e06b3a64d6f7d99"
       },
-      "paper_source_normal": "The exact formal claim \\textsc{app-001} is deliberately more abstract. For an indexed family $\\mathsf{Term}:\\mathbb N\\to\\mathsf{Type}$, an extractor returns an effective size $k$, a kernel in $\\mathsf{Term}(k)$, and a structural trace with dependent endpoints $\\langle n,\\mathit{input}\\rangle$ and $\\langle k,\\mathit{kernel}\\rangle$. For any two trace interpreters, each supplying an equality for every trace label, replay proves equality of the corresponding endpoint denotations. This theorem neither identifies those equalities with the paper's $\\operatorname{EqCert}$ type nor proves that Java extraction emits the required trace; those are separate refinement obligations.",
-      "paper_source_normal_sha256": "2c8a32a9e87fedd2079ed31aeaa7a0a99a3f6775cb837f39b915fcfbd3f9acb6",
+      "paper_source_normal": "The exact formal claim \\textsc{app-001} uses an indexed trace interface. For an indexed family $\\mathsf{Term}:\\mathbb N\\to\\mathsf{Type}$, an extractor returns an effective size $k$, a kernel in $\\mathsf{Term}(k)$, and a structural trace with dependent endpoints $\\langle n,\\mathit{input}\\rangle$ and $\\langle k,\\mathit{kernel}\\rangle$. For any two trace interpreters, each supplying an equality for every trace label, replay proves equality of the corresponding endpoint denotations. This theorem neither identifies those equalities with the paper's $\\operatorname{EqCert}$ type nor proves that Java extraction emits the required trace; those are separate refinement obligations.",
+      "paper_source_normal_sha256": "87b2417cb2cd500da2744ecdecf0d36119199e1ca77f5f67ed0d42d9782dfde7",
       "explicit_telescope": [
         {
           "index": 7,
@@ -8648,10 +8648,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 238,
         "line_end": 259,
-        "excerpt_sha256": "9f825ea4a03c58dad92f3848909175f093e3352dbebde93a721356f6fef52e82"
+        "excerpt_sha256": "2fc39381336182748bca8de4c77629583366eb2f26dfacacd681ae92d528bd8a"
       },
-      "paper_source_normal": "\\begin{definition}[Flexible Arity Typed Slotted E-Graph] \\label{res:F10} An F10 environment packages a finitely encoded class carrier and: \\begin{itemize} \\item class outputs and interfaces, finite stored-shape domains, and typed ambient records $B_a(p)=(T_{a,p},\\rho_{a,p})$ satisfying \\[ p\\in\\operatorname{Shape}_{\\tau_a},\\quad S_a\\subseteq T_{a,p},\\quad \\rho_{a,p}\\in\\TRen(\\operatorname{slots}(p),T_{a,p}); \\] \\item a depth-decreasing typed parent forest (roots have no parent) and a total recursive $\\operatorname{find}$; and \\item a collision-owner relation and per-class symmetry predicates closed under identity, inverse, and composition. \\end{itemize} \\leanref{TSG-INV-003}{TypedSlottedEGraphsPaper.QuiescentFiniteTypedEGraph.F10FiniteQuiescentGraphEnvironment.collisionIndexExact} The checked depth makes $\\operatorname{find}$ total. Representing $H$ by its membership relation, $a\\in H(p)$ exactly when $a$ is a leader and $p\\in\\operatorname{dom}(B_a)$. Thus a bucket may contain several leaders and asserts only collision candidacy; it has no owners when that set is empty. \\end{definition}",
-      "paper_source_normal_sha256": "e3fafa821bce9e23c6c709ec41b52d5d7f730abeb4ec98cf8e6163efa64e49aa",
+      "paper_source_normal": "\\begin{definition}[Flexible Arity Typed Slotted E-Graph] \\label{res:F10} A flexible-arity typed slotted e-graph environment packages a finitely encoded class carrier and: \\begin{itemize} \\item class outputs and interfaces, finite stored-shape domains, and typed ambient records $B_a(p)=(T_{a,p},\\rho_{a,p})$ satisfying \\[ p\\in\\operatorname{Shape}_{\\tau_a},\\quad S_a\\subseteq T_{a,p},\\quad \\rho_{a,p}\\in\\TRen(\\operatorname{slots}(p),T_{a,p}); \\] \\item a depth-decreasing typed parent forest (roots have no parent) and a total recursive $\\operatorname{find}$; and \\item a collision-owner relation and per-class symmetry predicates closed under identity, inverse, and composition. \\end{itemize} \\leanref{TSG-INV-003}{TypedSlottedEGraphsPaper.QuiescentFiniteTypedEGraph.F10FiniteQuiescentGraphEnvironment.collisionIndexExact} The checked depth makes $\\operatorname{find}$ total. Representing $H$ by its membership relation, $a\\in H(p)$ exactly when $a$ is a leader and $p\\in\\operatorname{dom}(B_a)$. Thus a bucket may contain several leaders and asserts only collision candidacy; it has no owners when that set is empty. \\end{definition}",
+      "paper_source_normal_sha256": "8954b5c98cebe4ac489193bf6599cf3e9615e0cbcf85d12783b978e79ed07d50",
       "explicit_telescope": [
         {
           "index": 7,
@@ -9356,10 +9356,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 387,
         "line_end": 398,
-        "excerpt_sha256": "273a7b8a5c1756c403bcf33fc7937ea56d35e84373588193f88686c43662f68e"
+        "excerpt_sha256": "25f3b52cbc312310a89edc98ea075409f02454c7c10e490da1faf57c16ebad5e"
       },
-      "paper_source_normal": "\\paragraph{Quotient-first normal form.} The concrete design minimizes child and block orbits before bag aggregation or set deduplication. The checked result below deliberately factors out that procedure. A \\emph{finite quotient presentation} $P$ supplies a linearly ordered carrier $X$, local generators fixed independently of normalization, a decision procedure for their reflexive--symmetric--transitive closure $\\mathrel{\\sim_P}$, an explicit finite carrier containing every value, and support, schema, leaf-type, and output observations preserved by every local generator. Define $Q_P(x)$ as the least member of the enumerated $\\sim_P$-orbit of $x$. Establishing that a particular recursive program constructs such a presentation is a separate refinement obligation.",
-      "paper_source_normal_sha256": "c0cf0290667e4b6c0f16aacff64560668d0d6414b8455044dfe2631a79b31c13",
+      "paper_source_normal": "\\paragraph{Quotient-first normal form.} The concrete design minimizes child and block orbits before bag aggregation or set deduplication. The following claims are stated over a finite quotient presentation. A \\emph{finite quotient presentation} $P$ supplies a linearly ordered carrier $X$, local generators fixed independently of normalization, a decision procedure for their reflexive--symmetric--transitive closure $\\mathrel{\\sim_P}$, an explicit finite carrier containing every value, and support, schema, leaf-type, and output observations preserved by every local generator. Define $Q_P(x)$ as the least member of the enumerated $\\sim_P$-orbit of $x$. Establishing that a particular recursive program constructs such a presentation is a separate refinement obligation.",
+      "paper_source_normal_sha256": "41f8df456e9c206f3f8246d40243d412c78f80523a96faec8fead34a418c89fa",
       "explicit_telescope": [
         {
           "index": 7,
@@ -10829,10 +10829,10 @@
         "file": "foundations_compressed.tex",
         "line_start": 93,
         "line_end": 100,
-        "excerpt_sha256": "e90a731084c038eaa048dc81935d0e06e1f1968805b62e0763e3be6dabefb5e8"
+        "excerpt_sha256": "70c5e23e93bfbe78eb45f76e4b393f9c28cb804549ad49a52d025a73b2f0ff29"
       },
-      "paper_source_normal": "Each binder descriptor $\\beta$ has a finite typed context $\\Delta_\\beta$, domain/multiplicity/disjointness/dependency data, and a certified subgroup $\\operatorname{Aut}(\\beta)\\leq\\operatorname{Perm}_{\\rm ty}(\\Delta_\\beta)$. An occurrence in $\\Gamma$ is $o=(\\Delta_o,a_o)$ with $\\Delta_o\\cap\\Gamma=\\varnothing$ and $a_o\\in\\TRen(\\Delta_\\beta,\\Delta_o)$; write $\\operatorname{BOcc}_\\beta(\\Gamma)$ for all such occurrences.",
-      "paper_source_normal_sha256": "05c47abb6e6f992d2b36279296f7c15d7e39b1408ecaf3a0ba60332b221bcab0",
+      "paper_source_normal": "Each binder descriptor $\\beta$ has a finite typed context $\\Delta_\\beta$, domain, multiplicity, disjointness, and dependency data, and a certified subgroup $\\operatorname{Aut}(\\beta)\\leq\\operatorname{Perm}_{\\rm ty}(\\Delta_\\beta)$. An occurrence in $\\Gamma$ is $o=(\\Delta_o,a_o)$ with $\\Delta_o\\cap\\Gamma=\\varnothing$ and $a_o\\in\\TRen(\\Delta_\\beta,\\Delta_o)$; write $\\operatorname{BOcc}_\\beta(\\Gamma)$ for all such occurrences.",
+      "paper_source_normal_sha256": "0a8f686dcad2e43548afbe53fc039771ac4c1fe9ee8b4e3f4db4b94920779ed4",
       "explicit_telescope": [
         {
           "index": 1,
@@ -14969,10 +14969,10 @@
         "file": "appendixC_vmcai_stage1.tex",
         "line_start": 299,
         "line_end": 313,
-        "excerpt_sha256": "0f4fe207781b5f0aa0af04a9a824f67b8c0060617d8c1954fb0b322d5148742a"
+        "excerpt_sha256": "476bca30fa7a881584a41e8e84359dd3064ec191b1481ab53f2532c39ab1447c"
       },
-      "paper_source_normal": "Atomic negation uses the following involutive duals: \\[ \\begin{array}{c@{\\quad\\leftrightarrow\\quad}c@{\\qquad}c@{\\quad\\leftrightarrow\\quad}c} = & \\ne & > & \\le \\\\ \\ge & < & \\in & \\notin \\\\ \\operatorname{some}R & \\operatorname{no}R && \\end{array} \\] The exact \\textsc{rule-007} theorem is conditional: if the finite $\\operatorname{atomicDual}$ function returns $o^\\bot$ for $o$, it returns $o$ for $o^\\bot$, and normalizing the negation of $o$ returns the atom $o^\\bot$. Behavior of parser-specific negative comparison heads and unsupported operators is not part of this theorem; Java conformance to the table is checked separately.",
-      "paper_source_normal_sha256": "323b42c00eb03696e1a68758e8cbc4058a43aaf30df038d6b56734b0b7cff426",
+      "paper_source_normal": "Atomic negation uses the following involutive duals: \\[ \\begin{array}{c@{\\quad\\leftrightarrow\\quad}c@{\\qquad}c@{\\quad\\leftrightarrow\\quad}c} = & \\ne & > & \\le \\\\ \\ge & < & \\in & \\notin \\\\ \\multicolumn{4}{c}{\\operatorname{some}R\\quad\\leftrightarrow\\quad\\operatorname{no}R} \\end{array} \\] The exact \\textsc{rule-007} theorem is conditional: if the finite $\\operatorname{atomicDual}$ function returns $o^\\bot$ for $o$, it returns $o$ for $o^\\bot$, and normalizing the negation of $o$ returns the atom $o^\\bot$. Behavior of parser-specific negative comparison heads and unsupported operators is not part of this theorem; Java conformance to the table is checked separately.",
+      "paper_source_normal_sha256": "ba2a382bd6dfe855f6b49f78cd9431d016d77592e5216a0121dca8a592cf2b6e",
       "explicit_telescope": [
         {
           "index": 1,
@@ -17358,5 +17358,13 @@
         }
       ]
     }
-  ]
+  ],
+  "regeneration_provenance": {
+    "previous_metadata_sha256": "763cdfd8c0bd1bc5709a61a2e49762cf423026e517274cff32d32ae39414a421",
+    "paper_fields_regenerated_from_current_source": true,
+    "hypothesis_and_Lean_type_fields_carried_forward_by_exact_lean_file_sha256": true,
+    "mapped_lean_file_hashes_verified": 146,
+    "fresh_Lean_environment_dump_executed": false,
+    "reason": "The historical dump tool was not packaged; the mapped Lean files are byte-identical."
+  }
 }

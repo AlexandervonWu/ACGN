@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0",
   "graph_kind": "COMPILER_USED_ACTIVE_DECLARATION_GRAPH",
-  "graph_status": "MECHANICALLY_REGENERATED_FROM_EXACT_LEAN_ENVIRONMENT",
+  "graph_status": "RECOMPUTED_FROM_HASH_VERIFIED_COMPILER_PROJECTION",
   "dependency_semantics": "Direct constants used by each declaration body, filtered to distinct ACTIVE mapped declarations, exactly as required by paper-lean-correspondence-normalization-v1. Transitive dependencies are non-reflexive reachability; the source itself is excluded and cyclic SCCs are reported separately.",
-  "formal_registry_sha256": "687f18cf2bc1c361441a4e6b0a99b0e9706904685835d91137403756f672219b",
+  "formal_registry_sha256": "ad9499ca333900f7bf815ff3a133c65382c5b265dd912351ce722fd7a8d43e3a",
   "normalization_contract": "formal/normalization-contract.json",
   "normalization_contract_sha256": "9b4a84e6b492a65bed6c9446b1c3c9e255e21277caba9cc9d8c31d713c873bc6",
   "compiler_correspondence_metadata": "formal/compiler-correspondence-metadata.json",
-  "compiler_correspondence_metadata_sha256": "763cdfd8c0bd1bc5709a61a2e49762cf423026e517274cff32d32ae39414a421",
+  "compiler_correspondence_metadata_sha256": "69c7939032a3811177e93d95e296b8f90c3b78cd6bd5417c206fc8361ca85143",
   "active_node_count": 146,
   "direct_edge_count": 200,
   "transitive_pair_count": 207,
@@ -3307,5 +3307,9 @@
   "cyclic_scc_count": 0,
   "cyclic_node_count": 0,
   "self_loop_count": 0,
-  "is_acyclic": true
+  "is_acyclic": true,
+  "regeneration_provenance": {
+    "direct_edges_recomputed_from": "compiler-correspondence-metadata.json:compiler_used_active_mappings",
+    "transitive_closure_recomputed": true
+  }
 }
