@@ -44,6 +44,8 @@ jobs:
         run: python3 scripts/report_obligation_repairs.py --output /tmp/acgn-obligation-status
       - name: Replay the five bounded obligation repairs in two clean builds
         run: python3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five
+      - name: Replay the next five bounded obligation repairs in two clean builds
+        run: python3 -B scripts/run_next_obligation_repairs.py /tmp/acgn-next-five
       - name: Compile and run bounded Java tests
         run: ./scripts/run_bounded_ci_java_tests.sh
       - name: Run clean producer and standalone verifier harness

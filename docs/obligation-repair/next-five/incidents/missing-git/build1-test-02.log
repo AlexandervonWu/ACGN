@@ -1,0 +1,15 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_ARROW', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Exception in thread "main" java.io.IOException: Cannot locate the Git repository for certificate provenance
+	at is.fivefivefive.CanDis.theory.CertificateProvenance.repositoryRoot(CertificateProvenance.java:205)
+	at is.fivefivefive.CanDis.theory.CertificateProvenance.capture(CertificateProvenance.java:82)
+	at is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest.certificateCase(DependentChainSequenceRegressionTest.java:282)
+	at is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest.pipelineCases(DependentChainSequenceRegressionTest.java:214)
+	at is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest.main(DependentChainSequenceRegressionTest.java:44)

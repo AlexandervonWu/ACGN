@@ -1,0 +1,9 @@
+9ed0bd358dbce5dedcb59c3438e16009bc8021d3afc383177f233a1d73523243  ./final-snapshot-check/input-manifest.json
+1607e4e27c6e86eab3ada66995555a5f3894d2bdc93d17ed9d3221ecfbddd817  ./final-snapshot-check/report.json
+2a28ec180065a6bfba4429afbdb2cd9ad2c5b37a0f53ef6fa2776dd4ad9c2911  ./generated-metadata/input-manifest.json
+ac4dfa0f1131c662cfc6208cc57186f186e2a5b309eeea81e981529bebb9d9a6  ./generated-metadata/report.json
+e00ea06ac781879489e1270893e663f2f1bfc554066a2bf1e7f81d8a7d57159f  ./input-freeze/input-manifest.json
+7f8afa3ce6c9a8fa771779c69b3616ee9c4c54b50a3b0d194b8fb5d1e96f57da  ./input-freeze/report.json
+ff81a513006770059f43a096f38e2de0d7065761ae3901a38b13eb7eabb1870c  ./missing-git/build1-test-02.log
+82b80f7303aba3699d6e463dfda4e39e22c6b978e983fd50d83c535d48dcf393  ./missing-git/input-manifest.json
+2522bc8af6ecba162ac94956e6e534dfd0503c797961f2898da8e3cbae5cafd4  ./missing-git/report.json

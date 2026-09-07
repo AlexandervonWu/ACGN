@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 300,
+  "requiredCleanBuilds": 2,
+  "replayPlugin": "scripts/next_obligation_replays.py",
+  "inputs": ["docs/obligation-repair/next-five/chain-notes.md", "docs/obligation-repair/next-five/call-notes.md"],
+  "phases": [
+    {
+      "id": "NF-P2-06", "parent": "P2-06",
+      "claimSha256": "2c839b74126cb1fffa416e6b93e58418d51d20025a4a2e7563dcf973734fcfec",
+      "proof": "FlatTypeSubstitution.lean", "replays": ["FlatTypeReplay.lean"],
+      "tests": [
+        {"class": "is.fivefivefive.CanDis.theory.FlatTypeSubstitutionRegressionTest", "output": "flat-types.tsv"},
+        "is.fivefivefive.CanDis.TheoryLawPolicyRegressionTest"
+      ],
+      "scope": "General exact One(result) admission and shared-substitution preservation; closed javac guard/substitution extraction; 675 finite type instances with nested types, construction and mismatch controls. Existing registry/adapter checks preserve authenticated widening. GraphType interpretation remains a parametric boundary plus bounded conformance."
+    },
+    {
+      "id": "NF-A2-01", "parent": "A2-01",
+      "claimSha256": "38ac6b152f7e2176d15f7391a88879242d420feb897662b37ac0aafde3cecd32",
+      "proof": "DependentChainSequence.lean", "replays": ["ChainSequenceReplay.lean"],
+      "tests": [{"class": "is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest", "output": "chain-sequences.tsv"}],
+      "scope": "General source-leaf sequence preservation for admitted homogeneous dependent chains, Seq carrier and positional replay checks; compiler-resolved producer/verifier controls and bounded direct observations. Independent type, arity, source and certificate authority obligations remain separate."
+    },
+    {
+      "id": "NF-A2-02", "parent": "A2-02",
+      "claimSha256": "5f8748b76ed20d27dc874462c96ae6215e4357216997ea072ea4de0c3f8a98b5",
+      "proof": "DependentChainSequence.lean", "replays": ["ChainSequenceReplay.lean"],
+      "tests": [{"class": "is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest", "output": "chain-sequences.tsv"}],
+      "scope": "General chain length and per-payload occurrence-count preservation; direct repeated-operand construction and certificate replay controls. Payload equality denotes complete operand identity, never merely type equality."
+    },
+    {
+      "id": "NF-P1-08", "parent": "P1-08",
+      "claimSha256": "d1d676e2e8137b650615102be2d892e26467ddae8c44476f99905f8f21590d7d",
+      "proof": "OrderedCallValidation.lean", "replays": ["CallValidationReplay.lean"],
+      "tests": [
+        {"class": "is.fivefivefive.CanDis.OrderedCallValidationRegressionTest", "output": "ordered-calls.tsv"},
+        "is.fivefivefive.CanDis.CallExtractionRegressionTest"
+      ],
+      "scope": "General arbitrary-arity exact-visit validation, complete ordered edge contract, and no neighboring-bucket fallback; compiler-extracted CALL-specific controls and bounded malformed/positive execution cases. Payload/authority issuance and Java integer/resource limits remain explicit dependencies."
+    },
+    {
+      "id": "NF-P1-05", "parent": "P1-05",
+      "claimSha256": "3177b459222015bc1a67e108ca3b636dda3df1fdfe2147121d681cbab6349615",
+      "proof": "OrderedCallValidation.lean", "replays": ["CallValidationReplay.lean"],
+      "tests": [{"class": "is.fivefivefive.CanDis.OrderedCallValidationRegressionTest", "output": "ordered-calls.tsv"}],
+      "scope": "General ordered capture/validation with repeated payloads and finite actual parser/MASG/certification-source IR/certified argument observations. This is retained-source boundary conformance, not universal parser refinement or optimizer occurrence survival."
+    }
+  ],
+  "extractors": [
+    {"id": "flat-types", "class": "FlatTypeSubstitutionExtractor", "source": "scripts/java/FlatTypeSubstitutionExtractor.java", "sources": ["scripts/java/FlatRootPortExtractor.java", "scripts/java/JoinGuardExtractor.java"], "output": "flat-type-source.tsv"},
+    {"id": "chain-sequences", "class": "ChainSequenceExtractor", "source": "scripts/java/ChainSequenceExtractor.java", "sources": ["scripts/java/JoinGuardExtractor.java"], "output": "chain-sequence-source.tsv"},
+    {"id": "ordered-calls", "class": "CallValidationExtractor", "source": "scripts/java/CallValidationExtractor.java", "sources": ["scripts/java/JoinGuardExtractor.java"], "output": "call-validation-source.tsv"}
+  ],
+  "trusted": [
+    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "javac/JVM 17 and Java standard-library contracts",
+    "Git deterministic commits of isolated frozen inputs for TEST_ONLY certificate provenance; these are not release or experiment commits",
+    "Hashed compiler extractors and observation encoders, tested but not Lean-verified",
+    "Hashed Alloy parser and admitted source/type/provenance decoding for finite observations",
+    "Python standard library, SHA-256, filesystem, OS and hardware"
+  ],
+  "excluded": [
+    "Whole-Java or whole-parser refinement",
+    "Whole-corpus semantic equivalence or new empirical results",
+    "Automatic discharge of broader parent claims",
+    "New rewrite, certificate or theory authority"
+  ],
+  "permittedNondeterminism": ["Log timings, diagnostic paths and host identifiers"],
+  "statusPolicy": {"unresolvedIsBlocking": true, "warningIsBlocking": true, "manualOverrideAllowed": false},
+  "networkDuringVerification": false
+}

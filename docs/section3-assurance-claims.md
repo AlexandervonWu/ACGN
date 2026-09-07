@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 92
-- Open diagnostics: 128
+- Fully ready rows: 97
+- Open diagnostics: 123
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -625,15 +625,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `3177b459222015bc1a67e108ca3b636dda3df1fdfe2147121d681cbab6349615`
 - Ledger line: 92
-- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
-- Lean declarations: `call_term_equality_preserves_argument_order;swapped_arguments_are_distinct;capture_preserves_parser_key_and_argument_order`
+- Lean file: `docs/section3-repair-audit/formal/OrderedCallValidation.lean`
+- Lean declarations: `source_order_complete;accepted_payload_at_source_index;duplicates_preserved;reordered_payloads_not_accepted;checked_observation_contract`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/CanDis/ir/IRAgent.java#buildEGraph;src/is/fivefivefive/ACGN/codegen/Generator.java#toCode`
-- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/OrderedCallValidationRegressionTest.java#main;src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The source-record capture model preserves order and Java tests distinguish h[a,b] from h[b,a] across boundaries; parser-object refinement is not mechanized
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General indexed capture/validation preserves payload order and duplicates; 56 actual parser/MASG/certification-source-IR/certified observations with independent literal decoding and target keys. Direct conformance is bounded to named fixtures; parser/JVM refinement and universal optimizer survival are not claimed; see next-five evidence.
+- Current proof state: `READY`
 
 ### P1-06
 
@@ -676,15 +676,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `d1d676e2e8137b650615102be2d892e26467ddae8c44476f99905f8f21590d7d`
 - Ledger line: 95
-- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
-- Lean declarations: `accepted_visit_is_complete_and_has_no_fallback;missing_end_rejects;foreign_end_rejects;noncontiguous_roles_reject;foreign_callee_visit_rejects;foreign_argument_visit_rejects;wrong_callee_identity_rejects;end_before_arguments_rejects`
+- Lean file: `docs/section3-repair-audit/formal/OrderedCallValidation.lean`
+- Lean declarations: `java_index_bounds;validate_iff;accepted_complete_and_ordered;malformed_rejects;no_unrelated_visit_fallback;missing_exact_visit_rejects;malformed_exact_visit_rejects;past_max_visit_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/ir/IRAgent.java#downlinksFor;src/is/fivefivefive/CanDis/ir/IRAgent.java#validateCallDownlinks;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit`
-- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/OrderedCallValidationRegressionTest.java#main;src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The formal accepted interface carries ValidVisit and the bounded Java malformed matrix reaches the CALL-specific fail-closed path; complete search-algorithm refinement remains open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: Executable arbitrary-arity exact-visit model proves complete ordered acceptance and no neighboring-bucket fallback; javac checks the CALL-specific return/validation controls and 637 bounded rejection checks exercise actual validators. Java interpretation assumes n+3 fits int and admitted object/collection contracts; this is not whole-program refinement; see next-five evidence.
+- Current proof state: `READY`
 
 ### P1-09
 
@@ -897,15 +897,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `38ac6b152f7e2176d15f7391a88879242d420feb897662b37ac0aafde3cecd32`
 - Ledger line: 113
-- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
-- Lean declarations: `arrow_order_is_observable;join_order_is_observable`
+- Lean file: `docs/section3-repair-audit/formal/DependentChainSequence.lean`
+- Lean declarations: `construction_preserves_source_sequence;construction_replay_correspondence;construction_never_bag_or_set;accepted_iff_source_sequence;distinct_order_is_observable`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/DependentChainSequenceRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Finite ARROW and JOIN sequence witnesses observe swaps and producer/verifier role-order attacks reject; Java-to-Lean Seq refinement remains open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General homogeneous-tree ordered sequence projection, Seq carrier and positional replay; 28 compiler-resolved objects and 1900 bounded observations with same-type swaps and mixed-head barriers. Twelve separate TEST_ONLY fixtures replay FULL; parsed pipeline observations are local only. This is not relational associativity or whole Java/parser refinement; see next-five evidence.
+- Current proof state: `READY`
 
 ### A2-02
 
@@ -914,15 +914,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `5f8748b76ed20d27dc874462c96ae6215e4357216997ea072ea4de0c3f8a98b5`
 - Ledger line: 114
-- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
-- Lean declarations: `arrow_duplicate_is_preserved;join_duplicate_is_preserved`
+- Lean file: `docs/section3-repair-audit/formal/DependentChainSequence.lean`
+- Lean declarations: `source_length;source_occurrences;construction_preserves_length;construction_preserves_occurrences;accepted_preserves_length_and_count;duplicate_deletion_rejects`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TypedENode.java#constructDependentChainCertified;src/is/fivefivefive/CanDis/theory/SeqPortSchema.java#dependent;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyDependentChain`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/DependentChainSequenceRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Both formal sequence carriers retain duplicates; direct ARROW and same-leaf JOIN fixtures plus wire substitution attacks preserve multiplicity, while a whole-implementation refinement remains open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General arbitrary homogeneous-tree length and per-identity count preservation; bounded duplicate-heavy construction, source/certificate replay and same-length substitution controls. Complete leaf identity is separate from type identity. Java/codecs are declared bounded correspondence dependencies, not universally refined; see next-five evidence.
+- Current proof state: `READY`
 
 ### A2-03
 
@@ -1441,15 +1441,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `2c839b74126cb1fffa416e6b93e58418d51d20025a4a2e7563dcf973734fcfec`
 - Ledger line: 150
-- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
-- Lean declarations: `valid_flat_requires_homogeneous_element_and_result_types`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
-- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing`
+- Lean file: `docs/section3-repair-audit/formal/FlatTypeSubstitution.lean`
+- Lean declarations: `validation_iff;admission_is_homogeneous;exact_type_preserved_by_instantiation;admitted_instantiation;mismatched_type_rejected;extracted_shared_substitution`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/OperatorDeclaration.java#validateFlatPort;src/is/fivefivefive/CanDis/theory/InstantiatedOperator.java#InstantiatedOperator;src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java#issue;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/FlatTypeSubstitutionRegressionTest.java#main;src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The exact finite policy premise and Java registry reject cross-result and cross-element type reuse; a mechanized Java type-bridge refinement is absent
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General exact One(result) admission and shared substitution preservation; compiler-resolved guard and substitution sites plus 675 finite actual type instances and registry/adapter controls. GraphType interpretation is a parametric proof boundary with bounded Java conformance, not whole-parser/JVM refinement; see next-five evidence.
+- Current proof state: `READY`
 
 ### P2-07
 

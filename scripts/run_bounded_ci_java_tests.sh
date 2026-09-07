@@ -10,6 +10,8 @@ mkdir -p "$classes"
 mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
 javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \
   -d "$classes" "${sources[@]}"
+mapfile -t verifier_sources < <(find "$ROOT/certificate-verifier/src" -name '*.java' -type f | sort)
+javac --release 17 -encoding UTF-8 -d "$classes" "${verifier_sources[@]}"
 
 printf 'Running %s\n' is.fivefivefive.CanDis.RewriteRuleTraceability
 printf '%s\n' \
@@ -27,10 +29,13 @@ tests=(
   is.fivefivefive.CanDis.RequiredPolicyCoverageTest
   is.fivefivefive.CanDis.CallExtractionRegressionTest
   is.fivefivefive.CanDis.ZeroArgumentCallRegressionTest
+  is.fivefivefive.CanDis.OrderedCallValidationRegressionTest
   is.fivefivefive.CanDis.BuiltinIdentityRegressionTest
   is.fivefivefive.CanDis.theory.PolicyRepresentationRegressionTest
   is.fivefivefive.CanDis.theory.DependentJoinGuardRegressionTest
   is.fivefivefive.CanDis.theory.FlatRootPortRegressionTest
+  is.fivefivefive.CanDis.theory.FlatTypeSubstitutionRegressionTest
+  is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest

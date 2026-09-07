@@ -71,8 +71,13 @@ general nominal-policy, JOIN-guard, root-port, zero-call, and built-in proofs
 with direct Java checks and two-build replay. Their five ledger gaps are
 resolved under bounded conformance; the full matrix remains incomplete.
 
-The [v2.12 assurance release](docs/release-v2.12.md) packages these proof,
-correspondence, and test updates. It retains the v2.11 experiment JAR and
+The [next five bounded repairs](docs/obligation-repair/next-five/README.md)
+continue with exact flat typing, ordered and multiplicity-preserving dependent
+chains, and arbitrary-arity CALL validation and argument order. Each package
+retains its own hashed verification inputs and evidence.
+
+The [v2.13 assurance release](docs/release-v2.13.md) packages this continuation
+of [v2.12](docs/release-v2.12.md). It retains the v2.11 experiment JAR and
 empirical snapshot; it does not claim a new corpus run or full formal closure.
 
 ## Headline Results

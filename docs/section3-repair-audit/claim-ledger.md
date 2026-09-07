@@ -89,10 +89,10 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 | P1-02 | U/I | Callee, every argument, and END belong to that exact visit. | `ValidVisit` ownership obligations | Cross-visit edge mutations | `PROVED/DIRECT` |
 | P1-03 | U/I | A valid call has exactly one callee. | `valid_visit_has_one_callee` | Missing/duplicate callee probes | `PROVED/DIRECT` |
 | P1-04 | U/I | Argument roles are contiguous `0..declaredArity-1`. | `valid_visit_has_contiguous_ordered_roles` | Gap, duplicate, and swapped-role probes | `PROVED/DIRECT` |
-| P1-05 | U/I | Argument payload order is source order. | `call_term_equality_preserves_argument_order` | `h[a,b]` versus `h[b,a]` at every boundary | `PARTIAL/DIRECT` |
+| P1-05 | U/I | Argument payload order is source order. | `source_order_complete`; `accepted_payload_at_source_index` | 56 actual ordered CALL observations, repeats and same-type swap controls | `PROVED/DIRECT` |
 | P1-06 | U/I | Observed children cannot replace independently declared arity. | `observed_arity_cannot_replace_declared_arity` | Truncated/extended argument mutations | `PARTIAL/DIRECT` |
 | P1-07 | U/I | Exactly one terminator exists and is owned by the call occurrence. | `valid_visit_owns_exact_terminator` | Missing, duplicate, foreign, and END-as-argument probes | `PROVED/DIRECT` |
-| P1-08 | U/I | Malformed or incomplete calls reject; no unrelated-visit fallback exists. | Invalid-visit nonacceptance family | Parser/MASG/IR malformed fixtures | `PARTIAL/DIRECT` |
+| P1-08 | U/I | Malformed or incomplete calls reject; no unrelated-visit fallback exists. | `validate_iff`; `no_unrelated_visit_fallback` | Compiler-resolved CALL controls and 637 bounded validator rejections | `PROVED/DIRECT` |
 | P1-09 | U/I | A consumed call occurrence cannot be reused. | `occurrence_ledger_prevents_reuse`; `duplicated_occurrence_is_rejected` | Reused nested occurrence probe | `PARTIAL/DIRECT` |
 | P1-10 | U/I | Zero-argument calls retain callee, arity zero, and END. | General construction, validation, and lowering theorems in `ZeroArgumentCall.lean` | Thirteen parser-to-certified observations; local/imported zero-call fixtures | `PROVED/DIRECT` |
 | P1-11 | U/I | Semantic identity retains call kind. | `equal_call_keys_preserve_kind` | Function/predicate same-name distinction | `PROVED/DIRECT` |
@@ -110,8 +110,8 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 
 | ID | Class | Atomic claim | Formal obligation | Independent conformance evidence | State |
 | --- | --- | --- | --- | --- | --- |
-| A2-01 | U/I | JOIN and ARROW chain carriers are ordered `Seq`, never `Bag` or `Set`. | `arrow_order_is_observable` plus JOIN order theorem | Role-swap certificate attacks | `PARTIAL/DIRECT` |
-| A2-02 | U/I | Duplicate chain operands are retained. | `arrow_duplicate_is_preserved` plus JOIN analogue | Duplicate-operand probes | `PARTIAL/DIRECT` |
+| A2-01 | U/I | JOIN and ARROW chain carriers are ordered `Seq`, never `Bag` or `Set`. | `construction_preserves_source_sequence`; `construction_never_bag_or_set` | 28 compiler-resolved objects, bounded order and mixed-head barrier checks | `PROVED/DIRECT` |
+| A2-02 | U/I | Duplicate chain operands are retained. | `construction_preserves_occurrences`; `accepted_preserves_length_and_count` | 1900 bounded observations and 24 TEST_ONLY public semantic rejections | `PROVED/DIRECT` |
 | A2-03 | U | ARROW/product reassociation preserves ordered column concatenation. | `arrow_reassociation` | Parsed association pair | `PROVED/DIRECT` |
 | A2-04 | U | Relational JOIN reassociation is licensed only when every interior relation has arity at least two. | `guarded_join_relation_reassociation` | Parsed guarded association pairs | `PARTIAL/DIRECT` |
 | A2-05 | U | Unguarded JOIN reassociation is unsound when an interior relation is unary. | `unguarded_join_is_not_associative` | Exact finite Alloy counterexample | `PROVED/DIRECT` |
@@ -147,7 +147,7 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 | P2-03 | U | Set ports satisfy positive downward closure. | `invalid_set_downward_closure_rejects` | Invalid arity-set constructors | `PROVED/DIRECT` |
 | P2-04 | U | Flat ports satisfy splice closure. | `invalid_flat_splice_closure_rejects` | Invalid splice-set constructors | `PROVED/DIRECT` |
 | P2-05 | U/I | A flat port has exactly one root-container source argument. | General single-root and substitution-control theorems in `FlatRootPort.lean` | Compiler-resolved admission plus constructor/instantiation/application matrix | `PROVED/DIRECT` |
-| P2-06 | U/I | Flat element type equals result type at the same exact operator instantiation. | Homogeneous flat typing theorem | Cross-type/operator mutations | `PARTIAL/DIRECT` |
+| P2-06 | U/I | Flat element type equals result type at the same exact operator instantiation. | `admitted_instantiation`; `extracted_shared_substitution` | Compiler-resolved shared substitution and 675 finite exact-type observations | `PROVED/DIRECT` |
 | P2-07 | U/I | A zero-admitting flat port requires both A and exact U; ordinary nonflat zero arity requires neither. | `ordinary_zero_arity_needs_no_unit`; flat-zero theorems | Constructor/replay matrix | `PROVED/DIRECT` |
 | P2-08 | U/I | Nonempty variadic policies reject an empty stored container. | `nonempty_variadic_rejects_empty_storage` | Empty container probes | `PROVED/DIRECT` |
 | P2-09 | F/I | Formula AND/OR and relation UNION/INTERSECTION are exactly flat nonempty ACI `Set` operators. | Exact whitelist and `flat_set_plus_is_ACI_without_unit` | Opcode/profile registry census | `PROVED/DIRECT` |

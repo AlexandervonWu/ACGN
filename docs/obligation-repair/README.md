@@ -13,9 +13,14 @@ replacement proof, direct implementation test, correspondence boundary, and
 review finding. They are `PROVED/DIRECT` under the existing schema: general
 Lean statements with **bounded** direct conformance, not whole-JVM refinement.
 
-The fresh assessment reports **92 ready requirements and 128 diagnostics**.
-Five original diagnostics are absent; their evidence is in the separate
-five-claim closure report. The original queue now has 127 remaining diagnostics,
+The [v2.13 continuation](next-five/README.md) addresses P2-06, A2-01, A2-02,
+P1-08, and P1-05 with exact flat typing, ordered dependent chains and their
+multiplicity, and arbitrary-arity CALL validation and payload order. The
+separate source/proof/observation package records the limits of each result.
+
+The current assessment reports **97 ready requirements and 123 diagnostics**.
+Ten original diagnostics are absent; their evidence is in the two separate
+five-claim packages. The original queue has 122 remaining diagnostics,
 plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
 matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
 
