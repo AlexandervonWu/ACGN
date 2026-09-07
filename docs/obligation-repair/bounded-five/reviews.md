@@ -84,8 +84,13 @@ correctness: the final result comes from the registered proofs, extraction,
 Java checks, and replay under the declared trust boundary. No review claims
 to independently verify its author's own proof implementation.
 
-`bounded-five-v1-5c9400cca03d749b` completed both clean builds with all five
-configured claims VERIFIED. The 17 negative controls per build rejected.
+`bounded-five-v1-1e34a74d3b5be4e3` completed both clean builds with all five
+configured claims VERIFIED and explicitly pinned Lean invocations in each
+proof directory. The 17 negative controls per build rejected.
 The earlier integrated run `bounded-five-v1-48b495f01e229400` also passed, but
 predates final traceability descriptions and report provenance fields; it is
 superseded by the final hashed run, not used as current evidence.
+The subsequent `bounded-five-v1-5c9400cca03d749b` run is also superseded:
+publication CI exposed its unbound proof-directory toolchain selection.
+See [toolchain-incident.md](toolchain-incident.md) for the concrete witness,
+preserved failed run, environment regression, and replacement evidence.

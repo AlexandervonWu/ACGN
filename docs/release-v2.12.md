@@ -21,9 +21,13 @@ The [five-claim repair report](obligation-repair/bounded-five/README.md) records
 two identical clean builds, 77 general and 93 generated Lean theorems per
 build, 370,365 assertions in the five new Java tests per build, and all 17
 required rejection controls per build. Its input root is
-`5c9400cca03d749ba25568b406ec968bc0b02d7a8904652f4f57de954b613de6`.
+`1e34a74d3b5be4e39af665571123907e27950b24dabd43a4b63d5594752c5825`.
 Older evidence packages retain their original input hashes; their historical
 results are not silently reassigned to this release's source tree.
+Publication CI exposed a temporary-directory Lean pin failure. The repaired
+runner selects the pinned toolchain explicitly, checks it in each proof
+directory, and passed a fresh two-build replay; the incident and superseded
+evidence are retained in the five-claim package.
 
 ## Assurance Boundary
 

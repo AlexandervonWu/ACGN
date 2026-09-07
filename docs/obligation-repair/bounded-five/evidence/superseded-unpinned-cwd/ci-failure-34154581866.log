@@ -1,0 +1,20 @@
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	﻿2026-09-07T19:15:17.2250518Z ##[group]Run python3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2251521Z [36;1mpython3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five[0m
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2341649Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2341942Z env:
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2342269Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2342786Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2343200Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.2343489Z ##[endgroup]
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.3509685Z [bounded-five] lean-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.4152410Z [bounded-five] java-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.4795906Z [bounded-five] javac-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.6446806Z [bounded-five] driver-tests
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:17.8856544Z [bounded-five] build1-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:27.4209908Z [bounded-five] build1-extractor-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:28.5902852Z [bounded-five] build1-policy-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:30.3677997Z [bounded-five] build1-join-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:39.1264983Z [bounded-five] build1-flat-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:47.0896455Z [bounded-five] build1-BF-P2-02-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:47.0941148Z {"closureId": "bounded-five-v1-5c9400cca03d749b", "status": "BLOCKED", "errors": ["unexpected command outcome: build1-BF-P2-02-lean"]}
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-07T19:15:47.1017144Z ##[error]Process completed with exit code 1.

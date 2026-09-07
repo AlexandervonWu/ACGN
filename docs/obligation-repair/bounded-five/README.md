@@ -22,17 +22,17 @@ refinement and other parent requirements are not inferred from these results.
 ## Final Result
 
 Authoritative [machine report](evidence/report.json): **VERIFIED**, five frozen
-claims, two clean builds, 887 byte-identical artifacts per build. The run used
+claims, two clean builds, 888 byte-identical artifacts per build. The run used
 Lean 4.33.0, Java 17, UTF-8 compilation, 1 GiB Java process heaps, and no network.
 
-- Closure ID: `bounded-five-v1-5c9400cca03d749b`.
-- Input root: `5c9400cca03d749ba25568b406ec968bc0b02d7a8904652f4f57de954b613de6`.
+- Closure ID: `bounded-five-v1-1e34a74d3b5be4e3`.
+- Input root: `1e34a74d3b5be4e39af665571123907e27950b24dabd43a4b63d5594752c5825`.
 - Per build: 77 general Lean theorems and 93 generated extraction/observation
   theorems; all axiom audits passed without admissions or native decision axioms.
 - Per build: 370,365 assertions in the five new Java tests, plus 149 existing
   dependent-chain and 161 existing CALL regression assertions.
 - Per build: 17 required rejection controls. Both builds rejected all 17.
-- Five Python schema/encoding tests passed. No expected rejection accepts a
+- Six Python schema/encoding/environment tests passed. No expected rejection accepts a
   crash or signal as a successful negative control.
 
 The [input manifest](evidence/input-manifest.json) freezes sources, proofs,
@@ -41,6 +41,10 @@ points. [Evidence archive](evidence/evidence.tar.gz) contains both builds'
 generated Lean inputs, observation TSVs, artifact hash inventories, command
 logs, and the report. [SHA256SUMS](evidence/SHA256SUMS) binds the retained files.
 Large copied source trees and class files remain intermediate outputs in `/tmp`.
+The [toolchain incident](toolchain-incident.md) records the CI-discovered
+working-directory pin failure. The current run explicitly pins and checks
+Lean in both isolated proof directories; the earlier evidence is preserved
+under `evidence/superseded-unpinned-cwd/`, not reused for pinned closure.
 
 Separately, the full bounded Java suite passed, including distance-artifact
 regeneration smoke tests. The standalone producer/verifier suite passed:

@@ -6,10 +6,23 @@ import unittest
 from run_bounded_obligation_repairs import (
     Blocked, policy_mapping, join_mapping, flat_mapping, ZERO_FIELDS, ZERO_CENSUS, zero_trace_program,
     BUILTIN_FIELDS, BUILTIN_CENSUS, builtin_trace_program,
+    pinned_lean_environment,
 )
 
 
 class PolicyMappingTest(unittest.TestCase):
+    def test_toolchain_pin_across_working_directories(self):
+        pin = "leanprover/lean4:v4.33.0"
+        for old in ({}, {"ELAN_TOOLCHAIN": "leanprover/lean4:stable"},
+                    {"ELAN_TOOLCHAIN": "leanprover/lean4:v4.33.1", "PATH": "/test/bin"}):
+            original = dict(old)
+            result = pinned_lean_environment(old, pin + "\n", "4.33.0")
+            self.assertEqual(result, dict(old, ELAN_TOOLCHAIN=pin))
+            self.assertEqual(old, original)
+        for bad in ("", "leanprover/lean4:stable", "leanprover/lean4:v4.33.1"):
+            with self.assertRaises(Blocked):
+                pinned_lean_environment({}, bad, "4.33.0")
+
     def test_builtin_codec(self):
         rows = []
         for fixture, (name, left, right, equivalent) in BUILTIN_CENSUS.items():

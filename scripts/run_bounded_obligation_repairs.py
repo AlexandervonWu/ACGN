@@ -24,6 +24,15 @@ POLICY = Path("src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java")
 JOIN_SOURCE = Path("src/is/fivefivefive/CanDis/theory/DependentChainTheory.java")
 
 
+def pinned_lean_environment(environment, repository_pin, version):
+    expected = "leanprover/lean4:v" + version
+    if repository_pin.strip() != expected:
+        raise Blocked("repository Lean pin differs from frozen config")
+    # Every isolated working directory must use the same toolchain, even when
+    # elan has no default or the caller's default differs from the repository.
+    return dict(environment, ELAN_TOOLCHAIN=expected)
+
+
 def policy_mapping(path):
     with path.open(encoding="utf-8", newline="") as stream:
         reader = csv.DictReader(stream, delimiter="\t")
@@ -276,10 +285,14 @@ def execute(root, output):
         report["commands"].append({"id": label, "argv": argv, "exitCode": result.returncode,
                                    "log": log.name, "sha256": digest(log), "expectedRejection": reject})
         if (reject and result.returncode != 1) or (not reject and result.returncode != 0):
+            print(log.read_text(encoding="utf-8", errors="replace")[-4000:], flush=True)
             raise Blocked("unexpected command outcome: " + label)
         return log
 
     try:
+        env = pinned_lean_environment(env, (root / "lean-toolchain").read_text(encoding="utf-8"),
+                                      config["leanVersion"])
+        report["environment"]["ELAN_TOOLCHAIN"] = env["ELAN_TOOLCHAIN"]
         version = command("lean-version", [lean, "--version"], root).read_text()
         if "version " + config["leanVersion"] + "," not in version:
             raise Blocked("Lean differs from pinned toolchain")
@@ -299,6 +312,10 @@ def execute(root, output):
             for directory in (classes, formal, extractor):
                 directory.mkdir(parents=True)
             prefix = "build" + str(number) + "-"
+            shutil.copyfile(snapshot / "lean-toolchain", formal / "lean-toolchain")
+            isolated_version = command(prefix + "lean-version", [lean, "--version"], formal).read_text()
+            if isolated_version != version:
+                raise Blocked("isolated proof directory changed the Lean toolchain")
             sources = sorted(str(p) for p in (snapshot / "src").rglob("*.java"))
             command(prefix + "compile", ["javac", "-J-Xmx1g", "--release", "17", "-encoding", "UTF-8",
                     "-cp", str(snapshot / "lib/*"), "-d", str(classes), *sources], snapshot)
