@@ -338,6 +338,30 @@ when their own type evidence is missing, and no path may fabricate `univ`.
 
 ## Gate Consequence
 
+The [ordered obligation repair](../obligation-repair/README.md) records
+OR-A01: `PROVED/DIRECT` labels and a theorem-name mapping could make an A-01
+fixture look ready without any atomic child or reconstruction evidence. The
+assessment now exposes that missing evidence independently of labels. A
+separate exact structural decomposition helper and Lean proofs are available,
+but the full typed parent-contract inventory and primitive authority are not;
+A-01 remains open. The additional diagnostic is a newly exposed gate gap,
+not a new production semantic failure.
+
+The September 7 submission refinement records SCR-F01 through SCR-F04 in the
+[bounded container-replay ledger](../submission-closure/README.md#located-gaps-and-dispositions).
+Those records cover the missing OR construction model, native-evaluation proof
+dependencies, the absence of a finite Java-output-to-Lean replay, and the
+development runner's Python-version incompatibility. Their narrowly scoped
+repairs do not close the whole-artifact findings retained in this register.
+
+The follow-on [Java-Lean refinement ledger](../java-lean-refinement/README.md)
+addresses the remaining distinction between testing a detached container
+constructor and observing production certified construction. It extracts the
+actual target selector through javac, proves that fragment symbolically, and
+replays 2,356 production inputs including nested binary associations. Universal
+flattening, certificate-factory and parser refinement remain separate open
+obligations; the global diagnostic census is not reduced by this scoped result.
+
 No row in this register can authorize a phase `PASS`. The superseding finite
 plan in `do178c-assurance-plan.md` requires every scoped claim to have a
 compiled Lean obligation and bounded direct conformance evidence, zero open

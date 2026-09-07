@@ -27,6 +27,8 @@ public final class Section3AssuranceTraceability {
             "docs", "section3-repair-audit", "assurance-scope.tsv");
     private static final Path CLAIM_DOCUMENT = Path.of(
             "docs", "section3-assurance-claims.md");
+    private static final Path DECOMPOSITION = Path.of(
+            "docs", "section3-repair-audit", "low-level-requirements.tsv");
 
     private static final Pattern REQUIREMENT_ID = Pattern.compile(
             "(?:A|G|P1|A2|P2|P3|P4|P5|P6|M)-[0-9]{2}");
@@ -147,7 +149,7 @@ public final class Section3AssuranceTraceability {
                     .append("`\n\n");
         }
         Files.createDirectories(output.getParent());
-        Files.writeString(output, document.toString(), StandardCharsets.UTF_8);
+        Files.writeString(output, document.toString().stripTrailing() + "\n", StandardCharsets.UTF_8);
     }
 
     private static boolean rowReady(String requirementId, Assessment assessment) {
@@ -357,6 +359,9 @@ public final class Section3AssuranceTraceability {
                 continue;
             }
             int before = failures.size();
+            if ("A-01".equals(requirement.id)) {
+                validateDecomposition(root, failures);
+            }
             if (!requirement.claimSha256.equals(row.claimSha256)) {
                 failures.add(requirement.id + " claim hash mismatch: ledger="
                         + requirement.claimSha256 + " matrix=" + row.claimSha256);
@@ -390,6 +395,23 @@ public final class Section3AssuranceTraceability {
             }
         }
         return new Assessment(requirements.size(), rows.size(), ready, failures);
+    }
+
+    /**
+     * Structural reconstruction does not establish parent-contract or primitive
+     * predicate authority. Labels and theorem-name lists cannot supply those
+     * missing inputs to a complete decomposition check.
+     */
+    private static void validateDecomposition(Path root, List<String> failures) {
+        Path registry = root.resolve(DECOMPOSITION);
+        if (!Files.isRegularFile(registry)) {
+            failures.add("A-01 MISSING_LOW_LEVEL_REGISTRY: no atomic child obligations "
+                    + "or parent reconstruction evidence");
+            return;
+        }
+        failures.add("A-01 UNCHECKED_DECOMPOSITION: low-level records require exact "
+                + "parent contracts, structural atomicity, and independently checked "
+                + "semantic reconstruction; registry presence is not proof");
     }
 
     private static void validateFormal(

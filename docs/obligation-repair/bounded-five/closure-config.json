@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 300,
+  "requiredCleanBuilds": 2,
+  "phases": [
+    {"id": "BF-P2-02", "parent": "P2-02", "proof": "PolicyRepresentation.lean", "tests": ["is.fivefivefive.CanDis.theory.PolicyRepresentationRegressionTest"], "scope": "Four nominal policy coordinates, compiler-resolved constructor/getter mapping, and the finite opcode/profile/arity boundary matrix."},
+    {"id": "BF-A2-06", "parent": "A2-06", "proof": "DependentJoinGuard.lean", "tests": ["is.fivefivefive.CanDis.theory.DependentJoinGuardRegressionTest", "is.fivefivefive.CanDis.theory.TheoryDependentChainTest"], "scope": "General arity scan after exact relation-family decoding, compiler-resolved independent producer/verifier guard programs, and the bounded producer arity matrix."},
+    {"id": "BF-P2-05", "parent": "P2-05", "proof": "FlatRootPort.lean", "tests": ["is.fivefivefive.CanDis.theory.FlatRootPortRegressionTest"], "scope": "Source-local flat declaration admission, general root count/index guard, mapped constructor invocation, and bounded instantiation/application checks."},
+    {"id": "BF-P1-10", "parent": "P1-10", "proof": "ZeroArgumentCall.lean", "tests": ["is.fivefivefive.CanDis.ZeroArgumentCallRegressionTest", "is.fivefivefive.CanDis.CallExtractionRegressionTest"], "scope": "General zero-argument visit construction/validation and lowering contract, plus replay of 13 actual parser/MASG/certification-source-IR/certified zero-call observations in five positive fixtures, with two invalid-source controls. No universal optimizer-survival claim."},
+    {"id": "BF-P5-15", "parent": "P5-15", "proof": "BuiltinIdentity.lean", "tests": ["is.fivefivefive.CanDis.BuiltinIdentityRegressionTest"], "scope": "General exact built-in identity and empty-cardinality theorems, plus 12 fixed valid source pairs in three declared scopes, seven comparison engines, 252 independent bounded solver checks, and replay of observed nominal identities and solver results. This is direct bounded conformance, not whole-parser refinement or exhaustive Java coverage."}
+  ],
+  "trusted": ["Lean 4.33.0 kernel with propext, Quot.sound, Classical.choice only", "javac/JVM 17 language and Java standard-library contracts", "Hashed compiler extractor and observation encoders; these are tested, not themselves Lean-verified", "Hashed Alloy parser, translator, and SAT4J solver for the stated finite semantic checks", "Python standard library, SHA-256, filesystem, OS and hardware"],
+  "excluded": ["Whole-program JVM refinement", "Whole-corpus semantic equivalence", "Automatic discharge of broader parent claims", "New rewrite or certificate authority"],
+  "permittedNondeterminism": ["Log timings, diagnostic paths and host identifiers"],
+  "statusPolicy": {"unresolvedIsBlocking": true, "manualOverrideAllowed": false},
+  "networkDuringVerification": false
+}

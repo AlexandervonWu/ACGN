@@ -1,0 +1,123 @@
+{
+  "schemaVersion": "1",
+  "closureFamily": "submission-container-replay-v1",
+  "scope": "Finite Java container-constructor traces checked by Lean, and the Boolean smart-constructor model. No whole-Java, parser, law-authority, or corpus-refinement claim.",
+  "requiredCleanBuilds": 2,
+  "leanVersion": "4.33.0",
+  "bounds": {
+    "alphabetSize": 3,
+    "maxLength": 4,
+    "carriers": [
+      "BOOL",
+      "REL"
+    ],
+    "kinds": [
+      "SEQ",
+      "BAG",
+      "SET"
+    ]
+  },
+  "commandTimeoutSeconds": 300,
+  "javaHeap": "1g",
+  "claims": [
+    {
+      "id": "SCR-01",
+      "statement": "All 726 specified Java constructor traces are present exactly once and decode injectively from complete typed OnePort values.",
+      "verifier": "census",
+      "evidenceClass": "CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-02",
+      "statement": "All 242 Seq traces preserve the input sequence; the independent checker proves this property for every accepted Seq trace.",
+      "verifier": "lean-replay",
+      "evidenceClass": "PROVED_AND_EXECUTION_CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-03",
+      "statement": "All 242 Bag traces preserve every operand multiplicity; the independent checker proves this property for every accepted Bag trace.",
+      "verifier": "lean-replay",
+      "evidenceClass": "PROVED_AND_EXECUTION_CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-04",
+      "statement": "All 242 Set traces preserve exactly the operand support and have duplicate-free outputs; accepted Set traces preserve any/all evaluation for arbitrary operand denotations.",
+      "verifier": "lean-replay",
+      "evidenceClass": "PROVED_AND_EXECUTION_CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-05",
+      "statement": "All 726 occurrence-fiber tables partition the input indices with identity-preserving members, one fiber per output, singleton Bag/Seq fibers, and positional Seq fibers.",
+      "verifier": "lean-replay",
+      "evidenceClass": "PROVED_AND_EXECUTION_CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-06",
+      "statement": "The fixed negative controls are rejected by the independent Lean checker and the census checker detects missing, duplicate, or invalid rows.",
+      "verifier": "negative-controls",
+      "evidenceClass": "TESTED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-07",
+      "statement": "The AND/OR smart-constructor model and its mapped Java regression tests pass; empty and singleton cases preserve Boolean evaluation without granting a stored unit law.",
+      "verifier": "boolean-construction",
+      "evidenceClass": "PROVED_AND_TESTED",
+      "publicTarget": "docs/submission-closure/README.md#scope"
+    },
+    {
+      "id": "SCR-08",
+      "statement": "Two isolated builds produce identical Java class files, proof source and compiled proof objects, trace payloads, and per-claim outcomes from one frozen input root.",
+      "verifier": "determinism",
+      "evidenceClass": "CHECKED",
+      "publicTarget": "docs/submission-closure/README.md#reproduction"
+    }
+  ],
+  "statusPolicy": {
+    "unresolvedIsBlocking": true,
+    "manualOverrideAllowed": false,
+    "states": [
+      "VERIFIED",
+      "BLOCKED",
+      "INFRASTRUCTURE_FAILURE"
+    ]
+  },
+  "trusted": [
+    {
+      "id": "TCB-LEAN",
+      "description": "Pinned Lean 4.33.0 kernel and installed standard library; standard logical assumptions propext, Quot.sound, and Classical.choice are explicitly allowed and inventoried."
+    },
+    {
+      "id": "TCB-JAVA",
+      "description": "JDK 17 compiler/runtime semantics and hashed dependency JARs. No universal Java refinement proof is claimed."
+    },
+    {
+      "id": "TCB-EXTRACTION",
+      "description": "Hashed Java probe and Python JSON-to-Lean encoder. Structural equality decoding and a complete finite input census are checked, but this extractor is not formally verified."
+    },
+    {
+      "id": "TCB-EXECUTION",
+      "description": "Python standard library, SHA-256, filesystem, OS, and hardware."
+    }
+  ],
+  "excluded": [
+    "parser refinement",
+    "complete certificate-verifier refinement",
+    "source-theory authority",
+    "arbitrary typed graphs",
+    "full-corpus semantic soundness",
+    "production empty-container admission"
+  ],
+  "permittedNondeterminism": [
+    "absolute build directory",
+    "timestamps",
+    "elapsed time",
+    "host identity",
+    "log paths"
+  ],
+  "networkDuringVerification": false
+}

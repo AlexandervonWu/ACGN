@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 87
-- Open diagnostics: 132
+- Fully ready rows: 92
+- Open diagnostics: 128
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -32,12 +32,12 @@ Every claim follows the same bounded process:
 - Ledger line: 47
 - Lean file: `docs/section3-repair-audit/formal/AssuranceTraceability.lean`
 - Lean declarations: `pass_implies_requirements_decomposed`
-- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate`
-- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main`
+- Implementation references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validate;src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java#validateDecomposition;src/is/fivefivefive/CanDis/assurance/ContractDecomposition.java#reconstruct`
+- Bounded test references: `src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java#main;src/is/fivefivefive/CanDis/assurance/ContractDecompositionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
 - Conformance status: `PARTIAL`
-- Claim-specific process/limits: The checker binds the complete ordered scope to one matrix row per claim; independent review of atomic decomposition remains open
+- Claim-specific process/limits: The old Lean theorem projects assumed decomposition flags only. Java now rejects missing child records and unchecked theorem-name registries independently of status labels. The separate docs/obligation-repair contract helper has exact reconstruction proofs and bounded Java tests, but primitive authority, complete typed parent contracts, and their correspondence to the 191 original requirements remain open. A-01 is not discharged.
 - Current proof state: `INCOMPLETE`
 
 ### A-02
@@ -710,15 +710,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `9de7836312c59f4bd84f6ab35bb9539dc0c9d377e380ac7c69c76a7f000db478`
 - Ledger line: 97
-- Lean file: `docs/section3-repair-audit/formal/Phase1CallExtraction.lean`
-- Lean declarations: `zero_argument_call_is_valid;valid_visit_has_one_callee;valid_visit_owns_exact_terminator`
+- Lean file: `docs/section3-repair-audit/formal/ZeroArgumentCall.lean`
+- Lean declarations: `construction_accepts;construction_fields;accepted_exact_targets;construction_lowers_without_END;replay_retains_occurrence_key_and_zero_arguments`
 - Implementation references: `src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#visitCall;src/is/fivefivefive/ACGN/visitor/MASGVisitor.java#validateCompletedCallVisit;src/is/fivefivefive/CanDis/core/CallMetadata.java#require`
-- Bounded test references: `src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/ZeroArgumentCallRegressionTest.java#main;src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: A concrete zero-argument witness retains callee, arity zero, and END; local and imported Java fixtures exercise the general implementation
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: BF-P1-10: arbitrary zero-call visit/validation/lowering model plus 13 actual occurrence traces and 1160 direct checks. END is retained in the source visit and removed by lowering; optimized node survival is not claimed. Parser/observation transport is tested and trusted, not a universal JVM refinement.
+- Current proof state: `READY`
 
 ### P1-11
 
@@ -982,15 +982,15 @@ Every claim follows the same bounded process:
 - Class: `F/I`
 - Claim SHA-256: `75921bb49ad69c617dfbccf8e31dfd7ed23bf3eb83daf5523811f7cf4a6f10c4`
 - Ledger line: 118
-- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
-- Lean declarations: `unary_interior_join_has_no_flat_license;binary_interior_join_has_flat_license`
+- Lean file: `docs/section3-repair-audit/formal/DependentJoinGuard.lean`
+- Lean declarations: `scan_iff_all_from;join_guard_iff_slice;endpoints_exempt;small_interior_rejected;extracted_guard_iff`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/DependentChainTheory.java#requireSoundFlattening;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#requireSoundDependentFlattening`
-- Bounded test references: `src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/DependentJoinGuardRegressionTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Concrete unary and binary guards agree with direct producer and verifier probes; complete loop refinement is open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: BF-A2-06: arbitrary-length guard proof plus independent javac-resolved producer/verifier loops; 358847 bounded Java assertions. Exact relation-family decoding is the stated input boundary, not a new whole-type-bridge proof.
+- Current proof state: `READY`
 
 ### A2-07
 
@@ -1373,15 +1373,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `c5ca655e734ee107312eb1f23afcd324739b4c8dfdbd3e89176d31462970c74b`
 - Ledger line: 146
-- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
-- Lean declarations: `policy_fields_jointly_determine_policy`
+- Lean file: `docs/section3-repair-audit/formal/PolicyRepresentation.lean`
+- Lean declarations: `policy_fields_jointly_determine_policy;arity_policy_preserved;sibling_quotient_preserved;flat_license_preserved;unit_license_preserved;extracted_program_preserves_nominal_product`
 - Implementation references: `src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#arityPolicy;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#siblingQuotient;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#flatLicense;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
-- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testContainerLawSeparation`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/PolicyRepresentationRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The formal product and Java value object retain distinct policy coordinates; the finite model represents flat and unit authority as fields rather than Java nominal types
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: BF-P2-02: independent nominal product theorem and javac-resolved constructor/getter mapping; 4303 bounded API checks. Extractor and Java standard-library semantics are explicit trusted boundaries; no new law authority.
+- Current proof state: `READY`
 
 ### P2-03
 
@@ -1424,15 +1424,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `b114200dc3396e59e67239676d4d7fce5ceac56b6e9ff6799b889097c9d9339a`
 - Ledger line: 149
-- Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
-- Lean declarations: `valid_flat_requires_one_root_container`
-- Implementation references: `src/is/fivefivefive/CanDis/theory/FlatLicense.java#atRootPort;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand`
-- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing`
+- Lean file: `docs/section3-repair-audit/formal/FlatRootPort.lean`
+- Lean declarations: `enabled_requires_single_root;sole_root_schema;map_preserves_control;extracted_guard_iff`
+- Implementation references: `src/is/fivefivefive/CanDis/theory/OperatorDeclaration.java#validateFlatPort;src/is/fivefivefive/CanDis/theory/FlatLicense.java#atRootPort;src/is/fivefivefive/CanDis/theory/TypedENode.java#flattenVisible`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/FlatRootPortRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The finite valid-policy theorem and direct multi-port/path attacks enforce one declared root path; complete Java refinement remains open
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: BF-P2-05: general single-root admission theorem, compiler-resolved constructor validation and count/index extraction, and 3400 direct checks. Element typing and independent law/splice obligations are not discharged by this control theorem.
+- Current proof state: `READY`
 
 ### P2-06
 
@@ -1612,13 +1612,13 @@ Every claim follows the same bounded process:
 - Claim SHA-256: `ae04f7e0f12a960156f639a69db652e044fdc8c2aa39cecf35b7d3132d53ef60`
 - Ledger line: 160
 - Lean file: `docs/section3-repair-audit/formal/Phase2VariadicLaws.lean`
-- Lean declarations: `boolean_empty_collapses_by_smart_constructor;boolean_singleton_collapses_by_smart_constructor;stored_boolean_carrier_is_nonempty_and_has_no_unit`
+- Lean declarations: `boolean_empty_collapses_by_smart_constructor;boolean_singleton_collapses_by_smart_constructor;stored_boolean_carrier_is_nonempty_and_has_no_unit;boolean_smart_constructor_preserves_denotation;boolean_smart_constructor_returns_operand_iff_singleton;boolean_smart_constructor_stored_carrier_invariant;boolean_construction_never_mints_unit_evidence;boolean_certified_carrier_rejects_empty`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#constructCertifiedFlatOperand;src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java#unitLicense`
-- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testConstructionBoundary`
+- Bounded test references: `src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java#testCompletedArityAndTypedSplicing;src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java#testConstructionBoundary;src/is/fivefivefive/CanDis/theory/BooleanSmartConstructionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PARTIAL`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: The finite AND smart-constructor model and Java AND/OR tests collapse empty/singleton cases before storage; stored Boolean carriers remain nonempty with no U
+- Claim-specific process/limits: The generalized AND/OR construction model preserves denotation for arbitrary operand identities and handles empty/singleton/storage boundaries. All 55 Phase 2 theorems compile without native_decide; 68 additional Java checks cover both heads and profiles. The follow-on docs/java-lean-refinement/README.md package proves the compiler-extracted production target selector and replays 2356 certified executions per clean build under seven independently scoped claims. Full normalization, recursive flattening, and all-transition Java refinement remain open; P2-16 remains PARTIAL.
 - Current proof state: `INCOMPLETE`
 
 ### P2-17
@@ -2410,15 +2410,15 @@ Every claim follows the same bounded process:
 - Class: `U/I`
 - Claim SHA-256: `14959fe8a629b4661550cf2c51b90cb123c9bc6e9a53974d9201e6abd465c2b1`
 - Ledger line: 222
-- Lean file: `docs/section3-repair-audit/formal/Phase5SourceRules.lean`
-- Lean declarations: `exact_none_spelling_is_builtin;exact_univ_spelling_is_builtin;capitalized_none_is_a_user_signature;capitalized_univ_is_a_user_signature;every_nonreserved_name_is_a_user_signature;none_and_univ_are_distinct_on_bool`
+- Lean file: `docs/section3-repair-audit/formal/BuiltinIdentity.lean`
+- Lean declarations: `classifier_exact;classifier_nonreserved;builtin_identity_ignores_display_name;user_identity_is_not_builtin;permitted_identity_iff;user_identity_rejected;empty_cardinality_semantics;empty_univ_not_inhabited`
 - Implementation references: `src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java#fromAst;src/is/fivefivefive/ACGN/alloy/SigSymbol.java#getSemanticIdentity;src/is/fivefivefive/CanDis/ir/IRAgent.java#attachSourceMetadata;src/is/fivefivefive/CanDis/core/EGraphNode.java#isSetConstant;src/is/fivefivefive/CanDis/core/NormalForm.java#isNone`
-- Bounded test references: `src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main;src/is/fivefivefive/CanDis/EGraphSaturationTest.java#main;src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/BuiltinIdentityRegressionTest.java#main;src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
 - Formal status: `PROVED`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: The original solver-backed P5BuiltinIdentityProbe now reports rawEquivalent=false and all four formerly unsound canonical equalities false; 127 parser-backed checks cover certified and five ablation paths; structural coverage and immutable-snapshot review remain open
-- Current proof state: `INCOMPLETE`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: BF-P5-15: exact nominal identities and empty-cardinality semantics; 8 positive and 4 negative valid-source pairs over 3 scopes and 7 engines, 252 solver calls and 2655 assertions. DIRECT is bounded conformance, not exhaustive branch coverage or a proof of the parser, SAT solver, or observer. Empty univ is included.
+- Current proof state: `READY`
 
 ### P5-16
 

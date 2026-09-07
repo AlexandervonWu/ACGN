@@ -48,6 +48,33 @@ and the separate
 available for direct inspection. These links identify evidence; they do not
 enlarge any proof or assurance claim.
 
+The [submission container replay package](docs/submission-closure/README.md)
+adds an executed Java-to-Lean check for 726 finite Seq/Bag/Set constructor
+traces, including occurrence fibers, plus generalized AND/OR smart-constructor
+proofs. Its eight scoped obligations run in two isolated builds with hashed
+evidence. This advances the checked execution boundary while full parser and
+Java refinement remain open; it does not change the empirical snapshot below.
+
+The [Java-Lean refinement package](docs/java-lean-refinement/README.md) extends
+that work with compiler-resolved extraction of the production Boolean
+constructor's selector, a symbolic Lean correspondence proof for every
+nonempty carrier size, and 2,356 certified construction executions per clean
+build. It includes all binary same-head associations through four leaves and
+source-mutation rejection controls. Its seven scoped claims do not imply
+universal Java, parser, or certificate-factory refinement.
+
+[Ordered obligation repair](docs/obligation-repair/README.md) preserves the
+132-diagnostic starting queue. It distinguishes repaired acceptance checks
+from discharged requirements and records newly exposed diagnostics separately.
+The [five bounded repairs](docs/obligation-repair/bounded-five/README.md) add
+general nominal-policy, JOIN-guard, root-port, zero-call, and built-in proofs
+with direct Java checks and two-build replay. Their five ledger gaps are
+resolved under bounded conformance; the full matrix remains incomplete.
+
+The [v2.12 assurance release](docs/release-v2.12.md) packages these proof,
+correspondence, and test updates. It retains the v2.11 experiment JAR and
+empirical snapshot; it does not claim a new corpus run or full formal closure.
+
 ## Headline Results
 
 The checked-in experimental snapshot was regenerated on August 29, 2026. It

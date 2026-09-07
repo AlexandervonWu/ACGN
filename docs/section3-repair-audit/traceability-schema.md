@@ -55,3 +55,12 @@ independent review and bounded test execution establish whether that symbol
 actually reaches the claimed semantic boundary. The execution-coverage gate
 also requires every `DIRECT` Java test owner to run from a governed entry point
 and every named non-`main` test method to be called by that owner's `main`.
+
+A-01 also has a status-independent missing-evidence guard. Neither
+`PROVED/DIRECT` labels nor a list of theorem names certifies decomposition.
+Absent `low-level-requirements.tsv` produces `MISSING_LOW_LEVEL_REGISTRY`;
+registry presence without the complete typed parent contracts and their checked
+reconstruction produces `UNCHECKED_DECOMPOSITION`. The structural helper and
+its still-missing authority inputs are described in the
+[ordered repair record](../obligation-repair/README.md). No parent requirement
+is currently discharged by that helper alone.

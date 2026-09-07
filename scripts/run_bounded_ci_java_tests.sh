@@ -21,9 +21,16 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
 
 tests=(
+  is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
+  is.fivefivefive.CanDis.assurance.ContractDecompositionTest
   is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest
   is.fivefivefive.CanDis.RequiredPolicyCoverageTest
   is.fivefivefive.CanDis.CallExtractionRegressionTest
+  is.fivefivefive.CanDis.ZeroArgumentCallRegressionTest
+  is.fivefivefive.CanDis.BuiltinIdentityRegressionTest
+  is.fivefivefive.CanDis.theory.PolicyRepresentationRegressionTest
+  is.fivefivefive.CanDis.theory.DependentJoinGuardRegressionTest
+  is.fivefivefive.CanDis.theory.FlatRootPortRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest
@@ -37,6 +44,7 @@ tests=(
   is.fivefivefive.CanDis.metric.QuotientRepairDistanceTest
   is.fivefivefive.CanDis.theory.TheoryFoundationsTest
   is.fivefivefive.CanDis.theory.TheoryPortsTest
+  is.fivefivefive.CanDis.theory.BooleanSmartConstructionTest
   is.fivefivefive.CanDis.theory.TheoryStateTest
   is.fivefivefive.CanDis.theory.TheoryCanonicalizationTest
   is.fivefivefive.CanDis.theory.TheoryLeaderKernelTest

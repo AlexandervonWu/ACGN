@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "closureFamily": "java-lean-smart-construction-v1",
+  "parentObligation": "P2-16",
+  "scope": "The compiler-extracted target-selection fragment of TypedENode.flatConstructCertified, and the enumerated production-certified Boolean construction traces.",
+  "requiredCleanBuilds": 2,
+  "javaRelease": 17,
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 300,
+  "heap": "1g",
+  "bounds": {"alphabetSize": 3, "maxLeaves": 4, "heads": ["AND", "OR"], "profiles": ["FORBID", "MODULAR"], "expectedRows": 2356, "expectedEmptyRejections": 4},
+  "claims": [
+    {"id": "JLR-01", "statement": "Exactly one compiled production method resolves to the registered complete statement/effect shape; its actual condition, singleton type guard, and return actions are extracted without a handwritten predicate replacement.", "evidenceClass": "COMPILER_CHECKED", "verifier": "javac-extraction"},
+    {"id": "JLR-02", "statement": "For every nonempty normalized Boolean operand list, the extracted target selector agrees with Lean constructBooleanCarrier; non-Set inputs short-circuit the Set cast and wrongly typed singleton inputs reject.", "evidenceClass": "PROVED_UNDER_FRAGMENT_SEMANTICS", "verifier": "symbolic-refinement"},
+    {"id": "JLR-03", "statement": "All 2356 specified production AND/OR construction inputs are covered once, including all binary same-head associations through four leaves and four expected empty-source rejections.", "evidenceClass": "CHECKED", "verifier": "source-census"},
+    {"id": "JLR-04", "statement": "Every successful observed certificate binds the actual source application and returned target, preserves source-leaf identity through its occurrence fibers, and issues no UNIT premise.", "evidenceClass": "JAVA_AND_LEAN_REPLAY_CHECKED", "verifier": "certified-replay"},
+    {"id": "JLR-05", "statement": "Every successful observed construction preserves Boolean denotation for any interpretation of its atoms; its returned target shape agrees with the compiler-extracted Java selector.", "evidenceClass": "PROVED_AND_EXECUTION_CHECKED", "verifier": "certified-replay"},
+    {"id": "JLR-06", "statement": "A supported wrong singleton threshold fails Lean correspondence, an added unmodeled Java effect fails extraction, and every registered incomplete/malformed-data mutation in test_java_lean_refinement.py fails the replay boundary.", "evidenceClass": "TESTED", "verifier": "negative-controls"},
+    {"id": "JLR-07", "statement": "Two isolated Java and Lean builds reproduce the extracted program, observed traces, proof objects, and per-claim results from one frozen input root.", "evidenceClass": "CHECKED", "verifier": "determinism"}
+  ],
+  "trusted": [
+    {"id": "JDK", "description": "Javac's Java parsing, symbol resolution, compilation, JVM execution, and Java library contracts. This is a source-fragment refinement, not a verified whole-JVM semantics."},
+    {"id": "EXTRACTOR", "description": "Hashed, compiler-resolved Java statement/effect extractor and typed execution probe. Their implementations are checked and mutation-tested, not proved in Lean."},
+    {"id": "ENCODER", "description": "Hashed JSON-to-Lean literal encoder and finite source census; unsupported forms reject."},
+    {"id": "LEAN", "description": "Pinned Lean 4.33.0 kernel and standard library; only propext, Quot.sound, and Classical.choice are allowed in audited theorem dependencies."},
+    {"id": "PLATFORM", "description": "Python standard library, SHA-256, operating system, filesystem, and hardware."}
+  ],
+  "excluded": ["unbounded Java heap/loop refinement", "Alloy parser refinement", "unbounded flattenVisible and certificate-factory refinement", "production theory authority expansion", "source empty-form normalization before FlatApplication", "mixed-head sealing", "whole-corpus soundness"],
+  "statusPolicy": {"states": ["VERIFIED", "BLOCKED", "INFRASTRUCTURE_FAILURE"], "unresolvedIsBlocking": true, "manualOverrideAllowed": false},
+  "permittedNondeterminism": ["absolute paths", "timings", "timestamps", "host identity", "diagnostic log text"],
+  "networkDuringVerification": false
+}

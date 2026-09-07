@@ -1,0 +1,11 @@
+'ACGN.ContractDecomposition.refill_original_preserves_tail' depends on axioms: [propext]
+'ACGN.ContractDecomposition.reconstruct_original' depends on axioms: [propext, Quot.sound]
+'ACGN.ContractDecomposition.every_formula_has_an_atom' depends on axioms: [propext]
+'ACGN.ContractDecomposition.original_with_extra_atoms_rejects' depends on axioms: [propext, Quot.sound]
+'ACGN.ContractDecomposition.accepted_reconstruction_is_exact' depends on axioms: [propext]
+'ACGN.ContractDecomposition.accepted_reconstruction_preserves_interpretation' depends on axioms: [propext]
+'ACGN.ContractDecomposition.splitting_a_shared_witness_rejects' does not depend on any axioms
+'ACGN.ContractDecomposition.dropping_an_implication_branch_rejects' does not depend on any axioms
+'ACGN.ContractDecomposition.changing_quantifier_alternation_rejects' does not depend on any axioms
+'ACGN.ContractDecomposition.shared_witness_split_changes_semantics' does not depend on any axioms
+'ACGN.ContractDecomposition.swapping_quantifiers_changes_semantics' does not depend on any axioms

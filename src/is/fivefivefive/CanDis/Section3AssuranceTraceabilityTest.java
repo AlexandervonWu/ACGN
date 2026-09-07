@@ -23,8 +23,49 @@ public final class Section3AssuranceTraceabilityTest {
                     Section3AssuranceTraceability.assess(root);
             check(valid.requirements() == 1, "one synthetic requirement is read");
             check(valid.rows() == 1, "one synthetic matrix row is read");
-            check(valid.ready() == 1, "complete synthetic row is ready");
-            check(valid.failures().isEmpty(), "complete synthetic row has no failures");
+            check(valid.ready() == 0, "status labels cannot discharge missing decomposition");
+            check(valid.failures().size() == 1
+                            && valid.failures().get(0).contains("MISSING_LOW_LEVEL_REGISTRY"),
+                    "otherwise complete mappings retain the exact missing A-01 obligation");
+
+            Path decomposition = root.resolve(
+                    "docs/section3-repair-audit/low-level-requirements.tsv");
+            Files.writeString(decomposition,
+                    "parent_id\tchild_id\tatomic\tproof\n"
+                            + "A-01\tA-01.1\ttrue\tbounded_gate_rejects_missing\n",
+                    StandardCharsets.UTF_8);
+            expectFailure(root, "UNCHECKED_DECOMPOSITION");
+            check(Section3AssuranceTraceability.assess(root).ready() == 0,
+                    "a theorem-name registry cannot certify atomicity or reconstruction");
+            Files.delete(decomposition);
+
+            List<Path> fixtureRecords = List.of(
+                    root.resolve("docs/section3-repair-audit/claim-ledger.md"),
+                    root.resolve("docs/section3-repair-audit/assurance-scope.tsv"),
+                    matrix(root));
+            List<String> fixtureContents = new ArrayList<>();
+            for (Path record : fixtureRecords) {
+                String content = Files.readString(record, StandardCharsets.UTF_8);
+                fixtureContents.add(content);
+                Files.writeString(record, content.replace("A-01", "A-02"), StandardCharsets.UTF_8);
+            }
+            Section3AssuranceTraceability.Assessment otherRequirement =
+                    Section3AssuranceTraceability.assess(root);
+            check(otherRequirement.ready() == 1 && otherRequirement.failures().isEmpty(),
+                    "the new A-01 evidence boundary does not reject unrelated requirement fixtures");
+            for (int index = 0; index < fixtureRecords.size(); index++) {
+                Files.writeString(fixtureRecords.get(index), fixtureContents.get(index), StandardCharsets.UTF_8);
+            }
+
+            Path generated = root.resolve("claims.md");
+            Section3AssuranceTraceability.main(new String[] {
+                    root.toString(), "--markdown-output=" + generated});
+            String generatedText = Files.readString(generated, StandardCharsets.UTF_8);
+            check(generatedText.endsWith("\n") && !generatedText.endsWith("\n\n"),
+                    "the generated catalog has one final newline for byte-stable freshness checks");
+            check(generatedText.contains("MISSING_LOW_LEVEL_REGISTRY") == false
+                            && generatedText.contains("- Open diagnostics: 1"),
+                    "generated summary retains the new unresolved obligation count");
 
             Path annotatedImplementation = root.resolve("src/Boundary.java");
             String plainImplementation = Files.readString(
@@ -37,7 +78,7 @@ public final class Section3AssuranceTraceabilityTest {
                     StandardCharsets.UTF_8);
             Section3AssuranceTraceability.Assessment annotated =
                     Section3AssuranceTraceability.assess(root);
-            check(annotated.failures().isEmpty(),
+            check(annotated.failures().equals(valid.failures()),
                     "balanced Java annotations do not hide declarations");
             Files.writeString(annotatedImplementation, plainImplementation,
                     StandardCharsets.UTF_8);

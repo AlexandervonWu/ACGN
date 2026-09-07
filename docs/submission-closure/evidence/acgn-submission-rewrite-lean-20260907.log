@@ -1,0 +1,12 @@
+rewrite dispatch parity: PASS: 15 canonical aliases, the full 14-case atomic negation table, 4 NOT_* normalization mappings, and 4 ordinary EGraph complement mappings match Lean; EGraph NOT_* inputs are absent
+Compiling docs/section3-repair-audit/formal/FullCorpusNonTemporalP0.lean
+Compiling docs/section3-repair-audit/formal/Phase5SourceRules.lean
+1
+1
+0
+0
+1
+Compiling docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean
+Compiling docs/section3-repair-audit/formal/PhaseA2DependentChains.lean
+Compiling docs/section3-repair-audit/formal/PrenexAciScheduling.lean
+Rewrite Lean checks passed: toolchain=leanprover/lean4:v4.33.0 files=5

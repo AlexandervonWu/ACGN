@@ -1,0 +1,4 @@
+'ACGN.ObligationRepair.missing_registry_is_rejected' does not depend on any axioms
+'ACGN.ObligationRepair.unchecked_registry_is_rejected' does not depend on any axioms
+'ACGN.ObligationRepair.available_evidence_cannot_discharge_decomposition' depends on axioms: [propext]
+'ACGN.ObligationRepair.ready_labels_cannot_replace_missing_evidence' depends on axioms: [propext]

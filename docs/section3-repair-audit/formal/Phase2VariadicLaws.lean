@@ -115,32 +115,32 @@ def flatSetPlus : PortPolicy :=
 theorem ordinary_seq_plus_has_no_associativity_license :
     seqPlus.laws.associative = false := rfl
 
-theorem ordinary_seq_plus_is_valid : seqPlus.valid = true := by native_decide
+theorem ordinary_seq_plus_is_valid : seqPlus.valid = true := by decide
 
 theorem flat_seq_plus_without_associativity_rejects :
-    flatSeqWithoutA.valid = false := by native_decide
+    flatSeqWithoutA.valid = false := by decide
 
 theorem nonflat_bag_two_is_commutative_only :
     And (bagTwo.valid = true)
       (And (bagTwo.laws.commutative = true)
         (And (bagTwo.laws.associative = false)
-          (bagTwo.laws.idempotent = false))) := by native_decide
+          (bagTwo.laws.idempotent = false))) := by decide
 
 theorem flat_bag_plus_requires_exactly_A_and_C_here :
     And (flatBagPlus.valid = true)
       (And (flatBagPlus.laws.associative = true)
         (And (flatBagPlus.laws.commutative = true)
           (And (flatBagPlus.laws.idempotent = false)
-            (flatBagPlus.laws.unit = false)))) := by native_decide
+            (flatBagPlus.laws.unit = false)))) := by decide
 
 theorem ordinary_zero_arity_needs_no_unit : ordinaryKZero.valid = true := by
-  native_decide
+  decide
 
 theorem flat_zero_arity_without_A_and_U_rejects :
-    flatKZeroWithoutAU.valid = false := by native_decide
+    flatKZeroWithoutAU.valid = false := by decide
 
 theorem flat_zero_arity_with_A_and_U_is_valid :
-    flatKZeroWithAU.valid = true := by native_decide
+    flatKZeroWithAU.valid = true := by decide
 
 theorem nonempty_variadic_rejects_empty_storage :
     (ArityPolicy.atLeast 1).admits 0 = false := by decide
@@ -194,7 +194,7 @@ theorem flat_set_plus_is_ACI_without_unit :
       (And (flatSetPlus.laws.associative = true)
         (And (flatSetPlus.laws.commutative = true)
           (And (flatSetPlus.laws.idempotent = true)
-            (flatSetPlus.laws.unit = false)))) := by native_decide
+            (flatSetPlus.laws.unit = false)))) := by decide
 
 theorem policy_fields_jointly_determine_policy
     (left right : PortPolicy)
@@ -256,6 +256,154 @@ theorem stored_boolean_carrier_is_nonempty_and_has_no_unit
     (.stored first second rest : BooleanFlatResult).storedArity > 0 ∧
       (.stored first second rest : BooleanFlatResult).hasUnitEvidence = false := by
   simp [BooleanFlatResult.storedArity, BooleanFlatResult.hasUnitEvidence]
+
+/- P2-16 construction contract, generalized over operand identities and both
+   Boolean heads. Inputs are the remaining operands at the smart-construction
+   boundary, not raw source occurrences: neutral removal, the ACI quotient,
+   recursive flattening, and Java-to-model correspondence are separate
+   obligations. In Java an empty normalized source becomes a constant before
+   the adapter; the certified K+ constructor itself rejects empty input.
+   The earlier Bool-only AND declarations remain compatibility witnesses. -/
+
+inductive BooleanConnective where
+  | and | or
+  deriving DecidableEq, Repr
+
+def BooleanConnective.emptyValue : BooleanConnective -> Bool
+  | .and => true
+  | .or => false
+
+def BooleanConnective.evaluate {Operand : Type u}
+    (head : BooleanConnective) (interpret : Operand -> Bool)
+    (operands : List Operand) : Bool :=
+  match head with
+  | .and => operands.all interpret
+  | .or => operands.any interpret
+
+def BooleanConnective.storedPolicy : BooleanConnective -> PortPolicy
+  | .and | .or => flatSetPlus
+
+inductive BooleanConstruction (Operand : Type u) where
+  | constant (value : Bool)
+  | operand (value : Operand)
+  | stored (head : BooleanConnective) (first second : Operand)
+      (rest : List Operand)
+  deriving DecidableEq, Repr
+
+def smartBoolean {Operand : Type u} (head : BooleanConnective) :
+    List Operand -> BooleanConstruction Operand
+  | [] => .constant head.emptyValue
+  | [value] => .operand value
+  | first :: second :: rest => .stored head first second rest
+
+def BooleanConstruction.evaluate {Operand : Type u}
+    (interpret : Operand -> Bool) : BooleanConstruction Operand -> Bool
+  | .constant value => value
+  | .operand value => interpret value
+  | .stored head first second rest =>
+      head.evaluate interpret (first :: second :: rest)
+
+def BooleanConstruction.hasUnitEvidence {Operand : Type u} :
+    BooleanConstruction Operand -> Bool
+  | .constant _ | .operand _ => false
+  | .stored head _ _ _ => head.storedPolicy.laws.unit
+
+def constructBooleanCarrier {Operand : Type u} (head : BooleanConnective) :
+    List Operand -> Option (BooleanConstruction Operand)
+  | [] => none
+  | first :: rest => some (smartBoolean head (first :: rest))
+
+theorem boolean_and_empty_collapses_by_smart_constructor (Operand : Type u) :
+    smartBoolean .and ([] : List Operand) = .constant true := rfl
+
+theorem boolean_or_empty_collapses_by_smart_constructor (Operand : Type u) :
+    smartBoolean .or ([] : List Operand) = .constant false := rfl
+
+theorem boolean_and_singleton_collapses_by_smart_constructor
+    {Operand : Type u} (value : Operand) :
+    smartBoolean .and [value] = .operand value := rfl
+
+theorem boolean_or_singleton_collapses_by_smart_constructor
+    {Operand : Type u} (value : Operand) :
+    smartBoolean .or [value] = .operand value := rfl
+
+theorem boolean_smart_constructor_preserves_denotation
+    {Operand : Type u} (head : BooleanConnective)
+    (interpret : Operand -> Bool) (operands : List Operand) :
+    (smartBoolean head operands).evaluate interpret =
+      head.evaluate interpret operands := by
+  cases operands with
+  | nil => cases head <;> rfl
+  | cons first rest =>
+      cases rest with
+      | nil => cases head <;> simp [smartBoolean, BooleanConstruction.evaluate,
+          BooleanConnective.evaluate]
+      | cons second rest => rfl
+
+theorem boolean_smart_constructor_returns_operand_iff_singleton
+    {Operand : Type u} (head : BooleanConnective)
+    (operands : List Operand) (value : Operand) :
+    smartBoolean head operands = .operand value <-> operands = [value] := by
+  cases operands with
+  | nil => simp [smartBoolean]
+  | cons first rest => cases rest <;> simp [smartBoolean]
+
+theorem boolean_smart_constructor_stores_iff
+    {Operand : Type u} (head storedHead : BooleanConnective)
+    (operands : List Operand) (first second : Operand) (rest : List Operand) :
+    smartBoolean head operands = .stored storedHead first second rest <->
+      head = storedHead ∧ operands = first :: second :: rest := by
+  cases operands with
+  | nil => simp [smartBoolean]
+  | cons value tail => cases tail <;> simp [smartBoolean]
+
+theorem boolean_stored_policy_is_nonempty_and_has_no_unit
+    (head : BooleanConnective) (arity : Nat) :
+    head.storedPolicy.valid = true ∧
+      (head.storedPolicy.arities.admits arity = true <-> 0 < arity) ∧
+      head.storedPolicy.laws.unit = false := by
+  cases head <;>
+    simp [BooleanConnective.storedPolicy, flatSetPlus, PortPolicy.valid,
+      quotientLawMatch, ArityPolicy.admits, ArityPolicy.positiveDownwardClosed,
+      ArityPolicy.flatSpliceClosed] <;> rfl
+
+theorem boolean_smart_constructor_stored_carrier_invariant
+    {Operand : Type u} (head storedHead : BooleanConnective)
+    (operands : List Operand) (first second : Operand) (rest : List Operand)
+    (stored : smartBoolean head operands = .stored storedHead first second rest) :
+    storedHead = head ∧ 2 <= operands.length ∧
+      storedHead.storedPolicy.arities.admits operands.length = true ∧
+      storedHead.storedPolicy.laws.unit = false := by
+  obtain ⟨sameHead, sameOperands⟩ :=
+    (boolean_smart_constructor_stores_iff head storedHead operands first second rest).mp stored
+  subst storedHead
+  subst operands
+  have policy := boolean_stored_policy_is_nonempty_and_has_no_unit
+    head (first :: second :: rest).length
+  exact ⟨rfl, by simp, policy.2.1.mpr (by simp), policy.2.2⟩
+
+theorem boolean_construction_never_mints_unit_evidence
+    {Operand : Type u} (result : BooleanConstruction Operand) :
+    result.hasUnitEvidence = false := by
+  cases result with
+  | constant _ => rfl
+  | operand _ => rfl
+  | stored head _ _ _ => cases head <;> rfl
+
+theorem boolean_certified_carrier_rejects_empty
+    (Operand : Type u) (head : BooleanConnective) :
+    constructBooleanCarrier head ([] : List Operand) = none := rfl
+
+theorem boolean_certified_carrier_collapses_singleton
+    {Operand : Type u} (head : BooleanConnective) (value : Operand) :
+    constructBooleanCarrier head [value] = some (.operand value) := rfl
+
+theorem boolean_certified_carrier_agrees_with_smart_constructor
+    {Operand : Type u} (head : BooleanConnective) (operands : List Operand)
+    (result : BooleanConstruction Operand) :
+    constructBooleanCarrier head operands = some result <->
+      operands ≠ [] ∧ smartBoolean head operands = result := by
+  cases operands <;> simp [constructBooleanCarrier]
 
 /- Exact relational alternatives need not have the same column names to share
    the UNION/INTERSECTION ACI carrier.  They do have to be nonempty relation
@@ -494,13 +642,13 @@ def optionAdd4 : Option Int -> Int -> Option Int
   | none, _ => none
 
 theorem four_bit_left_association_overflows :
-    optionAdd4 (add4 7 1) (-1) = none := by native_decide
+    optionAdd4 (add4 7 1) (-1) = none := by decide
 
 theorem four_bit_right_association_succeeds :
-    optionAdd4 (add4 1 (-1)) 7 = some 7 := by native_decide
+    optionAdd4 (add4 1 (-1)) 7 = some 7 := by decide
 
 theorem no_overflow_addition_reassociation_is_unsound :
     Not (optionAdd4 (add4 7 1) (-1) = optionAdd4 (add4 1 (-1)) 7) := by
-  native_decide
+  decide
 
 end ACGN.Section3.Phase2

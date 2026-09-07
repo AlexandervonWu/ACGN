@@ -8,7 +8,7 @@ claim. The current assurance state is `INCOMPLETE`.
 
 - [Bounded assurance plan](do178c-assurance-plan.md): scope, objectives,
   evidence classes, coverage policy, and termination rule.
-- [Atomic claim ledger](claim-ledger.md): the 154 scoped requirements.
+- [Atomic claim ledger](claim-ledger.md): the scoped requirements.
 - [Traceability schema](traceability-schema.md) and
   [matrix](requirements-traceability.tsv): content-sensitive mapping from each
   exact claim to Lean, code, tests, and status.
@@ -17,6 +17,11 @@ claim. The current assurance state is `INCOMPLETE`.
   ledger and matrix and is not an independent authority.
 - [Global fault register](global-fault-register.md): every located
   contradiction and its current disposition.
+- [Five bounded repairs](../obligation-repair/bounded-five/README.md): general
+  proofs, compiler-resolved guards, source observations, and direct conformance
+  for P2-02, A2-06, P2-05, P1-10, and P5-15.
+- [Ordered repair queue](../obligation-repair/README.md): the original 132
+  diagnostics, fresh assessments, and per-obligation repairs and prerequisites.
 
 ## Execution And Review
 
@@ -33,6 +38,16 @@ claim. The current assurance state is `INCOMPLETE`.
   currently open statement/decision/MC/DC obligations.
 
 ## Focused Proof Processes
+
+- [Submission container replay](../submission-closure/README.md): 726 actual
+  Java Seq/Bag/Set constructor traces checked by an independent Lean checker,
+  generalized AND/OR construction proofs, and two isolated builds. Its finite
+  result does not promote the broader Section 3 refinement obligations.
+- [Java-Lean constructor refinement](../java-lean-refinement/README.md):
+  compiler-resolved production selector, a symbolic refinement theorem, and
+  2,356 actual certified construction executions per clean build. The seven
+  scoped claims supplement P2-16 without promoting its unresolved whole-path
+  refinement status.
 
 - [Source-command semantic profiles](semantic-profile-proof-process.md)
 - [Quiescent collision buckets](collision-bucket-proof-process.md)

@@ -1,0 +1,7 @@
+Section 3 assurance traceability
+requirements=1
+matrixRows=1
+ready=0
+failures=1
+FAIL	A-01 MISSING_LOW_LEVEL_REGISTRY: no atomic child obligations or parent reconstruction evidence
+Section3AssuranceTraceabilityTest passed: 40 checks

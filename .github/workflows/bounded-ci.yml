@@ -36,6 +36,14 @@ jobs:
           printf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"
       - name: Compile and audit cataloged rewrite obligations
         run: ./scripts/run_rewrite_rule_lean_checks.sh
+      - name: Replay finite Java container traces in Lean from two clean builds
+        run: python3 scripts/run_submission_container_closure.py /tmp/acgn-submission-container-closure
+      - name: Refine the compiler-extracted Java selector and replay certified constructions
+        run: python3 scripts/run_java_lean_refinement.py /tmp/acgn-java-lean-refinement
+      - name: Check decomposition prerequisites and report remaining obligations
+        run: python3 scripts/report_obligation_repairs.py --output /tmp/acgn-obligation-status
+      - name: Replay the five bounded obligation repairs in two clean builds
+        run: python3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five
       - name: Compile and run bounded Java tests
         run: ./scripts/run_bounded_ci_java_tests.sh
       - name: Run clean producer and standalone verifier harness
