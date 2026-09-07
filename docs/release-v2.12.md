@@ -45,7 +45,7 @@ Alloy/SAT4J, and the execution platform remain declared trust dependencies.
   2,292,989 bytes, SHA-256
   `361b33ef56f6ccb1089a7a6fdda2a92bf621e501166c5a1c73330a0cc1686807`.
 - `acgn-v2.12-assurance.tar.gz` contains the tagged source, libraries, scripts,
-  proofs, and retained evidence needed for the bounded closure commands. It
+  proofs, and retained evidence for bounded reproduction. It
   does not include corpus/result directories or the frontend. It is not a
   replacement corpus snapshot.
 - `SHA256SUMS` records hashes of both release assets. The GitHub release body
@@ -67,10 +67,17 @@ Python 3, and the pinned Lean toolchain available:
 
 ```bash
 python3 -B scripts/run_bounded_obligation_repairs.py /tmp/acgn-v212-five
-python3 -B scripts/run_java_lean_refinement.py /tmp/acgn-v212-refinement
-python3 -B scripts/run_submission_container_closure.py /tmp/acgn-v212-containers
 python3 -B scripts/report_obligation_repairs.py --output /tmp/acgn-v212-obligations
 ```
 
 Each output directory must be fresh. The last command reports the remaining
 obligations and does not convert missing diagnostics into proof closure.
+
+The two earlier runners additionally record Git HEAD and worktree status.
+Run them from a **Git checkout of v2.12**, not the extracted source archive,
+which has no `.git` metadata:
+
+```bash
+python3 -B scripts/run_java_lean_refinement.py /tmp/acgn-v212-refinement
+python3 -B scripts/run_submission_container_closure.py /tmp/acgn-v212-containers
+```
