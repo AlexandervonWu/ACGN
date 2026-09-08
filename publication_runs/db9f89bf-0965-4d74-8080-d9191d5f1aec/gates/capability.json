@@ -1,0 +1,14 @@
+{
+  "boundary": "Finite experiments, not proof. Capability temporal SAT4J checks remain inconclusive, including solver-reported counterexamples. No semantic or certificate boundary is relaxed.",
+  "counters": {
+    "arms": 7,
+    "cells": 77,
+    "conclusiveFailures": 0,
+    "inconclusiveTemporal": 6,
+    "pairArmEvaluations": 38500,
+    "pairs": 5500
+  },
+  "identitySha256": "e9d76f2fec64775dd0a6db063922738ee88a29b22b03ad993718a097d0f8d003",
+  "stage": "capability",
+  "status": "PASS"
+}

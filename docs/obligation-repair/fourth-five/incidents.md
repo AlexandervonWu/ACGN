@@ -156,3 +156,23 @@ and capabilities serially outside the worktree. Use all 66,080 files, reward
 pool 100, 16 workers and an 8 GiB heap. No partial run or pre-repair result may
 be substituted. Preserve the previous snapshot until all new stage gates pass;
 retain every interrupted or failed attempt with its source identity.
+
+The required rerun completed at clean source `8ad5fead39b687d2cadc79b01ac27743c1ece990`.
+Publication run `db9f89bf-0965-4d74-8080-d9191d5f1aec` passed all four gates:
+61,598 eligible distances, 42,386 incorrect rankings and rewards, seven full
+ablation arms, and 5,500 capability pairs. There were zero terminal failures
+or incorrect nearest-truth zeroes. All 5,808 imported stage files match the
+new manifest. The previous result-producing JAR remains unchanged.
+
+## Hosted Closure Resource Limit
+
+GitHub Actions run `34266539252` passed all preceding packages, then timed
+out after 300 seconds compiling `DependentChainWitnessReplay.lean` in the
+first new clean build. This is an `INFRASTRUCTURE_FAILURE`, not a falsified
+theorem and not a successful negative control. Its exact log is retained in
+`evidence/acgn-v215-ci-first-failure.log`.
+
+The new candidate allows 900 seconds per command and 120 minutes for the
+whole CI job. Proofs, observation counts, rejection predicates and production
+Java remain unchanged. A fresh input root and two-build closure are required;
+the earlier preflight root is retained only as historical evidence.

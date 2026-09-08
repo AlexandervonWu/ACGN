@@ -55,13 +55,44 @@ added two-build package. The final release must obtain a new closure report
 for its final inputs. The full assurance matrix has 107 ready requirements and
 111 diagnostics; its overall status remains `INCOMPLETE`.
 
+## Final Verified Evidence
+
+The [final machine report](evidence/final/report.json) is **VERIFIED** for all
+five frozen claims at closure ID `fourth-five-v1-188b4a84db91aeff`, input root
+`188b4a84db91aeff0f921e687a4093fc49fd9268d46647b98c7de4a052943575`.
+Both clean builds passed, with **1,076 identical artifacts per build**.
+
+| Evidence | Per build |
+| --- | ---: |
+| General Lean theorems | 66 |
+| Generated replay propositions/blocks | 9,128 |
+| Java observations | 10,630 |
+| Java assertions | 126,489 |
+| Compiler-resolved source objects | 33 |
+| False-proposition Lean controls | 36 |
+| Source-mutation rejection controls | 42 |
+
+The 17 driver tests, 46 area encoder tests and seven compatibility tests pass.
+The broader Java suite passes 45 entry points and its distance-artifact smoke.
+Certificate checks retain 184 verifier, 109 writer (twice), 68 inspection,
+31 trust-pin and ten parsed-PAIR checks, with census 1 verified / 2 uncheckable /
+0 rejected. The two parsed-source hashes remain distinct. Raw final evidence
+and the earlier preflight/review records are retained with
+[checksums](evidence/SHA256SUMS).
+
+The final run uses the explicit 900-second command limit and 120-minute CI
+budget. The earlier hosted timeout is retained as an infrastructure failure;
+no rejection criterion or theorem changed to obtain this result.
+
 ## Preservation
 
 Production rewrite and distance semantics, certificate authority, and the
 previously archived experiment JAR remain unchanged by this proof package.
 The three producer/replay fixes are documented in [the incident record](incidents.md).
-At the author's request, a fresh serial full-corpus run is required before
-v2.15 publication; old snapshots remain intact until its gates pass.
+At the author's request, a fresh serial full-corpus run was completed before
+v2.15 publication. Run `db9f89bf-0965-4d74-8080-d9191d5f1aec` passed all four
+stage gates, and its 5,808 stage files are now imported. The preceding
+publication manifest and JAR remain unchanged.
 SHA-256 collision resistance remains explicitly
 trusted. P1-19's external occurrence-authority prerequisite and the A-01
 complete contract-registry prerequisite are not discharged by this package.

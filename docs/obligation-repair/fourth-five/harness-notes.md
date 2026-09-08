@@ -29,6 +29,14 @@ the three area notes, test drivers, verifier sources, dependencies and CI
 entry points. Diagnostic paths and timings are the only nondeterministic
 output fields permitted by the configuration.
 
+The release execution budget is 900 seconds per command and 120 minutes for
+the aggregate CI job. The first hosted run reached the 300-second command
+limit while compiling the dependent-chain replay; it is retained as an
+infrastructure failure, not a semantic rejection or a proof failure. These
+finite budget changes do not change any claim, observation census, proof
+predicate or rejection requirement. The changed configuration and workflow
+are inputs to a fresh closure root.
+
 This is a finite assurance repair. It creates no new rewrite family or
 certificate authority. SHA-256 collision resistance remains a cryptographic
 assumption; no hash-injectivity theorem is claimed. Earlier empirical

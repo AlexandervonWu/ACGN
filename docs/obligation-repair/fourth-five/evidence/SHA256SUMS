@@ -1,0 +1,11 @@
+5d6e57ee6842adad3a53f78a25e464542d368f0444972c9a69ebc6b91301c84d  ./acgn-v215-ci-first-failure.log
+489a0c97b00a12feab0be2aa906d46cd72cb4889699438350e57493d018f649f  ./bounded-java.log
+41e390d25293599656ead7ac04a51ab158e73722b454e66daa2f80db3462306e  ./certificates.log
+2376e85a46c2c3d67b7590e603451f00ba9ef8ffa76efb712487766d16ef18fa  ./final/closure-evidence.tar.gz
+9d4533108bb8629ede4de262bf45d14bd2a3941fd076baf1fa7dace962cc9d6a  ./final/input-manifest.json
+5adf1587fd71617b34a954237dc9724aa038c21bc05aa7d5984ff6e60e5a8b72  ./final/publication.log
+b5a78805684a03704dd2f47f012b8b77abb3f62103ba692ca566983eb49bc743  ./final/report.json
+a6d98b2771a2df9202b436d8a8d11196ed913bf26825c9c4cc0b379f5105d44c  ./preflight-evidence.tar.gz
+50292f73bd2cfd40c95134831602c4cd4988ff0f16c39ebcffd335216d0724bd  ./preflight-input-manifest.json
+e15feea1cf42959a1cb7b5a09f0dde44aafaf589e190f5d08a56b60a2d32c382  ./preflight-report.json
+5adf1587fd71617b34a954237dc9724aa038c21bc05aa7d5984ff6e60e5a8b72  ./publication-before.log

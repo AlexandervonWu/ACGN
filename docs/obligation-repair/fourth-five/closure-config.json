@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "profile": "fourth-five-v1",
   "leanVersion": "4.33.0",
-  "timeoutSeconds": 300,
+  "timeoutSeconds": 900,
   "requiredCleanBuilds": 2,
   "proofDependencies": [],
   "replayPlugin": "scripts/fourth_obligation_replays.py",

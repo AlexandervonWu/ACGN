@@ -1,8 +1,8 @@
 # Alloy4Fun Augmented Dataset Summary
 
-- Generated at: `2026-08-29T22:35:44.269682386Z`
+- Generated at: `2026-09-08T20:44:59.343356966Z`
 - Input root: `/home/augustus/ACGN/classified-data`
-- Output root: `/home/augustus/acgn-codex-supervised-20260829T205326Z/run/alloy4fun-augmented`
+- Output root: `/home/augustus/acgn-v215-full-20260908T190500Z/run/alloy4fun-augmented`
 - Source Alloy files: 66080
 - AST-identical student/oracle files excluded before pools: 4482
 - Alloy files considered and used: 61598

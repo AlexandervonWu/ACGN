@@ -48,7 +48,7 @@ complete theorem prover for arbitrary Alloy semantics.
 
 ## Current Experimental Snapshot
 
-The August 29, 2026 snapshot uses 66,080 source files. Every runner excludes
+The September 8, 2026 snapshot uses 66,080 source files. Every runner excludes
 4,482 student-oracle pairs with identical parser ASTs before pool construction,
 leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 
@@ -61,9 +61,9 @@ leaving 61,598 eligible pairs: 19,212 `CORRECT` and 42,386 incorrect.
 | Generated capability matrix | slotted, Fast Rewrite, and Certificate-Integrated IR each recovered 5,500/5,500; all 11 expected capability boundaries matched |
 
 The certificate-integrated arm averaged 29.541 representation units, 18.443
-reachable e-classes, and 16.148 reachable e-nodes, but required 2,775.650
-seconds wall time versus 23.860 seconds for the Fast Rewrite IR arm. Maximum
-RSS was 8,912.141 versus 1,840.508 MiB. Its cost is dominated by certificate-bearing construction,
+reachable e-classes, and 16.148 reachable e-nodes, but required 2,684.110
+seconds wall time versus 23.990 seconds for the Fast Rewrite IR arm. Maximum
+RSS was 8,943.988 versus 2,061.391 MiB. Its cost is dominated by certificate-bearing construction,
 renaming-orbit search, strict invariant checks, rebuild, and finite unfolding,
 not by larger output terms or the final repair-distance recurrence.
 
@@ -673,18 +673,18 @@ The current full-corpus result is:
 
 | Arm | `CORRECT` zeroes | Mean distance | Wall s | Engine CPU s | Max RSS MiB |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| `raw-egraph` | 820 | 18.364 | 19.440 | 4.335 | 1,485.313 |
-| `raw-egraph-debruijn` | 2,160 | 17.911 | 19.440 | 5.292 | 1,491.105 |
-| `java-egglog` | 820 | 18.147 | 19.010 | 4.099 | 1,608.297 |
-| `java-egglog-debruijn` | 2,160 | 17.690 | 19.090 | 5.010 | 1,647.250 |
-| `slotted-egraph` | 2,159 | 17.824 | 19.300 | 16.389 | 1,772.973 |
-| `canonical` | 4,074 | 13.943 | 23.860 | 73.605 | 1,840.508 |
-| `typed-slotted-port-egraph` | 4,088 | 14.022 | 2,775.650 | 42,224.753 | 8,912.141 |
+| `raw-egraph` | 820 | 18.364 | 19.370 | 4.255 | 1,524.891 |
+| `raw-egraph-debruijn` | 2,160 | 17.911 | 19.380 | 5.015 | 1,575.672 |
+| `java-egglog` | 820 | 18.147 | 19.270 | 4.176 | 1,475.656 |
+| `java-egglog-debruijn` | 2,160 | 17.690 | 18.860 | 4.881 | 1,456.941 |
+| `slotted-egraph` | 2,159 | 17.824 | 19.670 | 15.565 | 1,614.004 |
+| `canonical` | 4,074 | 13.943 | 23.990 | 68.820 | 2,061.391 |
+| `typed-slotted-port-egraph` | 4,088 | 14.022 | 2,684.110 | 40,811.847 | 8,943.988 |
 
 All arms completed all 61,598 eligible pairs with zero failures and zero
 incorrect paired-oracle zero-distance merges. Pair-level transitions show
 `+14/-0` from the Fast Rewrite IR to the Certificate-Integrated IR. The latter's
-p50 and p95 engine latencies were 324.876 and 2,414.924 ms. Consult the generated report for per-pair transitions,
+p50 and p95 engine latencies were 314.487 and 2,329.619 ms. Consult the generated report for per-pair transitions,
 representation counts, and process metadata rather than copying this summary
 into a paper table by hand.
 

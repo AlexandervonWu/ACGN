@@ -2,35 +2,35 @@
   "outputs": [
     {
       "path": "pairs.csv",
-      "sha256": "4d3dec8485880e305ed2d2b97a8dccd907de2414d673840b4b400ed057f34cab",
-      "sizeBytes": 11297912
+      "sha256": "e115347737078b3e8212baf1199f0087fb26c32752fac23acc385ee1a1f8a0a3",
+      "sizeBytes": 11293699
     },
     {
       "path": "summary.json",
-      "sha256": "ea0fdf30f12c24390b153d1b2a0304a3c44d98b2dafe4c7aae749721e9f417e1",
-      "sizeBytes": 77240
+      "sha256": "9e7204c9412e7a6cc68d5eeae48e387d4f6328785433402be977da7833909d8a",
+      "sizeBytes": 77220
     },
     {
       "path": "metrics.properties",
-      "sha256": "0ba2262a3770b439384b7b279c48147999a1800f22b191e65f0693b9c3423bca",
+      "sha256": "2a9fbc9bc14aa08c3aa5f96c35954c8188289fac44c0dab3d31379d04d677080",
       "sizeBytes": 1505
     },
     {
       "path": "run.log",
-      "sha256": "7bbc1f7bc2d63bf379b607445237e8fab21b14a982b8c8315be1bcd97a94e2f9",
-      "sizeBytes": 6463
+      "sha256": "ea326d6b01d0d0d33f6e00819dc1eec5d56c9b1dcd01c99c5adfb9cfe4a98f68",
+      "sizeBytes": 6694
     },
     {
       "path": "process.time",
-      "sha256": "d2344195f9dd056d99687bb62c5b1c5f1eb7cf47b69a7b3ea08d8867a197fbb7",
-      "sizeBytes": 1382
+      "sha256": "43162f2058852b0cf4d0ad4c0a19c9a3f026043dd59b602eb6ee1ae7090bfd7d",
+      "sizeBytes": 1368
     }
   ],
   "seed": 55520260811,
   "javaVersion": "17.0.20",
   "osArch": "amd64",
-  "startedAt": "2026-08-29T22:35:48.367483531Z",
-  "javaSourceSha256": "0f566e6ba63266385075bafa989b1e535118dccadacef06a761bf3f8641043ca",
+  "startedAt": "2026-09-08T20:45:18.432090608Z",
+  "javaSourceSha256": "a8407cd83a0b2bd506d5765c7c22682de56c5c9a178a281275792bb4dfd20613",
   "result": {
     "failures": 0,
     "successes": 61598,
@@ -38,7 +38,7 @@
     "files": 66080
   },
   "logicalProcessors": 32,
-  "osVersion": "7.0.0-30-generic",
+  "osVersion": "7.0.0-31-generic",
   "engine": {
     "quotientMetricVersion": "not-applicable",
     "canonicalizerVersion": "legacy-bounded",
@@ -76,7 +76,7 @@
   "dirtyTree": false,
   "manifestSchemaVersion": "candis-ablation-manifest-v3",
   "datasetRoot": "/home/augustus/ACGN/classified-data",
-  "gitSha": "fbd9b1497a9036c55780da777f56581bc1c6bcec",
+  "gitSha": "8ad5fead39b687d2cadc79b01ac27743c1ece990",
   "datasetByteCount": 30141317,
   "ruleNames": [
     "operator aliases",
@@ -104,5 +104,5 @@
     "relational union with none",
     "relational intersection with none"
   ],
-  "runId": "f46b5647-7373-4cd7-ac3d-f8fd9b802db6"
+  "runId": "6348d68d-a364-458f-b8ef-834101b8ace6"
 }

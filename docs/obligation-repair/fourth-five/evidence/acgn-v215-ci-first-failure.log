@@ -1,0 +1,36 @@
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	﻿2026-09-08T19:38:34.1426456Z ##[group]Run python3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1427114Z [36;1mpython3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five[0m
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1497206Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1497466Z env:
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1497777Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1498287Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1498714Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.1499006Z ##[endgroup]
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.5045714Z [fourth-five] lean-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.5691643Z [fourth-five] java-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.6341637Z [fourth-five] javac-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:34.7991929Z [fourth-five] driver-tests
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:35.5152547Z [fourth-five] plugin-tests
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:35.7303140Z [fourth-five] area-tests-test_fourth_container_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:43.5671431Z [fourth-five] area-tests-test_fourth_chain_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:57.2712140Z [fourth-five] area-tests-test_fourth_profile_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:58.9663618Z [fourth-five] build1-fixture-git-init
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:38:58.9703124Z [fourth-five] build1-fixture-git-add
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:00.6395489Z [fourth-five] build1-fixture-git-commit
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:00.6721464Z [fourth-five] build1-fixture-git-sha
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:00.6765483Z [fourth-five] build1-lean-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:00.7468351Z [fourth-five] build1-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:13.5523291Z [fourth-five] build1-extractor-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:15.9315430Z [fourth-five] build1-extract-container
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:39:40.4352593Z [fourth-five] build1-extract-chain
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:04.9152489Z [fourth-five] build1-extract-profile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:28.9496477Z [fourth-five] build1-proof-ContainerWitnessTransitions
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:30.5319218Z [fourth-five] build1-proof-DependentChainWitnesses
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:31.4563835Z [fourth-five] build1-proof-SemanticProfileWire
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:32.3236216Z [fourth-five] build1-test-00
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:40:38.8456661Z [fourth-five] build1-test-01
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:42:00.0338996Z [fourth-five] build1-test-02
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:42:09.8838783Z [fourth-five] build1-proof-ContainerWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:43:25.6677686Z [fourth-five] build1-proof-DependentChainWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:48:25.7293551Z {"closureId": "fourth-five-v1-8414830e5b9a4770", "status": "INFRASTRUCTURE_FAILURE", "errors": ["Command '['/home/runner/work/_temp/acgn-elan/bin/lean', '-o', 'DependentChainWitnessReplay.olean', 'DependentChainWitnessReplay.lean']' timed out after 299.9999793520001 seconds"]}
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T19:48:25.7450220Z ##[error]Process completed with exit code 2.
