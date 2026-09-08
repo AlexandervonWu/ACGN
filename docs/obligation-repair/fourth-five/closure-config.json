@@ -1,0 +1,305 @@
+{
+  "schemaVersion": 1,
+  "profile": "fourth-five-v1",
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 300,
+  "requiredCleanBuilds": 2,
+  "proofDependencies": [],
+  "replayPlugin": "scripts/fourth_obligation_replays.py",
+  "inputs": [
+    "scripts/run_fourth_obligation_repairs.py",
+    "scripts/fourth_obligation_replays.py",
+    "scripts/test_fourth_obligation_repairs.py",
+    "scripts/third_obligation_replays.py",
+    "scripts/fourth_container_replays.py",
+    "scripts/test_fourth_container_replays.py",
+    "docs/obligation-repair/fourth-five/container-notes.md",
+    "scripts/fourth_chain_replays.py",
+    "scripts/test_fourth_chain_replays.py",
+    "docs/obligation-repair/fourth-five/chain-notes.md",
+    "scripts/fourth_profile_replays.py",
+    "scripts/test_fourth_profile_replays.py",
+    "docs/obligation-repair/fourth-five/profile-notes.md",
+    "docs/obligation-repair/fourth-five/harness-notes.md"
+  ],
+  "phases": [
+    {
+      "id": "FF-P2-20",
+      "parent": "P2-20",
+      "claimSha256": "96b8ce07afc0aad611a36396786a36cd235e5c553f40611962d168721e70b936",
+      "proof": "ContainerWitnessTransitions.lean",
+      "replays": [
+        "ContainerWitnessReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest",
+          "output": "container-witness.tsv"
+        }
+      ],
+      "scope": "General executable model of recursive same-head flattening with exact typed associativity evidence, order and multiplicity preservation; direct finite adapter/certificate observations and compiler-resolved source controls. Whole-Java and whole-parser semantic refinement remain excluded.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FF-P2-18",
+      "parent": "P2-18",
+      "claimSha256": "4dff4190a5709dd2253c47a941bd934e2b276bd595b7d9a4a581fd647b772735",
+      "proof": "ContainerWitnessTransitions.lean",
+      "replays": [
+        "ContainerWitnessReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest",
+          "output": "container-witness.tsv"
+        }
+      ],
+      "scope": "Exact structural indices for the registered permutation, quotient-surjection, splice and unit/deletion witnesses; finite Java field controls and replay of observable witness validation. Unadmitted laws remain unadmitted and digest collision resistance is trusted, not proved.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FF-A2-07",
+      "parent": "A2-07",
+      "claimSha256": "1f73b67ab4d51c8aa6cea982b564d710f2a6711852633153eedd075026a87f6e",
+      "proof": "DependentChainWitnesses.lean",
+      "replays": [
+        "DependentChainWitnessReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest",
+          "output": "dependent-chain-witness.tsv"
+        }
+      ],
+      "scope": "General executable exact stored-type-to-relation-view leaf proof contract, finite producer/independent-verifier observations and all-field rejection controls. Type interpretation beyond the declared model and finite Java observations remains trusted.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FF-A2-11",
+      "parent": "A2-11",
+      "claimSha256": "d12228a367db5e5046a6eb901b867b559db8c57590b6c91ada4e8dd473459ef5",
+      "proof": "DependentChainWitnesses.lean",
+      "replays": [
+        "DependentChainWitnessReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest",
+          "output": "dependent-chain-witness.tsv"
+        }
+      ],
+      "scope": "General complete dependent-chain index contract and finite producer/writer/independent-verifier field reconstruction observations, with compiler-resolved source mapping. Not universal Java-byte refinement, no new certificate authority.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FF-P3-03",
+      "parent": "P3-03",
+      "claimSha256": "c5733bd96ae6281cc4f3f9fe6d51e66261c20b0b0bf4b3aa426aaa210c7b0fca",
+      "proof": "SemanticProfileWire.lean",
+      "replays": [
+        "SemanticProfileWireReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.SemanticProfileWireRegressionTest",
+          "output": "semantic-profile-wire.tsv"
+        }
+      ],
+      "scope": "General exact five-field semantic-profile structural serialization contract and independent verifier reconstruction; fixed finite encoding and mutation observations. SHA-256 implementation/collision resistance and JVM string semantics at the declared boundary remain trusted.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    }
+  ],
+  "extractors": [
+    {
+      "id": "container",
+      "class": "ContainerWitnessTransitionsExtractor",
+      "source": "scripts/java/ContainerWitnessTransitionsExtractor.java",
+      "output": "container-witness-source.tsv"
+    },
+    {
+      "id": "chain",
+      "class": "DependentChainWitnessesExtractor",
+      "source": "scripts/java/DependentChainWitnessesExtractor.java",
+      "output": "dependent-chain-witness-source.tsv"
+    },
+    {
+      "id": "profile",
+      "class": "SemanticProfileWireExtractor",
+      "source": "scripts/java/SemanticProfileWireExtractor.java",
+      "output": "semantic-profile-wire-source.tsv"
+    }
+  ],
+  "trusted": [
+    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "javac/JVM 17 and Java standard-library contracts",
+    "Git deterministic commits in isolated frozen snapshots for TEST_ONLY certificate provenance, never release or experiment provenance",
+    "Pinned v2.13 engine and v2.14 dispatcher, counted profile adapters, hashed area encoders and compiler extractors; tested, not Lean-verified",
+    "Hashed Alloy parser, source/type/profile interpretation and provenance decoding at the finite observation boundary",
+    "Python standard library, SHA-256 implementation and collision resistance, filesystem, OS and hardware"
+  ],
+  "excluded": [
+    "Original parent statements beyond the explicitly frozen repair scopes; no automatic universal ledger discharge",
+    "Whole-Java, whole-parser or whole-corpus refinement",
+    "New empirical results, production guarantees, rewrite families or certificate authority",
+    "SHA-256 injectivity; unlisted claims, future revisions and undeclared deployment environments"
+  ],
+  "permittedNondeterminism": [
+    "Log timings, diagnostic paths and host identifiers"
+  ],
+  "statusPolicy": {
+    "unresolvedIsBlocking": true,
+    "warningIsBlocking": true,
+    "manualOverrideAllowed": false
+  },
+  "networkDuringVerification": false
+}

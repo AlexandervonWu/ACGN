@@ -24,14 +24,20 @@ ordered CALL representations, complete registry admission and arbitrary-length
 guarded relational JOIN proofs. Its separately frozen two-build package is
 VERIFIED under the documented bounded conformance and trust assumptions.
 
-The current assessment reports **102 ready requirements and 118 diagnostics**.
-Fifteen original diagnostics are absent; their evidence is in the three separate
-five-claim packages. The original queue has 117 remaining diagnostics,
+The [v2.15 continuation](fourth-five/README.md) addresses P2-20, A2-07, A2-11,
+P2-18 and P3-03: typed recursive flattening, exact leaf and chain witnesses,
+container indices, and profile wire reconstruction. It also records three
+concrete producer/replay corrections and their before/after regressions.
+Its machine report, not the assessment labels, determines bounded closure.
+
+The current assessment reports **107 ready requirements and 111 diagnostics**.
+Twenty-two original diagnostics are absent; their evidence belongs to the
+four separate five-claim packages. The original queue has 110 remaining diagnostics,
 plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
 matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
 
-The [next five candidates](next-candidates-v2.14.md) are proposed work, not
-additional discharged requirements.
+The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
+of this continuation. A lower diagnostic count is not full artifact closure.
 
 ## First Item: A-01
 

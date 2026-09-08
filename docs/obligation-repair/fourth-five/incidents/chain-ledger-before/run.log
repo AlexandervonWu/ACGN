@@ -1,0 +1,4 @@
+Exception in thread "main" java.lang.AssertionError: real writer/public FULL verifier JOIN:primitive:0:1: VerificationResult[outcome=REJECTED, code=Code[name=THEORY_MISMATCH], detail=A dependent product has no declared exact relation type]
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.check(DependentChainWitnessesRegressionTest.java:256)
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.chain(DependentChainWitnessesRegressionTest.java:146)
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.main(DependentChainWitnessesRegressionTest.java:35)

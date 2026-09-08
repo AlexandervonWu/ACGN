@@ -1,0 +1,33 @@
+VerifierTest: 184 checks passed
+CertificateProvenanceTest passed
+CertificateBundleWriterTest passed: 109 checks; fixtures=/tmp/acgn-v215-certificate-integration/writer-run-a
+CertificateBundleWriterTest passed: 109 checks; fixtures=/tmp/acgn-v215-certificate-integration/writer-run-b
+ProducerBundleInspectionTest: 68 checks passed
+TrustedTheoryPinsTest: 31 checks passed
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: MiddleSymbol{name='BOP_EQ', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='LIST_FORMULA_2', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='BOP_NEQ', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: ShadowSymbol{signature=0.0}
+certificate export census: total=3 VERIFIED=1 UNCHECKABLE=2 REJECTED=0
+nullary	VERIFIED	NONE	{"outcome":"VERIFIED","code":"NONE","detail":"full profile independently verified"}
+slotBearing	UNCHECKABLE	EXPORT_UNSUPPORTED	UNCHECKABLE: published root is not the final fresh insertion
+deliberatelyUnsupported	UNCHECKABLE	EXPORT_UNSUPPORTED	UNCHECKABLE: published root is not the final fresh insertion
+ParsedSourcePairInspectionTest: 10 checks passed; left=a443691ecfb89452818c6b7ea68b48294553ba8fc427a117c6e3840c2ce0f846 right=79037b305cec239a6954a35535d816ccbb0a4962eab9814898c6504542a320b9
+certificate producer/verifier harness passed; work=/tmp/acgn-v215-certificate-integration empty=9acf2f195da2b489ddf1537bc42c933b569f35390e248682802240a713334f6c parent=0901e1ee21d8f82c128ebc93f0e5f1e0b421f7a6833ec16cf5473df3b222b147

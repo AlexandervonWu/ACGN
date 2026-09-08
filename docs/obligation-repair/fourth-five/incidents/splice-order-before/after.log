@@ -1,0 +1,22 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_INTERSECT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_INTERSECT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+DEEP_SPLICE_POSTFIX VerificationResult[outcome=VERIFIED, code=NONE, detail=full profile independently verified]
+ContainerWitnessTransitionsRegressionTest passed: observations=1561 checks=103802

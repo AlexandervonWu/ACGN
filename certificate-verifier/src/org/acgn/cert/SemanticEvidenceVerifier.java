@@ -34,7 +34,7 @@ final class SemanticEvidenceVerifier {
     private static final String SOURCE_COMMAND_CONTEXT_TAG =
             "alloy-source-command-context-v1";
     private static final String SOURCE_COMMAND_CONTEXT_VERSION =
-            "alloy-command-options-v2";
+            "alloy-command-options-v4-independent-search-domain";
     private static final String CALL_OCCURRENCE_ANCHOR_PREFIX =
             "ACGN/CALL-OCCURRENCE/";
     private static final String PRODUCTION_ALLOY_REWRITE_MODE =
@@ -2972,10 +2972,12 @@ final class SemanticEvidenceVerifier {
                 Wire.Node child = node.child(position);
                 List<Integer> childPath = new ArrayList<>(path);
                 childPath.add(position);
+                int splicePosition = splices.size();
                 FlatView operand = flatInput(
                         child, operator, context, childPath, splices);
                 if (!operand.leaf()) {
-                    splices.add(new FlatSplice(
+                    // Keep source preorder while deriving every field from the validated child.
+                    splices.add(splicePosition, new FlatSplice(
                             List.copyOf(childPath),
                             arity,
                             operand.arity(),

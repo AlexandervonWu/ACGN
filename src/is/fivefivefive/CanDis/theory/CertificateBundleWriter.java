@@ -2643,6 +2643,7 @@ public final class CertificateBundleWriter {
             for (DependentChainCertificate construction
                     : session.artifact().dependentChainConstructions()) {
                 collectDependentChainTypes(construction.source());
+                collectDependentFoldTypes(construction.source());
                 collectNodeTypes(construction.target());
             }
             for (BinderOccurrenceAutomorphismCertificate occurrence
@@ -2672,16 +2673,7 @@ public final class CertificateBundleWriter {
         }
 
         private void collectDependentChainTypes(DependentChainInput input) {
-            collectExactType(input.outputType());
-            for (List<DependentColumnEvidence> product
-                    : input.outputTypeDag().alternatives()) {
-                for (DependentColumnEvidence column : product) {
-                    collectExactType(column.exactColumn());
-                    column.ancestry().forEach(this::collectExactType);
-                }
-            }
-            input.outputTypeDag().commonAncestorType()
-                    .ifPresent(this::collectExactType);
+            collectDependentDagTypes(input.outputTypeDag());
             collectContextTypes(input.context());
             if (input instanceof DependentChainLeaf) {
                 collectPortTypes(((DependentChainLeaf) input).port());
@@ -2689,8 +2681,45 @@ public final class CertificateBundleWriter {
             }
             DependentChainApplication application =
                     (DependentChainApplication) input;
-            for (DependentTypeDag.CombinationCase proof
-                    : application.combinationCases()) {
+            collectDependentCaseTypes(application.combinationCases());
+            collectDependentChainTypes(application.left());
+            collectDependentChainTypes(application.right());
+        }
+
+        private void collectDependentFoldTypes(DependentChainApplication source) {
+            // Replay checks the canonical left fold as well as the source association.
+            List<DependentChainLeaf> leaves = source.leafInputs();
+            DependentTypeDag folded = leaves.get(0).outputTypeDag();
+            collectDependentDagTypes(folded);
+            for (int index = 1; index < leaves.size(); index++) {
+                DependentTypeDag.ChainCombination step = DependentTypeDag.combine(
+                        source.kind(), folded, leaves.get(index).outputTypeDag());
+                collectDependentCaseTypes(step.cases());
+                folded = step.result();
+                collectDependentDagTypes(folded);
+            }
+            if (!folded.equals(source.outputTypeDag())) {
+                throw new IllegalStateException(
+                        "A dependent-chain type ledger must retain the certified fold result");
+            }
+        }
+
+        private void collectDependentDagTypes(DependentTypeDag dag) {
+            collectExactType(dag.relationType());
+            dag.alternatives().forEach(this::collectDependentProductTypes);
+            dag.commonAncestorType().ifPresent(this::collectExactType);
+        }
+
+        private void collectDependentProductTypes(List<DependentColumnEvidence> product) {
+            collectExactType(DependentChainKind.typeOf(product));
+            for (DependentColumnEvidence column : product) {
+                collectExactType(column.exactColumn());
+                column.ancestry().forEach(this::collectExactType);
+            }
+        }
+
+        private void collectDependentCaseTypes(List<DependentTypeDag.CombinationCase> cases) {
+            for (DependentTypeDag.CombinationCase proof : cases) {
                 proof.boundary().ifPresent(boundary -> {
                     collectExactType(boundary.leftBoundary());
                     collectExactType(boundary.rightBoundary());
@@ -2701,9 +2730,8 @@ public final class CertificateBundleWriter {
                     boundary.leftWitnessPath().forEach(this::collectExactType);
                     boundary.rightWitnessPath().forEach(this::collectExactType);
                 });
+                proof.resultAlternative().ifPresent(this::collectDependentProductTypes);
             }
-            collectDependentChainTypes(application.left());
-            collectDependentChainTypes(application.right());
         }
 
         private void collectNodeTypes(TypedENode node) {

@@ -1,0 +1,2 @@
+Error: Could not find or load main class is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest
+Caused by: java.lang.ClassNotFoundException: is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest

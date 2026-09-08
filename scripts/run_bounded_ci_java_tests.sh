@@ -39,6 +39,9 @@ tests=(
   is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest
   is.fivefivefive.CanDis.theory.GuardedJoinChainRegressionTest
   is.fivefivefive.CanDis.theory.RegistryAdmissionRegressionTest
+  is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest
+  is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest
+  is.fivefivefive.CanDis.theory.SemanticProfileWireRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest

@@ -80,14 +80,30 @@ The [third five bounded repairs](docs/obligation-repair/third-five/README.md)
 add independent CALL authority, executable occurrence nonreuse, ordered CALL
 representation, complete registry admission and arbitrary-length guarded
 relational JOIN proofs. The frozen package passes two clean builds with 74
-new general Lean theorems and 1,414 generated replay propositions. The matrix
-now has **102 ready requirements and 118 diagnostics**; it remains incomplete.
+new general Lean theorems and 1,414 generated replay propositions. At v2.14 the
+matrix had **102 ready requirements and 118 diagnostics** and remained incomplete.
 
-The [v2.14 assurance release](docs/release-v2.14.md) continues
-[v2.13](docs/release-v2.13.md). It retains the v2.11 experiment JAR and empirical
-snapshot; it does not claim a new corpus run or full formal closure. The
-[next five candidates](docs/obligation-repair/next-candidates-v2.14.md) remain
-proposed work, with original claim statements and trust boundaries preserved.
+The [fourth five bounded repairs](docs/obligation-repair/fourth-five/README.md)
+continue with typed recursive flattening, independent relation-view leaf
+proofs, dependent-chain indices, container-witness indices, and exact profile
+serialization. Original claim statements and trust boundaries are preserved.
+The package distinguishes general Lean contracts, bounded Java observations,
+and independently replayed certificate fields.
+
+The new source-profile checks also exposed and repaired an obsolete context
+version pin in the standalone verifier: it now checks the exact version emitted
+by the current producer, retaining all field and authority checks. This changes
+replay acceptance for those previously rejected valid bundles, not the published
+canonical distances or experiments. See the [v2.15 release record](docs/release-v2.15.md).
+
+The v2.11 experiment JAR and empirical snapshot remain archived. Because the
+new checks found real certificate-generation/replay defects, v2.15 publication
+is gated on a fresh serial four-stage corpus run after bounded verification;
+the existing figures below are not relabeled as that new run. No full formal
+closure is claimed. The
+[v2.14 release record](docs/release-v2.14.md) and its
+[follow-up specification](docs/obligation-repair/next-candidates-v2.14.md)
+retain the historical evidence and original scope of this continuation.
 
 ## Headline Results
 

@@ -1,0 +1,4 @@
+Exception in thread "main" java.lang.AssertionError: explicit TEST_ONLY provenance flag required
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.check(DependentChainWitnessesRegressionTest.java:256)
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.chain(DependentChainWitnessesRegressionTest.java:122)
+	at is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest.main(DependentChainWitnessesRegressionTest.java:35)

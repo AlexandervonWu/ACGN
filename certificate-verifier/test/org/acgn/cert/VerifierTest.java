@@ -104,6 +104,17 @@ public final class VerifierTest {
                         2,
                         sourceCommandContext("5", "true")), Profile.KERNEL),
                 "well-formed source-command context mismatch");
+        for (String version : List.of(
+                "alloy-command-options-v2",
+                "alloy-command-options-v4",
+                "alloy-command-options-v5-independent-search-domain")) {
+            assertCode(
+                    FailureCode.THEORY_MISMATCH,
+                    verify(verifier, withSemanticProfileScalar(
+                            publication, 2,
+                            sourceCommandContext("4", "true", version)), Profile.KERNEL),
+                    "unsupported source-command context version " + version);
+        }
         assertCode(
                 FailureCode.THEORY_MISMATCH,
                 verify(verifier, withSemanticProfileScalar(
@@ -4719,10 +4730,18 @@ public final class VerifierTest {
     private static String sourceCommandContext(
             String effectiveBitwidth,
             String noOverflow) {
+        return sourceCommandContext(effectiveBitwidth, noOverflow,
+                "alloy-command-options-v4-independent-search-domain");
+    }
+
+    private static String sourceCommandContext(
+            String effectiveBitwidth,
+            String noOverflow,
+            String contextVersion) {
         return stableKey(
                 "alloy-source-command-context-v1",
                 List.of(
-                        "alloy-command-options-v2",
+                        contextVersion,
                         "$run",
                         "true",
                         "false",

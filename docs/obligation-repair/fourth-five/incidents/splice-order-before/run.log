@@ -1,0 +1,24 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_INTERSECT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_INTERSECT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Exception in thread "main" java.lang.AssertionError: FULL original: VerificationResult[outcome=REJECTED, code=THEORY_MISMATCH, detail=Flat splice does not reconstruct from the visible source tree]
+	at is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest.check(ContainerWitnessTransitionsRegressionTest.java:420)
+	at is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest.wireCases(ContainerWitnessTransitionsRegressionTest.java:347)
+	at is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest.main(ContainerWitnessTransitionsRegressionTest.java:38)
