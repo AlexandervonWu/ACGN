@@ -1,6 +1,6 @@
 # Ordered Obligation Repair Status
 
-Current diagnostics: **123**. Original diagnostics: **132**.
+Current diagnostics: **118**. Original diagnostics: **132**.
 
 Absence of a diagnostic is not proof of repair; verified evidence is required.
 
@@ -41,16 +41,16 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 33 | G-18 | G-18 formal_status is PARTIAL | OPEN |
 | 34 | G-18 | G-18 conformance_status is REFUTED | OPEN |
 | 35 | P1-05 | P1-05 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 36 | P1-06 | P1-06 formal_status is PARTIAL | OPEN |
+| 36 | P1-06 | P1-06 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 37 | P1-08 | P1-08 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 38 | P1-09 | P1-09 formal_status is PARTIAL | OPEN |
+| 38 | P1-09 | P1-09 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 39 | P1-10 | P1-10 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 40 | P1-15 | P1-15 formal_status is PARTIAL | OPEN |
-| 41 | P1-16 | P1-16 formal_status is PARTIAL | OPEN |
+| 41 | P1-16 | P1-16 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 42 | P1-19 | P1-19 formal_status is PARTIAL | OPEN |
 | 43 | A2-01 | A2-01 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 44 | A2-02 | A2-02 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 45 | A2-04 | A2-04 formal_status is PARTIAL | OPEN |
+| 45 | A2-04 | A2-04 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 46 | A2-06 | A2-06 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 47 | A2-07 | A2-07 formal_status is PARTIAL | OPEN |
 | 48 | A2-07 | A2-07 conformance_status is PARTIAL | OPEN |
@@ -78,7 +78,7 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 70 | P2-06 | P2-06 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 71 | P2-16 | P2-16 formal_status is PARTIAL | OPEN |
 | 72 | P2-18 | P2-18 formal_status is PARTIAL | OPEN |
-| 73 | P2-19 | P2-19 formal_status is PARTIAL | OPEN |
+| 73 | P2-19 | P2-19 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 74 | P2-20 | P2-20 formal_status is PARTIAL | OPEN |
 | 75 | P3-01 | P3-01 formal_status is PARTIAL | OPEN |
 | 76 | P3-01 | P3-01 conformance_status is PARTIAL | OPEN |

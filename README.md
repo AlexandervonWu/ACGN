@@ -76,9 +76,18 @@ continue with exact flat typing, ordered and multiplicity-preserving dependent
 chains, and arbitrary-arity CALL validation and argument order. Each package
 retains its own hashed verification inputs and evidence.
 
-The [v2.13 assurance release](docs/release-v2.13.md) packages this continuation
-of [v2.12](docs/release-v2.12.md). It retains the v2.11 experiment JAR and
-empirical snapshot; it does not claim a new corpus run or full formal closure.
+The [third five bounded repairs](docs/obligation-repair/third-five/README.md)
+add independent CALL authority, executable occurrence nonreuse, ordered CALL
+representation, complete registry admission and arbitrary-length guarded
+relational JOIN proofs. The frozen package passes two clean builds with 74
+new general Lean theorems and 1,414 generated replay propositions. The matrix
+now has **102 ready requirements and 118 diagnostics**; it remains incomplete.
+
+The [v2.14 assurance release](docs/release-v2.14.md) continues
+[v2.13](docs/release-v2.13.md). It retains the v2.11 experiment JAR and empirical
+snapshot; it does not claim a new corpus run or full formal closure. The
+[next five candidates](docs/obligation-repair/next-candidates-v2.14.md) remain
+proposed work, with original claim statements and trust boundaries preserved.
 
 ## Headline Results
 

@@ -1,0 +1,15 @@
+.........................E.......
+======================================================================
+ERROR: test_rejection_requires_target_diagnostic (__main__.ProfileTests)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/home/augustus/ACGN/scripts/test_third_obligation_repairs.py", line 52, in test_rejection_requires_target_diagnostic
+    profile.check_rejection("build1-source-reject-call-wrong",
+  File "/home/augustus/ACGN/scripts/run_third_obligation_repairs.py", line 95, in check_rejection
+    raise Blocked("VERIFIER_FAILURE: unrelated rejection diagnostic: " + label)
+run_submission_container_closure.Blocked: VERIFIER_FAILURE: unrelated rejection diagnostic: build1-source-reject-call-wrong
+
+----------------------------------------------------------------------
+Ran 33 tests in 2.079s
+
+FAILED (errors=1)

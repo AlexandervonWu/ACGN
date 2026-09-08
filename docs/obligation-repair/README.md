@@ -18,11 +18,20 @@ P1-08, and P1-05 with exact flat typing, ordered dependent chains and their
 multiplicity, and arbitrary-arity CALL validation and payload order. The
 separate source/proof/observation package records the limits of each result.
 
-The current assessment reports **97 ready requirements and 123 diagnostics**.
-Ten original diagnostics are absent; their evidence is in the two separate
-five-claim packages. The original queue has 122 remaining diagnostics,
+The [v2.14 continuation](third-five/README.md) addresses P1-06, P1-09, P1-16,
+P2-19 and A2-04 with independent CALL authority, executable nonreuse,
+ordered CALL representations, complete registry admission and arbitrary-length
+guarded relational JOIN proofs. Its separately frozen two-build package is
+VERIFIED under the documented bounded conformance and trust assumptions.
+
+The current assessment reports **102 ready requirements and 118 diagnostics**.
+Fifteen original diagnostics are absent; their evidence is in the three separate
+five-claim packages. The original queue has 117 remaining diagnostics,
 plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
 matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
+
+The [next five candidates](next-candidates-v2.14.md) are proposed work, not
+additional discharged requirements.
 
 ## First Item: A-01
 

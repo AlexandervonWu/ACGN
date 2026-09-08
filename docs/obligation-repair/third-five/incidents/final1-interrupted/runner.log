@@ -1,0 +1,120 @@
+[third-five] lean-version
+[third-five] java-version
+[third-five] javac-version
+[third-five] driver-tests
+[third-five] plugin-tests
+[third-five] area-tests-test_third_call_replays
+[third-five] area-tests-test_third_join_replays
+[third-five] area-tests-test_third_registry_replays
+[third-five] build1-fixture-git-init
+[third-five] build1-fixture-git-add
+[third-five] build1-fixture-git-commit
+[third-five] build1-fixture-git-sha
+[third-five] build1-lean-version
+[third-five] build1-compile
+[third-five] build1-extractor-compile
+[third-five] build1-extract-call-authority
+[third-five] build1-extract-guarded-join
+[third-five] build1-extract-registry-admission
+[third-five] build1-proof-DependentChainSequence
+[third-five] build1-proof-DependentJoinGuard
+[third-five] build1-proof-PhaseA2DependentChains
+[third-five] build1-proof-CallAuthorityTransitions
+[third-five] build1-proof-RegistryAdmission
+[third-five] build1-proof-GuardedJoinChain
+[third-five] build1-test-00
+[third-five] build1-test-01
+[third-five] build1-test-02
+[third-five] build1-test-03
+[third-five] build1-test-04
+[third-five] build1-proof-CallAuthorityReplay
+[third-five] build1-proof-GuardedJoinChainReplay
+[third-five] build1-proof-RegistryAdmissionReplay
+[third-five] build1-reject-call-call-foreign-masg_tree
+[third-five] build1-reject-call-call-foreign-ir_tree
+[third-five] build1-reject-call-call-foreign-cert_tree
+[third-five] build1-reject-call-call-wrong-authority
+[third-five] build1-reject-call-call-counter-no-advance
+[third-five] build1-reject-call-call-consumed-reaccepted
+[third-five] build1-reject-call-call-visit-reused
+[third-five] build1-reject-call-call-int-overflow-premise
+[third-five] build1-reject-call-call-observed-cannot-replace-table
+[third-five] build1-reject-call-call-deduplicated-ports
+[third-five] build1-reject-call-call-swapped-ports
+[third-five] build1-reject-call-call-flattened-call
+[third-five] build1-reject-call-call-erased-barrier
+[third-five] build1-reject-join-join-unary-producer
+[third-five] build1-reject-join-join-endpoint-producer
+[third-five] build1-reject-join-join-unary-verifier
+[third-five] build1-reject-join-join-endpoint-verifier
+[third-five] build1-reject-join-join-wrong-relational-output
+[third-five] build1-reject-join-join-erased-counterexample
+[third-five] build1-reject-join-join-parser-inequality
+[third-five] build1-reject-join-join-source-minimum
+[third-five] build1-reject-join-join-source-start
+[third-five] build1-reject-join-join-source-endOffset
+[third-five] build1-reject-join-join-source-leftBoundary
+[third-five] build1-reject-join-join-source-rightBoundary
+[third-five] build1-reject-registry-registry-accepted
+[third-five] build1-reject-registry-registry-indexMatches
+[third-five] build1-reject-registry-registry-invented-unit
+[third-five] build1-source-reject-call-call-grouped-declaration-arity
+[third-five] build1-source-reject-call-call-import-observed-arity
+[third-five] build1-source-reject-call-call-synthesized-ledger-entry
+[third-five] build1-source-reject-call-call-shared-arity-state
+[third-five] build1-source-reject-call-call-counter-no-increment
+[third-five] build1-source-reject-call-call-reuse-guard-omitted
+[third-five] build1-source-reject-call-call-reversed-arguments
+[third-five] build1-source-reject-call-call-skipped-repeats
+[third-five] build1-source-reject-call-call-erased-nesting
+[third-five] build1-source-reject-call-call-commutative-policy
+[third-five] build1-source-reject-join-join-producer-unary
+[third-five] build1-source-reject-join-join-verifier-unary
+[third-five] build1-source-reject-join-join-producer-start
+[third-five] build1-source-reject-join-join-verifier-end
+[third-five] build1-source-reject-join-join-producer-untyped
+[third-five] build1-source-reject-join-join-producer-left-boundary
+[third-five] build1-source-reject-join-join-producer-right-boundary
+[third-five] build1-source-reject-join-join-verifier-left-boundary
+[third-five] build1-source-reject-join-join-verifier-right-boundary
+[third-five] build1-source-reject-join-join-producer-wrong-output
+[third-five] build1-source-reject-join-join-producer-modifiers
+[third-five] build1-source-reject-join-join-verifier-modifiers
+[third-five] build1-source-reject-registry-registry-omitted-parameter
+[third-five] build1-source-reject-registry-registry-omitted-profile-authority
+[third-five] build1-source-reject-registry-registry-shifted-path
+[third-five] build1-source-reject-registry-registry-omitted-identity
+[third-five] build1-fixture-git-final-sha
+[third-five] build1-fixture-git-final-status
+[third-five] build2-fixture-git-init
+[third-five] build2-fixture-git-add
+[third-five] build2-fixture-git-commit
+[third-five] build2-fixture-git-sha
+[third-five] build2-lean-version
+[third-five] build2-compile
+Traceback (most recent call last):
+  File "/home/augustus/ACGN/scripts/run_third_obligation_repairs.py", line 238, in <module>
+    sys.exit(load_runner().main())
+  File "/home/augustus/ACGN/scripts/run_next_obligation_repairs.py", line 851, in main
+    return execute(args.root, args.output, args.config)
+  File "/home/augustus/ACGN/scripts/run_next_obligation_repairs.py", line 775, in execute
+    record = run_build(root, output, config, manifest, report, commands, lean, version, number)
+  File "/home/augustus/ACGN/scripts/run_next_obligation_repairs.py", line 564, in run_build
+    run("compile", [*javac, "-cp", str(snapshot / "lib/*"), "-d", classes, *sources])
+  File "/home/augustus/ACGN/scripts/run_next_obligation_repairs.py", line 554, in run
+    return commands.run(prefix + label, argv, cwd, **kwargs)
+  File "/home/augustus/ACGN/scripts/run_third_obligation_repairs.py", line 144, in run
+    log = super().run(label, argv, cwd, extra, reject)
+  File "/home/augustus/ACGN/scripts/run_next_obligation_repairs.py", line 444, in run
+    result = subprocess.run(record["argv"], cwd=cwd,
+  File "/home/augustus/anaconda3/lib/python3.10/subprocess.py", line 505, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/home/augustus/anaconda3/lib/python3.10/subprocess.py", line 1154, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/home/augustus/anaconda3/lib/python3.10/subprocess.py", line 2047, in _communicate
+    self.wait(timeout=self._remaining_time(endtime))
+  File "/home/augustus/anaconda3/lib/python3.10/subprocess.py", line 1209, in wait
+    return self._wait(timeout=timeout)
+  File "/home/augustus/anaconda3/lib/python3.10/subprocess.py", line 1953, in _wait
+    time.sleep(delay)
+KeyboardInterrupt

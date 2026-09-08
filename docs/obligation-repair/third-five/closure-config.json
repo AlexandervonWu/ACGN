@@ -1,0 +1,313 @@
+{
+  "schemaVersion": 1,
+  "profile": "third-five-v1",
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 300,
+  "requiredCleanBuilds": 2,
+  "proofDependencies": [
+    "DependentChainSequence.lean",
+    "DependentJoinGuard.lean",
+    "PhaseA2DependentChains.lean"
+  ],
+  "generatedDependencyAudits": {
+    "PhaseA2DependentChains.lean": "ACGN.Section3.PhaseA2"
+  },
+  "replayPlugin": "scripts/third_obligation_replays.py",
+  "inputs": [
+    "scripts/run_third_obligation_repairs.py",
+    "scripts/third_obligation_replays.py",
+    "scripts/test_third_obligation_repairs.py",
+    "scripts/third_call_replays.py",
+    "scripts/third_join_replays.py",
+    "scripts/third_registry_replays.py",
+    "scripts/test_third_call_replays.py",
+    "scripts/test_third_join_replays.py",
+    "scripts/test_third_registry_replays.py",
+    "docs/obligation-repair/third-five/call-notes.md",
+    "docs/obligation-repair/third-five/join-notes.md",
+    "docs/obligation-repair/third-five/harness-notes.md",
+    "docs/obligation-repair/third-five/registry-notes.md"
+  ],
+  "phases": [
+    {
+      "id": "TF-P1-06",
+      "parent": "P1-06",
+      "claimSha256": "30fb21fcb2a524cc57aa6a240c4380ce349da552b012527be9e41ff988e810f9",
+      "proof": "CallAuthorityTransitions.lean",
+      "replays": [
+        "CallAuthorityReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.CallAuthorityTransitionsRegressionTest",
+          "output": "call-authority.tsv"
+        },
+        "is.fivefivefive.CanDis.CallExtractionRegressionTest"
+      ],
+      "scope": "Declared callable arity and authority transitions in the registered CallAuthorityTransitions model; compiler-resolved source controls and the exact finite CALL observation census. Parser and library-ledger authenticity beyond the extracted and observed boundary remain trusted, not universal Java refinement.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "TF-P1-09",
+      "parent": "P1-09",
+      "claimSha256": "88fab51f179dd66df7b0703a9e3d93dac32ffde6432e699709e6ce3ab9bb02d3",
+      "proof": "CallAuthorityTransitions.lean",
+      "replays": [
+        "CallAuthorityReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.CallAuthorityTransitionsRegressionTest",
+          "output": "call-authority.tsv"
+        }
+      ],
+      "scope": "Occurrence-ledger allocation, consumption and nonreuse in the registered CALL transition model, with exact finite nested/repeated-call observations and source rejection controls. Unbounded Java allocation, integer overflow, resource limits and whole-parser refinement are excluded.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "TF-P1-16",
+      "parent": "P1-16",
+      "claimSha256": "2ff9bdd7b3b7112086c0a821d74da9c49a16620a39e6ab62f8b348e4a8d6e052",
+      "proof": "CallAuthorityTransitions.lean",
+      "replays": [
+        "CallAuthorityReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.CallAuthorityTransitionsRegressionTest",
+          "output": "call-authority.tsv"
+        },
+        "is.fivefivefive.CanDis.TheoryLawPolicyRegressionTest"
+      ],
+      "scope": "Exact ordered, nonflat, noncommutative, nonidempotent CALL policy at the registered transition boundary, with finite sequence and repeated-payload observations. No claim about arbitrary optimizer occurrence survival or whole-program equivalence.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "TF-P2-19",
+      "parent": "P2-19",
+      "claimSha256": "19ae22028dc1c50a3f7b92d54a236e8696c1b389ef204e6c5ae764cdab60a354",
+      "proof": "RegistryAdmission.lean",
+      "replays": [
+        "RegistryAdmissionReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.RegistryAdmissionRegressionTest",
+          "output": "registry-admission.tsv"
+        }
+      ],
+      "scope": "Exact registry admission in the registered RegistryAdmission model, compiler-resolved issuance/acceptance controls and a fixed finite observation census binding the modeled registry fields. No new authority is issued by this package and full Java semantic refinement remains excluded.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "TF-A2-04",
+      "parent": "A2-04",
+      "claimSha256": "e5ed1e70cefbc417e2046ae878201b4c371f9e2223ed11f91e371d4658541e3d",
+      "proof": "GuardedJoinChain.lean",
+      "replays": [
+        "GuardedJoinChainReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.GuardedJoinChainRegressionTest",
+          "output": "guarded-join-chains.tsv"
+        }
+      ],
+      "scope": "Guarded arbitrary-chain reasoning in the registered GuardedJoinChain model, compiler-resolved producer/verifier guard controls and the fixed finite JOIN-chain census. Relation/type interpretation outside the model and finite correspondence boundary remains trusted; no unguarded reassociation claim.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    }
+  ],
+  "extractors": [
+    {
+      "id": "call-authority",
+      "class": "CallAuthorityTransitionsExtractor",
+      "source": "scripts/java/CallAuthorityTransitionsExtractor.java",
+      "output": "call-authority-source.tsv"
+    },
+    {
+      "id": "guarded-join",
+      "class": "GuardedJoinChainExtractor",
+      "source": "scripts/java/GuardedJoinChainExtractor.java",
+      "output": "guarded-join-source.tsv"
+    },
+    {
+      "id": "registry-admission",
+      "class": "RegistryAdmissionExtractor",
+      "source": "scripts/java/RegistryAdmissionExtractor.java",
+      "output": "registry-admission-source.tsv"
+    }
+  ],
+  "trusted": [
+    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "javac/JVM 17 and Java standard-library contracts",
+    "Git deterministic commits in isolated frozen snapshots for TEST_ONLY certificate provenance, never workspace, release or experiment provenance",
+    "Pinned v2.13 engine, counted profile adapter, hashed area plugins and compiler extractors; tested, not Lean-verified",
+    "Hashed Alloy parser, source/type/registry interpretation and provenance decoding at the finite observation boundary",
+    "Python standard library, SHA-256, filesystem, OS and hardware"
+  ],
+  "excluded": [
+    "Original parent statements beyond the explicitly frozen repair scopes; no automatic ledger discharge",
+    "Whole-Java, whole-parser or whole-corpus refinement and arbitrary optimizer occurrence survival",
+    "New empirical results, production guarantees, rewrite authority or certificate authority",
+    "Unlisted claims, future input revisions and undeclared deployment environments"
+  ],
+  "permittedNondeterminism": [
+    "Log timings, diagnostic paths and host identifiers"
+  ],
+  "statusPolicy": {
+    "unresolvedIsBlocking": true,
+    "warningIsBlocking": true,
+    "manualOverrideAllowed": false
+  },
+  "networkDuringVerification": false
+}

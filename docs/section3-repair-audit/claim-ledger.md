@@ -90,17 +90,17 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 | P1-03 | U/I | A valid call has exactly one callee. | `valid_visit_has_one_callee` | Missing/duplicate callee probes | `PROVED/DIRECT` |
 | P1-04 | U/I | Argument roles are contiguous `0..declaredArity-1`. | `valid_visit_has_contiguous_ordered_roles` | Gap, duplicate, and swapped-role probes | `PROVED/DIRECT` |
 | P1-05 | U/I | Argument payload order is source order. | `source_order_complete`; `accepted_payload_at_source_index` | 56 actual ordered CALL observations, repeats and same-type swap controls | `PROVED/DIRECT` |
-| P1-06 | U/I | Observed children cannot replace independently declared arity. | `observed_arity_cannot_replace_declared_arity` | Truncated/extended argument mutations | `PARTIAL/DIRECT` |
+| P1-06 | U/I | Observed children cannot replace independently declared arity. | `selected_from_independent_authority`; `observed_arity_cannot_create_authority` | Third-five CALL source/arity/authority replay | `PROVED/DIRECT` |
 | P1-07 | U/I | Exactly one terminator exists and is owned by the call occurrence. | `valid_visit_owns_exact_terminator` | Missing, duplicate, foreign, and END-as-argument probes | `PROVED/DIRECT` |
 | P1-08 | U/I | Malformed or incomplete calls reject; no unrelated-visit fallback exists. | `validate_iff`; `no_unrelated_visit_fallback` | Compiler-resolved CALL controls and 637 bounded validator rejections | `PROVED/DIRECT` |
-| P1-09 | U/I | A consumed call occurrence cannot be reused. | `occurrence_ledger_prevents_reuse`; `duplicated_occurrence_is_rejected` | Reused nested occurrence probe | `PARTIAL/DIRECT` |
+| P1-09 | U/I | A consumed call occurrence cannot be reused. | `executable_allocations_never_reuse`; `consumed_fresh_occurrence_rejects` | Third-five executable consumption and source controls | `PROVED/DIRECT` |
 | P1-10 | U/I | Zero-argument calls retain callee, arity zero, and END. | General construction, validation, and lowering theorems in `ZeroArgumentCall.lean` | Thirteen parser-to-certified observations; local/imported zero-call fixtures | `PROVED/DIRECT` |
 | P1-11 | U/I | Semantic identity retains call kind. | `equal_call_keys_preserve_kind` | Function/predicate same-name distinction | `PROVED/DIRECT` |
 | P1-12 | U/I | Semantic identity retains fully qualified callee identity. | `equal_call_keys_preserve_qualified_identity` | Local/imported/module-instantiation fixtures | `PROVED/DIRECT` |
 | P1-13 | U/I | Semantic identity retains declared arity. | `equal_call_keys_preserve_declared_arity` | Same-name different-arity key probes | `PROVED/DIRECT` |
 | P1-14 | U/I | Semantic identity retains independent arity authority. | `equal_call_keys_preserve_authority` | Local/pinned-library/unknown-authority probes | `PROVED/DIRECT` |
 | P1-15 | I/P | Imported callable arity is accepted only from a fixed library ledger. | Ledger-authenticity model | Unpinned member and corrupted `ord/first` attacks | `PARTIAL/DIRECT` |
-| P1-16 | I | CALL remains ordered, nonflat, noncommutative, and non-idempotent. | Phase 2 exact-policy matrix | Nested/mixed/multiargument call probes | `PARTIAL/DIRECT` |
+| P1-16 | I | CALL remains ordered, nonflat, noncommutative, and non-idempotent. | `representation_injective`; `nested_same_call_cannot_collapse` | Third-five parser/MASG/IR/certified ordered-tree replay | `PROVED/DIRECT` |
 | P1-17 | I | Generator output preserves exact call identity and source argument order. | `generation_preserves_source_order` | Parse-generate-reparse comparison | `PROVED/DIRECT` |
 | P1-18 | U/I | On a two-atom `r` cycle, `f[f[a]] = a` differs semantically from `f[a] = a`. | `nested_call_differs_from_single`; `nested_call_returns_input` | Independent Alloy instance evaluation | `PROVED/DIRECT` |
 | P1-19 | I | `f[g[a]]` preserves both distinct callees and nested ownership at all boundaries. | Nested-key composition theorem | Parser/MASG/IR/adapter/wire fixture | `PARTIAL/DIRECT` |
@@ -113,7 +113,7 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 | A2-01 | U/I | JOIN and ARROW chain carriers are ordered `Seq`, never `Bag` or `Set`. | `construction_preserves_source_sequence`; `construction_never_bag_or_set` | 28 compiler-resolved objects, bounded order and mixed-head barrier checks | `PROVED/DIRECT` |
 | A2-02 | U/I | Duplicate chain operands are retained. | `construction_preserves_occurrences`; `accepted_preserves_length_and_count` | 1900 bounded observations and 24 TEST_ONLY public semantic rejections | `PROVED/DIRECT` |
 | A2-03 | U | ARROW/product reassociation preserves ordered column concatenation. | `arrow_reassociation` | Parsed association pair | `PROVED/DIRECT` |
-| A2-04 | U | Relational JOIN reassociation is licensed only when every interior relation has arity at least two. | `guarded_join_relation_reassociation` | Parsed guarded association pairs | `PARTIAL/DIRECT` |
+| A2-04 | U | Relational JOIN reassociation is licensed only when every interior relation has arity at least two. | `accepted_chain_relational_equality`; `well_typed_chain_equality` | Third-five arbitrary-chain proof and bounded Java/source replay | `PROVED/DIRECT` |
 | A2-05 | U | Unguarded JOIN reassociation is unsound when an interior relation is unary. | `unguarded_join_is_not_associative` | Exact finite Alloy counterexample | `PROVED/DIRECT` |
 | A2-06 | F/I | The implementation's JOIN guard accepts binary interiors and rejects unary interiors. | General indexed/slice guard theorems in `DependentJoinGuard.lean` | Independent producer/verifier source extraction and bounded arity matrix | `PROVED/DIRECT` |
 | A2-07 | U/I | Each chain leaf has an independent exact stored-type-to-relation-view proof. | `exact_relation_leaf`; primitive leaf theorems | Leaf rule/proof mutation matrix | `PARTIAL/PARTIAL` |
@@ -160,7 +160,7 @@ prevent the assurance mechanism from exempting its own acceptance criteria.
 | P2-16 | U/I | Boolean empty/singleton forms collapse only by smart constructors; stored flat Boolean carriers remain nonempty and mint no U. | Boolean smart-constructor theorem | Empty/singleton certificate census | `PARTIAL/DIRECT` |
 | P2-17 | U/I | Bag normalization preserves multiplicity; Set normalization is idempotent; Seq preserves order. | multiplicity/idempotence/order theorems | Duplicate and role-swap differential probes | `PROVED/DIRECT` |
 | P2-18 | P | C binds an exact permutation; I binds an exact quotient surjection; A binds outer/nested arities and splice position; U binds exact empty/deletion endpoints. | Law-witness typing theorem | One-field-at-a-time certificate mutations | `PARTIAL/DIRECT` |
-| P2-19 | P | A law can be issued only for the exact fixed registry entry and semantic profile fingerprint. | Registry-authenticity theorem | Cross-op/profile/theory attacks | `PARTIAL/DIRECT` |
+| P2-19 | P | A law can be issued only for the exact fixed registry entry and semantic profile fingerprint. | `accepts_iff_reconstructed`; `index_preserves_every_coordinate` | Third-five fixed registry and profile/index reconstruction | `PROVED/DIRECT` |
 | P2-20 | I | Recursive same-head flattening occurs iff exact typed A evidence is present. | Flatten iff authority theorem | Positive and negative recursive fixtures | `PARTIAL/DIRECT` |
 
 ## Phase 3: Exact Types, Profiles, And Endpoints

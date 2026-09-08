@@ -30,12 +30,15 @@ tests=(
   is.fivefivefive.CanDis.CallExtractionRegressionTest
   is.fivefivefive.CanDis.ZeroArgumentCallRegressionTest
   is.fivefivefive.CanDis.OrderedCallValidationRegressionTest
+  is.fivefivefive.CanDis.CallAuthorityTransitionsRegressionTest
   is.fivefivefive.CanDis.BuiltinIdentityRegressionTest
   is.fivefivefive.CanDis.theory.PolicyRepresentationRegressionTest
   is.fivefivefive.CanDis.theory.DependentJoinGuardRegressionTest
   is.fivefivefive.CanDis.theory.FlatRootPortRegressionTest
   is.fivefivefive.CanDis.theory.FlatTypeSubstitutionRegressionTest
   is.fivefivefive.CanDis.theory.DependentChainSequenceRegressionTest
+  is.fivefivefive.CanDis.theory.GuardedJoinChainRegressionTest
+  is.fivefivefive.CanDis.theory.RegistryAdmissionRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest
