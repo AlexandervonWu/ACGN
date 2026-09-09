@@ -1,0 +1,10 @@
+{
+  "sameCheckRecords": true,
+  "checkedCases": 29,
+  "temporalChecks": 8,
+  "exposedChecks": 6,
+  "counterexamples": 0,
+  "errors": 0,
+  "inconclusive": 0,
+  "note": "Generation timestamps and progress timings excluded from deterministic comparison; this is bounded testing, not whole-artifact proof closure."
+}

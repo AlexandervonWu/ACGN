@@ -678,31 +678,34 @@ public final class CapabilityBenchmark {
         markdown.append(" |\n");
     }
 
-    private static void appendSoundnessSummary(StringBuilder markdown, Path soundnessPath) throws IOException {
+    static void appendSoundnessSummary(StringBuilder markdown, Path soundnessPath) throws IOException {
         if (!Files.isRegularFile(soundnessPath)) return;
         JSONObject soundness = new JSONObject(Files.readString(soundnessPath, StandardCharsets.UTF_8));
         JSONArray checks = soundness.getJSONArray("checks");
         int inconclusive = 0;
         int solverCounterexamples = 0;
         int conclusiveFailures = 0;
+        int temporalChecks = 0;
         for (int i = 0; i < checks.length(); i++) {
             JSONObject check = checks.getJSONObject(i);
             boolean uncertain = check.getBoolean("inconclusive");
             boolean counterexample = check.getBoolean("solverReportedCounterexample");
             boolean error = !check.getString("error").isEmpty();
             if (uncertain) inconclusive++;
-            if (counterexample) solverCounterexamples++;
+            if (uncertain && counterexample) solverCounterexamples++;
+            if (!uncertain && check.optBoolean("temporal", false)) temporalChecks++;
             if (!uncertain && (counterexample || error)) conclusiveFailures++;
         }
         markdown.append("\n## Bounded Soundness Sanity Check\n\n")
                 .append("- Sampled family/subtype cases: ").append(checks.length()).append("\n")
-                .append("- Conclusive non-temporal failures: ").append(conclusiveFailures).append("\n")
-                .append("- Inconclusive temporal checks: ").append(inconclusive).append("\n")
+                .append("- Conclusive failures: ").append(conclusiveFailures).append("\n")
+                .append("- Completed bounded temporal checks: ").append(temporalChecks).append("\n")
+                .append("- Inconclusive checks: ").append(inconclusive).append("\n")
                 .append("- Raw solver-reported counterexamples among inconclusive checks: ")
                 .append(solverCounterexamples).append("\n\n")
-                .append("The temporal sample is retained but not treated as evidence: this installation has no "
-                        + "temporal backend, and Alloy explicitly warns that SAT4J uses a possibly-unsound static reduction. "
-                        + "See `SOUNDNESS.md` and `soundness.csv`.\n");
+                .append("Only completed checks contribute bounded evidence, not semantic proofs. "
+                        + "Inconclusive checks remain unresolved; backend notes and per-command bounds are retained "
+                        + "in `SOUNDNESS.md` and `soundness.csv`.\n");
     }
 
     private static Map<String, NaturalMetrics> loadNaturalMetrics(Path root) throws IOException {

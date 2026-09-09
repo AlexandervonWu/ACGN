@@ -1,0 +1,22 @@
+CapabilitySoundnessCheck: processing 29 checks.
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/AlloyASG-Release.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.SimpleLoggerFactory]
+CapabilitySoundnessCheck: 2/29 complete (6.9%), 14.62 checks/s, ETA 0m 02s.
+CapabilitySoundnessCheck: 4/29 complete (13.8%), 23.95 checks/s, ETA 0m 01s.
+CapabilitySoundnessCheck: 6/29 complete (20.7%), 30.03 checks/s, ETA 0m 01s.
+CapabilitySoundnessCheck: 8/29 complete (27.6%), 35.51 checks/s, ETA 0m 01s.
+CapabilitySoundnessCheck: 10/29 complete (34.5%), 39.02 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 12/29 complete (41.4%), 28.96 checks/s, ETA 0m 01s.
+CapabilitySoundnessCheck: 14/29 complete (48.3%), 31.32 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 16/29 complete (55.2%), 29.97 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 18/29 complete (62.1%), 32.69 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 20/29 complete (69.0%), 35.42 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 22/29 complete (75.9%), 37.72 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 24/29 complete (82.8%), 38.87 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 26/29 complete (89.7%), 38.05 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 28/29 complete (96.6%), 37.42 checks/s, ETA 0m 00s.
+CapabilitySoundnessCheck: 29/29 complete (100.0%), 36.21 checks/s, ETA 0m 00s.
+Bounded capability soundness: 29 checks, 0 failures.

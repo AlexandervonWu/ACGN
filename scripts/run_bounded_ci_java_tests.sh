@@ -48,6 +48,7 @@ tests=(
   is.fivefivefive.CanDis.AlloySourceRuleRegressionTest
   is.fivefivefive.CanDis.MASGVisitorTypeRegressionTest
   is.fivefivefive.CanDis.SemanticProfileSourceCommandTest
+  is.fivefivefive.CanDis.CapabilitySoundnessCheckTest
   is.fivefivefive.CanDis.TheoryLawPolicyRegressionTest
   is.fivefivefive.CanDis.VisualizationAnalysisServiceTest
   is.fivefivefive.CanDis.VisualizationProcessRunnerTest
@@ -67,6 +68,9 @@ tests=(
   is.fivefivefive.CanDis.theory.TheoryDeterminismTest
   is.fivefivefive.CanDis.theory.CertificateProvenanceTest
 )
+
+"${LEAN_BIN:-lean}" -o "$work/TemporalCommandGuard.olean" \
+  "$ROOT/docs/temporal-capability-solver/TemporalCommandGuard.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"

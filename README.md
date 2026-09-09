@@ -351,12 +351,16 @@ were rejected by every arm, including the Certificate-Integrated IR. This is
 bounded evidence, not an unbounded proof. The claim set and performance data
 come from clean ablation run `6348d68d-a364-458f-b8ef-834101b8ace6` using the
 v38 phase-local-binding pipeline. The
-current targeted capability soundness sample had zero
+published targeted capability soundness sample had zero
 conclusive non-temporal failures across 29 subtype checks; six temporal checks
-were inconclusive because the installed solver lacked a temporal backend. One
+were retained as inconclusive. One
 of those inconclusive raw solver runs reported a counterexample under Alloy's
-warned static temporal reduction, so it is recorded but not counted as
-conclusive evidence. See
+warned static temporal reduction. The subsequent
+[temporal-check repair](docs/temporal-capability-solver/README.md) identified
+missed temporal operators inside predicate calls, not an absent backend.
+The repaired checker uses the bundled Pardinus temporal path; all 29 sampled
+checks now finish without counterexamples, errors or inconclusive results.
+Those post-release results are recorded separately from the frozen run. See
 [`semantic_soundness.md`](egraph_ablation/semantic_soundness.md) and
 [`capability_benchmark/SOUNDNESS.md`](capability_benchmark/SOUNDNESS.md).
 

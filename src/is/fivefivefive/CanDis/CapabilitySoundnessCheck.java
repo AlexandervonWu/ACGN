@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -20,7 +21,14 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import edu.mit.csail.sdg.alloy4.A4Reporter;
+import edu.mit.csail.sdg.alloy4.Err;
 import edu.mit.csail.sdg.ast.Command;
+import edu.mit.csail.sdg.ast.ExprBinary;
+import edu.mit.csail.sdg.ast.ExprCall;
+import edu.mit.csail.sdg.ast.ExprConstant;
+import edu.mit.csail.sdg.ast.ExprUnary;
+import edu.mit.csail.sdg.ast.Func;
+import edu.mit.csail.sdg.ast.VisitQueryOnce;
 import edu.mit.csail.sdg.parser.CompModule;
 import edu.mit.csail.sdg.parser.CompUtil;
 import edu.mit.csail.sdg.translator.A4Options;
@@ -49,11 +57,11 @@ public final class CapabilitySoundnessCheck {
             progress.update(++completed);
         }
         progress.finish(completed);
-        writeCsv(options.root.resolve("soundness.csv"), results);
-        writeJson(options.root.resolve("soundness.json"), options, results);
-        writeMarkdown(options.root.resolve("SOUNDNESS.md"), options, results);
-        long failures = results.stream().filter(result -> !result.inconclusive
-                && (result.counterexample || !result.error.isEmpty())).count();
+        Files.createDirectories(options.output);
+        writeCsv(options.output.resolve("soundness.csv"), results);
+        writeJson(options.output.resolve("soundness.json"), options, results);
+        writeMarkdown(options.output.resolve("SOUNDNESS.md"), options, results);
+        long failures = results.stream().filter(Result::failed).count();
         System.out.printf(Locale.ROOT, "Bounded capability soundness: %,d checks, %,d failures.%n",
                 results.size(), failures);
         if (failures > 0) {
@@ -75,12 +83,8 @@ public final class CapabilitySoundnessCheck {
         return selected;
     }
 
-    private static Result check(Path file, Map<String, String> metadata) {
+    static Result check(Path file, Map<String, String> metadata) {
         Result result = new Result(metadata);
-        if ("temporal_normalization".equals(result.family)) {
-            result.inconclusive = true;
-            result.note = "SAT4J uses Alloy's explicitly possibly-unsound static reduction for temporal formulas; no temporal backend is installed";
-        }
         try {
             CompModule module = CompUtil.parseEverything_fromFile(new A4Reporter(), null, file.toString());
             Command target = null;
@@ -94,27 +98,83 @@ public final class CapabilitySoundnessCheck {
             if (target == null) {
                 throw new IllegalStateException("Generated equivalence command not found");
             }
+            result.scope = target.overall;
+            Command prepared = prepareCommand(module, target);
+            result.temporal = CompUtil.isTemporalModel(module.getAllReachableSigs(), prepared);
+            result.temporalModeExposed = prepared != target;
             A4Options options = new A4Options();
             options.solver = A4Options.SatSolver.SAT4J;
             A4Solution solution = TranslateAlloyToKodkod.execute_command(
-                    new A4Reporter(), module.getAllReachableSigs(), target, options);
-            result.counterexample = solution != null && solution.satisfiable();
+                    new A4Reporter(), module.getAllReachableSigs(), prepared, options);
+            if (solution == null) throw new IllegalStateException("Solver returned no result");
+            result.minTrace = solution.getMinTrace();
+            result.maxTrace = solution.getMaxTrace();
+            if (result.temporal && (result.minTrace < 1 || result.maxTrace < result.minTrace)) {
+                throw new IllegalStateException("Temporal command did not use bounded temporal solving");
+            }
+            result.counterexample = solution.satisfiable();
+            result.inconclusive = false;
+            if (result.temporalModeExposed) {
+                result.note = "Exposed temporal mode with Q and after true; source predicates and scopes unchanged";
+            }
         } catch (Throwable throwable) {
             result.error = throwable.getClass().getSimpleName() + ": " + String.valueOf(throwable.getMessage());
         }
         return result;
     }
 
+    static Command prepareCommand(CompModule module, Command command) throws Err {
+        if (CompUtil.isTemporalModel(module.getAllReachableSigs(), command)) return command;
+        Boolean temporal = command.formula.accept(new VisitQueryOnce<Boolean>() {
+            private final Set<Func> functions = Collections.newSetFromMap(new IdentityHashMap<>());
+
+            @Override
+            public Boolean visit(ExprCall call) throws Err {
+                Boolean argument = super.visit(call);
+                if (argument != null) return argument;
+                return functions.add(call.fun) ? call.fun.getBody().accept(this) : null;
+            }
+
+            @Override
+            public Boolean visit(ExprUnary unary) throws Err {
+                switch (unary.op) {
+                    case AFTER: case BEFORE: case PRIME: case ALWAYS: case EVENTUALLY:
+                    case HISTORICALLY: case ONCE: return true;
+                    default: return super.visit(unary);
+                }
+            }
+
+            @Override
+            public Boolean visit(ExprBinary binary) throws Err {
+                switch (binary.op) {
+                    case UNTIL: case RELEASES: case SINCE: case TRIGGERED: return true;
+                    default: return super.visit(binary);
+                }
+            }
+        });
+        if (temporal == null) return command;
+        // Alloy 6.1's mode detector skips callee bodies. On infinite traces,
+        // Q and after true is Q; exposing the operator selects Pardinus without
+        // inlining bindings or adding a signature that would change univ.
+        Command prepared = command.change(command.formula.and(ExprConstant.TRUE.after()));
+        if (!CompUtil.isTemporalModel(module.getAllReachableSigs(), prepared)) {
+            throw new IllegalStateException("Could not expose the temporal command to Alloy");
+        }
+        return prepared;
+    }
+
     private static void writeCsv(Path path, List<Result> results) throws IOException {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            writer.write("relativePath,family,subtype,solverReportedCounterexample,inconclusive,note,error\n");
+            writer.write("relativePath,family,subtype,solverReportedCounterexample,inconclusive,note,error,temporal,temporalModeExposed,scope,minTrace,maxTrace,solver\n");
             for (Result result : results) {
                 csv(writer, result.relativePath);
                 csv(writer, result.family);
                 csv(writer, result.subtype);
                 writer.write(result.counterexample + "," + result.inconclusive + ",");
                 csv(writer, result.note);
-                csvLast(writer, result.error);
+                csv(writer, result.error);
+                writer.write(result.temporal + "," + result.temporalModeExposed + "," + result.scope
+                        + "," + result.minTrace + "," + result.maxTrace + ",SAT4J");
                 writer.write('\n');
             }
         }
@@ -123,9 +183,9 @@ public final class CapabilitySoundnessCheck {
     private static void writeJson(Path path, Options options, List<Result> results) throws IOException {
         JSONArray checks = new JSONArray();
         for (Result result : results) checks.put(result.toJson());
-        JSONObject json = new JSONObject().put("schemaVersion", "candis-capability-soundness-v1")
+        JSONObject json = new JSONObject().put("schemaVersion", "candis-capability-soundness-v2")
                 .put("generatedAt", Instant.now().toString()).put("perSubtype", options.perSubtype)
-                .put("boundedScope", 4).put("interpretation", "finite-scope SAT sanity check, not proof")
+                .put("interpretation", "finite-scope/trace SAT sanity check, not proof; bounds recorded per command")
                 .put("checks", checks);
         Files.writeString(path, json.toString(2) + "\n", StandardCharsets.UTF_8);
     }
@@ -134,8 +194,8 @@ public final class CapabilitySoundnessCheck {
         long counterexamples = results.stream().filter(result -> result.counterexample).count();
         long errors = results.stream().filter(result -> !result.error.isEmpty()).count();
         long inconclusive = results.stream().filter(result -> result.inconclusive).count();
-        long conclusiveFailures = results.stream().filter(result -> !result.inconclusive
-                && (result.counterexample || !result.error.isEmpty())).count();
+        long failures = results.stream().filter(Result::failed).count();
+        long temporal = results.stream().filter(result -> result.temporal && !result.inconclusive).count();
         Set<String> families = new LinkedHashSet<>();
         Set<String> subtypes = new LinkedHashSet<>();
         for (Result result : results) {
@@ -147,15 +207,16 @@ public final class CapabilitySoundnessCheck {
                 + "- Checked cases: " + results.size() + "\n"
                 + "- Families: " + families.size() + "\n"
                 + "- Family/subtype combinations: " + subtypes.size() + "\n"
-                + "- Solver-reported counterexamples at generated scope 4: " + counterexamples + "\n"
+                + "- Solver-reported counterexamples: " + counterexamples + "\n"
                 + "- Solver/translation errors: " + errors + "\n"
-                + "- Inconclusive temporal checks: " + inconclusive + "\n"
-                + "- Conclusive non-temporal failures: " + conclusiveFailures + "\n\n"
+                + "- Completed bounded temporal checks: " + temporal + "\n"
+                + "- Inconclusive checks: " + inconclusive + "\n"
+                + "- Failed checks (including inconclusive): " + failures + "\n\n"
                 + "These checks execute the generated Alloy equivalence assertions with SAT4J. "
-                + "Unsatisfiability at scope 4 is a finite-scope sanity check, not a semantic proof; "
+                + "Temporal commands use Pardinus bounded temporal solving; exact scope and trace bounds are recorded per check. "
+                + "Unsatisfiability within those bounds is a finite-scope sanity check, not a semantic proof; "
                 + "the benchmark ground truth remains the recorded sound transformation and side condition. "
-                + "Temporal results are retained but marked inconclusive because this installation lacks a temporal backend "
-                + "and Alloy warns that SAT4J uses a possibly-unsound static reduction.\n";
+                + "An inconclusive result or solver error fails the check, including temporal cases.\n";
         Files.writeString(path, markdown, StandardCharsets.UTF_8);
     }
 
@@ -201,22 +262,23 @@ public final class CapabilitySoundnessCheck {
         writer.write(',');
     }
 
-    private static void csvLast(Writer writer, String value) throws IOException {
-        csvValue(writer, value);
-    }
-
     private static void csvValue(Writer writer, String value) throws IOException {
         writer.write('"');
         writer.write((value == null ? "" : value).replace("\"", "\"\""));
         writer.write('"');
     }
 
-    private static final class Result {
+    static final class Result {
         private final String relativePath;
         private final String family;
         private final String subtype;
         private boolean counterexample;
-        private boolean inconclusive;
+        private boolean inconclusive = true;
+        private boolean temporal;
+        private boolean temporalModeExposed;
+        private int scope = -1;
+        private int minTrace = -1;
+        private int maxTrace = -1;
         private String note = "";
         private String error = "";
 
@@ -226,15 +288,23 @@ public final class CapabilitySoundnessCheck {
             subtype = metadata.get("subtype");
         }
 
-        private JSONObject toJson() {
+        boolean failed() {
+            return inconclusive || counterexample || !error.isEmpty();
+        }
+
+        JSONObject toJson() {
             return new JSONObject().put("relativePath", relativePath).put("family", family)
                     .put("subtype", subtype).put("solverReportedCounterexample", counterexample)
-                    .put("inconclusive", inconclusive).put("note", note).put("error", error);
+                    .put("inconclusive", inconclusive).put("note", note).put("error", error)
+                    .put("temporal", temporal).put("temporalModeExposed", temporalModeExposed)
+                    .put("scope", scope).put("minTrace", minTrace).put("maxTrace", maxTrace)
+                    .put("solver", "SAT4J");
         }
     }
 
     private static final class Options {
         private Path root = Paths.get("capability_benchmark");
+        private Path output;
         private int perSubtype = 1;
 
         private static Options parse(String[] args) {
@@ -242,11 +312,13 @@ public final class CapabilitySoundnessCheck {
             for (int i = 0; i < args.length; i++) {
                 switch (args[i]) {
                     case "--root": options.root = Paths.get(args[++i]); break;
+                    case "--output": options.output = Paths.get(args[++i]); break;
                     case "--per-subtype": options.perSubtype = Integer.parseInt(args[++i]); break;
                     default: throw new IllegalArgumentException("Unknown argument: " + args[i]);
                 }
             }
             if (options.perSubtype < 1) throw new IllegalArgumentException("--per-subtype must be positive");
+            if (options.output == null) options.output = options.root;
             return options;
         }
     }

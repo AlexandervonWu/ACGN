@@ -721,7 +721,12 @@ De Bruijn variants recovered 65.96%; and slotted, Fast Rewrite IR, and
 Certificate-Integrated IR each recovered 100.00% (5,500/5,500). Every
 expected first-capable boundary matched. The 29
 bounded checks had zero conclusive non-temporal failures; six temporal checks
-remain explicitly inconclusive because no temporal backend was available.
+were archived as inconclusive. A subsequent
+[solver-mode repair](../docs/temporal-capability-solver/README.md) found that
+Alloy's detector missed operators hidden in predicate calls. The bundled
+Pardinus backend is available: the repaired 29-case sample has zero
+counterexamples, errors and inconclusive checks. These post-release checks
+are retained separately and do not replace the archived run's reports.
 
 Principal outputs are `metadata.{json,csv}`, `skips.csv`, `results.{json,csv}`,
 `pair_results.csv`, `transitions.csv`, `unexpected_failures.csv`, `REPORT.md`,
