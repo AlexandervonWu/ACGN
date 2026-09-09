@@ -33,8 +33,8 @@ read -r seed target <<< "$config"
 mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
 compile=(javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$OUTPUT/build/classes" "${sources[@]}")
 package=(jar --create --file "$JAR" -C "$OUTPUT/build/classes" .)
-guard=("$LEAN" -o "$OUTPUT/proofs/TemporalCommandGuard.olean" "$OUTPUT/inputs/TemporalCommandGuard.lean")
-duals=("$LEAN" -o "$OUTPUT/proofs/Phase5SourceRules.olean" "$OUTPUT/inputs/Phase5SourceRules.lean")
+guard=("$LEAN" --root="$OUTPUT/inputs" -o "$OUTPUT/proofs/TemporalCommandGuard.olean" "$OUTPUT/inputs/TemporalCommandGuard.lean")
+duals=("$LEAN" --root="$OUTPUT/inputs" -o "$OUTPUT/proofs/Phase5SourceRules.olean" "$OUTPUT/inputs/Phase5SourceRules.lean")
 regression=(java -ea -Xmx"$HEAP" -XX:+ExitOnOutOfMemoryError -cp "$JAR:$ROOT/lib/*" is.fivefivefive.CanDis.CapabilitySoundnessCheckTest)
 sample=(java -ea -Xmx"$HEAP" -XX:+ExitOnOutOfMemoryError -cp "$JAR:$ROOT/lib/*" is.fivefivefive.CanDis.CapabilitySoundnessCheck --root "$BENCHMARK" --output "$OUTPUT/capability_validation" --per-subtype "$PER_SUBTYPE")
 for command in compile package guard duals regression sample; do

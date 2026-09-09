@@ -19,6 +19,10 @@ b345a85b7d15e6b4df7c5643c57fdebe98d66fdc8d401b9e07a236fa436086cf  ./check-compar
 bc035065e1316ef11781a4b1e36dc4aa58d003abc47094dc55b4f7620f15f7c8  ./java-version.log
 64f534c7cd1d0dbe701f44b4da6679d120b63f0f9f3bfab60540a07af143f1f2  ./lean-version.log
 2b1a0e25c328843d63702ea161085c68baa0fdfd038709206d724397004aae09  ./minimal-probe.log
+83734aa24b276782a5aabc5a952dadf3205fff48cb828ba22e4e6e02ad3f1bea  ./publication-root-failure/README.md
+fc3c33b540a63cf61d489c6219afe169b4536b16a6fff800d2b7ec8a871fadd0  ./publication-root-failure/guard.log
+85b4905c878a06e9a5d9f0942c66d8e7aee53d10379ceaa8d18cfb2360132dc3  ./publication-root-failure/planned-commands.txt
+4a997dc7b719b66492f3159e9d0e96fc7db0c1c52c0b3c77bfd366c7a3b013d0  ./publication-root-failure/run-manifest.json
 207fd27219c09811a0df534759ef830b4b40a47d91d4aabe6b0e9be124d7ace4  ./review-probes.tar.gz
 e13b00723eaa234e78ba36d8d9b7746d96d81be76f48b04a269bd7ef814dd836  ./review.md
 a7e28501716d05ff1ef410da9f1e24e2b5530fa846259008df60a2ff92e26682  ./sample-inputs.sha256

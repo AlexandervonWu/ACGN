@@ -1,0 +1,87 @@
+{
+  "commands": {
+    "path": "/home/augustus/acgn-v216-validation-20260909T045208Z/planned-commands.txt",
+    "sha256": "85b4905c878a06e9a5d9f0942c66d8e7aee53d10379ceaa8d18cfb2360132dc3"
+  },
+  "configuration": {
+    "capabilityTarget": 500,
+    "heap": "1g",
+    "limit": 0,
+    "rewardPool": 0,
+    "seed": 55520260811,
+    "workers": 1
+  },
+  "dataset": {
+    "byteCount": 5315709,
+    "fileCount": 5500,
+    "root": "/home/augustus/ACGN/capability_benchmark/models",
+    "sha256": "898d8123ce12ee9a28cb106b801c4d3cb9e1c8aaa2644e0389aedd41e6fb49c3"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "8d245fd222bbca8af797842d349502e1f46f7a27f5dbd70489a4e622d10de3cd",
+      "sizeBytes": 20397766
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "ac0ee637172ed035a4ca43327d5e09c05990aa0d073887308e30f88c2471370c",
+      "sizeBytes": 20064232
+    },
+    {
+      "path": "lib/commons-cli-1.4.jar",
+      "sha256": "fd3c7c9545a9cdb2051d1f9155c4f76b1e4ac5a57304404a6eedb578ffba7328",
+      "sizeBytes": 53820
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "9971d8e62ddf0e0db8baef94a920f099659b665058981e839f6500922f8a46dd",
+      "sizeBytes": 62649
+    },
+    {
+      "path": "lib/slf4j-simple-1.7.36.jar",
+      "sha256": "2f39bed943d624dfa8f4102d0571283a10870b6aa36f197a8a506f147010c10f",
+      "sizeBytes": 15333
+    }
+  ],
+  "experimentJar": {
+    "path": "/home/augustus/acgn-v216-validation-20260909T045208Z/build/acgn-experiments.jar",
+    "sha256": "9399f486ff725a936d21c8fcb7dc4fbc7638848887b78ed043882915138b0e43",
+    "sizeBytes": 2549918
+  },
+  "git": {
+    "commit": "2bddaa64242756e97a657fe4282deb433d35b453",
+    "dirty": false
+  },
+  "identitySha256": "d472f4ad56567118008f10da74ea7cfb5331c25095e57ce007b003b5fcb1b332",
+  "reportBindings": [],
+  "repositoryRoot": "/home/augustus/ACGN",
+  "runId": "349371c0-3130-4573-b3af-5e5ca3cd4ee9",
+  "runtime": {
+    "cpu": "x86_64",
+    "host": "augustus-x870e",
+    "java": "openjdk version \"17.0.20\" 2026-07-21\nOpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)",
+    "logicalProcessors": 32,
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "3.10.11 (main, Apr 20 2023, 19:02:41) [GCC 11.2.0]"
+  },
+  "schemaVersion": "acgn-publication-run-v1",
+  "source": {
+    "byteCount": 5817399,
+    "fileCount": 338,
+    "sha256": "3c9cf81c3b80e35ae24aebaac471965ecc760161311d4ce6ceada6fd948c2f99"
+  },
+  "stages": [],
+  "startedAt": "2026-09-09T04:52:19.763755Z",
+  "status": "running"
+}
