@@ -58,8 +58,8 @@ for its final inputs. The full assurance matrix has 107 ready requirements and
 ## Final Verified Evidence
 
 The [final machine report](evidence/final/report.json) is **VERIFIED** for all
-five frozen claims at closure ID `fourth-five-v1-96ad79ffdb675c46`, input root
-`96ad79ffdb675c46e4c07b6920fc04a797f67dea2eb6eccb19819a8877b3f990`.
+five frozen claims at closure ID `fourth-five-v1-58c1aae07b2d37dc`, input root
+`58c1aae07b2d37dc98459c7c9989cb942b0845ec1fce579b8ca19836b16a133b`.
 Both clean builds passed, with **1,076 identical artifacts per build**.
 
 | Evidence | Per build |
@@ -85,6 +85,10 @@ The final run uses the explicit 900-second command limit and an independent
 timeouts are retained as infrastructure failures; no rejection criterion or
 theorem changed. The prior locally VERIFIED candidate remains archived in
 `evidence/combined-ci-budget/`.
+The independent job installs the pinned Lean toolchain explicitly before
+offline verification; its first cold-start transcript rejection and the
+successful isolated-installer probe are retained in
+`evidence/independent-ci-cold-start/`. The strict version check is unchanged.
 
 ## Preservation
 

@@ -1,5 +1,5 @@
 {
-  ".github/workflows/bounded-ci.yml": "871273098e5bc9341590ca36091ba0164e7eae492b5522a4708b3262d270f0eb",
+  ".github/workflows/bounded-ci.yml": "8757bb520d37779a212499a87e76546d56b0b6b68f9054666937129ed917612b",
   "certificate-verifier/FAILURE_CODES.md": "ac2f4b1965e2f448cec18a81dc5cef8eff9329117e77c51fa4a00306b395e938",
   "certificate-verifier/FORMAT.md": "24241da3351e60f138573e7eb4a6bc040d2da6cd38b54350b8b0c25cb668ac4d",
   "certificate-verifier/README.md": "4af54f6caf0e146c00f088f4b78132ede8625b5b36b3cc4dcbdb50b87f48dc00",
@@ -181,7 +181,7 @@
   "docs/obligation-repair/fourth-five/chain-notes.md": "219c6b357f6073d02843b667b64ddb612bbaa6e1810f12f9e8cdce18fb427e16",
   "docs/obligation-repair/fourth-five/closure-config.json": "120c5124ef39f4c117fa9be6cc57240e4d49650c427eeabac64896a38e139ebe",
   "docs/obligation-repair/fourth-five/container-notes.md": "d209277d780963a6e143aa31f06a795c5af33173fc877e85ffe30c0f7187ccad",
-  "docs/obligation-repair/fourth-five/harness-notes.md": "4728b7e0561ce877f4341e18e9563edcecad890eb70edf711fbae5d71a06bb87",
+  "docs/obligation-repair/fourth-five/harness-notes.md": "0847f819f09481cd7f2ef9f64f3dc52b2cedfba2d11353628cb49e2893cc0818",
   "docs/obligation-repair/fourth-five/profile-notes.md": "ce420dee19878451b3d3beff4978d3cfd626d47aae91fa49792e958d78272f7e",
   "docs/section3-repair-audit/assurance-scope.tsv": "35af1f85302ac791de4ec1fa2136ee97f009123b330bf7c67c464f7a97670b58",
   "docs/section3-repair-audit/claim-ledger.md": "2677fb3836e57bd7b415c48f2b90e43a324ed6f663cdd77643c3f1d97b3bc108",

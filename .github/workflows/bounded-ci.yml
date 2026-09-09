@@ -79,6 +79,8 @@ jobs:
           "${bootstrap_dir}/elan-init" -y --default-toolchain none --no-modify-path
           printf '%s\n' "${ELAN_HOME}/bin" >> "${GITHUB_PATH}"
           printf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"
+      - name: Install frozen Lean toolchain before offline verification
+        run: elan toolchain install "$(cat lean-toolchain)"
       - name: Replay typed flattening, leaf and wire-index obligations
         run: python3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five
       - name: Retain closure reports and command logs

@@ -41,6 +41,12 @@ for the independent closure job. These scheduling/budget changes alter no
 claim, observation census, proof predicate or rejection requirement. The
 changed configuration and workflow are inputs to a fresh closure root.
 
+The independent job explicitly installs the frozen `lean-toolchain` before
+verification. A cold Elan invocation otherwise prepends download/install
+messages to `lean --version`, which the strict version contract rejects.
+Installation is setup, outside the offline verification interval; the version
+check is unchanged and must observe the exact pinned toolchain.
+
 This is a finite assurance repair. It creates no new rewrite family or
 certificate authority. SHA-256 collision resistance remains a cryptographic
 assumption; no hash-injectivity theorem is claimed. Earlier empirical

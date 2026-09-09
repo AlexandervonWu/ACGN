@@ -1,0 +1,302 @@
+﻿2026-09-09T00:56:32.1289833Z Current runner version: '2.337.0'
+2026-09-09T00:56:32.1325995Z ##[group]Runner Image Provisioner
+2026-09-09T00:56:32.1327602Z Hosted Compute Agent
+2026-09-09T00:56:32.1328861Z Version: 20260828.587
+2026-09-09T00:56:32.1330182Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+2026-09-09T00:56:32.1331723Z Build Date: 2026-08-28T16:44:25Z
+2026-09-09T00:56:32.1333121Z Worker ID: {d08bdc70-f29d-4af4-93ce-f212f28a4dc4}
+2026-09-09T00:56:32.1334444Z Azure Region: eastus
+2026-09-09T00:56:32.1335732Z ##[endgroup]
+2026-09-09T00:56:32.1338861Z ##[group]Operating System
+2026-09-09T00:56:32.1340082Z Ubuntu
+2026-09-09T00:56:32.1341047Z 22.04.5
+2026-09-09T00:56:32.1341951Z LTS
+2026-09-09T00:56:32.1343114Z ##[endgroup]
+2026-09-09T00:56:32.1344223Z ##[group]Runner Image
+2026-09-09T00:56:32.1345469Z Image: ubuntu-22.04
+2026-09-09T00:56:32.1346587Z Version: 20260831.284.1
+2026-09-09T00:56:32.1349835Z Included Software: https://github.com/actions/runner-images/blob/ubuntu22/20260831.284/images/ubuntu/Ubuntu2204-Readme.md
+2026-09-09T00:56:32.1352824Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu22%2F20260831.284
+2026-09-09T00:56:32.1354768Z ##[endgroup]
+2026-09-09T00:56:32.1356650Z ##[group]GITHUB_TOKEN Permissions
+2026-09-09T00:56:32.1360048Z Contents: read
+2026-09-09T00:56:32.1361056Z Metadata: read
+2026-09-09T00:56:32.1362175Z ##[endgroup]
+2026-09-09T00:56:32.1365168Z Secret source: Actions
+2026-09-09T00:56:32.1367371Z Prepare workflow directory
+2026-09-09T00:56:32.1733835Z Prepare all required actions
+2026-09-09T00:56:32.1782803Z Getting action download info
+2026-09-09T00:56:32.3803174Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-09-09T00:56:32.4694778Z Download action repository 'actions/setup-java@v4' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+2026-09-09T00:56:32.7110623Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-09-09T00:56:32.9429021Z Complete job name: fourth-obligation-closure
+2026-09-09T00:56:33.0237701Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-09T00:56:33.0246331Z ##[group]Run actions/checkout@v4
+2026-09-09T00:56:33.0247375Z with:
+2026-09-09T00:56:33.0247890Z   repository: AlexandervonWu/ACGN
+2026-09-09T00:56:33.0251733Z   token: ***
+2026-09-09T00:56:33.0252203Z   ssh-strict: true
+2026-09-09T00:56:33.0252679Z   ssh-user: git
+2026-09-09T00:56:33.0253154Z   persist-credentials: true
+2026-09-09T00:56:33.0253680Z   clean: true
+2026-09-09T00:56:33.0254143Z   sparse-checkout-cone-mode: true
+2026-09-09T00:56:33.0254680Z   fetch-depth: 1
+2026-09-09T00:56:33.0255122Z   fetch-tags: false
+2026-09-09T00:56:33.0255590Z   show-progress: true
+2026-09-09T00:56:33.0256060Z   lfs: false
+2026-09-09T00:56:33.0256555Z   submodules: false
+2026-09-09T00:56:33.0257311Z   set-safe-directory: true
+2026-09-09T00:56:33.0257914Z   allow-unsafe-pr-checkout: false
+2026-09-09T00:56:33.0258804Z ##[endgroup]
+2026-09-09T00:56:33.1376600Z Syncing repository: AlexandervonWu/ACGN
+2026-09-09T00:56:33.1380764Z ##[group]Getting Git version info
+2026-09-09T00:56:33.1382034Z Working directory is '/home/runner/work/ACGN/ACGN'
+2026-09-09T00:56:33.1383901Z [command]/usr/bin/git version
+2026-09-09T00:56:33.1495085Z git version 2.55.0
+2026-09-09T00:56:33.1558464Z ##[endgroup]
+2026-09-09T00:56:33.1576364Z Temporarily overriding HOME='/home/runner/work/_temp/8ecd87ed-a59a-43bb-a61d-72056300021e' before making global git config changes
+2026-09-09T00:56:33.1580131Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-09T00:56:33.1585504Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ACGN/ACGN
+2026-09-09T00:56:33.1613494Z Deleting the contents of '/home/runner/work/ACGN/ACGN'
+2026-09-09T00:56:33.1618694Z ##[group]Initializing the repository
+2026-09-09T00:56:33.1623636Z [command]/usr/bin/git init /home/runner/work/ACGN/ACGN
+2026-09-09T00:56:33.1827974Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-09-09T00:56:33.1830058Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-09-09T00:56:33.1832068Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-09-09T00:56:33.1833923Z hint: call:
+2026-09-09T00:56:33.1835059Z hint:
+2026-09-09T00:56:33.1836402Z hint: 	git config --global init.defaultBranch <name>
+2026-09-09T00:56:33.1838108Z hint:
+2026-09-09T00:56:33.1839227Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-09-09T00:56:33.1840916Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-09-09T00:56:33.1842251Z hint:
+2026-09-09T00:56:33.1843072Z hint: 	git branch -m <name>
+2026-09-09T00:56:33.1843919Z hint:
+2026-09-09T00:56:33.1845122Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-09-09T00:56:33.1846524Z Initialized empty Git repository in /home/runner/work/ACGN/ACGN/.git/
+2026-09-09T00:56:33.1848721Z [command]/usr/bin/git remote add origin https://github.com/AlexandervonWu/ACGN
+2026-09-09T00:56:33.1879363Z ##[endgroup]
+2026-09-09T00:56:33.1880775Z ##[group]Disabling automatic garbage collection
+2026-09-09T00:56:33.1882241Z [command]/usr/bin/git config --local gc.auto 0
+2026-09-09T00:56:33.1928398Z ##[endgroup]
+2026-09-09T00:56:33.1929795Z ##[group]Setting up auth
+2026-09-09T00:56:33.1931277Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-09T00:56:33.1958530Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-09T00:56:33.2460927Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-09T00:56:33.2537774Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-09T00:56:33.2796412Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-09T00:56:33.2836437Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-09T00:56:33.3098030Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-09-09T00:56:33.3145520Z ##[endgroup]
+2026-09-09T00:56:33.3147247Z ##[group]Fetching the repository
+2026-09-09T00:56:33.3156477Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +28eac6e4704f8964536664827cc5110bb47c83dc:refs/remotes/origin/aislop
+2026-09-09T00:56:39.5321294Z From https://github.com/AlexandervonWu/ACGN
+2026-09-09T00:56:39.5324116Z  * [new ref]           28eac6e4704f8964536664827cc5110bb47c83dc -> origin/aislop
+2026-09-09T00:56:39.5329131Z ##[endgroup]
+2026-09-09T00:56:39.5330997Z ##[group]Determining the checkout info
+2026-09-09T00:56:39.5333044Z ##[endgroup]
+2026-09-09T00:56:39.5336199Z [command]/usr/bin/git sparse-checkout disable
+2026-09-09T00:56:39.5387695Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-09-09T00:56:39.5424281Z ##[group]Checking out the ref
+2026-09-09T00:56:39.5428762Z [command]/usr/bin/git checkout --progress --force -B aislop refs/remotes/origin/aislop
+2026-09-09T00:56:40.5949043Z Updating files:  25% (18801/72990)
+2026-09-09T00:56:40.6264784Z Updating files:  26% (18978/72990)
+2026-09-09T00:56:40.6535623Z Updating files:  27% (19708/72990)
+2026-09-09T00:56:40.6816867Z Updating files:  28% (20438/72990)
+2026-09-09T00:56:40.7091841Z Updating files:  29% (21168/72990)
+2026-09-09T00:56:40.7374628Z Updating files:  30% (21897/72990)
+2026-09-09T00:56:40.7643198Z Updating files:  31% (22627/72990)
+2026-09-09T00:56:40.7911928Z Updating files:  32% (23357/72990)
+2026-09-09T00:56:40.8179343Z Updating files:  33% (24087/72990)
+2026-09-09T00:56:40.8445514Z Updating files:  34% (24817/72990)
+2026-09-09T00:56:40.8714437Z Updating files:  35% (25547/72990)
+2026-09-09T00:56:40.8981085Z Updating files:  36% (26277/72990)
+2026-09-09T00:56:40.9251793Z Updating files:  37% (27007/72990)
+2026-09-09T00:56:40.9523392Z Updating files:  38% (27737/72990)
+2026-09-09T00:56:40.9800747Z Updating files:  39% (28467/72990)
+2026-09-09T00:56:41.0069919Z Updating files:  40% (29196/72990)
+2026-09-09T00:56:41.0347305Z Updating files:  41% (29926/72990)
+2026-09-09T00:56:41.0633029Z Updating files:  42% (30656/72990)
+2026-09-09T00:56:41.0904901Z Updating files:  43% (31386/72990)
+2026-09-09T00:56:41.1206031Z Updating files:  44% (32116/72990)
+2026-09-09T00:56:41.1487388Z Updating files:  45% (32846/72990)
+2026-09-09T00:56:41.1815830Z Updating files:  46% (33576/72990)
+2026-09-09T00:56:41.2099037Z Updating files:  47% (34306/72990)
+2026-09-09T00:56:41.2375757Z Updating files:  48% (35036/72990)
+2026-09-09T00:56:41.2703249Z Updating files:  49% (35766/72990)
+2026-09-09T00:56:41.2979798Z Updating files:  50% (36495/72990)
+2026-09-09T00:56:41.3254765Z Updating files:  51% (37225/72990)
+2026-09-09T00:56:41.3525394Z Updating files:  52% (37955/72990)
+2026-09-09T00:56:41.3803170Z Updating files:  53% (38685/72990)
+2026-09-09T00:56:41.4076406Z Updating files:  54% (39415/72990)
+2026-09-09T00:56:41.4352362Z Updating files:  55% (40145/72990)
+2026-09-09T00:56:41.4630751Z Updating files:  56% (40875/72990)
+2026-09-09T00:56:41.4905688Z Updating files:  57% (41605/72990)
+2026-09-09T00:56:41.5181168Z Updating files:  58% (42335/72990)
+2026-09-09T00:56:41.5454522Z Updating files:  59% (43065/72990)
+2026-09-09T00:56:41.5744005Z Updating files:  60% (43794/72990)
+2026-09-09T00:56:41.5880492Z Updating files:  61% (44524/72990)
+2026-09-09T00:56:41.6021121Z Updating files:  61% (44879/72990)
+2026-09-09T00:56:41.6295734Z Updating files:  62% (45254/72990)
+2026-09-09T00:56:41.6567738Z Updating files:  63% (45984/72990)
+2026-09-09T00:56:41.6838244Z Updating files:  64% (46714/72990)
+2026-09-09T00:56:41.7109633Z Updating files:  65% (47444/72990)
+2026-09-09T00:56:41.7387774Z Updating files:  66% (48174/72990)
+2026-09-09T00:56:41.7665181Z Updating files:  67% (48904/72990)
+2026-09-09T00:56:41.7939206Z Updating files:  68% (49634/72990)
+2026-09-09T00:56:41.8212367Z Updating files:  69% (50364/72990)
+2026-09-09T00:56:41.8519100Z Updating files:  70% (51093/72990)
+2026-09-09T00:56:41.8791485Z Updating files:  71% (51823/72990)
+2026-09-09T00:56:41.9067380Z Updating files:  72% (52553/72990)
+2026-09-09T00:56:41.9341038Z Updating files:  73% (53283/72990)
+2026-09-09T00:56:41.9615159Z Updating files:  74% (54013/72990)
+2026-09-09T00:56:41.9898697Z Updating files:  75% (54743/72990)
+2026-09-09T00:56:42.0184032Z Updating files:  76% (55473/72990)
+2026-09-09T00:56:42.0463457Z Updating files:  77% (56203/72990)
+2026-09-09T00:56:42.0737803Z Updating files:  78% (56933/72990)
+2026-09-09T00:56:42.1032804Z Updating files:  79% (57663/72990)
+2026-09-09T00:56:42.1343707Z Updating files:  80% (58392/72990)
+2026-09-09T00:56:42.1621727Z Updating files:  81% (59122/72990)
+2026-09-09T00:56:42.1894165Z Updating files:  82% (59852/72990)
+2026-09-09T00:56:42.2166460Z Updating files:  83% (60582/72990)
+2026-09-09T00:56:42.2444353Z Updating files:  84% (61312/72990)
+2026-09-09T00:56:42.2725161Z Updating files:  85% (62042/72990)
+2026-09-09T00:56:42.3011597Z Updating files:  86% (62772/72990)
+2026-09-09T00:56:42.3296866Z Updating files:  87% (63502/72990)
+2026-09-09T00:56:42.3576048Z Updating files:  88% (64232/72990)
+2026-09-09T00:56:42.3859433Z Updating files:  89% (64962/72990)
+2026-09-09T00:56:42.4138062Z Updating files:  90% (65691/72990)
+2026-09-09T00:56:42.4411988Z Updating files:  91% (66421/72990)
+2026-09-09T00:56:42.4691097Z Updating files:  92% (67151/72990)
+2026-09-09T00:56:42.4961462Z Updating files:  93% (67881/72990)
+2026-09-09T00:56:42.5236442Z Updating files:  94% (68611/72990)
+2026-09-09T00:56:42.5510558Z Updating files:  95% (69341/72990)
+2026-09-09T00:56:42.5790254Z Updating files:  96% (70071/72990)
+2026-09-09T00:56:42.5880365Z Updating files:  97% (70801/72990)
+2026-09-09T00:56:42.6067911Z Updating files:  97% (71035/72990)
+2026-09-09T00:56:42.9153299Z Updating files:  98% (71531/72990)
+2026-09-09T00:56:43.4211930Z Updating files:  99% (72261/72990)
+2026-09-09T00:56:43.4212434Z Updating files: 100% (72990/72990)
+2026-09-09T00:56:43.4212869Z Updating files: 100% (72990/72990), done.
+2026-09-09T00:56:43.4852583Z Switched to a new branch 'aislop'
+2026-09-09T00:56:43.4855193Z branch 'aislop' set up to track 'origin/aislop'.
+2026-09-09T00:56:43.6913511Z ##[endgroup]
+2026-09-09T00:56:43.6966789Z [command]/usr/bin/git log -1 --format=%H
+2026-09-09T00:56:43.7007623Z 28eac6e4704f8964536664827cc5110bb47c83dc
+2026-09-09T00:56:43.7383107Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-09T00:56:43.7385440Z ##[group]Run actions/setup-java@v4
+2026-09-09T00:56:43.7385700Z with:
+2026-09-09T00:56:43.7385902Z   distribution: temurin
+2026-09-09T00:56:43.7386127Z   java-version: 17
+2026-09-09T00:56:43.7386329Z   java-package: jdk
+2026-09-09T00:56:43.7386538Z   check-latest: false
+2026-09-09T00:56:43.7386740Z   server-id: github
+2026-09-09T00:56:43.7387240Z   server-username: GITHUB_ACTOR
+2026-09-09T00:56:43.7387544Z   server-password: GITHUB_TOKEN
+2026-09-09T00:56:43.7387791Z   overwrite-settings: true
+2026-09-09T00:56:43.7388021Z   job-status: success
+2026-09-09T00:56:43.7390456Z   token: ***
+2026-09-09T00:56:43.7390668Z ##[endgroup]
+2026-09-09T00:56:43.9185231Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+2026-09-09T00:56:43.9195549Z ##[group]Installed distributions
+2026-09-09T00:56:43.9244537Z Resolved Java 17.0.20+1 from tool-cache
+2026-09-09T00:56:43.9245016Z Setting Java 17.0.20+1 as the default
+2026-09-09T00:56:43.9256822Z (node:2028) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-09T00:56:43.9257938Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-09T00:56:43.9260491Z Creating toolchains.xml for JDK version 17 from temurin
+2026-09-09T00:56:43.9337689Z Writing to /home/runner/.m2/toolchains.xml
+2026-09-09T00:56:43.9338212Z 
+2026-09-09T00:56:43.9338486Z Java configuration:
+2026-09-09T00:56:43.9338912Z   Distribution: temurin
+2026-09-09T00:56:43.9339323Z   Version: 17.0.20+1
+2026-09-09T00:56:43.9339888Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:43.9340427Z 
+2026-09-09T00:56:43.9340906Z ##[endgroup]
+2026-09-09T00:56:43.9357789Z Creating settings.xml with server-id: github
+2026-09-09T00:56:43.9385120Z Writing to /home/runner/.m2/settings.xml
+2026-09-09T00:56:43.9561626Z ##[group]Run set -euo pipefail
+2026-09-09T00:56:43.9561995Z [36;1mset -euo pipefail[0m
+2026-09-09T00:56:43.9562415Z [36;1mbootstrap_dir="$(mktemp -d "${RUNNER_TEMP}/acgn-elan-bootstrap.XXXXXX")"[0m
+2026-09-09T00:56:43.9562871Z [36;1marchive="${bootstrap_dir}/elan.tar.gz"[0m
+2026-09-09T00:56:43.9563306Z [36;1mcurl --proto '=https' --tlsv1.2 --fail --location --silent --show-error \[0m
+2026-09-09T00:56:43.9563749Z [36;1m  --retry 3 --output "${archive}" \[0m
+2026-09-09T00:56:43.9564333Z [36;1m  "https://github.com/leanprover/elan/releases/download/${ELAN_VERSION}/elan-x86_64-unknown-linux-gnu.tar.gz"[0m
+2026-09-09T00:56:43.9565042Z [36;1mprintf '%s  %s\n' "${ELAN_X86_64_LINUX_SHA256}" "${archive}" | sha256sum --check --strict[0m
+2026-09-09T00:56:43.9565638Z [36;1mtar --extract --gzip --no-same-owner --file "${archive}" --directory "${bootstrap_dir}"[0m
+2026-09-09T00:56:43.9566415Z [36;1m"${bootstrap_dir}/elan-init" -y --default-toolchain none --no-modify-path[0m
+2026-09-09T00:56:43.9566919Z [36;1mprintf '%s\n' "${ELAN_HOME}/bin" >> "${GITHUB_PATH}"[0m
+2026-09-09T00:56:43.9567640Z [36;1mprintf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"[0m
+2026-09-09T00:56:43.9962392Z shell: /usr/bin/bash -e {0}
+2026-09-09T00:56:43.9962690Z env:
+2026-09-09T00:56:43.9963031Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:43.9963567Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:43.9964007Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+2026-09-09T00:56:43.9964301Z   ELAN_VERSION: v4.2.4
+2026-09-09T00:56:43.9964680Z   ELAN_X86_64_LINUX_SHA256: 42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63
+2026-09-09T00:56:43.9965110Z ##[endgroup]
+2026-09-09T00:56:44.2344567Z /home/runner/work/_temp/acgn-elan-bootstrap.Do0ip7/elan.tar.gz: OK
+2026-09-09T00:56:44.3468599Z ##[group]Run python3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five
+2026-09-09T00:56:44.3469259Z [36;1mpython3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five[0m
+2026-09-09T00:56:44.3541643Z shell: /usr/bin/bash -e {0}
+2026-09-09T00:56:44.3541895Z env:
+2026-09-09T00:56:44.3542201Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:44.3542702Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:44.3543134Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+2026-09-09T00:56:44.3543414Z ##[endgroup]
+2026-09-09T00:56:44.7075531Z [fourth-five] lean-version
+2026-09-09T00:56:57.8058690Z {"closureId": "fourth-five-v1-96ad79ffdb675c46", "status": "BLOCKED", "errors": ["UNDECLARED_DEPENDENCY: Lean differs from frozen version"]}
+2026-09-09T00:56:57.8136115Z ##[error]Process completed with exit code 1.
+2026-09-09T00:56:57.8201873Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-09T00:56:57.8203178Z ##[group]Run actions/upload-artifact@v4
+2026-09-09T00:56:57.8203441Z with:
+2026-09-09T00:56:57.8203762Z   name: fourth-obligation-closure-28eac6e4704f8964536664827cc5110bb47c83dc
+2026-09-09T00:56:57.8204738Z   path: /tmp/acgn-fourth-five/report.json
+/tmp/acgn-fourth-five/input-manifest.json
+/tmp/acgn-fourth-five/*.log
+/tmp/acgn-fourth-five/build*/build-evidence.json
+/tmp/acgn-fourth-five/build*/artifacts.json
+
+2026-09-09T00:56:57.8205568Z   if-no-files-found: warn
+2026-09-09T00:56:57.8205796Z   compression-level: 6
+2026-09-09T00:56:57.8206016Z   overwrite: false
+2026-09-09T00:56:57.8206224Z   include-hidden-files: false
+2026-09-09T00:56:57.8206472Z env:
+2026-09-09T00:56:57.8206762Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:57.8207469Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-09-09T00:56:57.8207872Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+2026-09-09T00:56:57.8208149Z ##[endgroup]
+2026-09-09T00:56:58.0052974Z (node:2063) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-09T00:56:58.0053698Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-09T00:56:58.0229035Z With the provided path, there will be 3 files uploaded
+2026-09-09T00:56:58.0231465Z Artifact name is valid!
+2026-09-09T00:56:58.0232424Z Root directory input is valid!
+2026-09-09T00:56:58.2210654Z Beginning upload of artifact content to blob storage
+2026-09-09T00:56:58.2484290Z (node:2063) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-09-09T00:56:58.3002868Z Uploaded bytes 58696
+2026-09-09T00:56:58.3185905Z Finished uploading artifact content to blob storage!
+2026-09-09T00:56:58.3187481Z SHA256 digest of uploaded artifact zip is ca4fc3d0f0d514338fde31ff628b5e28161108a16cf1f1c17075cfecc9033d1f
+2026-09-09T00:56:58.3189708Z Finalizing artifact upload
+2026-09-09T00:56:58.5493384Z Artifact fourth-obligation-closure-28eac6e4704f8964536664827cc5110bb47c83dc.zip successfully finalized. Artifact ID 10083548182
+2026-09-09T00:56:58.5496260Z Artifact fourth-obligation-closure-28eac6e4704f8964536664827cc5110bb47c83dc has been successfully uploaded! Final size is 58696 bytes. Artifact ID is 10083548182
+2026-09-09T00:56:58.5499998Z Artifact download URL: https://github.com/AlexandervonWu/ACGN/actions/runs/34297111939/artifacts/10083548182
+2026-09-09T00:56:58.5679418Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-09T00:56:58.5680692Z Post job cleanup.
+2026-09-09T00:56:58.7124084Z (node:2075) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-09-09T00:56:58.7148819Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-09-09T00:56:58.7325177Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-09-09T00:56:58.7326564Z Post job cleanup.
+2026-09-09T00:56:58.8311372Z [command]/usr/bin/git version
+2026-09-09T00:56:58.8387800Z git version 2.55.0
+2026-09-09T00:56:58.8418740Z Temporarily overriding HOME='/home/runner/work/_temp/12384dad-7bbe-4a97-985c-8466ff0bb22a' before making global git config changes
+2026-09-09T00:56:58.8438318Z Adding repository directory to the temporary git global config as a safe directory
+2026-09-09T00:56:58.8448096Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ACGN/ACGN
+2026-09-09T00:56:58.8463363Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-09-09T00:56:58.8509826Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-09-09T00:56:58.9020428Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-09-09T00:56:58.9051560Z http.https://github.com/.extraheader
+2026-09-09T00:56:58.9067250Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-09-09T00:56:58.9109395Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-09-09T00:56:58.9548349Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-09-09T00:56:58.9591250Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-09-09T00:56:59.0106046Z Cleaning up orphan processes
+2026-09-09T00:56:59.0399230Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

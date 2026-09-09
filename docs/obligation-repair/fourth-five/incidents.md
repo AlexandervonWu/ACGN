@@ -195,3 +195,22 @@ time from consuming the new package's budget; reports and command logs are
 also uploaded. A fresh local two-build closure binds the new workflow. No
 producer, verifier, proof, dataset or experimental result changed, so the
 completed full-corpus run remains the result source for v2.15.
+
+## Independent Job Cold Start
+
+The independent job in run `34297111939` reported `BLOCKED` with
+`UNDECLARED_DEPENDENCY: Lean differs from frozen version`. Its retained
+`lean-version.log` actually contained the correct Lean 4.33.0 line preceded
+by Elan's first-install messages. The combined job had implicitly warmed
+the toolchain through its earlier catalog step; the new job had not.
+This is a setup/transcript mismatch, not a theorem or Java semantic defect.
+The exact failed report and log are in `evidence/independent-ci-cold-start/`.
+
+An explicit `elan toolchain install` now runs before offline verification.
+The strict version checker is unchanged. A fresh local ELAN_HOME using the
+exact CI installer (SHA-256
+`42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63`)
+reproduced a clean single-line Lean 4.33.0 version response after installation.
+The candidate is reverified with that isolated toolchain and a fresh input
+root. The preceding archive replay and superseded CI run were stopped with
+their partial records retained; no such partial run is used as a PASS.

@@ -54,8 +54,8 @@ right-associated primitive JOIN export reproduces the original failure.
 ## Bounded Verification
 
 The final [machine report](obligation-repair/fourth-five/evidence/final/report.json)
-is VERIFIED at `fourth-five-v1-96ad79ffdb675c46`, input root
-`96ad79ffdb675c46e4c07b6920fc04a797f67dea2eb6eccb19819a8877b3f990`.
+is VERIFIED at `fourth-five-v1-58c1aae07b2d37dc`, input root
+`58c1aae07b2d37dc98459c7c9989cb942b0845ec1fce579b8ca19836b16a133b`.
 Two clean builds passed all five claims with 1,076 identical artifacts each:
 66 general Lean theorems, 9,128 replay propositions/blocks, 10,630 Java
 observations, 126,489 assertions, 36 Lean rejection controls and 42 source
@@ -69,6 +69,9 @@ the earlier suites run separately. The combined job's later overall timeout
 is retained as an infrastructure limit too. Proofs, counters and pass
 criteria are unchanged. The release requires successful CI on its exact
 packaging commit in addition to the local frozen-input result.
+The independent job installs the pinned Lean toolchain before starting
+offline verification, preserving the strict clean-version transcript check.
+Its cold-start setup correction and original blocked report are retained.
 
 ## Full-Corpus Results
 
