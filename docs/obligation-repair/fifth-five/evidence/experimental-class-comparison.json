@@ -1,0 +1,9 @@
+{
+  "baselineJar": "publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/build/acgn-experiments.jar",
+  "baselineJarSha256": "67e7dd088ef864a9170178e6b6c963a2c339836fa88b25cffe8e20788714f04a",
+  "freshClasses": "/tmp/acgn-v217-fifth-final2/build1/classes",
+  "identicalExistingClasses": 898,
+  "changedExistingClasses": [],
+  "missingExistingClasses": [],
+  "allExistingClassesByteIdentical": true
+}

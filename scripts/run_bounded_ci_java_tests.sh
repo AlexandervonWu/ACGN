@@ -42,6 +42,10 @@ tests=(
   is.fivefivefive.CanDis.theory.ContainerWitnessTransitionsRegressionTest
   is.fivefivefive.CanDis.theory.DependentChainWitnessesRegressionTest
   is.fivefivefive.CanDis.theory.SemanticProfileWireRegressionTest
+  is.fivefivefive.CanDis.theory.LawRecordWireRegressionTest
+  is.fivefivefive.CanDis.theory.FlatContainerRecordsRegressionTest
+  is.fivefivefive.CanDis.theory.CanonicalWireTablesRegressionTest
+  is.fivefivefive.CanDis.theory.SourceOccurrenceBindingsRegressionTest
   is.fivefivefive.CanDis.CanonicalAlloyPipelineTest
   is.fivefivefive.CanDis.CanonicalBacktranslatorTest
   is.fivefivefive.CanDis.EGraphSaturationTest

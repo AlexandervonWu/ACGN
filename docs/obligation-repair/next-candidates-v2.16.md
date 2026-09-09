@@ -1,5 +1,9 @@
 # Next Five Bounded Repair Candidates
 
+Historical task specification recorded at v2.16. The implementation and
+bounded verification record are now in [fifth-five](fifth-five/README.md).
+The original proposal and its limitations are retained below.
+
 These follow the five completed v2.15 repairs. The v2.16 temporal solver fix
 does not discharge additional original assurance requirements. These remain
 proposed, separately scoped tasks, not completed repairs or new authority.

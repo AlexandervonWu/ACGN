@@ -1,0 +1,426 @@
+RejectFlatContainerRecords.lean:73:2612: error: Tactic `decide` proved that the proposition
+  [acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == true &&
+              false == true &&
+            wireEqual
+              (Wire.node "flat-construction"
+                ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction"
+                ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "wrong-record-tag"
+                      ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "wrong-record-tag"
+                ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "wrong-record-tag"
+                ["ref-11", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction" ["ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction" ["ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["wrong-field", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction"
+                ["wrong-field", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction"
+                ["wrong-field", "ref-12", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-11", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction" ["ref-11", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction" ["ref-11", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-11", "wrong-field", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction"
+                ["ref-11", "wrong-field", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction"
+                ["ref-11", "wrong-field", "ref-5", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-11", "ref-12", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction" ["ref-11", "ref-12", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction" ["ref-11", "ref-12", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]]),
+          acceptsFlat expected0
+                    (Wire.node "flat-construction"
+                      ["ref-11", "ref-12", "wrong-field", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                      [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                          [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                              [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                                  [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                                Wire.node "flat-leaf" ["ref-9"] []],
+                            Wire.node "flat-leaf" ["ref-8"] []],
+                        Wire.node "splices" []
+                          [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                            Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                        Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                          [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                            Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                            Wire.node "trace-output" ["ref-9", "0", "2"] []]]) ==
+                  false &&
+                false == false &&
+              false == false &&
+            wireEqual
+              (Wire.node "flat-construction"
+                ["ref-11", "ref-12", "wrong-field", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])
+              (Wire.node "flat-construction"
+                ["ref-11", "ref-12", "wrong-field", "0/0", "NODE", "ref-13", "ref-14", "ref-15", "ref-16"]
+                [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-4"]
+                    [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-3"]
+                        [Wire.node "flat-application" ["ref-5", "ref-6", "2", "ref-2"]
+                            [Wire.node "flat-leaf" ["ref-9"] [], Wire.node "flat-leaf" ["ref-8"] []],
+                          Wire.node "flat-leaf" ["ref-9"] []],
+                      Wire.node "flat-leaf" ["ref-8"] []],
+                  Wire.node "splices" []
+                    [Wire.node "splice" ["0", "2", "2", "0", "ref-3"] [],
+                      Wire.node "splice" ["0/0", "2", "2", "0", "ref-2"] []],
+                  Wire.node "container-trace" ["ref-7", "ref-6", "4", "2", "ref-10"]
+                    [Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-input" ["ref-9"] [], Wire.node "trace-input" ["ref-8"] [],
+                      Wire.node "trace-output" ["ref-8", "1", "3"] [],
+                      Wire.node "trace-output" ["ref-9", "0", "2"] []]])].all
+      id =
+    true
+is false
+'ACGN.FifthFive.FlatContainerRecordsReplay.recordsBlock0' depends on axioms: [propext,
+ sorryAx,
+ Classical.choice,
+ Quot.sound]

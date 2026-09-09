@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "profile": "fifth-five-v1",
+  "leanVersion": "4.33.0",
+  "timeoutSeconds": 900,
+  "requiredCleanBuilds": 2,
+  "proofDependencies": [],
+  "replayPlugin": "scripts/fifth_obligation_replays.py",
+  "inputs": [
+    "scripts/run_fifth_obligation_repairs.py",
+    "scripts/fifth_obligation_replays.py",
+    "scripts/test_fifth_obligation_repairs.py",
+    "scripts/third_obligation_replays.py",
+    "scripts/fifth_law_record_replays.py",
+    "scripts/test_fifth_law_record_replays.py",
+    "scripts/fifth_flat_container_replays.py",
+    "scripts/test_fifth_flat_container_replays.py",
+    "scripts/fifth_wire_tables_replays.py",
+    "scripts/test_fifth_wire_tables_replays.py",
+    "scripts/fifth_source_bindings_replays.py",
+    "scripts/test_fifth_source_bindings_replays.py",
+    "docs/obligation-repair/fifth-five/law-record-notes.md",
+    "docs/obligation-repair/fifth-five/flat-container-notes.md",
+    "docs/obligation-repair/fifth-five/wire-tables-notes.md",
+    "docs/obligation-repair/fifth-five/source-bindings-notes.md",
+    "docs/obligation-repair/fifth-five/harness-notes.md"
+  ],
+  "phases": [
+    {
+      "id": "FV-P3-04",
+      "parent": "P3-04",
+      "claimSha256": "3991aa4c4db10ffcd0bcc1bc0197fda0b30377e422d4804b44dd05fd89bdab89",
+      "proof": "LawRecordWire.lean",
+      "replays": [
+        "LawRecordWireReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.LawRecordWireRegressionTest",
+          "output": "law-record-wire.tsv"
+        }
+      ],
+      "scope": "General structural law-record codec and exact registry reconstruction contract, connected to a fixed independent census of producer and public verifier observations and compiler-resolved source controls. Whole-JVM and general parser refinement are excluded; hash collision resistance remains trusted.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FV-P3-05",
+      "parent": "P3-05",
+      "claimSha256": "55424471ff9ad348d3c3603257809bba4b768fcf53a389c5cb7c799e490ab620",
+      "proof": "FlatContainerRecords.lean",
+      "replays": [
+        "FlatContainerRecordsReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.FlatContainerRecordsRegressionTest",
+          "output": "flat-container-records.tsv"
+        }
+      ],
+      "scope": "General complete flat-record source, splice and application-trace reconstruction contract, connected to finite producer and independent verifier observations. Exact source-tree order and typed flattening barriers are retained. No new flattening law or whole-Java refinement is claimed.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FV-P3-06",
+      "parent": "P3-06",
+      "claimSha256": "fa0ab4cd0e16850dd0ec8bdb39c2043837ae3c20ead8ea771b5daafe002a1c67",
+      "proof": "FlatContainerRecords.lean",
+      "replays": [
+        "FlatContainerRecordsReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.FlatContainerRecordsRegressionTest",
+          "output": "flat-container-records.tsv"
+        }
+      ],
+      "scope": "General complete container-record input, output and quotient-fiber reconstruction contract, with independent finite producer/verifier observations distinguishing Seq order, Bag multiplicity and Set quotienting. Container law admission remains independently required.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FV-P3-12",
+      "parent": "P3-12",
+      "claimSha256": "981e681a6eac0f86c48a4aa9a4c95d01b6dafea2492683b66f22eb05f7fe0313",
+      "proof": "CanonicalWireTables.lean",
+      "replays": [
+        "CanonicalWireTablesReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.CanonicalWireTablesRegressionTest",
+          "output": "canonical-wire-tables.tsv"
+        }
+      ],
+      "scope": "General canonical wire-table grammar, ordering and content-ID preimage contract, connected to finite writer and independent decoder observations and compiler-resolved source controls. SHA-256 and its collision resistance are trusted; hash injectivity and whole-codec refinement are not claimed.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    },
+    {
+      "id": "FV-A2-12",
+      "parent": "A2-12",
+      "claimSha256": "7238742b9ecea6ad607bbb6fc152d0226175bb229caa2ed5a69352dd5f5aafae",
+      "proof": "SourceOccurrenceBindings.lean",
+      "replays": [
+        "SourceOccurrenceBindingsReplay.lean"
+      ],
+      "tests": [
+        {
+          "class": "is.fivefivefive.CanDis.theory.SourceOccurrenceBindingsRegressionTest",
+          "output": "source-occurrence-bindings.tsv"
+        }
+      ],
+      "scope": "General deterministic phase/child occurrence-path and retained dependent-source structural commitment contract, connected to finite adapter observations and source controls. The certified retained source tree is the boundary; P1-19 raw-source authority and whole-parser reconstruction remain separate obligations.",
+      "passCondition": {
+        "type": "all",
+        "checks": [
+          "original-parent-hash",
+          "frozen-inputs-and-verifiers",
+          "audited-lean-proofs",
+          "all-configured-java-tests",
+          "strict-area-censuses",
+          "kernel-checked-replays",
+          "negative-and-source-controls-exit-1",
+          "two-fresh-builds",
+          "deterministic-artifacts-and-provenance",
+          "bound-machine-evidence"
+        ]
+      },
+      "blockConditions": [
+        "CLAIM_MUTATION",
+        "INPUT_MUTATION",
+        "UNDECLARED_DEPENDENCY",
+        "VERIFIER_FAILURE",
+        "VERIFIER_NOT_RUN",
+        "STALE_OR_UNBOUND_EVIDENCE",
+        "UNMAPPED_IMPLEMENTATION_OBJECT",
+        "AMBIGUOUS_CORRESPONDENCE",
+        "MISSING_WITNESS",
+        "WITNESS_INVALID",
+        "CLEAN_BUILD_FAILURE",
+        "NONDETERMINISM",
+        "ORPHAN_CLAIM",
+        "SCOPE_LEAK"
+      ]
+    }
+  ],
+  "extractors": [
+    {
+      "id": "law",
+      "class": "LawRecordWireExtractor",
+      "source": "scripts/java/LawRecordWireExtractor.java",
+      "output": "law-record-wire-source.tsv"
+    },
+    {
+      "id": "records",
+      "class": "FlatContainerRecordsExtractor",
+      "source": "scripts/java/FlatContainerRecordsExtractor.java",
+      "output": "flat-container-records-source.tsv"
+    },
+    {
+      "id": "wire",
+      "class": "CanonicalWireTablesExtractor",
+      "source": "scripts/java/CanonicalWireTablesExtractor.java",
+      "output": "canonical-wire-tables-source.tsv"
+    },
+    {
+      "id": "source",
+      "class": "SourceOccurrenceBindingsExtractor",
+      "source": "scripts/java/SourceOccurrenceBindingsExtractor.java",
+      "output": "source-occurrence-bindings-source.tsv"
+    }
+  ],
+  "trusted": [
+    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "javac/JVM 17 and Java standard-library contracts",
+    "Git deterministic commits in isolated frozen snapshots for TEST_ONLY certificate provenance, never release or experiment provenance",
+    "Pinned v2.13 engine and v2.14 dispatcher, bounded profile adapter, hashed area encoders and compiler extractors; tested, not Lean-verified",
+    "Hashed Alloy parser, source/type/profile interpretation and provenance decoding at the finite observation boundary",
+    "Python standard library, SHA-256 implementation and collision resistance, filesystem, OS and hardware"
+  ],
+  "excluded": [
+    "Original parent statements beyond the explicitly frozen repair scopes; no automatic universal ledger discharge",
+    "Whole-Java, whole-parser or whole-corpus refinement",
+    "New empirical results, production guarantees, rewrite families or certificate authority",
+    "SHA-256 injectivity; unlisted claims, future revisions and undeclared deployment environments"
+  ],
+  "permittedNondeterminism": [
+    "Log timings, diagnostic paths and host identifiers"
+  ],
+  "statusPolicy": {
+    "unresolvedIsBlocking": true,
+    "warningIsBlocking": true,
+    "manualOverrideAllowed": false
+  },
+  "networkDuringVerification": false
+}

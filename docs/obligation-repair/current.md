@@ -1,6 +1,6 @@
 # Ordered Obligation Repair Status
 
-Current diagnostics: **111**. Original diagnostics: **132**.
+Current diagnostics: **105**. Original diagnostics: **132**.
 
 Absence of a diagnostic is not proof of repair; verified evidence is required.
 
@@ -57,8 +57,8 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 49 | A2-10 | A2-10 formal_status is PARTIAL | OPEN |
 | 50 | A2-11 | A2-11 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 51 | A2-11 | A2-11 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 52 | A2-12 | A2-12 formal_status is PARTIAL | OPEN |
-| 53 | A2-12 | A2-12 conformance_status is PARTIAL | OPEN |
+| 52 | A2-12 | A2-12 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 53 | A2-12 | A2-12 conformance_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 54 | A2-14 | A2-14 formal_status is PARTIAL | OPEN |
 | 55 | A2-15 | A2-15 formal_status is PARTIAL | OPEN |
 | 56 | A2-16 | A2-16 formal_status is PARTIAL | OPEN |
@@ -83,13 +83,13 @@ Absence of a diagnostic is not proof of repair; verified evidence is required.
 | 75 | P3-01 | P3-01 formal_status is PARTIAL | OPEN |
 | 76 | P3-01 | P3-01 conformance_status is PARTIAL | OPEN |
 | 77 | P3-03 | P3-03 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
-| 78 | P3-04 | P3-04 formal_status is PARTIAL | OPEN |
-| 79 | P3-05 | P3-05 formal_status is PARTIAL | OPEN |
-| 80 | P3-06 | P3-06 formal_status is PARTIAL | OPEN |
+| 78 | P3-04 | P3-04 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 79 | P3-05 | P3-05 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
+| 80 | P3-06 | P3-06 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 81 | P3-08 | P3-08 formal_status is PARTIAL | OPEN |
 | 82 | P3-09 | P3-09 formal_status is PARTIAL | OPEN |
 | 83 | P3-10 | P3-10 formal_status is PARTIAL | OPEN |
-| 84 | P3-12 | P3-12 formal_status is PARTIAL | OPEN |
+| 84 | P3-12 | P3-12 formal_status is PARTIAL | ABSENT_REQUIRES_EVIDENCE |
 | 85 | P3-13 | P3-13 formal_status is PARTIAL | OPEN |
 | 86 | P3-14 | P3-14 formal_status is PARTIAL | OPEN |
 | 87 | P3-15 | P3-15 formal_status is PARTIAL | OPEN |

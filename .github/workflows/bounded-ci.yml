@@ -95,6 +95,48 @@ jobs:
             /tmp/acgn-fourth-five/build*/build-evidence.json
             /tmp/acgn-fourth-five/build*/artifacts.json
 
+  fifth-obligation-closure:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install pinned Lean toolchain manager
+        env:
+          ELAN_HOME: ${{ runner.temp }}/acgn-elan
+          ELAN_VERSION: v4.2.4
+          ELAN_X86_64_LINUX_SHA256: 42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63
+        run: |
+          set -euo pipefail
+          bootstrap_dir="$(mktemp -d "${RUNNER_TEMP}/acgn-elan-bootstrap.XXXXXX")"
+          archive="${bootstrap_dir}/elan.tar.gz"
+          curl --proto '=https' --tlsv1.2 --fail --location --silent --show-error \
+            --retry 3 --output "${archive}" \
+            "https://github.com/leanprover/elan/releases/download/${ELAN_VERSION}/elan-x86_64-unknown-linux-gnu.tar.gz"
+          printf '%s  %s\n' "${ELAN_X86_64_LINUX_SHA256}" "${archive}" | sha256sum --check --strict
+          tar --extract --gzip --no-same-owner --file "${archive}" --directory "${bootstrap_dir}"
+          "${bootstrap_dir}/elan-init" -y --default-toolchain none --no-modify-path
+          printf '%s\n' "${ELAN_HOME}/bin" >> "${GITHUB_PATH}"
+          printf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"
+      - name: Install frozen Lean toolchain before offline verification
+        run: elan toolchain install "$(cat lean-toolchain)"
+      - name: Replay complete law, construction, wire and occurrence records
+        run: python3 -B scripts/run_fifth_obligation_repairs.py /tmp/acgn-fifth-five
+      - name: Retain closure reports and command logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fifth-obligation-closure-${{ github.sha }}
+          path: |
+            /tmp/acgn-fifth-five/report.json
+            /tmp/acgn-fifth-five/input-manifest.json
+            /tmp/acgn-fifth-five/*.log
+            /tmp/acgn-fifth-five/build*/build-evidence.json
+            /tmp/acgn-fifth-five/build*/artifacts.json
+
   frontend:
     runs-on: ubuntu-22.04
     timeout-minutes: 15

@@ -88,9 +88,8 @@ continue with typed recursive flattening, independent relation-view leaf
 proofs, dependent-chain indices, container-witness indices, and exact profile
 serialization. Original claim statements and trust boundaries are preserved.
 The package distinguishes general Lean contracts, bounded Java observations,
-and independently replayed certificate fields. Its five repairs bring the
-matrix to **107 ready requirements and 111 diagnostics**; overall formal
-closure remains incomplete.
+and independently replayed certificate fields. At v2.15, its five repairs
+brought the matrix to **107 ready requirements and 111 diagnostics**.
 
 The new source-profile checks also exposed and repaired an obsolete context
 version pin in the standalone verifier: it now checks the exact version emitted
@@ -113,7 +112,19 @@ of temporal operators hidden inside predicate calls. Its clean
 passes all 29 sampled checks, including the six previously inconclusive cases.
 The full-corpus measurements below are unchanged. The
 [next five bounded tasks](docs/obligation-repair/next-candidates-v2.16.md)
-cover law, flat and container wire replay, canonical tables and source bindings.
+defined the subsequent law, flat/container wire replay, canonical-table and
+source-binding work.
+
+The [v2.17 assurance package](docs/release-v2.17.md) implements those tasks
+with 85 general Lean theorems and 538 replay propositions over 700 finite
+Java observations. Its [two-build closure](docs/obligation-repair/fifth-five/README.md)
+requires complete records, independent expected censuses, strict rejection
+controls, source bindings and deterministic evidence. The matrix is now
+**112 ready requirements and 105 diagnostics**, with bounded direct conformance,
+not universal Java/parser refinement. Independent reviews and the retained
+integration failures are documented. All 898 existing experimental JAR classes
+remain byte-identical; this proof/test-only release retains the empirical
+snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 

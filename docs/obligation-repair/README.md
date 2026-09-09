@@ -30,14 +30,22 @@ container indices, and profile wire reconstruction. It also records three
 concrete producer/replay corrections and their before/after regressions.
 Its machine report, not the assessment labels, determines bounded closure.
 
-The current assessment reports **107 ready requirements and 111 diagnostics**.
-Twenty-two original diagnostics are absent; their evidence belongs to the
-four separate five-claim packages. The original queue has 110 remaining diagnostics,
+The [v2.17 continuation](fifth-five/README.md) addresses P3-04, P3-05, P3-06,
+P3-12 and A2-12 with complete law/flat/container records, canonical wire tables
+and retained-source occurrence commitments. It separates general structural
+contracts from finite Java correspondence and retains every original claim hash.
+
+The current assessment reports **112 ready requirements and 105 diagnostics**.
+Twenty-eight original diagnostics are absent; their evidence belongs to the
+five separate five-claim packages. The original queue has 104 remaining diagnostics,
 plus the explicitly exposed A-01 missing-registry diagnostic. The full assurance
 matrix remains `INCOMPLETE`; its original 132-entry baseline is not rewritten.
 
 The [v2.14 candidate list](next-candidates-v2.14.md) records the original scope
-of this continuation. A lower diagnostic count is not full artifact closure.
+of that continuation; the [v2.16 list](next-candidates-v2.16.md) records the
+fifth package's acceptance boundary. A lower diagnostic count is not full
+artifact closure. Each package's machine report applies only to its own
+frozen inputs, not automatically to future packaging revisions.
 
 ## First Item: A-01
 

@@ -6,8 +6,8 @@
 
 - Scoped claims: 191
 - Matrix rows: 191
-- Fully ready rows: 107
-- Open diagnostics: 111
+- Fully ready rows: 112
+- Open diagnostics: 105
 - Assurance state: `INCOMPLETE`
 
 ## Common Proof Process
@@ -1084,15 +1084,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `7238742b9ecea6ad607bbb6fc152d0226175bb229caa2ed5a69352dd5f5aafae`
 - Ledger line: 124
-- Lean file: `docs/section3-repair-audit/formal/PhaseA2DependentChains.lean`
-- Lean declarations: `accepted_binding_has_exact_path_and_content;same_typed_source_swap_rejects;post_certificate_content_mutation_rejects`
+- Lean file: `docs/section3-repair-audit/formal/SourceOccurrenceBindings.lean`
+- Lean declarations: `child_injective;index_exact;admitted_unique;content_encoding_grammar;commitment_encoding_grammar;commitment_structural;matches_iff;transfer_preserves_source;changed_transfer_rejected`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#indexSourceOccurrencePaths;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#sourceOccurrenceCommitment;src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java#requireMatches;src/is/fivefivefive/CanDis/core/EGraphNode.java#dependentChainSourceContentCommitment`
-- Bounded test references: `src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/SourceOccurrenceBindingsRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
-- Conformance status: `PARTIAL`
-- Claim-specific process/limits: Path and content equality plus swap and post-certificate mutation rejection are modeled; Java path-generation determinism and independent reconstruction of the Fast Rewrite content scalar remain open
-- Current proof state: `INCOMPLETE`
+- Formal status: `PROVED`
+- Conformance status: `DIRECT`
+- Claim-specific process/limits: General ordered phase/child traversal and retained-source descriptor/encoding-grammar contracts with independently reconstructed finite Java paths, content and provenance transitions in fifth-five; structural injectivity is not encoded-string injectivity; P1-19 raw-source authority and universal parser/JVM refinement remain separate
+- Current proof state: `READY`
 
 ### A2-13
 
@@ -1747,15 +1747,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `3991aa4c4db10ffcd0bcc1bc0197fda0b30377e422d4804b44dd05fd89bdab89`
 - Ledger line: 173
-- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
-- Lean declarations: `complete_law_index_is_injective`
+- Lean file: `docs/section3-repair-audit/formal/LawRecordWire.lean`
+- Lean declarations: `reconstruct_some_iff;decode_some_iff;fields_injective;registry_reconstruction_iff;table_admission_iff;all_field_corruptions_reject;recomputed_outside_matrix_rejects;exact_index_preimage;utf16_boundary_order`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java#lawIndex;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyLawRecord`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/LawRecordWireRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Every modeled law-index field and endpoint is independently replayed and mutation-tested; cryptographic encoding refinement remains outside the Lean model
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General complete 17-field structural codec and exact registry-reconstruction contract with finite actual producer/KERNEL-verifier records, UTF-16 ordering and recomputed-record rejection controls in fifth-five; SHA-256 and universal Java-byte decoding remain trusted or excluded
+- Current proof state: `READY`
 
 ### P3-05
 
@@ -1764,15 +1764,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `55424471ff9ad348d3c3603257809bba4b768fcf53a389c5cb7c799e490ab620`
 - Ledger line: 174
-- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
-- Lean declarations: `exact_flat_replay_accepts;flat_replay_payload_is_injective`
+- Lean file: `docs/section3-repair-audit/formal/FlatContainerRecords.lean`
+- Lean declarations: `flat_decode_lossless;flat_decode_roundtrip;accepted_flat_complete;changed_flat_field_rejects;reconstructed_flat_source`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#splices;src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyFlat`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/FlatContainerRecordsRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Visible source tree, derived splice ledger, ordered leaves, independently normalized trace, endpoints, and coverage survive omission/substitution/reorder attacks; the Lean model is an abstract bounded contract
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General complete flat Wire-record decoder and recursive source/splice/application-trace reconstruction with finite producer/FULL-verifier field controls in fifth-five; external metadata interpretation is explicit, and singleton FULL export and universal byte/JVM refinement are not claimed
+- Current proof state: `READY`
 
 ### P3-06
 
@@ -1781,15 +1781,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `fa0ab4cd0e16850dd0ec8bdb39c2043837ae3c20ead8ea771b5daafe002a1c67`
 - Ledger line: 175
-- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
-- Lean declarations: `exact_container_replay_accepts;container_replay_payload_is_injective`
+- Lean file: `docs/section3-repair-audit/formal/FlatContainerRecords.lean`
+- Lean declarations: `container_decode_lossless;container_decode_roundtrip;accepted_container_complete;changed_container_field_rejects;reconstructed_container_occurrences;bag_preserves_every_multiplicity;bag_fibers_cover_each_occurrence;set_fiber_exact_indices`
 - Implementation references: `src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#inputOccurrences;src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java#containerTrace;certificate-verifier/src/org/acgn/cert/SemanticEvidenceVerifier.java#verifyContainer`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main;src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/FlatContainerRecordsRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Ordered source occurrences, independently normalized outputs, multiplicity/order, and exact quotient fibers are reconstructed and mutation-tested; Java decoding refinement is not proved in Lean
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General complete container-record decoding and exact ordered input/output/fiber reconstruction with finite FULL Bag and local Seq/Bag/Set observations in fifth-five; local traces grant no new law authority and do not claim universal Java decoding
+- Current proof state: `READY`
 
 ### P3-07
 
@@ -1883,15 +1883,15 @@ Every claim follows the same bounded process:
 - Class: `P`
 - Claim SHA-256: `981e681a6eac0f86c48a4aa9a4c95d01b6dafea2492683b66f22eb05f7fe0313`
 - Ledger line: 181
-- Lean file: `docs/section3-repair-audit/formal/Phase3ExactTypesEndpoints.lean`
-- Lean declarations: `canonical_wire_payload_is_injective;exact_wire_claim_accepts;reordered_wire_children_reject`
+- Lean file: `docs/section3-repair-audit/formal/CanonicalWireTables.lean`
+- Lean declarations: `encoding_grammar;decode_exact;preimage_exact;preimage_ignores_id;accepted_section_shape;accepted_rows_ordered;sorted_section_preserves_records;ascii_units;recomputed_content_still_compared`
 - Implementation references: `certificate-verifier/src/org/acgn/cert/Bundle.java#indexedTable;certificate-verifier/src/org/acgn/cert/Bundle.java#contentId;src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java#sortedSection`
-- Bounded test references: `certificate-verifier/test/org/acgn/cert/VerifierTest.java#main;certificate-verifier/test/org/acgn/cert/ProducerSemanticEvidenceMutationTest.java#main`
+- Bounded test references: `src/is/fivefivefive/CanDis/theory/CanonicalWireTablesRegressionTest.java#main`
 - Test classes: `NOMINAL+BOUNDARY+ROBUSTNESS`
-- Formal status: `PARTIAL`
+- Formal status: `PROVED`
 - Conformance status: `DIRECT`
-- Claim-specific process/limits: Content-addressed tables recompute IDs and require canonical order; arbitrary duplicate, content, grammar, and reorder mutations reject, without asserting SHA-256 collision impossibility
-- Current proof state: `INCOMPLETE`
+- Claim-specific process/limits: General canonical wire grammar, conditional successful-decode contract, Java UTF-16 table order and content-ID preimages with finite writer/public-decoder observations in fifth-five; rehashed valid content is not automatically a semantic equality; SHA-256 and whole-codec/JVM refinement remain trusted or excluded
+- Current proof state: `READY`
 
 ### P3-13
 

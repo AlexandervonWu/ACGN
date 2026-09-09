@@ -1,0 +1,22 @@
+Running is.fivefivefive.CanDis.RewriteRuleTraceability
+Traceability scope: catalog reference presence only; this gate does not establish Java-Lean refinement or exhaustive executable-branch coverage.
+R0 rewrite-rule traceability
+rules=61
+baselineRules=24
+failures=0
+Running is.fivefivefive.CanDis.RewriteRuleTraceabilityTest
+RewriteRuleTraceabilityTest passed: 61 rule families, 24 bootstrap rules, 0 correspondence failures
+Running is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
+Section 3 assurance traceability
+requirements=1
+matrixRows=1
+ready=0
+failures=1
+FAIL	A-01 MISSING_LOW_LEVEL_REGISTRY: no atomic child obligations or parent reconstruction evidence
+Section3AssuranceTraceabilityTest passed: 40 checks
+Running is.fivefivefive.CanDis.assurance.ContractDecompositionTest
+ContractDecompositionTest passed: 4863 checks
+Running is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest
+Exception in thread "main" java.lang.AssertionError: A2-12 test class is not executed: is.fivefivefive.CanDis.theory.SourceOccurrenceBindingsRegressionTest
+	at is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest.check(AssuranceTestExecutionCoverageTest.java:110)
+	at is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest.main(AssuranceTestExecutionCoverageTest.java:56)

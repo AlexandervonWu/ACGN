@@ -1,0 +1,15 @@
+test_all_frozen_sites_are_exact_and_nonvacuous (__main__.RecordsPluginTests.test_all_frozen_sites_are_exact_and_nonvacuous) ... ok
+test_dictionary_is_lossless_and_fail_closed (__main__.RecordsPluginTests.test_dictionary_is_lossless_and_fail_closed) ... ok
+test_independent_order_multiplicity_and_fibers (__main__.RecordsPluginTests.test_independent_order_multiplicity_and_fibers) ... ok
+test_missing_extra_duplicate_and_changed_source_pins (__main__.RecordsPluginTests.test_missing_extra_duplicate_and_changed_source_pins) ... ok
+test_predeclared_unique_census (__main__.RecordsPluginTests.test_predeclared_unique_census) ... ok
+test_recursive_source_association_and_preorder (__main__.RecordsPluginTests.test_recursive_source_association_and_preorder) ... ok
+test_registered_rejection_diagnostic (__main__.RecordsPluginTests.test_registered_rejection_diagnostic) ... ok
+test_source_controls_have_unique_exact_supported_sites (__main__.RecordsPluginTests.test_source_controls_have_unique_exact_supported_sites) ... ok
+test_structural_preimage_encoding_not_hash_injectivity (__main__.RecordsPluginTests.test_structural_preimage_encoding_not_hash_injectivity) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.009s
+
+OK
+Two clean records builds passed: /tmp/acgn-v217-records-strict-live/area-test-report.json
