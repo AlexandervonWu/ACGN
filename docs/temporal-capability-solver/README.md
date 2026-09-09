@@ -109,6 +109,9 @@ records; this package does not claim a complete artifact-wide closure.
 The published v2.15 empirical directories, manifests, JAR and release remain
 unchanged. New results are kept alongside this incident, not substituted into
 the archived clean run. Its 5,808 imported output hashes still verify.
+The [v2.16 validation-only publication](../../publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/capability_validation/SOUNDNESS.md)
+records the subsequent clean-source run of these 29 checks, with its separate
+manifest and frozen JAR.
 
 ## Reproduce
 

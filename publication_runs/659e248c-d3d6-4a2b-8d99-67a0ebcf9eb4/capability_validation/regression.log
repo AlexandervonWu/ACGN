@@ -1,0 +1,9 @@
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/AlloyASG-Release.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.SimpleLoggerFactory]
+CapabilitySoundnessCheck: processing 1 checks.
+CapabilitySoundnessCheck: 1/1 complete (100.0%), 336.51 checks/s, ETA 0m 00s.
+Bounded capability soundness: 1 checks, 1 failures.
+CapabilitySoundnessCheckTest: 95 checks passed

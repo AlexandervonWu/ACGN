@@ -1,0 +1,920 @@
+{
+  "baseline": [
+    {
+      "diagnostic": "A-01 conformance_status is PARTIAL",
+      "requirementId": "A-01",
+      "sequence": 1,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-03 conformance_status is PARTIAL",
+      "requirementId": "A-03",
+      "sequence": 2,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-06 conformance_status is REFUTED",
+      "requirementId": "A-06",
+      "sequence": 3,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-07 conformance_status is PARTIAL",
+      "requirementId": "A-07",
+      "sequence": 4,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-08 conformance_status is PARTIAL",
+      "requirementId": "A-08",
+      "sequence": 5,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-10 conformance_status is PARTIAL",
+      "requirementId": "A-10",
+      "sequence": 6,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-11 conformance_status is REFUTED",
+      "requirementId": "A-11",
+      "sequence": 7,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A-12 conformance_status is REFUTED",
+      "requirementId": "A-12",
+      "sequence": 8,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-04 formal_status is PARTIAL",
+      "requirementId": "G-04",
+      "sequence": 9,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-04 conformance_status is PARTIAL",
+      "requirementId": "G-04",
+      "sequence": 10,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-05 formal_status is PARTIAL",
+      "requirementId": "G-05",
+      "sequence": 11,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-05 conformance_status is PARTIAL",
+      "requirementId": "G-05",
+      "sequence": 12,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-06 formal_status is PARTIAL",
+      "requirementId": "G-06",
+      "sequence": 13,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-06 conformance_status is PARTIAL",
+      "requirementId": "G-06",
+      "sequence": 14,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-07 formal_status is PARTIAL",
+      "requirementId": "G-07",
+      "sequence": 15,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-07 conformance_status is PARTIAL",
+      "requirementId": "G-07",
+      "sequence": 16,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-08 formal_status is PARTIAL",
+      "requirementId": "G-08",
+      "sequence": 17,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-08 conformance_status is PARTIAL",
+      "requirementId": "G-08",
+      "sequence": 18,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-09 formal_status is PARTIAL",
+      "requirementId": "G-09",
+      "sequence": 19,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-09 conformance_status is PARTIAL",
+      "requirementId": "G-09",
+      "sequence": 20,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-10 formal_status is PARTIAL",
+      "requirementId": "G-10",
+      "sequence": 21,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-10 conformance_status is PARTIAL",
+      "requirementId": "G-10",
+      "sequence": 22,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-11 formal_status is PARTIAL",
+      "requirementId": "G-11",
+      "sequence": 23,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-12 formal_status is PARTIAL",
+      "requirementId": "G-12",
+      "sequence": 24,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-12 conformance_status is PARTIAL",
+      "requirementId": "G-12",
+      "sequence": 25,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-13 formal_status is PARTIAL",
+      "requirementId": "G-13",
+      "sequence": 26,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-13 conformance_status is REFUTED",
+      "requirementId": "G-13",
+      "sequence": 27,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-14 formal_status is PARTIAL",
+      "requirementId": "G-14",
+      "sequence": 28,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-16 formal_status is PARTIAL",
+      "requirementId": "G-16",
+      "sequence": 29,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-16 conformance_status is REFUTED",
+      "requirementId": "G-16",
+      "sequence": 30,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-17 formal_status is PARTIAL",
+      "requirementId": "G-17",
+      "sequence": 31,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-17 conformance_status is REFUTED",
+      "requirementId": "G-17",
+      "sequence": 32,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-18 formal_status is PARTIAL",
+      "requirementId": "G-18",
+      "sequence": 33,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "G-18 conformance_status is REFUTED",
+      "requirementId": "G-18",
+      "sequence": 34,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P1-05 formal_status is PARTIAL",
+      "requirementId": "P1-05",
+      "sequence": 35,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-06 formal_status is PARTIAL",
+      "requirementId": "P1-06",
+      "sequence": 36,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-08 formal_status is PARTIAL",
+      "requirementId": "P1-08",
+      "sequence": 37,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-09 formal_status is PARTIAL",
+      "requirementId": "P1-09",
+      "sequence": 38,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-10 formal_status is PARTIAL",
+      "requirementId": "P1-10",
+      "sequence": 39,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-15 formal_status is PARTIAL",
+      "requirementId": "P1-15",
+      "sequence": 40,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P1-16 formal_status is PARTIAL",
+      "requirementId": "P1-16",
+      "sequence": 41,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P1-19 formal_status is PARTIAL",
+      "requirementId": "P1-19",
+      "sequence": 42,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-01 formal_status is PARTIAL",
+      "requirementId": "A2-01",
+      "sequence": 43,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-02 formal_status is PARTIAL",
+      "requirementId": "A2-02",
+      "sequence": 44,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-04 formal_status is PARTIAL",
+      "requirementId": "A2-04",
+      "sequence": 45,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-06 formal_status is PARTIAL",
+      "requirementId": "A2-06",
+      "sequence": 46,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-07 formal_status is PARTIAL",
+      "requirementId": "A2-07",
+      "sequence": 47,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-07 conformance_status is PARTIAL",
+      "requirementId": "A2-07",
+      "sequence": 48,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-10 formal_status is PARTIAL",
+      "requirementId": "A2-10",
+      "sequence": 49,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-11 formal_status is PARTIAL",
+      "requirementId": "A2-11",
+      "sequence": 50,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-11 conformance_status is PARTIAL",
+      "requirementId": "A2-11",
+      "sequence": 51,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "A2-12 formal_status is PARTIAL",
+      "requirementId": "A2-12",
+      "sequence": 52,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-12 conformance_status is PARTIAL",
+      "requirementId": "A2-12",
+      "sequence": 53,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-14 formal_status is PARTIAL",
+      "requirementId": "A2-14",
+      "sequence": 54,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-15 formal_status is PARTIAL",
+      "requirementId": "A2-15",
+      "sequence": 55,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-16 formal_status is PARTIAL",
+      "requirementId": "A2-16",
+      "sequence": 56,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-16 conformance_status is PARTIAL",
+      "requirementId": "A2-16",
+      "sequence": 57,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-17 formal_status is PARTIAL",
+      "requirementId": "A2-17",
+      "sequence": 58,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-19 formal_status is PARTIAL",
+      "requirementId": "A2-19",
+      "sequence": 59,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-20 formal_status is PARTIAL",
+      "requirementId": "A2-20",
+      "sequence": 60,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-21 formal_status is PARTIAL",
+      "requirementId": "A2-21",
+      "sequence": 61,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-22 formal_status is PARTIAL",
+      "requirementId": "A2-22",
+      "sequence": 62,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-23 formal_status is PARTIAL",
+      "requirementId": "A2-23",
+      "sequence": 63,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-24 formal_status is PARTIAL",
+      "requirementId": "A2-24",
+      "sequence": 64,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-25 formal_status is PARTIAL",
+      "requirementId": "A2-25",
+      "sequence": 65,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-26 formal_status is PARTIAL",
+      "requirementId": "A2-26",
+      "sequence": 66,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "A2-27 formal_status is PARTIAL",
+      "requirementId": "A2-27",
+      "sequence": 67,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P2-02 formal_status is PARTIAL",
+      "requirementId": "P2-02",
+      "sequence": 68,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P2-05 formal_status is PARTIAL",
+      "requirementId": "P2-05",
+      "sequence": 69,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P2-06 formal_status is PARTIAL",
+      "requirementId": "P2-06",
+      "sequence": 70,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P2-16 formal_status is PARTIAL",
+      "requirementId": "P2-16",
+      "sequence": 71,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P2-18 formal_status is PARTIAL",
+      "requirementId": "P2-18",
+      "sequence": 72,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P2-19 formal_status is PARTIAL",
+      "requirementId": "P2-19",
+      "sequence": 73,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P2-20 formal_status is PARTIAL",
+      "requirementId": "P2-20",
+      "sequence": 74,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P3-01 formal_status is PARTIAL",
+      "requirementId": "P3-01",
+      "sequence": 75,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-01 conformance_status is PARTIAL",
+      "requirementId": "P3-01",
+      "sequence": 76,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-03 formal_status is PARTIAL",
+      "requirementId": "P3-03",
+      "sequence": 77,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P3-04 formal_status is PARTIAL",
+      "requirementId": "P3-04",
+      "sequence": 78,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-05 formal_status is PARTIAL",
+      "requirementId": "P3-05",
+      "sequence": 79,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-06 formal_status is PARTIAL",
+      "requirementId": "P3-06",
+      "sequence": 80,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-08 formal_status is PARTIAL",
+      "requirementId": "P3-08",
+      "sequence": 81,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-09 formal_status is PARTIAL",
+      "requirementId": "P3-09",
+      "sequence": 82,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-10 formal_status is PARTIAL",
+      "requirementId": "P3-10",
+      "sequence": 83,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-12 formal_status is PARTIAL",
+      "requirementId": "P3-12",
+      "sequence": 84,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-13 formal_status is PARTIAL",
+      "requirementId": "P3-13",
+      "sequence": 85,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-14 formal_status is PARTIAL",
+      "requirementId": "P3-14",
+      "sequence": 86,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-15 formal_status is PARTIAL",
+      "requirementId": "P3-15",
+      "sequence": 87,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P3-15 conformance_status is PARTIAL",
+      "requirementId": "P3-15",
+      "sequence": 88,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-01 formal_status is PARTIAL",
+      "requirementId": "P4-01",
+      "sequence": 89,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-01 conformance_status is PARTIAL",
+      "requirementId": "P4-01",
+      "sequence": 90,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-04 formal_status is PARTIAL",
+      "requirementId": "P4-04",
+      "sequence": 91,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-06 formal_status is PARTIAL",
+      "requirementId": "P4-06",
+      "sequence": 92,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-07 formal_status is PARTIAL",
+      "requirementId": "P4-07",
+      "sequence": 93,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-08 formal_status is PARTIAL",
+      "requirementId": "P4-08",
+      "sequence": 94,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P4-11 formal_status is PARTIAL",
+      "requirementId": "P4-11",
+      "sequence": 95,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-05 conformance_status is PARTIAL",
+      "requirementId": "P5-05",
+      "sequence": 96,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-06 conformance_status is PARTIAL",
+      "requirementId": "P5-06",
+      "sequence": 97,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-07 conformance_status is PARTIAL",
+      "requirementId": "P5-07",
+      "sequence": 98,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-08 conformance_status is PARTIAL",
+      "requirementId": "P5-08",
+      "sequence": 99,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-09 formal_status is PARTIAL",
+      "requirementId": "P5-09",
+      "sequence": 100,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-11 formal_status is PARTIAL",
+      "requirementId": "P5-11",
+      "sequence": 101,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-12 conformance_status is PARTIAL",
+      "requirementId": "P5-12",
+      "sequence": 102,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-13 formal_status is PARTIAL",
+      "requirementId": "P5-13",
+      "sequence": 103,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-14 formal_status is PARTIAL",
+      "requirementId": "P5-14",
+      "sequence": 104,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-14 conformance_status is PARTIAL",
+      "requirementId": "P5-14",
+      "sequence": 105,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P5-15 conformance_status is PARTIAL",
+      "requirementId": "P5-15",
+      "sequence": 106,
+      "state": "ABSENT_REQUIRES_EVIDENCE"
+    },
+    {
+      "diagnostic": "P6-02 formal_status is PARTIAL",
+      "requirementId": "P6-02",
+      "sequence": 107,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-03 formal_status is PARTIAL",
+      "requirementId": "P6-03",
+      "sequence": 108,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-03 conformance_status is PARTIAL",
+      "requirementId": "P6-03",
+      "sequence": 109,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-04 formal_status is PARTIAL",
+      "requirementId": "P6-04",
+      "sequence": 110,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-05 formal_status is PARTIAL",
+      "requirementId": "P6-05",
+      "sequence": 111,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-05 conformance_status is PARTIAL",
+      "requirementId": "P6-05",
+      "sequence": 112,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-06 formal_status is PARTIAL",
+      "requirementId": "P6-06",
+      "sequence": 113,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-06 conformance_status is PARTIAL",
+      "requirementId": "P6-06",
+      "sequence": 114,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-07 formal_status is PARTIAL",
+      "requirementId": "P6-07",
+      "sequence": 115,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-07 conformance_status is PARTIAL",
+      "requirementId": "P6-07",
+      "sequence": 116,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-08 formal_status is PARTIAL",
+      "requirementId": "P6-08",
+      "sequence": 117,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-09 conformance_status is PARTIAL",
+      "requirementId": "P6-09",
+      "sequence": 118,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-10 formal_status is PARTIAL",
+      "requirementId": "P6-10",
+      "sequence": 119,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-11 conformance_status is PARTIAL",
+      "requirementId": "P6-11",
+      "sequence": 120,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-12 formal_status is PARTIAL",
+      "requirementId": "P6-12",
+      "sequence": 121,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-12 conformance_status is PARTIAL",
+      "requirementId": "P6-12",
+      "sequence": 122,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-13 formal_status is PARTIAL",
+      "requirementId": "P6-13",
+      "sequence": 123,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "P6-13 conformance_status is PARTIAL",
+      "requirementId": "P6-13",
+      "sequence": 124,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-01 formal_status is PARTIAL",
+      "requirementId": "M-01",
+      "sequence": 125,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-01 conformance_status is PARTIAL",
+      "requirementId": "M-01",
+      "sequence": 126,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-03 formal_status is PARTIAL",
+      "requirementId": "M-03",
+      "sequence": 127,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-04 formal_status is PARTIAL",
+      "requirementId": "M-04",
+      "sequence": 128,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-05 conformance_status is PARTIAL",
+      "requirementId": "M-05",
+      "sequence": 129,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-06 formal_status is PARTIAL",
+      "requirementId": "M-06",
+      "sequence": 130,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-08 formal_status is PARTIAL",
+      "requirementId": "M-08",
+      "sequence": 131,
+      "state": "OPEN"
+    },
+    {
+      "diagnostic": "M-08 conformance_status is PARTIAL",
+      "requirementId": "M-08",
+      "sequence": 132,
+      "state": "OPEN"
+    }
+  ],
+  "commands": [
+    {
+      "argv": [
+        "/home/augustus/anaconda3/bin/python3",
+        "-B",
+        "scripts/test_obligation_repair_reporting.py"
+      ],
+      "exitCode": 0,
+      "name": "reporting-tests",
+      "seconds": 0.03155875999800628,
+      "sha256": "f8f7b0ac7f2b53ac4e96000f166430c488f2c37e059ad5502b09d60f29d363b8"
+    },
+    {
+      "argv": [
+        "lean",
+        "--version"
+      ],
+      "exitCode": 0,
+      "name": "lean-version",
+      "seconds": 0.03158431000338169,
+      "sha256": "64f534c7cd1d0dbe701f44b4da6679d120b63f0f9f3bfab60540a07af143f1f2"
+    },
+    {
+      "argv": [
+        "javac",
+        "-J-Xmx256m",
+        "--release",
+        "17",
+        "-encoding",
+        "UTF-8",
+        "-d",
+        "/tmp/acgn-v216-final-status/classes",
+        "src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java",
+        "src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java",
+        "src/is/fivefivefive/CanDis/assurance/ContractDecomposition.java",
+        "src/is/fivefivefive/CanDis/assurance/ContractDecompositionTest.java"
+      ],
+      "exitCode": 0,
+      "name": "compile",
+      "seconds": 0.46417842200025916,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "java",
+        "-ea",
+        "-Xmx256m",
+        "-cp",
+        "/tmp/acgn-v216-final-status/classes",
+        "is.fivefivefive.CanDis.Section3AssuranceTraceability",
+        "/home/augustus/ACGN"
+      ],
+      "exitCode": 0,
+      "name": "assessment",
+      "seconds": 2.2170611129986355,
+      "sha256": "4a8b13e730bc653b4d0da8b6fcf97034dad54eda4af2432fed38a40b44dfaefa"
+    },
+    {
+      "argv": [
+        "java",
+        "-ea",
+        "-Xmx256m",
+        "-cp",
+        "/tmp/acgn-v216-final-status/classes",
+        "is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest",
+        "/home/augustus/ACGN"
+      ],
+      "exitCode": 0,
+      "name": "regressions",
+      "seconds": 2.117238234000979,
+      "sha256": "930d21935f4104ad9587a97279755595856ab65299057fe5b5f863a58edf1b1b"
+    },
+    {
+      "argv": [
+        "java",
+        "-ea",
+        "-Xmx256m",
+        "-cp",
+        "/tmp/acgn-v216-final-status/classes",
+        "is.fivefivefive.CanDis.assurance.ContractDecompositionTest"
+      ],
+      "exitCode": 0,
+      "name": "decomposition-tests",
+      "seconds": 0.06386590500187594,
+      "sha256": "b2a9d86438097bf6e056ba0421fd42028b645c20ec1383f0daec580b226fffce"
+    },
+    {
+      "argv": [
+        "lean",
+        "-o",
+        "/tmp/acgn-v216-final-status/A01Admission.olean",
+        "docs/obligation-repair/A01Admission.lean"
+      ],
+      "exitCode": 0,
+      "name": "A01Admission",
+      "seconds": 0.11372641100024339,
+      "sha256": "3274c1f52fe16dfbe81e0e9f53a398ee3ee920e67dfc03b5c574924081ea2dcc"
+    },
+    {
+      "argv": [
+        "lean",
+        "-o",
+        "/tmp/acgn-v216-final-status/ContractDecomposition.olean",
+        "docs/obligation-repair/ContractDecomposition.lean"
+      ],
+      "exitCode": 0,
+      "name": "ContractDecomposition",
+      "seconds": 0.3642529389981064,
+      "sha256": "2b45a68033f1b09ba35bfc06420ea77425cbf50d2b6264ffb71cf35f27f05644"
+    }
+  ],
+  "counts": {
+    "failures": 111,
+    "matrixRows": 191,
+    "ready": 107,
+    "requirements": 191
+  },
+  "inputManifestSha256": "d4ffe24156deb93ba779a1dd5a251fa5e6d1097406aafbf72920f0e210edca58",
+  "newDiagnostics": [
+    "A-01 MISSING_LOW_LEVEL_REGISTRY: no atomic child obligations or parent reconstruction evidence"
+  ],
+  "schemaVersion": 1,
+  "status": "INCOMPLETE",
+  "warning": "This is a diagnostic comparison, not a proof-closure decision."
+}

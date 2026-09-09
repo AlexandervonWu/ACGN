@@ -107,6 +107,14 @@ merges. No full formal closure is claimed. The
 [follow-up specification](docs/obligation-repair/next-candidates-v2.14.md)
 retain the historical evidence and original scope of this continuation.
 
+The [v2.16 validation-only release](docs/release-v2.16.md) repairs detection
+of temporal operators hidden inside predicate calls. Its clean
+[validation refresh](publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/capability_validation/SOUNDNESS.md)
+passes all 29 sampled checks, including the six previously inconclusive cases.
+The full-corpus measurements below are unchanged. The
+[next five bounded tasks](docs/obligation-repair/next-candidates-v2.16.md)
+cover law, flat and container wire replay, canonical tables and source bindings.
+
 ## Headline Results
 
 The checked-in experimental snapshot was regenerated on September 8, 2026. It

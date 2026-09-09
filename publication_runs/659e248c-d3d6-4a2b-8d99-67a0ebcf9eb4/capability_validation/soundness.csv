@@ -1,0 +1,30 @@
+relativePath,family,subtype,solverReportedCounterexample,inconclusive,note,error,temporal,temporalModeExposed,scope,minTrace,maxTrace,solver
+"ac_logical/CORRECT/generated_cap004500.als","ac_logical","de-morgan-reorder",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000500.als","aci","reorder-and",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000501.als","aci","reorder-or",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000502.als","aci","duplicate-and",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000503.als","aci","duplicate-or",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000504.als","aci","reassociate-intersection",false,false,"","",false,false,4,-1,-1,SAT4J
+"aci/CORRECT/generated_cap000505.als","aci","flatten-unflatten-union",false,false,"","",false,false,4,-1,-1,SAT4J
+"alpha/CORRECT/generated_cap000000.als","alpha","nested-rename",false,false,"","",false,false,4,-1,-1,SAT4J
+"alpha/CORRECT/generated_cap000001.als","alpha","capture-avoiding-nested-swap",false,false,"","",false,false,4,-1,-1,SAT4J
+"alpha_ac/CORRECT/generated_cap003000.als","alpha_ac","alpha-and-reorder",false,false,"","",false,false,4,-1,-1,SAT4J
+"alpha_binder_permutation/CORRECT/generated_cap003500.als","alpha_binder_permutation","alpha-block-permutation",false,false,"","",true,false,4,1,10,SAT4J
+"binder_permutation/CORRECT/generated_cap001000.als","binder_permutation","two-binder-universal",false,false,"","",false,false,4,-1,-1,SAT4J
+"binder_permutation/CORRECT/generated_cap001001.als","binder_permutation","three-binder-existential",false,false,"","",false,false,4,-1,-1,SAT4J
+"binder_permutation_prenex/CORRECT/generated_cap004000.als","binder_permutation_prenex","permuted-existential-prenex",false,false,"","",false,false,4,-1,-1,SAT4J
+"logical_normalization/CORRECT/generated_cap002000.als","logical_normalization","double-negation",false,false,"","",false,false,4,-1,-1,SAT4J
+"logical_normalization/CORRECT/generated_cap002001.als","logical_normalization","de-morgan",false,false,"","",true,false,4,1,10,SAT4J
+"logical_normalization/CORRECT/generated_cap002002.als","logical_normalization","implication",false,false,"","",false,false,4,-1,-1,SAT4J
+"logical_normalization/CORRECT/generated_cap002003.als","logical_normalization","iff",false,false,"","",false,false,4,-1,-1,SAT4J
+"logical_normalization/CORRECT/generated_cap002004.als","logical_normalization","quantifier-negation",false,false,"","",false,false,4,-1,-1,SAT4J
+"logical_normalization/CORRECT/generated_cap002005.als","logical_normalization","no-to-all-not",false,false,"","",false,false,4,-1,-1,SAT4J
+"mixed/CORRECT/generated_cap005000.als","mixed","negation-quantifier-prenex-permutation",false,false,"","",false,false,4,-1,-1,SAT4J
+"safe_prenex/CORRECT/generated_cap001500.als","safe_prenex","existential-conjunction",false,false,"","",false,false,4,-1,-1,SAT4J
+"safe_prenex/CORRECT/generated_cap001501.als","safe_prenex","universal-disjunction",false,false,"","",false,false,4,-1,-1,SAT4J
+"temporal_normalization/CORRECT/generated_cap002500.als","temporal_normalization","always-eventually-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J
+"temporal_normalization/CORRECT/generated_cap002501.als","temporal_normalization","eventually-always-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J
+"temporal_normalization/CORRECT/generated_cap002502.als","temporal_normalization","historically-once-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J
+"temporal_normalization/CORRECT/generated_cap002503.als","temporal_normalization","once-historically-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J
+"temporal_normalization/CORRECT/generated_cap002504.als","temporal_normalization","until-releases-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J
+"temporal_normalization/CORRECT/generated_cap002505.als","temporal_normalization","since-triggered-dual",false,false,"Exposed temporal mode with Q and after true; source predicates and scopes unchanged","",true,true,4,1,10,SAT4J

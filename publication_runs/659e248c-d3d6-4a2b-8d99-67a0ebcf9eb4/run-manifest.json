@@ -1,0 +1,245 @@
+{
+  "artifacts": [
+    {
+      "path": "build/acgn-experiments.jar",
+      "sha256": "67e7dd088ef864a9170178e6b6c963a2c339836fa88b25cffe8e20788714f04a",
+      "sizeBytes": 2549918
+    },
+    {
+      "path": "build/compile.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sizeBytes": 0
+    },
+    {
+      "path": "build/package.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sizeBytes": 0
+    },
+    {
+      "path": "capability_validation/SOUNDNESS.md",
+      "sha256": "6d21321e74f0dd15028d880656ff5422d4fd766f239420360206271e55f6de77",
+      "sizeBytes": 774
+    },
+    {
+      "path": "capability_validation/regression.log",
+      "sha256": "7a158138450545c0675947f4988046c5000fcd52fcf56a6446d6b94f7b9cfbef",
+      "sizeBytes": 672
+    },
+    {
+      "path": "capability_validation/solver.log",
+      "sha256": "c62d5f86d62c0acc9957e3021de40d223c899f0c99e47450a384331ff29e95be",
+      "sizeBytes": 1715
+    },
+    {
+      "path": "capability_validation/soundness.csv",
+      "sha256": "cdd23f53756536d83da63415b2cc85de65d3d28892afd5387f589a97b6a69eed",
+      "sizeBytes": 4455
+    },
+    {
+      "path": "capability_validation/soundness.json",
+      "sha256": "65e8f1f502558220674b5d5bec0203c6ae585af285c1dcc6b26bb2d050927d7f",
+      "sizeBytes": 12822
+    },
+    {
+      "path": "inputs/Phase5SourceRules.lean",
+      "sha256": "e438fad111b73dae0aa532777e7be3852daf7baa7a728000011e90856a7d24d8",
+      "sizeBytes": 176545
+    },
+    {
+      "path": "inputs/TemporalCommandGuard.lean",
+      "sha256": "d8df5a13c3d82b1fe7155bb858edd16ef8033ee49dc1f32bf54baaf9a58f3a58",
+      "sizeBytes": 1563
+    },
+    {
+      "path": "inputs/lean-toolchain",
+      "sha256": "302cd63c54178885b89e669f33b38f12f4dd7ae7e5cac537b3203e3768d8fb2b",
+      "sizeBytes": 25
+    },
+    {
+      "path": "inputs/metadata.csv",
+      "sha256": "2fc09f9eb084df6be0979d191a9128124a95609060955dd529f8f93b366b0952",
+      "sizeBytes": 3754108
+    },
+    {
+      "path": "inputs/metadata.json",
+      "sha256": "2fd3ad6fc488c600013c36ef49f93deeda97f9a0ede006c391f264b4181954d7",
+      "sizeBytes": 5737004
+    },
+    {
+      "path": "inputs/publication_manifest.py",
+      "sha256": "455c669285341d11a331ae0e36f87edd2269474295545c11af583bf63c8da35c",
+      "sizeBytes": 15968
+    },
+    {
+      "path": "inputs/refresh_capability_validation.sh",
+      "sha256": "706e2536fd42a1b67408bbaeaf11cc4f7e320f31d16f4406d123cd1c4924eaec",
+      "sizeBytes": 5154
+    },
+    {
+      "path": "planned-commands.txt",
+      "sha256": "e5956d570d743b2227eeab9d55d653bd5b4bfee3ff203b20806c0f0e93756e71",
+      "sizeBytes": 27894
+    },
+    {
+      "path": "proofs/Phase5SourceRules.olean",
+      "sha256": "bd6b29de73ce8199598ab9969d27e8b6f1d7d94d052a11eed8f4eade216e7961",
+      "sizeBytes": 7123184
+    },
+    {
+      "path": "proofs/TemporalCommandGuard.olean",
+      "sha256": "ef3ca185ae7ceafd236e9c0825d22a996df152355da0aeec87356cae6004f761",
+      "sizeBytes": 18440
+    },
+    {
+      "path": "proofs/duals.log",
+      "sha256": "71456e704505f6c25c5387bdc0673d8407ed3f0f09f2926b4ec341b259cd1961",
+      "sizeBytes": 10
+    },
+    {
+      "path": "proofs/guard.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sizeBytes": 0
+    },
+    {
+      "path": "proofs/lean-version.log",
+      "sha256": "64f534c7cd1d0dbe701f44b4da6679d120b63f0f9f3bfab60540a07af143f1f2",
+      "sizeBytes": 106
+    }
+  ],
+  "commands": {
+    "path": "/home/augustus/acgn-v216-validation-final/planned-commands.txt",
+    "sha256": "e5956d570d743b2227eeab9d55d653bd5b4bfee3ff203b20806c0f0e93756e71"
+  },
+  "completedAt": "2026-09-09T04:54:39.690031Z",
+  "configuration": {
+    "capabilityTarget": 500,
+    "heap": "1g",
+    "limit": 0,
+    "rewardPool": 0,
+    "seed": 55520260811,
+    "workers": 1
+  },
+  "dataset": {
+    "byteCount": 5315709,
+    "fileCount": 5500,
+    "root": "/home/augustus/ACGN/capability_benchmark/models",
+    "sha256": "898d8123ce12ee9a28cb106b801c4d3cb9e1c8aaa2644e0389aedd41e6fb49c3"
+  },
+  "dependencies": [
+    {
+      "path": "lib/AlloyASG-Release.jar",
+      "sha256": "8d245fd222bbca8af797842d349502e1f46f7a27f5dbd70489a4e622d10de3cd",
+      "sizeBytes": 20397766
+    },
+    {
+      "path": "lib/AlloyASG.jar",
+      "sha256": "5adc247bae551739bb61db848eb8ba6ee3292300f126e2b286c3a298a22c9dc6",
+      "sizeBytes": 42535
+    },
+    {
+      "path": "lib/AlloyParser.jar",
+      "sha256": "be040bcd26ddcf042bb629f9c2a8c56e2f8bca0c829281c5cc0d07a047474fe3",
+      "sizeBytes": 121873
+    },
+    {
+      "path": "lib/alloy.jar",
+      "sha256": "ac0ee637172ed035a4ca43327d5e09c05990aa0d073887308e30f88c2471370c",
+      "sizeBytes": 20064232
+    },
+    {
+      "path": "lib/commons-cli-1.4.jar",
+      "sha256": "fd3c7c9545a9cdb2051d1f9155c4f76b1e4ac5a57304404a6eedb578ffba7328",
+      "sizeBytes": 53820
+    },
+    {
+      "path": "lib/json-java.jar",
+      "sha256": "9971d8e62ddf0e0db8baef94a920f099659b665058981e839f6500922f8a46dd",
+      "sizeBytes": 62649
+    },
+    {
+      "path": "lib/slf4j-simple-1.7.36.jar",
+      "sha256": "2f39bed943d624dfa8f4102d0571283a10870b6aa36f197a8a506f147010c10f",
+      "sizeBytes": 15333
+    }
+  ],
+  "experimentJar": {
+    "path": "/home/augustus/acgn-v216-validation-final/build/acgn-experiments.jar",
+    "sha256": "67e7dd088ef864a9170178e6b6c963a2c339836fa88b25cffe8e20788714f04a",
+    "sizeBytes": 2549918
+  },
+  "git": {
+    "commit": "8feab00f9190482af6a25334af5b2716653f8ac9",
+    "dirty": false
+  },
+  "identitySha256": "cfee36eee84b553d0441a0228b19c5a28cd359e5214db5c4d526d05864cb06a6",
+  "reportBindings": [
+    {
+      "report": "/home/augustus/acgn-v216-validation-final/capability_validation/SOUNDNESS.md",
+      "reportSha256": "6d21321e74f0dd15028d880656ff5422d4fd766f239420360206271e55f6de77",
+      "sources": [
+        {
+          "path": "/home/augustus/acgn-v216-validation-final/capability_validation/soundness.json",
+          "sha256": "65e8f1f502558220674b5d5bec0203c6ae585af285c1dcc6b26bb2d050927d7f"
+        },
+        {
+          "path": "/home/augustus/acgn-v216-validation-final/inputs/metadata.csv",
+          "sha256": "2fc09f9eb084df6be0979d191a9128124a95609060955dd529f8f93b366b0952"
+        }
+      ]
+    }
+  ],
+  "repositoryRoot": "/home/augustus/ACGN",
+  "runId": "659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4",
+  "runtime": {
+    "cpu": "x86_64",
+    "host": "augustus-x870e",
+    "java": "openjdk version \"17.0.20\" 2026-07-21\nOpenJDK Runtime Environment (build 17.0.20+8-1-24.04-Ubuntu)\nOpenJDK 64-Bit Server VM (build 17.0.20+8-1-24.04-Ubuntu, mixed mode, sharing)",
+    "logicalProcessors": 32,
+    "platform": "Linux-7.0.0-31-generic-x86_64-with-glibc2.39",
+    "python": "3.10.11 (main, Apr 20 2023, 19:02:41) [GCC 11.2.0]"
+  },
+  "schemaVersion": "acgn-publication-run-v1",
+  "source": {
+    "byteCount": 5817399,
+    "fileCount": 338,
+    "sha256": "3c9cf81c3b80e35ae24aebaac471965ecc760161311d4ce6ceada6fd948c2f99"
+  },
+  "stages": [
+    {
+      "command": "java -ea -Xmx1g -XX:+ExitOnOutOfMemoryError -cp /home/augustus/acgn-v216-validation-final/build/acgn-experiments.jar:/home/augustus/ACGN/lib/\\* is.fivefivefive.CanDis.CapabilitySoundnessCheck --root /home/augustus/ACGN/capability_benchmark --output /home/augustus/acgn-v216-validation-final/capability_validation --per-subtype 1 ",
+      "commandSha256": "60c7436c90accf9af0879a86e2df92d10b161e836f36b721e85780edb8177b02",
+      "name": "capability-validation",
+      "outputs": [
+        {
+          "path": "SOUNDNESS.md",
+          "sha256": "6d21321e74f0dd15028d880656ff5422d4fd766f239420360206271e55f6de77",
+          "sizeBytes": 774
+        },
+        {
+          "path": "regression.log",
+          "sha256": "7a158138450545c0675947f4988046c5000fcd52fcf56a6446d6b94f7b9cfbef",
+          "sizeBytes": 672
+        },
+        {
+          "path": "solver.log",
+          "sha256": "c62d5f86d62c0acc9957e3021de40d223c899f0c99e47450a384331ff29e95be",
+          "sizeBytes": 1715
+        },
+        {
+          "path": "soundness.csv",
+          "sha256": "cdd23f53756536d83da63415b2cc85de65d3d28892afd5387f589a97b6a69eed",
+          "sizeBytes": 4455
+        },
+        {
+          "path": "soundness.json",
+          "sha256": "65e8f1f502558220674b5d5bec0203c6ae585af285c1dcc6b26bb2d050927d7f",
+          "sizeBytes": 12822
+        }
+      ],
+      "recordedAt": "2026-09-09T04:54:39.435478Z",
+      "root": "/home/augustus/acgn-v216-validation-final/capability_validation"
+    }
+  ],
+  "startedAt": "2026-09-09T04:54:36.032450Z",
+  "status": "complete"
+}

@@ -727,6 +727,10 @@ Alloy's detector missed operators hidden in predicate calls. The bundled
 Pardinus backend is available: the repaired 29-case sample has zero
 counterexamples, errors and inconclusive checks. These post-release checks
 are retained separately and do not replace the archived run's reports.
+The [v2.16 validation publication](../publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/capability_validation/SOUNDNESS.md)
+binds that refresh to a clean source, one frozen JAR and 21 hashed generated
+artifacts. Reproduce validation alone with
+`./scripts/refresh_capability_validation.sh /tmp/acgn-capability-validation`.
 
 Principal outputs are `metadata.{json,csv}`, `skips.csv`, `results.{json,csv}`,
 `pair_results.csv`, `transitions.csv`, `unexpected_failures.csv`, `REPORT.md`,

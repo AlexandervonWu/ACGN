@@ -40,11 +40,26 @@ report bindings and generated-output hashes. Its manifest has one stage,
 ./scripts/refresh_capability_validation.sh /tmp/acgn-v216-validation
 ```
 
-The public release records the completed validation run, clean validation
-source commit, final packaging/tag commit, exact-commit CI, and asset hashes.
+The completed validation run is
+`659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4`, from clean source
+`8feab00f9190482af6a25334af5b2716653f8ac9`.
+Its [refreshed validation report](../publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/capability_validation/SOUNDNESS.md)
+and [manifest](../publication_runs/659e248c-d3d6-4a2b-8d99-67a0ebcf9eb4/run-manifest.json)
+retain all 21 generated artifact hashes. The dataset identity binds 5,500
+generated model files, while the executed deterministic sample contains
+29 checks. Configuration: one worker, 1 GiB heap, no reward evaluation.
+
+The public release records the final packaging/tag commit, exact-commit CI,
+and asset hashes.
 The attached JAR contains the repaired checker and is the same JAR used by
 that validation. It is not presented as the result-producing JAR for the
 unchanged full-corpus measurements.
+Its size is 2,549,918 bytes; SHA-256
+`67e7dd088ef864a9170178e6b6c963a2c339836fa88b25cffe8e20788714f04a`.
+The assurance archive includes the tagged source, libraries, proofs,
+bounded runners, this validation run and its report; it excludes the full
+corpus, historical empirical trees and frontend. Use `git lfs pull` in a
+full checkout for the large experimental JSON files.
 
 ## Preserved Results
 
@@ -56,7 +71,11 @@ published separately rather than mixed into that frozen run.
 
 Certificate coverage remains fixture-scoped: 1 VERIFIED, 2 UNCHECKABLE,
 0 REJECTED. No new authority is admitted. The broader assurance matrix
-remains incomplete; the temporal-check repair is not a new blanket closure.
+remains at 107 ready requirements and 111 diagnostics and is incomplete;
+the temporal-check repair is not a new blanket closure. Previously published
+bounded closure reports retain their original input roots; exact-commit CI
+regenerates the checks for the new packaging source rather than transferring
+a previous VERIFIED status across changed inputs.
 
 ## Next Work
 
