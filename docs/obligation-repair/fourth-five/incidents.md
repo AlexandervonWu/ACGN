@@ -176,3 +176,22 @@ The new candidate allows 900 seconds per command and 120 minutes for the
 whole CI job. Proofs, observation counts, rejection predicates and production
 Java remain unchanged. A fresh input root and two-build closure are required;
 the earlier preflight root is retained only as historical evidence.
+
+## Combined Hosted Job Budget
+
+Actions run `34285126819` exhausted its overall 120-minute job budget. It
+had completed both builds' positive proofs and replays and was executing
+`build2-source-reject-chain-chain-verifier-index` when the host canceled it.
+This is a second infrastructure limit, not a failed proof or accepted invalid
+certificate. The complete hosted log and the locally VERIFIED report for
+that candidate are retained in `evidence/combined-ci-budget/`.
+
+The fourth-five closure now has an independent 120-minute CI job, in parallel
+with the unchanged earlier suites. It uses the identical pinned installer,
+toolchain, command, 900-second per-command limit, claims and controls. A
+structured YAML comparison confirmed that no previous test was removed and
+the installer steps are identical. This prevents the earlier packages' run
+time from consuming the new package's budget; reports and command logs are
+also uploaded. A fresh local two-build closure binds the new workflow. No
+producer, verifier, proof, dataset or experimental result changed, so the
+completed full-corpus run remains the result source for v2.15.

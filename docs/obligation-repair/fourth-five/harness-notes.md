@@ -29,13 +29,17 @@ the three area notes, test drivers, verifier sources, dependencies and CI
 entry points. Diagnostic paths and timings are the only nondeterministic
 output fields permitted by the configuration.
 
-The release execution budget is 900 seconds per command and 120 minutes for
-the aggregate CI job. The first hosted run reached the 300-second command
-limit while compiling the dependent-chain replay; it is retained as an
-infrastructure failure, not a semantic rejection or a proof failure. These
-finite budget changes do not change any claim, observation census, proof
-predicate or rejection requirement. The changed configuration and workflow
-are inputs to a fresh closure root.
+The release execution budget is 900 seconds per command. The earlier suites
+and the fourth-five closure have independent 120-minute CI jobs. The first
+hosted run reached the 300-second command limit during dependent-chain replay.
+The next combined job completed both positive replay sets but exhausted its
+overall two-hour budget during the second build's source controls. Both are
+retained as infrastructure failures, not semantic rejections or proof failures.
+Separating the jobs preserves every check and both clean builds; each uses
+the same pinned installer and toolchain. Reports and command logs are uploaded
+for the independent closure job. These scheduling/budget changes alter no
+claim, observation census, proof predicate or rejection requirement. The
+changed configuration and workflow are inputs to a fresh closure root.
 
 This is a finite assurance repair. It creates no new rewrite family or
 certificate authority. SHA-256 collision resistance remains a cryptographic

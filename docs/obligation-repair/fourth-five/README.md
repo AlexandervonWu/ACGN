@@ -58,8 +58,8 @@ for its final inputs. The full assurance matrix has 107 ready requirements and
 ## Final Verified Evidence
 
 The [final machine report](evidence/final/report.json) is **VERIFIED** for all
-five frozen claims at closure ID `fourth-five-v1-188b4a84db91aeff`, input root
-`188b4a84db91aeff0f921e687a4093fc49fd9268d46647b98c7de4a052943575`.
+five frozen claims at closure ID `fourth-five-v1-96ad79ffdb675c46`, input root
+`96ad79ffdb675c46e4c07b6920fc04a797f67dea2eb6eccb19819a8877b3f990`.
 Both clean builds passed, with **1,076 identical artifacts per build**.
 
 | Evidence | Per build |
@@ -80,9 +80,11 @@ Certificate checks retain 184 verifier, 109 writer (twice), 68 inspection,
 and the earlier preflight/review records are retained with
 [checksums](evidence/SHA256SUMS).
 
-The final run uses the explicit 900-second command limit and 120-minute CI
-budget. The earlier hosted timeout is retained as an infrastructure failure;
-no rejection criterion or theorem changed to obtain this result.
+The final run uses the explicit 900-second command limit and an independent
+120-minute CI job for this package. The earlier command and combined-job
+timeouts are retained as infrastructure failures; no rejection criterion or
+theorem changed. The prior locally VERIFIED candidate remains archived in
+`evidence/combined-ci-budget/`.
 
 ## Preservation
 

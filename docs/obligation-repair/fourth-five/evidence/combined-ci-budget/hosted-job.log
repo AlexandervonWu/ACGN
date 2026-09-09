@@ -1,0 +1,931 @@
+java-and-certificates	Set up job	﻿2026-09-08T22:17:32.1954962Z Current runner version: '2.337.0'
+java-and-certificates	Set up job	2026-09-08T22:17:32.1985201Z ##[group]Runner Image Provisioner
+java-and-certificates	Set up job	2026-09-08T22:17:32.1986323Z Hosted Compute Agent
+java-and-certificates	Set up job	2026-09-08T22:17:32.1987010Z Version: 20260828.587
+java-and-certificates	Set up job	2026-09-08T22:17:32.1987698Z Commit: abac92662cab4cc7352de4f9f9d2e2419aad9c29
+java-and-certificates	Set up job	2026-09-08T22:17:32.1988779Z Build Date: 2026-08-28T16:44:25Z
+java-and-certificates	Set up job	2026-09-08T22:17:32.1989642Z Worker ID: {c2c3d566-9f4d-4530-9797-fe485b716a26}
+java-and-certificates	Set up job	2026-09-08T22:17:32.1990407Z Azure Region: centralus
+java-and-certificates	Set up job	2026-09-08T22:17:32.1991185Z ##[endgroup]
+java-and-certificates	Set up job	2026-09-08T22:17:32.1992778Z ##[group]Operating System
+java-and-certificates	Set up job	2026-09-08T22:17:32.1993510Z Ubuntu
+java-and-certificates	Set up job	2026-09-08T22:17:32.1994196Z 22.04.5
+java-and-certificates	Set up job	2026-09-08T22:17:32.1994720Z LTS
+java-and-certificates	Set up job	2026-09-08T22:17:32.1995902Z ##[endgroup]
+java-and-certificates	Set up job	2026-09-08T22:17:32.1996548Z ##[group]Runner Image
+java-and-certificates	Set up job	2026-09-08T22:17:32.1997249Z Image: ubuntu-22.04
+java-and-certificates	Set up job	2026-09-08T22:17:32.1997894Z Version: 20260831.284.1
+java-and-certificates	Set up job	2026-09-08T22:17:32.1999431Z Included Software: https://github.com/actions/runner-images/blob/ubuntu22/20260831.284/images/ubuntu/Ubuntu2204-Readme.md
+java-and-certificates	Set up job	2026-09-08T22:17:32.2001404Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu22%2F20260831.284
+java-and-certificates	Set up job	2026-09-08T22:17:32.2002461Z ##[endgroup]
+java-and-certificates	Set up job	2026-09-08T22:17:32.2003734Z ##[group]GITHUB_TOKEN Permissions
+java-and-certificates	Set up job	2026-09-08T22:17:32.2006648Z Contents: read
+java-and-certificates	Set up job	2026-09-08T22:17:32.2007353Z Metadata: read
+java-and-certificates	Set up job	2026-09-08T22:17:32.2008012Z ##[endgroup]
+java-and-certificates	Set up job	2026-09-08T22:17:32.2010718Z Secret source: Actions
+java-and-certificates	Set up job	2026-09-08T22:17:32.2012362Z Prepare workflow directory
+java-and-certificates	Set up job	2026-09-08T22:17:32.2382828Z Prepare all required actions
+java-and-certificates	Set up job	2026-09-08T22:17:32.2434412Z Getting action download info
+java-and-certificates	Set up job	2026-09-08T22:17:32.4897256Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+java-and-certificates	Set up job	2026-09-08T22:17:32.5697912Z Download action repository 'actions/setup-java@v4' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+java-and-certificates	Set up job	2026-09-08T22:17:33.3080273Z Complete job name: java-and-certificates
+java-and-certificates	Run actions/checkout@v4	﻿2026-09-08T22:17:33.3968346Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3978196Z ##[group]Run actions/checkout@v4
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3979235Z with:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3979725Z   repository: AlexandervonWu/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3984136Z   token: ***
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3984613Z   ssh-strict: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3985103Z   ssh-user: git
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3985580Z   persist-credentials: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3986101Z   clean: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3986581Z   sparse-checkout-cone-mode: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3987150Z   fetch-depth: 1
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3987620Z   fetch-tags: false
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3988100Z   show-progress: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3988821Z   lfs: false
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3989310Z   submodules: false
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3989885Z   set-safe-directory: true
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3990437Z   allow-unsafe-pr-checkout: false
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.3991232Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5165291Z Syncing repository: AlexandervonWu/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5168696Z ##[group]Getting Git version info
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5169991Z Working directory is '/home/runner/work/ACGN/ACGN'
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5171860Z [command]/usr/bin/git version
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5189847Z git version 2.55.0
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5223101Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5237141Z Temporarily overriding HOME='/home/runner/work/_temp/127ca95d-ba66-4adb-8cde-b5da15789f6d' before making global git config changes
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5243792Z Adding repository directory to the temporary git global config as a safe directory
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5245813Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ACGN/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5294747Z Deleting the contents of '/home/runner/work/ACGN/ACGN'
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5301588Z ##[group]Initializing the repository
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5307070Z [command]/usr/bin/git init /home/runner/work/ACGN/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5407568Z hint: Using 'master' as the name for the initial branch. This default branch name
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5410278Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5412426Z hint: to use in all of your new repositories, which will suppress this warning,
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5414086Z hint: call:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5415323Z hint:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5416375Z hint: 	git config --global init.defaultBranch <name>
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5417434Z hint:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5418656Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5420989Z hint: 'development'. The just-created branch can be renamed via this command:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5422398Z hint:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5423171Z hint: 	git branch -m <name>
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5423991Z hint:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5425126Z hint: Disable this message with "git config set advice.defaultBranchName false"
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5426977Z Initialized empty Git repository in /home/runner/work/ACGN/ACGN/.git/
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5430095Z [command]/usr/bin/git remote add origin https://github.com/AlexandervonWu/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5478792Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5480607Z ##[group]Disabling automatic garbage collection
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5484284Z [command]/usr/bin/git config --local gc.auto 0
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5530330Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5532124Z ##[group]Setting up auth
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5539928Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.5587668Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6009025Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6057388Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6366936Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6416903Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6716521Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6767936Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6769232Z ##[group]Fetching the repository
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:33.6778413Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +8c7fe05bdccda4e4003a73f234af297f4c2465bd:refs/remotes/origin/aislop
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6037259Z From https://github.com/AlexandervonWu/ACGN
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6050551Z  * [new ref]           8c7fe05bdccda4e4003a73f234af297f4c2465bd -> origin/aislop
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6053028Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6053756Z ##[group]Determining the checkout info
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6054538Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6055048Z [command]/usr/bin/git sparse-checkout disable
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6108149Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6148309Z ##[group]Checking out the ref
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:36.6153710Z [command]/usr/bin/git checkout --progress --force -B aislop refs/remotes/origin/aislop
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.6709434Z Updating files:  25% (18796/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.7009951Z Updating files:  26% (18977/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.7290824Z Updating files:  27% (19706/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.7573620Z Updating files:  28% (20436/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.7849437Z Updating files:  29% (21166/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.8126178Z Updating files:  30% (21896/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.8411959Z Updating files:  31% (22626/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.8686239Z Updating files:  32% (23356/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.8954096Z Updating files:  33% (24086/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.9222882Z Updating files:  34% (24815/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.9488131Z Updating files:  35% (25545/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:37.9777854Z Updating files:  36% (26275/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.0068825Z Updating files:  37% (27005/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.0339772Z Updating files:  38% (27735/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.0613976Z Updating files:  39% (28465/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.0934046Z Updating files:  40% (29194/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.1216479Z Updating files:  41% (29924/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.1500096Z Updating files:  42% (30654/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.1772709Z Updating files:  43% (31384/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.2055446Z Updating files:  44% (32114/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.2330141Z Updating files:  45% (32844/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.2606870Z Updating files:  46% (33574/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.2887533Z Updating files:  47% (34303/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.3163799Z Updating files:  48% (35033/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.3441338Z Updating files:  49% (35763/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.3714922Z Updating files:  50% (36493/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.3989653Z Updating files:  51% (37223/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.4259202Z Updating files:  52% (37953/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.4538960Z Updating files:  53% (38683/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.4810844Z Updating files:  54% (39412/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.5089359Z Updating files:  55% (40142/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.5368750Z Updating files:  56% (40872/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.5652568Z Updating files:  57% (41602/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.5929635Z Updating files:  58% (42332/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.6208322Z Updating files:  59% (43062/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.6493287Z Updating files:  60% (43791/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.6640424Z Updating files:  61% (44521/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.6768254Z Updating files:  61% (44917/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.7040233Z Updating files:  62% (45251/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.7311956Z Updating files:  63% (45981/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.7583265Z Updating files:  64% (46711/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.7855639Z Updating files:  65% (47441/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.8129228Z Updating files:  66% (48171/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.8404151Z Updating files:  67% (48900/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.8685430Z Updating files:  68% (49630/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.8957423Z Updating files:  69% (50360/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.9245538Z Updating files:  70% (51090/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.9519587Z Updating files:  71% (51820/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:38.9795516Z Updating files:  72% (52550/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.0069331Z Updating files:  73% (53280/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.0340634Z Updating files:  74% (54009/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.0620323Z Updating files:  75% (54739/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.0905807Z Updating files:  76% (55469/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.1185650Z Updating files:  77% (56199/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.1466561Z Updating files:  78% (56929/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.1743188Z Updating files:  79% (57659/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.2018137Z Updating files:  80% (58388/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.2293330Z Updating files:  81% (59118/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.2563183Z Updating files:  82% (59848/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.2836146Z Updating files:  83% (60578/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.3111473Z Updating files:  84% (61308/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.3390369Z Updating files:  85% (62038/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.3671677Z Updating files:  86% (62768/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.3951159Z Updating files:  87% (63497/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.4228915Z Updating files:  88% (64227/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.4524897Z Updating files:  89% (64957/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.4801549Z Updating files:  90% (65687/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.5074901Z Updating files:  91% (66417/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.5349431Z Updating files:  92% (67147/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.5617585Z Updating files:  93% (67877/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.5891194Z Updating files:  94% (68606/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.6164280Z Updating files:  95% (69336/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.6441895Z Updating files:  96% (70066/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.6641247Z Updating files:  97% (70796/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:39.6715562Z Updating files:  97% (71327/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.0055788Z Updating files:  98% (71526/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.5639726Z Updating files:  99% (72256/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.5640256Z Updating files: 100% (72985/72985)
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.5640630Z Updating files: 100% (72985/72985), done.
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.6300428Z Switched to a new branch 'aislop'
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.6301730Z branch 'aislop' set up to track 'origin/aislop'.
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.8601357Z ##[endgroup]
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.8656643Z [command]/usr/bin/git log -1 --format=%H
+java-and-certificates	Run actions/checkout@v4	2026-09-08T22:17:40.8698072Z 8c7fe05bdccda4e4003a73f234af297f4c2465bd
+java-and-certificates	Run actions/setup-java@v4	﻿2026-09-08T22:17:40.9107928Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9110552Z ##[group]Run actions/setup-java@v4
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9110844Z with:
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9111056Z   distribution: temurin
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9111292Z   java-version: 17
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9111513Z   java-package: jdk
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9111738Z   check-latest: false
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9111956Z   server-id: github
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9112175Z   server-username: GITHUB_ACTOR
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9112437Z   server-password: GITHUB_TOKEN
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9112700Z   overwrite-settings: true
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9112948Z   job-status: success
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9115671Z   token: ***
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:40.9115888Z ##[endgroup]
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1124173Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1136488Z ##[group]Installed distributions
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1177260Z Resolved Java 17.0.20+1 from tool-cache
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1177834Z Setting Java 17.0.20+1 as the default
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1188299Z (node:2022) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1189390Z (Use `node --trace-deprecation ...` to show where the warning was created)
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1192003Z Creating toolchains.xml for JDK version 17 from temurin
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1265314Z Writing to /home/runner/.m2/toolchains.xml
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1265721Z 
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1265863Z Java configuration:
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1266200Z   Distribution: temurin
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1266558Z   Version: 17.0.20+1
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1267059Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1267521Z 
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1268183Z ##[endgroup]
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1291057Z Creating settings.xml with server-id: github
+java-and-certificates	Run actions/setup-java@v4	2026-09-08T22:17:41.1337689Z Writing to /home/runner/.m2/settings.xml
+java-and-certificates	Install pinned Lean toolchain manager	﻿2026-09-08T22:17:41.1529708Z ##[group]Run set -euo pipefail
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1530158Z [36;1mset -euo pipefail[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1530594Z [36;1mbootstrap_dir="$(mktemp -d "${RUNNER_TEMP}/acgn-elan-bootstrap.XXXXXX")"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1531061Z [36;1marchive="${bootstrap_dir}/elan.tar.gz"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1531493Z [36;1mcurl --proto '=https' --tlsv1.2 --fail --location --silent --show-error \[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1531911Z [36;1m  --retry 3 --output "${archive}" \[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1532505Z [36;1m  "https://github.com/leanprover/elan/releases/download/${ELAN_VERSION}/elan-x86_64-unknown-linux-gnu.tar.gz"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1533201Z [36;1mprintf '%s  %s\n' "${ELAN_X86_64_LINUX_SHA256}" "${archive}" | sha256sum --check --strict[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1533801Z [36;1mtar --extract --gzip --no-same-owner --file "${archive}" --directory "${bootstrap_dir}"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1534388Z [36;1m"${bootstrap_dir}/elan-init" -y --default-toolchain none --no-modify-path[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1534849Z [36;1mprintf '%s\n' "${ELAN_HOME}/bin" >> "${GITHUB_PATH}"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1535532Z [36;1mprintf 'ELAN_HOME=%s\n' "${ELAN_HOME}" >> "${GITHUB_ENV}"[0m
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1886722Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1887035Z env:
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1887374Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1887885Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1888313Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1888875Z   ELAN_VERSION: v4.2.4
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1889264Z   ELAN_X86_64_LINUX_SHA256: 42b94d4244e8353142c456ec0e4ca6528fd898a6c604d4059f494e706e431f63
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.1889704Z ##[endgroup]
+java-and-certificates	Install pinned Lean toolchain manager	2026-09-08T22:17:41.7586895Z /home/runner/work/_temp/acgn-elan-bootstrap.psYsxo/elan.tar.gz: OK
+java-and-certificates	Compile and audit cataloged rewrite obligations	﻿2026-09-08T22:17:41.8850949Z ##[group]Run ./scripts/run_rewrite_rule_lean_checks.sh
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8851373Z [36;1m./scripts/run_rewrite_rule_lean_checks.sh[0m
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8931387Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8931699Z env:
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8932050Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8932584Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8933015Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:41.8933310Z ##[endgroup]
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:42.4250861Z info: downloading https://releases.lean-lang.org/lean4/v4.33.0/lean-4.33.0-linux.tar.zst
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:46.1047264Z info: installing /home/runner/work/_temp/acgn-elan/toolchains/leanprover--lean4---v4.33.0
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:54.7761638Z rewrite dispatch parity: PASS: 15 canonical aliases, the full 14-case atomic negation table, 4 NOT_* normalization mappings, and 4 ordinary EGraph complement mappings match Lean; EGraph NOT_* inputs are absent
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:54.7908416Z Compiling docs/section3-repair-audit/formal/FullCorpusNonTemporalP0.lean
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:55.3299597Z Compiling docs/section3-repair-audit/formal/Phase5SourceRules.lean
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.7582789Z 1
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.7583170Z 1
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.7583396Z 0
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.7583611Z 0
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.7583819Z 1
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:17:59.8094908Z Compiling docs/section3-repair-audit/formal/Phase6OrbitCanonicalization.lean
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:18:01.0630846Z Compiling docs/section3-repair-audit/formal/PhaseA2DependentChains.lean
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:18:05.2678041Z Compiling docs/section3-repair-audit/formal/PrenexAciScheduling.lean
+java-and-certificates	Compile and audit cataloged rewrite obligations	2026-09-08T22:18:16.9696101Z Rewrite Lean checks passed: toolchain=leanprover/lean4:v4.33.0 files=5
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	﻿2026-09-08T22:18:16.9752054Z ##[group]Run python3 scripts/run_submission_container_closure.py /tmp/acgn-submission-container-closure
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9752843Z [36;1mpython3 scripts/run_submission_container_closure.py /tmp/acgn-submission-container-closure[0m
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9831769Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9832078Z env:
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9832425Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9832969Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9833394Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:16.9833691Z ##[endgroup]
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:17.0926345Z [submission-closure] lean-version
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:17.1572799Z [submission-closure] java-version
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:17.2723188Z [submission-closure] javac-version
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:17.4378383Z [submission-closure] git-head
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:17.4418081Z [submission-closure] git-status
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:18.1111563Z [submission-closure] census-tests
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:18.4458209Z [submission-closure] A-javac
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:28.8157586Z [submission-closure] A-probe
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:30.0950296Z [submission-closure] A-ContainerReplay
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:30.7194088Z [submission-closure] A-Phase2VariadicLaws
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:32.3419453Z [submission-closure] A-boolean-assumptions
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:32.8107209Z [submission-closure] A-lean-replay
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:39.4503045Z [submission-closure] A-BooleanSmartConstructionTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:39.7678899Z [submission-closure] A-TheoryLawPolicyRegressionTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:40.0331441Z [submission-closure] A-TheoryPortsTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:40.5000772Z [submission-closure] A-TheoryCertificatesTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:42.0965327Z [submission-closure] B-javac
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:51.6239298Z [submission-closure] B-probe
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:52.7420630Z [submission-closure] B-ContainerReplay
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:53.3669679Z [submission-closure] B-Phase2VariadicLaws
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:54.9366405Z [submission-closure] B-boolean-assumptions
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:18:55.4045429Z [submission-closure] B-lean-replay
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:19:01.7942997Z [submission-closure] B-BooleanSmartConstructionTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:19:02.0604525Z [submission-closure] B-TheoryLawPolicyRegressionTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:19:02.2755174Z [submission-closure] B-TheoryPortsTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:19:02.6917242Z [submission-closure] B-TheoryCertificatesTest
+java-and-certificates	Replay finite Java container traces in Lean from two clean builds	2026-09-08T22:19:04.4720259Z {"status": "VERIFIED", "claims": 8, "report": "/tmp/acgn-submission-container-closure/closure-report.json", "errors": []}
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	﻿2026-09-08T22:19:04.4851825Z ##[group]Run python3 scripts/run_java_lean_refinement.py /tmp/acgn-java-lean-refinement
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4852496Z [36;1mpython3 scripts/run_java_lean_refinement.py /tmp/acgn-java-lean-refinement[0m
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4929775Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4930051Z env:
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4930381Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4930886Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4931316Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.4931627Z ##[endgroup]
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.6043170Z [java-lean-refinement] lean-version
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.6689318Z [java-lean-refinement] java-version
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.7345964Z [java-lean-refinement] javac-version
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.8995464Z [java-lean-refinement] git-head
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:04.9036600Z [java-lean-refinement] git-status
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:05.0857345Z [java-lean-refinement] boundary-tests
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:07.3275166Z [java-lean-refinement] A-compile
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:17.4637110Z [java-lean-refinement] A-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:26.6796349Z [java-lean-refinement] A-probe
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:33.3480598Z [java-lean-refinement] A-ContainerReplay
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:33.9725100Z [java-lean-refinement] A-Phase2VariadicLaws
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:35.5941409Z [java-lean-refinement] A-SmartConstructionRefinement
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:36.6612151Z [java-lean-refinement] A-symbolic-refinement
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:19:37.1630930Z [java-lean-refinement] A-certified-replay
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:15.4845571Z [java-lean-refinement] A-wrong-threshold-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:24.2901854Z [java-lean-refinement] A-wrong-threshold-proof
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:24.8251485Z [java-lean-refinement] A-unknown-effect-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:33.1327393Z [java-lean-refinement] A-boolean-tests
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:33.7147146Z [java-lean-refinement] B-compile
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:44.8514231Z [java-lean-refinement] B-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:20:53.7218335Z [java-lean-refinement] B-probe
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:00.2066606Z [java-lean-refinement] B-ContainerReplay
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:00.8309883Z [java-lean-refinement] B-Phase2VariadicLaws
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:02.4543632Z [java-lean-refinement] B-SmartConstructionRefinement
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:03.5216202Z [java-lean-refinement] B-symbolic-refinement
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:04.0195017Z [java-lean-refinement] B-certified-replay
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:42.1011713Z [java-lean-refinement] B-wrong-threshold-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:50.9234703Z [java-lean-refinement] B-wrong-threshold-proof
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:21:51.4562085Z [java-lean-refinement] B-unknown-effect-extract
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:22:00.8748879Z [java-lean-refinement] B-boolean-tests
+java-and-certificates	Refine the compiler-extracted Java selector and replay certified constructions	2026-09-08T22:22:03.4697396Z {"status": "VERIFIED", "errors": [], "report": "/tmp/acgn-java-lean-refinement/closure-report.json"}
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	﻿2026-09-08T22:22:03.5036041Z ##[group]Run python3 scripts/report_obligation_repairs.py --output /tmp/acgn-obligation-status
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5036949Z [36;1mpython3 scripts/report_obligation_repairs.py --output /tmp/acgn-obligation-status[0m
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5114866Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5115187Z env:
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5115649Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5116191Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5116802Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:03.5117149Z ##[endgroup]
+java-and-certificates	Check decomposition prerequisites and report remaining obligations	2026-09-08T22:22:17.6395279Z {"status": "INCOMPLETE", "counts": {"requirements": 191, "matrixRows": 191, "ready": 107, "failures": 111}, "report": "/tmp/acgn-obligation-status/current.json"}
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	﻿2026-09-08T22:22:17.6494970Z ##[group]Run python3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6495597Z [36;1mpython3 scripts/run_bounded_obligation_repairs.py /tmp/acgn-bounded-five[0m
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6574386Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6574672Z env:
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6574991Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6575495Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6575915Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.6576211Z ##[endgroup]
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.7792729Z [bounded-five] lean-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.8464915Z [bounded-five] java-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:17.9110262Z [bounded-five] javac-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:18.0769250Z [bounded-five] driver-tests
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:18.3218633Z [bounded-five] build1-lean-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:18.3894344Z [bounded-five] build1-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:27.7942179Z [bounded-five] build1-extractor-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:28.9674215Z [bounded-five] build1-policy-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:30.8983996Z [bounded-five] build1-join-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:40.5772555Z [bounded-five] build1-flat-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:48.5835526Z [bounded-five] build1-BF-P2-02-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:49.3016730Z [bounded-five] build1-BF-P2-02-PolicyRepresentationRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:49.4213247Z [bounded-five] build1-BF-A2-06-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:50.1892542Z [bounded-five] build1-BF-A2-06-DependentJoinGuardRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:50.5057425Z [bounded-five] build1-BF-A2-06-TheoryDependentChainTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:51.1755402Z [bounded-five] build1-BF-P2-05-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:51.7917645Z [bounded-five] build1-BF-P2-05-FlatRootPortRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:52.0102346Z [bounded-five] build1-BF-P1-10-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:53.0273071Z [bounded-five] build1-BF-P1-10-ZeroArgumentCallRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:54.2979355Z [bounded-five] build1-BF-P1-10-CallExtractionRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:22:56.5307875Z [bounded-five] build1-BF-P5-15-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:02.1611405Z [bounded-five] build1-BF-P5-15-BuiltinIdentityRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:04.3404782Z [bounded-five] build1-builtin-replay
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:06.5635337Z [bounded-five] build1-builtin-reject-source_kind
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:08.7355602Z [bounded-five] build1-builtin-reject-semantic_identity
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:10.9580827Z [bounded-five] build1-builtin-reject-source_preservation_sat
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:13.2801537Z [bounded-five] build1-zero-call-replay
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:14.2506599Z [bounded-five] build1-zero-reject-e2_is_end
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:15.2193186Z [bounded-five] build1-zero-reject-e1_owner
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:16.1879395Z [bounded-five] build1-zero-reject-cert_callee
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:17.1547048Z [bounded-five] build1-extracted-policy-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:17.6204779Z [bounded-five] build1-extracted-join-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:18.0863179Z [bounded-five] build1-join-threshold-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:27.0683046Z [bounded-five] build1-join-threshold-reject
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:27.3336264Z [bounded-five] build1-join-omitted-interior
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:36.3940279Z [bounded-five] build1-join-shadowed-enum
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:44.7500108Z [bounded-five] build1-extracted-flat-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:45.2158335Z [bounded-five] build1-flat-two-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:53.7883310Z [bounded-five] build1-flat-two-reject
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:23:54.0536219Z [bounded-five] build1-flat-omitted-validation
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:02.4813121Z [bounded-five] build1-flat-shadowed-factory
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:10.3808253Z [bounded-five] build1-policy-getter
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:12.2037492Z [bounded-five] build1-policy-receiver
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:14.0339311Z [bounded-five] build1-policy-null
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:15.9122665Z [bounded-five] build1-policy-mutability
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:17.7340614Z [bounded-five] build1-policy-effectful-qualifier
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:19.7856093Z [bounded-five] build2-lean-version
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:19.8528030Z [bounded-five] build2-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:28.8757557Z [bounded-five] build2-extractor-compile
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:30.0480707Z [bounded-five] build2-policy-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:31.9225541Z [bounded-five] build2-join-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:40.5024405Z [bounded-five] build2-flat-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:49.1165415Z [bounded-five] build2-BF-P2-02-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:49.8327664Z [bounded-five] build2-BF-P2-02-PolicyRepresentationRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:49.9507604Z [bounded-five] build2-BF-A2-06-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:50.6680996Z [bounded-five] build2-BF-A2-06-DependentJoinGuardRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:51.0378786Z [bounded-five] build2-BF-A2-06-TheoryDependentChainTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:51.6599449Z [bounded-five] build2-BF-P2-05-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:52.2769953Z [bounded-five] build2-BF-P2-05-FlatRootPortRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:52.4963516Z [bounded-five] build2-BF-P1-10-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:53.4632025Z [bounded-five] build2-BF-P1-10-ZeroArgumentCallRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:54.7326088Z [bounded-five] build2-BF-P1-10-CallExtractionRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:24:56.9097184Z [bounded-five] build2-BF-P5-15-lean
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:02.4870494Z [bounded-five] build2-BF-P5-15-BuiltinIdentityRegressionTest
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:04.5655177Z [bounded-five] build2-builtin-replay
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:06.6874504Z [bounded-five] build2-builtin-reject-source_kind
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:08.7589074Z [bounded-five] build2-builtin-reject-semantic_identity
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:10.8804497Z [bounded-five] build2-builtin-reject-source_preservation_sat
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:13.0012735Z [bounded-five] build2-zero-call-replay
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:13.9698191Z [bounded-five] build2-zero-reject-e2_is_end
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:14.8879904Z [bounded-five] build2-zero-reject-e1_owner
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:15.8083649Z [bounded-five] build2-zero-reject-cert_callee
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:16.7248305Z [bounded-five] build2-extracted-policy-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:17.1904085Z [bounded-five] build2-extracted-join-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:17.6563256Z [bounded-five] build2-join-threshold-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:27.6307272Z [bounded-five] build2-join-threshold-reject
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:27.8958805Z [bounded-five] build2-join-omitted-interior
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:35.7564394Z [bounded-five] build2-join-shadowed-enum
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:44.6192513Z [bounded-five] build2-extracted-flat-proof
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:45.0851853Z [bounded-five] build2-flat-two-extract
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:52.9431161Z [bounded-five] build2-flat-two-reject
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:25:53.2082269Z [bounded-five] build2-flat-omitted-validation
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:01.2053170Z [bounded-five] build2-flat-shadowed-factory
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:09.2316547Z [bounded-five] build2-policy-getter
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:11.1078674Z [bounded-five] build2-policy-receiver
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:12.9861554Z [bounded-five] build2-policy-null
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:14.8617597Z [bounded-five] build2-policy-mutability
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:16.7352837Z [bounded-five] build2-policy-effectful-qualifier
+java-and-certificates	Replay the five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7196172Z {"closureId": "bounded-five-v1-b4dd741e9983b728", "status": "VERIFIED", "errors": []}
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	﻿2026-09-08T22:26:18.7302063Z ##[group]Run python3 -B scripts/run_next_obligation_repairs.py /tmp/acgn-next-five
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7302669Z [36;1mpython3 -B scripts/run_next_obligation_repairs.py /tmp/acgn-next-five[0m
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7379241Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7379504Z env:
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7379827Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7380333Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7380751Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:18.7381043Z ##[endgroup]
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:19.0597981Z [next-five] lean-version
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:19.1243195Z [next-five] java-version
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:19.1889019Z [next-five] javac-version
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:19.3553766Z [next-five] driver-tests
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:21.8756593Z [next-five] plugin-tests
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:22.6020221Z [next-five] build1-fixture-git-init
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:22.6059255Z [next-five] build1-fixture-git-add
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:24.4248802Z [next-five] build1-fixture-git-commit
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:24.4571446Z [next-five] build1-fixture-git-sha
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:24.4612803Z [next-five] build1-lean-version
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:24.5290264Z [next-five] build1-compile
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:34.8680026Z [next-five] build1-extractor-compile
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:36.9924299Z [next-five] build1-extract-flat-types
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:48.9817258Z [next-five] build1-extract-chain-sequences
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:26:59.4307983Z [next-five] build1-extract-ordered-calls
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:07.5734819Z [next-five] build1-proof-FlatTypeSubstitution
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:08.0955454Z [next-five] build1-proof-DependentChainSequence
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:08.8198744Z [next-five] build1-proof-OrderedCallValidation
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:09.8423361Z [next-five] build1-test-00
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:10.1685927Z [next-five] build1-test-01
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:10.3836670Z [next-five] build1-test-02
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:17.0588225Z [next-five] build1-test-03
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:22.4544719Z [next-five] build1-test-04
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:27:25.3976600Z [next-five] build1-proof-FlatTypeReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:28:20.2720960Z [next-five] build1-proof-ChainSequenceReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:04.6725710Z [next-five] build1-proof-CallValidationReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:06.7653393Z [next-five] build1-reject-flat-wrong-element
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:07.0809019Z [next-five] build1-reject-flat-wrong-output
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:07.3962615Z [next-five] build1-reject-flat-wrong-substitution
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:07.7116282Z [next-five] build1-reject-chain-carrier-BAG
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:08.1775760Z [next-five] build1-reject-chain-output-0
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:08.6433851Z [next-five] build1-reject-chain-output-1-0
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:09.1091983Z [next-five] build1-reject-chain-distinct-swap
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:09.5747922Z [next-five] build1-reject-call-target_callee
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:10.0405020Z [next-five] build1-reject-call-edge_owners
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:10.5062459Z [next-five] build1-reject-call-edge_targets
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:10.9720277Z [next-five] build1-reject-call-cert_payloads
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:11.4377395Z [next-five] build1-reject-call-distinct-swap
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:12.0634390Z [next-five] build1-source-reject-flat-omitted-type-guard
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:21.0362619Z [next-five] build1-source-reject-flat-wrong-map
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:29.2957240Z [next-five] build1-source-reject-flat-unsubstituted-one
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:38.5873342Z [next-five] build1-source-reject-flat-shared-instance-state
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:29:52.0698423Z [next-five] build1-source-reject-call-omitted-early-return
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:00.4390095Z [next-five] build1-source-reject-chain-shared-instance-state
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:11.9714094Z [next-five] build1-source-reject-chain-reordered-source
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:22.3515700Z [next-five] build1-source-reject-chain-deduplicated-source
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:33.0773035Z [next-five] build1-source-reject-call-omitted-last-argument
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:41.4480768Z [next-five] build1-fixture-git-final-sha
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:41.4521603Z [next-five] build1-fixture-git-final-status
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:42.2505508Z [next-five] build2-fixture-git-init
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:42.2545606Z [next-five] build2-fixture-git-add
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:44.0743645Z [next-five] build2-fixture-git-commit
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:44.1068263Z [next-five] build2-fixture-git-sha
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:44.1108170Z [next-five] build2-lean-version
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:44.1823356Z [next-five] build2-compile
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:55.3059132Z [next-five] build2-extractor-compile
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:30:57.4886701Z [next-five] build2-extract-flat-types
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:10.6415989Z [next-five] build2-extract-chain-sequences
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:22.1262458Z [next-five] build2-extract-ordered-calls
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:31.1472322Z [next-five] build2-proof-FlatTypeSubstitution
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:31.6684582Z [next-five] build2-proof-DependentChainSequence
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:32.3945553Z [next-five] build2-proof-OrderedCallValidation
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:33.4139207Z [next-five] build2-test-00
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:33.7381956Z [next-five] build2-test-01
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:33.9533295Z [next-five] build2-test-02
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:40.6337106Z [next-five] build2-test-03
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:45.6222335Z [next-five] build2-test-04
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:31:48.5100478Z [next-five] build2-proof-FlatTypeReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:32:45.9584562Z [next-five] build2-proof-ChainSequenceReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:32.0618333Z [next-five] build2-proof-CallValidationReplay
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:34.2124866Z [next-five] build2-reject-flat-wrong-element
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:34.5779655Z [next-five] build2-reject-flat-wrong-output
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:34.9436805Z [next-five] build2-reject-flat-wrong-substitution
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:35.2591535Z [next-five] build2-reject-chain-carrier-BAG
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:35.7250638Z [next-five] build2-reject-chain-output-0
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:36.1909178Z [next-five] build2-reject-chain-output-1-0
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:36.6567204Z [next-five] build2-reject-chain-distinct-swap
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:37.1225493Z [next-five] build2-reject-call-target_callee
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:37.5897175Z [next-five] build2-reject-call-edge_owners
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:38.0554756Z [next-five] build2-reject-call-edge_targets
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:38.5212210Z [next-five] build2-reject-call-cert_payloads
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:38.9869602Z [next-five] build2-reject-call-distinct-swap
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:39.6127870Z [next-five] build2-source-reject-flat-omitted-type-guard
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:48.4251214Z [next-five] build2-source-reject-flat-wrong-map
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:33:57.9522253Z [next-five] build2-source-reject-flat-unsubstituted-one
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:34:07.8172866Z [next-five] build2-source-reject-flat-shared-instance-state
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:34:20.4920646Z [next-five] build2-source-reject-call-omitted-early-return
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:34:28.8633243Z [next-five] build2-source-reject-chain-shared-instance-state
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:34:40.3447290Z [next-five] build2-source-reject-chain-reordered-source
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:34:50.7384803Z [next-five] build2-source-reject-chain-deduplicated-source
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:35:01.7177809Z [next-five] build2-source-reject-call-omitted-last-argument
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:35:09.7694977Z [next-five] build2-fixture-git-final-sha
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:35:09.7735720Z [next-five] build2-fixture-git-final-status
+java-and-certificates	Replay the next five bounded obligation repairs in two clean builds	2026-09-08T22:35:11.2604728Z {"closureId": "next-five-v2.13-edd98cff2f9d2fb5", "status": "VERIFIED", "errors": []}
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	﻿2026-09-08T22:35:11.2764150Z ##[group]Run python3 -B scripts/run_third_obligation_repairs.py /tmp/acgn-third-five
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2765165Z [36;1mpython3 -B scripts/run_third_obligation_repairs.py /tmp/acgn-third-five[0m
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2855825Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2856123Z env:
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2856470Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2857038Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2857501Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.2857806Z ##[endgroup]
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.6390994Z [third-five] lean-version
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.7035733Z [third-five] java-version
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.7685189Z [third-five] javac-version
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:11.9352257Z [third-five] driver-tests
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:17.7145805Z [third-five] plugin-tests
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:17.9298289Z [third-five] area-tests-test_third_call_replays
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:18.1948141Z [third-five] area-tests-test_third_join_replays
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:19.1619555Z [third-five] area-tests-test_third_registry_replays
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:19.7852018Z [third-five] build1-fixture-git-init
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:19.7891426Z [third-five] build1-fixture-git-add
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:21.6086095Z [third-five] build1-fixture-git-commit
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:21.6410999Z [third-five] build1-fixture-git-sha
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:21.6453972Z [third-five] build1-lean-version
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:21.7178262Z [third-five] build1-compile
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:33.0509649Z [third-five] build1-extractor-compile
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:35.2847197Z [third-five] build1-extract-call-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:44.8694349Z [third-five] build1-extract-guarded-join
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:35:59.4660589Z [third-five] build1-extract-registry-admission
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:08.1520184Z [third-five] build1-proof-DependentChainSequence
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:08.8794845Z [third-five] build1-proof-DependentJoinGuard
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:09.7859126Z [third-five] build1-proof-PhaseA2DependentChains
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:14.0779074Z [third-five] build1-proof-CallAuthorityTransitions
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:15.2533072Z [third-five] build1-proof-RegistryAdmission
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:17.7410084Z [third-five] build1-proof-GuardedJoinChain
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:18.7597711Z [third-five] build1-test-00
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:24.8176314Z [third-five] build1-test-01
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:26.9936851Z [third-five] build1-test-02
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:27.2088156Z [third-five] build1-test-03
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:28.2345538Z [third-five] build1-test-04
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:38.2882493Z [third-five] build1-proof-CallAuthorityReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:36:44.5412133Z [third-five] build1-proof-GuardedJoinChainReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:37:14.9714519Z [third-five] build1-proof-RegistryAdmissionReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:01.3132330Z [third-five] build1-reject-call-call-foreign-masg_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:01.8302720Z [third-five] build1-reject-call-call-foreign-ir_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:02.3466840Z [third-five] build1-reject-call-call-foreign-cert_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:02.8627530Z [third-five] build1-reject-call-call-wrong-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:03.3789701Z [third-five] build1-reject-call-call-counter-no-advance
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:03.8958060Z [third-five] build1-reject-call-call-consumed-reaccepted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:04.4119195Z [third-five] build1-reject-call-call-visit-reused
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:04.9279131Z [third-five] build1-reject-call-call-int-overflow-premise
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:05.4442113Z [third-five] build1-reject-call-call-observed-cannot-replace-table
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:05.9605935Z [third-five] build1-reject-call-call-deduplicated-ports
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:06.4767597Z [third-five] build1-reject-call-call-swapped-ports
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:06.9928830Z [third-five] build1-reject-call-call-flattened-call
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:07.5090282Z [third-five] build1-reject-call-call-erased-barrier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:08.0250981Z [third-five] build1-reject-join-join-unary-producer
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:08.7419608Z [third-five] build1-reject-join-join-endpoint-producer
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:09.4087295Z [third-five] build1-reject-join-join-unary-verifier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:10.1255234Z [third-five] build1-reject-join-join-endpoint-verifier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:10.7922586Z [third-five] build1-reject-join-join-wrong-relational-output
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:19.0353481Z [third-five] build1-reject-join-join-erased-counterexample
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:38:47.9452756Z [third-five] build1-reject-join-join-parser-inequality
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:16.9553863Z [third-five] build1-reject-join-join-source-minimum
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:17.4236042Z [third-five] build1-reject-join-join-source-start
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:17.8895672Z [third-five] build1-reject-join-join-source-endOffset
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:18.4056634Z [third-five] build1-reject-join-join-source-leftBoundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:18.9219498Z [third-five] build1-reject-join-join-source-rightBoundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:19.3879236Z [third-five] build1-reject-registry-registry-accepted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:20.0070889Z [third-five] build1-reject-registry-registry-indexMatches
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:20.6259842Z [third-five] build1-reject-registry-registry-invented-unit
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:21.1131618Z [third-five] build1-source-reject-call-call-grouped-declaration-arity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:31.0508138Z [third-five] build1-source-reject-call-call-import-observed-arity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:41.6327669Z [third-five] build1-source-reject-call-call-synthesized-ledger-entry
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:39:51.1661988Z [third-five] build1-source-reject-call-call-shared-arity-state
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:01.7008669Z [third-five] build1-source-reject-call-call-counter-no-increment
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:12.6385744Z [third-five] build1-source-reject-call-call-reuse-guard-omitted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:22.3321536Z [third-five] build1-source-reject-call-call-reversed-arguments
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:32.7605291Z [third-five] build1-source-reject-call-call-skipped-repeats
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:42.2540249Z [third-five] build1-source-reject-call-call-erased-nesting
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:40:51.6728030Z [third-five] build1-source-reject-call-call-commutative-policy
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:00.8975504Z [third-five] build1-source-reject-join-join-producer-unary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:09.8024528Z [third-five] build1-source-reject-join-join-verifier-unary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:19.6799392Z [third-five] build1-source-reject-join-join-producer-start
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:28.2046413Z [third-five] build1-source-reject-join-join-verifier-end
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:37.8763853Z [third-five] build1-source-reject-join-join-producer-untyped
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:41:46.0837258Z [third-five] build1-source-reject-join-join-producer-left-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:42:00.4081577Z [third-five] build1-source-reject-join-join-producer-right-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:42:15.7762720Z [third-five] build1-source-reject-join-join-verifier-left-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:42:30.3393559Z [third-five] build1-source-reject-join-join-verifier-right-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:42:44.0906543Z [third-five] build1-source-reject-join-join-producer-wrong-output
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:42:58.5283035Z [third-five] build1-source-reject-join-join-producer-modifiers
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:11.6989367Z [third-five] build1-source-reject-join-join-verifier-modifiers
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:24.4750396Z [third-five] build1-source-reject-registry-registry-omitted-parameter
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:33.3917986Z [third-five] build1-source-reject-registry-registry-omitted-profile-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:41.6625775Z [third-five] build1-source-reject-registry-registry-shifted-path
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:50.3859780Z [third-five] build1-source-reject-registry-registry-omitted-identity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:59.9658392Z [third-five] build1-fixture-git-final-sha
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:43:59.9699162Z [third-five] build1-fixture-git-final-status
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:00.7806198Z [third-five] build2-fixture-git-init
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:00.7846107Z [third-five] build2-fixture-git-add
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:02.6034168Z [third-five] build2-fixture-git-commit
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:02.6357866Z [third-five] build2-fixture-git-sha
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:02.6398036Z [third-five] build2-lean-version
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:02.7096613Z [third-five] build2-compile
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:13.0451284Z [third-five] build2-extractor-compile
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:15.2714887Z [third-five] build2-extract-call-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:24.3283140Z [third-five] build2-extract-guarded-join
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:38.4140337Z [third-five] build2-extract-registry-admission
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:47.5280079Z [third-five] build2-proof-DependentChainSequence
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:48.3053987Z [third-five] build2-proof-DependentJoinGuard
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:49.2117703Z [third-five] build2-proof-PhaseA2DependentChains
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:53.4012798Z [third-five] build2-proof-CallAuthorityTransitions
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:54.4806765Z [third-five] build2-proof-RegistryAdmission
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:56.8675367Z [third-five] build2-proof-GuardedJoinChain
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:44:57.8868418Z [third-five] build2-test-00
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:03.4507989Z [third-five] build2-test-01
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:05.4800880Z [third-five] build2-test-02
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:05.6951693Z [third-five] build2-test-03
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:06.6131851Z [third-five] build2-test-04
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:16.4689558Z [third-five] build2-proof-CallAuthorityReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:22.5666705Z [third-five] build2-proof-GuardedJoinChainReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:45:51.8932842Z [third-five] build2-proof-RegistryAdmissionReplay
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:35.9740769Z [third-five] build2-reject-call-call-foreign-masg_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:36.4399834Z [third-five] build2-reject-call-call-foreign-ir_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:36.9057584Z [third-five] build2-reject-call-call-foreign-cert_tree
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:37.3717247Z [third-five] build2-reject-call-call-wrong-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:37.8376092Z [third-five] build2-reject-call-call-counter-no-advance
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:38.3034177Z [third-five] build2-reject-call-call-consumed-reaccepted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:38.7692723Z [third-five] build2-reject-call-call-visit-reused
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:39.2350534Z [third-five] build2-reject-call-call-int-overflow-premise
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:39.7028847Z [third-five] build2-reject-call-call-observed-cannot-replace-table
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:40.1679103Z [third-five] build2-reject-call-call-deduplicated-ports
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:40.6838924Z [third-five] build2-reject-call-call-swapped-ports
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:41.1496097Z [third-five] build2-reject-call-call-flattened-call
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:41.6657911Z [third-five] build2-reject-call-call-erased-barrier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:42.1817571Z [third-five] build2-reject-join-join-unary-producer
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:42.8485040Z [third-five] build2-reject-join-join-endpoint-producer
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:43.4647217Z [third-five] build2-reject-join-join-unary-verifier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:44.1314214Z [third-five] build2-reject-join-join-endpoint-verifier
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:44.7480357Z [third-five] build2-reject-join-join-wrong-relational-output
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:46:52.3376110Z [third-five] build2-reject-join-join-erased-counterexample
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:19.2301023Z [third-five] build2-reject-join-join-parser-inequality
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:45.9722101Z [third-five] build2-reject-join-join-source-minimum
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:46.4381067Z [third-five] build2-reject-join-join-source-start
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:46.9038890Z [third-five] build2-reject-join-join-source-endOffset
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:47.3696981Z [third-five] build2-reject-join-join-source-leftBoundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:47.8355577Z [third-five] build2-reject-join-join-source-rightBoundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:48.3014803Z [third-five] build2-reject-registry-registry-accepted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:48.8699142Z [third-five] build2-reject-registry-registry-indexMatches
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:49.4385165Z [third-five] build2-reject-registry-registry-invented-unit
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:49.8765752Z [third-five] build2-source-reject-call-call-grouped-declaration-arity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:47:59.2940544Z [third-five] build2-source-reject-call-call-import-observed-arity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:08.2241566Z [third-five] build2-source-reject-call-call-synthesized-ledger-entry
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:17.3717785Z [third-five] build2-source-reject-call-call-shared-arity-state
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:27.6355902Z [third-five] build2-source-reject-call-call-counter-no-increment
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:37.9971275Z [third-five] build2-source-reject-call-call-reuse-guard-omitted
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:47.8656357Z [third-five] build2-source-reject-call-call-reversed-arguments
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:48:58.2019647Z [third-five] build2-source-reject-call-call-skipped-repeats
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:08.3248751Z [third-five] build2-source-reject-call-call-erased-nesting
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:18.0109888Z [third-five] build2-source-reject-call-call-commutative-policy
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:27.7993945Z [third-five] build2-source-reject-join-join-producer-unary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:36.7649674Z [third-five] build2-source-reject-join-join-verifier-unary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:45.4347180Z [third-five] build2-source-reject-join-join-producer-start
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:49:54.2752065Z [third-five] build2-source-reject-join-join-verifier-end
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:50:03.4404056Z [third-five] build2-source-reject-join-join-producer-untyped
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:50:12.2644643Z [third-five] build2-source-reject-join-join-producer-left-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:50:25.4702916Z [third-five] build2-source-reject-join-join-producer-right-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:50:39.5776826Z [third-five] build2-source-reject-join-join-verifier-left-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:50:53.2800875Z [third-five] build2-source-reject-join-join-verifier-right-boundary
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:51:07.1906813Z [third-five] build2-source-reject-join-join-producer-wrong-output
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:51:21.3005343Z [third-five] build2-source-reject-join-join-producer-modifiers
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:51:34.8760407Z [third-five] build2-source-reject-join-join-verifier-modifiers
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:51:48.7940947Z [third-five] build2-source-reject-registry-registry-omitted-parameter
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:51:57.9267804Z [third-five] build2-source-reject-registry-registry-omitted-profile-authority
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:52:07.3000717Z [third-five] build2-source-reject-registry-registry-shifted-path
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:52:15.8768298Z [third-five] build2-source-reject-registry-registry-omitted-identity
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:52:24.3854261Z [third-five] build2-fixture-git-final-sha
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:52:24.3894963Z [third-five] build2-fixture-git-final-status
+java-and-certificates	Replay CALL authority, registry admission and guarded JOIN obligations	2026-09-08T22:52:25.9218294Z {"closureId": "third-five-v1-83973c6a869d32a4", "status": "VERIFIED", "errors": []}
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	﻿2026-09-08T22:52:25.9412984Z ##[group]Run python3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9413648Z [36;1mpython3 -B scripts/run_fourth_obligation_repairs.py /tmp/acgn-fourth-five[0m
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9490446Z shell: /usr/bin/bash -e {0}
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9490717Z env:
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9491042Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9491556Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9491977Z   ELAN_HOME: /home/runner/work/_temp/acgn-elan
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:25.9492280Z ##[endgroup]
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:26.2957281Z [fourth-five] lean-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:26.3604820Z [fourth-five] java-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:26.4256564Z [fourth-five] javac-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:26.5944221Z [fourth-five] driver-tests
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:27.3609466Z [fourth-five] plugin-tests
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:27.5759322Z [fourth-five] area-tests-test_fourth_container_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:34.9093611Z [fourth-five] area-tests-test_fourth_chain_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:48.4596830Z [fourth-five] area-tests-test_fourth_profile_replays
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:50.1370868Z [fourth-five] build1-fixture-git-init
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:50.1410957Z [fourth-five] build1-fixture-git-add
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:51.9601959Z [fourth-five] build1-fixture-git-commit
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:51.9925772Z [fourth-five] build1-fixture-git-sha
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:51.9968731Z [fourth-five] build1-lean-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:52:52.0646361Z [fourth-five] build1-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:53:03.6358241Z [fourth-five] build1-extractor-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:53:05.7656589Z [fourth-five] build1-extract-container
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:53:30.3838096Z [fourth-five] build1-extract-chain
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:53:52.4752404Z [fourth-five] build1-extract-profile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:54:14.7985015Z [fourth-five] build1-proof-ContainerWitnessTransitions
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:54:16.3306655Z [fourth-five] build1-proof-DependentChainWitnesses
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:54:17.2544589Z [fourth-five] build1-proof-SemanticProfileWire
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:54:18.1238284Z [fourth-five] build1-test-00
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:54:25.0544680Z [fourth-five] build1-test-01
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:55:50.6612507Z [fourth-five] build1-test-02
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:56:00.5583974Z [fourth-five] build1-proof-ContainerWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T22:57:10.1368285Z [fourth-five] build1-proof-DependentChainWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:04:20.8237324Z [fourth-five] build1-proof-SemanticProfileWireReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:12:12.4613020Z [fourth-five] build1-reject-container-container-accepted
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:12:13.0811941Z [fourth-five] build1-reject-container-container-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:12:13.7000474Z [fourth-five] build1-reject-container-container-order
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:12:14.3218343Z [fourth-five] build1-reject-container-container-permutation
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:13:21.8744205Z [fourth-five] build1-reject-container-container-splice
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:13:22.5451904Z [fourth-five] build1-reject-container-container-unit-authority
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:14:31.7492558Z [fourth-five] build1-reject-container-container-missing-A
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:15:41.7171244Z [fourth-five] build1-reject-container-container-wire-acceptance
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:16:57.5646329Z [fourth-five] build1-reject-container-container-recursive-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:14.6691801Z [fourth-five] build1-reject-chain-chain-leaf-primitive
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:20.8529126Z [fourth-five] build1-reject-chain-chain-leaf-absent
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:27.5370407Z [fourth-five] build1-reject-chain-chain-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:35.6752545Z [fourth-five] build1-reject-chain-chain-certificate
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:45.4182566Z [fourth-five] build1-reject-chain-chain-0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:18:57.5680439Z [fourth-five] build1-reject-chain-chain-record-s2
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:19:10.1694831Z [fourth-five] build1-reject-chain-chain-record-s7
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:19:22.7199660Z [fourth-five] build1-reject-chain-chain-record-s8
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:19:35.2714783Z [fourth-five] build1-reject-chain-chain-index-c0-drop0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:19:49.9297724Z [fourth-five] build1-reject-chain-chain-index-c1-c0-s0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:20:07.1950694Z [fourth-five] build1-reject-chain-chain-leaf0-c0-tag
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:20:31.6357447Z [fourth-five] build1-reject-chain-chain-stored-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:20:43.6851448Z [fourth-five] build1-reject-chain-chain-view-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:20:55.7346121Z [fourth-five] build1-reject-chain-chain-rule-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:21:07.8347199Z [fourth-five] build1-reject-chain-chain-ledger-intermediate
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:22:09.2383418Z [fourth-five] build1-reject-chain-chain-ledger-public-control
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:20.6225260Z [fourth-five] build1-reject-profile-profile-0-producerKey
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:21.3393801Z [fourth-five] build1-reject-profile-profile-1-independentKey
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:22.0561423Z [fourth-five] build1-reject-profile-profile-2-digest
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:22.8231251Z [fourth-five] build1-reject-profile-profile-3-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:23.9409301Z [fourth-five] build1-reject-profile-profile-4-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:25.0087803Z [fourth-five] build1-reject-profile-profile-5-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:26.1270476Z [fourth-five] build1-reject-profile-profile-6-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:27.2446846Z [fourth-five] build1-reject-profile-profile-7-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:28.4129902Z [fourth-five] build1-reject-profile-profile-8-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:29.4308065Z [fourth-five] build1-reject-profile-profile-9-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:32.9577040Z [fourth-five] build1-reject-profile-profile-10-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:36.5079499Z [fourth-five] build1-source-reject-container-law-parameter
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:23:59.9383720Z [fourth-five] build1-source-reject-container-trace-fiber
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:24:24.0591116Z [fourth-five] build1-source-reject-container-splice-position
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:24:46.1922819Z [fourth-five] build1-source-reject-container-same-head
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:25:09.5975194Z [fourth-five] build1-source-reject-container-resolved-dispatch
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:25:32.5928018Z [fourth-five] build1-source-reject-container-verifier-fiber
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:25:55.9569593Z [fourth-five] build1-source-reject-container-verifier-postorder
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:26:20.1465770Z [fourth-five] build1-source-reject-chain-chain-leaf-exact
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:26:43.7569529Z [fourth-five] build1-source-reject-chain-chain-leaf-unary
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:27:07.9922563Z [fourth-five] build1-source-reject-chain-chain-leaf-proof-rule
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:27:32.2674727Z [fourth-five] build1-source-reject-chain-chain-leaf-primitive
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:27:54.4329111Z [fourth-five] build1-source-reject-chain-chain-index-kind
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:28:17.3004502Z [fourth-five] build1-source-reject-chain-chain-index-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:28:41.1242574Z [fourth-five] build1-source-reject-chain-chain-index-result
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:29:04.3844003Z [fourth-five] build1-source-reject-chain-chain-certificate-profile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:29:27.3620331Z [fourth-five] build1-source-reject-chain-chain-certificate-order
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:29:50.8313739Z [fourth-five] build1-source-reject-chain-chain-verifier-leaf
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:30:14.4508985Z [fourth-five] build1-source-reject-chain-chain-verifier-unary
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:30:38.4202815Z [fourth-five] build1-source-reject-chain-chain-verifier-proof
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:31:01.8487162Z [fourth-five] build1-source-reject-chain-chain-verifier-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:31:25.7272474Z [fourth-five] build1-source-reject-chain-chain-verifier-order
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:31:48.9013023Z [fourth-five] build1-source-reject-chain-chain-writer-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:32:12.2175108Z [fourth-five] build1-source-reject-chain-chain-writer-rule
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:32:35.8314007Z [fourth-five] build1-source-reject-chain-chain-writer-fold-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:32:59.3088644Z [fourth-five] build1-source-reject-chain-chain-writer-fold-result-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:33:22.4269142Z [fourth-five] build1-source-reject-chain-chain-writer-product-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:33:46.3615003Z [fourth-five] build1-source-reject-chain-chain-writer-case-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:34:09.3795639Z [fourth-five] build1-source-reject-profile-profile-writer-bitwidth
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:34:30.2599487Z [fourth-five] build1-source-reject-profile-profile-writer-overflow
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:34:52.1103042Z [fourth-five] build1-source-reject-profile-profile-writer-temporal
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:35:14.4335636Z [fourth-five] build1-source-reject-profile-profile-writer-rewrite
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:35:36.5080262Z [fourth-five] build1-source-reject-profile-profile-writer-signature
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:35:58.4767419Z [fourth-five] build1-source-reject-profile-profile-producer-length
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:36:20.4323411Z [fourth-five] build1-source-reject-profile-profile-verifier-length
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:36:42.2943414Z [fourth-five] build1-source-reject-profile-profile-verifier-field-count
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:37:04.8177622Z [fourth-five] build1-source-reject-profile-profile-verifier-digest
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:37:26.8672953Z [fourth-five] build1-source-reject-profile-profile-producer-authority
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:37:47.8483106Z [fourth-five] build1-source-reject-profile-profile-producer-export
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:38:09.3597841Z [fourth-five] build1-source-reject-profile-profile-verifier-publication
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:38:31.0942913Z [fourth-five] build1-source-reject-profile-profile-producer-modifiers
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:38:53.4574643Z [fourth-five] build1-source-reject-profile-profile-verifier-crypto
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:14.6571848Z [fourth-five] build1-source-reject-profile-profile-verifier-context-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:36.5616109Z [fourth-five] build1-fixture-git-final-sha
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:36.5656498Z [fourth-five] build1-fixture-git-final-status
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:37.4179501Z [fourth-five] build2-fixture-git-init
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:37.4220014Z [fourth-five] build2-fixture-git-add
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:39.2409570Z [fourth-five] build2-fixture-git-commit
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:39.2733942Z [fourth-five] build2-fixture-git-sha
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:39.2773355Z [fourth-five] build2-lean-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:39.3463840Z [fourth-five] build2-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:50.9420130Z [fourth-five] build2-extractor-compile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:39:53.0668949Z [fourth-five] build2-extract-container
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:40:16.8338261Z [fourth-five] build2-extract-chain
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:40:39.7322284Z [fourth-five] build2-extract-profile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:41:01.7002666Z [fourth-five] build2-proof-ContainerWitnessTransitions
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:41:03.2318776Z [fourth-five] build2-proof-DependentChainWitnesses
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:41:04.1559499Z [fourth-five] build2-proof-SemanticProfileWire
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:41:05.0733618Z [fourth-five] build2-test-00
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:41:11.1974772Z [fourth-five] build2-test-01
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:42:36.6899375Z [fourth-five] build2-test-02
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:42:46.9525437Z [fourth-five] build2-proof-ContainerWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:43:56.7871603Z [fourth-five] build2-proof-DependentChainWitnessReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:51:01.7544283Z [fourth-five] build2-proof-SemanticProfileWireReplay
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:58:45.9957312Z [fourth-five] build2-reject-container-container-accepted
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:58:46.6147434Z [fourth-five] build2-reject-container-container-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:58:47.2336773Z [fourth-five] build2-reject-container-container-order
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:58:47.9045206Z [fourth-five] build2-reject-container-container-permutation
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:59:57.7730567Z [fourth-five] build2-reject-container-container-splice
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-08T23:59:58.4440515Z [fourth-five] build2-reject-container-container-unit-authority
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:01:08.0052731Z [fourth-five] build2-reject-container-container-missing-A
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:02:16.9102598Z [fourth-five] build2-reject-container-container-wire-acceptance
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:03:25.7107457Z [fourth-five] build2-reject-container-container-recursive-ledger
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:04:34.2565368Z [fourth-five] build2-reject-chain-chain-leaf-primitive
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:04:40.3873603Z [fourth-five] build2-reject-chain-chain-leaf-absent
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:04:46.8694640Z [fourth-five] build2-reject-chain-chain-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:04:54.7051156Z [fourth-five] build2-reject-chain-chain-certificate
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:05:04.0951260Z [fourth-five] build2-reject-chain-chain-0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:05:15.8915283Z [fourth-five] build2-reject-chain-chain-record-s2
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:05:28.3925841Z [fourth-five] build2-reject-chain-chain-record-s7
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:05:41.1943609Z [fourth-five] build2-reject-chain-chain-record-s8
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:05:53.9962776Z [fourth-five] build2-reject-chain-chain-index-c0-drop0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:06:08.3005449Z [fourth-five] build2-reject-chain-chain-index-c1-c0-s0
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:06:25.7161507Z [fourth-five] build2-reject-chain-chain-leaf0-c0-tag
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:06:50.3073998Z [fourth-five] build2-reject-chain-chain-stored-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:07:02.7104754Z [fourth-five] build2-reject-chain-chain-view-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:07:15.1619962Z [fourth-five] build2-reject-chain-chain-rule-key
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:07:27.5129700Z [fourth-five] build2-reject-chain-chain-ledger-intermediate
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:08:28.7652021Z [fourth-five] build2-reject-chain-chain-ledger-public-control
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:37.2340178Z [fourth-five] build2-reject-profile-profile-0-producerKey
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:37.9006455Z [fourth-five] build2-reject-profile-profile-1-independentKey
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:38.6172240Z [fourth-five] build2-reject-profile-profile-2-digest
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:39.3339440Z [fourth-five] build2-reject-profile-profile-3-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:40.4017070Z [fourth-five] build2-reject-profile-profile-4-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:41.4207575Z [fourth-five] build2-reject-profile-profile-5-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:42.4884866Z [fourth-five] build2-reject-profile-profile-6-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:43.6064731Z [fourth-five] build2-reject-profile-profile-7-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:44.7246384Z [fourth-five] build2-reject-profile-profile-8-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:45.6922513Z [fourth-five] build2-reject-profile-profile-9-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:49.1170360Z [fourth-five] build2-reject-profile-profile-10-outcome
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:09:52.5645762Z [fourth-five] build2-source-reject-container-law-parameter
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:10:16.2384644Z [fourth-five] build2-source-reject-container-trace-fiber
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:10:39.4748800Z [fourth-five] build2-source-reject-container-splice-position
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:11:03.9449030Z [fourth-five] build2-source-reject-container-same-head
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:11:28.2664610Z [fourth-five] build2-source-reject-container-resolved-dispatch
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:11:53.0472969Z [fourth-five] build2-source-reject-container-verifier-fiber
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:12:17.2577247Z [fourth-five] build2-source-reject-container-verifier-postorder
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:12:42.3517047Z [fourth-five] build2-source-reject-chain-chain-leaf-exact
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:13:06.0900544Z [fourth-five] build2-source-reject-chain-chain-leaf-unary
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:13:28.6525788Z [fourth-five] build2-source-reject-chain-chain-leaf-proof-rule
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:13:51.4310948Z [fourth-five] build2-source-reject-chain-chain-leaf-primitive
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:14:16.0169576Z [fourth-five] build2-source-reject-chain-chain-index-kind
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:14:39.4806570Z [fourth-five] build2-source-reject-chain-chain-index-version
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:15:02.9689598Z [fourth-five] build2-source-reject-chain-chain-index-result
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:15:25.4367736Z [fourth-five] build2-source-reject-chain-chain-certificate-profile
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:15:48.9913441Z [fourth-five] build2-source-reject-chain-chain-certificate-order
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:16:13.1622433Z [fourth-five] build2-source-reject-chain-chain-verifier-leaf
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:16:36.2341326Z [fourth-five] build2-source-reject-chain-chain-verifier-unary
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:16:59.3877726Z [fourth-five] build2-source-reject-chain-chain-verifier-proof
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:17:22.4519987Z [fourth-five] build2-source-reject-chain-chain-verifier-index
+java-and-certificates	Replay typed flattening, leaf and wire-index obligations	2026-09-09T00:17:44.1280208Z ##[error]The operation was canceled.
+java-and-certificates	Post Run actions/setup-java@v4	﻿2026-09-09T00:17:44.1434238Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+java-and-certificates	Post Run actions/setup-java@v4	2026-09-09T00:17:44.1435445Z Post job cleanup.
+java-and-certificates	Post Run actions/setup-java@v4	2026-09-09T00:17:44.3424993Z (node:13149) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+java-and-certificates	Post Run actions/setup-java@v4	2026-09-09T00:17:44.3426823Z (Use `node --trace-deprecation ...` to show where the warning was created)
+java-and-certificates	Post Run actions/checkout@v4	﻿2026-09-09T00:17:44.3697790Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.3700105Z Post job cleanup.
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5198981Z [command]/usr/bin/git version
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5301496Z git version 2.55.0
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5354114Z Temporarily overriding HOME='/home/runner/work/_temp/a78991b3-903f-4ddd-b125-d128d77e3f62' before making global git config changes
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5356049Z Adding repository directory to the temporary git global config as a safe directory
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5357190Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ACGN/ACGN
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5379707Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.5461776Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6909114Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6909757Z http.https://github.com/.extraheader
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6910572Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6912236Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6913739Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+java-and-certificates	Post Run actions/checkout@v4	2026-09-09T00:17:44.6958316Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+java-and-certificates	Complete job	﻿2026-09-09T00:17:44.7579780Z Cleaning up orphan processes
+java-and-certificates	Complete job	2026-09-09T00:17:44.7898127Z Terminate orphan process: pid (9350) (python3)
+java-and-certificates	Complete job	2026-09-09T00:17:44.8029155Z Terminate orphan process: pid (13116) (java)
+java-and-certificates	Complete job	2026-09-09T00:17:44.8039525Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

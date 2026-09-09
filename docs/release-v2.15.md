@@ -54,8 +54,8 @@ right-associated primitive JOIN export reproduces the original failure.
 ## Bounded Verification
 
 The final [machine report](obligation-repair/fourth-five/evidence/final/report.json)
-is VERIFIED at `fourth-five-v1-188b4a84db91aeff`, input root
-`188b4a84db91aeff0f921e687a4093fc49fd9268d46647b98c7de4a052943575`.
+is VERIFIED at `fourth-five-v1-96ad79ffdb675c46`, input root
+`96ad79ffdb675c46e4c07b6920fc04a797f67dea2eb6eccb19819a8877b3f990`.
 Two clean builds passed all five claims with 1,076 identical artifacts each:
 66 general Lean theorems, 9,128 replay propositions/blocks, 10,630 Java
 observations, 126,489 assertions, 36 Lean rejection controls and 42 source
@@ -64,7 +64,9 @@ original findings and executed evidence remain in the package.
 
 The first hosted closure exceeded its 300-second Lean compilation limit and
 is retained as an infrastructure failure. The final configuration permits
-900 seconds per command and 120 minutes for CI; proofs, counters and pass
+900 seconds per command and an independent 120-minute job for this package;
+the earlier suites run separately. The combined job's later overall timeout
+is retained as an infrastructure limit too. Proofs, counters and pass
 criteria are unchanged. The release requires successful CI on its exact
 packaging commit in addition to the local frozen-input result.
 
