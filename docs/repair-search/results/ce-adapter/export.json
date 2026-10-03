@@ -1,0 +1,32 @@
+{
+  "adapterHash": "64e2dc942087d60add7ec26d2a1f5c05028772dea71b6e839039fbee4b5a3505",
+  "converterHash": "3c5f109f3d7a5ef530ea388d8e994512df6f544ce1aa8b2e39be446223637b93",
+  "defaultModelChanged": false,
+  "inferenceBase": "aix-qwen3.8:27b-ud-q3_k_xl",
+  "model": {
+    "capabilities": [
+      "completion",
+      "tools",
+      "thinking"
+    ],
+    "details": {
+      "context_length": 262144,
+      "embedding_length": 5120,
+      "families": [
+        "qwen35"
+      ],
+      "family": "qwen35",
+      "format": "gguf",
+      "parameter_size": "27.3B",
+      "parent_model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "quantization_level": "Q3_K_L"
+    },
+    "digest": "6e61119df05de0273ac7b15ce490978c6739f5abbc268e11dae0e692f29cba07",
+    "model": "acgn-repair-search-01-ce:pilot",
+    "modified_at": "2026-10-03T10:55:54.784565982-05:00",
+    "name": "acgn-repair-search-01-ce:pilot",
+    "size": 13150721797
+  },
+  "tag": "acgn-repair-search-01-ce:pilot",
+  "trainingBase": "/home/augustus/AIx/.local/hf-training/models--unsloth--Qwen3.8-27B-unsloth-bnb-4bit/snapshots/8aa5f05d26b7205477066e1449e0af13f762a299"
+}

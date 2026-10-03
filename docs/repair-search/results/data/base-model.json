@@ -1,0 +1,24 @@
+{
+  "capabilities": [
+    "completion",
+    "tools",
+    "thinking"
+  ],
+  "details": {
+    "context_length": 262144,
+    "embedding_length": 5120,
+    "families": [
+      "qwen35"
+    ],
+    "family": "qwen35",
+    "format": "gguf",
+    "parameter_size": "27.3B",
+    "parent_model": "",
+    "quantization_level": "Q3_K_L"
+  },
+  "digest": "283945d2cfdbd2646a4cfa392a55f7ba6c64c69661464f145a321fcbe976a036",
+  "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+  "modified_at": "2026-09-09T13:04:30.359913538-05:00",
+  "name": "aix-qwen3.8:27b-ud-q3_k_xl",
+  "size": 13146393829
+}

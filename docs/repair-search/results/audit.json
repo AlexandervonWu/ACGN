@@ -1,0 +1,450 @@
+{
+  "auditScriptHash": "294f71258d47f89cb993663182e5b193415a795519f89b3fd7242cabd13bda68",
+  "baseDigest": "283945d2cfdbd2646a4cfa392a55f7ba6c64c69661464f145a321fcbe976a036",
+  "boundedRepairAndTargetRechecks": [
+    {
+      "method": "tar",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "repair",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "21aff1bac1351d7611e38c0f40e85a289012824f842573b7fc42ee95032ea41f",
+          "split": "evaluation",
+          "used": 1
+        }
+      },
+      "task": "dd02cbbb47f50f4b21c3"
+    },
+    {
+      "method": "tar",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "repair",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "93ea2997c52c8a330ee03a5318608e438ecb88b2d42fa0fd0298380150924d97",
+          "split": "evaluation",
+          "used": 1
+        }
+      },
+      "task": "9dfbebfbf540909b1e11"
+    },
+    {
+      "method": "tar",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "repair",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "6cc43a3af38d46c681d74e6782be93f0a0eecdf833a1a4a82d693936bc930e00",
+          "split": "evaluation",
+          "used": 1
+        }
+      },
+      "task": "cafc7f1383dcfca22826"
+    },
+    {
+      "method": "tar",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "repair",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "2ce93c815e8cd3fc27a403bcdec926cada698c9e664918cfae04885fd8bafa48",
+          "split": "evaluation",
+          "used": 1
+        }
+      },
+      "task": "a0a86a4785202f92ef19"
+    },
+    {
+      "method": "base",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "repair",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "21aff1bac1351d7611e38c0f40e85a289012824f842573b7fc42ee95032ea41f",
+          "split": "evaluation",
+          "used": 1
+        }
+      },
+      "task": "dd02cbbb47f50f4b21c3"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "4b929a6a47e5f3152c1290e0a5a71d4665b55d0bd3b79b438c8606c3528f71da",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "be563a3a9ebe9062107c"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "ecffbfa2db5fbe28b1b24287f45fa189548d41236b5e91ac41a0bc2d130ffaa8",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "841b47d7a6530bdcdc29"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "eb1d582c2b07307c617c6eeba4645a22d348f6ec732795280a26533ea31ca639",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "e925b59446448a4c679a"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "f2f50903f7132c0e2522e96b4f948211e93905f0e17f01f28031ffdb4155b11e",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "45e3b214d8e2c259bcdf"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "1b06ab627bc657d6c0167841424ac121079c7c8dedd9f4a76cfac65589c12f59",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "880a7087b92b5ece2a43"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "9ef0d38a1ba9f294a11a29a9088788de126c5d6e0a968d3030151e10026c5de7",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "763d065c3ac245b08ec5"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "82d3d1f209e45819b1f82634b89cb38a7c693b6ef70cd2ffd2715b8831e70593",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "7b838a83e9b3d3f81c3b"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "284b95eb20a36221b62449f9a1b949c8d6782be4010719e038818ef336d3087b",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "35612179cdee5ab833b1"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "99c7a49af7e6fb6db4b4fd7d46445a4d23de0a728b9933a914b92c2d5bda710f",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "7b548b97db1453c93c70"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "4c96733409017cf8c4eca0bccf323bdfce70de068bc07d68f9ba96a28c347773",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "56a735cfb6fd4d9ea94b"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "2e1b967c1b9fcbb44ad4414d239957c3479f96f78b891e1be6379e88478c6d93",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "52ec408160a189e64b75"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "25f7c2049b0be1c5604a2cb92c9f9ed2b7aa65d7e4d08dda9057b9221c52334e",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "f852e8dec0a3382fc6bb"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "5d8d2f8bb2732266ac5d2c3f4ee7cd777530844bce4e3b149d47c3e37661c867",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "e2c01a2ed104f1745dc2"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "3c3ab3e6de0f00066ba5f84a0bc26984c3e0bfa4b941060bea101d9b3cb67ce6",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "c46d1fe0fac771787d51"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "6921a918fe62c178ac941626f1303bb76c9d675e64a5f895bf700e1041540fc1",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "2aeda657eb32bc427cef"
+    },
+    {
+      "method": "training-target",
+      "receipt": {
+        "accepted": true,
+        "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+        "request": {
+          "budget": 1,
+          "contextSat": true,
+          "extraUnsat": true,
+          "identityBound": true,
+          "kind": "training",
+          "missingUnsat": true,
+          "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+          "sourceHash": "0aac98e463967e68bee65e0277038512b5c821074d8f9be7fd718b91321b0248",
+          "split": "train",
+          "used": 1
+        }
+      },
+      "task": "539762d264f87178579b"
+    }
+  ],
+  "exceptionReason": "Reporting-only generation diagnostics and their unit test",
+  "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+  "sourceExceptions": {
+    "/home/augustus/ACGN/rl/acgn_repair/report_search.py": "0b0109df750e10ff1d3c3a4758848d9fe43dd66ad7937766f5e08b369eff7dda",
+    "/home/augustus/ACGN/rl/tests/test_search_study.py": "b693d70104618d3a3d4071b4e0e4418de46d46a60219f0aa822b379e40929596"
+  },
+  "sourceFiles": 394,
+  "sourceTasks": 24,
+  "status": "PASS_BOUNDED_EVIDENCE_AUDIT",
+  "trackedDiffEmpty": true,
+  "training": {
+    "ce": {
+      "peakAllocated": 11341565952,
+      "peakReserved": 11603542016,
+      "steps": 30
+    },
+    "sft": {
+      "peakAllocated": 10474892800,
+      "peakReserved": 10701766656,
+      "steps": 16
+    }
+  },
+  "trainingWeightsHash": "d5ced71fee428687bca87ed1b62a1518e936e8698b180fbba35431ebd31e1a25",
+  "wholeApplicationRefinement": "BLOCKED"
+}

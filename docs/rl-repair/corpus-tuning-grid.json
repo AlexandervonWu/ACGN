@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "configurations": [
+    {"id":"corpus-64x2-lr001","hidden":64,"layers":2,"heads":8,"lr":0.001}
+  ]
+}

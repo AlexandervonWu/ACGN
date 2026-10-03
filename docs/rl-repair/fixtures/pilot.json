@@ -1,0 +1,7 @@
+{
+  "schemaVersion": 1,
+  "tasks": [
+    {"id":"universal-cardinality","group":"fixture-universal","split":"train","path":"basic.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"existential-cardinality","group":"fixture-existential","split":"evaluation","path":"held_out.als","target":"candidate","oracle":"oracle","command":0}
+  ]
+}

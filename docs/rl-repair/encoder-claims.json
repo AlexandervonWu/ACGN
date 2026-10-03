@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "scope": "Finite graph schedule/model proofs, CUDA dense-reference tests and bounded training pilots",
+  "wholeApplicationRefinement": "BLOCKED",
+  "theorems": [
+    "endpoint_bounds", "reverse_attributes", "reverse_twice", "bidirectional_count",
+    "self_edge_count", "with_self_count", "duplicate_occurrences_retained", "self_is_incoming",
+    "self_degree_positive", "gcn_degree_product_positive", "degree_edge_order_invariant",
+    "aggregate_edge_order_invariant", "aggregate_duplicate", "relabel_attributes",
+    "relabel_reverse", "relabel_incoming", "attention_denominator_positive",
+    "attention_mass_numerator", "attention_denominator_order_invariant",
+    "gat_head_width_reconstructs", "same_architecture_keeps_encoder"
+  ],
+  "matrixRows": 400,
+  "additionalPilotEncoders": ["gcn", "gat", "gin", "egraph_transformer"],
+  "pilotTrainEpisodes": 6,
+  "pilotEvaluationEpisodes": 2,
+  "nondeterministicSummaryFields": ["elapsedSeconds", "modelForwardSeconds", "modelUpdateSeconds", "peakCudaAllocatedBytes", "peakCudaReservedBytes", "cudaMemory"],
+  "numericTolerance": {"denseValuesAtol": 1e-9, "denseValuesRtol": 1e-8, "denseGradientsAtol": 1e-8, "denseGradientsRtol": 1e-7, "permutationAtol": 1e-5},
+  "openBridges": ["complete Python-to-Lean encoder refinement", "feature extractor/source correspondence", "floating-point algebra is not exact sum algebra"],
+  "excluded": ["corpus generalization", "policy superiority", "graph-isomorphism completeness", "semantic equality from embeddings", "cross-device bitwise equivalence"]
+}

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "configurations": [
+    {"id":"control-64x2","hidden":64,"layers":2,"heads":8,"lr":0.0003},
+    {"id":"wide-1024x2","hidden":1024,"layers":2,"heads":8,"lr":0.0003},
+    {"id":"wide-2048x2","hidden":2048,"layers":2,"heads":8,"lr":0.0003},
+    {"id":"wide-4096x2","hidden":4096,"layers":2,"heads":8,"lr":0.0003}
+  ]
+}

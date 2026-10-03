@@ -1,0 +1,24 @@
+{
+  "capabilities": [
+    "completion",
+    "tools",
+    "thinking"
+  ],
+  "details": {
+    "context_length": 262144,
+    "embedding_length": 5120,
+    "families": [
+      "qwen35"
+    ],
+    "family": "qwen35",
+    "format": "gguf",
+    "parameter_size": "27.3B",
+    "parent_model": "aix-qwen3.8:27b-ud-q3_k_xl",
+    "quantization_level": "Q3_K_L"
+  },
+  "digest": "8c601f20b5ff38a9579e60e34b8a1f9616290a85009ca536d81c650934046837",
+  "model": "acgn-repair-search-01-sft:pilot",
+  "modified_at": "2026-10-03T10:50:43.482793963-05:00",
+  "name": "acgn-repair-search-01-sft:pilot",
+  "size": 13150721797
+}

@@ -1,0 +1,91 @@
+{
+  "proofHash": "c4258197e4c7cf1a10475616644a2018c98c94afb398fa5e66a801034ac58b36",
+  "protocolHash": "2d5dc8f5cd5bb3fe11fbb65229ea27cb7425f0913bfb580143d880d503b56da7",
+  "selections": {
+    "gat": {
+      "configuration": "large-256x4",
+      "validationScores": [
+        0,
+        3,
+        3,
+        0
+      ]
+    },
+    "gcn": {
+      "configuration": "large-1024x6",
+      "validationScores": [
+        0,
+        0,
+        0,
+        3
+      ]
+    }
+  },
+  "validationRuns": [
+    {
+      "directory": "validation-gcn-control-64x4-142",
+      "manifestHash": "a70fc33e939bbd5bbfd3835fb743ee719bc6ed7f79978f599b3c703457d9e930"
+    },
+    {
+      "directory": "validation-gcn-control-64x4-143",
+      "manifestHash": "c2199531b30a621f19f1576caf32935109bc8225d4ccfc25ffc300ba41f99810"
+    },
+    {
+      "directory": "validation-gcn-large-256x4-142",
+      "manifestHash": "4a2e3a35a0740a070d5751d68733869ba7962f9872e70ca47fe9c2d4e550ce32"
+    },
+    {
+      "directory": "validation-gcn-large-256x4-143",
+      "manifestHash": "fe719aa081f1c86d0238aab2e38ffbf15e17caeb007f8b8711e011001c000290"
+    },
+    {
+      "directory": "validation-gcn-large-512x6-142",
+      "manifestHash": "91777e2f6ce5e02e7216ecec77c95ccb88dde1452a65c990ee1d88e53d158a44"
+    },
+    {
+      "directory": "validation-gcn-large-512x6-143",
+      "manifestHash": "f0e25185cc1e92be8267960b35ab94694551f6561c38fc4b8d347e055b1ba167"
+    },
+    {
+      "directory": "validation-gcn-large-1024x6-142",
+      "manifestHash": "24686b6e3bb5f9e389996092d97ced73ffedb4ed1888fbef71da3ae7a6ece072"
+    },
+    {
+      "directory": "validation-gcn-large-1024x6-143",
+      "manifestHash": "9688a94a73c2595862a71fedc98f12e89537b533abe722c7d5e030e60beadf3f"
+    },
+    {
+      "directory": "validation-gat-control-64x4-142",
+      "manifestHash": "b9cb8d3396b6829a62c31faf5518c10343f05035a5cbb002b8ac972a76081a0f"
+    },
+    {
+      "directory": "validation-gat-control-64x4-143",
+      "manifestHash": "4d1cf51446c54ae452e7c38154e0ecceea54cb8aab505bb210bcf718209adb20"
+    },
+    {
+      "directory": "validation-gat-large-256x4-142",
+      "manifestHash": "36484020a21d6a4730f75ebfc96eb00fcc7c3901d0b93c7bcec17c6778a85b11"
+    },
+    {
+      "directory": "validation-gat-large-256x4-143",
+      "manifestHash": "0b6365c1a25ce8aea91d522fc01316f00f4ca4ebb014c79ac4a1a94daca3d42d"
+    },
+    {
+      "directory": "validation-gat-large-512x6-142",
+      "manifestHash": "d3b3bf787a10524fee01646003d407fc634c4b3ebee3f7cb8dd525af05a020c3"
+    },
+    {
+      "directory": "validation-gat-large-512x6-143",
+      "manifestHash": "0021846140aa887d5f93b92aea1dfd5a4414e88cf40bc2e409eef91b4571290a"
+    },
+    {
+      "directory": "validation-gat-large-1024x6-142",
+      "manifestHash": "fac5dfb7cec9a38297efc9ceaea43fa103d2d5cbf2c525f463d63b17ac8c451d"
+    },
+    {
+      "directory": "validation-gat-large-1024x6-143",
+      "manifestHash": "fe084729523534325230c5256fd018fa1c5861fec675e209998dfee13f8fcf47"
+    }
+  ],
+  "validationRunsHash": "6a603b725ddf223c2c533da0e478327a24f68381aebbe526cdf5bced35d788df"
+}

@@ -1,0 +1,173 @@
+{
+  "proofHash": "c4258197e4c7cf1a10475616644a2018c98c94afb398fa5e66a801034ac58b36",
+  "protocolHash": "c1fb53ce7d9f4359bf381513d54bf7806a2658376539238dc1c5106ecc8e79b9",
+  "selections": {
+    "gat": {
+      "configuration": "baseline-2",
+      "validationScores": [
+        3,
+        3,
+        3,
+        0
+      ]
+    },
+    "gcn": {
+      "configuration": "depth-4",
+      "validationScores": [
+        0,
+        3,
+        3,
+        0
+      ]
+    },
+    "gin": {
+      "configuration": "wide-4-slow",
+      "validationScores": [
+        0,
+        3,
+        6,
+        0
+      ]
+    },
+    "mpnn": {
+      "configuration": "baseline-2",
+      "validationScores": [
+        3,
+        3,
+        3,
+        3
+      ]
+    }
+  },
+  "validationRuns": [
+    {
+      "directory": "validation-mpnn-baseline-2-42",
+      "manifestHash": "80f878dd45c43081efde68e7c8dab5696ff730df6a4066d148d84f9bf26e7791"
+    },
+    {
+      "directory": "validation-mpnn-baseline-2-43",
+      "manifestHash": "1ce051f9f46fe3b9185a341e72643b3446203ae5eb8b053cf437ff74b4931fd2"
+    },
+    {
+      "directory": "validation-mpnn-depth-4-42",
+      "manifestHash": "c43cc6b48a77d660804c7028e46d27e5e67cb37204ce33b2a28fcf31f0cf9ccc"
+    },
+    {
+      "directory": "validation-mpnn-depth-4-43",
+      "manifestHash": "d1e71089c693b745414cb40ab80d7136d088b628d2bb7e719d1e3a51d4672332"
+    },
+    {
+      "directory": "validation-mpnn-wide-4-slow-42",
+      "manifestHash": "fbfbbc6be3d9755edd8b7aeea75572dbadada9818fb40f0ee8337feccab86319"
+    },
+    {
+      "directory": "validation-mpnn-wide-4-slow-43",
+      "manifestHash": "2148a7865fc1640daca81caa4262dcbb2b434be9d45b13d648de43257a562f4c"
+    },
+    {
+      "directory": "validation-mpnn-depth-6-slow-42",
+      "manifestHash": "0df9fd26263461efce0ba35e6b870f79b7e4d2a049021f4df4117867a3f777ff"
+    },
+    {
+      "directory": "validation-mpnn-depth-6-slow-43",
+      "manifestHash": "48bf71e033b2093e84a9e27abd35c241a28936dc282d09dc23fdbd3a8d0dec9f"
+    },
+    {
+      "directory": "validation-gcn-baseline-2-42",
+      "manifestHash": "c468ff6c5ca8b42fe6dd269f5aa41d2428e89388685cc5818c9d56d252571902"
+    },
+    {
+      "directory": "validation-gcn-baseline-2-43",
+      "manifestHash": "a0fb1733429fce62dde425ab1b2a8a7caa0faf82960c906d1884bb725010e099"
+    },
+    {
+      "directory": "validation-gcn-depth-4-42",
+      "manifestHash": "b807deaa063ec27a795d09723440917446e1fef71456f89bb97411f9a3ed0edc"
+    },
+    {
+      "directory": "validation-gcn-depth-4-43",
+      "manifestHash": "0541c58c6510d5dac0c2d879e7902bdbf214cdff57e4b5aeceb8bbd53464a473"
+    },
+    {
+      "directory": "validation-gcn-wide-4-slow-42",
+      "manifestHash": "1325cf0e2aea7be8d3738bfb882254fc3586ce4968fd17271f61739575698849"
+    },
+    {
+      "directory": "validation-gcn-wide-4-slow-43",
+      "manifestHash": "cdd753217c087a3b90f7a76c7c8337ddeef4ca0520e9ba9a8502cd1c1fd0d8c8"
+    },
+    {
+      "directory": "validation-gcn-depth-6-slow-42",
+      "manifestHash": "59b4da912bea7c7f205d92d3b2449488fc106b51b27422760ce69c3330af59f0"
+    },
+    {
+      "directory": "validation-gcn-depth-6-slow-43",
+      "manifestHash": "33c3fef67fbd8d639a27f05968c6f4d6061e67b8f9a232a83482f6b7e4151b55"
+    },
+    {
+      "directory": "validation-gat-baseline-2-42",
+      "manifestHash": "634d2cd900b2664dc5652653e89fc53c885b6b01a90edf12319b4a912d9d8c93"
+    },
+    {
+      "directory": "validation-gat-baseline-2-43",
+      "manifestHash": "e525cdcb5721b6c394a316b2ff529f2543ab85abe0b76f5e9d1b601a8ac6686b"
+    },
+    {
+      "directory": "validation-gat-depth-4-42",
+      "manifestHash": "9d6957618036f4eb6f9ea9d7b5427759ac8fda5772f79e3685e4881284e52c41"
+    },
+    {
+      "directory": "validation-gat-depth-4-43",
+      "manifestHash": "2310b2761488cc160e87817407c426fc07935b277aec20ea92d542b537bdef95"
+    },
+    {
+      "directory": "validation-gat-wide-4-slow-42",
+      "manifestHash": "1db97596f242dd8b01cc035359d27cde9bab06296c03f73349f9c4c09eba39fd"
+    },
+    {
+      "directory": "validation-gat-wide-4-slow-43",
+      "manifestHash": "897254259e630a643df668690a280a69e32407c2b5252991a93a4f43b085214c"
+    },
+    {
+      "directory": "validation-gat-depth-6-slow-42",
+      "manifestHash": "f9f940855d0c49294c5194b3380cbd74ffaf1353e92df32a23f94fc2cb47ba8d"
+    },
+    {
+      "directory": "validation-gat-depth-6-slow-43",
+      "manifestHash": "0b42c86775d42b4564660fb1d7903e7cc0dd2e9068b32179063705fd025c1d88"
+    },
+    {
+      "directory": "validation-gin-baseline-2-42",
+      "manifestHash": "2913ecde710c610db18fc1dcebfce4f5fb48c90588878a151c54c6461ffa708c"
+    },
+    {
+      "directory": "validation-gin-baseline-2-43",
+      "manifestHash": "a4696370bc7feb0d635eb96a8217e845b799a9a3f771da82762fdb9f185b50a4"
+    },
+    {
+      "directory": "validation-gin-depth-4-42",
+      "manifestHash": "a06d70be7b29b2e7140c2a650f98fccf7ec84b66971b6aa108c449b3ccb752c7"
+    },
+    {
+      "directory": "validation-gin-depth-4-43",
+      "manifestHash": "139f1f750d17aee791d431e53c36dc1f3ec06cab59608c150c741a07923d3f20"
+    },
+    {
+      "directory": "validation-gin-wide-4-slow-42",
+      "manifestHash": "2063d856e1aee4c5c3cf08f0782997e1cde570e05f585b28e4c7e1cb71903110"
+    },
+    {
+      "directory": "validation-gin-wide-4-slow-43",
+      "manifestHash": "eb17e891fea7b94d1c1a8f5dc6e21214c2b841d221bf09a6bbbcd5bb1d77113c"
+    },
+    {
+      "directory": "validation-gin-depth-6-slow-42",
+      "manifestHash": "1258dd05fc4e454abc2b0068e39bb0130f5fe46470ba0b83da21c55d31f5b31b"
+    },
+    {
+      "directory": "validation-gin-depth-6-slow-43",
+      "manifestHash": "f1a2eef8b2d0d14bcae4192b5c6595c009f353c7d982c8397d8abae28fa27310"
+    }
+  ],
+  "validationRunsHash": "5a32ac231fa679e57eee789f97b2376602a6b4aa67f12554190f9edf6f8a2d3f"
+}

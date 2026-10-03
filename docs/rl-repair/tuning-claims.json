@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Bounded validation selection, split controls, and deep-encoder execution",
+  "wholeApplicationRefinement": "BLOCKED",
+  "theorems": ["choose_member", "choose_ge_left", "choose_ge_right", "choose_tie_left", "select_member", "select_ge_first", "select_maximal", "layers_preserve"],
+  "matrixRows": 84,
+  "minimumPythonTests": 34,
+  "depthsTested": [4, 6],
+  "excluded": ["full Python-to-Lean refinement", "policy convergence", "deep model superiority", "independent corpus generalization", "proof of floating-point gradients"]
+}

@@ -1,0 +1,266 @@
+[
+  {
+    "exitCode": 0,
+    "method": "TAR",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 1,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "repair",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "21aff1bac1351d7611e38c0f40e85a289012824f842573b7fc42ee95032ea41f",
+        "split": "evaluation",
+        "used": 1
+      }
+    },
+    "reported": {
+      "depth": 3,
+      "elapsed": 142,
+      "file": "/tmp/acgn-search-study-01/tar/dd02cbbb47f50f4b21c3.als",
+      "solution": {
+        "inv3": "(all u : (one User), p : (one Photo) | (((p in (u . sees)) => (p in Ad)) || (some ((posts . p) & (u . follows)))))"
+      },
+      "solved": true,
+      "stats": {
+        "#attempted_candidates": 318,
+        "#cex": 5,
+        "#generated": 358,
+        "#prunned_cex": 287,
+        "#prunned_ext": 0
+      },
+      "timed_out": false,
+      "timeout": 60
+    },
+    "seconds": 1.7456190109987801,
+    "solved": true,
+    "status": "FINISHED",
+    "task": "dd02cbbb47f50f4b21c3"
+  },
+  {
+    "exitCode": 1,
+    "method": "TAR",
+    "receipt": null,
+    "reported": {
+      "depth": 3,
+      "elapsed": 60000,
+      "file": "/tmp/acgn-search-study-01/tar/75232801b709e17fb930.als",
+      "solved": false,
+      "stats": {
+        "#attempted_candidates": 1433446,
+        "#cex": 2,
+        "#generated": 2557307,
+        "#prunned_cex": 1192323,
+        "#prunned_ext": 1123615
+      },
+      "timed_out": true,
+      "timeout": 60
+    },
+    "seconds": 60.54013242900328,
+    "solved": false,
+    "status": "FINISHED",
+    "task": "75232801b709e17fb930"
+  },
+  {
+    "exitCode": 1,
+    "method": "TAR",
+    "receipt": null,
+    "reported": {
+      "depth": 3,
+      "elapsed": 60050,
+      "file": "/tmp/acgn-search-study-01/tar/39be56f72f50434c2fe9.als",
+      "solved": false,
+      "stats": {
+        "#attempted_candidates": 2499616,
+        "#cex": 5,
+        "#generated": 5089678,
+        "#prunned_cex": 1271909,
+        "#prunned_ext": 2589810
+      },
+      "timed_out": true,
+      "timeout": 60
+    },
+    "seconds": 60.52075265700114,
+    "solved": false,
+    "status": "FINISHED",
+    "task": "39be56f72f50434c2fe9"
+  },
+  {
+    "exitCode": 0,
+    "method": "TAR",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 1,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "repair",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "93ea2997c52c8a330ee03a5318608e438ecb88b2d42fa0fd0298380150924d97",
+        "split": "evaluation",
+        "used": 1
+      }
+    },
+    "reported": {
+      "depth": 3,
+      "elapsed": 218,
+      "file": "/tmp/acgn-search-study-01/tar/9dfbebfbf540909b1e11.als",
+      "solution": {
+        "inv4": "(! ((Person != (Student + Teacher)) && (Person != Teacher)))"
+      },
+      "solved": true,
+      "stats": {
+        "#attempted_candidates": 2997,
+        "#cex": 6,
+        "#generated": 3100,
+        "#prunned_cex": 2990,
+        "#prunned_ext": 63
+      },
+      "timed_out": false,
+      "timeout": 60
+    },
+    "seconds": 1.3447978969998076,
+    "solved": true,
+    "status": "FINISHED",
+    "task": "9dfbebfbf540909b1e11"
+  },
+  {
+    "exitCode": 1,
+    "method": "TAR",
+    "receipt": null,
+    "reported": {
+      "depth": 3,
+      "elapsed": 60007,
+      "file": "/tmp/acgn-search-study-01/tar/8c749f9b167e0c49e245.als",
+      "solved": false,
+      "stats": {
+        "#attempted_candidates": 1463437,
+        "#cex": 2,
+        "#generated": 2694301,
+        "#prunned_cex": 1122831,
+        "#prunned_ext": 1230498
+      },
+      "timed_out": true,
+      "timeout": 60
+    },
+    "seconds": 60.28721075999783,
+    "solved": false,
+    "status": "FINISHED",
+    "task": "8c749f9b167e0c49e245"
+  },
+  {
+    "exitCode": 0,
+    "method": "TAR",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 1,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "repair",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "6cc43a3af38d46c681d74e6782be93f0a0eecdf833a1a4a82d693936bc930e00",
+        "split": "evaluation",
+        "used": 1
+      }
+    },
+    "reported": {
+      "depth": 3,
+      "elapsed": 70,
+      "file": "/tmp/acgn-search-study-01/tar/cafc7f1383dcfca22826.als",
+      "solution": {
+        "inv10": "(no ((Trash . link) - Trash))"
+      },
+      "solved": true,
+      "stats": {
+        "#attempted_candidates": 28,
+        "#cex": 2,
+        "#generated": 58,
+        "#prunned_cex": 25,
+        "#prunned_ext": 0
+      },
+      "timed_out": false,
+      "timeout": 60
+    },
+    "seconds": 0.9699707590007165,
+    "solved": true,
+    "status": "FINISHED",
+    "task": "cafc7f1383dcfca22826"
+  },
+  {
+    "exitCode": 2,
+    "method": "TAR",
+    "receipt": null,
+    "reported": {
+      "depth": 3,
+      "elapsed": 4217,
+      "file": "/tmp/acgn-search-study-01/tar/ba151eec06127108e585.als",
+      "solved": false,
+      "stats": {
+        "#attempted_candidates": 185189,
+        "#cex": 5,
+        "#generated": 568773,
+        "#prunned_cex": 106449,
+        "#prunned_ext": 383464
+      },
+      "timed_out": false,
+      "timeout": 60
+    },
+    "seconds": 4.42449409999972,
+    "solved": false,
+    "status": "FINISHED",
+    "task": "ba151eec06127108e585"
+  },
+  {
+    "exitCode": 0,
+    "method": "TAR",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 1,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "repair",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "2ce93c815e8cd3fc27a403bcdec926cada698c9e664918cfae04885fd8bafa48",
+        "split": "evaluation",
+        "used": 1
+      }
+    },
+    "reported": {
+      "depth": 3,
+      "elapsed": 83,
+      "file": "/tmp/acgn-search-study-01/tar/a0a86a4785202f92ef19.als",
+      "solution": {
+        "inv5": "(all f : (one (Protected + File)) | ((f - Protected) in Trash))"
+      },
+      "solved": true,
+      "stats": {
+        "#attempted_candidates": 145,
+        "#cex": 3,
+        "#generated": 240,
+        "#prunned_cex": 105,
+        "#prunned_ext": 0
+      },
+      "timed_out": false,
+      "timeout": 60
+    },
+    "seconds": 0.9933750150012202,
+    "solved": true,
+    "status": "FINISHED",
+    "task": "a0a86a4785202f92ef19"
+  }
+]

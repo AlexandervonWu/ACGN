@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "scope": "Parameter accounting and bounded large-policy CUDA execution",
+  "wholeApplicationRefinement": "BLOCKED",
+  "theorems": ["shared_parameters_present", "layer_increment", "depth_monotone", "nominal_four_full_tensors", "distinct_layers_preserve"],
+  "matrixRows": 275,
+  "minimumPythonTests": 39,
+  "cudaWidth": 1024,
+  "cudaDepth": 6,
+  "excluded": ["peak GPU-memory upper bound", "corpus memory guarantee", "full Python-to-Lean refinement", "learned-policy superiority", "new untouched benchmark", "numerical kernel correctness"]
+}

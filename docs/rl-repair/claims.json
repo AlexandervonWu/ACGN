@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "closureId": "rl-repair-slice-v1",
+  "claims": [
+    {"id":"RL-C01","class":"proof_compilation","statement":"The frozen RepairKernel Lean model's 15 named theorem declarations compile without forbidden proof placeholders.","verifier":"LEAN","pass":"both clean builds compile and the declared inventory is present"},
+    {"id":"RL-C02","class":"bounded_correspondence","statement":"Java RepairKernel.step and Lean step agree on the registered 128-row control matrix.","verifier":"MATRIX","pass":"both builds produce exactly the same 128 distinct matrix rows as Lean"},
+    {"id":"RL-C03","class":"bounded_source_tests","statement":"The frozen Alloy fixture suite exercises occurrence-local edits, immutable context, stale/rejected transitions, unsupported input boundaries, deterministic bounded search, and the bounded explorer report contract.","verifier":"JAVA","pass":"both builds pass at least 64 RepairEnvironmentTest assertions and the five-attempt CLI smoke check"},
+    {"id":"RL-C04","class":"regression","statement":"The selected existing canonical-pipeline, source-profile and quotient-repair-metric regression suites still pass.","verifier":"REGRESSION","pass":"all three registered Java mains pass in both builds"},
+    {"id":"RL-C05","class":"determinism","statement":"The two fresh builds have equal compiled Java class hashes, Lean object hashes, and bounded fixture outputs.","verifier":"DETERMINISM","pass":"all declared deterministic output inventories agree"},
+    {"id":"RL-C06","class":"provenance","statement":"Verification inputs remain byte-identical throughout both builds and all evidence binds to their manifest.","verifier":"MANIFEST","pass":"before and after input manifests match and logs have hashes"}
+  ],
+  "theorems": ["typed_replacement","left_edit_keeps_right","binder_edit_keeps_domain","relabel_binary_keeps_children","absent_binding_cannot_be_used","repair_need_not_preserve_meaning","splice_preserves_prefix","splice_preserves_suffix","context_preserved","theory_preserved","bounded_attempt","rejected_keeps_revision","stop_is_not_applied","stale_is_not_applied","unadmitted_is_not_applied"],
+  "regressions": ["is.fivefivefive.CanDis.CanonicalAlloyPipelineTest","is.fivefivefive.CanDis.SemanticProfileSourceCommandTest","is.fivefivefive.CanDis.metric.QuotientRepairDistanceTest"],
+  "configuration": {"requiredCleanBuilds":2,"controlRows":128,"minimumSourceChecks":64,"cliAttempts":5,"timeoutSeconds":180,"javaHeap":"2g","networkAllowed":false,"unresolvedIsBlocking":true,"manualOverrideAllowed":false},
+  "blockConditions": ["proof compilation error or forbidden placeholder","matrix mismatch or missing row","test failure or missing RESULT","CLI report contract mismatch","regression failure","deterministic artifact mismatch","input mutation","missing or unbound claim evidence"],
+  "nondeterministicFields": ["elapsedSeconds","temporaryPaths","JVM diagnostic output"],
+  "trust": ["Lean 4.33.0 and Std kernel/toolchain","JDK 17 compilation and JVM execution","bundled Alloy/parser libraries and existing CanDis semantic implementation","Python and Bash","SHA-256 collision resistance","operating system and hardware"],
+  "excluded": ["full Java-Lean refinement","unbounded Alloy soundness","reward correctness or trained policy effectiveness","full proposal action coverage","temporal/imported model repair","independent certificate replay authority"]
+}

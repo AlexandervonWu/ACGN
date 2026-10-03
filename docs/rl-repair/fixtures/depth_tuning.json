@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "tasks": [
+    {"id":"universal-cardinality","group":"fixture-universal","split":"train","path":"basic.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"boolean-connectives","group":"fixture-boolean","split":"train","path":"train_connectives.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"validation-overlap","group":"tuning-overlap","split":"validation","path":"val_overlap.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"validation-implication","group":"tuning-implication","split":"validation","path":"val_implication.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"test-nested-boolean","group":"tuning-nested-boolean","split":"evaluation","path":"test_nested_boolean.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"test-bound-overlap","group":"tuning-bound-overlap","split":"evaluation","path":"test_bound_overlap.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"test-nested-relation","group":"tuning-nested-relation","split":"evaluation","path":"test_nested_relation.als","target":"candidate","oracle":"oracle","command":0}
+  ]
+}

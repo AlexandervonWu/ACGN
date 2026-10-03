@@ -1,0 +1,21 @@
+{
+  "maxAttempts": 600,
+  "ordering": "SHA256(corpus-v1:repository-relative-path)",
+  "perQuestion": 4,
+  "problems": [
+    "classroom_fol",
+    "graphs",
+    "socialMedia",
+    "coursesNew",
+    "cv_v1",
+    "trash_fol"
+  ],
+  "quotas": {
+    "evaluation": 24,
+    "train": 64,
+    "validation": 16
+  },
+  "schemaVersion": 1,
+  "scope": 3,
+  "selectionUsesRepairSuccess": false
+}

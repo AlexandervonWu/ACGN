@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "scope": "ApplicationCore model proofs and executable rollout admission, not whole-application refinement",
+  "wholeApplicationRefinement": "BLOCKED",
+  "ledger": "docs/rl-repair/APPLICATION-ASSURANCE.md",
+  "theorems": [
+    "certified_input", "certified_valid", "empty_not_admitted", "admitted_action_in_menu",
+    "admitted_reward_equation", "solved_has_evidence", "continuing_bank_is_fixed",
+    "terminal_potential_zero", "returns_length", "return_head_is_total", "returns_tail",
+    "return_at_suffix", "rollout_shaping_constant", "admitted_request_is_input",
+    "admitted_request_is_training", "admitted_request_has_valid_rollout", "target_count",
+    "target_suffix_total", "evaluation_never_updates", "censored_never_updates",
+    "update_requires_all_guards", "feature_bound", "bucket_bound", "edge_reverse_preserves_position",
+    "edge_reverse_involution", "edge_occurrences_preserved", "detached_baseline_has_no_actor_path",
+    "actor_keeps_logprob_path", "critic_keeps_value_path", "critic_has_no_logprob_path",
+    "detach_cuts_dependency", "selected_index_exists", "checkpoint_matches_architecture"
+  ],
+  "runtimeFiles": ["ApplicationCore.lean", "ApplicationGate.lean", "ApplicationRunner.lean"],
+  "openBridges": [
+    "source-edit and semantic-profile producer refinement",
+    "Alloy solver query construction and answer/source correspondence",
+    "instance bank/scoring implementation refinement",
+    "source/binding observation extraction and complete oracle noninterference",
+    "JSON trace normalization and tensor/action association",
+    "message-passing assembly and typed loss implementation refinement",
+    "on-policy control, exceptional optimizer paths and checkpoint lifecycle"
+  ]
+}

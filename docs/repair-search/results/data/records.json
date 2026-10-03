@@ -1,0 +1,626 @@
+[
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:38:58.963818236Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 13,
+      "eval_duration": 272558000,
+      "load_duration": 27598263110,
+      "message": {
+        "content": "{\"body\":\"all n : Node | no n.adj\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 511,
+      "prompt_eval_duration": 832579000,
+      "total_duration": 28766612538
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "4b929a6a47e5f3152c1290e0a5a71d4665b55d0bd3b79b438c8606c3528f71da",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 29.60326874400198,
+    "split": "train",
+    "task": "be563a3a9ebe9062107c"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:06.694991207Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 23,
+      "eval_duration": 449485000,
+      "load_duration": 12821863,
+      "message": {
+        "content": "{\"body\": \"all u : User | all s : u.follows | s in u.suggested\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1888,
+      "prompt_eval_duration": 1044676999,
+      "total_duration": 1576336380
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "ecffbfa2db5fbe28b1b24287f45fa189548d41236b5e91ac41a0bc2d130ffaa8",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 7.695175213997572,
+    "split": "train",
+    "task": "841b47d7a6530bdcdc29"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:21.076773539Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 15,
+      "eval_duration": 268847000,
+      "load_duration": 555835,
+      "message": {
+        "content": "{\"body\": \"all f:File | f !in Trash\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 745,
+      "prompt_eval_duration": 437753000,
+      "total_duration": 816165327
+    },
+    "baseStatus": "SOLVED_WITHIN_PROFILE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "eb1d582c2b07307c617c6eeba4645a22d348f6ec732795280a26533ea31ca639",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 14.323132016001182,
+    "split": "train",
+    "task": "e925b59446448a4c679a"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:23.98205779Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 26,
+      "eval_duration": 487822000,
+      "load_duration": 571735,
+      "message": {
+        "content": "{\"body\":\"all u : User, i : Influencer | i in u.follows iff u not in Influencer\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 2087,
+      "prompt_eval_duration": 1139701000,
+      "total_duration": 1730285985
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "f2f50903f7132c0e2522e96b4f948211e93905f0e17f01f28031ffdb4155b11e",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.125751652998588,
+    "split": "train",
+    "task": "45e3b214d8e2c259bcdf"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:26.7644518Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 15,
+      "eval_duration": 284172000,
+      "load_duration": 591565,
+      "message": {
+        "content": "{\"body\": \"all p: Photo | p in User.posts\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 2030,
+      "prompt_eval_duration": 1112317000,
+      "total_duration": 1515072811
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "1b06ab627bc657d6c0167841424ac121079c7c8dedd9f4a76cfac65589c12f59",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 2.5434867160001886,
+    "split": "train",
+    "task": "880a7087b92b5ece2a43"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:29.883739946Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 25,
+      "eval_duration": 483126000,
+      "load_duration": 479354,
+      "message": {
+        "content": "{\"body\":\"all c:Class | some t:Teacher | some c.Groups implies c in t.Teaches\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1660,
+      "prompt_eval_duration": 898600000,
+      "total_duration": 1494136396
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "9ef0d38a1ba9f294a11a29a9088788de126c5d6e0a968d3030151e10026c5de7",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.2430659160017967,
+    "split": "train",
+    "task": "763d065c3ac245b08ec5"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:32.700135005Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 15,
+      "eval_duration": 282309000,
+      "load_duration": 525364,
+      "message": {
+        "content": "{\"body\": \"all w: Work | w.ids in Id\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1266,
+      "prompt_eval_duration": 708120000,
+      "total_duration": 1106276231
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "82d3d1f209e45819b1f82634b89cb38a7c693b6ef70cd2ffd2715b8831e70593",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 2.6790310390024388,
+    "split": "train",
+    "task": "7b838a83e9b3d3f81c3b"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:35.45240945Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 22,
+      "eval_duration": 406247000,
+      "load_duration": 604115,
+      "message": {
+        "content": "{\"body\": \"all y : User | some x : Influencer | x -> y in follows\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 2238,
+      "prompt_eval_duration": 1202383000,
+      "total_duration": 1715552266
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "284b95eb20a36221b62449f9a1b949c8d6782be4010719e038818ef336d3087b",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 2.742112026000541,
+    "split": "train",
+    "task": "35612179cdee5ab833b1"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:38.862317875Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 35,
+      "eval_duration": 676588000,
+      "load_duration": 615546,
+      "message": {
+        "content": "{\"body\": \"all x : User | (x.suggested in x.follows.follows) or (no x.follows implies x in x.suggested)\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1764,
+      "prompt_eval_duration": 944519000,
+      "total_duration": 1768978737
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "99c7a49af7e6fb6db4b4fd7d46445a4d23de0a728b9933a914b92c2d5bda710f",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.600340911998501,
+    "split": "train",
+    "task": "7b548b97db1453c93c70"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:42.868941285Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 49,
+      "eval_duration": 962083000,
+      "load_duration": 94714093,
+      "message": {
+        "content": "{\"body\": \"all x1, x2, x3 : User | x3 in x2.suggested implies (x2 in follows.x3 and x1 in follows.x2 and x2 not in follows.x3)\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1990,
+      "prompt_eval_duration": 1139055000,
+      "total_duration": 2422526611
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "4c96733409017cf8c4eca0bccf323bdfce70de068bc07d68f9ba96a28c347773",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.845872264002537,
+    "split": "train",
+    "task": "56a735cfb6fd4d9ea94b"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:45.635881899Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 16,
+      "eval_duration": 293092000,
+      "load_duration": 609135,
+      "message": {
+        "content": "{\"body\": \"sees = (follows + suggested).posts\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1929,
+      "prompt_eval_duration": 1054977000,
+      "total_duration": 1458618834
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "2e1b967c1b9fcbb44ad4414d239957c3479f96f78b891e1be6379e88478c6d93",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 2.7088495430034527,
+    "split": "train",
+    "task": "52ec408160a189e64b75"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:48.603837693Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 30,
+      "eval_duration": 569593000,
+      "load_duration": 546045,
+      "message": {
+        "content": "{\"body\": \"all x : User | (x.suggested not in x.follows) && (x not in x.suggested)\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 1949,
+      "prompt_eval_duration": 1049189000,
+      "total_duration": 1727740133
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "25f7c2049b0be1c5604a2cb92c9f9ed2b7aa65d7e4d08dda9057b9221c52334e",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.029573376999906,
+    "split": "train",
+    "task": "f852e8dec0a3382fc6bb"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:51.809297929Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 40,
+      "eval_duration": 760524000,
+      "load_duration": 532974,
+      "message": {
+        "content": "{\"body\": \"all x:Influencer, y:User | x in y.follows or x in y.suggested or y in x.follows or y in x.suggested\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 2236,
+      "prompt_eval_duration": 1202368000,
+      "total_duration": 2073993312
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "5d8d2f8bb2732266ac5d2c3f4ee7cd777530844bce4e3b149d47c3e37661c867",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 3.302451920000749,
+    "split": "train",
+    "task": "e2c01a2ed104f1745dc2"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:53.646928191Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 17,
+      "eval_duration": 313103000,
+      "load_duration": 624826,
+      "message": {
+        "content": "{\"body\":\"all n: this/Node | n not in ^adj\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 512,
+      "prompt_eval_duration": 309305000,
+      "total_duration": 736385225
+    },
+    "baseStatus": "INVALID",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "3c3ab3e6de0f00066ba5f84a0bc26984c3e0bfa4b941060bea101d9b3cb67ce6",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 1.5825856560004468,
+    "split": "train",
+    "task": "c46d1fe0fac771787d51"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:56.125048692Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 18,
+      "eval_duration": 335731000,
+      "load_duration": 531265,
+      "message": {
+        "content": "{\"body\":\"all c:Class, g:Group | some c.Groups.g\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 2080,
+      "prompt_eval_duration": 1135071000,
+      "total_duration": 1540471675
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "6921a918fe62c178ac941626f1303bb76c9d675e64a5f895bf700e1041540fc1",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 2.5048512360008317,
+    "split": "train",
+    "task": "2aeda657eb32bc427cef"
+  },
+  {
+    "baseResponse": {
+      "created_at": "2026-10-03T15:39:57.839165286Z",
+      "done": true,
+      "done_reason": "stop",
+      "eval_count": 13,
+      "eval_duration": 235799000,
+      "load_duration": 549595,
+      "message": {
+        "content": "{\"body\":\"all f : File | f in Protected\"}",
+        "role": "assistant"
+      },
+      "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+      "prompt_eval_cached_count": 0,
+      "prompt_eval_count": 897,
+      "prompt_eval_duration": 528620000,
+      "total_duration": 884902192
+    },
+    "baseStatus": "COUNTEREXAMPLE",
+    "receipt": {
+      "accepted": true,
+      "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+      "request": {
+        "budget": 3,
+        "contextSat": true,
+        "extraUnsat": true,
+        "identityBound": true,
+        "kind": "training",
+        "missingUnsat": true,
+        "profileHash": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+        "sourceHash": "0aac98e463967e68bee65e0277038512b5c821074d8f9be7fd718b91321b0248",
+        "split": "train",
+        "used": 1
+      }
+    },
+    "seconds": 1.6901085829995282,
+    "split": "train",
+    "task": "539762d264f87178579b"
+  }
+]

@@ -1,0 +1,6 @@
+{
+  "gitSha": "aad990e405b811bd245518cbb63ecc4f065c5275",
+  "jar": "/home/augustus/lp_baselines/TAR/beafix_benchmarks/arepair/atr.jar",
+  "jarHash": "dcd3a2849a398fc231ca199407fc0f29aa0579498511cdf9170b8b75cd21c505",
+  "sourceToJarCorrespondence": "Upstream bundled binary; not rebuilt or claimed source-identical"
+}

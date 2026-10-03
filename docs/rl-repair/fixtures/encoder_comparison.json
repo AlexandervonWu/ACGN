@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "tasks": [
+    {"id":"universal-cardinality","group":"fixture-universal","split":"train","path":"basic.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"boolean-connectives","group":"fixture-boolean","split":"train","path":"train_connectives.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"existential-cardinality","group":"fixture-existential","split":"evaluation","path":"held_out.als","target":"candidate","oracle":"oracle","command":0},
+    {"id":"relational-overlap","group":"fixture-relational","split":"evaluation","path":"eval_relational.als","target":"candidate","oracle":"oracle","command":0}
+  ]
+}

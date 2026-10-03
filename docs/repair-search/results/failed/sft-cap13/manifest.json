@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "experimental": true,
+  "base": "/home/augustus/AIx/.local/hf-training/models--unsloth--Qwen3.8-27B-unsloth-bnb-4bit/snapshots/8aa5f05d26b7205477066e1449e0af13f762a299",
+  "base_config_sha256": "2d239652486841d13eab478b738beaa43bac88e2052f9b4c5afbefd94e59522a",
+  "dataset": "/tmp/acgn-search-study-01/data/sft.jsonl",
+  "dataset_sha256": "1bbe64d394e6c9132290ec15abbf39f7e1c35840def871e19336d6ff7daf5625",
+  "dataset_rows": 16,
+  "selected_rows": 16,
+  "length_min": 527,
+  "length_max": 2260,
+  "truncation": false,
+  "response_only_loss": true,
+  "epochs": 1,
+  "rank": 8,
+  "last_layers": 4,
+  "target_modules": [
+    "gate_proj",
+    "up_proj",
+    "down_proj"
+  ],
+  "resident_frozen_layers": 16,
+  "checkpoint_every": 4,
+  "learning_rate": 0.0002,
+  "seed": 801,
+  "placement": "CPU frozen quantized prefix storage; all decoder/head/adapter/optimizer arithmetic on CUDA; CPU embedding gather",
+  "prefix_backpropagation": false,
+  "numerical_loss_test": {
+    "torch.float32": {
+      "loss_error": 0.0,
+      "max_gradient_error": 2.9802322387695312e-08,
+      "tolerance": 1e-06
+    },
+    "torch.float16": {
+      "loss_error": 4.76837158203125e-07,
+      "max_gradient_error": 0.0,
+      "tolerance": 0.0005
+    },
+    "torch.bfloat16": {
+      "loss_error": 4.76837158203125e-07,
+      "max_gradient_error": 0.0,
+      "tolerance": 0.005
+    }
+  },
+  "dependency_versions": {
+    "torch": "2.11.0",
+    "transformers": "5.5.0",
+    "bitsandbytes": "0.50.2",
+    "peft": "0.20.0",
+    "accelerate": "1.15.0"
+  },
+  "quantization": "frozen NF4 double-quantized checkpoint; fp16 compute and fp32 LoRA weights",
+  "loss_chunk_tokens": 64,
+  "train_index_sha256": null,
+  "source_manifest_sha256": null,
+  "runner_sha256": "d6c542270d97d28adf1691ebf47da9391881c18141f79f2de67d1de98213b928",
+  "checkpoint_helper_sha256": "1fb481e2d7061aa35c430674fb7fbec5ff58471a1005754408f6b6a571535ef9",
+  "status": "failed",
+  "probe": true,
+  "trainable_names": [
+    "base_model.model.model.language_model.layers.60.mlp.gate_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.60.mlp.gate_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.60.mlp.up_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.60.mlp.up_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.60.mlp.down_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.60.mlp.down_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.gate_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.gate_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.up_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.up_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.down_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.61.mlp.down_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.gate_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.gate_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.up_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.up_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.down_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.62.mlp.down_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.gate_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.gate_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.up_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.up_proj.lora_B.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.down_proj.lora_A.default.weight",
+    "base_model.model.model.language_model.layers.63.mlp.down_proj.lora_B.default.weight"
+  ],
+  "trainable_parameters": 2162688,
+  "total_decoder_layers": 64,
+  "frozen_prefix_layers": 60
+}

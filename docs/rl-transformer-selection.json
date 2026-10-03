@@ -1,0 +1,107 @@
+{
+  "bestValidation": {
+    "configuration": "transformer-512x4",
+    "encoder": "gat",
+    "parameterCount": 5559298,
+    "selectedScore": 9,
+    "validationScores": [
+      3,
+      0,
+      0,
+      9
+    ]
+  },
+  "proofHash": "9b2e157815534054aa0fa0b9a8d2c8e52d8fc975e77a6d700d33c896edc96049",
+  "protocolHash": "5d8e1ff47d0cfb5c3dfe161db7fe88bf6a2042fff55dda43157bb0be8d7394d8",
+  "selections": {
+    "egraph_transformer": {
+      "configuration": "transformer-512x4",
+      "parameterCount": 23953922,
+      "selectedScore": 6,
+      "validationScores": [
+        0,
+        0,
+        3,
+        6
+      ]
+    },
+    "gat": {
+      "configuration": "transformer-512x4",
+      "parameterCount": 5559298,
+      "selectedScore": 9,
+      "validationScores": [
+        3,
+        0,
+        0,
+        9
+      ]
+    }
+  },
+  "validationRuns": [
+    {
+      "directory": "validation-egraph_transformer-control-64x2-342",
+      "manifestHash": "cdd700268cfbd5f26d702b51320eca7b1fa4d82596690de5d38c8116f6faa206"
+    },
+    {
+      "directory": "validation-egraph_transformer-control-64x2-343",
+      "manifestHash": "8851df9ac91631940fe76f1937692d3682ef37bfa06ed8b9af98b1d4dfe0a04a"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-128x2-342",
+      "manifestHash": "885e8c413bd9e46ec9a8c51353f0e1e0b8a8a486865679199ef11eac2e33e749"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-128x2-343",
+      "manifestHash": "93eb40e9f528c474d36955f165f23795ba34bc87d8caa6478609b7c2922e4445"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-256x4-342",
+      "manifestHash": "a6e8930edfa3cfbc58cef1a7a685450e7ece0266a43555f382f416cb59e735b6"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-256x4-343",
+      "manifestHash": "6c5e5f3980214db8c48974c3eb9676237f8a4d4805bebdc1505cc0bbe3b801d9"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-512x4-342",
+      "manifestHash": "d72a3e59bd9b982d1677ea4046a9f962b81a8132fe8476f04281e9e38cee14ab"
+    },
+    {
+      "directory": "validation-egraph_transformer-transformer-512x4-343",
+      "manifestHash": "7efed7ce197d238407e431d8257187652015d1872ea970ada4c0da5fde350a95"
+    },
+    {
+      "directory": "validation-gat-control-64x2-342",
+      "manifestHash": "b02178115a87c5c7fa302a3ec5120a4c3c2939f77f35cbe6c63b423db50caa35"
+    },
+    {
+      "directory": "validation-gat-control-64x2-343",
+      "manifestHash": "f50e0ee4d4e05ca4dc1566f3d46e2e33abd76b0434bc71dfb7a011687c23be0d"
+    },
+    {
+      "directory": "validation-gat-transformer-128x2-342",
+      "manifestHash": "1c04c765930d97a9f060ef14560ea840ef0b0439d4dc8d6924f81760df1e59f8"
+    },
+    {
+      "directory": "validation-gat-transformer-128x2-343",
+      "manifestHash": "ecb42579fca67260f1fe355d7923f4c5c95f7da96f345b42d0620e60b70b61a0"
+    },
+    {
+      "directory": "validation-gat-transformer-256x4-342",
+      "manifestHash": "57de96b55bb93bc932d7688da43f3e2e7f18ed31e7b6e46ddb14f5351348ace8"
+    },
+    {
+      "directory": "validation-gat-transformer-256x4-343",
+      "manifestHash": "74eb91812c83ca41236db86db6876733b8f01fde78aa9ee4be84b2bcc1cd566c"
+    },
+    {
+      "directory": "validation-gat-transformer-512x4-342",
+      "manifestHash": "5ce56c2349f78b68837b4089e7b0bb7cbca2989825b7f04c84dd0231a070b07c"
+    },
+    {
+      "directory": "validation-gat-transformer-512x4-343",
+      "manifestHash": "b17873bc825a5c6a5ba72829ec57e3fdf4a2732f8f8d5aa2b03fd9e06c314774"
+    }
+  ],
+  "validationRunsHash": "6ad5aef57ecd37861a26f7366265d9f57bc0e06a51fc59db38b927604315cf24"
+}

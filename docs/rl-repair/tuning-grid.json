@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "configurations": [
+    {"id":"baseline-2","hidden":64,"layers":2,"heads":4,"lr":0.003},
+    {"id":"depth-4","hidden":64,"layers":4,"heads":4,"lr":0.003},
+    {"id":"wide-4-slow","hidden":96,"layers":4,"heads":4,"lr":0.001},
+    {"id":"depth-6-slow","hidden":64,"layers":6,"heads":4,"lr":0.0003}
+  ]
+}

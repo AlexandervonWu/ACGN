@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "configurations": [
+    {"id":"control-64x2","hidden":64,"layers":2,"heads":8,"lr":0.0003},
+    {"id":"transformer-128x2","hidden":128,"layers":2,"heads":8,"lr":0.0003},
+    {"id":"transformer-256x4","hidden":256,"layers":4,"heads":8,"lr":0.0003},
+    {"id":"transformer-512x4","hidden":512,"layers":4,"heads":8,"lr":0.0003}
+  ]
+}

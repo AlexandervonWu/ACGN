@@ -1,0 +1,7 @@
+{
+  "wrapperHash": "9d1a1bcd961a1b96d92bc8737d1e4d881f5f0a26e0c7d85762f925e158de7438",
+  "checkpointing": "last four resident decoder layers; use_reentrant=False; frozen prefix disabled",
+  "detachedInputCheckpointGradientTest": "exact equality on the recorded CUDA toy test",
+  "cudaAllocationCapGiB": 13,
+  "upstreamRunner": "/home/augustus/AIx/scripts/train_distillation_offload.py"
+}

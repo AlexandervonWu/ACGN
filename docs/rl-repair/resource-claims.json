@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "scope": "Width-only tuning with explicit CUDA resource limits and size tie-breaking",
+  "wholeApplicationRefinement": "BLOCKED",
+  "theorems": ["admission_bound", "admission_nominal_bound", "over_budget_rejected", "choose_member", "choose_prefers_left", "choose_prefers_right", "preference_transitive", "select_prefers_first", "select_optimal"],
+  "matrixRows": 129,
+  "minimumPythonTests": 45,
+  "cudaBudgetGiB": 10,
+  "excluded": ["peak memory bound", "other processes' memory", "full Python-to-Lean refinement", "novel held-out tasks", "policy superiority or convergence"]
+}

@@ -1,0 +1,52 @@
+{
+  "ceRows": 30,
+  "datasetHashes": {
+    "ce": "578b71a9c7de9e84f862595172cde141ad66114259f8d2d2f7c781687f3d4862",
+    "sft": "1bbe64d394e6c9132290ec15abbf39f7e1c35840def871e19336d6ff7daf5625"
+  },
+  "model": {
+    "capabilities": [
+      "completion",
+      "tools",
+      "thinking"
+    ],
+    "details": {
+      "context_length": 262144,
+      "embedding_length": 5120,
+      "families": [
+        "qwen35"
+      ],
+      "family": "qwen35",
+      "format": "gguf",
+      "parameter_size": "27.3B",
+      "parent_model": "",
+      "quantization_level": "Q3_K_L"
+    },
+    "digest": "283945d2cfdbd2646a4cfa392a55f7ba6c64c69661464f145a321fcbe976a036",
+    "model": "aix-qwen3.8:27b-ud-q3_k_xl",
+    "modified_at": "2026-09-09T13:04:30.359913538-05:00",
+    "name": "aix-qwen3.8:27b-ud-q3_k_xl",
+    "size": 13146393829
+  },
+  "scope": "16-task pilot; positive targets checked under scope 3",
+  "sftRows": 16,
+  "status": "COMPLETE",
+  "trainTasks": [
+    "be563a3a9ebe9062107c",
+    "841b47d7a6530bdcdc29",
+    "e925b59446448a4c679a",
+    "45e3b214d8e2c259bcdf",
+    "880a7087b92b5ece2a43",
+    "763d065c3ac245b08ec5",
+    "7b838a83e9b3d3f81c3b",
+    "35612179cdee5ab833b1",
+    "7b548b97db1453c93c70",
+    "56a735cfb6fd4d9ea94b",
+    "52ec408160a189e64b75",
+    "f852e8dec0a3382fc6bb",
+    "e2c01a2ed104f1745dc2",
+    "c46d1fe0fac771787d51",
+    "2aeda657eb32bc427cef",
+    "539762d264f87178579b"
+  ]
+}

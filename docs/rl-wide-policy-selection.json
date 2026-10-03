@@ -1,0 +1,193 @@
+{
+  "bestValidation": {
+    "configuration": "control-64x2",
+    "encoder": "gat",
+    "parameterCount": 305154,
+    "selectedScore": 3,
+    "validationScores": [
+      3,
+      0,
+      0,
+      0
+    ]
+  },
+  "proofHash": "9b2e157815534054aa0fa0b9a8d2c8e52d8fc975e77a6d700d33c896edc96049",
+  "protocolHash": "1560767651c483a58273df27f63b305fbb5493173d5bad9f2462213a19a32571",
+  "selections": {
+    "gat": {
+      "configuration": "control-64x2",
+      "parameterCount": 305154,
+      "selectedScore": 3,
+      "validationScores": [
+        3,
+        0,
+        0,
+        0
+      ]
+    },
+    "gcn": {
+      "configuration": "control-64x2",
+      "parameterCount": 304770,
+      "selectedScore": 0,
+      "validationScores": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "gin": {
+      "configuration": "wide-1024x2",
+      "parameterCount": 20021252,
+      "selectedScore": 3,
+      "validationScores": [
+        0,
+        3,
+        0,
+        0
+      ]
+    },
+    "mpnn": {
+      "configuration": "wide-2048x2",
+      "parameterCount": 96681986,
+      "selectedScore": 3,
+      "validationScores": [
+        0,
+        0,
+        3,
+        0
+      ]
+    }
+  },
+  "validationRuns": [
+    {
+      "directory": "validation-mpnn-control-64x2-242",
+      "manifestHash": "eed993bb6fe97365e22b4f28f3bdbc4cd2e16ccba867a7d478a604d425bb392f"
+    },
+    {
+      "directory": "validation-mpnn-control-64x2-243",
+      "manifestHash": "dc527b144d22378cbddccd3eb05f5c7a792341dedf7776094f2e3b3179a129f2"
+    },
+    {
+      "directory": "validation-mpnn-wide-1024x2-242",
+      "manifestHash": "169142a9950af52cf7aeb00aa5c3496bbd72962eaabaf2efde4d6c2d7a82933c"
+    },
+    {
+      "directory": "validation-mpnn-wide-1024x2-243",
+      "manifestHash": "563f6ac42a2922339724128e273d751eb350b30ff46c8ccdc3ba2f9b60aed40f"
+    },
+    {
+      "directory": "validation-mpnn-wide-2048x2-242",
+      "manifestHash": "d638b529a36e4278d89a29970bf5fb49900d15c20ec0f1605064ef682a8628d1"
+    },
+    {
+      "directory": "validation-mpnn-wide-2048x2-243",
+      "manifestHash": "a8b9564e827e6831a80813fc5a105e6962165d70756f4a7a21e2c01d66616f00"
+    },
+    {
+      "directory": "validation-mpnn-wide-4096x2-242",
+      "manifestHash": "0dd63c919b1512e3cfe4ec09b169f53339b40593b6c6825b91533bcb4b82c44d"
+    },
+    {
+      "directory": "validation-mpnn-wide-4096x2-243",
+      "manifestHash": "09eb7be19409270fad4b74e4c90f472297f6dd09beab0913a63b74b35d1a89c1"
+    },
+    {
+      "directory": "validation-gcn-control-64x2-242",
+      "manifestHash": "036bf4f322347a9569ef1afa1e42a85705ead39ce977b9bb0b3b06702ae770a4"
+    },
+    {
+      "directory": "validation-gcn-control-64x2-243",
+      "manifestHash": "0cd04e8b74345ba4ecd12ae227acb47ea1b8c50af40f12aa06e2c96ff38421b3"
+    },
+    {
+      "directory": "validation-gcn-wide-1024x2-242",
+      "manifestHash": "ab783ed0ddb86ac5dd19dd89a843dc35a4e2eaf6096470491c7f5bce5a68739b"
+    },
+    {
+      "directory": "validation-gcn-wide-1024x2-243",
+      "manifestHash": "41afc78fdfe05851443069beeed5a675b33ebe1cce18716ead67352eb62d6aa1"
+    },
+    {
+      "directory": "validation-gcn-wide-2048x2-242",
+      "manifestHash": "5f20529bbc370f0999af924f91d75092dcbfd6befe3b7eeeba3e4d8c8a6db0b5"
+    },
+    {
+      "directory": "validation-gcn-wide-2048x2-243",
+      "manifestHash": "edee763ccdc4094e725011c330a32af38acc3c4479af785bdee9033411cd3f5e"
+    },
+    {
+      "directory": "validation-gcn-wide-4096x2-242",
+      "manifestHash": "0ed51cf17a9cd5766549a27d12f83a9a9da4d289f657fbf31e50bb8f52e8c40f"
+    },
+    {
+      "directory": "validation-gcn-wide-4096x2-243",
+      "manifestHash": "f885cbd0b9ce73f60ca5829a39fec484942410d78bebc8d1065dbd7e75a65f1b"
+    },
+    {
+      "directory": "validation-gat-control-64x2-242",
+      "manifestHash": "8f986d179247a9659be551e6634881e27f67242961dd9abbf13e4038363b4663"
+    },
+    {
+      "directory": "validation-gat-control-64x2-243",
+      "manifestHash": "be556fb5a8900657cc0dc3bc2a4f8399c1bbc728e0c642a8999dda1b96317759"
+    },
+    {
+      "directory": "validation-gat-wide-1024x2-242",
+      "manifestHash": "2bd3f6dd872c8dc6e53f451eb1a3668330f726d051acfb916cd1b8cacc776894"
+    },
+    {
+      "directory": "validation-gat-wide-1024x2-243",
+      "manifestHash": "94ab2249aeed593fccc87bd9a5f3135a9a4c9c096c4588265392f5bda34ad012"
+    },
+    {
+      "directory": "validation-gat-wide-2048x2-242",
+      "manifestHash": "96fffb71423e7c0ed423cbbf5f4034426b1f03365677d47c1c32f76e56940a58"
+    },
+    {
+      "directory": "validation-gat-wide-2048x2-243",
+      "manifestHash": "bffbd24d3a5d1bb7defc78e3aaa02150ec09c4e90c988bc46b33267d75b427b4"
+    },
+    {
+      "directory": "validation-gat-wide-4096x2-242",
+      "manifestHash": "3996e3ba0e6a4589110bb53098770b4c3852ca1c1e263d3b4d42227a53a6ec84"
+    },
+    {
+      "directory": "validation-gat-wide-4096x2-243",
+      "manifestHash": "95d7b3911f432a880c783a6f530bb1a230fd77074cfa0c0e55c08b2e03b4ca40"
+    },
+    {
+      "directory": "validation-gin-control-64x2-242",
+      "manifestHash": "79713a5b1b873a1f55d9efb572f292ff4c588f4455b1d9a8110cbf6ac897368b"
+    },
+    {
+      "directory": "validation-gin-control-64x2-243",
+      "manifestHash": "42aed9426e44e25e40cf98e66fd515f8ab346c120ddb06dc142f54fb83421bef"
+    },
+    {
+      "directory": "validation-gin-wide-1024x2-242",
+      "manifestHash": "a657f3ad21a9799aa95a425b20bea16b8ef74b663c171134b0966930d4b49e38"
+    },
+    {
+      "directory": "validation-gin-wide-1024x2-243",
+      "manifestHash": "5f1a0160b23bfcc21a6cf62d15ceabd6a561984595c9cd368f36f4e53fc2ca97"
+    },
+    {
+      "directory": "validation-gin-wide-2048x2-242",
+      "manifestHash": "d403329991fd792a2593044151dbd683ed41a0aedc7b4229c8024e74fe0648c2"
+    },
+    {
+      "directory": "validation-gin-wide-2048x2-243",
+      "manifestHash": "7e4747fe07ebf73c52eda2300db8e10ab689aec18773160b439b1510bd5d12d5"
+    },
+    {
+      "directory": "validation-gin-wide-4096x2-242",
+      "manifestHash": "fce8c01e790622d2f367a9b83443a8e4212426b5f8f06bf25893ec9bc1c5682e"
+    },
+    {
+      "directory": "validation-gin-wide-4096x2-243",
+      "manifestHash": "df1ebe52d1fedd3101bce1ebd0ccd1398f9f240e8347042e552a49a35a21f92f"
+    }
+  ],
+  "validationRunsHash": "a4a59c943dd24aa8323f1b4dd3f3c61da3ed546421c1455aa0d94abddcbb9fba"
+}

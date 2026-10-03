@@ -1,0 +1,2626 @@
+[
+  {
+    "group": "graphs:inv5",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c3edc3668e3aa719c22b95ca8c2f1a4e04b4cde18f93eeeeedb55574ba9a2fef",
+      "oracle": "inv5c",
+      "oracleAstHash": "28f62bb20b201a6540decdb5cbde8677f63920efc8160e63689d5ab9fc9fcf89",
+      "originalHash": "55c6da84e33f46a5c3d0fd9e19e82f25b27ddfda91ccc67b22ae3b4a9e83f3c5",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "497903c939304960d570dd24d697de0d43c655f6a88c155c0d5196b6deb621b6",
+      "target": "inv5"
+    },
+    "nodes": 24,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/cRkzAo3QGbK2zL58y_inv5.als",
+    "sourceHash": "55c6da84e33f46a5c3d0fd9e19e82f25b27ddfda91ccc67b22ae3b4a9e83f3c5",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv7",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "0610a82437a75b4ef1dc1cd7a91c1c5d124a646aa4e3ae6ebafc6cee51426d3d",
+      "oracle": "inv7c",
+      "oracleAstHash": "57890d931315669c48ff1e0c14f49a4f99d5410fc19cb20cf6b6edd1841899e9",
+      "originalHash": "c717495a3d134554cb51506c1b99de798bd9b19c17d8e981833ad29a6a9025f1",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5c8274d72372266e259fe0f99c347d728e23032fe8d99adfa83576e172cd1512",
+      "target": "inv7"
+    },
+    "nodes": 57,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/kbRna2dEfbqmddssn_inv7.als",
+    "sourceHash": "c717495a3d134554cb51506c1b99de798bd9b19c17d8e981833ad29a6a9025f1",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv4",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d402876ebf5f77284085cf438d3258cc50680ef2130b8f2bef3a04a2bda7df1a",
+      "oracle": "inv4c",
+      "oracleAstHash": "0fce47dd4f2acdbfe7f2c66f749b2d5fc3ae2d0fc41a9a4d6c45e19a99d2d6bd",
+      "originalHash": "8244478d35849a7dba4f7a89bd8c16b4915a2e802b1d8ae5f3f7e09531f799eb",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "92b5ddf8d82209fa30d3045407769f024dfdfe45feab4fedfeb0dfb444224b74",
+      "target": "inv4"
+    },
+    "nodes": 51,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/MzdGyvm2eFBuCpZX7_inv4.als",
+    "sourceHash": "8244478d35849a7dba4f7a89bd8c16b4915a2e802b1d8ae5f3f7e09531f799eb",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv1",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "003715ce8ce111c42b335972a23a6b7c88b0a4dffa5b5f3b5e5b2e46796b2501",
+      "oracle": "inv1c",
+      "oracleAstHash": "4ec9ac747c06c110b26baa7021301559b062f1bb3c800af5bee5b10f68e9555c",
+      "originalHash": "167d346ea63845a64b2bbded2f3bcdf47f662bf6579293126f745360f0d851d2",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5881d1d5783147e7d9dcd312f8fa03db4d040780cf65962d88c2123a0dfa4850",
+      "target": "inv1"
+    },
+    "nodes": 30,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/x4h2Y6sGBqi8nu8jD_inv1.als",
+    "sourceHash": "167d346ea63845a64b2bbded2f3bcdf47f662bf6579293126f745360f0d851d2",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv5",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "fd3b52e232dc9a46d3b84cc65cfb36af337140409a179d3eff65fae1c2049bc8",
+      "oracle": "inv5c",
+      "oracleAstHash": "d23abc7e37bc91643eb2ec7596e1bf96c4ac0019c604fd1bb73b06c8e791448e",
+      "originalHash": "2619b5e1a33df097f469eca223273c90f4d863e0e12fb6265a765a904ff76bb7",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d91c80655e6111231d0478b2ed188833178a5ebf9fcd63f90738d7acfaba61b8",
+      "target": "inv5"
+    },
+    "nodes": 53,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/5AkNBYbKdYoqyuNk4_inv5.als",
+    "sourceHash": "2619b5e1a33df097f469eca223273c90f4d863e0e12fb6265a765a904ff76bb7",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv1",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "f9859debd93f5b42212ba658d352f934d32d5bed53b368b29dbb9e43201021dc",
+      "oracle": "inv1c",
+      "oracleAstHash": "2349ba0ab5358e1dcf57e38af1585f5afdade0799300defc786fc266a940037d",
+      "originalHash": "92e53b85b25d1631c760123a95eae604249f4e47a38c3c170f28b5d5827f1350",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e4393098910032de8e22299c8d2d2d7abc814c32c831fbc6a596f217ddcb3afc",
+      "target": "inv1"
+    },
+    "nodes": 11,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/ksfPAiasYTGwbWjrG_inv1.als",
+    "sourceHash": "92e53b85b25d1631c760123a95eae604249f4e47a38c3c170f28b5d5827f1350",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "menuSize": 20,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c6265a762e1b285dcf2c6e62155a381a0e016901a7586c6985c6a5a7f80ccb49",
+      "oracle": "inv11c",
+      "oracleAstHash": "40dc620efe53febdf551f1d3866354c085c84fdb2e91965630d091fe194ab951",
+      "originalHash": "f8853a089b8606dc65a24646ecefd800d31125867ac833abe4c624f5c8d9d700",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "c1173274958f9736a54ff80c7496c1386e16882ba463eb1c184d578c4a834190",
+      "target": "inv11"
+    },
+    "nodes": 49,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/wEqej3Ts9tnnxxJzH_inv11.als",
+    "sourceHash": "f8853a089b8606dc65a24646ecefd800d31125867ac833abe4c624f5c8d9d700",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv4",
+    "menuSize": 1,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "47938c184faa03c5ea244e048778b0afb900a0549e8df228638105f8a37d7853",
+      "oracle": "inv4c",
+      "oracleAstHash": "1f03abbe90b0d912eea2ce5980849bef2c717bf2eed62dff5320abd8e331a7ed",
+      "originalHash": "6a8d1f2ba042f016e9baa8b646dae63a3e6c20497d1ae465cac65db096e8bde1",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "6b032bddbf9a1b552383e4e81c164b0e07390c86253e486c53b0378c49af5eb2",
+      "target": "inv4"
+    },
+    "nodes": 40,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/over/xwapHuF8hLsmnhGwZ_inv4.als",
+    "sourceHash": "6a8d1f2ba042f016e9baa8b646dae63a3e6c20497d1ae465cac65db096e8bde1",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv5",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "a32dd6598325f10eaedfe14b1f2aa4f285c88e3a66fe0f421c1fc14a3a788f41",
+      "oracle": "inv5c",
+      "oracleAstHash": "d23abc7e37bc91643eb2ec7596e1bf96c4ac0019c604fd1bb73b06c8e791448e",
+      "originalHash": "4567e145e92038e2077c24ef1ff2acf8a2fac9ce04643da58f83dfe3f046470f",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "90a05a690fad8cc682aa16791864a77ca6ef394d545c4ebb6ca51218fea252a1",
+      "target": "inv5"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/JYLv7oZj5pMhktfZA_inv5.als",
+    "sourceHash": "4567e145e92038e2077c24ef1ff2acf8a2fac9ce04643da58f83dfe3f046470f",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv7",
+    "menuSize": 21,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c718a4bf972fe09760ca12c67694edd7a73dc5dc6d695a7495d03f892904cf31",
+      "oracle": "inv7c",
+      "oracleAstHash": "57890d931315669c48ff1e0c14f49a4f99d5410fc19cb20cf6b6edd1841899e9",
+      "originalHash": "a86c70aed1fa711199cdd746817a79a2ae46989fc03191adde6fcb1ea78ae98d",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8cfed86aa3254f3819996e56ff45c739a3b2535b65556ca75f6ab8f90c57ff16",
+      "target": "inv7"
+    },
+    "nodes": 77,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/695bFjrraQs8k3vzZ_inv7.als",
+    "sourceHash": "a86c70aed1fa711199cdd746817a79a2ae46989fc03191adde6fcb1ea78ae98d",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv7",
+    "menuSize": 11,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "7a0731c31cf983ab897e7aabc9859dfe4a889a362c7adf51738ad672a66a4e64",
+      "oracle": "inv7c",
+      "oracleAstHash": "57890d931315669c48ff1e0c14f49a4f99d5410fc19cb20cf6b6edd1841899e9",
+      "originalHash": "e8f3379a2719ac9967edc1991417a7bbc1f79344882aad42659f1aff4e844675",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "86e70dd57d02510d1994dc65424dac6857a47a492158a2472e64ea6677615257",
+      "target": "inv7"
+    },
+    "nodes": 55,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/3e4i8BjjL3FZJJGK6_inv7.als",
+    "sourceHash": "e8f3379a2719ac9967edc1991417a7bbc1f79344882aad42659f1aff4e844675",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv8",
+    "menuSize": 4,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c4e3da94d2c3d60e4386a76d02a39ad28aa2be9eefa4cafe489bd1e173e08960",
+      "oracle": "inv8c",
+      "oracleAstHash": "ed649210375f4ec35cf3b8553ed8a86f2b74ff03a7e429d5d361b278518df463",
+      "originalHash": "58736830725a20b99f5006ddd0d50c57f72737f766b9d0e58d89906924d51d35",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "36f25c4d7ad113033e929c7af1f79adb3a0cfc3716173693233b0629ed5642bd",
+      "target": "inv8"
+    },
+    "nodes": 39,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/over/Lt9fiCMLtkdAaWvrr_inv8.als",
+    "sourceHash": "58736830725a20b99f5006ddd0d50c57f72737f766b9d0e58d89906924d51d35",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv7",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "98c4ba9adf62775df6ec09b58aea3a83802aa5f4f08f9c628b9ae8dde5c5edec",
+      "oracle": "inv7c",
+      "oracleAstHash": "57890d931315669c48ff1e0c14f49a4f99d5410fc19cb20cf6b6edd1841899e9",
+      "originalHash": "3c96bc3517c083cdfb0d7a6eb923522bea9b04920faf2bb125307a0d23647d89",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5fb62b79053abc219762b39720e3872c74b7318d73a176d93f943fb2ad68396d",
+      "target": "inv7"
+    },
+    "nodes": 47,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/mvKH5dr44EAkF8oaS_inv7.als",
+    "sourceHash": "3c96bc3517c083cdfb0d7a6eb923522bea9b04920faf2bb125307a0d23647d89",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv5",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "5bb78fdc4541105678c910790966fa6d893bc3b909d6500e2112ea490a25dda5",
+      "oracle": "inv5c",
+      "oracleAstHash": "d23abc7e37bc91643eb2ec7596e1bf96c4ac0019c604fd1bb73b06c8e791448e",
+      "originalHash": "8564c28a63f7b3cd5a1f69992f29c115b40911b234eafc6bb02df86f60afb0be",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "fb2f119c3c8ca79b3e56515327b7f5762ae365edeb616f1edc3e6bd2784e2b78",
+      "target": "inv5"
+    },
+    "nodes": 46,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/znbJ5pPGTec4au4AK_inv5.als",
+    "sourceHash": "8564c28a63f7b3cd5a1f69992f29c115b40911b234eafc6bb02df86f60afb0be",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "source": "classified-data/coursesNew/under/dfrPFNX8dXW95wLdK_inv8.als",
+    "sourceHash": "711d361236c9c2002385fd7536aac80e9bb8a098a4722be54575208820fe2da3",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv3",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "8fa411d2945c61a7a99ae016b7853b598c565923dbce80e01694ad7f639b4a1b",
+      "oracle": "inv3c",
+      "oracleAstHash": "0726976fb16e858cf872cd060204bc8b8a028708ad6af99feacca911bb3d835a",
+      "originalHash": "26e44dfc8fa64dd3329ae9b79e6f2b5e353874f1fbcf0b6571a54b34b57528fd",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "10c36a502618d6a0d8386bd0f96482324e1e4eff1a995873b8888100132126ef",
+      "target": "inv3"
+    },
+    "nodes": 62,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/FNWreyYmaFfgoPwvk_inv3.als",
+    "sourceHash": "26e44dfc8fa64dd3329ae9b79e6f2b5e353874f1fbcf0b6571a54b34b57528fd",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv3",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "0786002a571182aac93f680a305e4f51e873b9359a6d227c17464ed41e43d9cd",
+      "oracle": "inv3c",
+      "oracleAstHash": "8ce433dc04f38316d48e11ba1184bc164a618ca3777c929a89c400ff4b3dbafd",
+      "originalHash": "904be704fb239684e253b9957508fa7ff79f321a28b5d163a2dc7b42f7e8aa8a",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "df6419e3989afbcee339f5c125adbb57ec9b8fa1fc707aa71efc36d84f3a59ef",
+      "target": "inv3"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/WHn2R3XemrY3pyG8z_inv3.als",
+    "sourceHash": "904be704fb239684e253b9957508fa7ff79f321a28b5d163a2dc7b42f7e8aa8a",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "79e0a3e89e38ff0f341ec3dea9b58438a69ba7a2a7e9dde374edd4e70d0f6d8c",
+      "oracle": "inv11c",
+      "oracleAstHash": "40dc620efe53febdf551f1d3866354c085c84fdb2e91965630d091fe194ab951",
+      "originalHash": "df1819fb748b023d0b5fa1b2997d7da2ba7acb319c2b52d42594808a40d7c2f3",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "40f9701aee3e29066b58a468a1dd74d03cd461c8017b7846eb0d03f93680b2e4",
+      "target": "inv11"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/xv642Jf48e6P5MsSq_inv11.als",
+    "sourceHash": "df1819fb748b023d0b5fa1b2997d7da2ba7acb319c2b52d42594808a40d7c2f3",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/under/g2dE3Jb2HBEeHB5Bq_inv11.als",
+    "sourceHash": "edc801f203889fe87e1d66ceb861d9638a9ce2e4c39d4d841cd80e500546a24e",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/9chNXPh2yDrCgTREf_inv6.als",
+    "sourceHash": "274651b0016c280be28eb57000a29fe6e50ca0e904b01eee667d8433ece193fc",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv14",
+    "source": "classified-data/coursesNew/under/N8pQdmoXPX2MHpvCw_inv14.als",
+    "sourceHash": "ce48b7d3d8973fe87eb5c3c66f65264bbe7f8bd2a745329a0d1c19c8d7bce2c6",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "source": "classified-data/coursesNew/both/PzpX9fzbRvBZ2r6bY_inv3.als",
+    "sourceHash": "9dd616f2df6b5d73def18793043d7b1a4204efdff650c2a879bf9ea401e000c1",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv3",
+    "menuSize": 55,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "fca60f17463939886033532a19277d9e1c98fe0d48218e30ab2eee959bd2a8e5",
+      "oracle": "inv3c",
+      "oracleAstHash": "0726976fb16e858cf872cd060204bc8b8a028708ad6af99feacca911bb3d835a",
+      "originalHash": "242303478584b2554855872d50ca14030a05f995110eb0800fd28ed9c9bddbf8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "b417d7fc369c3f4d361a7fcf8e5410838bbbf0c53563a2bbab845d052f5ca7ed",
+      "target": "inv3"
+    },
+    "nodes": 252,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/WLJm4jyER8zYpJqL6_inv3.als",
+    "sourceHash": "242303478584b2554855872d50ca14030a05f995110eb0800fd28ed9c9bddbf8",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/under/A2scCaGR3LkJ37TMu_inv7.als",
+    "sourceHash": "0bdb342bfb377e3047c7898f423047b5af376f9360af0c732ef3ac39f068c1bc",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv3",
+    "menuSize": 25,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "b52806c547bd49ca05d1b05617381218a156fe0d7e8d7bb1552fcdaf87aa653f",
+      "oracle": "inv3c",
+      "oracleAstHash": "0726976fb16e858cf872cd060204bc8b8a028708ad6af99feacca911bb3d835a",
+      "originalHash": "c3ea24a0fb225d3f30a4b47ec0841ba041da1778933ff25c8de61fd975e749d8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "b1d2ce3e9f1298f5c1a30d56c23fac42bd6d20cba7e1d1b13171c780da7a9f3a",
+      "target": "inv3"
+    },
+    "nodes": 80,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/SZSQaDeq6zTj9ciQJ_inv3.als",
+    "sourceHash": "c3ea24a0fb225d3f30a4b47ec0841ba041da1778933ff25c8de61fd975e749d8",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv6",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "71910674de4b1c0cc0ac03790a6709d3ec6e2b049c35fddce36168c3e2b68dfd",
+      "oracle": "inv6c",
+      "oracleAstHash": "61a383dc84b70cc6002eddd5b1032aba1f679c82ad95c0d94493635e2f77c355",
+      "originalHash": "7c68749f53d3b966434f2bec096825ffbfc16c9194b35e1e1a7e2ea24cfbafa3",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e851e807b0c4baa4592b432ae0856580fa636d137a7c9611c82cc8a9943c26a6",
+      "target": "inv6"
+    },
+    "nodes": 23,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/JHSzLNZp9mzfF4jwa_inv6.als",
+    "sourceHash": "7c68749f53d3b966434f2bec096825ffbfc16c9194b35e1e1a7e2ea24cfbafa3",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv6",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "3842780f12695533bb79b6d705724160216c784a50854c23a30f1215b23ed9f4",
+      "oracle": "inv6c",
+      "oracleAstHash": "e696c745831f7445ea16ec7ace596a3ea37259abdd32a9649eab9ede50d0d470",
+      "originalHash": "d7bd344c4a8023046a8365d2b1a927b7878b8d6df0c8f021541189f31906936a",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "f5e2e12b29f17d5b244e78eec15ca45bdddbe44f6c2b99c035daa50688718275",
+      "target": "inv6"
+    },
+    "nodes": 32,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/j6YEW7ZArvSscCGQz_inv6.als",
+    "sourceHash": "d7bd344c4a8023046a8365d2b1a927b7878b8d6df0c8f021541189f31906936a",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv2",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "6dd9369d56ec03c36cbb82f679aeef021328ef461e1336035c07336e754a2226",
+      "oracle": "inv2c",
+      "oracleAstHash": "3823d4ead94823a9e1576dfda8ba45c77df6bc92063f5cfa9ac890c3c0baf466",
+      "originalHash": "c828264bac9b59c5ac688d8e23b3fd8d67d465086ec37174fad6f8076a843592",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "3693f0e658c4ad4366f1360f7701aebeb56b2714651084878d3c559a9594007a",
+      "target": "inv2"
+    },
+    "nodes": 19,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/fucryhfnSCHjPyt9q_inv2.als",
+    "sourceHash": "c828264bac9b59c5ac688d8e23b3fd8d67d465086ec37174fad6f8076a843592",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d599ffc4e47075e50e4a7687beffe4f409f5cc078bce345b744eec428fa7f596",
+      "oracle": "inv4c",
+      "oracleAstHash": "a7a3feebd9610451b5a6ea1f1daed96b721c0e99b408151af6698d2acf22fa8f",
+      "originalHash": "e7ebd222356e267921253801cfe3abf5f6aae2eb2f095bad9d81cd31b76a3a1f",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d9bcbcec488cb077b6e3fc23739c211eaa7fa86c42985d4f0665828c2430fe50",
+      "target": "inv4"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/54pYy56jC2GL4m7cr_inv4.als",
+    "sourceHash": "e7ebd222356e267921253801cfe3abf5f6aae2eb2f095bad9d81cd31b76a3a1f",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv6",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "97c2ff1a6364402cb41917fc05cbe5d86f987ba9bab47de31bef12d2f789ae3e",
+      "oracle": "inv6c",
+      "oracleAstHash": "e696c745831f7445ea16ec7ace596a3ea37259abdd32a9649eab9ede50d0d470",
+      "originalHash": "7db3e856d75c6242f307e9b13e9d2d46ad47dc00116bbd70da7c6e4d1c8a64c1",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e885f1ffeb8ef8f1fc1d71de29543b31cd0efe280be581dcc354fec508ae36b6",
+      "target": "inv6"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/eAPo8kkmEhgXE6xjJ_inv6.als",
+    "sourceHash": "7db3e856d75c6242f307e9b13e9d2d46ad47dc00116bbd70da7c6e4d1c8a64c1",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv3",
+    "menuSize": 62,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d1a84ec95ef116bbc55adcd924ac81484816c65cfb8863ef4be0cf5fcefdb4cd",
+      "oracle": "inv3c",
+      "oracleAstHash": "0726976fb16e858cf872cd060204bc8b8a028708ad6af99feacca911bb3d835a",
+      "originalHash": "95a8f784f85684ed261ed7084ec70da66ca62394ebc7c59e3a35335d05fcbfe8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "fbb13cf451d0c15a4502a1970f7019637234edc39c39d1ade7ef92011fdf99a9",
+      "target": "inv3"
+    },
+    "nodes": 248,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/tn5JGoQWkLWXoueaZ_inv3.als",
+    "sourceHash": "95a8f784f85684ed261ed7084ec70da66ca62394ebc7c59e3a35335d05fcbfe8",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv4",
+    "menuSize": 21,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "cd063e8d029179af74f05471f648e0cc969eeda0058e54c54a801d89474b0347",
+      "oracle": "inv4c",
+      "oracleAstHash": "0fce47dd4f2acdbfe7f2c66f749b2d5fc3ae2d0fc41a9a4d6c45e19a99d2d6bd",
+      "originalHash": "0afc13d58641e1833780af7644ff402b4f084f8e62f9b66272decbf3ef227435",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "ada9c0a35f6951dde4b673e4caecfa45d898584239ab250adf6a8e4e99977912",
+      "target": "inv4"
+    },
+    "nodes": 71,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/aNkkDHCzaeLb9z6mZ_inv4.als",
+    "sourceHash": "0afc13d58641e1833780af7644ff402b4f084f8e62f9b66272decbf3ef227435",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv6",
+    "menuSize": 16,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "b45fc2439b65271a2124e82b278661fcc2de06079d7be69f60ac0bd9dcb89de2",
+      "oracle": "inv6c",
+      "oracleAstHash": "e696c745831f7445ea16ec7ace596a3ea37259abdd32a9649eab9ede50d0d470",
+      "originalHash": "7e634fa19aa6263660082cc0ffac7af4003c9f3784957c884cfda37ab59c8938",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "fcfde95b624d6a60eb5e72b7dc88b20297bd633aca55086bc11f760f6adc0342",
+      "target": "inv6"
+    },
+    "nodes": 58,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/C97GSnsp8FQxFjzFJ_inv6.als",
+    "sourceHash": "7e634fa19aa6263660082cc0ffac7af4003c9f3784957c884cfda37ab59c8938",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "menuSize": 22,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d2b9caf9dccf9a889a2948b1fa329cf448b88ac8b2861752655221977bc1a627",
+      "oracle": "inv12c",
+      "oracleAstHash": "29b3ab93aa5ede9a615839b67943fd572555cf0a0667a4110f669a6f44b43165",
+      "originalHash": "6f9a1a5091e91496d907022fdd17f8fc5e43b2eda5068644b9899622f28c407f",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "c308073a7f028df31d879b65ff531e9635f4ba1076371d00fadfc85a9fa282b4",
+      "target": "inv12"
+    },
+    "nodes": 67,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/23hRS4QxeZXFFZ2Z9_inv12.als",
+    "sourceHash": "6f9a1a5091e91496d907022fdd17f8fc5e43b2eda5068644b9899622f28c407f",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv3",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "0fdb892432ead22938066e9afd9a56969a60f8cb75a07688f1a04fac0d637f77",
+      "oracle": "inv3c",
+      "oracleAstHash": "14e61a871a5c7db8d81a5a18c6a51186e69b976e5f29ac829b3c9656fd4d025a",
+      "originalHash": "0d63f7f3c689af310313aaf64f99291738f28e4b7763681cbff410a406e40c61",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "220a9a08ea56f32b9bac330a9b4ffe5a11926217e1eb21c25e03acfb16e41a01",
+      "target": "inv3"
+    },
+    "nodes": 38,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/over/F4oRKjuvmoQusaJXm_inv3.als",
+    "sourceHash": "0d63f7f3c689af310313aaf64f99291738f28e4b7763681cbff410a406e40c61",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv4",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "eceadaa7286867390cbab1d9421cdf6af3334e1663561fcaff572b15646afe16",
+      "oracle": "inv4c",
+      "oracleAstHash": "0fce47dd4f2acdbfe7f2c66f749b2d5fc3ae2d0fc41a9a4d6c45e19a99d2d6bd",
+      "originalHash": "6cdc0e85e5f6b7c9fc909c8b91586bdc8674a628554d630e7e41c4c95d66b72d",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "67b9f875a62b7bbe085110016eda3fc591a578c4d4071ba2a399dbaf0026b3b9",
+      "target": "inv4"
+    },
+    "nodes": 54,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/over/XhEknjYZusRtC8sXs_inv4.als",
+    "sourceHash": "6cdc0e85e5f6b7c9fc909c8b91586bdc8674a628554d630e7e41c4c95d66b72d",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv4",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "aa1e2da45480614eb0bb6195ea8c640cd790ab6b3e22c08d451e91cec99cfa9f",
+      "oracle": "inv4c",
+      "oracleAstHash": "699a8f164780ca9f734bb9b28fa911beb8c9837dd898dce3038e55d0d0f2bd78",
+      "originalHash": "0863000cbf336282052afd1c6ea12fca075b10f1f38d6d17a76495c67ec07748",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "ac66a1a4725be220d3bf125893dcaaebfce55cba880c4862f06ce80fe6bf09be",
+      "target": "inv4"
+    },
+    "nodes": 28,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/Ntim6htqeZyQRESXT_inv4.als",
+    "sourceHash": "0863000cbf336282052afd1c6ea12fca075b10f1f38d6d17a76495c67ec07748",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/vzmNJAD6EBBEYopM8_inv6.als",
+    "sourceHash": "e2c7220638822587a1784eae4a9ea209d533f2c0ed6862d718ec60565cfdfa7a",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/under/SGRfy3JEf2wgci3Ps_inv7.als",
+    "sourceHash": "6db3eaa41f322e10dacb75bfb9487db26e849aa8a424a4e314d9f8fb906c97b3",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv13",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "faade35e681d77a14da6104085cd183d40e8da1ad4a1476f5bab6d40b9baf994",
+      "oracle": "inv13c",
+      "oracleAstHash": "6c7910222fdad0c4c85c4fdd034fd1a371ac1e39180db0f58c856b30748d1437",
+      "originalHash": "4f24262c7177e0547031ccf4bf74844f5aca133ffd014386928bfaa7cfa879d5",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8ed4ea4d4af47bb466ce0b7cdf84c393ae7f6d1d61ac2b916a4cdf0a853731de",
+      "target": "inv13"
+    },
+    "nodes": 23,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/eJnDwz8BNiY6QhDBs_inv13.als",
+    "sourceHash": "4f24262c7177e0547031ccf4bf74844f5aca133ffd014386928bfaa7cfa879d5",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "menuSize": 16,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "4db25fc7ec9bda143c3c0be30add9b5c468db11bab6deb8e2baef39210e27b98",
+      "oracle": "inv14c",
+      "oracleAstHash": "c84b14b7d8c21437caeccdcdcc0e2d810988e44b3b920bf681545a0ffeac7c01",
+      "originalHash": "f5e33542f54b21dad432e3c198276b6216985b91d641c5cc41b5797a598d9eff",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "76f71f744dd217604249b123ddc13622e8c263b0a94f454726a8e4f8ea2793e3",
+      "target": "inv14"
+    },
+    "nodes": 68,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/okDFA27pSe3foGqkd_inv14.als",
+    "sourceHash": "f5e33542f54b21dad432e3c198276b6216985b91d641c5cc41b5797a598d9eff",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv10",
+    "menuSize": 4,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "e42dfabd42c3672129ff1aeefaf8614cf62d4dd44a1a9b55e6ce738d5528dfc6",
+      "oracle": "inv10c",
+      "oracleAstHash": "ef03c15e4d04654f45167c4a563a53d8d190d7f6d7540293c0905a7579b789a2",
+      "originalHash": "bf1861f4cea6391368c574e9a25245b6fe337a43b2c3dca619743f3a35f88792",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8f8918902169a59fa975c069fe9e16e90f6264c1390074bb7c74437cf0754774",
+      "target": "inv10"
+    },
+    "nodes": 17,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/over/uuhnWGycM642zPW7Z_inv10.als",
+    "sourceHash": "bf1861f4cea6391368c574e9a25245b6fe337a43b2c3dca619743f3a35f88792",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "f3d4e7279fb1f1ec56356c00c95a0bef49742d8cf16b16b4bb316d9c06d0d02c",
+      "oracle": "inv8c",
+      "oracleAstHash": "b7e1e1b34ef5f76d19ea174c51aa58931b0014aa58aeabfb12a24d11547bbecd",
+      "originalHash": "b81939f865793c9d5c1e56632ac34b492b996df24d258ff83e22287b8a8b7d71",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "15694423118fc204108a78f803a0d49be7dd7bb6702bc468f48faa77045fb03b",
+      "target": "inv8"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/H97TctT8S6ihSigh9_inv8.als",
+    "sourceHash": "b81939f865793c9d5c1e56632ac34b492b996df24d258ff83e22287b8a8b7d71",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv1",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "9e65c339f8094086f7a4e6fc2f48e3467d6c6113ed927be1d02f3ddbdeda874d",
+      "oracle": "inv1c",
+      "oracleAstHash": "e6500f9a7f07221af59f62053f058ec70e76f911ca415cbab025d56744a0dc29",
+      "originalHash": "4457433c0f709d7593538f52d425ae3cdefe7b942da19e010edf2e65da3618b5",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "dfd3f760dd94eab0e2560316d8b9bf573e6777b32aa82683e6f4540b67282ee0",
+      "target": "inv1"
+    },
+    "nodes": 20,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/under/ho7ATgYrBwTnWMguB_inv1.als",
+    "sourceHash": "4457433c0f709d7593538f52d425ae3cdefe7b942da19e010edf2e65da3618b5",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv5",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "83bb5c77806e42d8937b1cb2d001403fc90b0cb9be515dbf31ce368cc53e1a48",
+      "oracle": "inv5c",
+      "oracleAstHash": "d23abc7e37bc91643eb2ec7596e1bf96c4ac0019c604fd1bb73b06c8e791448e",
+      "originalHash": "ce78986e71f116b6bd2d9a86319d17a4f03e90b01d9ed3658ffb1ab38cfcafd7",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "ddc3243ef1842796e2605b358d8a30449af3475ac4ae16ae085f5078b8bf213e",
+      "target": "inv5"
+    },
+    "nodes": 38,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/B2WLpEwGpkRtnijwG_inv5.als",
+    "sourceHash": "ce78986e71f116b6bd2d9a86319d17a4f03e90b01d9ed3658ffb1ab38cfcafd7",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv2",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "ab5b417ebe94e34b7fe34368ea92262bed3722e241222a68a08ce09d487690a7",
+      "oracle": "inv2c",
+      "oracleAstHash": "f4fbc55da4b3b354848bfdd9e6da2eee2b7bb8bff176645233133cbc5bf1c1f2",
+      "originalHash": "2585f3fc01c260c208bd0edc9a919975fb71c80d3c7d2ca9dcd552d9f8f0addc",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "4506656a49628f6a2f0b80bc8d4bfea9b1b6c0fde399c7eba74e75b97893e7aa",
+      "target": "inv2"
+    },
+    "nodes": 46,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/over/E4cz5hGgXduKmRnNE_inv2.als",
+    "sourceHash": "2585f3fc01c260c208bd0edc9a919975fb71c80d3c7d2ca9dcd552d9f8f0addc",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv6",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "f8d12978e8bb504ebccce747c26cee0e6adb58808fb32da058ff018c927111b1",
+      "oracle": "inv6c",
+      "oracleAstHash": "e71c164900cfa62e3df87d8523ba152e179e3b1ca640b784832d05ca8a5ee8a1",
+      "originalHash": "c231c4f3daf2dcf4b3dca6487070bce134ca693917f324a282401d580418ba84",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "0cfe752bf5540fc0c3df5560da35d284ca22ced138dfd39b5589867b6daebfb2",
+      "target": "inv6"
+    },
+    "nodes": 41,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/sfqbaq9QbiW3zBzhz_inv6.als",
+    "sourceHash": "c231c4f3daf2dcf4b3dca6487070bce134ca693917f324a282401d580418ba84",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "source": "classified-data/coursesNew/under/rgJeKmXShYomuiXcy_inv8.als",
+    "sourceHash": "93d88185012ab5bd2a854f4f023f4a846274a11e46ea9b953f9d6a538be194ac",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "menuSize": 17,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "4adaea3ee5db3af1987798045b50380e7616cf138cb235518ccbc39b50503d9c",
+      "oracle": "inv11c",
+      "oracleAstHash": "40dc620efe53febdf551f1d3866354c085c84fdb2e91965630d091fe194ab951",
+      "originalHash": "6c63e2a29005bb4139a05fccc777a9348cb4c5eb7ead3c30adf18e039842d7d4",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8b3404e1e28e443a66d49b7f691031c0c7d3edd5c460cff4c6d41b594887d354",
+      "target": "inv11"
+    },
+    "nodes": 71,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/MQvnKyvSFvoEbLsT6_inv11.als",
+    "sourceHash": "6c63e2a29005bb4139a05fccc777a9348cb4c5eb7ead3c30adf18e039842d7d4",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv5",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d58992bbd270e46918d2f390531dd92eb02bc54d9d6c7def1e33fb3f94a8b92c",
+      "oracle": "inv5c",
+      "oracleAstHash": "0c92985383aa9f2f7a4b64163fa9239a55f2cff0e1cc9be52d3ff4dab1a97db2",
+      "originalHash": "d199d43b232325775f2cd5d00b4c75a53d30c144d028f06f4df55ccacae6f36d",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e2708de7ac9c38431f037654386f1cd12a227fec7edf375f1632e3f4af832bc4",
+      "target": "inv5"
+    },
+    "nodes": 20,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/uYewFtP6tXa3p4r7Z_inv5.als",
+    "sourceHash": "d199d43b232325775f2cd5d00b4c75a53d30c144d028f06f4df55ccacae6f36d",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "menuSize": 14,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "2e8a2e7d03d35c81c73c8ff890dad0d1ab6234a07996efd0ce8cc046650330b0",
+      "oracle": "inv12c",
+      "oracleAstHash": "29b3ab93aa5ede9a615839b67943fd572555cf0a0667a4110f669a6f44b43165",
+      "originalHash": "11d448b78e873578d1310c01a860a2382b9bd3922e17ccd4a235704ef6a5ab5a",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d755c0e7c74a89ac50fb766bc657526c41214f6dd22f1cd165df31398df06fe6",
+      "target": "inv12"
+    },
+    "nodes": 79,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/bubEt4a7FkffBwzmj_inv12.als",
+    "sourceHash": "11d448b78e873578d1310c01a860a2382b9bd3922e17ccd4a235704ef6a5ab5a",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv6",
+    "menuSize": 11,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "3e8948b6b06e2e9f4f01aa1608c73f46b73b27166949f79334f1c57d8c9e9b42",
+      "oracle": "inv6c",
+      "oracleAstHash": "61a383dc84b70cc6002eddd5b1032aba1f679c82ad95c0d94493635e2f77c355",
+      "originalHash": "43d10ddfb2b04a1df22e642bcf2153d557e36ed566ba4c0383c8f356931203d4",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "af2a96b73200c0e35f648172e744477fb242b1b04475dc37f6514aff4fb9931b",
+      "target": "inv6"
+    },
+    "nodes": 54,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/over/eTLoRXBBqLWJWczYF_inv6.als",
+    "sourceHash": "43d10ddfb2b04a1df22e642bcf2153d557e36ed566ba4c0383c8f356931203d4",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "source": "classified-data/coursesNew/both/fwDZgovssYXfeaPLP_inv9.als",
+    "sourceHash": "11ccb6df564c4d2af1efb583287da1687a7e4988ad211eb35e6e93537fc5f48f",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "source": "classified-data/coursesNew/both/TuXz9w2HhnBofeNDe_inv9.als",
+    "sourceHash": "a72484311047ca4a18e9fd73c4352c32afa4622ee6f417df936e4917cfdd8d08",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "f75ab94921f9661b1ab3fd20b06d7b9f4ae8bf7e68cbce1de4461d245798157f",
+      "oracle": "inv14c",
+      "oracleAstHash": "c84b14b7d8c21437caeccdcdcc0e2d810988e44b3b920bf681545a0ffeac7c01",
+      "originalHash": "9b3ffddf50a048cdc06b311ccfbdfc066d9524137976b404c17d0aa1a9a8dd04",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "29fbdbaf28b211a30d14c210ac5f3bc3700f6c06f537baf8c03ccdd2d47d5ad2",
+      "target": "inv14"
+    },
+    "nodes": 71,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/xX3WohjMRqZFhSfuS_inv14.als",
+    "sourceHash": "9b3ffddf50a048cdc06b311ccfbdfc066d9524137976b404c17d0aa1a9a8dd04",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv6",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "724734410b817c0415e02ddf172f1eac810ead49bf96fb080b0dea9a439a0d28",
+      "oracle": "inv6c",
+      "oracleAstHash": "e71c164900cfa62e3df87d8523ba152e179e3b1ca640b784832d05ca8a5ee8a1",
+      "originalHash": "a8ce1ca9023f27860fb7c9717dcd129e9ed32e1247dd1c5e88a918cc340a82a3",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "7fedbe852f42d07f15163518a4167c06f415634023a9fb700ebd59699733a43e",
+      "target": "inv6"
+    },
+    "nodes": 24,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/mc92eWCC5u2xu2e7m_inv6.als",
+    "sourceHash": "a8ce1ca9023f27860fb7c9717dcd129e9ed32e1247dd1c5e88a918cc340a82a3",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv1",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "33837643826adc22cf9b379156fcc7227abc41849f9a65dbe634b0ef3738d52f",
+      "oracle": "inv1c",
+      "oracleAstHash": "2349ba0ab5358e1dcf57e38af1585f5afdade0799300defc786fc266a940037d",
+      "originalHash": "ebe7258fb33ed3c6527a38302e9322eda561082b58d57027cb957225beb87819",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d948eaf8cf4068cf865a80619cf90992c8413f0068b09e3219f5a99dd27d2bad",
+      "target": "inv1"
+    },
+    "nodes": 22,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/tBu9Faqo5aRk5Hqt8_inv1.als",
+    "sourceHash": "ebe7258fb33ed3c6527a38302e9322eda561082b58d57027cb957225beb87819",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv1",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "7a62bb4ce07cb2e127b93d13f18074fd29bd87144d926ea2ba880a850ec85d77",
+      "oracle": "inv1c",
+      "oracleAstHash": "174c4b5eb3afb2b0e7d1513e7b67802448057f77df2ab518ec6fbb3cecaabaa5",
+      "originalHash": "59ab5c3e2e5a64026ebfbb1b249fa357b2875b6541a613d17a2637540a5f06cd",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "39549058af417f244fb200fa2ff8d66452754673285ad937a8390cb90f45f556",
+      "target": "inv1"
+    },
+    "nodes": 22,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/both/Wjcd47vw3mgK4cmZr_inv1.als",
+    "sourceHash": "59ab5c3e2e5a64026ebfbb1b249fa357b2875b6541a613d17a2637540a5f06cd",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/SPLjYyuMLzYGrgshN_inv6.als",
+    "sourceHash": "c79c8da8f6ec262dd8f86c3aac3a85c11f3cb4e4fa7c520f9b4d17edb3844ae5",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "menuSize": 22,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "cd157ceaecfc25831fd225ce48d424f21756db91db1ace6827f9e238c6f2bc73",
+      "oracle": "inv12c",
+      "oracleAstHash": "29b3ab93aa5ede9a615839b67943fd572555cf0a0667a4110f669a6f44b43165",
+      "originalHash": "d70b6b4d0a1d4eb1b5c2cec5eb162cad113f5ff0dd53bdd316bbed5369a26406",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5afa3d74ad442a9d4f424c8753319cbb970a7e194298d03e983540e522151717",
+      "target": "inv12"
+    },
+    "nodes": 86,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/PoauyKHfY3eaThsAv_inv12.als",
+    "sourceHash": "d70b6b4d0a1d4eb1b5c2cec5eb162cad113f5ff0dd53bdd316bbed5369a26406",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv6",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "6b35e64f7a13cccfbbb5ec77bf836cf3c5e6873ebe45ff707f05bcbcdaa769ed",
+      "oracle": "inv6c",
+      "oracleAstHash": "e71c164900cfa62e3df87d8523ba152e179e3b1ca640b784832d05ca8a5ee8a1",
+      "originalHash": "9d090c52ee2692d7eb4e4b4948d89dba50ea27305212732ff3028d1b002c9964",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "fb64d76b7b2ecb33ee6357516cdfa25f59b89cd85ad178fdac1a9799183dbb3a",
+      "target": "inv6"
+    },
+    "nodes": 41,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/CwyTKz96XbKzENymC_inv6.als",
+    "sourceHash": "9d090c52ee2692d7eb4e4b4948d89dba50ea27305212732ff3028d1b002c9964",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "source": "classified-data/coursesNew/both/hjMKxWatd4jXGke8n_inv3.als",
+    "sourceHash": "d5bbbed79d0007db1349e78dac7fa51051f5588f104b121276b70bf04cf20f46",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "menuSize": 16,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "077b4c6966a655e0bf42d46fa4fae4c610fd7c0bc6241b37881041714f878635",
+      "oracle": "inv11c",
+      "oracleAstHash": "40dc620efe53febdf551f1d3866354c085c84fdb2e91965630d091fe194ab951",
+      "originalHash": "943657d31b9b27671198641d400421b432d4545cdadf6ffe25fdfb6b49952ce8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "9f80af944db1084e34af8b291faf8368a774b0af451450fc502f853f86656a53",
+      "target": "inv11"
+    },
+    "nodes": 66,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/CftXM3aTXbbTt7oKm_inv11.als",
+    "sourceHash": "943657d31b9b27671198641d400421b432d4545cdadf6ffe25fdfb6b49952ce8",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv6",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "3339928ed1b4d24a2a4cf6feca573ef857904f3b8119ace22cbe793f9931733d",
+      "oracle": "inv6c",
+      "oracleAstHash": "e71c164900cfa62e3df87d8523ba152e179e3b1ca640b784832d05ca8a5ee8a1",
+      "originalHash": "351fa2e821f5a6193f82c34888c441c0f29efdf27ee4112eaaabe1ccf4993dbf",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "3c81e577202d1dccfde3357e158fe262b78943f7727db59101dccecd1ea4eb0b",
+      "target": "inv6"
+    },
+    "nodes": 41,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/G3s2yBNxWhoJTFnFC_inv6.als",
+    "sourceHash": "351fa2e821f5a6193f82c34888c441c0f29efdf27ee4112eaaabe1ccf4993dbf",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv5",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "98a357341ab79e11a9e46b4015296f696ba2699f10080457ce9b0a226056a089",
+      "oracle": "inv5c",
+      "oracleAstHash": "0c92985383aa9f2f7a4b64163fa9239a55f2cff0e1cc9be52d3ff4dab1a97db2",
+      "originalHash": "103740a4df121b1f13292877d0049efcd351f526f9b99933bf488fd75302e548",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "7fdd230f9159361607d22a2372844d7abfc02381444cdeb93c1371efe1ffc4b2",
+      "target": "inv5"
+    },
+    "nodes": 21,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/SSHNBFgStHA5E6dWE_inv5.als",
+    "sourceHash": "103740a4df121b1f13292877d0049efcd351f526f9b99933bf488fd75302e548",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv6",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "59e56c03ee5e1b76b3c50b033ef3ed4bcf92d69d47986ce2d1ed3c0862e09c7d",
+      "oracle": "inv6c",
+      "oracleAstHash": "61a383dc84b70cc6002eddd5b1032aba1f679c82ad95c0d94493635e2f77c355",
+      "originalHash": "525a2d0abb62c135e5e510966419ddb158a862369f44977740665c3c3e3ed1ee",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "0acf3743e517a56a120c16eb082c9e30bc5137902269af9011a1cf1d5bc90cdc",
+      "target": "inv6"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/Q5RY3GeDPDRZrh8N8_inv6.als",
+    "sourceHash": "525a2d0abb62c135e5e510966419ddb158a862369f44977740665c3c3e3ed1ee",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/over/jyCkaXe4ohGMCQBJC_inv11.als",
+    "sourceHash": "06c5d1b52df6c7204c891923bf22c00f61d9a50ad1b25759ce09a53f41ea0f87",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv10",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c093c9de724b865d5637d54e3ff0d786ae201cf8166c5affa80487a17263ff9b",
+      "oracle": "inv10c",
+      "oracleAstHash": "065c177846a80ce868cfffa741eca465b7a8e4989a72702381d4b28dd096def3",
+      "originalHash": "e83126e3c1ac40180e479a6fb34fa17961b8ea5ff88d913079f3b842ccb30667",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "bb2e6a2eb959f4f5934522e312af5425f9203e9c77ab2a0254b1fa79a830d7a2",
+      "target": "inv10"
+    },
+    "nodes": 29,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/TFL3z6D4DYbPdnpbo_inv10.als",
+    "sourceHash": "e83126e3c1ac40180e479a6fb34fa17961b8ea5ff88d913079f3b842ccb30667",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv8",
+    "menuSize": 18,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "7481c3889922cca1e78fb134ecf15eec5c12e7d99b6cf8dbd9c23f5c6ca65575",
+      "oracle": "inv8c",
+      "oracleAstHash": "ed649210375f4ec35cf3b8553ed8a86f2b74ff03a7e429d5d361b278518df463",
+      "originalHash": "811213de25c096b0924867b23440b2f117963e4ccc4a870bebbdac5156cfcc09",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "6b4e8e2bce8220190eb67b963900072b9e7bea4763d3ab18198cf63239471599",
+      "target": "inv8"
+    },
+    "nodes": 78,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/irLyzaDbNzAK6noMg_inv8.als",
+    "sourceHash": "811213de25c096b0924867b23440b2f117963e4ccc4a870bebbdac5156cfcc09",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv6",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "acd4649f7d514cdbf3e6e630e6ffef9e0b9aa1fb0a452d17bf24c2d00fc7a300",
+      "oracle": "inv6c",
+      "oracleAstHash": "e696c745831f7445ea16ec7ace596a3ea37259abdd32a9649eab9ede50d0d470",
+      "originalHash": "c13135c03229815f6b2b01c5fa588f375e6c4615d8fe799aba4db9d3d44ae39c",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "238adfd296c8e4081217adb50d57b6c0828e102875c2595ae8eaef624f0f5cdc",
+      "target": "inv6"
+    },
+    "nodes": 53,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/Sm5AYquRWh6xLDfp6_inv6.als",
+    "sourceHash": "c13135c03229815f6b2b01c5fa588f375e6c4615d8fe799aba4db9d3d44ae39c",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv3",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c108e84faa74f1a839f976b185e2e4da649f383f35d51fd2f376f3e024da32a2",
+      "oracle": "inv3c",
+      "oracleAstHash": "14e61a871a5c7db8d81a5a18c6a51186e69b976e5f29ac829b3c9656fd4d025a",
+      "originalHash": "1a4a18e708422a5dbef068b8c373f808f238b8f40ffbe84afe8ef393fccce2d4",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "16cf3b539c9d23e16720af7bacb054c444e227e46f739f356508857baf4da40c",
+      "target": "inv3"
+    },
+    "nodes": 62,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/over/zJHAprk9Mo7BfsYkt_inv3.als",
+    "sourceHash": "1a4a18e708422a5dbef068b8c373f808f238b8f40ffbe84afe8ef393fccce2d4",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv1",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "728ae4294088451131b562fcbfa138fe54283f4ee34180791a749a1ca9ef0fdc",
+      "oracle": "inv1c",
+      "oracleAstHash": "4ec9ac747c06c110b26baa7021301559b062f1bb3c800af5bee5b10f68e9555c",
+      "originalHash": "60f4147b33fdf139a3f0b35bcdcbce40b997da73eb6d6c72f52336a1573e4750",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "bc53b173c4308c67af0fd6ac082c996c488bbb0a6c219d35d1c13ff481de87b8",
+      "target": "inv1"
+    },
+    "nodes": 15,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/wpgnLCZasyAJcpSMx_inv1.als",
+    "sourceHash": "60f4147b33fdf139a3f0b35bcdcbce40b997da73eb6d6c72f52336a1573e4750",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv4",
+    "menuSize": 22,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "be8eaa8e947affe243c702aeba99d0fbe4db4b3dbe346be94dd23301bf49b3f4",
+      "oracle": "inv4c",
+      "oracleAstHash": "0fce47dd4f2acdbfe7f2c66f749b2d5fc3ae2d0fc41a9a4d6c45e19a99d2d6bd",
+      "originalHash": "6a33da2680a833f16d4c33315ccc3e5504310c37c93e834f0d79c46c84c31729",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "9c961af0d2f40d45c38ec93cf3886c2a21e98136fc8bfe43c99ef399205d2013",
+      "target": "inv4"
+    },
+    "nodes": 63,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/WHBr6nxTHxd6QJF9F_inv4.als",
+    "sourceHash": "6a33da2680a833f16d4c33315ccc3e5504310c37c93e834f0d79c46c84c31729",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "menuSize": 19,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "e476b39a60b5869d1c8525bd8e399f6de09ab597055df3784b4b43e29a8a98f9",
+      "oracle": "inv14c",
+      "oracleAstHash": "c84b14b7d8c21437caeccdcdcc0e2d810988e44b3b920bf681545a0ffeac7c01",
+      "originalHash": "be213c5338d4aefeeffa6f6411d821bb7fb5cc163b3beb23604c3f2fe0870323",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "dca2c9787916036e16f70903ee3c0c13033c753786c7296f07cb30dca7d0a215",
+      "target": "inv14"
+    },
+    "nodes": 85,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/CeY5soiMuZ49wTgsN_inv14.als",
+    "sourceHash": "be213c5338d4aefeeffa6f6411d821bb7fb5cc163b3beb23604c3f2fe0870323",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv2",
+    "menuSize": 14,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "cfdb60810baf76fdbc820ff9bd56a2d30b05f860c5c27167b0994d7b0d3e11d8",
+      "oracle": "inv2c",
+      "oracleAstHash": "f4fbc55da4b3b354848bfdd9e6da2eee2b7bb8bff176645233133cbc5bf1c1f2",
+      "originalHash": "5153701a47575f0a50bcdffb400af2f71ff0f84bbb353eb9ba5b1c152253140a",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e7d5f12a4d33b99ceaf9b444ae9159d681d7b5d0c6c74e09e727dbea1ef2bd64",
+      "target": "inv2"
+    },
+    "nodes": 67,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/over/zcdZ8SjzGLxmJRzQX_inv2.als",
+    "sourceHash": "5153701a47575f0a50bcdffb400af2f71ff0f84bbb353eb9ba5b1c152253140a",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv1",
+    "menuSize": 6,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "645f33cfbc0398e9166792736d099e18bc00c0a142d64280452288455a9a0879",
+      "oracle": "inv1c",
+      "oracleAstHash": "2349ba0ab5358e1dcf57e38af1585f5afdade0799300defc786fc266a940037d",
+      "originalHash": "1901e604e36f355ba7350f8a0d13dd9e13e926843c9d50d93ed8e88db520b581",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "cde8b948d0a8966abbce190f2059bd5fd001ae9fba00a864e463784757b27bbf",
+      "target": "inv1"
+    },
+    "nodes": 29,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/B9yDtEk3tS6jwhWzg_inv1.als",
+    "sourceHash": "1901e604e36f355ba7350f8a0d13dd9e13e926843c9d50d93ed8e88db520b581",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "menuSize": 23,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "b56c6c24b12feb59fd72e12d10c41c7f7f04dd17e5a4a5c2b139621f60d7514d",
+      "oracle": "inv15c",
+      "oracleAstHash": "d22fca4c860a4eb6fbc47d6c7ea589637315bc3e547b49ebe7cbdf5eb94decc9",
+      "originalHash": "f5bad173cc33e116e27cb61ffaec039b1900fae59af396931c90292ce2b5e317",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d4b55d46c250a42c578e7be2939a464f3e8568bc3dc87ee28e19e498da93a889",
+      "target": "inv15"
+    },
+    "nodes": 94,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/under/BgzodBeDWSi5bEDBB_inv15.als",
+    "sourceHash": "f5bad173cc33e116e27cb61ffaec039b1900fae59af396931c90292ce2b5e317",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "menuSize": 20,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "9c26f7a08ae2fb2c3567ee48f66e15d0a94ccc180adf54a2b43cb7af93e411c4",
+      "oracle": "inv12c",
+      "oracleAstHash": "29b3ab93aa5ede9a615839b67943fd572555cf0a0667a4110f669a6f44b43165",
+      "originalHash": "09c07c0d60afcd85a453059c5a4650330cbed86ca30b7e16ccec57f5e223e9a5",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "0e38a59233a758bd2aa9e88f85d97bda009df6d41adfff8eccd0762bd53aa125",
+      "target": "inv12"
+    },
+    "nodes": 61,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/rCwfFtw8XnzCM5HYZ_inv12.als",
+    "sourceHash": "09c07c0d60afcd85a453059c5a4650330cbed86ca30b7e16ccec57f5e223e9a5",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/fDTZ6rmpvn3dCEvAe_inv6.als",
+    "sourceHash": "952f598ab83a05c0ed0c09028f6a1947febdb2021c721f51902e18b9305cda58",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "cv_v1:inv3",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "bec9eaec88908fddcde06b2ab14009a3e0b8a43e66d3905725e5644ddc077d01",
+      "oracle": "inv3c",
+      "oracleAstHash": "14e61a871a5c7db8d81a5a18c6a51186e69b976e5f29ac829b3c9656fd4d025a",
+      "originalHash": "ab16a247d8cb2792ac5eb43ef2e77fa80553f2647047ff26bd66749b039fb863",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "74df5f4cb751a2d60bd43ec7685e047f9ad21edcf0b431dbd8931239326ea34f",
+      "target": "inv3"
+    },
+    "nodes": 45,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/both/xYNFbP2m5ujagcJw8_inv3.als",
+    "sourceHash": "ab16a247d8cb2792ac5eb43ef2e77fa80553f2647047ff26bd66749b039fb863",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv10",
+    "menuSize": 17,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "bbdea1a02897b162aa80e5cdf054398b0834a9b5fb8deeeb0592b3207e24c1c8",
+      "oracle": "inv10c",
+      "oracleAstHash": "065c177846a80ce868cfffa741eca465b7a8e4989a72702381d4b28dd096def3",
+      "originalHash": "a851d964bd62d2fd4e0c13f202deaae64ca27d267c465c115ca1ecca8f58d45a",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "969a5e58938715d3c0d28bf1617cd6c4b898d0c242374b642a6cdcdd8f2b4b15",
+      "target": "inv10"
+    },
+    "nodes": 41,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/fNRLm4LDBAxWEFnrx_inv10.als",
+    "sourceHash": "a851d964bd62d2fd4e0c13f202deaae64ca27d267c465c115ca1ecca8f58d45a",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv2",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "4fc41f5e7a237b99faa6aecfd0a7a5667288617bf7750faad5156f2b8d3a5ceb",
+      "oracle": "inv2c",
+      "oracleAstHash": "3823d4ead94823a9e1576dfda8ba45c77df6bc92063f5cfa9ac890c3c0baf466",
+      "originalHash": "2235de4fc5db6968718930a9901b4655321a08fd41812f5adb8a68113a6be2b9",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5091f737183a2f2f52cbbad881cab3019ecdba3e0bce8d728bf8979c71d5716d",
+      "target": "inv2"
+    },
+    "nodes": 17,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/both/5Fc23AsRfwMscyFPv_inv2.als",
+    "sourceHash": "2235de4fc5db6968718930a9901b4655321a08fd41812f5adb8a68113a6be2b9",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "source": "classified-data/coursesNew/under/CZKiGRAZMq5wfcGc8_inv12.als",
+    "sourceHash": "bf1b87e101dc5252b0e5a7ae3ad5118b63e559b9f0e1561ece80bbd9dee6ee36",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "source": "classified-data/coursesNew/under/Q2AG6dEAQwDb6rfSh_inv9.als",
+    "sourceHash": "2c81b3bcccba6d8b76b98e7caa937b091df7b76232f6ac3100a6b6485e8043fd",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv8",
+    "menuSize": 18,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "b28f6be1fecf8086059b9e87d6e97f1fe2249c403244fea4f1b87b244427c7c9",
+      "oracle": "inv8c",
+      "oracleAstHash": "ed649210375f4ec35cf3b8553ed8a86f2b74ff03a7e429d5d361b278518df463",
+      "originalHash": "db634afb340b4e343f691da583cdf9050819822bc72fb4d3dbbeabc159a885dc",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "09889104c225d8a13e4dd2ba719ccf2a5ec210d1c7835b09579ea8d908fea9d8",
+      "target": "inv8"
+    },
+    "nodes": 78,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/JxjC88bA92xPSBWpq_inv8.als",
+    "sourceHash": "db634afb340b4e343f691da583cdf9050819822bc72fb4d3dbbeabc159a885dc",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv14",
+    "source": "classified-data/coursesNew/both/DDxbzaCnvr2CeFqxm_inv14.als",
+    "sourceHash": "d7f86c2bd0b201794cf5a18f98368e811dba17685a5a7f705d79743b5ce9ce31",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/aE9Gev4DMQpuLbHM5_inv7.als",
+    "sourceHash": "4baf374c497525317484d486b88170142ba2a7f6ca26ec1410a8de38af5d7aee",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv8",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "44329783eeb30100a0c4a3664810e5e7d61931929c31f79d41ee8df5b21f32f5",
+      "oracle": "inv8c",
+      "oracleAstHash": "ed649210375f4ec35cf3b8553ed8a86f2b74ff03a7e429d5d361b278518df463",
+      "originalHash": "9dfff31f43f56112fe18c1e74cc86614b06864ad95123ca1685e0f05c358bf96",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "f7efff64c241e16c5b27af01d761291fe604651e6ff55e2f3ecbfe1c00c78b6c",
+      "target": "inv8"
+    },
+    "nodes": 51,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/over/Jk4yNA2LinTcAs2rh_inv8.als",
+    "sourceHash": "9dfff31f43f56112fe18c1e74cc86614b06864ad95123ca1685e0f05c358bf96",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/under/oXopkHimGFhXXLgcm_inv5.als",
+    "sourceHash": "135b666a53cc5bbab0385b6c9438f799d25bd2d6125ace501923be48c1bcc3bb",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/both/QYu4WJNAe4bMD8yFa_inv5.als",
+    "sourceHash": "cb49293bd391a2c2b8af193fe751ad991d4bfc77f31110bf63a98d752332c6f9",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "menuSize": 19,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "8a0d417657b109adfc2eca6a6d587b163189506d557a051c0d7e9d92d186ef38",
+      "oracle": "inv14c",
+      "oracleAstHash": "c84b14b7d8c21437caeccdcdcc0e2d810988e44b3b920bf681545a0ffeac7c01",
+      "originalHash": "3fc1da918010991dd8964d0d1f631f2d75eeed52dcf782a2c6d4766a1dd8fe66",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "1ecde9423bc05dd507d5436804a575adb1e94758f376b9b9a70d9d89c4f28218",
+      "target": "inv14"
+    },
+    "nodes": 97,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/nLFtT4igpPp8xeCP9_inv14.als",
+    "sourceHash": "3fc1da918010991dd8964d0d1f631f2d75eeed52dcf782a2c6d4766a1dd8fe66",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/F9t2euDM5Wrat9iyA_inv6.als",
+    "sourceHash": "4536c54c74521b84bbb7e493583fd5fd9e64ae3bdbaae4422a394aa20729fab4",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "source": "classified-data/coursesNew/both/nkY9QnuTY9WMoih9T_inv1.als",
+    "sourceHash": "1e406c75a9221fe7e1690d0103588c3a6c3c2d0810fc49d2e4ff3a0ec5f35d4f",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "cv_v1:inv4",
+    "menuSize": 11,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c8d39bc83bd86b8422f7a2e6247c01ae7685a076c3a4c7b8fe2807acf245725b",
+      "oracle": "inv4c",
+      "oracleAstHash": "1f03abbe90b0d912eea2ce5980849bef2c717bf2eed62dff5320abd8e331a7ed",
+      "originalHash": "47e3b0183659bc53929f557a4bc76d9da9f1c974e4aa561d657d1bd4ef866495",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "dc5aa48612fd0011ad9b3ec28ae17b669b1f57db8c9b259c293fc8093d7f2233",
+      "target": "inv4"
+    },
+    "nodes": 48,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/under/cx44ybuLEhwyLBQNR_inv4.als",
+    "sourceHash": "47e3b0183659bc53929f557a4bc76d9da9f1c974e4aa561d657d1bd4ef866495",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "socialMedia:inv2",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "04bcd17c2afe22238226b1c6fa4d8d2cf266a5f932b96113012e7dc0082ce5f0",
+      "oracle": "inv2c",
+      "oracleAstHash": "68bd94ceec8e6d6b348811f1c744403814bb22687a980bbbf165db3ffec43333",
+      "originalHash": "e3ca2542b6296e9cfc1530aeae8ba5bcee56d8d3162927d14dc6faa26c00bb0e",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "936076f8215dcfd65c3b6314099111ae0ca5a08aa137646459f461412933f887",
+      "target": "inv2"
+    },
+    "nodes": 21,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/both/aKndRuQEGoiEPEd6g_inv2.als",
+    "sourceHash": "e3ca2542b6296e9cfc1530aeae8ba5bcee56d8d3162927d14dc6faa26c00bb0e",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "cv_v1:inv2",
+    "menuSize": 9,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "e1eb7f3e39a2ed72025520fe49cc1f70b57bdb677218e9625df71ed5f8a3bad7",
+      "oracle": "inv2c",
+      "oracleAstHash": "f4fbc55da4b3b354848bfdd9e6da2eee2b7bb8bff176645233133cbc5bf1c1f2",
+      "originalHash": "40ee54f5705347791184d9b8141e174ce9a45b552662792f63e467a58a0a0c9f",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "9219eb07a70f256174973949c468571e03f4657755ae5b22085bc00dca7e3c51",
+      "target": "inv2"
+    },
+    "nodes": 52,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/under/eGGoCmswDnawyWSnw_inv2.als",
+    "sourceHash": "40ee54f5705347791184d9b8141e174ce9a45b552662792f63e467a58a0a0c9f",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/under/gna2uF2pnQ6pDpuhd_inv6.als",
+    "sourceHash": "42e1e81be660042a935110c5b3ca5ccd258d6a29a87e224cfb3526ec59c7621a",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "trash_fol:inv8",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d05e3637057d95d750938ac896a2a486f97d731d4de7408eec97764e8e4e5a44",
+      "oracle": "inv8c",
+      "oracleAstHash": "91ffa0306cb51285ba378946f3b21c7b5487dea4568f38b06a07481741466c66",
+      "originalHash": "989cbef10edbc69c2fb857fb7a200d3a3107a5ba41e61e49a32c445818816dc3",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "594f2c95d6c0d00581fd7a1de50064ad7d9209d73c708f5ef3cafc541177e366",
+      "target": "inv8"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/under/RwYg6PBuv6qcyhbjC_inv8.als",
+    "sourceHash": "989cbef10edbc69c2fb857fb7a200d3a3107a5ba41e61e49a32c445818816dc3",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/sfpKzhdm3fFGPzy2Y_inv7.als",
+    "sourceHash": "41734726d37f24ee1de8b026db8cc49fadb3f5f0189da4ce7271ba7a0503c7cd",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv1",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "5e199c8ebd31b8b5ba99e06d4231c5ddb6de96fa691caee5643b2577c0f69ca1",
+      "oracle": "inv1c",
+      "oracleAstHash": "174c4b5eb3afb2b0e7d1513e7b67802448057f77df2ab518ec6fbb3cecaabaa5",
+      "originalHash": "2bf6df22324c46600836ef6446a11bdcba2550d318c520e6eb348f08dd3a763d",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5e9fab2a0d5b4315eaac7e5716be17df606c92c533baea46eed36bd9d3317a1b",
+      "target": "inv1"
+    },
+    "nodes": 14,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/over/gbyse8x8SZTFfH2tE_inv1.als",
+    "sourceHash": "2bf6df22324c46600836ef6446a11bdcba2550d318c520e6eb348f08dd3a763d",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/both/HHdudMYoAcvNNCEuE_inv6.als",
+    "sourceHash": "d67b8dd6b332dae95e1b7a9bee973c35e3aaca268126d941436793688fd74aad",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "source": "classified-data/coursesNew/both/sc6TzhwNiMbZhXpTF_inv1.als",
+    "sourceHash": "439fd6943ba92a37f3cdfefc5a8cad497b5bb95c8d2041911e2b16e32d91fe1c",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "source": "classified-data/coursesNew/over/CCFEcHTTG2ewkTWSj_inv10.als",
+    "sourceHash": "d8f1c0b65d9b6bc29948297a90e8d38250b91dfc128f942987f4fdb5a9080761",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv1",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c1e10160149b45b2500b02226044175ff75f75daeec746a9de27a4b6454a1c10",
+      "oracle": "inv1c",
+      "oracleAstHash": "174c4b5eb3afb2b0e7d1513e7b67802448057f77df2ab518ec6fbb3cecaabaa5",
+      "originalHash": "4455f315265397fcaf57324b8947b10339a02bd90ec0139a6bcb4a85153209ee",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "9c698df054672b8e0853e90711d61b91f0243b1f4ec25dcfa9a1ed1ac9538e84",
+      "target": "inv1"
+    },
+    "nodes": 14,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/both/izQ4YGqfxiPE2r7vd_inv1.als",
+    "sourceHash": "4455f315265397fcaf57324b8947b10339a02bd90ec0139a6bcb4a85153209ee",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/both/aC6dqybKqdoMQY7on_inv6.als",
+    "sourceHash": "95de5cff4e1cf6415df79eeefb255d5da0902043a1cb76f9108d297433d205fd",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "trash_fol:inv10",
+    "menuSize": 16,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "0476aadfab3abbac8533d1f91b1b378f1301dc97ad7deeb2ba14c2a83e1b672b",
+      "oracle": "inv10c",
+      "oracleAstHash": "ef03c15e4d04654f45167c4a563a53d8d190d7f6d7540293c0905a7579b789a2",
+      "originalHash": "531849cabd3ebee4c31d024536093a168ce2d133dfd9f77ce4a93a214127f058",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "c33fff2492f2c33b3e0cccb0e379e41eac00e6ace656fc3e3757d000f09f696d",
+      "target": "inv10"
+    },
+    "nodes": 47,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/a7zhGgYnymDfci7C6_inv10.als",
+    "sourceHash": "531849cabd3ebee4c31d024536093a168ce2d133dfd9f77ce4a93a214127f058",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/yTrmgHbDpdc9w3qqt_inv7.als",
+    "sourceHash": "5bfbea235fbfb78508ebef98754a29db88415928685ff5b286bafab918e08a37",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv4",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "1f2367438126449914e4067a4fc23e2bafdc8f6408655859ef1a3efca3236c85",
+      "oracle": "inv4c",
+      "oracleAstHash": "699a8f164780ca9f734bb9b28fa911beb8c9837dd898dce3038e55d0d0f2bd78",
+      "originalHash": "5b89451d58aef8fe4a0ffc3efc1381a27de4faa22736b3f7f6cca02572928fc6",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "2bb8e1605af201988b36488a2c00c05b9d6417e7d1653da524f16141d16be7c8",
+      "target": "inv4"
+    },
+    "nodes": 28,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/GqjAs5f6KYvitMn7T_inv4.als",
+    "sourceHash": "5b89451d58aef8fe4a0ffc3efc1381a27de4faa22736b3f7f6cca02572928fc6",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "graphs:inv2",
+    "menuSize": 4,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "2be7f87e7c76587c3f692dc66e4a6b3ecad00b5a73f8c2e5932cd0e748d49682",
+      "oracle": "inv2c",
+      "oracleAstHash": "3823d4ead94823a9e1576dfda8ba45c77df6bc92063f5cfa9ac890c3c0baf466",
+      "originalHash": "c721bf876fd10479178aace3fe0348c67e10df19964ff2a6ad9652df2ee57e86",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "96dfb7ef12db2144f5747bf3cf186210267606383bbb1774d36253ea3c97dfb1",
+      "target": "inv2"
+    },
+    "nodes": 22,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/48mbTuPRH7SSe3Ndp_inv2.als",
+    "sourceHash": "c721bf876fd10479178aace3fe0348c67e10df19964ff2a6ad9652df2ee57e86",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/bwX5CsbtnJ9sZGoXs_inv7.als",
+    "sourceHash": "10ea91709c8963892dd490faf238c9c15d5fd69014b923e06de6b70c2abc3bfd",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "socialMedia:inv1",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "db4931bb0383a6eea9faed8b13c28321ad404a3344516649c82c28757db7a413",
+      "oracle": "inv1c",
+      "oracleAstHash": "2349ba0ab5358e1dcf57e38af1585f5afdade0799300defc786fc266a940037d",
+      "originalHash": "653bf4be9fc9444edabb1bf7bc03d02d4db95fddd7f8c5196a927cb49060c174",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "93f2f9270ae972576e8063eea70419f2208e00973a745bbaa5f5708b43526646",
+      "target": "inv1"
+    },
+    "nodes": 35,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/socialMedia/under/6XgJ2qGxwRBDqP6TN_inv1.als",
+    "sourceHash": "653bf4be9fc9444edabb1bf7bc03d02d4db95fddd7f8c5196a927cb49060c174",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/npx7tJwz7xH4DR2ws_inv7.als",
+    "sourceHash": "f3380df7b2a7b18c11abc326bc4582ae70929bd327bf9c1f7d12920d78700cb7",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "source": "classified-data/coursesNew/under/7GywpBRggpZ8DjBKe_inv8.als",
+    "sourceHash": "fa0f5949a389e6b74b20396d454b6319be12074d1d5a8113521b240d3914d682",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "source": "classified-data/coursesNew/under/AcqCrb3au3MXP9YyW_inv8.als",
+    "sourceHash": "1831513a96604931f6e13606b71c82e4fd261a31005f04a45e70fb39da3c6c59",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "source": "classified-data/coursesNew/both/na99RFEBtN2dPtPsH_inv12.als",
+    "sourceHash": "e6bfd29f0b5bafabeb5018b37f9d012637fa90fc282f86c2507df11cc4a9c063",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "source": "classified-data/coursesNew/both/JJZbGYe5fzqgqQLG9_inv1.als",
+    "sourceHash": "ccd1a178a0c78de4633e471843a5d29886e65aeff0f3fff96b9bcef6a7c576c3",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "cv_v1:inv1",
+    "menuSize": 1,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "8eee3ae9c367ebcad98a97115a58dfd2ad86f04eae19f73fb8cf0b2eec49e621",
+      "oracle": "inv1c",
+      "oracleAstHash": "560a52e567dc9837b7128535f3690994c9577277da51dcb14faa9fe82767bd05",
+      "originalHash": "c58e82b0a72847574182778e51e6344ce439d5b324c34166e4269bdfaf74eccb",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8a374888b6ec1d545f64757a899c8213003783ac0aaa39720af0a07d2f8eecb9",
+      "target": "inv1"
+    },
+    "nodes": 7,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/under/G5rxLThiWiMyv44Xn_inv1.als",
+    "sourceHash": "c58e82b0a72847574182778e51e6344ce439d5b324c34166e4269bdfaf74eccb",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "source": "classified-data/coursesNew/both/8pbiadrS4hPzLiLw7_inv1.als",
+    "sourceHash": "21070e6d4ebb029d0e0d4779da11b541785a562b31c955e03563d9015457df0b",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "source": "classified-data/coursesNew/both/9Biiom6S55chb9NPB_inv13.als",
+    "sourceHash": "73a0326c18c3d87d1e7891a664f8e0bd99d1dc66e917b4883e2aff254bb4ef3b",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "cc5287f3de74ff79a5d73f397054b19cc2f3af528e3b6686c007a8911582e7db",
+      "oracle": "inv15c",
+      "oracleAstHash": "d22fca4c860a4eb6fbc47d6c7ea589637315bc3e547b49ebe7cbdf5eb94decc9",
+      "originalHash": "5d8d6d33f82b02f0efc6fd208972b226e21b1d561f0d9f9a71a1c0b97c7978ba",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "948cdebf93141500108cc2549eab8e9715b842e9880992cb209b6f4210da8e29",
+      "target": "inv15"
+    },
+    "nodes": 42,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/FYHwoa2YADXE8MLZm_inv15.als",
+    "sourceHash": "5d8d6d33f82b02f0efc6fd208972b226e21b1d561f0d9f9a71a1c0b97c7978ba",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "source": "classified-data/coursesNew/both/2cjQY4yHzoAd2sDKP_inv6.als",
+    "sourceHash": "cf9d812defcbb99f49131fb0c8a88d04243bd771e37d474471a144c4afccd549",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "cv_v1:inv4",
+    "menuSize": 4,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "9caca39c9b8db705dd3ba9a74c727bb66a076140fe10141839cde361c8864d8c",
+      "oracle": "inv4c",
+      "oracleAstHash": "1f03abbe90b0d912eea2ce5980849bef2c717bf2eed62dff5320abd8e331a7ed",
+      "originalHash": "10df64adaae5c0833a7aab912c16ba75eb0b1aad1bdc675680fbc6c2a9aba1c3",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "0d18c5dc06117cd4ef8a8bdf4b7f11c6ff0b4de25729a1824f8dbf1a38ec5b9f",
+      "target": "inv4"
+    },
+    "nodes": 30,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/cv_v1/both/rhuTToJFn6udWiCZR_inv4.als",
+    "sourceHash": "10df64adaae5c0833a7aab912c16ba75eb0b1aad1bdc675680fbc6c2a9aba1c3",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv14",
+    "source": "classified-data/coursesNew/both/5BZpfXYmemRtPDFyx_inv14.als",
+    "sourceHash": "e4b13ea8e1ecdefea92c1801e67c186b87139ff563d63e01baa9906adfab6ab7",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv14",
+    "source": "classified-data/coursesNew/under/N4YptsiZvN8kx28ri_inv14.als",
+    "sourceHash": "2099a29e96dd7806f9688971712555c71fbcbbabec5d9d25b375c8966ddccae6",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv2",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "f7a7fb819b826c28727802337f2f0aee7e423b9e6d84009fc31db40b97a125e5",
+      "oracle": "inv2c",
+      "oracleAstHash": "3823d4ead94823a9e1576dfda8ba45c77df6bc92063f5cfa9ac890c3c0baf466",
+      "originalHash": "6cf3d2cd165fc6b5a0ab9ad330e1c000b66d179bcd41a1976ae7c1168d6c9d49",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "a7aa175836e2aae4d122b7908b0f9ffe6cc5768f5e2f2b25fb896f37351bc87b",
+      "target": "inv2"
+    },
+    "nodes": 23,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/both/fpb4429Sf73pZtgwD_inv2.als",
+    "sourceHash": "6cf3d2cd165fc6b5a0ab9ad330e1c000b66d179bcd41a1976ae7c1168d6c9d49",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv7",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "1ac9abb2669e60ae30f833aaeef9cc8a2a2086bccd41d3de436c1b662aaa6b6f",
+      "oracle": "inv7c",
+      "oracleAstHash": "31f8b6b3edfd26d7d51c97f1480e838e7b6409f588709a7de1e2103f147c3112",
+      "originalHash": "cfd4a993a5ff9f3adf05a6c0208784cfd2fb7d53c3b4b2089bbe29a0705b0a79",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "a0b888bc7ee760bb6b4d6c6028bf1ed2d69fa48179a0005be775edd872b6b595",
+      "target": "inv7"
+    },
+    "nodes": 21,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/uNAHxCqqLCYYAgDbN_inv7.als",
+    "sourceHash": "cfd4a993a5ff9f3adf05a6c0208784cfd2fb7d53c3b4b2089bbe29a0705b0a79",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/both/RS9xzhEx7pihRAHix_inv5.als",
+    "sourceHash": "7511ae94a386ccff93c8fd703d76d4a326a6c8e3c3deb505dbdb98f4ee7563b0",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "source": "classified-data/coursesNew/both/xi9D5Ze9punM7CjRF_inv12.als",
+    "sourceHash": "84248c3dc10496209217ac6e0f0b633a08c593e4e6f8d5a041ef9eb1530dbaa8",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "menuSize": 19,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "23a449e92b7517b24852284e60a1cf8463a8d4b55c6939f9843773643d10c741",
+      "oracle": "inv15c",
+      "oracleAstHash": "d22fca4c860a4eb6fbc47d6c7ea589637315bc3e547b49ebe7cbdf5eb94decc9",
+      "originalHash": "7744540f5e39cddd3539279f9c2350f6272614ae028b10ebbdb5e4bcbc771c01",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "55bd71ad2f024707377f75eaa6d567745f2e6480294f19c942ea35fc02fbf6e4",
+      "target": "inv15"
+    },
+    "nodes": 78,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/DuHkHTKM2NZN2STjQ_inv15.als",
+    "sourceHash": "7744540f5e39cddd3539279f9c2350f6272614ae028b10ebbdb5e4bcbc771c01",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "source": "classified-data/coursesNew/under/TKFBuMjsDkD6JQ2FD_inv8.als",
+    "sourceHash": "3c12d211be17e98ef6cf9771d2414ae5925bdb5acc709efd9fd3053b02f07c68",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/both/h77oGsuu27Gpg5cgM_inv5.als",
+    "sourceHash": "853d77fbc8c46770827e83ce33fcb615d88c4dcc9f9185ee422fc5dd5af06aa4",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/under/ePCmMLku2vW92dKbC_inv5.als",
+    "sourceHash": "ef50ab7ad43311d2f1f3914f504f462a60b7d184aab6f3a33741db166a0f2c99",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "source": "classified-data/coursesNew/over/T7nYrwo7igemC4ieR_inv12.als",
+    "sourceHash": "83ac94daa65ac60d9d28ea05bff0ad04ddd31511c26ba608bc5064eb99a69a3d",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "source": "classified-data/coursesNew/both/iD4dtK82KiFY5SmWD_inv12.als",
+    "sourceHash": "ffb257d1f9e26dbecb5af4ae72eee8bf19bbcccc3ddbc2a64268e64ff00f158f",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv8",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "ff91636000881432277a18deca5a90d76f68d9b0c8fed9bd7fa94bc8b079d0cb",
+      "oracle": "inv8c",
+      "oracleAstHash": "78a865c6aad86d9fe208a17532886fea75f26a02dbd73b25d3cce66d93024608",
+      "originalHash": "107724f338efd8c4b368b08ff32dcf1f1876ad58551673a8aea15329e4ca9050",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "f80acc6b6b7cc93d0ce08a999c382905950d098ca876e23d7a2151c437f2357b",
+      "target": "inv8"
+    },
+    "nodes": 32,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/HMmEdMxHbFi64BQ7E_inv8.als",
+    "sourceHash": "107724f338efd8c4b368b08ff32dcf1f1876ad58551673a8aea15329e4ca9050",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv9",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "89e5890d47c85602c219de381eaedde1ec6b55e86a19326ac1f9ec0117244ccd",
+      "oracle": "inv9c",
+      "oracleAstHash": "2edb7580c78cdba0331dff34fc2a28a9508731df07aae3c4c3b33f306e0755de",
+      "originalHash": "aa6413edfb529968b2ae4021c96222845978f88aa002f879b1e9a4af5bdae073",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "e071b90cd845750cc2aae2260184a17e4427fc2ac615adcb1fa929eb4ba5dc50",
+      "target": "inv9"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/dZRbPZSXaWiymxdKv_inv9.als",
+    "sourceHash": "aa6413edfb529968b2ae4021c96222845978f88aa002f879b1e9a4af5bdae073",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "source": "classified-data/coursesNew/both/3vTyZmRM39ubuZvsB_inv5.als",
+    "sourceHash": "46d37076fe6b1cb759e2a7af2697956abdcc1fc34d833fb84563e6ff08cbf14f",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "source": "classified-data/coursesNew/both/X4ZFD6ACeS5DvYHEP_inv9.als",
+    "sourceHash": "71d7147b113172cf93f44defe654e1322364f335aecceb177bbffd630f5fd460",
+    "split": "train",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "trash_fol:inv6",
+    "menuSize": 25,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "9501f47cf4f044a905ef541ad094b8943de8c17d7e8507a48c86d71d3902e621",
+      "oracle": "inv6c",
+      "oracleAstHash": "61a383dc84b70cc6002eddd5b1032aba1f679c82ad95c0d94493635e2f77c355",
+      "originalHash": "264ec859f1b45c128d4b003911471998e742d6bf6edc07d186a1508431691f73",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "994765cbc04e81d4b64ac0d5a75a515a8240c49ca35596835e4a255f158be9ee",
+      "target": "inv6"
+    },
+    "nodes": 51,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/under/Lykh6o6L9wkMJAePS_inv6.als",
+    "sourceHash": "264ec859f1b45c128d4b003911471998e742d6bf6edc07d186a1508431691f73",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/XNsuiPtFJHN5XGQrw_inv7.als",
+    "sourceHash": "36f9d35880a189a8b2e1e41d1dfbf8104a1a2962e730feed24d9431c922cf6e5",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv13",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "1e128bacf2d0fc1a85e9dc05cb888d2cb78e7e5c92dc06d22744bcde2bb8bf4c",
+      "oracle": "inv13c",
+      "oracleAstHash": "6c7910222fdad0c4c85c4fdd034fd1a371ac1e39180db0f58c856b30748d1437",
+      "originalHash": "4cf477c07eb0055890358754d26b91a718638d328c3d04134a49d319f6736fbe",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "11815a1ecb693a8239b54f336abfe9bae6bad8e35c0127b749aae2a35ea496d2",
+      "target": "inv13"
+    },
+    "nodes": 37,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/uaLFzyRKKif9tZdwo_inv13.als",
+    "sourceHash": "4cf477c07eb0055890358754d26b91a718638d328c3d04134a49d319f6736fbe",
+    "split": "train",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv5",
+    "menuSize": 5,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "9247c878f37b84ffabbae04c5def16e46b92cafeb9ca26475e8965dbbfcaf291",
+      "oracle": "inv5c",
+      "oracleAstHash": "0c92985383aa9f2f7a4b64163fa9239a55f2cff0e1cc9be52d3ff4dab1a97db2",
+      "originalHash": "cc01db2afe8043637ffaba707026c5b15a1dc58a52bfb4fe41e80a1d43eb2139",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "184146e491f22c32a2f23587444631c24dddc9fe0eb16e14d4cbf412cafb2c6c",
+      "target": "inv5"
+    },
+    "nodes": 27,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/bCCpq4vzEKZc9ShmB_inv5.als",
+    "sourceHash": "cc01db2afe8043637ffaba707026c5b15a1dc58a52bfb4fe41e80a1d43eb2139",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "menuSize": 21,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "7139ea637f761f117683f467e2266ee01458d81b94f495271e5a9276f6eb1af8",
+      "oracle": "inv15c",
+      "oracleAstHash": "d22fca4c860a4eb6fbc47d6c7ea589637315bc3e547b49ebe7cbdf5eb94decc9",
+      "originalHash": "4f16356d7ccabd1e52f60aa2138b713b67d3583976bacac9d92b2f07f87ae7b7",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "70d26b52fb6613b5bb99cba1b69b29e6c90cbe1362ca7414f52ae608b8252542",
+      "target": "inv15"
+    },
+    "nodes": 79,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/7equkqtwmrdPwsLfx_inv15.als",
+    "sourceHash": "4f16356d7ccabd1e52f60aa2138b713b67d3583976bacac9d92b2f07f87ae7b7",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv7",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "a68dc0f41d71fa068ae64f7301b92d73c56a7bb96f4709b2365e71d8d5ccdb3e",
+      "oracle": "inv7c",
+      "oracleAstHash": "31f8b6b3edfd26d7d51c97f1480e838e7b6409f588709a7de1e2103f147c3112",
+      "originalHash": "fa8366967eef34297cb50b7ff2d604516763b4d603f744f32d9896c6a8544ed8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "822de343b6cf53d8521477f2ad83336f9bc2e1099cf61007dbf7f9596142901b",
+      "target": "inv7"
+    },
+    "nodes": 26,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/vMLLxzYCtPwmBL2tQ_inv7.als",
+    "sourceHash": "fa8366967eef34297cb50b7ff2d604516763b4d603f744f32d9896c6a8544ed8",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv14",
+    "source": "classified-data/coursesNew/under/iuQZe5BafitLJC7k8_inv14.als",
+    "sourceHash": "3bd2ba5d3fd5c0bdf8f4c4064e3b66b4e08ecee87c674ebedd9baac5928c1971",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "64b4968d3aefa5dce2a02105c729d619701a4663cf54af58e12d9e630d9c3702",
+      "oracle": "inv4c",
+      "oracleAstHash": "a7a3feebd9610451b5a6ea1f1daed96b721c0e99b408151af6698d2acf22fa8f",
+      "originalHash": "e7e6a65eacd5c50966a86186b568fa7a3980beee196deed20b697b02cc7e28b8",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "67307437bc87d380ab9cfedd26ee0c19522cbbcb2c04b395ca4d4dd573f961d3",
+      "target": "inv4"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/C7JZ4we6w42LQTJtA_inv4.als",
+    "sourceHash": "e7e6a65eacd5c50966a86186b568fa7a3980beee196deed20b697b02cc7e28b8",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/over/EpZx4KKv9zBzEkDhC_inv11.als",
+    "sourceHash": "94104c0f0cf3511b96ada86f8ca1610b364f8ffdceea804a714e8b7bcf160bfc",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "menuSize": 20,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "fef9c8941f028cb5473f821982f29072d439db02900a1952480052fc2eca2c28",
+      "oracle": "inv8c",
+      "oracleAstHash": "b7e1e1b34ef5f76d19ea174c51aa58931b0014aa58aeabfb12a24d11547bbecd",
+      "originalHash": "43b143d2c17e9c89e6662bf92156ec4bc5d0c32bcbd8bd3184b145dc929cfaa6",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "361db5cabe7b43537a1f9e1fd1e61b2e09528c7597e98dbcc3eb15c6c6ac1f0b",
+      "target": "inv8"
+    },
+    "nodes": 63,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/x2NHqrBmzxdx5Jiix_inv8.als",
+    "sourceHash": "43b143d2c17e9c89e6662bf92156ec4bc5d0c32bcbd8bd3184b145dc929cfaa6",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "52118421617c40f114512071a42d7fc214a7323a29c9393546beb29e5488d98e",
+      "oracle": "inv8c",
+      "oracleAstHash": "b7e1e1b34ef5f76d19ea174c51aa58931b0014aa58aeabfb12a24d11547bbecd",
+      "originalHash": "4257bb99bd7f85307a55948b7e02187ed5267bcce1c1f712d49a9d9924f757bf",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "d1bf7f6a6aa48170ee27a391af90d5bdc40e16a459e17fd23694fbdd3ad579a7",
+      "target": "inv8"
+    },
+    "nodes": 21,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/over/b5XMR5iks6YSonSJR_inv8.als",
+    "sourceHash": "4257bb99bd7f85307a55948b7e02187ed5267bcce1c1f712d49a9d9924f757bf",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv7",
+    "menuSize": 17,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d3753392333038b5b99cf226db49831b0a637d20fee0d922041a9e08e466af15",
+      "oracle": "inv7c",
+      "oracleAstHash": "31f8b6b3edfd26d7d51c97f1480e838e7b6409f588709a7de1e2103f147c3112",
+      "originalHash": "0ca5c6423e20d14946229ac19e856f1c8a151758450cf2b00ea26c746dac5c4e",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "8e3d503308421eb4f90bb037505ac8ce9473d2a40979a23977ada055e17cffeb",
+      "target": "inv7"
+    },
+    "nodes": 42,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/under/cYdnMduYuN58D6YyK_inv7.als",
+    "sourceHash": "0ca5c6423e20d14946229ac19e856f1c8a151758450cf2b00ea26c746dac5c4e",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "023fdaae2a59bd07c6ea45b17bd2bfcee51018449fcfa0a261ab463a217c22c2",
+      "oracle": "inv8c",
+      "oracleAstHash": "b7e1e1b34ef5f76d19ea174c51aa58931b0014aa58aeabfb12a24d11547bbecd",
+      "originalHash": "cc3e6f8d32ebed36e1ea15f175b0d6fbfa19d743be552ff828a3359d941584c2",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "267abd0c60eee2b415d88744e097bc8e967000b493b9776b3cf4482d854fc71e",
+      "target": "inv8"
+    },
+    "nodes": 36,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/under/BFnEmFfdBTCdFgZDi_inv8.als",
+    "sourceHash": "cc3e6f8d32ebed36e1ea15f175b0d6fbfa19d743be552ff828a3359d941584c2",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv2",
+    "source": "classified-data/coursesNew/both/Woi6wdNDDNhPkMXFM_inv2.als",
+    "sourceHash": "dcffb0c3ea99f6bcf7889c452880f123b42bb0f5e8bf6e92312cbd1b2368dd92",
+    "split": "evaluation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "menuSize": 10,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "28b6eeb0a6ce2206f4810f3f67e532b697ce76dfc6f5d4c5ca3e555dd87e7135",
+      "oracle": "inv4c",
+      "oracleAstHash": "a7a3feebd9610451b5a6ea1f1daed96b721c0e99b408151af6698d2acf22fa8f",
+      "originalHash": "de1644779b6f092373d28f5e394fd8040fb63a2994ebda71036627bf226e778d",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "32c04e844967dee5b1f2f83feb78a609248380a124df0baa697657e4a53c9d28",
+      "target": "inv4"
+    },
+    "nodes": 32,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/pAAm8aBsCwbvjMuFo_inv4.als",
+    "sourceHash": "de1644779b6f092373d28f5e394fd8040fb63a2994ebda71036627bf226e778d",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "group": "trash_fol:inv10",
+    "menuSize": 15,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "7d8c91f5bdc5b1a8252bd06b6f5cbd04bb2bb6bcfbd96ed1cd0eaa508e9498da",
+      "oracle": "inv10c",
+      "oracleAstHash": "ef03c15e4d04654f45167c4a563a53d8d190d7f6d7540293c0905a7579b789a2",
+      "originalHash": "05c30e232890b515840afc9c009be26935338552761ac92747600abc8addb113",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "5ec323b8b1337c4fd92b05d182d406e9d9b3591f5459711bd2c2675646cadc1b",
+      "target": "inv10"
+    },
+    "nodes": 49,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/over/i2ywd5BaPq2SbjPRS_inv10.als",
+    "sourceHash": "05c30e232890b515840afc9c009be26935338552761ac92747600abc8addb113",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/under/wikrxBGQgb5TAMcdj_inv7.als",
+    "sourceHash": "cfbc20e49d199755217e360fe767ac5248986c77709d42220da9a9c80ea250a9",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/over/q2aqkRqxmW2zNCGyC_inv7.als",
+    "sourceHash": "d0afe567976fde6379ce96feae3afb0c25ffb09b1e7ff12f8e7a6da54a4548e2",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/under/WC5JvmLxYAqM48GaL_inv7.als",
+    "sourceHash": "1b52483ced812c1c90084a45d9ac047ad87dbcdabd114c8ecef9acd3edf7259e",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv4",
+    "menuSize": 6,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "2eed735dd9e8470ea9f90ec7b452bce2ae5c875832ece29f742cbf9a932675b6",
+      "oracle": "inv4c",
+      "oracleAstHash": "699a8f164780ca9f734bb9b28fa911beb8c9837dd898dce3038e55d0d0f2bd78",
+      "originalHash": "a845fe88b4826732ba741590b05d57ba2815ac085d02c7e335ab33c38d3998ec",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "0ce290b23d9e4e26fb65d6fd60c67ab5e13bda7a116f7d9f572f5024badb0d9d",
+      "target": "inv4"
+    },
+    "nodes": 29,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/7BGyGGbAawco6ExPa_inv4.als",
+    "sourceHash": "a845fe88b4826732ba741590b05d57ba2815ac085d02c7e335ab33c38d3998ec",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/both/zzoX9GW6AfyCfgGko_inv11.als",
+    "sourceHash": "a6dfa7f03bef967d19e265aeddbd0c83eb45bb163c3cef1fd9bf4594b4ccb7c9",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/bsBiCFujxdS82gtFb_inv7.als",
+    "sourceHash": "efba0cfd971e2cdc8e191c3200dea17cb6aff94c3b0a3f22fa74f916c0bb3f94",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "menuSize": 12,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d34da6206bac0cd3dc9f1c86b155a03fc93e22fca419805745e4af42648228e6",
+      "oracle": "inv4c",
+      "oracleAstHash": "a7a3feebd9610451b5a6ea1f1daed96b721c0e99b408151af6698d2acf22fa8f",
+      "originalHash": "7e0e72554dc7dc18b7b4c116befb0747db75006f5ac231e619792cd8c4a94114",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "a1a1f8aca5a5addc0ca0dcb921deabd531338c285c0c1c34f50420f780bde177",
+      "target": "inv4"
+    },
+    "nodes": 31,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/classroom_fol/both/j8HXqZx8yaQnQQvMY_inv4.als",
+    "sourceHash": "7e0e72554dc7dc18b7b4c116befb0747db75006f5ac231e619792cd8c4a94114",
+    "split": "evaluation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/A35idQWkonvPKu3je_inv7.als",
+    "sourceHash": "3fcf0124e7e42e615614f435bce8b6ae70c97bc7ffc4f31b626b98c6104ee3bb",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/over/feHMEojDSERg4oCo7_inv7.als",
+    "sourceHash": "cb1e2ca2c5eae1fd20cde51950ddebc83c0ff6fbe980935dce18db757b1d7be2",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/J6W3m9KGsBQeZTBbL_inv7.als",
+    "sourceHash": "23cbc829293fec09fc0cb200861e702f810367959f9628bed0d8d7732c9af4c4",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "graphs:inv4",
+    "menuSize": 7,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "d96293f57735d2c1754ec5cf70506bcb7aa75b0fc6f4e021c056130d22883e5b",
+      "oracle": "inv4c",
+      "oracleAstHash": "699a8f164780ca9f734bb9b28fa911beb8c9837dd898dce3038e55d0d0f2bd78",
+      "originalHash": "8a618a77744ad34bbef97d7abf3111380f730960e77d10513beb9a1861d59462",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "227cc8a4e5b3fe0ef0edc7df41e1d89a54fedda27920048adccd0d2648b6d2cf",
+      "target": "inv4"
+    },
+    "nodes": 47,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/graphs/under/ZTJJK8zggBed4zaA2_inv4.als",
+    "sourceHash": "8a618a77744ad34bbef97d7abf3111380f730960e77d10513beb9a1861d59462",
+    "split": "validation",
+    "status": "ACCEPTED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/both/JPuHKYtK45cLpTphD_inv7.als",
+    "sourceHash": "12be1c9bb862923a6bfeb8847b6e0068f6341a37a70a14be377b84dcee008f10",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/under/DgWQfxqeaai62n6M2_inv11.als",
+    "sourceHash": "91597c6ad14c87375c725f49716199100950f11683c22af03c6ebf5a24c79093",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/under/scQ3odrNeppnGcsq6_inv11.als",
+    "sourceHash": "9056943abe656f73de797313afdf41f9928e0753c9d70cc0bc86209f4c2c1420",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/under/YGqRq9utfk5TL3zZ4_inv11.als",
+    "sourceHash": "da74a1566516b137000e8564609dbb71fbaf6e3755e1373a2941c56811fdf96b",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv7",
+    "source": "classified-data/coursesNew/under/6iXQTmKvurTBq9S3K_inv7.als",
+    "sourceHash": "5f0fe30d5a643975d5c6cb836492a485ba362d001c5ad5694d0177ec50cd96be",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "error": "WorkerError: UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv11",
+    "source": "classified-data/coursesNew/under/qeWGhMAqPFK44umr7_inv11.als",
+    "sourceHash": "406956f16a21526d5a5ee6c839b955134825b6a79d233746880c2bdf7ebc8cc6",
+    "split": "validation",
+    "status": "EXCLUDED"
+  },
+  {
+    "group": "trash_fol:inv4",
+    "menuSize": 2,
+    "metadata": {
+      "command": 3,
+      "derivedHash": "c70875f746d5b3ab9d467aafe090756630e239dacc5ff8b17766b4a29073cf07",
+      "oracle": "inv4c",
+      "oracleAstHash": "a9a2111ef8d282a431182f00c3f174d6efe3a6cb05e06e549187284114c3222c",
+      "originalHash": "3bd20e90559cca796f12de0afeaebfad34f0a9c05a92433a96e800c4a29b425c",
+      "profile": "appended-independent-run-scope-3",
+      "studentAstHash": "7d1aa5d39aeb1aec6da34e9af9f67a5be0d0bd67a690f879658d0b8d9ccbbe74",
+      "target": "inv4"
+    },
+    "nodes": 15,
+    "profile": "b1c17c9a46016dab1617ad7882afae3cfbdc9d15c4e48d51a3b769c0fd0384b7",
+    "source": "classified-data/trash_fol/both/H6eCmcHFvo7sRibc4_inv4.als",
+    "sourceHash": "3bd20e90559cca796f12de0afeaebfad34f0a9c05a92433a96e800c4a29b425c",
+    "split": "validation",
+    "status": "ACCEPTED"
+  }
+]

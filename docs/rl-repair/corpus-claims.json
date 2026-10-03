@@ -1,0 +1,6 @@
+{
+  "theorems": ["admission_valid", "admission_positive", "sorted_schedule_exact", "split_same_key", "stable_five", "stable_each_win", "stable_no_aborts", "stable_bounded"],
+  "runtimeFile": "CorpusProtocol.lean",
+  "scope": "Complete episode schedule admission and five-seed count predicate; bounded extraction/pairing tests",
+  "excluded": ["full application refinement", "semantic clone completeness", "statistical generalization proof", "learned policy superiority"]
+}

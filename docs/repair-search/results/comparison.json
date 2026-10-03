@@ -1,0 +1,147 @@
+{
+  "adapters": {
+    "ce": {
+      "adapter_reload_max_abs_error": 0.0,
+      "seconds": 146.480241827001,
+      "selected_rows": 30,
+      "steps": 30,
+      "trainable_parameters": 2162688
+    },
+    "sft": {
+      "adapter_reload_max_abs_error": 0.0,
+      "seconds": 84.4579919989992,
+      "selected_rows": 16,
+      "steps": 16,
+      "trainable_parameters": 2162688
+    }
+  },
+  "methods": [
+    {
+      "infrastructureErrors": null,
+      "method": "uniform-puct",
+      "perSeed": {
+        "711": 0,
+        "712": 0,
+        "713": 0
+      },
+      "seconds": 345.0400537359892,
+      "solved": 0,
+      "timeouts": null,
+      "trials": 24,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    },
+    {
+      "infrastructureErrors": null,
+      "method": "learned-puct",
+      "perSeed": {
+        "711": 0,
+        "712": 0,
+        "713": 0
+      },
+      "seconds": 328.66909339100675,
+      "solved": 0,
+      "timeouts": null,
+      "trials": 24,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    },
+    {
+      "infrastructureErrors": null,
+      "method": "random-tree-walk",
+      "perSeed": {
+        "711": 0,
+        "712": 0,
+        "713": 0
+      },
+      "seconds": 332.38717877200907,
+      "solved": 0,
+      "timeouts": null,
+      "trials": 24,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    },
+    {
+      "infrastructureErrors": 0,
+      "method": "tar",
+      "perSeed": {},
+      "seconds": 190.8263526280025,
+      "solved": 4,
+      "timeouts": 3,
+      "trials": 8,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": 0
+    },
+    {
+      "generation": {
+        "attempts": 29,
+        "incompleteResponses": 0,
+        "outputTokenLimits": 0,
+        "statuses": {
+          "COUNTEREXAMPLE": 24,
+          "INVALID": 4,
+          "SOLVED_WITHIN_PROFILE": 1
+        }
+      },
+      "infrastructureErrors": null,
+      "method": "base",
+      "perSeed": {},
+      "seconds": 70.10020193800665,
+      "solved": 1,
+      "timeouts": null,
+      "trials": 8,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    },
+    {
+      "generation": {
+        "attempts": 32,
+        "incompleteResponses": 24,
+        "outputTokenLimits": 4,
+        "statuses": {
+          "COUNTEREXAMPLE": 4,
+          "FORMAT_ERROR": 28
+        }
+      },
+      "infrastructureErrors": null,
+      "method": "sft",
+      "perSeed": {},
+      "seconds": 104.24386689799576,
+      "solved": 0,
+      "timeouts": null,
+      "trials": 8,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    },
+    {
+      "generation": {
+        "attempts": 32,
+        "incompleteResponses": 0,
+        "outputTokenLimits": 2,
+        "statuses": {
+          "COUNTEREXAMPLE": 30,
+          "FORMAT_ERROR": 2
+        }
+      },
+      "infrastructureErrors": null,
+      "method": "ce",
+      "perSeed": {},
+      "seconds": 99.90296857000067,
+      "solved": 0,
+      "timeouts": null,
+      "trials": 8,
+      "uniqueTasks": 8,
+      "unrevalidatedClaims": null
+    }
+  ],
+  "proofHash": "d07ec55bf8c3c6d1da510550b66a35ff7e6b92d7764c966a9cdd6f53f5217f0c",
+  "scope": "8 held-out predicates, scope 3; unequal mutation/proposal spaces and budgets; not stable superiority",
+  "status": "COMPLETE_BOUNDED_PILOT",
+  "trainingSearch": {
+    "seconds": 38.93714171600732,
+    "solved": 1,
+    "tasks": 16,
+    "updates": 384
+  },
+  "wholeApplicationRefinement": "BLOCKED"
+}

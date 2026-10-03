@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "scope": "Graph-edit transformer structural admission, algebra model, CUDA correspondence fixtures and gated pilots",
+  "wholeApplicationRefinement": "BLOCKED",
+  "theorems": ["admission_valid", "rejection_invalid", "admitted_node_bounds", "admitted_endpoints", "admitted_action_pointer", "admitted_head_partition", "relabel_port_attributes", "relabel_duplicate_ports", "relabel_pointer", "mass_order_invariant", "moment_order_invariant", "positive_mass", "duplicate_mass_retained", "cross_read_permutation", "query_order_equivariant", "pointwise_composition", "masked_zero", "positive_mask_is_allowed", "commit_requires_checked_graph", "rejected_preserves_graph", "accepted_uses_checked_graph", "layer_parameter_increment", "fixed_latents_linear"],
+  "runtimeFiles": ["EGraph2Graph.lean", "EGraph2GraphRunner.lean", "EGraph2GraphMatrix.lean"],
+  "matrixRows": 640,
+  "minimumPythonTests": 53,
+  "numericTolerance": {"denseValueAtol": 1e-9, "denseValueRtol": 1e-8, "denseGradientAtol": 1e-8, "denseGradientRtol": 1e-7, "permutationAtol": 1e-5},
+  "excluded": ["complete implementation-to-proof refinement", "full internal e-class incidence observation", "floating-point exact permutation invariance", "graph-isomorphism completeness", "neural semantic certification", "novel benchmark", "policy superiority or convergence"],
+  "trusted": ["Lean kernel and executable runtime", "PyTorch/CUDA attention, floating-point arithmetic and autograd", "existing Java/Alloy/SAT trusted boundary", "JSON and SHA-256 binding"]
+}
