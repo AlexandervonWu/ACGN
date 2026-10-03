@@ -1,0 +1,286 @@
+{
+  "scope": "synthetic small-model functionality; no corpus or large-model fit claim",
+  "python": "3.10.11",
+  "torch": "2.14.1+cu130",
+  "cuda": "13.0",
+  "device": "NVIDIA GeForce RTX 5080",
+  "input_hashes": {
+    "docs/canonical-edit-learning/formal/HybridRepair.lean": "89804c5a71ae5ec7aef8ba33abe794c814bad34124d55e8442a9f6d254fe818b",
+    "experiments/hybrid_edit/__init__.py": "a16f527d3168204e27d1b99f82ab28d008da791e587a5f92f1b85b1293638a98",
+    "experiments/hybrid_edit/model.py": "9abfb4ce2956989077ad4ee386b85d492e686e79b0c2a20a41ca650563563ce4",
+    "experiments/hybrid_edit/probe.py": "da3d147af6a721b0a0d8f19a8c18fe6517f5924d866d1adc90ee25e7c182b865",
+    "experiments/hybrid_edit/test_model.py": "4c1ceb89f6f0d4a05b8d0edbbda7ec396ed1b73ed97b327c8c342045dd455ca0"
+  },
+  "candidates": [
+    {
+      "id": "l16-w16a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 16,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 1642208256,
+      "mixed_packed_weights_bytes": 3284416512,
+      "fp32_master_and_gradient_bytes": 13137666048,
+      "nominal_full_adam_bytes": 26275332096,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l24-w16a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 24,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 2447563776,
+      "mixed_packed_weights_bytes": 4895127552,
+      "fp32_master_and_gradient_bytes": 19580510208,
+      "nominal_full_adam_bytes": 39161020416,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l32-w16a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 32,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 3252919296,
+      "mixed_packed_weights_bytes": 6505838592,
+      "fp32_master_and_gradient_bytes": 26023354368,
+      "nominal_full_adam_bytes": 52046708736,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l32-w8a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 32,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 3252919296,
+      "mixed_packed_weights_bytes": 3385276416,
+      "fp32_master_and_gradient_bytes": 26023354368,
+      "nominal_full_adam_bytes": 52046708736,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l40-w8a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 40,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 4058274816,
+      "mixed_packed_weights_bytes": 4215846912,
+      "fp32_master_and_gradient_bytes": 32466198528,
+      "nominal_full_adam_bytes": 64932397056,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l32-w4a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 32,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 3252919296,
+      "mixed_packed_weights_bytes": 1774663680,
+      "fp32_master_and_gradient_bytes": 26023354368,
+      "nominal_full_adam_bytes": 52046708736,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l40-w4a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 40,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 4058274816,
+      "mixed_packed_weights_bytes": 2202580992,
+      "fp32_master_and_gradient_bytes": 32466198528,
+      "nominal_full_adam_bytes": 64932397056,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "l48-w4a16",
+      "config": {
+        "vocab": 4096,
+        "width": 3072,
+        "layers": 48,
+        "heads": 24,
+        "kv_heads": 8,
+        "head_dim": 128,
+        "ff": 8192,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 4863630336,
+      "mixed_packed_weights_bytes": 2630498304,
+      "fp32_master_and_gradient_bytes": 38909042688,
+      "nominal_full_adam_bytes": 77818085376,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    }
+  ],
+  "smoke": [
+    {
+      "weight_bits": 16,
+      "config": {
+        "vocab": 64,
+        "width": 64,
+        "layers": 2,
+        "heads": 4,
+        "kv_heads": 2,
+        "head_dim": 16,
+        "ff": 128,
+        "weight_bits": 16,
+        "group_size": 16,
+        "max_tokens": 32
+      },
+      "parameters": 87104,
+      "master_dtype": "float32",
+      "activation_autocast": "bfloat16",
+      "steps": 8,
+      "losses": [
+        3.949193000793457,
+        3.383286476135254,
+        2.9717185497283936,
+        2.678816556930542,
+        2.4412269592285156,
+        2.2385525703430176,
+        2.0566773414611816,
+        1.8946291208267212
+      ],
+      "elapsed_seconds": 0.8322175339999376,
+      "peak_torch_allocated_bytes": 67975680,
+      "peak_torch_reserved_bytes": 69206016,
+      "status": "TINY_FIXTURE_FUNCTIONAL_ONLY"
+    },
+    {
+      "weight_bits": 8,
+      "config": {
+        "vocab": 64,
+        "width": 64,
+        "layers": 2,
+        "heads": 4,
+        "kv_heads": 2,
+        "head_dim": 16,
+        "ff": 128,
+        "weight_bits": 8,
+        "group_size": 16,
+        "max_tokens": 32
+      },
+      "parameters": 87104,
+      "master_dtype": "float32",
+      "activation_autocast": "bfloat16",
+      "steps": 8,
+      "losses": [
+        3.9494848251342773,
+        3.3794147968292236,
+        2.971926212310791,
+        2.6782732009887695,
+        2.44323992729187,
+        2.238081693649292,
+        2.057114362716675,
+        1.8976516723632812
+      ],
+      "elapsed_seconds": 0.06666092599698459,
+      "peak_torch_allocated_bytes": 67975680,
+      "peak_torch_reserved_bytes": 69206016,
+      "status": "TINY_FIXTURE_FUNCTIONAL_ONLY"
+    },
+    {
+      "weight_bits": 4,
+      "config": {
+        "vocab": 64,
+        "width": 64,
+        "layers": 2,
+        "heads": 4,
+        "kv_heads": 2,
+        "head_dim": 16,
+        "ff": 128,
+        "weight_bits": 4,
+        "group_size": 16,
+        "max_tokens": 32
+      },
+      "parameters": 87104,
+      "master_dtype": "float32",
+      "activation_autocast": "bfloat16",
+      "steps": 8,
+      "losses": [
+        3.961794853210449,
+        3.388751268386841,
+        2.988793134689331,
+        2.6941637992858887,
+        2.453500747680664,
+        2.2490346431732178,
+        2.068359851837158,
+        1.9088225364685059
+      ],
+      "elapsed_seconds": 0.06534064500010572,
+      "peak_torch_allocated_bytes": 67975680,
+      "peak_torch_reserved_bytes": 69206016,
+      "status": "TINY_FIXTURE_FUNCTIONAL_ONLY"
+    }
+  ],
+  "maximum_host_rss_kib": 2056612,
+  "open_gates": [
+    "certified_export",
+    "source_edit_coverage",
+    "checked_real_data_labels",
+    "whole_codec_correspondence",
+    "packed_training_backend",
+    "large_training_fit"
+  ]
+}
