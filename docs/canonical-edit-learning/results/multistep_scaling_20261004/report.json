@@ -1,0 +1,858 @@
+{
+  "additionalRuntimeTests": 31,
+  "admittedEpisodes": 144,
+  "baselines": [
+    {
+      "mode": "filtered_random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 10,
+          "proposals": 79,
+          "queryLimit": 15,
+          "solved": 17,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 16,
+          "proposals": 79,
+          "queryLimit": 11,
+          "solved": 21,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    },
+    {
+      "mode": "random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 86,
+          "meanQueries": 3.9375,
+          "multistepSolved": 0,
+          "proposals": 94,
+          "queryLimit": 31,
+          "solved": 1,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 70,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    },
+    {
+      "mode": "filtered_random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.53125,
+          "multistepSolved": 7,
+          "proposals": 81,
+          "queryLimit": 19,
+          "solved": 13,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.59375,
+          "multistepSolved": 16,
+          "proposals": 83,
+          "queryLimit": 11,
+          "solved": 21,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 29
+    },
+    {
+      "mode": "random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 90,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 83,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 29
+    },
+    {
+      "mode": "filtered_random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.65625,
+          "multistepSolved": 13,
+          "proposals": 85,
+          "queryLimit": 16,
+          "solved": 16,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.5,
+          "multistepSolved": 17,
+          "proposals": 80,
+          "queryLimit": 12,
+          "solved": 20,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 43
+    },
+    {
+      "mode": "random",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 88,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 83,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 43
+    },
+    {
+      "mode": "search",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.375,
+          "multistepSolved": 21,
+          "proposals": 76,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    }
+  ],
+  "configs": [
+    {
+      "layers": 2,
+      "width": 48
+    },
+    {
+      "layers": 3,
+      "width": 96
+    }
+  ],
+  "contract": "multistep-scaling-v1",
+  "corpusRepairEvaluation": "NOT_RUN; coverage audit only",
+  "decisionBudget": 256,
+  "device": "cpu",
+  "dirty": true,
+  "epochs": 16,
+  "evaluations": [
+    {
+      "fit": "config0-17",
+      "mode": "model",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    },
+    {
+      "fit": "config0-17",
+      "mode": "reset",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    },
+    {
+      "fit": "config0-17",
+      "mode": "unfiltered",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 93,
+          "meanQueries": 4.0,
+          "multistepSolved": 1,
+          "proposals": 96,
+          "queryLimit": 31,
+          "solved": 1,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 96,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 17
+    },
+    {
+      "fit": "locked-29",
+      "mode": "model",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 29
+    },
+    {
+      "fit": "locked-29",
+      "mode": "reset",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 29
+    },
+    {
+      "fit": "locked-29",
+      "mode": "unfiltered",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 90,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "proposals": 96,
+          "queryLimit": 32,
+          "solved": 0,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 87,
+          "meanQueries": 3.9375,
+          "multistepSolved": 0,
+          "proposals": 94,
+          "queryLimit": 31,
+          "solved": 1,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 29
+    },
+    {
+      "fit": "locked-43",
+      "mode": "model",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 43
+    },
+    {
+      "fit": "locked-43",
+      "mode": "reset",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.46875,
+          "multistepSolved": 20,
+          "proposals": 79,
+          "queryLimit": 9,
+          "solved": 23,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 3.40625,
+          "multistepSolved": 21,
+          "proposals": 77,
+          "queryLimit": 7,
+          "solved": 25,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 43
+    },
+    {
+      "fit": "locked-43",
+      "mode": "unfiltered",
+      "results": {
+        "arity4": {
+          "errors": 0,
+          "inconsistentProposals": 32,
+          "meanQueries": 3.71875,
+          "multistepSolved": 8,
+          "proposals": 87,
+          "queryLimit": 21,
+          "solved": 11,
+          "tasks": 32
+        },
+        "test": {
+          "errors": 0,
+          "inconsistentProposals": 43,
+          "meanQueries": 3.6875,
+          "multistepSolved": 11,
+          "proposals": 86,
+          "queryLimit": 18,
+          "solved": 14,
+          "tasks": 32
+        },
+        "train": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "inconsistentProposals": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "proposals": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        }
+      },
+      "seed": 43
+    }
+  ],
+  "exploratoryPrefixes": 72,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "naturalCoverage": {
+    "GRAMMAR_UNSUPPORTED": 95,
+    "LOAD_FAILED": 9
+  },
+  "newLeanDeclarations": 15,
+  "queryBudget": 4,
+  "screening": [
+    {
+      "checkpointHash": "3e8a12bfadb8647907c9e641cac62dfa429d38a061750c4a1c5976a39bfe82ba",
+      "config": {
+        "layers": 2,
+        "width": 48
+      },
+      "name": "config0-17",
+      "parameters": 271637,
+      "passesPerEpisode": 16,
+      "seed": 17,
+      "updates": 2304,
+      "validation": {
+        "errors": 0,
+        "inconsistentProposals": 0,
+        "meanQueries": 3.25,
+        "multistepSolved": 21,
+        "proposals": 72,
+        "queryLimit": 6,
+        "solved": 26,
+        "tasks": 32
+      }
+    },
+    {
+      "checkpointHash": "e82ff6c7577d4e4b9fd74a251d26b9b717e2c0a080f42311eaf0b80afbb50b52",
+      "config": {
+        "layers": 3,
+        "width": 96
+      },
+      "name": "config1-17",
+      "parameters": 1030854,
+      "passesPerEpisode": 16,
+      "seed": 17,
+      "updates": 2304,
+      "validation": {
+        "errors": 0,
+        "inconsistentProposals": 0,
+        "meanQueries": 3.25,
+        "multistepSolved": 21,
+        "proposals": 72,
+        "queryLimit": 6,
+        "solved": 26,
+        "tasks": 32
+      }
+    }
+  ],
+  "seconds": 748.4177493790003,
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "selection": {
+    "config": {
+      "layers": 2,
+      "width": 48
+    },
+    "rule": "validation repairs, then fewer parameters, then fixed order",
+    "selected": 0,
+    "testUsed": false
+  },
+  "status": "STUDY_COMPLETE",
+  "tasks": {
+    "arity4": 32,
+    "test": 32,
+    "train": 144,
+    "validation": 32
+  },
+  "teacher": {
+    "errors": 0,
+    "inconsistentProposals": 0,
+    "meanQueries": 3.076388888888889,
+    "multistepSolved": 96,
+    "proposals": 299,
+    "queryLimit": 13,
+    "solved": 131,
+    "tasks": 144
+  },
+  "torch": "2.14.1+cu130",
+  "trainingPlanChoices": 299,
+  "workers": 2
+}

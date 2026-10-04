@@ -1,0 +1,682 @@
+[
+  {
+    "command": 0,
+    "id": "case-000",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-000.als",
+    "privateGoal": [
+      0,
+      1
+    ],
+    "sourceHash": "0f18011fe2b82212d793f2081a7d7edf26f7c8e823568c10f058025c18ea4cb6",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-001",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-001.als",
+    "privateGoal": [
+      0,
+      1
+    ],
+    "sourceHash": "c2560ab3d9569152beb9afafc1e6141d46bb4fca5a3f79bc56d4fd9f6b087a16",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-002",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-002.als",
+    "privateGoal": [
+      0,
+      1
+    ],
+    "sourceHash": "6443f41662141429a436d126e5574bb66e357d79c9a3ccd8403f080d74a71b40",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-003",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-003.als",
+    "privateGoal": [
+      1,
+      0
+    ],
+    "sourceHash": "23097343c00ff74c81a16764ce64fc07f48eb9f65deeec44adf07377415fbb47",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-004",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-004.als",
+    "privateGoal": [
+      1,
+      0
+    ],
+    "sourceHash": "7cd4a22ea15b2ce0e2a7958a3ebbb9a40e8052ca7473e4651bc862a78ac4a00a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-005",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-005.als",
+    "privateGoal": [
+      1,
+      0
+    ],
+    "sourceHash": "066afb11ac3e2e1080fb0817f0ab022a4b53775185deafb00e3bbd6221fb1794",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-006",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-006.als",
+    "privateGoal": [
+      0,
+      2
+    ],
+    "sourceHash": "bd9ad10c38b6c46437733ca74a6cf307de48b67bb5d25eceb84ee7c94e1d34df",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-007",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-007.als",
+    "privateGoal": [
+      0,
+      2
+    ],
+    "sourceHash": "720c4d765a5c117a80fec18b16d0a697ce18d0069fac7fbd53a4f2478feccc6f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-008",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-008.als",
+    "privateGoal": [
+      0,
+      2
+    ],
+    "sourceHash": "594381f7daf14660580d67228e403d6aa49393e842d6e2addf462566ce91bf00",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-009",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-009.als",
+    "privateGoal": [
+      2,
+      0
+    ],
+    "sourceHash": "0cc2fc409d52d3f2f086da236c01f0ce695f19963609bb87392c053719f5b2a9",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-010",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-010.als",
+    "privateGoal": [
+      2,
+      0
+    ],
+    "sourceHash": "635457424ca0e22d54a083c3871c36bfcf7ad9ed34a9d37df2277a94856aab3a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-011",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-011.als",
+    "privateGoal": [
+      2,
+      0
+    ],
+    "sourceHash": "5d1633703df461f15996e3e9ce5af3b16bc6b7a60f0aa13426f1df19296fcacd",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-012",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-012.als",
+    "privateGoal": [
+      1,
+      3
+    ],
+    "sourceHash": "c67901ff1e5d097ce2b6e5767cfb5122d541a5a3c49628fefdd52bb076539011",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-013",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-013.als",
+    "privateGoal": [
+      1,
+      3
+    ],
+    "sourceHash": "60027a6ee63a118be8e16309435ab29bed6421e0fe2f395016dd641fba64d6f7",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-014",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-014.als",
+    "privateGoal": [
+      1,
+      3
+    ],
+    "sourceHash": "edc61700b6bdf0c0c5b044a836344ec1b0f023aee0b3b7cb61e12f6964b0b477",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-015",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-015.als",
+    "privateGoal": [
+      3,
+      1
+    ],
+    "sourceHash": "15ed3e36bd8b32047db9f4d83f537bf56641e2aca1c9428928f00aa1f258b936",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-016",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-016.als",
+    "privateGoal": [
+      3,
+      1
+    ],
+    "sourceHash": "d44d4781296ecf8f87ff8eda5f16ec7d445475b5c0a038aa422d4b136b33d4a2",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-017",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-017.als",
+    "privateGoal": [
+      3,
+      1
+    ],
+    "sourceHash": "9230030f9384c22af7b1eb238017c9b53911c6dfb94de9625f7c31759495e3c6",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-018",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-018.als",
+    "privateGoal": [
+      2,
+      3
+    ],
+    "sourceHash": "c7accc31451e8fbbd74772eb798053fe070420e051af954df179b7a468c64328",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-019",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-019.als",
+    "privateGoal": [
+      2,
+      3
+    ],
+    "sourceHash": "a332d1994daf266a9ebfe70b3d159e5a3dcc0e209017667486f91d11dc6dc3ce",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-020",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-020.als",
+    "privateGoal": [
+      2,
+      3
+    ],
+    "sourceHash": "7a61e31a842c4dd1bd6ec7df6f65f44558182f9851525cfcb3eec92e3d658b66",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-021",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-021.als",
+    "privateGoal": [
+      3,
+      2
+    ],
+    "sourceHash": "4c2c451738acfce16955f5a93ab65dbfa7735bc8505e1f3ef4bf1b509b118300",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-022",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-022.als",
+    "privateGoal": [
+      3,
+      2
+    ],
+    "sourceHash": "6f44f5d0b20a63cf1bbf922afd73891c30f667069b343488526d1fe176a08853",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-023",
+    "initial": [
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-023.als",
+    "privateGoal": [
+      3,
+      2
+    ],
+    "sourceHash": "720e67075492c79a7162534d1cbd8e916eb82586d9613317bc5a25742c767f70",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-024",
+    "initial": [
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-024.als",
+    "privateGoal": [
+      0,
+      0
+    ],
+    "sourceHash": "227fae8b3e35c6e14904c24a03c41c8f284057257670f730bac75728cd3828b3",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-025",
+    "initial": [
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-025.als",
+    "privateGoal": [
+      0,
+      0
+    ],
+    "sourceHash": "30b7c5cf4271ea94b4a57ae1a998b439b3363eb5a2510eabcaa7f2308544355a",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-026",
+    "initial": [
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-026.als",
+    "privateGoal": [
+      1,
+      1
+    ],
+    "sourceHash": "352374ac5f54300f086a91ac1ddab8615555ed43fc35e49cb2f54f471a51564f",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-027",
+    "initial": [
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-027.als",
+    "privateGoal": [
+      1,
+      1
+    ],
+    "sourceHash": "bd187f4698d8188049179ad36569612420401ac82dfdec66c5b3220a6b9ba20c",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-028",
+    "initial": [
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-028.als",
+    "privateGoal": [
+      2,
+      2
+    ],
+    "sourceHash": "17f38a51967a63c58983b219e1ac1fe5d7fa38c59861c4d9e59f0d9e722cb068",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-029",
+    "initial": [
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-029.als",
+    "privateGoal": [
+      2,
+      2
+    ],
+    "sourceHash": "3fbce8689875a2ce1b2f483efbcc032d2efd0cdcc5bb6886b1c6d1e6c3093c34",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-030",
+    "initial": [
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-030.als",
+    "privateGoal": [
+      3,
+      3
+    ],
+    "sourceHash": "cca6eb9c967b7356216301c661e043af4072b8e787580bf7f688ce8d9657c01a",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-031",
+    "initial": [
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-031.als",
+    "privateGoal": [
+      3,
+      3
+    ],
+    "sourceHash": "c87d39c6a9d785ccc4727e401959c429c528753a7a8e80a3b3c15574fa0c2c17",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-032",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-032.als",
+    "privateGoal": [
+      0,
+      3
+    ],
+    "sourceHash": "2f476a3bb1bb1a9e762a5b5ab5597ca3468ae9e1b4e96b2938d2c96b94345ee6",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-033",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-033.als",
+    "privateGoal": [
+      0,
+      3
+    ],
+    "sourceHash": "fca7b32c529e8bc9fc5d3b2e76fc943fbf7cdcb2540146de54f44ff0868e733a",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-034",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-034.als",
+    "privateGoal": [
+      3,
+      0
+    ],
+    "sourceHash": "6babff383ffbc3383d59908b9548244a20dd683f706fc71461463c3de7bfaada",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-035",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-035.als",
+    "privateGoal": [
+      3,
+      0
+    ],
+    "sourceHash": "145ad98c80a314ee5ed58e6ad9e2b90d11bbe131e06f2528b74c93a74c39e32a",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-036",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-036.als",
+    "privateGoal": [
+      1,
+      2
+    ],
+    "sourceHash": "aa720e1de682079ed8b9fe88bc018c658acf1c839cc35ae60bb28be14becb912",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-037",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-037.als",
+    "privateGoal": [
+      1,
+      2
+    ],
+    "sourceHash": "0dfd68ac1d7f1674213b7d04bbd510ca77b6b23332640d76365571ffe13d4e75",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-038",
+    "initial": [
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-038.als",
+    "privateGoal": [
+      2,
+      1
+    ],
+    "sourceHash": "7a9fa5b95a571562ae978c1a829a1f42f2ff6ec184d885258104e58e31b04dc2",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "command": 0,
+    "id": "case-039",
+    "initial": [
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-20261004-v1/case-039.als",
+    "privateGoal": [
+      2,
+      1
+    ],
+    "sourceHash": "a532376af0d77e86d77f9801df6622b3161eb605a29f39b4d6e89989afba9af7",
+    "split": "test",
+    "target": "candidate"
+  }
+]

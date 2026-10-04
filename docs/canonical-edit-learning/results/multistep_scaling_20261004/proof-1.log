@@ -1,0 +1,15 @@
+'MultistepScaling.clipped_cardinality' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.variadic_clipping' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.mismatched_arity_refused' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.filter_retains_truth' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.filter_no_repeat' depends on axioms: [propext]
+'MultistepScaling.filter_every_witness' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.more_evidence_never_readmits' depends on axioms: [propext]
+'MultistepScaling.masked_choice_consistent' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.no_future_evidence' depends on axioms: [propext]
+'MultistepScaling.heldout_refused' depends on axioms: [propext]
+'MultistepScaling.unreplayed_refused' depends on axioms: [propext]
+'MultistepScaling.group_split_consistent' does not depend on any axioms
+'MultistepScaling.four_query_decision_bound' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.pool_bound' depends on axioms: [propext, Quot.sound]
+'MultistepScaling.finite_evidence_not_acceptance' does not depend on any axioms

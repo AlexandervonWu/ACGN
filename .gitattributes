@@ -1,2 +1,5 @@
 /distance_results/distances.json filter=lfs diff=lfs merge=lfs -text
 /alloy4fun-augmented/index.json filter=lfs diff=lfs merge=lfs -text
+/docs/canonical-edit-learning/results/multistep_scaling_20261004/evidence.tar.gz filter=lfs diff=lfs merge=lfs -text
+/docs/canonical-edit-learning/results/multistep_repair_20261004/evidence.tar.gz filter=lfs diff=lfs merge=lfs -text
+/docs/canonical-edit-learning/results/local_scaling_20261004/evidence.tar.gz filter=lfs diff=lfs merge=lfs -text

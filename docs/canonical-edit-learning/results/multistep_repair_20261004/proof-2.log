@@ -1,0 +1,15 @@
+'MultistepRepair.cardinality_abstraction' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.world_abstraction' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.survivor_origin' depends on axioms: [propext]
+'MultistepRepair.survivor_consistent' depends on axioms: [propext]
+'MultistepRepair.authentic_target_retained' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.contradicted_candidate_removed' depends on axioms: [propext]
+'MultistepRepair.evidence_cannot_grow_pool' depends on axioms: [propext]
+'MultistepRepair.causal_evidence' depends on axioms: [propext]
+'MultistepRepair.target_retained_over_history' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.selected_plan_not_repeated' depends on axioms: [propext]
+'MultistepRepair.attempt_decreases_fuel' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.context_extension' depends on axioms: [propext, Quot.sound]
+'MultistepRepair.public_only' does not depend on any axioms
+'MultistepRepair.consistency_is_not_equivalence' does not depend on any axioms
+'MultistepRepair.feedback_branches' does not depend on any axioms

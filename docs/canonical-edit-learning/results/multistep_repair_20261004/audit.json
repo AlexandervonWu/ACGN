@@ -1,0 +1,10 @@
+{
+  "status": "AUDIT_PASSED",
+  "inputs": 449,
+  "outputs": 2029,
+  "runtimeCheckExecutions": 363,
+  "newLeanDeclarations": 15,
+  "limitation": "Finite model proofs, tests and synthetic experiment; not universal refinement or corpus repair",
+  "producerManifestHash": "1d9e587a5e06112f0dea3d12a8e2718d475854ba2b74f97552f1af281aa3ed16",
+  "reporterHash": "16e9e59ae12e2a34d89ae807052ec0e3b9877d687e39d49b35fa9fd46481378b"
+}

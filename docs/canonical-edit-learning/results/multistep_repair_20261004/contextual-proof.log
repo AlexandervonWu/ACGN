@@ -1,0 +1,16 @@
+'ContextualRepair.commit_invalidates_success' depends on axioms: [propext, Quot.sound]
+'ContextualRepair.query_accounting' depends on axioms: [propext, Classical.choice, Quot.sound]
+'ContextualRepair.receipt_bound' depends on axioms: [propext, Quot.sound]
+'ContextualRepair.counterexample_not_success' depends on axioms: [propext, Quot.sound]
+'ContextualRepair.unknown_not_success' depends on axioms: [propext, Quot.sound]
+'ContextualRepair.stale_receipt_unchanged' depends on axioms: [propext]
+'ContextualRepair.exhausted_query_unchanged' depends on axioms: [propext]
+'ContextualRepair.exhausted_decision_unchanged' depends on axioms: [propext]
+'ContextualRepair.rejection_preserves_receipt' does not depend on any axioms
+'ContextualRepair.rejection_cannot_create_success' does not depend on any axioms
+'ContextualRepair.no_future_context' depends on axioms: [propext]
+'ContextualRepair.reset_is_empty_context' depends on axioms: [propext]
+'ContextualRepair.same_public_prefix_same_prediction' does not depend on any axioms
+'ContextualRepair.ordered_context_example' does not depend on any axioms
+'ContextualRepair.no_heldout_training' depends on axioms: [propext]
+'ContextualRepair.unreplayed_not_admitted' depends on axioms: [propext]

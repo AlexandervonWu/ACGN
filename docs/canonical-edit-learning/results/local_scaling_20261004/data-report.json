@@ -1,0 +1,33 @@
+{
+  "contract": "local-feedback-repair-v1",
+  "eligible": {
+    "evaluation": 89,
+    "train": 474,
+    "validation": 62
+  },
+  "preflight": "/tmp/acgn-local-scale-preflight-20261004-v2",
+  "preflightHash": "410aeb5d57d219a0d2ad9b720383f7366a8b6400682b830ef2f0baa70686ab7f",
+  "preparation": {
+    "DUPLICATE_AST_PAIR": 47,
+    "SOURCE_READY": 625
+  },
+  "questionGroups": {
+    "evaluation": 9,
+    "train": 39,
+    "validation": 8
+  },
+  "schema": "local-feedback-scale-data-v1",
+  "seconds": 296.9726187470078,
+  "selected": {
+    "evaluation": 96,
+    "train": 512,
+    "validation": 64
+  },
+  "status": "FROZEN",
+  "teachers": {
+    "NOT_ADMITTED": 165,
+    "REPLAY_ADMITTED": 309
+  },
+  "trainingDecisions": 4397,
+  "workers": 4
+}

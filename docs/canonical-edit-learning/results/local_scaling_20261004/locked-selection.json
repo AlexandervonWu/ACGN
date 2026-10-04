@@ -1,0 +1,26 @@
+{
+  "config": {
+    "layers": 4,
+    "name": "mlp-256x4",
+    "variant": "mlp",
+    "width": 256
+  },
+  "datasetHash": "96e37ec60cd4bc8e6bea9ed12c4a7ee0059f0bf8d6724e49ebaf1faf7b5a0c55",
+  "parameters": 6008833,
+  "seed17CheckpointHash": "0d087619b8ff08c648dbdab1002441120f9ee5114d8bb3e90889cf5a293e09bb",
+  "selection": "validation repairs, parameter count, fixed order",
+  "validation": {
+    "decisionExhausted": 12,
+    "decisionsIssued": 3440,
+    "errorKinds": {
+      "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+      "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+    },
+    "errors": 29,
+    "queries": 54,
+    "queriesIssued": 54,
+    "rejected": 19,
+    "repairs": 0,
+    "tasks": 62
+  }
+}

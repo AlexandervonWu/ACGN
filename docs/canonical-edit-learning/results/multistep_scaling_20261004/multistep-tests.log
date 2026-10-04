@@ -1,0 +1,36 @@
+test_actual_failed_attempt_then_repaired (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_changed_source_and_false_feedback_refused (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_contextual_mask_and_prediction_are_not_acceptance (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_heldout_admission_refused_before_replay (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_policy_cannot_terminate_with_unchecked_stop (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_prefix_memory_and_reset (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_real_episode_gradients_and_historical_addresses (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_replay_requires_verification_after_commit (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_unreplayed_loss_refused (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_unsolved_budget_limited_episode_is_retained (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_actual_branch_and_failed_attempt_replay (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_all_sixteen_paths_match_real_alloy (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_blind_inputs_remove_feedback_and_history (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_cardinality_and_evidence_algebra (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_latest_projection_does_not_duplicate_old_feedback (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_missing_mapping_and_temporal_world_refused (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_modes_memory_and_gradients (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_no_heldout_or_unreplayed_training (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_same_fault_different_feedback_different_plan (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_source_scope_and_plan_index_refused (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_trial_feedback_mutation_rejected_by_java_replay (experiments.feedback_repair.test_multistep.MultistepTest) ... ok
+test_evidence_filter_never_reintroduces_or_repeats (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_heldout_and_changed_replay_refused (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_missing_mapping_and_wrong_revision_refused (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_mixed_and_duplicate_source_refused (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_model_respects_mask_and_variable_arity (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_old_evidence_retained_outside_window (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_real_paths_across_arities_and_connectives (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_real_replay_with_exploration_and_budget_failures (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_split_groups_and_counts (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+test_variadic_semantics_and_bounds (experiments.feedback_repair.test_multistep_scale.ScalingTest) ... ok
+
+----------------------------------------------------------------------
+Ran 31 tests in 28.589s
+
+OK

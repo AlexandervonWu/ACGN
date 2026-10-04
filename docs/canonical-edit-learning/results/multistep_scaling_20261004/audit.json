@@ -1,0 +1,51 @@
+{
+  "status": "AUDIT_PASSED",
+  "inputs": 549,
+  "outputs": 4018,
+  "runtimeCheckExecutions": 373,
+  "newLeanDeclarations": 15,
+  "fits": 4,
+  "totalUpdates": 9216,
+  "naturalCoverageTasks": 104,
+  "trajectoryComparisons": [
+    {
+      "seed": 17,
+      "control": "reset-17",
+      "tasks": 64,
+      "identicalPlanSequences": 63
+    },
+    {
+      "seed": 17,
+      "control": "search-17",
+      "tasks": 64,
+      "identicalPlanSequences": 49
+    },
+    {
+      "seed": 29,
+      "control": "reset-29",
+      "tasks": 64,
+      "identicalPlanSequences": 57
+    },
+    {
+      "seed": 29,
+      "control": "search-17",
+      "tasks": 64,
+      "identicalPlanSequences": 50
+    },
+    {
+      "seed": 43,
+      "control": "reset-43",
+      "tasks": 64,
+      "identicalPlanSequences": 59
+    },
+    {
+      "seed": 43,
+      "control": "search-17",
+      "tasks": 64,
+      "identicalPlanSequences": 49
+    }
+  ],
+  "manifestHash": "fe025b2d9fee342311e2e3287d05d4e7e59198f00c13b9bbdec5d3e9367371c6",
+  "curatorHash": "b35c2c218063711ee5d91f10c0a85a12e83e943fa84f640194a9501fcc693af0",
+  "limitation": "Finite models/tests and synthetic study; no universal refinement or natural-corpus repair claim"
+}

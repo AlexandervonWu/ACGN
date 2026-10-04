@@ -1,0 +1,5346 @@
+[
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-000",
+    "initial": [
+      0,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-000.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "35c578a722886527b4cd27692d13988a5387938df3521dc67111a242ed852e90",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-001",
+    "initial": [
+      2,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-001.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "e8cd449b66ea17a0cfab5f02b5d5d8e80ffd28bcc1e8f23ccba0ca1e1f497323",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-002",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-002.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "9782bd79d5a3ae78825606a692203be9cfb8c2d78b6258c208f2294bfc058574",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-003",
+    "initial": [
+      1,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-003.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "204b9e254acf4776e0f6ba4f7d049e501ae1358f0125e1d3d6221a3454ce2b98",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-004",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-004.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "74d584ce325b9370bd42ca0b89ba5afba3c2ceb99805dcb350cdc6e7ced1ec9e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-005",
+    "initial": [
+      2,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-005.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "5016d598964f286aecfc711f66bc5e8b1d6a6be5902f8c80de57b7fb924f790e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-006",
+    "initial": [
+      3,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-006.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "b6a55aaac6b62c7da30303742d28c214de8b46c395b9ba9579dada756ac00ae8",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-007",
+    "initial": [
+      0,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-007.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "ad88a93ea38ab7429b0326d7603cf1df9dc108d463c81f7c1699041f6a58586c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-008",
+    "initial": [
+      3,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-008.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "7ee03c33c39d77e74de79e356c2a2dd10c01416e51bf3db41aced9f48009df2f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-009",
+    "initial": [
+      2,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-009.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "81f6d7bd60736cbadf07dc5c7c4b71cfaf29ce01caf966755f7af2436f4d9ee7",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-010",
+    "initial": [
+      2,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-010.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "c4c8f5eb0560233dfb52ec3d833c6b35634ba6b31d4faafda29e5a99494d4628",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-011",
+    "initial": [
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-011.als",
+    "privateGoal": [
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "6d2816e80fa139a997570a95967b6457f7ceacd1cf1b2982a35a8c8431e2395f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-012",
+    "initial": [
+      1,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-012.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "138762aef5089f02ec58c536f56da087bd5708bb781b91739b4222bd55fec260",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-013",
+    "initial": [
+      2,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-013.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "afdc150999afc054c27c5e5cee7610806dd8a140f8e3a03c91fb2cca4026f656",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-014",
+    "initial": [
+      1,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-014.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "072916f8fc1657d85bb39cffa8c87535ceb4a691e91f9dc0937f66ccff120a5c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-015",
+    "initial": [
+      1,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-015.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "e9701fa4762a9b830ab8ca2aacbf94dd3d908dfae26f024a9874c210ad488e77",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-016",
+    "initial": [
+      1,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-016.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "e513d6b22260d320239e336d00579fac57cbe09b150c8f8c80a5d0ae13a5f5ef",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-017",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-017.als",
+    "privateGoal": [
+      3,
+      1,
+      2
+    ],
+    "sourceHash": "d3e071dd98c3e71dccecc6407241e85dbc39703dfb02e98c069b01e8771c247a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-018",
+    "initial": [
+      0,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-018.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "70e5a87eff97c55dd446d2c73d196ab85ade271e455360ebadc5c1d7d4d00d0c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-019",
+    "initial": [
+      3,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-019.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "e7709b85b90fbada04b2581287a5aff4f0f3bc61f61cc43d37e2e0d3eabe68b5",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-020",
+    "initial": [
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-020.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "59b14bed41a745861ab2c2dfe466cf63f25125fc3e07b14d952869a0f2e7b2c6",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-021",
+    "initial": [
+      0,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-021.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "264511b179e9e23aecdfbc9d6b365ef5fc419f462f0e6d961c29b4cde956fe89",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-022",
+    "initial": [
+      3,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-022.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "d89f9049bf95c85e402a58ee7e8f482dee34c795b4c57daff0bda2d19bb5d067",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-023",
+    "initial": [
+      1,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-023.als",
+    "privateGoal": [
+      2,
+      3,
+      1
+    ],
+    "sourceHash": "a86b0547fffe4a17d4fd282e2016c676c8959b0c1c186e564fce1f7faf8c5731",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-024",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-024.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "cda646e53ab3b506477b07d2057aa27abb079ce6b21673ffc1d3d38cb81b3e06",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-025",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-025.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "8fd6a922eda93a907a47a70001661648baff3c5a4c72ab52db134373715f3b22",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-026",
+    "initial": [
+      0,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-026.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "da730ed1308871fbafd0205c07dfa8f0b057edb82790b2a0f7471445a0a46846",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-027",
+    "initial": [
+      3,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-027.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "648406ab14b503f363fa8034808706f3517b48539f08d4cde724a61629ffabbb",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-028",
+    "initial": [
+      3,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-028.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "315a2d556c77320d6119c7df6f4686c2f86076024b7a10d045d9a4fb05d73a41",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-029",
+    "initial": [
+      1,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-029.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "7540691cda16e7aceb8391a4f52c94fa4308bae54abf7cf544a92de81474f4df",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-030",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-030.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "7c91ebf7c0fc45801c9ea896bb2aca6ce0fea4fbfb5d9a3c865389711c560641",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-031",
+    "initial": [
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-031.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "7f3073fb7ec849d14adf06c09a4235ee69687a305729573a7232412b7cf956d2",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-032",
+    "initial": [
+      1,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-032.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "e8e5e4fa63dd2357de1cdf0b0667d3550978df85142d260dabc3e2fc7ed3a8a1",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-033",
+    "initial": [
+      2,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-033.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "8d2d3a8dc8eafd93d2d5b0c4750fb04c3492014e939d5036c9831d2d7605cbaa",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-034",
+    "initial": [
+      0,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-034.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "2fce3d209c30137147a1aee5ca7abf16f2687e2e33432d267d3a0797c4054a56",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-035",
+    "initial": [
+      3,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-035.als",
+    "privateGoal": [
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "fe7562d57c0926465e3c0c3521921922b9f18d940caba0c7fd5e1f30bd29b3db",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-036",
+    "initial": [
+      3,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-036.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "1c6c3f81a424e7aeb64e90527a797ec1a2d7866b8a9cb1ec2c1f419ad692fa99",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-037",
+    "initial": [
+      1,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-037.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "8f04fa12bd835fb2ad55649f9018a5053e8b9d188d9c4c5d1446b8d9594ad7e0",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-038",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-038.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "a28332ca65be6992db72c734355d3137ee02b2c33b895ed120d24fcb01f6240e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-039",
+    "initial": [
+      2,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-039.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "41c9633f6604ff07a6852d2d025a7ce003db882dce3d11412e55687a9089c756",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-040",
+    "initial": [
+      2,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-040.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "915bc7b125c214883294360ecf6d589ec40f72b5bc3293a6daf8b13fe9171a65",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-041",
+    "initial": [
+      3,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-041.als",
+    "privateGoal": [
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "749c287a679a839bf36a08e04dbccbb92684d21f7398ec9c0c149d30801a15ed",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-042",
+    "initial": [
+      3,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-042.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "bd6728a2ef15709fa1e43062be67becfd2c093ee5f150a093ada7934ec5e0626",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-043",
+    "initial": [
+      2,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-043.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "44d4fa6ef9ac0d466699e6b02939a620f59bee2656f456b95b5bdf42f8f79168",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-044",
+    "initial": [
+      3,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-044.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "5930668793f96a7099379e52fc221a10a07f424d00b341271ce9b14ef29b1846",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-045",
+    "initial": [
+      3,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-045.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "c151191173aede26e68fc9f8c0d802e181e90cf0ac38cf0f193ea90d52bc9780",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-046",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-046.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "17b126ca558ed3fc179880c3bfc0815fce4c6602a209d5c2c46ef25f0a7f08bc",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-047",
+    "initial": [
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-047.als",
+    "privateGoal": [
+      1,
+      1,
+      3
+    ],
+    "sourceHash": "c556dbbf94e064e9c642429c7517adc7fcc7a0666f230175c9b0f842fd494a5e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-048",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-048.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "b415e62721ba4a2b745b3600440958842703b680d652025c8a873deb14a134b0",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-049",
+    "initial": [
+      0,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-049.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "b446455b99d3629c4750e586b70ef923729c8f709bb69bfb86eb0edb898e7998",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-050",
+    "initial": [
+      2,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-050.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "b37e54615b863af73762cefbaa86fa85c2e8d2cc99e15e0aa830bb478db7d80b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-051",
+    "initial": [
+      3,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-051.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "6df3490baae9800cdffe2e4249d48c3463e5ea221a20a6e78c5abf2e5f576c47",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-052",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-052.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "1c84b8f63d1df19da62a39bba1eab21674087f76e9943ea09c791ffe6f43a667",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-053",
+    "initial": [
+      0,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-053.als",
+    "privateGoal": [
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "d82d6aaa96dbdb5cf21d5d03d575bef78b43d2df1260afed68cfa7f3a1e3df3d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-054",
+    "initial": [
+      2,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-054.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "7c5ae172d9070312a62d419dd4081074beec956fe7242419b8873fe8b204e9c3",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-055",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-055.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "b8f6a23eeddb1ff523ac2179d674cd5114fc7297c515bcbc50ccdde938a4eb37",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-056",
+    "initial": [
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-056.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "c430da8ba1980ff8a7a5bb5d935bf583d2f32c3b0e48d3b57f27f2ffbff5ecec",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-057",
+    "initial": [
+      3,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-057.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "a66e6e3d285358331148a4b0016be3cae020c2ca461f8a492510b4d3491dd463",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-058",
+    "initial": [
+      2,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-058.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "41ad8ff6b4daf5c19b431245c60ff8618c87b209482828168cfbabec14696f22",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-059",
+    "initial": [
+      1,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-059.als",
+    "privateGoal": [
+      0,
+      0,
+      2
+    ],
+    "sourceHash": "cd1f7bd43a331cabd089df97f616eb299bb4ae0eb92603e0ec3cafe0904fb0f0",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-060",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-060.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "b87fabce4048a514d24ed95eaafc09d22e2fd6623bb52f93ca05c86324721ef5",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-061",
+    "initial": [
+      3,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-061.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "3c4923fa7e4010d09f8dd6df59820be5f16bc0dfe0f571f4d2b0a9ddd9a86a43",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-062",
+    "initial": [
+      0,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-062.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "e8a3dd5104064c1f3a5d8fe15aa144c6dceaee5c131c2f312369e7950588ab7c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-063",
+    "initial": [
+      2,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-063.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "933a61ed8758601924f69f7a92021f8b376b2121f5992a0ab0a40cfc746eff2f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-064",
+    "initial": [
+      2,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-064.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "d6c6d2feb37f965f124a086e9e44447707ce5eb574b3ba2c586ac5e14c262345",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-065",
+    "initial": [
+      0,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-065.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "6f0e5cdb935cda2fb0ce67667827c8794673e24ac913e5c04311295adedd4509",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-066",
+    "initial": [
+      3,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-066.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "1f2f78a38151d8d3766f1db205392f43f72b223718e5b807757df24e7cbbd98d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-067",
+    "initial": [
+      3,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-067.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "b827e88065b21f650caac085933c150e55281720b71125648950a43f2a215002",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-068",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-068.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "67a690976bf0abf3a454568856bc79e3e1ba29cfa05f32848192265c25659131",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-069",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-069.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "4c9442384bb70b75fe06bd1d071ccbd6e9536073c87e2de24bb46ca575514bfd",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-070",
+    "initial": [
+      0,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-070.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "f5559e3b22b3582f94274f15aa0854664df2375d17ab81ad3bdf5843a891c999",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-071",
+    "initial": [
+      2,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-071.als",
+    "privateGoal": [
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "d3f263c46a5bb125d4451b16b06d0eaf5687fd5ce347630f8a9b5fdec843960a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-072",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-072.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "4619bab6a7a87e9b5cbda15bd3cb36365b762ce21e8470cdc857fc8e003b666f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-073",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-073.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "71675a84b4c715fc8f1661d06efdf8043a8813776a95e2fe6bda94907d5e1b47",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-074",
+    "initial": [
+      0,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-074.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "dab0c16fb474576fe2b0f569f09e830c320b785d827e51a6255b6b1a645a1b54",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-075",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-075.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "c8000966753b051ef1d64813dbba72ddbf1413c6e24ff267a261dedc8ce5f21a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-076",
+    "initial": [
+      3,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-076.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "122605e7ae5d13f277e0407c6a7a111c64bc011c50a6c5b85fb15345d30c242b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-077",
+    "initial": [
+      3,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-077.als",
+    "privateGoal": [
+      3,
+      1,
+      3
+    ],
+    "sourceHash": "ac0f35960604b9c717fe219f3628f00f0ff67ecce8bf1e56d4edf073e309c9b4",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-078",
+    "initial": [
+      2,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-078.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "2808c2cca9ca131d8be550b2fa707a50de2f87d97262af53704524733057ee49",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-079",
+    "initial": [
+      2,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-079.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "600a09fad083f5711cc9f81ea8da25a0d10b944795f9c9b805b4f25aeb5a3f76",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-080",
+    "initial": [
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-080.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "d8b1f5b4d7d1f749bcb46184ff4a3fa70e5ae28df5a838fbfcfc0ba2fb18a66c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-081",
+    "initial": [
+      1,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-081.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "3d98c4b06aa5773f8bca6e3f5abcd723b1c621202cfab4ed73b9cbd43e0d0319",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-082",
+    "initial": [
+      2,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-082.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "063e19ade6c639370c31f681208fee6a47350884da6420874398da179d36a602",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-083",
+    "initial": [
+      2,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-083.als",
+    "privateGoal": [
+      1,
+      3,
+      3
+    ],
+    "sourceHash": "044978571a0f3cac46982d513dd4f1258fa5183cc3384e277175b8f3a394594f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-084",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-084.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "ced3e579c3b2b3ba09f43eb6bfb6c0dc00b79089fe2f37237c5eb55adc01ee6d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-085",
+    "initial": [
+      2,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-085.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "1618f0352b34c6ddde952b5f40802afe967d0419c7a9c2033a71502cd1e29701",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-086",
+    "initial": [
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-086.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "63f758862395f8ca01514f9110cc257b4939c5a33e0e4225001eb955a658c19a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-087",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-087.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "c1f1eb07a3d9767c1edfe9552f701de05ea4766e22a4891568e8041b38a6b12b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-088",
+    "initial": [
+      2,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-088.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "5af7fb8800ee5d72d80c19d35bb816301a753947802ff284632d43433fe953a8",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-089",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-089.als",
+    "privateGoal": [
+      1,
+      2,
+      2
+    ],
+    "sourceHash": "74a04860cf2c6107a6c1bb6e072e48cef313e1ffe12efe88ba0b58c601a73aeb",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-090",
+    "initial": [
+      0,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-090.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "230e97a16b8f82865ff4f3d237efa3c8566d7dbbc3e7433daeffa368714915ae",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-091",
+    "initial": [
+      0,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-091.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "cf36651a7531f057ad3e5a00ee08db3b258f9d40ff1dac09b9ccc587a720739c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-092",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-092.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "6d40b4b01ad0381918fc289e2091699bdcba5b33467b3aa4e80db73660a35493",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-093",
+    "initial": [
+      3,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-093.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "c8ec4168d63c34ad9030032a57d57df48d6d7f5caab04b158a4cdbdd0f0e1244",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-094",
+    "initial": [
+      0,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-094.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "f17b62571e70791bb7b54b2017e1599f215f425c894b2e25323bca3d4963bcb6",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-095",
+    "initial": [
+      2,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-095.als",
+    "privateGoal": [
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "e11d03f7056930d141c298966304142cc2ae24e93f63325cf58ddc44dba9ce1d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-096",
+    "initial": [
+      0,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-096.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "58f03e64fae2e0f9a078eb99622117e3d5fc790bfacfb85d064314eda717a4a2",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-097",
+    "initial": [
+      0,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-097.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "3e73aa5b49b4cc61431049d552e4ae874424deb509a757e36c30113ab15f35b4",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-098",
+    "initial": [
+      2,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-098.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "b5dd2c2a18264eb838a3b941b5e6943222372cd91495e61b72ffb1c7c040b5a9",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-099",
+    "initial": [
+      3,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-099.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "d91074e76cc885534ddeb4b3f9409603e23512e98e4db6bcb43142bec7c36cf3",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-100",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-100.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "8393b6a039a9fe28b997c56489e78bbd2fbdadc5ef484f3b71ba367127dcd91b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-101",
+    "initial": [
+      0,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-101.als",
+    "privateGoal": [
+      0,
+      3,
+      0
+    ],
+    "sourceHash": "4c17e93eade70a699a6d105de0d07c8425f983db3eaed64474c12df9227dc0dd",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-102",
+    "initial": [
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-102.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "fa41711aa1a9a31054bcfaf4fce338bb5909b2c3d6f3176b8acdbeb29c27878a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-103",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-103.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "f5f1b0b5fde3afb661be3acbfb217097b56538994f943e6843cb56474a57d0bb",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-104",
+    "initial": [
+      0,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-104.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "587463e1d8a5190cb4fc2aea2f3351bce1f7b8e3ca03afc520536c58e34e91ed",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-105",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-105.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "55739ecb94c1d5ec16cf267204e7c98d95c651100eacbfb2a039c0d96c07ab2e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-106",
+    "initial": [
+      2,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-106.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "6bcdf886caf684070c2597fc73c67f4f6a358d4bb831ac1af106e5070ca5e473",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-107",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-107.als",
+    "privateGoal": [
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "d3c2ebd50014099f94ada18a8a70f2ca3a6d584f17afae2ef15bacc82c4d3713",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-108",
+    "initial": [
+      0,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-108.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "e875b5883558c04aa30e8b85724f9f925974319b776c581832e224d6ac2cf5a0",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-109",
+    "initial": [
+      2,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-109.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "447687c91ee585ace94c748551e8c6a12690c767605c25f567a1553de2008cd5",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-110",
+    "initial": [
+      3,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-110.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "9ab4ad06b0449efd81004d77a12e2679335b457cc01843161eddf1de856a26df",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-111",
+    "initial": [
+      0,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-111.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "b3ec6c620a0b33f56de22dd0145804aeca71b7d0c43180cb79840e6b028fc516",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-112",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-112.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "d9173b835516935c7e1784f92904471109959757e61a09af8fd7ca9bedf1751a",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-113",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-113.als",
+    "privateGoal": [
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "8cdc86a0e067a58e00b9f6700900aea608f8247e96aaa88e8c17aba34ee45133",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-114",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-114.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "d9b3549a5ee2f62c234127e1a742aa717e83fe78576a61197dbdbee55569f62c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-115",
+    "initial": [
+      1,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-115.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "5b2f1e023d74bfba61f18c6aec1b6cf758f27bdcbdee6676c9202375f48fd00f",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-116",
+    "initial": [
+      3,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-116.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "0cc94c4bc7d7e9897aa249a78ce9bf0f57cf38d763ef6aa53355d711be01630e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-117",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-117.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "d3b89830bbdb2b284e1654606558e46e993a5419bf372a1be22fc3878745e4ef",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-118",
+    "initial": [
+      3,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-118.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "5e7de851cae6535487f9122c4f46e1b1d850498cf5f11a46dc97ab0633cac4d2",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-119",
+    "initial": [
+      1,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-119.als",
+    "privateGoal": [
+      1,
+      0,
+      3
+    ],
+    "sourceHash": "8b2a3212ff92a857d6a5913c7df7fa1cd3964ba9719d73cddd91ed77f7a3f9e7",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-120",
+    "initial": [
+      1,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-120.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "c3a87c781f0d0a1b0bbb4f29146dae79a1a27e9526f26be6fe62f77776a76c2e",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-121",
+    "initial": [
+      3,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-121.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "0f29214b0b3396f60d3a44206fce8f6fd8bf22cc67247c63337996bbdf45ceb5",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-122",
+    "initial": [
+      1,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-122.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "0e86f12ed7b041ad28fd12a101941d822b4ceaeb7fc43989cc33f488de07febe",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-123",
+    "initial": [
+      3,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-123.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "272f0397f5e772fe846659676a2704f96576eec8c5e0aab284e249938686f932",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-124",
+    "initial": [
+      3,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-124.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "b27767234869743724c074df0be91a9b315f24aa82715ef2b3f5b32bedc263de",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-125",
+    "initial": [
+      3,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-125.als",
+    "privateGoal": [
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "74cbb90290ab3ebfc7eb3da107b66e2acdf52e0b7a615c932f7ab3e381d6fe19",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-126",
+    "initial": [
+      3,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-126.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "aebc8f70c150ac084d8d5108dbeec384012d03ae3b18d9e9918a09154f610c69",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-127",
+    "initial": [
+      3,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-127.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "b48ba26a3b3959e7e7e218dfd973974273d7bd53eb0e3ac6118c0ddf490817ea",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-128",
+    "initial": [
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-128.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "5df2135b447e956e96e9a365770bee68669a7fc8457140947fdecca64732a619",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-129",
+    "initial": [
+      3,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-129.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "386cddcd5347d9280dbbe3c2edab59b522820b1185b1e1de5a3f31829dc48418",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-130",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-130.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "28920240232b00c9e1abded2aa95835294a38ca9375ea7e1be701413f45ac38d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-131",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-131.als",
+    "privateGoal": [
+      2,
+      2,
+      0
+    ],
+    "sourceHash": "037c0dd0f3070efc5b1695e9f8ac77c8946ee35652a18c2b3f17dca09eae4c2c",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-132",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-132.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "69ca071721ff3dd04f90eb6c55f7a4d5ec7cfd3d613617f09495b7241e53142d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-133",
+    "initial": [
+      1,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-133.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "ca09629474a217829d777f1e6447ad80c71afe3055f5af49106b6be9fd8df49b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-134",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-134.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "27986c4015110fec09d3f028e4f217493b81242e784a60f8639606f06b8157ae",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-135",
+    "initial": [
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-135.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "1bd60187bb73d53560d6a4deecce63d7928a06d94162568a9ba154528a6e98ef",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-136",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-136.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "7ea94556b4d4cf2889417b82486acabbb8aeae78a07cb241a11f8db668dbb88d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": true,
+    "id": "case-137",
+    "initial": [
+      2,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-137.als",
+    "privateGoal": [
+      0,
+      3,
+      3
+    ],
+    "sourceHash": "aa7296712f6ba49c14541e2fcd516473fe0d843eea1b37b778a78456a625cff9",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-138",
+    "initial": [
+      3,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-138.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "eac114b47cedb4757ee9b30d7869d54c987f7aa177fb8a5a54a97dacfbb7e30d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-139",
+    "initial": [
+      1,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-139.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "125cfd8570614103504e62b41df2e11662576e2bb582e8d51b5d67556397eb56",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-140",
+    "initial": [
+      3,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-140.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "3d47296c43e1924937c954562322b59596bc7c5f9a08602cf4782cf67b547936",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-141",
+    "initial": [
+      1,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-141.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "a6f063d87bee655592cf90bebef8e09fc08cfdeebea3ccbaa05cfbf2a8fa2c29",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-142",
+    "initial": [
+      3,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-142.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "83549cf14094193c60a897f455cdaf3eed18dce55c14c6952b50a13ad9db0c3b",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": true,
+    "id": "case-143",
+    "initial": [
+      1,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-143.als",
+    "privateGoal": [
+      3,
+      3,
+      0
+    ],
+    "sourceHash": "13a2f50676796a9c927143f06605855f0c9ec7c6f2295b60cb4eb318a1168a0d",
+    "split": "train",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-144",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-144.als",
+    "privateGoal": [
+      0,
+      1,
+      1
+    ],
+    "sourceHash": "96df5b12bc51c065656c91a7e5301dae3a3ab5d1b0d19ac633e7d1dd3395f134",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-145",
+    "initial": [
+      3,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-145.als",
+    "privateGoal": [
+      0,
+      1,
+      1
+    ],
+    "sourceHash": "c8c13e3508aa6ea79ea60fbdac83f71db126323db61d8f4500df1be46510faa6",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-146",
+    "initial": [
+      3,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-146.als",
+    "privateGoal": [
+      0,
+      1,
+      1
+    ],
+    "sourceHash": "1fbed638f176d1dcafc01c160c22e193eeb795d9b8461560be5043f85a483439",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-147",
+    "initial": [
+      0,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-147.als",
+    "privateGoal": [
+      0,
+      1,
+      1
+    ],
+    "sourceHash": "ca2373b04c47642654535ff41dc8ed300cae59f9db0ae43be3059ec3e4c283ba",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-148",
+    "initial": [
+      3,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-148.als",
+    "privateGoal": [
+      1,
+      0,
+      1
+    ],
+    "sourceHash": "1b8bc3d398c0dd9bb638988e07dbecba3e57391de7bd9c376d4ea51af308f3b2",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-149",
+    "initial": [
+      1,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-149.als",
+    "privateGoal": [
+      1,
+      0,
+      1
+    ],
+    "sourceHash": "a58208d01e4ac896b6f60ad3ea0542f0d624b94f8b2e88b60937b8d52186149b",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-150",
+    "initial": [
+      0,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-150.als",
+    "privateGoal": [
+      1,
+      0,
+      1
+    ],
+    "sourceHash": "204f4a4b032b73ebf31ec42a4e2db27bf47f65432cde950671d08bb6d284ba45",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-151",
+    "initial": [
+      2,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-151.als",
+    "privateGoal": [
+      1,
+      0,
+      1
+    ],
+    "sourceHash": "5b639b5a588979f8371190b6cc58bdcd92777f4c6c1067dafa7f5af3f44d67fd",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-152",
+    "initial": [
+      3,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-152.als",
+    "privateGoal": [
+      2,
+      2,
+      3
+    ],
+    "sourceHash": "391ce7d2e357325150cccbcf1929310c6d3909eb468b8bd88cd4f766e411ef7c",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-153",
+    "initial": [
+      0,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-153.als",
+    "privateGoal": [
+      2,
+      2,
+      3
+    ],
+    "sourceHash": "f552b81f5571526ec395ff7ff4f43d5d45979914cb34e940ff43cb59926daf8d",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-154",
+    "initial": [
+      2,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-154.als",
+    "privateGoal": [
+      2,
+      2,
+      3
+    ],
+    "sourceHash": "e62618d054af43ee2d1eb544a61be0366b892b6566c7168236494e05b11f3b38",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-155",
+    "initial": [
+      2,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-155.als",
+    "privateGoal": [
+      2,
+      2,
+      3
+    ],
+    "sourceHash": "2acf294fe46cfaf255106bcaeeb56197f935b5fe133ab37e97e5328b9cc89a95",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-156",
+    "initial": [
+      2,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-156.als",
+    "privateGoal": [
+      3,
+      2,
+      2
+    ],
+    "sourceHash": "ab836663b96b4fdbde7951083dac9355608f21a94c310305cade56f230e64d4e",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-157",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-157.als",
+    "privateGoal": [
+      3,
+      2,
+      2
+    ],
+    "sourceHash": "e7e724213782ee4be061fd181fbed768772987dcda54cc0f4ed50aebd11117a2",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-158",
+    "initial": [
+      1,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-158.als",
+    "privateGoal": [
+      3,
+      2,
+      2
+    ],
+    "sourceHash": "a1454a60d9be5f4d5a5947ee8ac3497897abefdf9ec1ef13ab850aa42a5df8d3",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-159",
+    "initial": [
+      1,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-159.als",
+    "privateGoal": [
+      3,
+      2,
+      2
+    ],
+    "sourceHash": "845862ea7a6f9ee76339bd7b49600eec0092745284787d26b0e6320ba2f95cf3",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-160",
+    "initial": [
+      1,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-160.als",
+    "privateGoal": [
+      1,
+      2,
+      0
+    ],
+    "sourceHash": "c8c435d17ddf2f93a1f6c84e51219711c84c1e329009cb689eda400c3ad6552a",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-161",
+    "initial": [
+      0,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-161.als",
+    "privateGoal": [
+      1,
+      2,
+      0
+    ],
+    "sourceHash": "f816b248eafec686c73ad0724410120970edfe78002a1fb4d14be8806f65d6ca",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-162",
+    "initial": [
+      1,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-162.als",
+    "privateGoal": [
+      1,
+      2,
+      0
+    ],
+    "sourceHash": "2e877e5657a0fe724b401d0a20d649b8e0803d869fe1d860af2905ba78851b3f",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-163",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-163.als",
+    "privateGoal": [
+      1,
+      2,
+      0
+    ],
+    "sourceHash": "331e99082e25518e386e8db8e6101f669014578d3c95a71af3cd9414e81960e2",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-164",
+    "initial": [
+      0,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-164.als",
+    "privateGoal": [
+      2,
+      0,
+      1
+    ],
+    "sourceHash": "7526462d91dc4575f5ed3192bfdb49385bebed7d5c5cbae6df748247ee4bbbd8",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-165",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-165.als",
+    "privateGoal": [
+      2,
+      0,
+      1
+    ],
+    "sourceHash": "b3795a304e6b5424c69de7acf913b44a5b2b90b0c9029ecf6dc79b602cc0c8ad",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-166",
+    "initial": [
+      2,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-166.als",
+    "privateGoal": [
+      2,
+      0,
+      1
+    ],
+    "sourceHash": "b8956663a5c4aa575d302559303c660d321e7e312f7d24de81d9e9ccdde993d6",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-167",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-167.als",
+    "privateGoal": [
+      2,
+      0,
+      1
+    ],
+    "sourceHash": "58847dc23944f95c8008ac6a16fe0f50ff3add81f5dd0ce25944839664954e45",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-168",
+    "initial": [
+      0,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-168.als",
+    "privateGoal": [
+      3,
+      2,
+      0
+    ],
+    "sourceHash": "1ca4996ac708f888911dfe757b04b013272068c97486ab84ff2d9c06aec1dc62",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-169",
+    "initial": [
+      0,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-169.als",
+    "privateGoal": [
+      3,
+      2,
+      0
+    ],
+    "sourceHash": "36867cb6c5259f7c5e841c07bd4761da4728cdbc43d08043a74f33cb32b9a7fe",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-170",
+    "initial": [
+      2,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-170.als",
+    "privateGoal": [
+      3,
+      2,
+      0
+    ],
+    "sourceHash": "490ecd4858d809c5fd51a6b02110e5cc35da5bfc95cf29b65d28f3efae4a61c5",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-171",
+    "initial": [
+      2,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-171.als",
+    "privateGoal": [
+      3,
+      2,
+      0
+    ],
+    "sourceHash": "7b8c9f936416caaeaafc8ffd4490dafdf418020c08ee02220a5a8e49e97c37a8",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-172",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-172.als",
+    "privateGoal": [
+      2,
+      3,
+      0
+    ],
+    "sourceHash": "a9d0fbd358ed2914226a287974d27e97837c5e1d425944c6a162d2fd4474887c",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-173",
+    "initial": [
+      1,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-173.als",
+    "privateGoal": [
+      2,
+      3,
+      0
+    ],
+    "sourceHash": "df92c5b6fa4d9ac2c5917ddf92e046a44d4ae578cf294817b06329b072e930d9",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-174",
+    "initial": [
+      1,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-174.als",
+    "privateGoal": [
+      2,
+      3,
+      0
+    ],
+    "sourceHash": "605bc11c37343ebafa77c1ee3a68e1e7f3befcc3ed928adc741bda34a93a44e1",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-175",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-175.als",
+    "privateGoal": [
+      2,
+      3,
+      0
+    ],
+    "sourceHash": "5d720a1c67f97fbb5e236169d6a3bceb5b584edbc4a5cef1a8ea3558f2901786",
+    "split": "validation",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-176",
+    "initial": [
+      2,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-176.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "1e8ff103d8efd5382e7c93ce12de0c103980915dead6990cd52624a15260d98e",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-177",
+    "initial": [
+      2,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-177.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "65a651a2ee19c729c927f0a82bcfe843c731fce1ae700db4ce1cb0a7af19482e",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-178",
+    "initial": [
+      2,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-178.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "fb5d18703ecb21ee6292f6ef418e74d1b41a27a314caf4f8afa455e602f39e84",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-179",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-179.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "6359f6ef732d825cfbcdf707eadb1de1e12a692a82baef9f834ec8b56f31f9d8",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-180",
+    "initial": [
+      1,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-180.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "18dda749af409f305105ca711fd39118c11919b5891f1b685ba650904b4fd604",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-181",
+    "initial": [
+      2,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-181.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "2a76b2d9f6710d7484888415a1e316b7f757c2f03f09250cf978ea60b5f0fc76",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-182",
+    "initial": [
+      3,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-182.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "8c5482ae8776be54cb2b50360e457d4f154825c1e20d46a30c8df1cd0f1e5f50",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-183",
+    "initial": [
+      2,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-183.als",
+    "privateGoal": [
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "bcd9e843853be2f2622f868985181a398a58ca12cc7c88205bfd51f6052c78c9",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-184",
+    "initial": [
+      0,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-184.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "26b82b3b152941aa7b7ad977ac3cbb61aabc00332db84d839c84d1f73b377109",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-185",
+    "initial": [
+      1,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-185.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "6d0a0569d1ca0e075779b777be65105bd51203a489282bb145884e270af167e0",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-186",
+    "initial": [
+      2,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-186.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "c503c8e024ac3291a63c0cf03ceab586df8f1dda173deeb933b492384d25950b",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-187",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-187.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "19a60d8ecc36a08b7a1616680d40865ebf93b9f344b088911f63abae84b5d9ad",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-188",
+    "initial": [
+      3,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-188.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "74a47ad7212c07ad3a807d711ad6e7e6ebfa754f88d7f63bfc8217ff3816f507",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-189",
+    "initial": [
+      2,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-189.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "48e450da9f17a2e343a2db9d87197b2556b6a0713cd7460eb06e518d5caa7702",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-190",
+    "initial": [
+      1,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-190.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "50640dd673d1fdf6beb8e73665b3b683832e56a414f65f594e43cbc7ca69240a",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-191",
+    "initial": [
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-191.als",
+    "privateGoal": [
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "ee62bbdaae7d68c2577f55bfdfebcb8ae6439ec7ca49dd6c6e256c580a6612cd",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-192",
+    "initial": [
+      1,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-192.als",
+    "privateGoal": [
+      3,
+      2,
+      3
+    ],
+    "sourceHash": "9505bc40caeace8e16bc7bf6e68b42743bab372dcde42400bba497d3f3e51402",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-193",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-193.als",
+    "privateGoal": [
+      3,
+      2,
+      3
+    ],
+    "sourceHash": "c3b350a8f22cd0bca3e23aff8ee9ba684bc9dc6921a6c1eb6757702013a32327",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-194",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-194.als",
+    "privateGoal": [
+      3,
+      2,
+      3
+    ],
+    "sourceHash": "cebd32e4afa76aae0f700f0fe72b5379dd553ea96008a9d14169835fea533486",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-195",
+    "initial": [
+      2,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-195.als",
+    "privateGoal": [
+      3,
+      2,
+      3
+    ],
+    "sourceHash": "f86d7a881d06190ac7b277849b2aefe5a3364494c60e9a8e71eb2021b012d1ed",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-196",
+    "initial": [
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-196.als",
+    "privateGoal": [
+      3,
+      3,
+      2
+    ],
+    "sourceHash": "7981d59456105fa3728ec7b93c94c030f81c963605a1ca27c719afbdaa2cc127",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-197",
+    "initial": [
+      3,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-197.als",
+    "privateGoal": [
+      3,
+      3,
+      2
+    ],
+    "sourceHash": "7448f5972e4532a91de87ba86056a8025a0e5b38fc62c58d4b5c4193c1962049",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-198",
+    "initial": [
+      0,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-198.als",
+    "privateGoal": [
+      3,
+      3,
+      2
+    ],
+    "sourceHash": "efaf1d428db48e14bae6cd34a6a3e424279740bc00694e657414bfd9af84cd8a",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-199",
+    "initial": [
+      0,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-199.als",
+    "privateGoal": [
+      3,
+      3,
+      2
+    ],
+    "sourceHash": "09f8a2abcad2a4ac07d9279cd857120e00425966c5eac42d4d04d96283d7ca02",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-200",
+    "initial": [
+      2,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-200.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "9b31e4c430126c078bd379c299e3a1b3e963538531cbc2968ffa237dbda04be0",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-201",
+    "initial": [
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-201.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "c36314385404aa4d561fa4a533323d9c6330ea9ae551c0bb0c855c0885c1768c",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-202",
+    "initial": [
+      2,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-202.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "e803204c30d641f50cb31019848cd477228afe73811f3197b4789f71c1f48523",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-203",
+    "initial": [
+      3,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-203.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "168ff3b8b6aa84916536791200080f22c802fd25546172b94d99a5fc4d030eb0",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-204",
+    "initial": [
+      0,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-204.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "8b30c4cad65c2a3c35e403f48bd7d869d093515eae652ea267817f47fab725c6",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-205",
+    "initial": [
+      2,
+      0,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-205.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "675df29f89c5b6cec8c2698d6122685c53f646ba70e0893785a4a2d159c6870b",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-206",
+    "initial": [
+      2,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-206.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "d42144c6ea98ce5adafa21d52fa190e3184e035b112760a68d74d49699037101",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 3,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-207",
+    "initial": [
+      0,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-207.als",
+    "privateGoal": [
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "5c84eb5af077fde74901ab5aa7680372340bcd6eca88b894878eb391484b7ec0",
+    "split": "test",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-208",
+    "initial": [
+      2,
+      3,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-208.als",
+    "privateGoal": [
+      2,
+      2,
+      0,
+      0
+    ],
+    "sourceHash": "14b2df983ae8955eaa1baee5d929c6940c09d5c8a3e602bee6d8b92a808a2d6b",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-209",
+    "initial": [
+      0,
+      3,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-209.als",
+    "privateGoal": [
+      2,
+      0,
+      2,
+      0
+    ],
+    "sourceHash": "58f2f1d78efe0d2febf4fa488d1dbf07695edc12b5958d328ea8a7d710e362ec",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-210",
+    "initial": [
+      3,
+      2,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-210.als",
+    "privateGoal": [
+      2,
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "996a251507ddce0d90175d96144ac57368e676454ab5c8e8c4b4c4f3cb2c0c76",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-211",
+    "initial": [
+      0,
+      1,
+      2,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-211.als",
+    "privateGoal": [
+      2,
+      0,
+      2,
+      2
+    ],
+    "sourceHash": "90735f5b98cc79117f68972e0056ad2182ecd148da62cf822be63b2a3db5b66d",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-212",
+    "initial": [
+      3,
+      2,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-212.als",
+    "privateGoal": [
+      3,
+      0,
+      1,
+      2
+    ],
+    "sourceHash": "b339541c187fae562cfebdfe112ed1bcb68e69be51da04b09741f53864ea44f3",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-213",
+    "initial": [
+      2,
+      0,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-213.als",
+    "privateGoal": [
+      2,
+      0,
+      1,
+      3
+    ],
+    "sourceHash": "da06adb650ea816435b7bdae647ecfdc305624431525ba7bbbce09ce6b974ec7",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-214",
+    "initial": [
+      3,
+      2,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-214.als",
+    "privateGoal": [
+      2,
+      0,
+      1,
+      1
+    ],
+    "sourceHash": "265fe541282b461399fe6949b5cf21dd524eede0bed1717829e7aa01765559ec",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-215",
+    "initial": [
+      3,
+      3,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-215.als",
+    "privateGoal": [
+      0,
+      1,
+      1,
+      2
+    ],
+    "sourceHash": "630eaa858f78ac5b6a6cf13a07376c5beaf9c2ca3993627236f7026fae64656b",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-216",
+    "initial": [
+      2,
+      1,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-216.als",
+    "privateGoal": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "a495b39b353d67667984a0bc00b321039604b9d5cc40ec6ef7c2624c94232897",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-217",
+    "initial": [
+      1,
+      3,
+      1,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-217.als",
+    "privateGoal": [
+      0,
+      0,
+      1,
+      0
+    ],
+    "sourceHash": "e73ef46d00ee3a1ff5f2975c8fd92b73a3231103644bafe1183baee3899660c6",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-218",
+    "initial": [
+      0,
+      2,
+      1,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-218.als",
+    "privateGoal": [
+      2,
+      0,
+      2,
+      3
+    ],
+    "sourceHash": "2ae0fce0b0c26840f741932ef0abb21338bde9846f2fa49cc104fce79237f51a",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-219",
+    "initial": [
+      2,
+      3,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-219.als",
+    "privateGoal": [
+      2,
+      2,
+      3,
+      0
+    ],
+    "sourceHash": "82ee21d422a0c911c23af56d4b8bcc0e1055b602c2f6b0983380d2e834287d7a",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-220",
+    "initial": [
+      1,
+      2,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-220.als",
+    "privateGoal": [
+      3,
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "82ea53fa28911082297c319dbe8334814b22989b5972f336ea8d59a1d1f5dc34",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-221",
+    "initial": [
+      0,
+      0,
+      2,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-221.als",
+    "privateGoal": [
+      3,
+      3,
+      3,
+      3
+    ],
+    "sourceHash": "035d07634310d3b6f77796cca13ef7a80b8282dff23132d41becbc44cd887abf",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-222",
+    "initial": [
+      1,
+      3,
+      0,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-222.als",
+    "privateGoal": [
+      3,
+      1,
+      1,
+      0
+    ],
+    "sourceHash": "cb2bf822f8ee434261a7f57933c78f7eef66bdb9b8c2b91fa9c919b939685ae4",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-223",
+    "initial": [
+      1,
+      1,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-223.als",
+    "privateGoal": [
+      1,
+      1,
+      3,
+      0
+    ],
+    "sourceHash": "0630a976efbf59d31e50266e2af657a210c34c3bece4851dca4ed023d98452b2",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-224",
+    "initial": [
+      1,
+      1,
+      3,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-224.als",
+    "privateGoal": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "02c4ac3c8201713d358c054a9d52331a8b6912d3564224e1fe8e9611396b8ddf",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-225",
+    "initial": [
+      2,
+      3,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-225.als",
+    "privateGoal": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "sourceHash": "6ad44e55a2242502a41ca22f1b8f70b40ddaa18fe39376aaaf9940fa3d63a7cd",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-226",
+    "initial": [
+      3,
+      3,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-226.als",
+    "privateGoal": [
+      2,
+      3,
+      2,
+      2
+    ],
+    "sourceHash": "997594ce24647655a2f680b545e25a83f8344ff2fafb0fa29db35b0b1d2afa1c",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-227",
+    "initial": [
+      1,
+      3,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-227.als",
+    "privateGoal": [
+      3,
+      2,
+      2,
+      2
+    ],
+    "sourceHash": "db36b865b5a5d14f48001ac4100837712fca2b0588b8815b8b0ea8eb264e2eda",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-228",
+    "initial": [
+      3,
+      1,
+      1,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-228.als",
+    "privateGoal": [
+      1,
+      2,
+      2,
+      1
+    ],
+    "sourceHash": "41d5ed7de9093a3853b78a05e15302b396fe2696e19a304b2d72b328dcfa3f31",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-229",
+    "initial": [
+      1,
+      1,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-229.als",
+    "privateGoal": [
+      1,
+      2,
+      1,
+      2
+    ],
+    "sourceHash": "f46dfb6ce663976f5cc4dfe3c495e1f3ceaf52da0005f94cffeb989048a03082",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-230",
+    "initial": [
+      2,
+      1,
+      1,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-230.als",
+    "privateGoal": [
+      3,
+      2,
+      1,
+      3
+    ],
+    "sourceHash": "61907bb78e2bdacc7191785b90f21a12f79a35a9463cad62f5e68ece63da987c",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-231",
+    "initial": [
+      2,
+      3,
+      2,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-231.als",
+    "privateGoal": [
+      1,
+      2,
+      3,
+      3
+    ],
+    "sourceHash": "dbfd14955ff441beffeca80c8bcca3c5876d74f1eee61fb47508347f668719c5",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-232",
+    "initial": [
+      0,
+      3,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-232.als",
+    "privateGoal": [
+      3,
+      3,
+      0,
+      2
+    ],
+    "sourceHash": "2292c2a5fdfc0f766ac634020826edce171a6f4cf18f721e85f46ba95b961026",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-233",
+    "initial": [
+      0,
+      3,
+      3,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-233.als",
+    "privateGoal": [
+      0,
+      3,
+      3,
+      2
+    ],
+    "sourceHash": "3cfdbfbeb93204192978ae783285d6cc70eb3e1c36515aa875d203164e1bd926",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-234",
+    "initial": [
+      3,
+      1,
+      3,
+      0
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-234.als",
+    "privateGoal": [
+      3,
+      3,
+      1,
+      1
+    ],
+    "sourceHash": "9781925ba8543fb1b610f860ac5f29a1fbe9c2509f712c4164f00874c91efe87",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-235",
+    "initial": [
+      0,
+      2,
+      0,
+      1
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-235.als",
+    "privateGoal": [
+      1,
+      3,
+      3,
+      1
+    ],
+    "sourceHash": "64af2a57113c141b156ac3bdb7d0d68fcb7068614b2e60eb839cd74393b33562",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-236",
+    "initial": [
+      2,
+      2,
+      0,
+      3
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-236.als",
+    "privateGoal": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "c41743ab548edd42688ea7cad600461e68d355ab201e81db9d125bc30ea7b510",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-237",
+    "initial": [
+      1,
+      2,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-237.als",
+    "privateGoal": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "sourceHash": "037295320c94dd4ac67b2dd6bffbcb2fd14530a0f726b93141d8be5c9a5e663b",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "AND",
+    "explore": false,
+    "id": "case-238",
+    "initial": [
+      3,
+      0,
+      2,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-238.als",
+    "privateGoal": [
+      3,
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "1d3fdcf582b1981b7dd87d551f41bf9a95cd68ca6cd4c2554b4f27762f54b4dc",
+    "split": "arity4",
+    "target": "candidate"
+  },
+  {
+    "arity": 4,
+    "command": 0,
+    "connective": "OR",
+    "explore": false,
+    "id": "case-239",
+    "initial": [
+      0,
+      0,
+      3,
+      2
+    ],
+    "oracle": "oracle",
+    "path": "/tmp/acgn-multistep-scale-20261004-v1/case-239.als",
+    "privateGoal": [
+      3,
+      0,
+      0,
+      3
+    ],
+    "sourceHash": "a905aebb69c016b1f0971704cf4e993f4286e288bd00a10702fc49a8d3534709",
+    "split": "arity4",
+    "target": "candidate"
+  }
+]

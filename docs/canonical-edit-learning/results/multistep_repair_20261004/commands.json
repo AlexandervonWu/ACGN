@@ -1,0 +1,52 @@
+[
+  {
+    "command": [
+      "lean",
+      "-o",
+      "/tmp/acgn-multistep-20261004-v1/proof-1/MultistepRepair.olean",
+      "/home/augustus/ACGN/docs/canonical-edit-learning/formal/MultistepRepair.lean"
+    ],
+    "exitCode": 0,
+    "log": "proof-1.log"
+  },
+  {
+    "command": [
+      "lean",
+      "-o",
+      "/tmp/acgn-multistep-20261004-v1/proof-2/MultistepRepair.olean",
+      "/home/augustus/ACGN/docs/canonical-edit-learning/formal/MultistepRepair.lean"
+    ],
+    "exitCode": 0,
+    "log": "proof-2.log"
+  },
+  {
+    "command": [
+      "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+      "-m",
+      "experiments.feedback_repair.local_preflight",
+      "/tmp/acgn-multistep-20261004-v1/base"
+    ],
+    "exitCode": 0,
+    "log": "base-preflight.log"
+  },
+  {
+    "command": [
+      "lean",
+      "/home/augustus/ACGN/docs/canonical-edit-learning/formal/ContextualRepair.lean"
+    ],
+    "exitCode": 0,
+    "log": "contextual-proof.log"
+  },
+  {
+    "command": [
+      "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+      "-m",
+      "unittest",
+      "experiments.feedback_repair.test_contextual",
+      "experiments.feedback_repair.test_multistep",
+      "-v"
+    ],
+    "exitCode": 0,
+    "log": "contextual-multistep-tests.log"
+  }
+]

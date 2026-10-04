@@ -1,0 +1,461 @@
+{
+  "additionalRuntimeTests": 21,
+  "baselines": [
+    {
+      "mode": "search",
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.5,
+          "multistepSolved": 4,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.0,
+          "multistepSolved": 6,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        }
+      },
+      "seed": 17
+    },
+    {
+      "mode": "random",
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.625,
+          "multistepSolved": 1,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 4.0,
+          "multistepSolved": 2,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        }
+      },
+      "seed": 17
+    },
+    {
+      "mode": "random",
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 1,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 4.0,
+          "multistepSolved": 0,
+          "queryLimit": 8,
+          "solved": 0,
+          "tasks": 8
+        }
+      },
+      "seed": 29
+    },
+    {
+      "mode": "random",
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.875,
+          "multistepSolved": 1,
+          "queryLimit": 7,
+          "solved": 1,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 0.0,
+          "multistepSolved": 0,
+          "queryLimit": 0,
+          "solved": 0,
+          "tasks": 0
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.375,
+          "multistepSolved": 1,
+          "queryLimit": 5,
+          "solved": 3,
+          "tasks": 8
+        }
+      },
+      "seed": 43
+    }
+  ],
+  "config": {
+    "layers": 2,
+    "width": 48
+  },
+  "contract": "multistep-contextual-repair-v1",
+  "corpus": "NOT_RUN",
+  "decisionBudget": 256,
+  "device": "cpu",
+  "dirty": true,
+  "generalizationClaim": "Synthetic heldout compositions only",
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "models": [
+    {
+      "checkpointHash": "6f218d440f7b17716a2177ea3e5fcdf84f22c36315eb612fa575873c4e5e1050",
+      "mode": "persistent",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.625,
+          "multistepSolved": 1,
+          "queryLimit": 2,
+          "solved": 6,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.7916666666666665,
+          "multistepSolved": 17,
+          "queryLimit": 0,
+          "solved": 24,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.0,
+          "multistepSolved": 3,
+          "queryLimit": 2,
+          "solved": 6,
+          "tasks": 8
+        }
+      },
+      "seed": 17,
+      "teacherChoiceAccuracy": 1.0
+    },
+    {
+      "checkpointHash": "998cb56db06650a53f5f658bc20149bea2e7cccbdf5807ff752e7b079c4bed02",
+      "mode": "reset",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.625,
+          "multistepSolved": 2,
+          "queryLimit": 1,
+          "solved": 7,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.875,
+          "multistepSolved": 18,
+          "queryLimit": 0,
+          "solved": 24,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.0,
+          "multistepSolved": 3,
+          "queryLimit": 2,
+          "solved": 6,
+          "tasks": 8
+        }
+      },
+      "seed": 17,
+      "teacherChoiceAccuracy": 0.9767441860465116
+    },
+    {
+      "checkpointHash": "12e449a99dd633e7619a39043337e30ec970dc95cc769ecf232c9b3a49bcb720",
+      "mode": "blind",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 0,
+          "queryLimit": 7,
+          "solved": 1,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 3.8333333333333335,
+          "multistepSolved": 5,
+          "queryLimit": 18,
+          "solved": 6,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.5,
+          "multistepSolved": 0,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        }
+      },
+      "seed": 17,
+      "teacherChoiceAccuracy": 0.3023255813953488
+    },
+    {
+      "checkpointHash": "da90d36391a1caad1bc7a54e08b076422e9a3d67c380f10f4235094b6c1200bf",
+      "mode": "persistent",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.75,
+          "multistepSolved": 3,
+          "queryLimit": 1,
+          "solved": 7,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.7916666666666665,
+          "multistepSolved": 16,
+          "queryLimit": 1,
+          "solved": 23,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.25,
+          "multistepSolved": 6,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        }
+      },
+      "seed": 29,
+      "teacherChoiceAccuracy": 0.9767441860465116
+    },
+    {
+      "checkpointHash": "e77e87fd4a95cfe3542c83d60d8d1e9b8f50f3c9aedbd91aa564b246a55529a4",
+      "mode": "reset",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.625,
+          "multistepSolved": 2,
+          "queryLimit": 1,
+          "solved": 7,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.875,
+          "multistepSolved": 16,
+          "queryLimit": 1,
+          "solved": 23,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.25,
+          "multistepSolved": 5,
+          "queryLimit": 1,
+          "solved": 7,
+          "tasks": 8
+        }
+      },
+      "seed": 29,
+      "teacherChoiceAccuracy": 0.9302325581395349
+    },
+    {
+      "checkpointHash": "fc1891584b04ab7aa8a1c13a99fc6da56259c6522876da27fd8eba433de77210",
+      "mode": "blind",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 1,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 4,
+          "queryLimit": 18,
+          "solved": 6,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.5,
+          "multistepSolved": 0,
+          "queryLimit": 6,
+          "solved": 2,
+          "tasks": 8
+        }
+      },
+      "seed": 29,
+      "teacherChoiceAccuracy": 0.27906976744186046
+    },
+    {
+      "checkpointHash": "7ce883f1dd02c3274a3459e8b3b804e94e7225e8ccbf117707d06fb8f9b99a00",
+      "mode": "persistent",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.625,
+          "multistepSolved": 4,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.875,
+          "multistepSolved": 18,
+          "queryLimit": 0,
+          "solved": 24,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.25,
+          "multistepSolved": 5,
+          "queryLimit": 1,
+          "solved": 7,
+          "tasks": 8
+        }
+      },
+      "seed": 43,
+      "teacherChoiceAccuracy": 0.9767441860465116
+    },
+    {
+      "checkpointHash": "a6af71b91d14f7d6183fce29d2834899a6fca98192403278c1851688cd4502dd",
+      "mode": "reset",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 2.25,
+          "multistepSolved": 2,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 2.875,
+          "multistepSolved": 17,
+          "queryLimit": 1,
+          "solved": 23,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 2.875,
+          "multistepSolved": 5,
+          "queryLimit": 0,
+          "solved": 8,
+          "tasks": 8
+        }
+      },
+      "seed": 43,
+      "teacherChoiceAccuracy": 0.9767441860465116
+    },
+    {
+      "checkpointHash": "c7775fb90657d89f5ae635f22399f4b35269b3053823e7ba7f08580ef46db983",
+      "mode": "blind",
+      "parameters": 274805,
+      "results": {
+        "test": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 0,
+          "queryLimit": 7,
+          "solved": 1,
+          "tasks": 8
+        },
+        "train": {
+          "errors": 0,
+          "meanQueries": 3.75,
+          "multistepSolved": 2,
+          "queryLimit": 20,
+          "solved": 4,
+          "tasks": 24
+        },
+        "validation": {
+          "errors": 0,
+          "meanQueries": 3.5,
+          "multistepSolved": 2,
+          "queryLimit": 4,
+          "solved": 4,
+          "tasks": 8
+        }
+      },
+      "seed": 43,
+      "teacherChoiceAccuracy": 0.18604651162790697
+    }
+  ],
+  "newLeanDeclarations": 15,
+  "queryBudget": 4,
+  "scope": "40 synthetic tasks; target-composition-disjoint, not corpus performance",
+  "seconds": 307.59077490100026,
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "status": "STUDY_COMPLETE",
+  "teacher": {
+    "errors": 0,
+    "meanQueries": 2.7916666666666665,
+    "multistepSolved": 17,
+    "queryLimit": 0,
+    "solved": 24,
+    "tasks": 24
+  },
+  "teacherPlanChoices": 43,
+  "testTasks": 8,
+  "torch": "2.14.1+cu130",
+  "trainTasks": 24,
+  "trainingEpisodesWithFailedAttempt": 17,
+  "updates": 400,
+  "validationTasks": 8
+}

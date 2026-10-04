@@ -952,6 +952,7 @@ asset candidate; its SHA-256 is
 
 ## Further Documentation
 
+- [Iterative repair learning: search, model structure, scaling results and failure modes](docs/repair-search/MULTISTEP-ITERATION-ANALYSIS.md)
 - [CanDis architecture, APIs, runners, and generated outputs](documentation/README.md)
 - [Ordered rewrite system and side conditions](documentation/REWRITE_SYSTEM.md)
 - [Phase I exact-engine integration, invariants, faults, and reproduction](docs/theory-phase-i-artifact-integration.md)

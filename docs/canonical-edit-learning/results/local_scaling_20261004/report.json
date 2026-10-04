@@ -1,0 +1,706 @@
+{
+  "aggregationRounds": 2,
+  "batchDecisions": 8,
+  "contract": "local-feedback-repair-v1",
+  "controls": [
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 61,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "queriesIssued": 61,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 192,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 55,
+      "queriesIssued": 55,
+      "rejected": 21,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 61,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "queriesIssued": 61,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 150,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 51,
+      "queriesIssued": 51,
+      "rejected": 15,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 61,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "queriesIssued": 61,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 0,
+      "decisionsIssued": 183,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 58,
+      "queriesIssued": 58,
+      "rejected": 14,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89
+    }
+  ],
+  "data": {
+    "contract": "local-feedback-repair-v1",
+    "eligible": {
+      "evaluation": 89,
+      "train": 474,
+      "validation": 62
+    },
+    "preflight": "/tmp/acgn-local-scale-preflight-20261004-v2",
+    "preflightHash": "410aeb5d57d219a0d2ad9b720383f7366a8b6400682b830ef2f0baa70686ab7f",
+    "preparation": {
+      "DUPLICATE_AST_PAIR": 47,
+      "SOURCE_READY": 625
+    },
+    "questionGroups": {
+      "evaluation": 9,
+      "train": 39,
+      "validation": 8
+    },
+    "schema": "local-feedback-scale-data-v1",
+    "seconds": 296.9726187470078,
+    "selected": {
+      "evaluation": 96,
+      "train": 512,
+      "validation": 64
+    },
+    "status": "FROZEN",
+    "teachers": {
+      "NOT_ADMITTED": 165,
+      "REPLAY_ADMITTED": 309
+    },
+    "trainingDecisions": 4397,
+    "workers": 4
+  },
+  "dataset": "/tmp/acgn-local-scale-data-20261004-v2",
+  "datasetHash": "96e37ec60cd4bc8e6bea9ed12c4a7ee0059f0bf8d6724e49ebaf1faf7b5a0c55",
+  "decisionBudget": 256,
+  "dirty": true,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "initialUpdates": 3000,
+  "laterStages": {
+    "500M": "NOT_RUN",
+    "Qwen": "NOT_RUN"
+  },
+  "pairedQuestionBootstrap": {
+    "clusters": 9,
+    "difference": 0.0,
+    "lower": 0.0,
+    "resamples": 10000,
+    "seed": 99173,
+    "upper": 0.0
+  },
+  "queryBudget": 4,
+  "replicateTraining": [
+    {
+      "clippedUpdates": 4999,
+      "config": {
+        "layers": 4,
+        "name": "mlp-256x4",
+        "variant": "mlp",
+        "width": 256
+      },
+      "encoderDelta": 7.960925579071045,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2356376,
+      "parameters": 6008833,
+      "peakCudaAllocatedBytes": 267180032,
+      "peakCudaReservedBytes": 308281344,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 1,
+            "decisionsIssued": 501,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 24,
+            "queriesIssued": 24,
+            "rejected": 15,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 7,
+            "decisionsIssued": 2170,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 33,
+            "queriesIssued": 33,
+            "rejected": 21,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 681.5347654680081,
+      "seed": 29,
+      "updates": 5000
+    },
+    {
+      "clippedUpdates": 5000,
+      "config": {
+        "layers": 4,
+        "name": "mlp-256x4",
+        "variant": "mlp",
+        "width": 256
+      },
+      "encoderDelta": 8.382822036743164,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2356376,
+      "parameters": 6008833,
+      "peakCudaAllocatedBytes": 273143808,
+      "peakCudaReservedBytes": 306184192,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 11,
+            "decisionsIssued": 3069,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 29,
+            "queriesIssued": 29,
+            "rejected": 8,
+            "repairs": 0,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 1,
+            "decisionsIssued": 652,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 39,
+            "queriesIssued": 39,
+            "rejected": 250,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 741.054912476,
+      "seed": 43,
+      "updates": 5000
+    }
+  ],
+  "roundUpdates": 1000,
+  "scalingAuthorization": "explicit user-requested diagnostic",
+  "schema": "local-feedback-scaling-v1",
+  "screening": [
+    {
+      "clippedUpdates": 4990,
+      "config": {
+        "layers": 4,
+        "name": "gin-256x4",
+        "variant": "gin",
+        "width": 256
+      },
+      "directory": "gin-256x4-17",
+      "encoderDelta": 7.7904953956604,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2283768,
+      "order": 0,
+      "parameters": 6303749,
+      "peakCudaAllocatedBytes": 316470272,
+      "peakCudaReservedBytes": 358612992,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 1,
+            "decisionsIssued": 547,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 27,
+            "queriesIssued": 27,
+            "rejected": 17,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 5,
+            "decisionsIssued": 2017,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 35,
+            "queriesIssued": 35,
+            "rejected": 25,
+            "repairs": 3,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 743.0216654619871,
+      "seed": 17,
+      "updates": 5000,
+      "validation": {
+        "decisionExhausted": 0,
+        "decisionsIssued": 696,
+        "errorKinds": {
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+        },
+        "errors": 29,
+        "queries": 66,
+        "queriesIssued": 66,
+        "rejected": 35,
+        "repairs": 0,
+        "tasks": 62
+      }
+    },
+    {
+      "clippedUpdates": 4997,
+      "config": {
+        "layers": 6,
+        "name": "gin-512x6",
+        "variant": "gin",
+        "width": 512
+      },
+      "directory": "gin-512x6-17",
+      "encoderDelta": 11.086297035217285,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2356376,
+      "order": 1,
+      "parameters": 28244999,
+      "peakCudaAllocatedBytes": 912693760,
+      "peakCudaReservedBytes": 1023410176,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 1,
+            "decisionsIssued": 499,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 39,
+            "queriesIssued": 39,
+            "rejected": 4,
+            "repairs": 0,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 7,
+            "decisionsIssued": 2097,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 32,
+            "queriesIssued": 32,
+            "rejected": 10,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 847.3186188990076,
+      "seed": 17,
+      "updates": 5000,
+      "validation": {
+        "decisionExhausted": 3,
+        "decisionsIssued": 1455,
+        "errorKinds": {
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+        },
+        "errors": 29,
+        "queries": 63,
+        "queriesIssued": 63,
+        "rejected": 27,
+        "repairs": 0,
+        "tasks": 62
+      }
+    },
+    {
+      "clippedUpdates": 4987,
+      "config": {
+        "layers": 4,
+        "name": "gat-256x4",
+        "variant": "gat",
+        "width": 256
+      },
+      "directory": "gat-256x4-17",
+      "encoderDelta": 7.296435832977295,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2356376,
+      "order": 2,
+      "parameters": 6828033,
+      "peakCudaAllocatedBytes": 392735232,
+      "peakCudaReservedBytes": 455081984,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 0,
+            "decisionsIssued": 246,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 31,
+            "queriesIssued": 31,
+            "rejected": 14,
+            "repairs": 2,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 3,
+            "decisionsIssued": 1124,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 36,
+            "queriesIssued": 36,
+            "rejected": 11,
+            "repairs": 5,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 791.5716788599966,
+      "seed": 17,
+      "updates": 5000,
+      "validation": {
+        "decisionExhausted": 0,
+        "decisionsIssued": 651,
+        "errorKinds": {
+          "ValueError: HISTORY_ROW_BUDGET_EXCEEDED": 1,
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+        },
+        "errors": 30,
+        "queries": 63,
+        "queriesIssued": 63,
+        "rejected": 21,
+        "repairs": 0,
+        "tasks": 62
+      }
+    },
+    {
+      "clippedUpdates": 4999,
+      "config": {
+        "layers": 4,
+        "name": "mlp-256x4",
+        "variant": "mlp",
+        "width": 256
+      },
+      "directory": "mlp-256x4-17",
+      "encoderDelta": 8.003605842590332,
+      "finiteNonzeroGradientUpdates": 5000,
+      "hostMaxRssKiB": 2356376,
+      "order": 3,
+      "parameters": 6008833,
+      "peakCudaAllocatedBytes": 267233280,
+      "peakCudaReservedBytes": 308281344,
+      "rounds": [
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 1,
+            "decisionsIssued": 524,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 39,
+            "queriesIssued": 39,
+            "rejected": 7,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 0
+        },
+        {
+          "admission": {
+            "REPLAY_ADMITTED": 40
+          },
+          "newDecisions": 510,
+          "newTrajectories": 40,
+          "rollin": {
+            "decisionExhausted": 12,
+            "decisionsIssued": 3146,
+            "errorKinds": {
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 1,
+              "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 10
+            },
+            "errors": 12,
+            "queries": 28,
+            "queriesIssued": 28,
+            "rejected": 3,
+            "repairs": 1,
+            "tasks": 32
+          },
+          "round": 1
+        }
+      ],
+      "seconds": 732.4112428340013,
+      "seed": 17,
+      "updates": 5000,
+      "validation": {
+        "decisionExhausted": 12,
+        "decisionsIssued": 3440,
+        "errorKinds": {
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+          "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+        },
+        "errors": 29,
+        "queries": 54,
+        "queriesIssued": 54,
+        "rejected": 19,
+        "repairs": 0,
+        "tasks": 62
+      }
+    }
+  ],
+  "seconds": 5188.828102597006,
+  "selection": {
+    "config": {
+      "layers": 4,
+      "name": "mlp-256x4",
+      "variant": "mlp",
+      "width": 256
+    },
+    "datasetHash": "96e37ec60cd4bc8e6bea9ed12c4a7ee0059f0bf8d6724e49ebaf1faf7b5a0c55",
+    "parameters": 6008833,
+    "seed17CheckpointHash": "0d087619b8ff08c648dbdab1002441120f9ee5114d8bb3e90889cf5a293e09bb",
+    "selection": "validation repairs, parameter count, fixed order",
+    "validation": {
+      "decisionExhausted": 12,
+      "decisionsIssued": 3440,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "errors": 29,
+      "queries": 54,
+      "queriesIssued": 54,
+      "rejected": 19,
+      "repairs": 0,
+      "tasks": 62
+    }
+  },
+  "selectionHash": "3ca72946f03a1bfda35a7b81c7cd2b0aec59d89cfe062f2c4a2c1d569de41303",
+  "smallGatePassed": false,
+  "status": "COMPLETE",
+  "teacherDecisions": 4397,
+  "teacherTasks": 309,
+  "testing": [
+    {
+      "decisionExhausted": 16,
+      "decisionsIssued": 5040,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "queries": 106,
+      "queriesIssued": 106,
+      "rejected": 309,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 3,
+      "decisionsIssued": 1646,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "queries": 119,
+      "queriesIssued": 119,
+      "rejected": 265,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89
+    },
+    {
+      "decisionExhausted": 40,
+      "decisionsIssued": 10968,
+      "errorKinds": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "errors": 28,
+      "queries": 82,
+      "queriesIssued": 82,
+      "rejected": 55,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89
+    }
+  ],
+  "torch": "2.14.1+cu130",
+  "workers": 4
+}

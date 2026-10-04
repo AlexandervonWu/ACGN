@@ -1,0 +1,139 @@
+{
+  "status": "AUDIT_PASSED",
+  "sourceHashes": 1112,
+  "preflightOutputHashes": 1036,
+  "datasetOutputHashes": 3391,
+  "studyOutputHashes": 3941,
+  "checkpointChecks": [
+    {
+      "path": "gin-256x4-17/policy-2.pt",
+      "sha256": "92022ab8dfec2c7d26e5229fc554c08893d5c6ec135270233b54904deea872e0",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gin-512x6-17/policy-2.pt",
+      "sha256": "83d366c85d00db6b1ad3506eb0b6583edaaa719043ffb872b7ce2cce6bb3a315",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gat-256x4-17/policy-2.pt",
+      "sha256": "72c445791058a7e19a0ef6953e54cb35d541f4a83f68f7e6340f716d55d4536f",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-256x4-17/policy-2.pt",
+      "sha256": "0d087619b8ff08c648dbdab1002441120f9ee5114d8bb3e90889cf5a293e09bb",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-256x4-29/policy-2.pt",
+      "sha256": "e815c792d455bb8a4f818958d70963570e26db947ced9052666cb31826574d19",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-256x4-43/policy-2.pt",
+      "sha256": "196cec18acfdf3b31cf8ba40e1033a5cfa485036c16e4c5fbd919a7858d021c8",
+      "status": "STRICT_LOAD_FINITE"
+    }
+  ],
+  "aggregationAdmissions": {
+    "REPLAY_ADMITTED": 480
+  },
+  "aggregatedDecisionKinds": {
+    "continuation": 6120
+  },
+  "proofTheorems": 78,
+  "runtimeCheckExecutions": 342,
+  "reporterHash": "0c154b48acb35730824319c91dd1c8a8ee9b19434ce8b7fde75584aa2db7fc12",
+  "initialTeacherErrors": {
+    "ReplayRejected: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 124,
+    "ReplayRejected: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 32,
+    "ReplayRejected: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED": 5,
+    "ReplayRejected: java.lang.IllegalArgumentException: SOURCE_UNREALIZABLE:COMMIT:is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 3,
+    "ReplayRejected: java.lang.IllegalArgumentException: SOURCE_UNREALIZABLE:COMMIT:Type error in /tmp/acgn-repair-virtual.als at line 16 column 13:\nThis cannot be a legal relational join where\nleft hand side is this/Teacher (type = {this/Person})\nright hand side is this/Class (type = {this/Class})\n": 1
+  },
+  "rolloutBehavior": {
+    "gin-256x4-17/validation": {
+      "executed": 33,
+      "noCommittedEdit": 21,
+      "counterexampleStop": 33,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 0,
+      "issuedQueries": {
+        "2": 33
+      }
+    },
+    "gin-512x6-17/validation": {
+      "executed": 33,
+      "noCommittedEdit": 15,
+      "counterexampleStop": 30,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 3,
+      "issuedQueries": {
+        "2": 30,
+        "1": 3
+      }
+    },
+    "gat-256x4-17/validation": {
+      "executed": 32,
+      "noCommittedEdit": 15,
+      "counterexampleStop": 30,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 0,
+      "issuedQueries": {
+        "2": 30,
+        "1": 2
+      }
+    },
+    "mlp-256x4-17/validation": {
+      "executed": 33,
+      "noCommittedEdit": 13,
+      "counterexampleStop": 21,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 12,
+      "issuedQueries": {
+        "1": 12,
+        "2": 21
+      }
+    },
+    "mlp-256x4-17/evaluation": {
+      "executed": 61,
+      "noCommittedEdit": 17,
+      "counterexampleStop": 45,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 16,
+      "issuedQueries": {
+        "2": 45,
+        "1": 16
+      }
+    },
+    "mlp-256x4-29/evaluation": {
+      "executed": 61,
+      "noCommittedEdit": 5,
+      "counterexampleStop": 58,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 3,
+      "issuedQueries": {
+        "2": 58,
+        "1": 3
+      }
+    },
+    "mlp-256x4-43/evaluation": {
+      "executed": 61,
+      "noCommittedEdit": 44,
+      "counterexampleStop": 21,
+      "usedFullQueryBudget": 0,
+      "decisionExhausted": 40,
+      "issuedQueries": {
+        "1": 40,
+        "2": 21
+      }
+    }
+  },
+  "previousBenchmark": {
+    "identicalOrderedTasksAndSourceHashes": true,
+    "reportHash": "cc906c51d310057b0f7d93f4b1d7c25d94499fb05b5c0a343f890066ca9bccac",
+    "taskHash": "d5097a3fbf86ebdd07243ae84153465efe8f60c14f6925384c1c585cb0ff5ce2"
+  },
+  "scope": "Bounded source/dataflow/accounting evidence, not universal refinement or learning proof"
+}

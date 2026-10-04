@@ -1,0 +1,9 @@
+{
+  "config": {
+    "layers": 2,
+    "width": 48
+  },
+  "rule": "validation repairs, then fewer parameters, then fixed order",
+  "selected": 0,
+  "testUsed": false
+}
