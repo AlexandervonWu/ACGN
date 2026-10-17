@@ -1,0 +1,1615 @@
+[
+  {
+    "attempts": [
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "01bab9c7c49705658cf37afb238ff4e7781829020a2dc17272314b72b1d873ed",
+        "operand": 4,
+        "operator": "U:ONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "5c990f566048f13cba99f82008892c79ac2f95ed3bacea897fc99869dd6810ec",
+        "operand": 4,
+        "operator": "U:LONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "c5aa2a7228f3cedb0ae706bf3f547398e4e1f1bafe92dd6185fdbd0d82738d59",
+        "operand": 4,
+        "operator": "U:SOME",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      }
+    ],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "be563a3a9ebe9062107c",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "be563a3a9ebe9062107c",
+    "proposals": 3,
+    "sourceHash": "c3edc3668e3aa719c22b95ca8c2f1a4e04b4cde18f93eeeeedb55574ba9a2fef",
+    "split": "train",
+    "status": "SUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "841b47d7a6530bdcdc29",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "841b47d7a6530bdcdc29",
+    "proposals": 0,
+    "sourceHash": "0610a82437a75b4ef1dc1cd7a91c1c5d124a646aa4e3ae6ebafc6cee51426d3d",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "d309e3ecec9059feb7f0",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "d309e3ecec9059feb7f0",
+    "proposals": 0,
+    "sourceHash": "d402876ebf5f77284085cf438d3258cc50680ef2130b8f2bef3a04a2bda7df1a",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e925b59446448a4c679a",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e925b59446448a4c679a",
+    "proposals": 0,
+    "sourceHash": "003715ce8ce111c42b335972a23a6b7c88b0a4dffa5b5f3b5e5b2e46796b2501",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "45e3b214d8e2c259bcdf",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "45e3b214d8e2c259bcdf",
+    "proposals": 0,
+    "sourceHash": "fd3b52e232dc9a46d3b84cc65cfb36af337140409a179d3eff65fae1c2049bc8",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "880a7087b92b5ece2a43",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "880a7087b92b5ece2a43",
+    "proposals": 0,
+    "sourceHash": "f9859debd93f5b42212ba658d352f934d32d5bed53b368b29dbb9e43201021dc",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "763d065c3ac245b08ec5",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "763d065c3ac245b08ec5",
+    "proposals": 0,
+    "sourceHash": "c6265a762e1b285dcf2c6e62155a381a0e016901a7586c6985c6a5a7f80ccb49",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "7b838a83e9b3d3f81c3b",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "7b838a83e9b3d3f81c3b",
+    "proposals": 0,
+    "sourceHash": "47938c184faa03c5ea244e048778b0afb900a0549e8df228638105f8a37d7853",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "35612179cdee5ab833b1",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "35612179cdee5ab833b1",
+    "proposals": 0,
+    "sourceHash": "a32dd6598325f10eaedfe14b1f2aa4f285c88e3a66fe0f421c1fc14a3a788f41",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "7b548b97db1453c93c70",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "7b548b97db1453c93c70",
+    "proposals": 0,
+    "sourceHash": "c718a4bf972fe09760ca12c67694edd7a73dc5dc6d695a7495d03f892904cf31",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "56a735cfb6fd4d9ea94b",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "56a735cfb6fd4d9ea94b",
+    "proposals": 0,
+    "sourceHash": "7a0731c31cf983ab897e7aabc9859dfe4a889a362c7adf51738ad672a66a4e64",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "52ec408160a189e64b75",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "52ec408160a189e64b75",
+    "proposals": 0,
+    "sourceHash": "c4e3da94d2c3d60e4386a76d02a39ad28aa2be9eefa4cafe489bd1e173e08960",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "f852e8dec0a3382fc6bb",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "f852e8dec0a3382fc6bb",
+    "proposals": 0,
+    "sourceHash": "98c4ba9adf62775df6ec09b58aea3a83802aa5f4f08f9c628b9ae8dde5c5edec",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e2c01a2ed104f1745dc2",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e2c01a2ed104f1745dc2",
+    "proposals": 0,
+    "sourceHash": "5bb78fdc4541105678c910790966fa6d893bc3b909d6500e2112ea490a25dda5",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "dd02cbbb47f50f4b21c3",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "dd02cbbb47f50f4b21c3",
+    "proposals": 0,
+    "sourceHash": "8fa411d2945c61a7a99ae016b7853b598c565923dbce80e01694ad7f639b4a1b",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_SIGNATURE_CARDINALITIES_REQUIRED",
+      "id": "c46d1fe0fac771787d51",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "c46d1fe0fac771787d51",
+    "proposals": 0,
+    "sourceHash": "0786002a571182aac93f680a305e4f51e873b9359a6d227c17464ed41e43d9cd",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "2aeda657eb32bc427cef",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "2aeda657eb32bc427cef",
+    "proposals": 0,
+    "sourceHash": "79e0a3e89e38ff0f341ec3dea9b58438a69ba7a2a7e9dde374edd4e70d0f6d8c",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "75232801b709e17fb930",
+      "split": "evaluation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "75232801b709e17fb930",
+    "proposals": 0,
+    "sourceHash": "fca60f17463939886033532a19277d9e1c98fe0d48218e30ab2eee959bd2a8e5",
+    "split": "evaluation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "39be56f72f50434c2fe9",
+      "split": "evaluation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "39be56f72f50434c2fe9",
+    "proposals": 0,
+    "sourceHash": "b52806c547bd49ca05d1b05617381218a156fe0d7e8d7bb1552fcdaf87aa653f",
+    "split": "evaluation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "539762d264f87178579b",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "539762d264f87178579b",
+    "proposals": 0,
+    "sourceHash": "71910674de4b1c0cc0ac03790a6709d3ec6e2b049c35fddce36168c3e2b68dfd",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "2a7fee82df0fa3aa55ef4ecd98115f33486981ad96c6b01eec60b10bb0a33dd9",
+        "operand": 4,
+        "operator": "U:ONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "dc45acf1d533cfe8598031eec866578b8d4e6c97197a64db6a12a33c5275581b",
+        "operand": 4,
+        "operator": "U:LONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "0a232b6b02f167f8ee53969f4812d0c473532e69b317b9b78d76561028f65eda",
+        "operand": 4,
+        "operator": "U:SOME",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      }
+    ],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "ae1005bc105b6803a89e",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "ae1005bc105b6803a89e",
+    "proposals": 3,
+    "sourceHash": "3842780f12695533bb79b6d705724160216c784a50854c23a30f1215b23ed9f4",
+    "split": "train",
+    "status": "SUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "c4919a04eac66305a854",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "c4919a04eac66305a854",
+    "proposals": 0,
+    "sourceHash": "6dd9369d56ec03c36cbb82f679aeef021328ef461e1336035c07336e754a2226",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_SIGNATURE_CARDINALITIES_REQUIRED",
+      "id": "9dfbebfbf540909b1e11",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "9dfbebfbf540909b1e11",
+    "proposals": 0,
+    "sourceHash": "d599ffc4e47075e50e4a7687beffe4f409f5cc078bce345b744eec428fa7f596",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "67f908addb09c9c703e9",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "67f908addb09c9c703e9",
+    "proposals": 0,
+    "sourceHash": "97c2ff1a6364402cb41917fc05cbe5d86f987ba9bab47de31bef12d2f789ae3e",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "8c749f9b167e0c49e245",
+      "split": "evaluation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "8c749f9b167e0c49e245",
+    "proposals": 0,
+    "sourceHash": "d1a84ec95ef116bbc55adcd924ac81484816c65cfb8863ef4be0cf5fcefdb4cd",
+    "split": "evaluation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "4021f10fd8f4484947e3",
+      "split": "validation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "4021f10fd8f4484947e3",
+    "proposals": 0,
+    "sourceHash": "cd063e8d029179af74f05471f648e0cc969eeda0058e54c54a801d89474b0347",
+    "split": "validation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "468435d3183d2fa36e6e",
+      "split": "train",
+      "status": "LOAD_FAILED"
+    },
+    "id": "468435d3183d2fa36e6e",
+    "proposals": 0,
+    "sourceHash": "b45fc2439b65271a2124e82b278661fcc2de06079d7be69f60ac0bd9dcb89de2",
+    "split": "train",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "250794767a4a7c94ffed",
+      "split": "validation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "250794767a4a7c94ffed",
+    "proposals": 0,
+    "sourceHash": "d2b9caf9dccf9a889a2948b1fa329cf448b88ac8b2861752655221977bc1a627",
+    "split": "validation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "ba5dd940f899f3d1e802",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "ba5dd940f899f3d1e802",
+    "proposals": 0,
+    "sourceHash": "0fdb892432ead22938066e9afd9a56969a60f8cb75a07688f1a04fac0d637f77",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "56174adff0f7d3c255c5",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "56174adff0f7d3c255c5",
+    "proposals": 0,
+    "sourceHash": "eceadaa7286867390cbab1d9421cdf6af3334e1663561fcaff572b15646afe16",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "8592ccb26f893e822497",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "8592ccb26f893e822497",
+    "proposals": 0,
+    "sourceHash": "aa1e2da45480614eb0bb6195ea8c640cd790ab6b3e22c08d451e91cec99cfa9f",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "f70279d49d687acc0956",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "f70279d49d687acc0956",
+    "proposals": 0,
+    "sourceHash": "faade35e681d77a14da6104085cd183d40e8da1ad4a1476f5bab6d40b9baf994",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "4ef9db0594ee46d493eb",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "4ef9db0594ee46d493eb",
+    "proposals": 0,
+    "sourceHash": "4db25fc7ec9bda143c3c0be30add9b5c468db11bab6deb8e2baef39210e27b98",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "cafc7f1383dcfca22826",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "cafc7f1383dcfca22826",
+    "proposals": 0,
+    "sourceHash": "e42dfabd42c3672129ff1aeefaf8614cf62d4dd44a1a9b55e6ce738d5528dfc6",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "ba151eec06127108e585",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "ba151eec06127108e585",
+    "proposals": 0,
+    "sourceHash": "f3d4e7279fb1f1ec56356c00c95a0bef49742d8cf16b16b4bb316d9c06d0d02c",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "930f90b8fd4978263097",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "930f90b8fd4978263097",
+    "proposals": 0,
+    "sourceHash": "9e65c339f8094086f7a4e6fc2f48e3467d6c6113ed927be1d02f3ddbdeda874d",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "19fa26af3571f224eacc",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "19fa26af3571f224eacc",
+    "proposals": 0,
+    "sourceHash": "83bb5c77806e42d8937b1cb2d001403fc90b0cb9be515dbf31ce368cc53e1a48",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "5e731d78910230c88313",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "5e731d78910230c88313",
+    "proposals": 0,
+    "sourceHash": "ab5b417ebe94e34b7fe34368ea92262bed3722e241222a68a08ce09d487690a7",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e1c2009f98b9020b53d3",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e1c2009f98b9020b53d3",
+    "proposals": 0,
+    "sourceHash": "f8d12978e8bb504ebccce747c26cee0e6adb58808fb32da058ff018c927111b1",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "d4d3782bb93c265c71e2",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "d4d3782bb93c265c71e2",
+    "proposals": 0,
+    "sourceHash": "4adaea3ee5db3af1987798045b50380e7616cf138cb235518ccbc39b50503d9c",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "a0a86a4785202f92ef19",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "a0a86a4785202f92ef19",
+    "proposals": 0,
+    "sourceHash": "d58992bbd270e46918d2f390531dd92eb02bc54d9d6c7def1e33fb3f94a8b92c",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "6c5b6032abfee69d76e9",
+      "split": "validation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "6c5b6032abfee69d76e9",
+    "proposals": 0,
+    "sourceHash": "2e8a2e7d03d35c81c73c8ff890dad0d1ab6234a07996efd0ce8cc046650330b0",
+    "split": "validation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "6367f47a086245a47e49",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "6367f47a086245a47e49",
+    "proposals": 0,
+    "sourceHash": "3e8948b6b06e2e9f4f01aa1608c73f46b73b27166949f79334f1c57d8c9e9b42",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "0b3099fd2dbb56bfcb51",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "0b3099fd2dbb56bfcb51",
+    "proposals": 0,
+    "sourceHash": "f75ab94921f9661b1ab3fd20b06d7b9f4ae8bf7e68cbce1de4461d245798157f",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "6410b380ac3bd37ce0607f2db5251476fbfc9473c1980a75d72c1a5585037645",
+        "operand": 4,
+        "operator": "U:NO",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "a4b0f12ce3e8fa7eac46f4b01cc1f1bbe184f06f283d38019cd0629dc9b82b09",
+        "operand": 4,
+        "operator": "U:ONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "a25b2149b0adf80bad9b0b47960429fed17255cb27e571c0f39411e99dd4e1d0",
+        "operand": 4,
+        "operator": "U:LONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      }
+    ],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "9a4a7746df4e4f77a4e7",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "9a4a7746df4e4f77a4e7",
+    "proposals": 3,
+    "sourceHash": "724734410b817c0415e02ddf172f1eac810ead49bf96fb080b0dea9a439a0d28",
+    "split": "train",
+    "status": "SUPPORTED"
+  },
+  {
+    "attempts": [
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "a7be9d65f10510d80bf402262ff2c64dfc8880dc61e78232ab76fa1365fa1a6f",
+        "operand": 4,
+        "operator": "U:NO",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "SOLVED_WITHIN_PROFILE",
+        "key": "e2547a266e88f4aa3d0858ea8593b98deded9a61953434e8fe7fe0c643e7befb",
+        "operand": 4,
+        "operator": "U:ONE",
+        "site": 3,
+        "solved": true,
+        "status": 5
+      },
+      {
+        "applied": true,
+        "baselineStatus": 4,
+        "checked": true,
+        "end": "COUNTEREXAMPLE",
+        "key": "27c7848e1461d91743eba98ff8423937786be9faa1146669f4ddc576c0852906",
+        "operand": 4,
+        "operator": "U:LONE",
+        "site": 3,
+        "solved": false,
+        "status": 4
+      }
+    ],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "c44a0fb82108da00c1a0",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "c44a0fb82108da00c1a0",
+    "proposals": 3,
+    "sourceHash": "33837643826adc22cf9b379156fcc7227abc41849f9a65dbe634b0ef3738d52f",
+    "split": "train",
+    "status": "SUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "1ddd20a1fa78a0439c3e",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "1ddd20a1fa78a0439c3e",
+    "proposals": 0,
+    "sourceHash": "7a62bb4ce07cb2e127b93d13f18074fd29bd87144d926ea2ba880a850ec85d77",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "e25f4209713c97ea93c9",
+      "split": "validation",
+      "status": "LOAD_FAILED"
+    },
+    "id": "e25f4209713c97ea93c9",
+    "proposals": 0,
+    "sourceHash": "cd157ceaecfc25831fd225ce48d424f21756db91db1ace6827f9e238c6f2bc73",
+    "split": "validation",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e8f3935358943b19cc34",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e8f3935358943b19cc34",
+    "proposals": 0,
+    "sourceHash": "6b35e64f7a13cccfbbb5ec77bf836cf3c5e6873ebe45ff707f05bcbcdaa769ed",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "f999ade4d45541ef1f7e",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "f999ade4d45541ef1f7e",
+    "proposals": 0,
+    "sourceHash": "077b4c6966a655e0bf42d46fa4fae4c610fd7c0bc6241b37881041714f878635",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "00e482af43106022ace7",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "00e482af43106022ace7",
+    "proposals": 0,
+    "sourceHash": "3339928ed1b4d24a2a4cf6feca573ef857904f3b8119ace22cbe793f9931733d",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e753767fb99748219661",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e753767fb99748219661",
+    "proposals": 0,
+    "sourceHash": "98a357341ab79e11a9e46b4015296f696ba2699f10080457ce9b0a226056a089",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "90bb4cad38ee3eff6d05",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "90bb4cad38ee3eff6d05",
+    "proposals": 0,
+    "sourceHash": "59e56c03ee5e1b76b3c50b033ef3ed4bcf92d69d47986ce2d1ed3c0862e09c7d",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "2dd96b0f416bdb62444c",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "2dd96b0f416bdb62444c",
+    "proposals": 0,
+    "sourceHash": "c093c9de724b865d5637d54e3ff0d786ae201cf8166c5affa80487a17263ff9b",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "a653c704f59b75d1d006",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "a653c704f59b75d1d006",
+    "proposals": 0,
+    "sourceHash": "7481c3889922cca1e78fb134ecf15eec5c12e7d99b6cf8dbd9c23f5c6ca65575",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e61a45ead85d60479e07",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e61a45ead85d60479e07",
+    "proposals": 0,
+    "sourceHash": "acd4649f7d514cdbf3e6e630e6ffef9e0b9aa1fb0a452d17bf24c2d00fc7a300",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "63a32a3b5901162158fa",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "63a32a3b5901162158fa",
+    "proposals": 0,
+    "sourceHash": "c108e84faa74f1a839f976b185e2e4da649f383f35d51fd2f376f3e024da32a2",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "64d34a2596721dc34953",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "64d34a2596721dc34953",
+    "proposals": 0,
+    "sourceHash": "728ae4294088451131b562fcbfa138fe54283f4ee34180791a749a1ca9ef0fdc",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "b4ccb79dc4d98dc71a8b",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "b4ccb79dc4d98dc71a8b",
+    "proposals": 0,
+    "sourceHash": "be8eaa8e947affe243c702aeba99d0fbe4db4b3dbe346be94dd23301bf49b3f4",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "09d522e4b40833622e57",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "09d522e4b40833622e57",
+    "proposals": 0,
+    "sourceHash": "e476b39a60b5869d1c8525bd8e399f6de09ab597055df3784b4b43e29a8a98f9",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "0787a307cb300a7d8b07",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "0787a307cb300a7d8b07",
+    "proposals": 0,
+    "sourceHash": "cfdb60810baf76fdbc820ff9bd56a2d30b05f860c5c27167b0994d7b0d3e11d8",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "df8ff4f6c078a6f745b5",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "df8ff4f6c078a6f745b5",
+    "proposals": 0,
+    "sourceHash": "645f33cfbc0398e9166792736d099e18bc00c0a142d64280452288455a9a0879",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "420d89b6a2e288a34afe",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "420d89b6a2e288a34afe",
+    "proposals": 0,
+    "sourceHash": "b56c6c24b12feb59fd72e12d10c41c7f7f04dd17e5a4a5c2b139621f60d7514d",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "0bbbe0c30764061c7ba3",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "0bbbe0c30764061c7ba3",
+    "proposals": 0,
+    "sourceHash": "9c26f7a08ae2fb2c3567ee48f66e15d0a94ccc180adf54a2b43cb7af93e411c4",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "fe5915180aba69dd6a33",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "fe5915180aba69dd6a33",
+    "proposals": 0,
+    "sourceHash": "bec9eaec88908fddcde06b2ab14009a3e0b8a43e66d3905725e5644ddc077d01",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "917063500dfffe1168d7",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "917063500dfffe1168d7",
+    "proposals": 0,
+    "sourceHash": "bbdea1a02897b162aa80e5cdf054398b0834a9b5fb8deeeb0592b3207e24c1c8",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "5e5b6b2203ae2819b1c2",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "5e5b6b2203ae2819b1c2",
+    "proposals": 0,
+    "sourceHash": "4fc41f5e7a237b99faa6aecfd0a7a5667288617bf7750faad5156f2b8d3a5ceb",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "3e066da6cc9766f1c2b9",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "3e066da6cc9766f1c2b9",
+    "proposals": 0,
+    "sourceHash": "b28f6be1fecf8086059b9e87d6e97f1fe2249c403244fea4f1b87b244427c7c9",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "be14895f2c3589fb44dd",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "be14895f2c3589fb44dd",
+    "proposals": 0,
+    "sourceHash": "44329783eeb30100a0c4a3664810e5e7d61931929c31f79d41ee8df5b21f32f5",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "historical": {
+      "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+      "id": "8d6349d73f380a96a488",
+      "split": "train",
+      "status": "LOAD_FAILED"
+    },
+    "id": "8d6349d73f380a96a488",
+    "proposals": 0,
+    "sourceHash": "8a0d417657b109adfc2eca6a6d587b163189506d557a051c0d7e9d92d186ef38",
+    "split": "train",
+    "status": "LOAD_OR_GENERATION_ERROR"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "c1be72530814d10328f4",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "c1be72530814d10328f4",
+    "proposals": 0,
+    "sourceHash": "c8d39bc83bd86b8422f7a2e6247c01ae7685a076c3a4c7b8fe2807acf245725b",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "fc627dab866ad0c3f9e9",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "fc627dab866ad0c3f9e9",
+    "proposals": 0,
+    "sourceHash": "04bcd17c2afe22238226b1c6fa4d8d2cf266a5f932b96113012e7dc0082ce5f0",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "7b52d53851354439309b",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "7b52d53851354439309b",
+    "proposals": 0,
+    "sourceHash": "e1eb7f3e39a2ed72025520fe49cc1f70b57bdb677218e9625df71ed5f8a3bad7",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "ce5f91cb14373bdd9487",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "ce5f91cb14373bdd9487",
+    "proposals": 0,
+    "sourceHash": "d05e3637057d95d750938ac896a2a486f97d731d4de7408eec97764e8e4e5a44",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "60bf759ea91ccddf36ed",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "60bf759ea91ccddf36ed",
+    "proposals": 0,
+    "sourceHash": "5e199c8ebd31b8b5ba99e06d4231c5ddb6de96fa691caee5643b2577c0f69ca1",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "b561b3819f7e0afbffd6",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "b561b3819f7e0afbffd6",
+    "proposals": 0,
+    "sourceHash": "c1e10160149b45b2500b02226044175ff75f75daeec746a9de27a4b6454a1c10",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "a2f97235d3a19d3af37b",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "a2f97235d3a19d3af37b",
+    "proposals": 0,
+    "sourceHash": "0476aadfab3abbac8533d1f91b1b378f1301dc97ad7deeb2ba14c2a83e1b672b",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "f2a2485d0c89cb96b5cb",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "f2a2485d0c89cb96b5cb",
+    "proposals": 0,
+    "sourceHash": "1f2367438126449914e4067a4fc23e2bafdc8f6408655859ef1a3efca3236c85",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "b7a6dc8535c160334bf4",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "b7a6dc8535c160334bf4",
+    "proposals": 0,
+    "sourceHash": "2be7f87e7c76587c3f692dc66e4a6b3ecad00b5a73f8c2e5932cd0e748d49682",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "080d266553e9e757ab26",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "080d266553e9e757ab26",
+    "proposals": 0,
+    "sourceHash": "db4931bb0383a6eea9faed8b13c28321ad404a3344516649c82c28757db7a413",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "2cf4841745329fabe9dd",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "2cf4841745329fabe9dd",
+    "proposals": 0,
+    "sourceHash": "8eee3ae9c367ebcad98a97115a58dfd2ad86f04eae19f73fb8cf0b2eec49e621",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "63f6679962b5370b86b7",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "63f6679962b5370b86b7",
+    "proposals": 0,
+    "sourceHash": "cc5287f3de74ff79a5d73f397054b19cc2f3af528e3b6686c007a8911582e7db",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "60fa446b75de7c35173a",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "60fa446b75de7c35173a",
+    "proposals": 0,
+    "sourceHash": "9caca39c9b8db705dd3ba9a74c727bb66a076140fe10141839cde361c8864d8c",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "dc9282be9d7b3ff3e1ac",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "dc9282be9d7b3ff3e1ac",
+    "proposals": 0,
+    "sourceHash": "f7a7fb819b826c28727802337f2f0aee7e423b9e6d84009fc31db40b97a125e5",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "ff17284c15b7dafce481",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "ff17284c15b7dafce481",
+    "proposals": 0,
+    "sourceHash": "1ac9abb2669e60ae30f833aaeef9cc8a2a2086bccd41d3de436c1b662aaa6b6f",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "5d028b0beb304c11115b",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "5d028b0beb304c11115b",
+    "proposals": 0,
+    "sourceHash": "23a449e92b7517b24852284e60a1cf8463a8d4b55c6939f9843773643d10c741",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "07acd52b3f247064347a",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "07acd52b3f247064347a",
+    "proposals": 0,
+    "sourceHash": "ff91636000881432277a18deca5a90d76f68d9b0c8fed9bd7fa94bc8b079d0cb",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "685690dc48270c49b7e7",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "685690dc48270c49b7e7",
+    "proposals": 0,
+    "sourceHash": "89e5890d47c85602c219de381eaedde1ec6b55e86a19326ac1f9ec0117244ccd",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "fd286b52b007d120c618",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "fd286b52b007d120c618",
+    "proposals": 0,
+    "sourceHash": "9501f47cf4f044a905ef541ad094b8943de8c17d7e8507a48c86d71d3902e621",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "6b784011a509b119253a",
+      "split": "train",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "6b784011a509b119253a",
+    "proposals": 0,
+    "sourceHash": "1e128bacf2d0fc1a85e9dc05cb888d2cb78e7e5c92dc06d22744bcde2bb8bf4c",
+    "split": "train",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "f6c556cc0a69bb54c013",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "f6c556cc0a69bb54c013",
+    "proposals": 0,
+    "sourceHash": "9247c878f37b84ffabbae04c5def16e46b92cafeb9ca26475e8965dbbfcaf291",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "e41104184c451ac0b9fd",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "e41104184c451ac0b9fd",
+    "proposals": 0,
+    "sourceHash": "7139ea637f761f117683f467e2266ee01458d81b94f495271e5a9276f6eb1af8",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "5f3ec1fe5a905c3cb62f",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "5f3ec1fe5a905c3cb62f",
+    "proposals": 0,
+    "sourceHash": "a68dc0f41d71fa068ae64f7301b92d73c56a7bb96f4709b2365e71d8d5ccdb3e",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "5e9b3b85719fa9c2bb6b",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "5e9b3b85719fa9c2bb6b",
+    "proposals": 0,
+    "sourceHash": "64b4968d3aefa5dce2a02105c729d619701a4663cf54af58e12d9e630d9c3702",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "597d70bbe0936f60a072",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "597d70bbe0936f60a072",
+    "proposals": 0,
+    "sourceHash": "fef9c8941f028cb5473f821982f29072d439db02900a1952480052fc2eca2c28",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "b01b6a109cb8e5e17f2b",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "b01b6a109cb8e5e17f2b",
+    "proposals": 0,
+    "sourceHash": "52118421617c40f114512071a42d7fc214a7323a29c9393546beb29e5488d98e",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "dfd5c944a4f83e9395bd",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "dfd5c944a4f83e9395bd",
+    "proposals": 0,
+    "sourceHash": "d3753392333038b5b99cf226db49831b0a637d20fee0d922041a9e08e466af15",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "4a9a60e0c87d89d16f8c",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "4a9a60e0c87d89d16f8c",
+    "proposals": 0,
+    "sourceHash": "023fdaae2a59bd07c6ea45b17bd2bfcee51018449fcfa0a261ab463a217c22c2",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "3f7cea27518440a34761",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "3f7cea27518440a34761",
+    "proposals": 0,
+    "sourceHash": "28b6eeb0a6ce2206f4810f3f67e532b697ce76dfc6f5d4c5ca3e555dd87e7135",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "451c8dd2aa91f29a35a6",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "451c8dd2aa91f29a35a6",
+    "proposals": 0,
+    "sourceHash": "7d8c91f5bdc5b1a8252bd06b6f5cbd04bb2bb6bcfbd96ed1cd0eaa508e9498da",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "6c1ad0f62c69ab70bd15",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "6c1ad0f62c69ab70bd15",
+    "proposals": 0,
+    "sourceHash": "2eed735dd9e8470ea9f90ec7b452bce2ae5c875832ece29f742cbf9a932675b6",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "fe2b7e5460cffef019ec",
+      "split": "evaluation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "fe2b7e5460cffef019ec",
+    "proposals": 0,
+    "sourceHash": "d34da6206bac0cd3dc9f1c86b155a03fc93e22fca419805745e4af42648228e6",
+    "split": "evaluation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "639748788692fc6fb4cd",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "639748788692fc6fb4cd",
+    "proposals": 0,
+    "sourceHash": "d96293f57735d2c1754ec5cf70506bcb7aa75b0fc6f4e021c056130d22883e5b",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  },
+  {
+    "attempts": [],
+    "historical": {
+      "error": "ValueError: HOMOGENEOUS_CARDINALITY_TREE_REQUIRED",
+      "id": "cd50c9fb7c6051d6da6e",
+      "split": "validation",
+      "status": "GRAMMAR_UNSUPPORTED"
+    },
+    "id": "cd50c9fb7c6051d6da6e",
+    "proposals": 0,
+    "sourceHash": "c70875f746d5b3ab9d467aafe090756630e239dacc5ff8b17766b4a29073cf07",
+    "split": "validation",
+    "status": "SHAPE_UNSUPPORTED"
+  }
+]

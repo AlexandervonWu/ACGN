@@ -1,0 +1,49 @@
+{
+  "baseBranch": "aislop",
+  "baseCommit": "7c4d66c13820462053f07560a06c785b2b9421ee",
+  "producerRecordedHead": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "producerRecordedDirty": true,
+  "producerInputCount": 549,
+  "producerInputHashMismatches": 0,
+  "archiveSha256": "257367661fec4b029da476ed9bb7006d32a19e35ed5bd87a30643cba2a86b2ec",
+  "preparationSmoke": {
+    "verifiedInputs": 549,
+    "archiveSha256": "257367661fec4b029da476ed9bb7006d32a19e35ed5bd87a30643cba2a86b2ec",
+    "compileCommand": [
+      "java",
+      "-m",
+      "jdk.compiler/com.sun.tools.javac.Main",
+      "--release",
+      "17",
+      "-encoding",
+      "UTF-8",
+      "-cp",
+      "/workspace/scratch/6fe67ac0a171/prepared-producer/lib/AlloyASG-Release.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/AlloyASG.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/AlloyParser.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/alloy.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/commons-cli-1.4.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/json-java.jar:/workspace/scratch/6fe67ac0a171/prepared-producer/lib/slf4j-simple-1.7.36.jar",
+      "-d",
+      "/workspace/scratch/6fe67ac0a171/prepared-producer/classes",
+      "@/workspace/scratch/6fe67ac0a171/prepared-producer/sources.args"
+    ]
+  },
+  "java": "OpenJDK 17.0.20",
+  "pythonCommand": "python -m experiments.source_local.run ../producer ../source-local-run-v2 --check",
+  "historicalEvidenceModified": false,
+  "trainingStarted": false,
+  "independentCoverageReplay": {
+    "inputs": 104,
+    "identicalStatusesAndProposalCounts": true,
+    "freshProducerRestore": true
+  },
+  "regressionTests": {
+    "run": 10,
+    "passed": 10
+  },
+  "implementationSha256": {
+    "experiments/source_local/.gitignore": "32dae3052f331ee34d628ef535709b301259a45df7c7522c4d35dcf49873f00b",
+    "experiments/source_local/README.md": "7d3bbc046cde651c3cab0282c7e1df6b54003e2887f8256515a2e7755dfd7d1d",
+    "experiments/source_local/candidates.py": "17564ead25671322c600f5b9e71f8f308717f0ec15dece15c3f75b61176a2418",
+    "experiments/source_local/fixtures/be563a3a9ebe9062107c.json": "d537a0ac92e50f27ee7d30e9106968f9f6561ce3724c026fc129b98b00a02106",
+    "experiments/source_local/prepare.py": "889cf39c28bd71a186dae8b22a1500c62bdb9415f62ef66b8dfb13c6461d394d",
+    "experiments/source_local/run.py": "afcc1e1aed91780021dd7853db51de14a70e4e6909bd9d3c4d200a16e7d9e728",
+    "experiments/source_local/test_candidates.py": "28d7ca8395dd6d88791e9e8552e71f98170a22495132dcf09eab7ebdfb12c421"
+  }
+}

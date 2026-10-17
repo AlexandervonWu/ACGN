@@ -1,0 +1,18 @@
+{
+  "candidateChecksIssued": 12,
+  "checkRequested": true,
+  "conclusiveCandidateChecks": 12,
+  "denominator": 104,
+  "generatedProposals": 12,
+  "historicalCoverageSha256": "442a968c5dc011104eca9d4266e52f81c44760a45fcd493750c1366e8cebd848",
+  "historicalWholePredicateSupported": 0,
+  "interpretation": "Source coverage, legal candidates, and bounded repair are separate; no learning claim.",
+  "legallyCommittedCandidates": 12,
+  "loadOrGenerationErrors": 9,
+  "schema": "source-local-cardinality-v1",
+  "solvedCandidates": 1,
+  "solvedTasks": 1,
+  "sourceShapeSupported": 4,
+  "tasksWithLegalCandidate": 4,
+  "verifiedProducerInputs": 549
+}
