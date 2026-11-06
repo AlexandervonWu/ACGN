@@ -222,7 +222,7 @@ theorem exact_fields_iff (r s : LawRecord) :
 
 theorem decode_encode (r : LawRecord) : decode (encode r) = some r := by
   unfold decode
-  rw [if_pos ⟨rfl, rfl⟩]
+  rw [ite_eq_left ⟨rfl, rfl⟩]
   exact reconstruct_fields r
 
 theorem encode_injective (r s : LawRecord) : encode r = encode s ↔ r = s := by

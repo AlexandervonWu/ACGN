@@ -23,6 +23,18 @@ def observations():
 
 
 class SourceBindingsReplayTest(unittest.TestCase):
+    def test_pre_parity_source_pins_are_rejected(self):
+        old = {
+            "EGraphNode": "a3dcefcf9f13b10cf7883954a822a3d01d2a975d953214550eeb454958296a39 17723240dfec4fb1add3566251897704133d13eb339d0d7b5862cb5fa54aa637",
+            "NormalForm": "ab9bfc73fc9e8489d60d8114188ae8fee2b5ef21486eee7767360ab9cb059f79 fc5576cd2d9e19533cbb680801d2972d2348a3c293b1f2495fc539d7e806e5f0",
+        }
+        for name, pins in old.items():
+            changed = sources()
+            row = next(s for s in changed if s["object"] == name)
+            row["shapeSha256"], row["bindingsSha256"] = pins.split()
+            with self.subTest(name=name), self.assertRaises(Blocked):
+                r.program(observations(), changed)
+
     def test_independent_census(self):
         rows = observations()
         self.assertEqual(len(rows), 171)

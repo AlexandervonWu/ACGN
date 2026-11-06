@@ -277,7 +277,7 @@ theorem ascii_units (xs : Bytes) (h : ∀ x ∈ xs, x < 128) : utf16Units xs = x
     have hx : x < 128 := h x (List.mem_cons_self ..)
     have ht : ∀ y ∈ xs, y < 128 := fun y hy => h y (List.mem_cons_of_mem x hy)
     rw [utf16Units.eq_def]
-    simp only [if_pos hx]
+    simp only [ite_eq_left hx]
     exact congrArg (List.cons x) (ih ht)
 
 #print axioms encoding_grammar

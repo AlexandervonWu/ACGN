@@ -35,6 +35,13 @@ def observations():
 
 
 class ProfileReplayTest(unittest.TestCase):
+    def test_pre_upgrade_solver_binding_is_rejected(self):
+        changed = sources()
+        row = next(s for s in changed if s["object"] == "AlloySemanticProfileFactory")
+        row["bindingsSha256"] = "9f2bb6130489dc740ba241f4811186be27d0ba8526300b0df2b7c6e2e3703818"
+        with self.assertRaises(Blocked):
+            r.program(observations(), changed)
+
     def test_census(self):
         self.assertEqual(Counter(key[0] for key in r.census()),
                          {"serialization": 132, "boundary": 132, "clone": 8})

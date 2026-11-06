@@ -17,7 +17,7 @@ FIELDS = ("case surface fixture mutation authority testOnly bitwidth overflow te
 SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 P = "is.fivefivefive.CanDis.theory."
 SOURCES = {
-    "AlloySemanticProfileFactory": (P + "AlloySemanticProfileFactory", "d9821e2209abefbbc39e5ca2ef3b44fb82a0720b0f89c824b5bde13b28bdafc2", "9f2bb6130489dc740ba241f4811186be27d0ba8526300b0df2b7c6e2e3703818"),
+    "AlloySemanticProfileFactory": (P + "AlloySemanticProfileFactory", "d9821e2209abefbbc39e5ca2ef3b44fb82a0720b0f89c824b5bde13b28bdafc2", "e980db5ae20141c0f80954196610a284d59da5ef586ba0d4bd13108c4338cebd"),
     "CertificateBundleWriter": (P + "CertificateBundleWriter", "94c4ab8b81db73094f3dbf1987660fa2e662af108973b5c78dca58b82d213aa6", "880ff160e6040325eccf17d41bba699294ab06e13ee57a3d29ee188dae88566a"),
     "Codec": ("org.acgn.cert.Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec", "099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b"),
     "SemanticEvidenceVerifier": ("org.acgn.cert.SemanticEvidenceVerifier", "c91040e65f45bfc520051f2ccdba9aa6a609e01c0d597eba731fd613f65743da", "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),

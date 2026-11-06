@@ -19,8 +19,8 @@ SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 NAMESPACE = "ACGN.FifthFive.SourceReplay"
 PINS = {
     "DependentChainCertificate": "800b128e0f225b68f242d201009689bb5eeded3391250ef4259378dce034c35f 123b6c433070bf4455f1a888010e09bd51b45b584833ff884c6d71d48f0978e4",
-    "EGraphNode": "a3dcefcf9f13b10cf7883954a822a3d01d2a975d953214550eeb454958296a39 17723240dfec4fb1add3566251897704133d13eb339d0d7b5862cb5fa54aa637",
-    "NormalForm": "ab9bfc73fc9e8489d60d8114188ae8fee2b5ef21486eee7767360ab9cb059f79 fc5576cd2d9e19533cbb680801d2972d2348a3c293b1f2495fc539d7e806e5f0",
+    "EGraphNode": "2f0f8bbdf5f7651d87f1d217426f01760b279d69d4e526f52c5f7eab87bf6153 12843c82704c68ca2a0c9344803261826b23e0ba016121a8288f065152f271d4",
+    "NormalForm": "0503e95cbaeb1f925c33dcc814e2274fb5be3e158138f2667f18c4835e98cf23 2a09deac7cce49358f82930e5211b8394379d0e8bc8abe448046c67d9424f78b",
     "StructuralKey": "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
     "TheoryAlloyAdapter": "e4c13603b97a2b342cd80a2aa25e131abdda5ff91aea63248f15bca102080495 2781b813137ddf634e7d56b3f3649302d7a94e1d1503449cb2e0cf21c0c4d2a5",
 }
@@ -424,7 +424,7 @@ def program(observed, extracted):
     header = ["import SourceOccurrenceBindings", "namespace " + NAMESPACE,
               "open ACGN.FifthFive.Source", "set_option maxRecDepth 65536", "set_option maxHeartbeats 4000000"]
     proofs = {**path_proofs,
-        transition_start: "by\n  unfold transferTo\n  exact if_pos ⟨rfl, rfl, rfl, rfl⟩",
+        transition_start: "by\n  unfold transferTo\n  exact ite_eq_left ⟨rfl, rfl, rfl, rfl⟩",
         transition_start + 1: "by\n  apply (matches_iff _ _ _ _).2\n  exact ⟨rfl, rfl, rfl⟩",
         transition_start + 2: "by\n  apply wrong_lineage_rejected\n  decide +kernel",
         transition_start + 3: "by\n  apply changed_content_rejected\n  intro h\n  cases h",
