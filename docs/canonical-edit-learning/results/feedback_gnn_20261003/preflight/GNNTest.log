@@ -1,0 +1,12 @@
+test_channel_isolation (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_finite_difference_encoder_gradients (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_message_dependence_and_no_message_control (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_nonzero_encoder_pointer_and_query_gradients (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_private_oracle_prediction_independence (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_query_changes_candidate_relative_scores (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+test_row_and_edge_order_transport (experiments.feedback_repair.test_gnn.GNNTest) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.713s
+
+OK

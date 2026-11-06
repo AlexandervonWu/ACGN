@@ -35,8 +35,8 @@ class ModelTests(unittest.TestCase):
     def test_candidate_counts_without_allocating_billions(self):
         expected = {16: 1642208256, 24: 2447563776, 32: 3252919296,
                     40: 4058274816, 48: 4863630336}
-        self.assertEqual(len(candidates()), 8)
-        for name, config in candidates().items():
+        self.assertEqual(len(candidates("scale")), 8)
+        for name, config in candidates("scale").items():
             with self.subTest(candidate=name), torch.device("meta"):
                 model = HybridEditTransformer(config)
                 self.assertEqual(sum(p.numel() for p in model.parameters()), config.parameters())
@@ -44,6 +44,19 @@ class ModelTests(unittest.TestCase):
                 self.assertTrue(all(p.requires_grad for p in model.parameters()))
         sizes = [Config(weight_bits=b).packed_weight_bytes() for b in (4, 8, 16)]
         self.assertEqual(sizes, sorted(sizes))
+
+    def test_default_pilot_counts_and_vocabulary(self):
+        self.assertEqual(len(candidates()), 9)
+        expected = {"508m": 508313088, "710m": 709664256, "911m": 910534656}
+        for name, config in candidates().items():
+            with self.subTest(candidate=name), torch.device("meta"):
+                model = HybridEditTransformer(config)
+                self.assertEqual(config.vocab, 128)
+                self.assertEqual(sum(p.numel() for p in model.parameters()), config.parameters())
+                self.assertEqual(config.parameters(), expected[name.split("-")[0]])
+        self.assertEqual(Config(), candidates()["508m-w16a16"])
+        with self.assertRaises(ValueError):
+            candidates("unknown")
 
     def test_all_256_nibble_pairs_and_odd_padding(self):
         low = torch.arange(16, dtype=torch.uint8).repeat_interleave(16)

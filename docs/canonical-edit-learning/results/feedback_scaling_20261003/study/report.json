@@ -1,0 +1,512 @@
+{
+  "batchDecisions": 16,
+  "contract": "feedback-intent-path-v1",
+  "controls": [
+    {
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 48,
+      "rejections": 19,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 50,
+      "rejections": 15,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "mode": "noop",
+      "queries": 61,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "mode": "uniform",
+      "queries": 52,
+      "rejections": 16,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89,
+      "wellFormed": 61
+    }
+  ],
+  "data": {
+    "eligible": {
+      "evaluation": 89,
+      "train": 474,
+      "validation": 62
+    },
+    "preflight": "/tmp/acgn-feedback-scale-preflight-20261003-v2",
+    "preflightHash": "fe9710c6f0b61a7a07524f0aff095f3e890609f6a3c9f5ac6758679c26797e0d",
+    "preparation": {
+      "DUPLICATE_AST_PAIR": 47,
+      "SOURCE_READY": 625
+    },
+    "questionGroups": {
+      "evaluation": 9,
+      "train": 39,
+      "validation": 8
+    },
+    "schema": "feedback-scale-data-v1",
+    "seconds": 292.8844962499861,
+    "selected": {
+      "evaluation": 96,
+      "train": 512,
+      "validation": 64
+    },
+    "status": "FROZEN",
+    "teachers": {
+      "NO_ADMITTED_PATH": 161,
+      "REPLAY_VALIDATED_TEACHER": 313
+    },
+    "trainingDecisions": 4677,
+    "workers": 4
+  },
+  "dataset": "/tmp/acgn-feedback-scale-data-20261003-v2",
+  "datasetHash": "fcbba907cf5f384ba2832075e7f8f3e58b85da72d39a4a72cc218dbce714dc0e",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "laterStages": {
+    "LLM": "NOT_RUN",
+    "localTransformer": "NOT_RUN"
+  },
+  "pairedQuestionBootstrap": {
+    "clusters": 9,
+    "difference": 0.0,
+    "lower": 0.0,
+    "resamples": 10000,
+    "seed": 99173,
+    "upper": 0.0
+  },
+  "replicateTraining": [
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.1659919028340081,
+        "jointAccuracy": 0.0703125,
+        "loss": 2.101846078876406
+      },
+      "clippedUpdates": 2827,
+      "config": {
+        "layers": 3,
+        "name": "gin-128x3",
+        "variant": "gin",
+        "width": 128
+      },
+      "encoderUpdateNorm": 2.9324185848236084,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3095584,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 266201088,
+      "peakCudaReservedBytes": 297795584,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.8380566801619433,
+          "jointAccuracy": 0.734375,
+          "loss": 0.460969522952837,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.9635627530364372,
+          "jointAccuracy": 0.9375,
+          "loss": 0.08344459360381506,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "99c3bce399d9731e3df3b58a79691673fd39c94073c6752690970692567ee007",
+      "seconds": 221.3714332459931,
+      "seed": 29,
+      "updates": 3000
+    },
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.10526315789473684,
+        "jointAccuracy": 0.09375,
+        "loss": 2.060224895365536
+      },
+      "clippedUpdates": 2864,
+      "config": {
+        "layers": 3,
+        "name": "gin-128x3",
+        "variant": "gin",
+        "width": 128
+      },
+      "encoderUpdateNorm": 3.031630754470825,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3095584,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 266406912,
+      "peakCudaReservedBytes": 297795584,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.7854251012145749,
+          "jointAccuracy": 0.6640625,
+          "loss": 0.5478954296881966,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.979757085020243,
+          "jointAccuracy": 0.9609375,
+          "loss": 0.09109549678032636,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "a415677ae87ef525d5ab6f43a4c1614d55efad37e0094dac3fb929f540c9be7e",
+      "seconds": 226.42470939400664,
+      "seed": 43,
+      "updates": 3000
+    }
+  ],
+  "schema": "feedback-scaled-learning-v1",
+  "screening": [
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.10526315789473684,
+        "jointAccuracy": 0.0,
+        "loss": 2.1895447624847293
+      },
+      "clippedUpdates": 2874,
+      "config": {
+        "layers": 3,
+        "name": "gin-128x3",
+        "variant": "gin",
+        "width": 128
+      },
+      "directory": "gin-128x3-17",
+      "encoderUpdateNorm": 3.037675380706787,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 2976480,
+      "order": 0,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 132189184,
+      "peakCudaReservedBytes": 163577856,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.8097165991902834,
+          "jointAccuracy": 0.6796875,
+          "loss": 0.5512426407249222,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.9757085020242915,
+          "jointAccuracy": 0.953125,
+          "loss": 0.07699987297411326,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+      "seconds": 215.86425802299345,
+      "seed": 17,
+      "updates": 3000,
+      "validation": {
+        "errors": 29,
+        "queries": 59,
+        "rejections": 1742,
+        "repairs": 0,
+        "tasks": 62,
+        "wellFormed": 33
+      }
+    },
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.13765182186234817,
+        "jointAccuracy": 0.03125,
+        "loss": 2.17370688309893
+      },
+      "clippedUpdates": 2637,
+      "config": {
+        "layers": 4,
+        "name": "gin-256x4",
+        "variant": "gin",
+        "width": 256
+      },
+      "directory": "gin-256x4-17",
+      "encoderUpdateNorm": 3.7868645191192627,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3004104,
+      "order": 1,
+      "parameters": 6303749,
+      "peakCudaAllocatedBytes": 403573248,
+      "peakCudaReservedBytes": 444596224,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.8097165991902834,
+          "jointAccuracy": 0.7109375,
+          "loss": 0.5078802433336023,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.9878542510121457,
+          "jointAccuracy": 0.9765625,
+          "loss": 0.05300813983106423,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+      "seconds": 251.2829178009997,
+      "seed": 17,
+      "updates": 3000,
+      "validation": {
+        "errors": 29,
+        "queries": 61,
+        "rejections": 1217,
+        "repairs": 0,
+        "tasks": 62,
+        "wellFormed": 33
+      }
+    },
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.0728744939271255,
+        "jointAccuracy": 0.0,
+        "loss": 2.303841453976929
+      },
+      "clippedUpdates": 2668,
+      "config": {
+        "layers": 4,
+        "name": "gin-512x4",
+        "variant": "gin",
+        "width": 512
+      },
+      "directory": "gin-512x4-17",
+      "encoderUpdateNorm": 5.757973670959473,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3095120,
+      "order": 2,
+      "parameters": 24535045,
+      "peakCudaAllocatedBytes": 833097216,
+      "peakCudaReservedBytes": 887095296,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.728744939271255,
+          "jointAccuracy": 0.609375,
+          "loss": 0.6150730221772278,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.97165991902834,
+          "jointAccuracy": 0.953125,
+          "loss": 0.08121177909698929,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+      "seconds": 330.91781960499065,
+      "seed": 17,
+      "updates": 3000,
+      "validation": {
+        "errors": 29,
+        "queries": 52,
+        "rejections": 2679,
+        "repairs": 0,
+        "tasks": 62,
+        "wellFormed": 33
+      }
+    },
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.2388663967611336,
+        "jointAccuracy": 0.125,
+        "loss": 1.925932458601892
+      },
+      "clippedUpdates": 2834,
+      "config": {
+        "layers": 4,
+        "name": "sage-256x4",
+        "variant": "sage",
+        "width": 256
+      },
+      "directory": "sage-256x4-17",
+      "encoderUpdateNorm": 4.090595245361328,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3095584,
+      "order": 3,
+      "parameters": 6303745,
+      "peakCudaAllocatedBytes": 399458816,
+      "peakCudaReservedBytes": 442499072,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.7732793522267206,
+          "jointAccuracy": 0.625,
+          "loss": 0.5776867050439023,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.9595141700404858,
+          "jointAccuracy": 0.9375,
+          "loss": 0.09199318642225762,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+      "seconds": 249.2437255679979,
+      "seed": 17,
+      "updates": 3000,
+      "validation": {
+        "errors": 29,
+        "queries": 51,
+        "rejections": 1959,
+        "repairs": 0,
+        "tasks": 62,
+        "wellFormed": 33
+      }
+    },
+    {
+      "before": {
+        "decisions": 128,
+        "headAccuracy": 0.2591093117408907,
+        "jointAccuracy": 0.0,
+        "loss": 1.9382620714604855
+      },
+      "clippedUpdates": 2994,
+      "config": {
+        "layers": 4,
+        "name": "mlp-256x4",
+        "variant": "mlp",
+        "width": 256
+      },
+      "directory": "mlp-256x4-17",
+      "encoderUpdateNorm": 4.071804046630859,
+      "finiteNonzeroGradientUpdates": 3000,
+      "hostMaxRssKiB": 3095584,
+      "order": 4,
+      "parameters": 6008833,
+      "peakCudaAllocatedBytes": 357815296,
+      "peakCudaReservedBytes": 396361728,
+      "probes": [
+        {
+          "decisions": 128,
+          "headAccuracy": 0.7246963562753036,
+          "jointAccuracy": 0.6328125,
+          "loss": 0.7727004417411081,
+          "update": 1000
+        },
+        {
+          "decisions": 128,
+          "headAccuracy": 0.8461538461538461,
+          "jointAccuracy": 0.7578125,
+          "loss": 0.41753766563033423,
+          "update": 3000
+        }
+      ],
+      "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+      "seconds": 207.79458516999148,
+      "seed": 17,
+      "updates": 3000,
+      "validation": {
+        "errors": 29,
+        "queries": 55,
+        "rejections": 2717,
+        "repairs": 0,
+        "tasks": 62,
+        "wellFormed": 33
+      }
+    }
+  ],
+  "seconds": 2243.6573214399978,
+  "selection": {
+    "config": {
+      "layers": 3,
+      "name": "gin-128x3",
+      "variant": "gin",
+      "width": 128
+    },
+    "datasetHash": "fcbba907cf5f384ba2832075e7f8f3e58b85da72d39a4a72cc218dbce714dc0e",
+    "parameters": 1541252,
+    "seed17CheckpointHash": "624ff3d00980db3ee37b591df8e76996c544112e28a42c3e356565c115e95a5f",
+    "selection": "validation repairs, parameter count, fixed order",
+    "validation": {
+      "errors": 29,
+      "queries": 59,
+      "rejections": 1742,
+      "repairs": 0,
+      "tasks": 62,
+      "wellFormed": 33
+    }
+  },
+  "selectionHash": "52045403c9e2c66ed1652ccbd6e1122f9b3afae10195d9dfe1fea62699b6cc99",
+  "status": "COMPLETE",
+  "teacherDecisions": 4677,
+  "teacherTasks": 313,
+  "testing": [
+    {
+      "errors": 28,
+      "queries": 91,
+      "rejections": 7551,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "queries": 90,
+      "rejections": 7399,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 89,
+      "wellFormed": 61
+    },
+    {
+      "errors": 28,
+      "queries": 88,
+      "rejections": 8281,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 89,
+      "wellFormed": 61
+    }
+  ],
+  "torch": "2.14.1+cu130",
+  "updates": 3000,
+  "workers": 4
+}

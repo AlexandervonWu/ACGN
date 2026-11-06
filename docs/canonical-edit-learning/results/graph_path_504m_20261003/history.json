@@ -1,0 +1,50 @@
+[
+  {
+    "epoch": 1,
+    "trainingTokenLoss": 3.979136864770123,
+    "validationTokenLoss": 3.1390281022778574,
+    "epochSeconds": 380.2196245330051
+  },
+  {
+    "epoch": 2,
+    "trainingTokenLoss": 2.8805353763975923,
+    "validationTokenLoss": 2.698242279913238,
+    "epochSeconds": 379.889687183997
+  },
+  {
+    "epoch": 3,
+    "trainingTokenLoss": 2.499896231491354,
+    "validationTokenLoss": 2.4145300064511104,
+    "epochSeconds": 380.0657615560049
+  },
+  {
+    "epoch": 4,
+    "trainingTokenLoss": 2.2851470025684515,
+    "validationTokenLoss": 2.229381094668194,
+    "epochSeconds": 379.54511086200364
+  },
+  {
+    "epoch": 5,
+    "trainingTokenLoss": 2.1476847372940338,
+    "validationTokenLoss": 2.125975767140165,
+    "epochSeconds": 379.4354913499992
+  },
+  {
+    "epoch": 6,
+    "trainingTokenLoss": 2.052530543567569,
+    "validationTokenLoss": 2.055954824846069,
+    "epochSeconds": 379.2922616460055
+  },
+  {
+    "epoch": 7,
+    "trainingTokenLoss": 1.98905348484617,
+    "validationTokenLoss": 2.012117681283625,
+    "epochSeconds": 379.30789776200254
+  },
+  {
+    "epoch": 8,
+    "trainingTokenLoss": 1.9497381849151063,
+    "validationTokenLoss": 1.9830056569990986,
+    "epochSeconds": 378.94686500599346
+  }
+]

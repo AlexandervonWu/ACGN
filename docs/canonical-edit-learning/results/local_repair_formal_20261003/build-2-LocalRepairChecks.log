@@ -1,0 +1,20 @@
+'LocalRepairChecks.stable_retry_is_blocked' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.changed_candidate_is_allowed' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.transient_retry_is_allowed' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.checked_draft_commits' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.stale_commit_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.wrong_draft_commit_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.old_success_cannot_certify_new_revision' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.rejected_source_is_unchanged' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.abort_does_not_forget_failure' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.successful_receipt_is_inhabited' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.wrong_revision_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.wrong_candidate_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.wrong_context_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.unknown_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.empty_query_budget_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.active_draft_fails' depends on axioms: [propext, Quot.sound]
+'LocalRepairChecks.recovery_is_admitted_but_not_semantic_success' does not depend on any axioms
+'LocalRepairChecks.both_heldout_splits_fail' does not depend on any axioms
+'LocalRepairChecks.unbound_snapshot_fails' does not depend on any axioms
+'LocalRepairChecks.occurrence_edit_retains_equal_sibling' does not depend on any axioms

@@ -1,0 +1,1011 @@
+{
+  "arms": [
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.5666666666666667,
+        "heads": 210,
+        "jointAccuracy": 0.411214953271028,
+        "loss": 0.8551510199556284
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.2857142857142857,
+        "heads": 210,
+        "jointAccuracy": 0.11214953271028037,
+        "loss": 1.9406367016729908
+      },
+      "clippedUpdates": 241,
+      "encoderTotalUpdateNorm": 12.40273666381836,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 482049,
+      "peakCudaAllocatedBytes": 105308672,
+      "peakCudaReservedBytes": 125829120,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 0,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 500,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 36.78432772499946,
+      "seed": 17,
+      "variant": "original"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.7428571428571429,
+        "heads": 210,
+        "jointAccuracy": 0.5887850467289719,
+        "loss": 0.520971226699054
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.18571428571428572,
+        "heads": 210,
+        "jointAccuracy": 0.037383177570093455,
+        "loss": 2.2568741290368766
+      },
+      "clippedUpdates": 941,
+      "encoderTotalUpdateNorm": 6.861411094665527,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 119321088,
+      "peakCudaReservedBytes": 146800640,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 11,
+          "rejections": 997,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 36.91928838699823,
+      "seed": 17,
+      "variant": "mlp"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8285714285714286,
+        "heads": 210,
+        "jointAccuracy": 0.7289719626168224,
+        "loss": 0.3767033247598099
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.09047619047619047,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.234789481786924
+      },
+      "clippedUpdates": 923,
+      "encoderTotalUpdateNorm": 7.594354629516602,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 130657280,
+      "peakCudaReservedBytes": 153092096,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 11,
+          "rejections": 996,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 41.25918577200355,
+      "seed": 17,
+      "variant": "gcn"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.9047619047619048,
+        "heads": 210,
+        "jointAccuracy": 0.8317757009345794,
+        "loss": 0.2523210925044912
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.06190476190476191,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.2292149713106246
+      },
+      "clippedUpdates": 911,
+      "encoderTotalUpdateNorm": 7.965026378631592,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 129121792,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 12,
+          "rejections": 975,
+          "repairs": 2,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 38.02930794299755,
+      "seed": 17,
+      "variant": "sage"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8952380952380953,
+        "heads": 210,
+        "jointAccuracy": 0.8130841121495327,
+        "loss": 0.22382376036510443
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.08095238095238096,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.259411107713931
+      },
+      "clippedUpdates": 902,
+      "encoderTotalUpdateNorm": 7.909297466278076,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 131318784,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 495,
+          "repairs": 3,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 35.69338395100203,
+      "seed": 17,
+      "variant": "gin"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8952380952380953,
+        "heads": 210,
+        "jointAccuracy": 0.8411214953271028,
+        "loss": 0.22952290392311064
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.11904761904761904,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.1879381052801543
+      },
+      "clippedUpdates": 902,
+      "encoderTotalUpdateNorm": 6.847513675689697,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 146952704,
+      "peakCudaReservedBytes": 186646528,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 248,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 740,
+          "repairs": 3,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "8d15898498e167d6963c3cb215e8014db2b92a8748fbee4adb2fbd0d15b67d15",
+      "seconds": 50.150815427005,
+      "seed": 17,
+      "variant": "gat"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.6571428571428571,
+        "heads": 210,
+        "jointAccuracy": 0.40186915887850466,
+        "loss": 0.7610216498936344
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.14761904761904762,
+        "heads": 210,
+        "jointAccuracy": 0.07476635514018691,
+        "loss": 1.9499055392274232
+      },
+      "clippedUpdates": 199,
+      "encoderTotalUpdateNorm": 14.926889419555664,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 482049,
+      "peakCudaAllocatedBytes": 111484416,
+      "peakCudaReservedBytes": 146800640,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 0,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 33.740800599996874,
+      "seed": 29,
+      "variant": "original"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.7,
+        "heads": 210,
+        "jointAccuracy": 0.5327102803738317,
+        "loss": 0.5509920787212013
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.17142857142857143,
+        "heads": 210,
+        "jointAccuracy": 0.11214953271028037,
+        "loss": 2.007165637528785
+      },
+      "clippedUpdates": 965,
+      "encoderTotalUpdateNorm": 7.921782493591309,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 119710208,
+      "peakCudaReservedBytes": 146800640,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 500,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 30.806926300996565,
+      "seed": 29,
+      "variant": "mlp"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.861904761904762,
+        "heads": 210,
+        "jointAccuracy": 0.7476635514018691,
+        "loss": 0.4076284383509034
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.24285714285714285,
+        "heads": 210,
+        "jointAccuracy": 0.11214953271028037,
+        "loss": 2.031456470489502
+      },
+      "clippedUpdates": 936,
+      "encoderTotalUpdateNorm": 9.092061996459961,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 131517440,
+      "peakCudaReservedBytes": 153092096,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 8,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 724,
+          "repairs": 4,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 48.350667979997525,
+      "seed": 29,
+      "variant": "gcn"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.9,
+        "heads": 210,
+        "jointAccuracy": 0.8130841121495327,
+        "loss": 0.2561429625222836
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.23333333333333334,
+        "heads": 210,
+        "jointAccuracy": 0.09345794392523364,
+        "loss": 2.047196031730866
+      },
+      "clippedUpdates": 909,
+      "encoderTotalUpdateNorm": 8.164092063903809,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 129246720,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 10,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 12,
+          "rejections": 739,
+          "repairs": 4,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 44.82357381700422,
+      "seed": 29,
+      "variant": "sage"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.9238095238095239,
+        "heads": 210,
+        "jointAccuracy": 0.8691588785046729,
+        "loss": 0.2041413825712217
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.16666666666666666,
+        "heads": 210,
+        "jointAccuracy": 0.018691588785046728,
+        "loss": 2.105011714396076
+      },
+      "clippedUpdates": 891,
+      "encoderTotalUpdateNorm": 7.894546985626221,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 130314240,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 464,
+          "repairs": 5,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 40.73898097300116,
+      "seed": 29,
+      "variant": "gin"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.9142857142857143,
+        "heads": 210,
+        "jointAccuracy": 0.8411214953271028,
+        "loss": 0.2822818178063363
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.08095238095238096,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.2231437079260283
+      },
+      "clippedUpdates": 882,
+      "encoderTotalUpdateNorm": 7.61472749710083,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 145887744,
+      "peakCudaReservedBytes": 186646528,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 10,
+          "rejections": 490,
+          "repairs": 2,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "2b00ecf3053a552165ee547b80154b173f9c46e79ed8b11caa224222503f370e",
+      "seconds": 54.469965165997564,
+      "seed": 29,
+      "variant": "gat"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.6285714285714286,
+        "heads": 210,
+        "jointAccuracy": 0.40186915887850466,
+        "loss": 0.765224042809873
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.21904761904761905,
+        "heads": 210,
+        "jointAccuracy": 0.07476635514018691,
+        "loss": 1.9391483681224218
+      },
+      "clippedUpdates": 201,
+      "encoderTotalUpdateNorm": 10.788326263427734,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 482049,
+      "peakCudaAllocatedBytes": 105308672,
+      "peakCudaReservedBytes": 125829120,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 0,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 10,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 41.221535999997286,
+      "seed": 43,
+      "variant": "original"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.7142857142857143,
+        "heads": 210,
+        "jointAccuracy": 0.5233644859813084,
+        "loss": 0.6785309411831217
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.07142857142857142,
+        "heads": 210,
+        "jointAccuracy": 0.0,
+        "loss": 2.3237863701080608
+      },
+      "clippedUpdates": 929,
+      "encoderTotalUpdateNorm": 8.933825492858887,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 119288320,
+      "peakCudaReservedBytes": 146800640,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 8,
+          "rejections": 0,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 36.34519496899884,
+      "seed": 43,
+      "variant": "mlp"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8428571428571429,
+        "heads": 210,
+        "jointAccuracy": 0.7102803738317757,
+        "loss": 0.3312320845061124
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.15714285714285714,
+        "heads": 210,
+        "jointAccuracy": 0.06542056074766354,
+        "loss": 2.0461401042537153
+      },
+      "clippedUpdates": 950,
+      "encoderTotalUpdateNorm": 8.854103088378906,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 130569216,
+      "peakCudaReservedBytes": 153092096,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 37.22958012299932,
+      "seed": 43,
+      "variant": "gcn"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8809523809523809,
+        "heads": 210,
+        "jointAccuracy": 0.7850467289719626,
+        "loss": 0.21728298947744695
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.2,
+        "heads": 210,
+        "jointAccuracy": 0.102803738317757,
+        "loss": 2.0207199019806406
+      },
+      "clippedUpdates": 895,
+      "encoderTotalUpdateNorm": 7.970003128051758,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 129082880,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 16,
+          "rejections": 0,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 743,
+          "repairs": 2,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 37.03081167900382,
+      "seed": 43,
+      "variant": "sage"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.9,
+        "heads": 210,
+        "jointAccuracy": 0.8130841121495327,
+        "loss": 0.23639801471093214
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.12857142857142856,
+        "heads": 210,
+        "jointAccuracy": 0.09345794392523364,
+        "loss": 2.0452071717966382
+      },
+      "clippedUpdates": 917,
+      "encoderTotalUpdateNorm": 8.006579399108887,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 130156544,
+      "peakCudaReservedBytes": 174063616,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 14,
+          "rejections": 248,
+          "repairs": 1,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 12,
+          "rejections": 745,
+          "repairs": 4,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 40.27250286300114,
+      "seed": 43,
+      "variant": "gin"
+    },
+    {
+      "after": {
+        "decisions": 107,
+        "headAccuracy": 0.8857142857142857,
+        "heads": 210,
+        "jointAccuracy": 0.7850467289719626,
+        "loss": 0.26082092247578037
+      },
+      "before": {
+        "decisions": 107,
+        "headAccuracy": 0.2571428571428571,
+        "heads": 210,
+        "jointAccuracy": 0.18691588785046728,
+        "loss": 1.8713503134584872
+      },
+      "clippedUpdates": 901,
+      "encoderTotalUpdateNorm": 7.438540935516357,
+      "nonzeroFiniteGradientUpdates": 1000,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 145842688,
+      "peakCudaReservedBytes": 186646528,
+      "rollouts": [
+        {
+          "errors": 0,
+          "queries": 8,
+          "rejections": 492,
+          "repairs": 0,
+          "tasks": 8,
+          "update": 250,
+          "wellFormed": 8
+        },
+        {
+          "errors": 0,
+          "queries": 13,
+          "rejections": 500,
+          "repairs": 2,
+          "tasks": 8,
+          "update": 1000,
+          "wellFormed": 8
+        }
+      ],
+      "scheduleHash": "f7157b95dd6a710405ef41d6d73550eb5e5400ec51e8053e3a7bafad4f1bd828",
+      "seconds": 57.58884723899973,
+      "seed": 43,
+      "variant": "gat"
+    }
+  ],
+  "batchDecisions": 8,
+  "contract": "feedback-intent-path-v1",
+  "controls": [
+    {
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 8,
+      "wellFormed": 8
+    },
+    {
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 5,
+      "rejections": 3,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 8,
+      "wellFormed": 8
+    },
+    {
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 8,
+      "wellFormed": 8
+    },
+    {
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 8,
+      "rejections": 4,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 8,
+      "wellFormed": 8
+    },
+    {
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 8,
+      "wellFormed": 8
+    },
+    {
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 5,
+      "rejections": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 8,
+      "wellFormed": 8
+    }
+  ],
+  "decisionBudget": 256,
+  "device": "cuda",
+  "dirty": true,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "laterStages": {
+    "500M": "NOT_RUN",
+    "Qwen": "NOT_RUN",
+    "heldout": "NOT_RUN"
+  },
+  "limitations": [
+    "Eight training tasks, not held-out generalization.",
+    "New readout and decoder are shared interventions, not isolated single-factor ablations.",
+    "Gradients and imitation scores cannot certify semantic repair.",
+    "No large-model escalation; original 1/8/64 gate outcome preserved."
+  ],
+  "preflight": "/tmp/acgn-feedback-gnn-preflight-20261003",
+  "preflightHash": "9e5cc68187d46d3ac1c3b5d8dcdc2fa8e92fdd9499382abb690fd3496fd56ac3",
+  "queryBudget": 2,
+  "schema": "feedback-gnn-gradient-v1",
+  "seconds": 764.7670241279993,
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "status": "BOUNDED_COMPARISON_COMPLETE",
+  "summary": [
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        3,
+        5,
+        4
+      ],
+      "meanTeacherJointAccuracy": 0.8317757009345795,
+      "parameters": 1541252,
+      "totalRepairs": 12,
+      "variant": "gin"
+    },
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        2,
+        4,
+        2
+      ],
+      "meanTeacherJointAccuracy": 0.8099688473520249,
+      "parameters": 1541249,
+      "totalRepairs": 8,
+      "variant": "sage"
+    },
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        3,
+        2,
+        2
+      ],
+      "meanTeacherJointAccuracy": 0.822429906542056,
+      "parameters": 1639553,
+      "totalRepairs": 7,
+      "variant": "gat"
+    },
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        1,
+        4,
+        1
+      ],
+      "meanTeacherJointAccuracy": 0.7289719626168224,
+      "parameters": 1541249,
+      "totalRepairs": 6,
+      "variant": "gcn"
+    },
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        1,
+        1,
+        0
+      ],
+      "meanTeacherJointAccuracy": 0.5482866043613707,
+      "parameters": 1479809,
+      "totalRepairs": 2,
+      "variant": "mlp"
+    },
+    {
+      "eightTaskGatePasses": 0,
+      "finalRepairs": [
+        0,
+        1,
+        0
+      ],
+      "meanTeacherJointAccuracy": 0.40498442367601245,
+      "parameters": 482049,
+      "totalRepairs": 1,
+      "variant": "original"
+    }
+  ],
+  "taskIds": [
+    "be563a3a9ebe9062107c",
+    "841b47d7a6530bdcdc29",
+    "e925b59446448a4c679a",
+    "45e3b214d8e2c259bcdf",
+    "880a7087b92b5ece2a43",
+    "763d065c3ac245b08ec5",
+    "7b838a83e9b3d3f81c3b",
+    "35612179cdee5ab833b1"
+  ],
+  "teacherDecisions": 107,
+  "torch": "2.14.1+cu130",
+  "updateCap": 1000
+}

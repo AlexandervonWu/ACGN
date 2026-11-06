@@ -1,0 +1,107 @@
+[
+  {
+    "id": "e3f34254adf0799730ed",
+    "maxLogitDifference": 1.430511474609375e-06,
+    "ordinaryArgmax": 5,
+    "cachedArgmax": 5,
+    "goldFirst": 5,
+    "generatedPrefix": [
+      5,
+      10,
+      23,
+      20,
+      17,
+      22,
+      21,
+      23,
+      20,
+      22,
+      21,
+      5
+    ],
+    "goldPrefix": [
+      5,
+      10,
+      17,
+      32,
+      18,
+      4,
+      22,
+      5,
+      10,
+      18,
+      33,
+      16
+    ]
+  },
+  {
+    "id": "49a0428bccb93c25f291",
+    "maxLogitDifference": 1.3113021850585938e-06,
+    "ordinaryArgmax": 5,
+    "cachedArgmax": 5,
+    "goldFirst": 5,
+    "generatedPrefix": [
+      5,
+      10,
+      23,
+      20,
+      17,
+      16,
+      16,
+      16,
+      16,
+      16,
+      16,
+      3
+    ],
+    "goldPrefix": [
+      5,
+      10,
+      17,
+      32,
+      18,
+      4,
+      22,
+      5,
+      10,
+      18,
+      33,
+      16
+    ]
+  },
+  {
+    "id": "4ed8c9e9bc198a300170",
+    "maxLogitDifference": 2.384185791015625e-06,
+    "ordinaryArgmax": 5,
+    "cachedArgmax": 5,
+    "goldFirst": 5,
+    "generatedPrefix": [
+      5,
+      10,
+      23,
+      20,
+      22,
+      31,
+      23,
+      20,
+      22,
+      31,
+      23,
+      5
+    ],
+    "goldPrefix": [
+      5,
+      10,
+      17,
+      32,
+      18,
+      4,
+      20,
+      5,
+      10,
+      18,
+      33,
+      16
+    ]
+  }
+]

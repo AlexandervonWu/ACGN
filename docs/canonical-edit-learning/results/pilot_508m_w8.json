@@ -1,0 +1,242 @@
+{
+  "scope": "synthetic short-context SGD functionality; no corpus or production optimizer fit claim",
+  "python": "3.10.11",
+  "torch": "2.14.1+cu130",
+  "cuda": "13.0",
+  "device": "NVIDIA GeForce RTX 5080",
+  "input_hashes": {
+    "docs/canonical-edit-learning/formal/HybridRepair.lean": "804b7747ca69162d8af394b7bb9488dc8d13788e65d00f0c75547df7ffe8bb90",
+    "experiments/hybrid_edit/__init__.py": "a16f527d3168204e27d1b99f82ab28d008da791e587a5f92f1b85b1293638a98",
+    "experiments/hybrid_edit/model.py": "90193432f106cbc3306de6a715d677182273cf66d7cbae02a574a28786358174",
+    "experiments/hybrid_edit/probe.py": "94f3b114b39d2b5e54f7b844867f4f22050856013aecbcf195086bc60cba7e65",
+    "experiments/hybrid_edit/scope.py": "229b86e4541932daeb10e1f02e08b70a71da388a99646adbc9f37d0eaae9716d",
+    "experiments/hybrid_edit/test_model.py": "c5c5c2662801de2c784ea00fa6964ab0444835833d8385e22a40d4c9ce56a0b1",
+    "experiments/hybrid_edit/test_scope.py": "e622bf6514348b00670a995bc4ca7a6a6f4593e65d243a17987eba9129308b74"
+  },
+  "study": "pilot",
+  "candidate": "508m-w8a16",
+  "candidates": [
+    {
+      "id": "508m-w16a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 20,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 508313088,
+      "mixed_packed_weights_bytes": 1016626176,
+      "fp32_master_and_gradient_bytes": 4066504704,
+      "nominal_full_adam_bytes": 8133009408,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "508m-w8a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 20,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 508313088,
+      "mixed_packed_weights_bytes": 529038336,
+      "fp32_master_and_gradient_bytes": 4066504704,
+      "nominal_full_adam_bytes": 8133009408,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "508m-w4a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 20,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 508313088,
+      "mixed_packed_weights_bytes": 277380096,
+      "fp32_master_and_gradient_bytes": 4066504704,
+      "nominal_full_adam_bytes": 8133009408,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "710m-w16a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 28,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 709664256,
+      "mixed_packed_weights_bytes": 1419328512,
+      "fp32_master_and_gradient_bytes": 5677314048,
+      "nominal_full_adam_bytes": 11354628096,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "710m-w8a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 28,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 709664256,
+      "mixed_packed_weights_bytes": 736705536,
+      "fp32_master_and_gradient_bytes": 5677314048,
+      "nominal_full_adam_bytes": 11354628096,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "710m-w4a16",
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 28,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 709664256,
+      "mixed_packed_weights_bytes": 384384000,
+      "fp32_master_and_gradient_bytes": 5677314048,
+      "nominal_full_adam_bytes": 11354628096,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "911m-w16a16",
+      "config": {
+        "vocab": 128,
+        "width": 2048,
+        "layers": 20,
+        "heads": 16,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 5632,
+        "weight_bits": 16,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 910534656,
+      "mixed_packed_weights_bytes": 1821069312,
+      "fp32_master_and_gradient_bytes": 7284277248,
+      "nominal_full_adam_bytes": 14568554496,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "911m-w8a16",
+      "config": {
+        "vocab": 128,
+        "width": 2048,
+        "layers": 20,
+        "heads": 16,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 5632,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 910534656,
+      "mixed_packed_weights_bytes": 947474432,
+      "fp32_master_and_gradient_bytes": 7284277248,
+      "nominal_full_adam_bytes": 14568554496,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    },
+    {
+      "id": "911m-w4a16",
+      "config": {
+        "vocab": 128,
+        "width": 2048,
+        "layers": 20,
+        "heads": 16,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 5632,
+        "weight_bits": 4,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 910534656,
+      "mixed_packed_weights_bytes": 496586752,
+      "fp32_master_and_gradient_bytes": 7284277248,
+      "nominal_full_adam_bytes": 14568554496,
+      "large_training_status": "NOT_RUN_BACKEND_AND_DATA_GATES_OPEN"
+    }
+  ],
+  "smoke": [
+    {
+      "weight_bits": 8,
+      "config": {
+        "vocab": 128,
+        "width": 1536,
+        "layers": 20,
+        "heads": 12,
+        "kv_heads": 4,
+        "head_dim": 128,
+        "ff": 4096,
+        "weight_bits": 8,
+        "group_size": 128,
+        "max_tokens": 2048
+      },
+      "parameters": 508313088,
+      "master_dtype": "float32",
+      "activation_autocast": "bfloat16",
+      "steps": 2,
+      "tokens_per_packet": 64,
+      "batch_size": 2,
+      "optimizer": "SGD-no-momentum",
+      "learning_rate": 0.001,
+      "losses": [
+        5.530756950378418,
+        4.932703018188477
+      ],
+      "elapsed_seconds": 0.9813748569977179,
+      "peak_torch_allocated_bytes": 4180804608,
+      "peak_torch_reserved_bytes": 4341104640,
+      "status": "SYNTHETIC_FIXTURE_FUNCTIONAL_ONLY"
+    }
+  ],
+  "maximum_host_rss_kib": 2075764,
+  "open_gates": [
+    "certified_export",
+    "source_edit_coverage",
+    "checked_real_data_labels",
+    "whole_codec_correspondence",
+    "packed_training_backend",
+    "large_training_fit"
+  ]
+}

@@ -1,0 +1,199 @@
+{
+  "commands": [
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/IntentRepair.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/IntentRepair.lean"
+      ],
+      "exitCode": 0,
+      "log": "IntentRepair.log"
+    },
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/FeedbackSession.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/FeedbackSession.lean"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackSession.log"
+    },
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/FeedbackLearning.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/FeedbackLearning.lean"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackLearning.log"
+    },
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/FeedbackGNN.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/FeedbackGNN.lean"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackGNN.log"
+    },
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/FeedbackScaling.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/FeedbackScaling.lean"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackScaling.log"
+    },
+    {
+      "command": [
+        "javac",
+        "--release",
+        "17",
+        "-encoding",
+        "UTF-8",
+        "-cp",
+        "/home/augustus/ACGN/lib/*",
+        "-d",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/classes",
+        "@/tmp/acgn-feedback-scale-preflight-20261003-v2/sources.args"
+      ],
+      "exitCode": 0,
+      "log": "compile.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.FeedbackRepairTest"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackRepairTest.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.RepairEnvironmentTest"
+      ],
+      "exitCode": 0,
+      "log": "RepairEnvironmentTest.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-scale-preflight-20261003-v2/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.RepairLearningTest"
+      ],
+      "exitCode": 0,
+      "log": "RepairLearningTest.log"
+    },
+    {
+      "command": [
+        "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+        "-m",
+        "unittest",
+        "experiments.feedback_repair.test_replay",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "ReplayTest.log"
+    },
+    {
+      "command": [
+        "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+        "-m",
+        "unittest",
+        "experiments.feedback_repair.test_learning.LearningTest",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "LearningBoundaryTest.log"
+    },
+    {
+      "command": [
+        "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+        "-m",
+        "unittest",
+        "experiments.feedback_repair.test_gnn.GNNTest",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "GNNTest.log"
+    },
+    {
+      "command": [
+        "/home/augustus/.venvs/acgn-rl-cu130/bin/python",
+        "-m",
+        "unittest",
+        "experiments.feedback_repair.test_scaling.ScalingTest",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "ScalingTest.log"
+    }
+  ],
+  "contract": "feedback-intent-path-v1",
+  "coverage": {
+    "OBSERVATION_AND_QUERY_PASS": 95,
+    "UNSUPPORTED_OR_FAILURE": 9
+  },
+  "dirty": true,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "openGates": [
+    "Canonical numeric export is bounded: local binders and unrepresentable domains explicitly fail coverage.",
+    "Draft masks expose coarse sorts; exact dependent type checking remains a mandatory commit-time check.",
+    "Training-only teacher coverage is measured; 1/8/64 free-running learnability and matched controls have not run.",
+    "The small graph policy is available in train_gates; Qwen and large scratch consumers remain gated."
+  ],
+  "schema": "feedback-training-preflight-v1",
+  "seconds": 156.11145043400757,
+  "stages": [
+    {
+      "name": "GNN",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    },
+    {
+      "name": "Qwen local adaptation",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    },
+    {
+      "name": "~500M scratch transformer",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    }
+  ],
+  "status": "BOUNDED_LEARNING_PREFLIGHT",
+  "taskCount": 104,
+  "teacherCoverage": {
+    "NO_ADMITTED_PATH": 2,
+    "REPLAY_VALIDATED_TEACHER": 62
+  },
+  "teacherTasks": 64,
+  "tests": {
+    "CausalReplayTest": 14,
+    "FeedbackRepairTest": 132,
+    "GNNTest": 7,
+    "LearningBoundaryTest": 7,
+    "RepairEnvironmentTest": 64,
+    "RepairLearningTest": 38,
+    "ScalingTest": 9
+  }
+}

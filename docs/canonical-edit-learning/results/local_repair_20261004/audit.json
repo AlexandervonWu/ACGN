@@ -1,0 +1,108 @@
+{
+  "status": "AUDIT_PASSED",
+  "inputHashes": 420,
+  "preflightOutputHashes": 1035,
+  "studyOutputHashes": 5397,
+  "admissionStatuses": {
+    "REPLAY_ADMITTED": 960
+  },
+  "admissionErrors": {},
+  "supervisedDecisionKinds": {
+    "continuation": 11231
+  },
+  "rejectedSupervisedStates": 70,
+  "supervisedStatesAfterCommit": 960,
+  "checkpointChecks": [
+    {
+      "path": "gin-17/policy-2.pt",
+      "sha256": "4ce5a60e847eeb8348fd946967a2021c21f5fe83da835b200d59be7692287ad5",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gcn-17/policy-2.pt",
+      "sha256": "3f7a5cc2bc4c46188dfd0e893b23cad06981933d9e34b9621ac20ebad684c69e",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "sage-17/policy-2.pt",
+      "sha256": "cdb5ef2ad8198b983918d2ac4a140e14739d5839b2637595017d99f7821c99b6",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gat-17/policy-2.pt",
+      "sha256": "baf0bfa8d27aedcfaff2e4b3c8cc9389ec2ac6dfa9a2f6799c6869c75e678ca9",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-17/policy-2.pt",
+      "sha256": "ea2efb03936a31b180ae305d7fe3f5c26d74423c6022327372d5c063f754d070",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gin-29/policy-2.pt",
+      "sha256": "e3366da1a818df8f38bc94eae98faa2775d9888dd9c045b19aab73ee25ba7fe8",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gcn-29/policy-2.pt",
+      "sha256": "fb700fb08aac1eece7706fc5935bbfaebba2641339af71fff6db069adedd1002",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "sage-29/policy-2.pt",
+      "sha256": "3f8cc5d56baeff43c9ff9aeb88188482378c7b92b636e027fbf18547b38e252d",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gat-29/policy-2.pt",
+      "sha256": "0fc71e6136962989fa55fd8a40bb4669cc09e13ec0f31be0f06f9812e6ff328b",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-29/policy-2.pt",
+      "sha256": "1ae9cbf1f694bd48e58b24da8c33ac0a5a4ae13d22cf9e4bf7c7e32b9eef73cc",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gin-43/policy-2.pt",
+      "sha256": "5ea968be0c903be435e75692d8321e6fd4a401dea059326a410cf3dadf1a83ce",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gcn-43/policy-2.pt",
+      "sha256": "f904c8d8baea73cebac68bd59ee0874199516bfd069ca7fc6ff5076ab801995c",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "sage-43/policy-2.pt",
+      "sha256": "67fb799b32ab3b77e499b7f5433bf383a77edb3f4576b41610362d3eee927a3c",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "gat-43/policy-2.pt",
+      "sha256": "ee4928ce3d36f0c9e097b8d1969f54a45ef9ec2bbddf9b8d8319f9fdddc163e3",
+      "status": "STRICT_LOAD_FINITE"
+    },
+    {
+      "path": "mlp-43/policy-2.pt",
+      "sha256": "b098b3367674ceafb686423386257cd40a9fbddd5d8d2c442db343ddade72065",
+      "status": "STRICT_LOAD_FINITE"
+    }
+  ],
+  "finalTaskRepairs": {
+    "be563a3a9ebe9062107c": 14,
+    "841b47d7a6530bdcdc29": 0,
+    "e925b59446448a4c679a": 12,
+    "45e3b214d8e2c259bcdf": 11,
+    "880a7087b92b5ece2a43": 12,
+    "763d065c3ac245b08ec5": 2,
+    "7b838a83e9b3d3f81c3b": 2,
+    "35612179cdee5ab833b1": 10
+  },
+  "diagnosticHashes": {
+    "LocalTrainingProbe.java": "c4a6cd6a23c2cec1ccb7350cdca020021334effb21db19e8469a2e1b4f3135b6",
+    "acgn-local-training-probe.log": "beeaccbf53915477ea6bcf71fae25ffc3939ded86f071422677401ec8dbb5a9b"
+  },
+  "reporterHash": "2c383fa65cd215b4a9f74e00c53e48d292d2e0d920691d121ebcead33bee34b0",
+  "scope": "Finite source/dataflow/accounting audit; not universal Java/Lean refinement"
+}

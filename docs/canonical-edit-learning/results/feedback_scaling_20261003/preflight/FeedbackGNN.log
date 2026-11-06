@@ -1,0 +1,11 @@
+'FeedbackGNN.aggregate_permutation' depends on axioms: [propext]
+'FeedbackGNN.channel_ignores_other' depends on axioms: [propext, Quot.sound]
+'FeedbackGNN.channel_retains_member' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FeedbackGNN.score_context_difference' depends on axioms: [propext, Quot.sound]
+'FeedbackGNN.score_choice_difference' depends on axioms: [propext]
+'FeedbackGNN.context_sensitive_witness' does not depend on any axioms
+'FeedbackGNN.variant_private_independence' does not depend on any axioms
+'FeedbackGNN.schedule_length' depends on axioms: [propext]
+'FeedbackGNN.paired_schedule' does not depend on any axioms
+'FeedbackGNN.gradients_not_authority' does not depend on any axioms
+'FeedbackGNN.nonzero_gradient_cannot_certify' does not depend on any axioms

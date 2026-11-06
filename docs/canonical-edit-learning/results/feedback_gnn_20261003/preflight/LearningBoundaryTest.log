@@ -1,0 +1,12 @@
+test_canonical_aci_and_temporal_import (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_exact_int32_roundtrip (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_graph_address_transport (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_private_changes_same_tensors_and_prediction (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_query_budget_mask (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_source_alpha_names_not_tensor_identity (experiments.feedback_repair.test_learning.LearningTest) ... ok
+test_teacher_features_exclude_label_and_future (experiments.feedback_repair.test_learning.LearningTest) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.996s
+
+OK

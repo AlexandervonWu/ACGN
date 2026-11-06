@@ -1,0 +1,41 @@
+{
+  "before": {
+    "decisions": 128,
+    "headAccuracy": 0.2388663967611336,
+    "jointAccuracy": 0.125,
+    "loss": 1.925932458601892
+  },
+  "clippedUpdates": 2834,
+  "config": {
+    "layers": 4,
+    "name": "sage-256x4",
+    "variant": "sage",
+    "width": 256
+  },
+  "encoderUpdateNorm": 4.090595245361328,
+  "finiteNonzeroGradientUpdates": 3000,
+  "hostMaxRssKiB": 3095584,
+  "parameters": 6303745,
+  "peakCudaAllocatedBytes": 399458816,
+  "peakCudaReservedBytes": 442499072,
+  "probes": [
+    {
+      "decisions": 128,
+      "headAccuracy": 0.7732793522267206,
+      "jointAccuracy": 0.625,
+      "loss": 0.5776867050439023,
+      "update": 1000
+    },
+    {
+      "decisions": 128,
+      "headAccuracy": 0.9595141700404858,
+      "jointAccuracy": 0.9375,
+      "loss": 0.09199318642225762,
+      "update": 3000
+    }
+  ],
+  "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+  "seconds": 249.2437255679979,
+  "seed": 17,
+  "updates": 3000
+}

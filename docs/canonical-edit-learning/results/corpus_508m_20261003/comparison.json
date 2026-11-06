@@ -1,0 +1,636 @@
+{
+  "manifest": {
+    "protocol": "hybrid-corpus-one-step-v2",
+    "config": {
+      "vocab": 128,
+      "width": 1536,
+      "layers": 20,
+      "heads": 12,
+      "kv_heads": 4,
+      "head_dim": 128,
+      "ff": 4096,
+      "weight_bits": 16,
+      "group_size": 128,
+      "max_tokens": 2048
+    },
+    "parameters": 508313088,
+    "seed": 19,
+    "epochs": 8,
+    "rate": 3e-05,
+    "effectiveBatch": 128,
+    "microbatch": 8,
+    "counts": {
+      "train": 1192,
+      "validation": 221,
+      "evaluation": 192
+    },
+    "groups": {
+      "train": [
+        "classroom_fol:inv1",
+        "classroom_fol:inv11",
+        "classroom_fol:inv13",
+        "classroom_fol:inv14",
+        "classroom_fol:inv2",
+        "classroom_fol:inv5",
+        "classroom_fol:inv6",
+        "classroom_fol:inv7",
+        "classroom_fol:inv9",
+        "cv_v1:inv1",
+        "cv_v1:inv2",
+        "cv_v1:inv3",
+        "cv_v1:inv4",
+        "graphs:inv1",
+        "graphs:inv2",
+        "graphs:inv3",
+        "graphs:inv5",
+        "graphs:inv6",
+        "graphs:inv7",
+        "graphs:inv8",
+        "socialMedia:inv1",
+        "socialMedia:inv2",
+        "socialMedia:inv5",
+        "socialMedia:inv6",
+        "socialMedia:inv7",
+        "socialMedia:inv8",
+        "trash_fol:inv1",
+        "trash_fol:inv3",
+        "trash_fol:inv6",
+        "trash_fol:inv8",
+        "trash_fol:inv9"
+      ],
+      "validation": [
+        "classroom_fol:inv12",
+        "classroom_fol:inv3",
+        "graphs:inv4",
+        "socialMedia:inv4",
+        "trash_fol:inv2",
+        "trash_fol:inv4",
+        "trash_fol:inv7"
+      ],
+      "evaluation": [
+        "classroom_fol:inv10",
+        "classroom_fol:inv15",
+        "classroom_fol:inv4",
+        "socialMedia:inv3",
+        "trash_fol:inv5"
+      ]
+    },
+    "developmentTestGroupsExcluded": [
+      "classroom_fol:inv8",
+      "trash_fol:inv10"
+    ],
+    "developmentTestIdsExcluded": [
+      "1d21ce1c50ce32906adf",
+      "8f39afed0acc56c2d36d",
+      "38065ac80b71f6da8781",
+      "bf5fc473e6ac18e0d3ef",
+      "05f5fa8ae7f4d47804af",
+      "8da76a74ec6cda09e8f5",
+      "557b4fd73f9b832fe43d",
+      "ae23d893c011e212a4c9",
+      "6640d131035c2fd96e38",
+      "0f2f45f2e2ffba8ba8b1",
+      "a79b94a83367ef0c2af2",
+      "e819a94b175ef4601239",
+      "4d3ced6c1362fe6271d5",
+      "1b08c232bd0d7662f28b",
+      "451149cb442d131b7f14",
+      "597d70bbe0936f60a072",
+      "f2d7c95c256d6ce19336",
+      "8b6dae8bf602bdd1c2eb",
+      "405014573c012ee19727",
+      "80b3e726cebddbe10295",
+      "00d039f65f7ca570f29a",
+      "5433e7bd624a47a9894e",
+      "0dfa54fea7f5c8b3365f",
+      "3d1f89a25fba13a36f5f",
+      "f24b0f1f4c8202b304a9",
+      "8fde31777718ac6b6d95",
+      "c6bad95479301f84d8bb",
+      "542cc9dfc0dc113c5b58",
+      "a45192dad62ece06f0d6",
+      "1a7420aea1cc36df1c9e",
+      "bac5c1896acae5913e5c",
+      "5f9beaaefa856ea7470d",
+      "5a3b8073c633bea5cb5f",
+      "5fd1650c0c4fc95054e7",
+      "643a10e47ff89a5e0b6a",
+      "70585b4eff4096d73678",
+      "1997772c66f1dcbff6df",
+      "1cd30f36828298c90ed2"
+    ],
+    "datasetLedgerHash": "4e2ae62dbf533e98dfa998f4da3545419c9e79ea7725d151e82bafc08b24c434",
+    "datasetSelectionHash": "5a278ef64c097104104da673f713b148f475549fd87744ab9f765e6888fc3a81",
+    "sourceHashes": {
+      "experiments/hybrid_edit/__init__.py": "a16f527d3168204e27d1b99f82ab28d008da791e587a5f92f1b85b1293638a98",
+      "experiments/hybrid_edit/corpus_codec.py": "20bccd480b54945a26aacc210bd0b00fe0c4db805912a43c29e30393db924137",
+      "experiments/hybrid_edit/test_model.py": "c5c5c2662801de2c784ea00fa6964ab0444835833d8385e22a40d4c9ce56a0b1",
+      "experiments/hybrid_edit/audit_vocabulary.py": "d2c5c3258bcc4ca13dd08faeca5caa86bf3c9dad3c2890e5e72fe824c64d9a9c",
+      "experiments/hybrid_edit/probe.py": "94f3b114b39d2b5e54f7b844867f4f22050856013aecbcf195086bc60cba7e65",
+      "experiments/hybrid_edit/test_scope.py": "4d470f4a356f873590e0ed4160f67637d3f8d5a589a294b6ac525ff04f6c072f",
+      "experiments/hybrid_edit/test_batching.py": "6a9c6dda0c6a24e7015f2ebb9be94161594d14fe03a8509a8beb999eb24638d3",
+      "experiments/hybrid_edit/model.py": "73681e1b3afa54919ef7270178c03d017a90d4504287a1e3677a1d98d208458c",
+      "experiments/hybrid_edit/test_corpus.py": "2c3fb95e82deac269aec230b280bb4e339b6f9c757e2af1126dec60bb3596642",
+      "experiments/hybrid_edit/test_vocabulary_audit.py": "7955c67bb18a229cb399026e09c0743eee0c977d4ec73acbb5309b5b46650712",
+      "experiments/hybrid_edit/batching.py": "4322284a7e0e321a120ee94629df423a8761159ad6b5e0d95e6ba6ee10e40957",
+      "experiments/hybrid_edit/scope.py": "30a2348af310f027234813065f97ff787935e383907613a369349e0832b53050",
+      "experiments/hybrid_edit/train_corpus.py": "50c31a1c34994455922e13993f960a0a82f80cbd20c9f7566b8ddce0fd4cb705",
+      "experiments/hybrid_edit/retry_corpus.py": "3c6223decba92424b1279b113d593f7d5b89e92a2e45ec419c41366ce8e7ee47",
+      "experiments/hybrid_edit/report_corpus.py": "b5835f201520276c0d05ee533d7f760bde0b1ea4601c63ec68b76145a6c9e96d",
+      "experiments/hybrid_edit/batch_probe.py": "56d51e25cd4aa9d283dce65f7000f8e1854fb30bd7f290dca8922fd2a840e6b4",
+      "experiments/hybrid_edit/corpus.py": "027df7e57ada54be779654ebfbf0f285fc359c2f2d2ec84d0fd57793d609d209",
+      "docs/canonical-edit-learning/formal/CorpusTraining.lean": "3603a61ee13ffaa0ad8ee266d41d4117d7cc61da68627618278c26cbdea73efb",
+      "docs/canonical-edit-learning/formal/HybridRepair.lean": "89f27f0b1056273b7586c3449eebfe66c89483397bfc393da41701aec7d62e1d",
+      "src/is/fivefivefive/ACGN/repair/RepairEnvironmentTest.java": "75d433af11cf7014252377242d1aaacdece0ddc3b3698e664914a01ba5e8d478",
+      "src/is/fivefivefive/ACGN/repair/RepairSearch.java": "53d140ef1dda51c489e4a54e529c2bd90de4a188a1eeb238881efd5e87fb9206",
+      "src/is/fivefivefive/ACGN/repair/RepairExplorer.java": "cc1676e3b08bd013d19a23187386e9735ba11290a17d0529ee68f9a39a2dc700",
+      "src/is/fivefivefive/ACGN/repair/RepairWorkerMain.java": "afd4559149fad8527b8358de44a764e74640b4993c2a3d4f03b405392a1ac0ae",
+      "src/is/fivefivefive/ACGN/repair/RepairLearningTest.java": "a6afe676baee2be43bba89ca142f9a4ec6adfabaab88b1cc899f1b9aa1980cad",
+      "src/is/fivefivefive/ACGN/repair/RepairAction.java": "60763816c16778d10ec8f02d09851eb1b530af2936ce7f94f16065e77d53cd53",
+      "src/is/fivefivefive/ACGN/repair/RepairFeedback.java": "1e4c3308f8f60e892b89e0a075c8210ec5d0088458af5a8d31e4a3483f54c303",
+      "src/is/fivefivefive/ACGN/repair/RepairTask.java": "89cf43d84563db1e91342224e6551c3b2060eb0109bbcc61c062c60e939aaaae",
+      "src/is/fivefivefive/ACGN/repair/RepairEvaluator.java": "5b343945ec73f12d4f946969e35887cd3e209f0eabbb367d78d78e3be7af21be",
+      "src/is/fivefivefive/ACGN/repair/RepairObservation.java": "133ff1a84ff0abfee9eda7a887af676ac6528226b970b0c6848c6fd0b2dbd1ca",
+      "src/is/fivefivefive/ACGN/repair/RepairActionEnumerator.java": "f11d938809135e47721c9bb9ff43e1cf8a63fbf902800b4403dec00ebe1851cf",
+      "src/is/fivefivefive/ACGN/repair/RepairEnvironment.java": "7f620e30d69eb4d95a6fe7b0872a8b22d66e40fc9a860f4ac23f22bc3ef40d71",
+      "src/is/fivefivefive/ACGN/repair/RepairKernel.java": "df4f7bf57d19c93201df8dbad6bc28d36b442f60ba24b91a8ec9dfc3ce9d3c45",
+      "src/is/fivefivefive/ACGN/repair/RepairStudyWorker.java": "3d2ed216944b155a824054f9e45387aafb2b556fbdc9081684c3867fcd47eb4c",
+      "src/is/fivefivefive/ACGN/repair/HybridCorpusWorker.java": "a08cb427554b0c9ed7448b76d9a274e3091e270bdf6b28e71a174163a1b3f39d"
+    },
+    "startedAt": "2026-10-03T17:57:49.153590+00:00",
+    "gitHead": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+    "dirtyTree": true,
+    "python": "3.10.11",
+    "host": "augustus-x870e",
+    "torch": "2.14.1+cu130",
+    "cuda": "13.0",
+    "device": "NVIDIA GeForce RTX 5080",
+    "scope": "one-step, independent run scope 3",
+    "certificateReplay": "NOT_REQUESTED",
+    "training": "from-scratch-full-parameter"
+  },
+  "dataCounts": {
+    "ACCEPTED": 1643,
+    "EXCLUDED": 2453
+  },
+  "exclusions": {
+    "ScopeExclusion: OPERATOR_IDEN": 96,
+    "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 1163,
+    "ScopeExclusion: OPERATOR_QUANT_ONE": 84,
+    "ScopeExclusion: SCOPED_MENU_SIZE": 123,
+    "DUPLICATE_AST_PAIR": 462,
+    "ScopeExclusion: UNKNOWN_SYMBOL": 104,
+    "ScopeExclusion: OPERATOR_EXISTS": 204,
+    "ScopeExclusion: OPERATOR_FORALL": 76,
+    "ScopeExclusion: OPERATOR_ONE_ARROW_ONE": 3,
+    "ScopeExclusion: OPERATOR_QUANT_NO": 18,
+    "ScopeExclusion: OPERATOR_ANY_ARROW_LONE": 7,
+    "ScopeExclusion: OPERATOR_ONE_ARROW_ANY": 6,
+    "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: SOURCE_FEATURE_ExprITE": 2,
+    "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: SOURCE_FEATURE_ExprCall": 25,
+    "ScopeExclusion: OPERATOR_LONE_ARROW_LONE": 2,
+    "ScopeExclusion: OPERATOR_RANGE": 11,
+    "ScopeExclusion: OPERATOR_ANY_ARROW_ONE": 5,
+    "ScopeExclusion: OPERATOR_DOMAIN": 24,
+    "ScopeExclusion: OPERATOR_CARDINALITY": 2,
+    "ScopeExclusion: OPERATOR_LTE": 4,
+    "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Temporal expressions require a later repair milestone": 3,
+    "ScopeExclusion: OPERATOR_LONE_ARROW_ANY": 2,
+    "ScopeExclusion: OPERATOR_GT": 2,
+    "ScopeExclusion: OPERATOR_QUANT_LONE": 10,
+    "ScopeExclusion: OPERATOR_ANY_ARROW_SOME": 1,
+    "ScopeExclusion: OPERATOR_CAST2SIGINT": 1,
+    "ScopeExclusion: OPERATOR_ONE_ARROW_LONE": 2,
+    "ScopeExclusion: OPERATOR_QUANT_COMPREHENSION": 1,
+    "ScopeExclusion: OPERATOR_NUMBER": 3,
+    "ScopeExclusion: OPERATOR_LT": 3,
+    "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: SOURCE_FEATURE_ExprLet": 1,
+    "ScopeExclusion: OPERATOR_GTE": 1,
+    "ScopeExclusion: OPERATOR_SOME_ARROW_ANY": 1,
+    "ScopeExclusion: RELATION_ARITY": 1
+  },
+  "test": {
+    "count": 192,
+    "questions": 5,
+    "budgets": {
+      "1": {
+        "learned_solved": 0,
+        "learned_rate": 0.0,
+        "random_expected_solved": 0.5333333333333333,
+        "random_expected_rate": 0.002777777777777778,
+        "counterexample_score_solved": 2,
+        "counterexample_score_rate": 0.010416666666666666
+      },
+      "3": {
+        "learned_solved": 1,
+        "learned_rate": 0.005208333333333333,
+        "random_expected_solved": 1.6,
+        "random_expected_rate": 0.008333333333333333,
+        "counterexample_score_solved": 2,
+        "counterexample_score_rate": 0.010416666666666666
+      }
+    },
+    "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+    "one_step_upper_bound": 2,
+    "untrained_same_seed": {
+      "count": 192,
+      "questions": 5,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.5333333333333333,
+          "random_expected_rate": 0.002777777777777778,
+          "counterexample_score_solved": 2,
+          "counterexample_score_rate": 0.010416666666666666
+        },
+        "3": {
+          "learned_solved": 2,
+          "learned_rate": 0.010416666666666666,
+          "random_expected_solved": 1.6,
+          "random_expected_rate": 0.008333333333333333,
+          "counterexample_score_solved": 2,
+          "counterexample_score_rate": 0.010416666666666666
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 2
+    },
+    "elapsed_seconds": 1206.5470077179998,
+    "peak_allocated_bytes": 7678656000,
+    "peak_reserved_bytes": 11452547072,
+    "checkpointHash": "0ce94a78c983df5810f9f79f8348d711c78dc841f1d329dcc3f79aa9bf68254d"
+  },
+  "byQuestion": {
+    "classroom_fol:inv10": {
+      "count": 6,
+      "questions": 1,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        },
+        "3": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 0
+    },
+    "classroom_fol:inv15": {
+      "count": 55,
+      "questions": 1,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        },
+        "3": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 0
+    },
+    "classroom_fol:inv4": {
+      "count": 19,
+      "questions": 1,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        },
+        "3": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 0
+    },
+    "socialMedia:inv3": {
+      "count": 99,
+      "questions": 1,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.5333333333333333,
+          "random_expected_rate": 0.0053872053872053875,
+          "counterexample_score_solved": 2,
+          "counterexample_score_rate": 0.020202020202020204
+        },
+        "3": {
+          "learned_solved": 1,
+          "learned_rate": 0.010101010101010102,
+          "random_expected_solved": 1.6,
+          "random_expected_rate": 0.01616161616161616,
+          "counterexample_score_solved": 2,
+          "counterexample_score_rate": 0.020202020202020204
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 2
+    },
+    "trash_fol:inv5": {
+      "count": 13,
+      "questions": 1,
+      "budgets": {
+        "1": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        },
+        "3": {
+          "learned_solved": 0,
+          "learned_rate": 0.0,
+          "random_expected_solved": 0.0,
+          "random_expected_rate": 0.0,
+          "counterexample_score_solved": 0,
+          "counterexample_score_rate": 0.0
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 0
+    }
+  },
+  "top1PairedQuestionBootstrap": {
+    "questionClusters": 5,
+    "resamples": 5000,
+    "meanDifference": -0.002777777777777778,
+    "lower": -0.004863221884498481,
+    "upper": 0.0
+  },
+  "selectedEpoch": 8,
+  "trainingHistory": [
+    {
+      "epoch": 1,
+      "train_loss": 2.826166750600674,
+      "validation_loss": 2.0923630177165586,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 12,
+            "learned_rate": 0.05429864253393665,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 28,
+            "learned_rate": 0.12669683257918551,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": true
+    },
+    {
+      "epoch": 2,
+      "train_loss": 2.103899278896767,
+      "validation_loss": 1.9481346553267398,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 13,
+            "learned_rate": 0.058823529411764705,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 28,
+            "learned_rate": 0.12669683257918551,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": true
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.9504181010611106,
+      "validation_loss": 1.9080152080069839,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 12,
+            "learned_rate": 0.05429864253393665,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 28,
+            "learned_rate": 0.12669683257918551,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": false
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.8819053053055834,
+      "validation_loss": 1.8624976598299468,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 12,
+            "learned_rate": 0.05429864253393665,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 28,
+            "learned_rate": 0.12669683257918551,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": false
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.837059146605882,
+      "validation_loss": 1.8058372094080999,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 13,
+            "learned_rate": 0.058823529411764705,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 29,
+            "learned_rate": 0.13122171945701358,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": true
+    },
+    {
+      "epoch": 6,
+      "train_loss": 1.7997252189072988,
+      "validation_loss": 1.8048330788159264,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 12,
+            "learned_rate": 0.05429864253393665,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 29,
+            "learned_rate": 0.13122171945701358,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": false
+    },
+    {
+      "epoch": 7,
+      "train_loss": 1.7668429757124626,
+      "validation_loss": 1.771226470826438,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 14,
+            "learned_rate": 0.06334841628959276,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 29,
+            "learned_rate": 0.13122171945701358,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": true
+    },
+    {
+      "epoch": 8,
+      "train_loss": 1.7357316009150257,
+      "validation_loss": 1.7326871798588679,
+      "validation": {
+        "count": 221,
+        "questions": 7,
+        "budgets": {
+          "1": {
+            "learned_solved": 14,
+            "learned_rate": 0.06334841628959276,
+            "random_expected_solved": 14.116666666666669,
+            "random_expected_rate": 0.06387631975867271,
+            "counterexample_score_solved": 27,
+            "counterexample_score_rate": 0.12217194570135746
+          },
+          "3": {
+            "learned_solved": 29,
+            "learned_rate": 0.13122171945701358,
+            "random_expected_solved": 27.85,
+            "random_expected_rate": 0.1260180995475113,
+            "counterexample_score_solved": 29,
+            "counterexample_score_rate": 0.13122171945701358
+          }
+        },
+        "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+        "one_step_upper_bound": 29
+      },
+      "selected": true
+    }
+  ]
+}

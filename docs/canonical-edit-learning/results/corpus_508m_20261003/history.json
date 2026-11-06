@@ -1,0 +1,242 @@
+[
+  {
+    "epoch": 1,
+    "train_loss": 2.826166750600674,
+    "validation_loss": 2.0923630177165586,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 12,
+          "learned_rate": 0.05429864253393665,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 28,
+          "learned_rate": 0.12669683257918551,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": true
+  },
+  {
+    "epoch": 2,
+    "train_loss": 2.103899278896767,
+    "validation_loss": 1.9481346553267398,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 13,
+          "learned_rate": 0.058823529411764705,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 28,
+          "learned_rate": 0.12669683257918551,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": true
+  },
+  {
+    "epoch": 3,
+    "train_loss": 1.9504181010611106,
+    "validation_loss": 1.9080152080069839,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 12,
+          "learned_rate": 0.05429864253393665,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 28,
+          "learned_rate": 0.12669683257918551,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": false
+  },
+  {
+    "epoch": 4,
+    "train_loss": 1.8819053053055834,
+    "validation_loss": 1.8624976598299468,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 12,
+          "learned_rate": 0.05429864253393665,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 28,
+          "learned_rate": 0.12669683257918551,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": false
+  },
+  {
+    "epoch": 5,
+    "train_loss": 1.837059146605882,
+    "validation_loss": 1.8058372094080999,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 13,
+          "learned_rate": 0.058823529411764705,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 29,
+          "learned_rate": 0.13122171945701358,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": true
+  },
+  {
+    "epoch": 6,
+    "train_loss": 1.7997252189072988,
+    "validation_loss": 1.8048330788159264,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 12,
+          "learned_rate": 0.05429864253393665,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 29,
+          "learned_rate": 0.13122171945701358,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": false
+  },
+  {
+    "epoch": 7,
+    "train_loss": 1.7668429757124626,
+    "validation_loss": 1.771226470826438,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 14,
+          "learned_rate": 0.06334841628959276,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 29,
+          "learned_rate": 0.13122171945701358,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": true
+  },
+  {
+    "epoch": 8,
+    "train_loss": 1.7357316009150257,
+    "validation_loss": 1.7326871798588679,
+    "validation": {
+      "count": 221,
+      "questions": 7,
+      "budgets": {
+        "1": {
+          "learned_solved": 14,
+          "learned_rate": 0.06334841628959276,
+          "random_expected_solved": 14.116666666666669,
+          "random_expected_rate": 0.06387631975867271,
+          "counterexample_score_solved": 27,
+          "counterexample_score_rate": 0.12217194570135746
+        },
+        "3": {
+          "learned_solved": 29,
+          "learned_rate": 0.13122171945701358,
+          "random_expected_solved": 27.85,
+          "random_expected_rate": 0.1260180995475113,
+          "counterexample_score_solved": 29,
+          "counterexample_score_rate": 0.13122171945701358
+        }
+      },
+      "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+      "one_step_upper_bound": 29
+    },
+    "selected": true
+  }
+]

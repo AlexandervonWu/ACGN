@@ -1,0 +1,29 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 4,
+          "site": 3
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 1,
+    "seconds": 0.23129717400297523,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  }
+]

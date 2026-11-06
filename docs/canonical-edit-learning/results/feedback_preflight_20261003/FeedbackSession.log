@@ -1,0 +1,21 @@
+'FeedbackSession.initial_feedback_empty' does not depend on any axioms
+'FeedbackSession.private_change_hidden' does not depend on any axioms
+'FeedbackSession.query_consumes_budget' depends on axioms: [propext, Quot.sound]
+'FeedbackSession.query_appends_exact_response' depends on axioms: [propext, Classical.choice, Quot.sound]
+'FeedbackSession.query_preserves_private_contract' depends on axioms: [propext]
+'FeedbackSession.exhausted_query_unchanged' depends on axioms: [propext]
+'FeedbackSession.rejected_attempt_no_feedback' does not depend on any axioms
+'FeedbackSession.rejected_attempt_keeps_view' does not depend on any axioms
+'FeedbackSession.rejected_attempt_consumes_budget' depends on axioms: [propext, Quot.sound]
+'FeedbackSession.response_prefix_preserved' depends on axioms: [propext]
+'FeedbackSession.query_same_public_response' depends on axioms: [propext]
+'FeedbackSession.no_empty_is_true' does not depend on any axioms
+'FeedbackSession.some_empty_is_false' does not depend on any axioms
+'FeedbackSession.enclosing_span_keeps_core' depends on axioms: [propext]
+'FeedbackSession.masks_ignore_private' does not depend on any axioms
+'FeedbackSession.masked_choice_from_public' depends on axioms: [propext]
+'FeedbackSession.replay_key_excludes_future' does not depend on any axioms
+'FeedbackSession.exhausted_replay_does_not_query' depends on axioms: [propext]
+'FeedbackSession.first_domain_has_no_draft_bindings' depends on axioms: [propext]
+'FeedbackSession.domain_scope_is_preceding_groups' depends on axioms: [propext, Quot.sound]
+'FeedbackSession.returned_signature_member_retained' depends on axioms: [propext, Quot.sound]

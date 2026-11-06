@@ -1,0 +1,20 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.29644310599542223,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  }
+]

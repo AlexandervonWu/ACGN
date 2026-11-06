@@ -1,0 +1,40 @@
+{
+  "selectedEpoch": 8,
+  "trainingSeconds": 3066.8430674850024,
+  "totalSeconds": 5887.442053368002,
+  "testTokenLoss": 1.8484539795745445,
+  "validation": {
+    "count": 444,
+    "programExact": 0,
+    "validReplay": 216,
+    "rootShape": 0,
+    "targetGraphExact": 0,
+    "unchangedGraph": 0,
+    "seconds": 1250.990487405994,
+    "stopCounts": {
+      "EOS": 216,
+      "INVALID": 194,
+      "TOKEN_LIMIT": 34
+    },
+    "behavioralRepair": "NOT_EVALUATED: graph-to-Alloy realization and solver gate required"
+  },
+  "test": {
+    "count": 652,
+    "programExact": 0,
+    "validReplay": 376,
+    "rootShape": 0,
+    "targetGraphExact": 0,
+    "unchangedGraph": 0,
+    "seconds": 1538.973393197004,
+    "stopCounts": {
+      "EOS": 376,
+      "INVALID": 235,
+      "TOKEN_LIMIT": 41
+    },
+    "behavioralRepair": "NOT_EVALUATED: graph-to-Alloy realization and solver gate required"
+  },
+  "unchangedBaselineExact": 0,
+  "checkpointHash": "e55c72b2be7211867cc40c53efd77bc612ef4184558c365c5e9cc40bacb474f1",
+  "peakAllocatedGiB": 10.761413097381592,
+  "peakReservedGiB": 13.76171875
+}

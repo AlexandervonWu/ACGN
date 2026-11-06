@@ -1,0 +1,146 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.3044275860011112,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7726716280012624,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.3500641270002234,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.719074457003444,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.25709817899769405,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5254571540062898,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.438263324998843,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "mode": "noop",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.32923516900336836,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  }
+]

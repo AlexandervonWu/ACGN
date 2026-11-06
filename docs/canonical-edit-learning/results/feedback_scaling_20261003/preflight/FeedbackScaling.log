@@ -1,0 +1,10 @@
+'FeedbackScaling.no_validation_gradient' does not depend on any axioms
+'FeedbackScaling.no_evaluation_gradient' does not depend on any axioms
+'FeedbackScaling.same_question_same_split' does not depend on any axioms
+'FeedbackScaling.selection_ignores_teacher' does not depend on any axioms
+'FeedbackScaling.selection_bound' depends on axioms: [propext]
+'FeedbackScaling.unsupported_not_repaired' does not depend on any axioms
+'FeedbackScaling.failure_retained' does not depend on any axioms
+'FeedbackScaling.smaller_wins_validation_tie' depends on axioms: [propext]
+'FeedbackScaling.test_does_not_select' does not depend on any axioms
+'FeedbackScaling.cache_preserves_example' does not depend on any axioms

@@ -1,0 +1,938 @@
+{
+  "aggregationRounds": 2,
+  "arms": [
+    {
+      "clippedUpdates": 1732,
+      "eightTaskGate": false,
+      "encoderDelta": 10.538496017456055,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 122450432,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 5,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 6,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 0,
+          "errors": 0,
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 6,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 169.3958941479941,
+      "seed": 17,
+      "updates": 2000,
+      "variant": "gin"
+    },
+    {
+      "clippedUpdates": 1919,
+      "eightTaskGate": false,
+      "encoderDelta": 11.47288990020752,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 130317824,
+      "peakCudaReservedBytes": 161480704,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 16,
+          "rejected": 6,
+          "repairs": 4,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 3,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 13,
+          "rejected": 1,
+          "repairs": 5,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 2,
+          "errors": 0,
+          "queries": 14,
+          "rejected": 4,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 184.7333974159992,
+      "seed": 17,
+      "updates": 2000,
+      "variant": "gcn"
+    },
+    {
+      "clippedUpdates": 1739,
+      "eightTaskGate": false,
+      "encoderDelta": 11.04403305053711,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 120843264,
+      "peakCudaReservedBytes": 138412032,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 16,
+          "rejected": 4,
+          "repairs": 5,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 2,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 749
+          },
+          "queries": 14,
+          "rejected": 1,
+          "repairs": 4,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 2,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 175.1163189529907,
+      "seed": 17,
+      "updates": 2000,
+      "variant": "sage"
+    },
+    {
+      "clippedUpdates": 1771,
+      "eightTaskGate": false,
+      "encoderDelta": 10.425466537475586,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 140182528,
+      "peakCudaReservedBytes": 174063616,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 374
+          },
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 2,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 747
+          },
+          "queries": 15,
+          "rejected": 0,
+          "repairs": 4,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 192.7888830939919,
+      "seed": 17,
+      "updates": 2000,
+      "variant": "gat"
+    },
+    {
+      "clippedUpdates": 1997,
+      "eightTaskGate": false,
+      "encoderDelta": 10.81557559967041,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 109500416,
+      "peakCudaReservedBytes": 136314880,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 370
+          },
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 0,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 3,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 742
+          },
+          "queries": 13,
+          "rejected": 501,
+          "repairs": 0,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 2,
+          "repairs": 1,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 218.77324845000112,
+      "seed": 17,
+      "updates": 2000,
+      "variant": "mlp"
+    },
+    {
+      "clippedUpdates": 1761,
+      "eightTaskGate": false,
+      "encoderDelta": 10.81061840057373,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 123829760,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 5,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 6,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 0,
+          "errors": 0,
+          "queries": 16,
+          "rejected": 3,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 170.73841032900964,
+      "seed": 29,
+      "updates": 2000,
+      "variant": "gin"
+    },
+    {
+      "clippedUpdates": 1941,
+      "eightTaskGate": false,
+      "encoderDelta": 11.182408332824707,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 130317824,
+      "peakCudaReservedBytes": 161480704,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 374
+          },
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 3,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 749
+          },
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 4,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 2,
+          "errors": 0,
+          "queries": 14,
+          "rejected": 5,
+          "repairs": 4,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 178.61588884799858,
+      "seed": 29,
+      "updates": 2000,
+      "variant": "gcn"
+    },
+    {
+      "clippedUpdates": 1819,
+      "eightTaskGate": false,
+      "encoderDelta": 11.550495147705078,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 115760128,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 3,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 16,
+          "rejected": 4,
+          "repairs": 6,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 0,
+          "errors": 0,
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 4,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 163.6269504429947,
+      "seed": 29,
+      "updates": 2000,
+      "variant": "sage"
+    },
+    {
+      "clippedUpdates": 1674,
+      "eightTaskGate": false,
+      "encoderDelta": 9.970168113708496,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 141759488,
+      "peakCudaReservedBytes": 174063616,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 374
+          },
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 5,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 749
+          },
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 5,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 2,
+          "errors": 0,
+          "queries": 14,
+          "rejected": 2,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 194.66668461999507,
+      "seed": 29,
+      "updates": 2000,
+      "variant": "gat"
+    },
+    {
+      "clippedUpdates": 1991,
+      "eightTaskGate": false,
+      "encoderDelta": 12.046704292297363,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 110842368,
+      "peakCudaReservedBytes": 138412032,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 1,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 15,
+          "rejected": 0,
+          "repairs": 1,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 749
+          },
+          "queries": 16,
+          "rejected": 5,
+          "repairs": 0,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 2,
+          "errors": 0,
+          "queries": 14,
+          "rejected": 7,
+          "repairs": 1,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 167.50718673699885,
+      "seed": 29,
+      "updates": 2000,
+      "variant": "mlp"
+    },
+    {
+      "clippedUpdates": 1807,
+      "eightTaskGate": false,
+      "encoderDelta": 11.229068756103516,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541252,
+      "peakCudaAllocatedBytes": 117178880,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 16,
+          "rejected": 5,
+          "repairs": 3,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 16,
+          "rejected": 3,
+          "repairs": 6,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 177.8602807569987,
+      "seed": 43,
+      "updates": 2000,
+      "variant": "gin"
+    },
+    {
+      "clippedUpdates": 1892,
+      "eightTaskGate": false,
+      "encoderDelta": 12.459446907043457,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 121033216,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 14,
+          "rejected": 3,
+          "repairs": 3,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 2,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 14,
+          "rejected": 3,
+          "repairs": 5,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 5,
+          "repairs": 6,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 183.47338733400102,
+      "seed": 43,
+      "updates": 2000,
+      "variant": "gcn"
+    },
+    {
+      "clippedUpdates": 1855,
+      "eightTaskGate": false,
+      "encoderDelta": 11.433185577392578,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1541249,
+      "peakCudaAllocatedBytes": 117006336,
+      "peakCudaReservedBytes": 140509184,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 375
+          },
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 5,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 750
+          },
+          "queries": 16,
+          "rejected": 2,
+          "repairs": 6,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 0,
+          "errors": 0,
+          "queries": 16,
+          "rejected": 1,
+          "repairs": 5,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 174.5980091370002,
+      "seed": 43,
+      "updates": 2000,
+      "variant": "sage"
+    },
+    {
+      "clippedUpdates": 1764,
+      "eightTaskGate": false,
+      "encoderDelta": 9.829771041870117,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": true,
+      "parameters": 1639553,
+      "peakCudaAllocatedBytes": 133576704,
+      "peakCudaReservedBytes": 174063616,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 376
+          },
+          "queries": 10,
+          "rejected": 6,
+          "repairs": 1,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 0,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 751
+          },
+          "queries": 15,
+          "rejected": 3,
+          "repairs": 4,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 0,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 1,
+          "repairs": 6,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 197.38471423600276,
+      "seed": 43,
+      "updates": 2000,
+      "variant": "gat"
+    },
+    {
+      "clippedUpdates": 1996,
+      "eightTaskGate": false,
+      "encoderDelta": 11.111844062805176,
+      "finiteNonzeroGradientUpdates": 2000,
+      "oneTaskGate": false,
+      "parameters": 1479809,
+      "peakCudaAllocatedBytes": 113231360,
+      "peakCudaReservedBytes": 138412032,
+      "rounds": [
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 2,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 370
+          },
+          "queries": 14,
+          "rejected": 0,
+          "repairs": 0,
+          "round": 0,
+          "tasks": 8
+        },
+        {
+          "aggregation": {
+            "REPLAY_ADMITTED": 32
+          },
+          "decisionExhausted": 4,
+          "errors": 0,
+          "newSupervisionKinds": {
+            "continuation": 745
+          },
+          "queries": 12,
+          "rejected": 10,
+          "repairs": 0,
+          "round": 1,
+          "tasks": 8
+        },
+        {
+          "decisionExhausted": 1,
+          "errors": 0,
+          "queries": 15,
+          "rejected": 10,
+          "repairs": 0,
+          "round": 2,
+          "tasks": 8
+        }
+      ],
+      "seconds": 195.45779550800216,
+      "seed": 43,
+      "updates": 2000,
+      "variant": "mlp"
+    }
+  ],
+  "contract": "local-feedback-repair-v1",
+  "controls": [
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 5,
+      "rejected": 3,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 8
+    },
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 17,
+      "tasks": 8
+    },
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 9,
+      "rejected": 4,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 8
+    },
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 29,
+      "tasks": 8
+    },
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "uniform",
+      "queries": 5,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 8
+    },
+    {
+      "decisionExhausted": 0,
+      "errors": 0,
+      "mode": "noop",
+      "queries": 8,
+      "rejected": 0,
+      "repairs": 0,
+      "seed": 43,
+      "tasks": 8
+    }
+  ],
+  "decisionBudget": 256,
+  "dirty": true,
+  "gateStatus": "EIGHT_TASK_GATE_NOT_PASSED",
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "initialUpdates": 1000,
+  "laterStages": {
+    "500M": "GATED_NOT_RUN",
+    "Qwen": "GATED_NOT_RUN",
+    "heldout": "NOT_RUN"
+  },
+  "preflight": "/tmp/acgn-local-preflight-20261004-v3",
+  "preflightHash": "5667fa4c859770310d7d58265c93aa4c7fc4cde7729fdd1456f7ed5c4611ee66",
+  "queryBudget": 4,
+  "schema": "local-feedback-learning-study-v1",
+  "seconds": 2767.62369973,
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "status": "BOUNDED_COMPARISON_COMPLETE",
+  "taskIds": [
+    "be563a3a9ebe9062107c",
+    "841b47d7a6530bdcdc29",
+    "e925b59446448a4c679a",
+    "45e3b214d8e2c259bcdf",
+    "880a7087b92b5ece2a43",
+    "763d065c3ac245b08ec5",
+    "7b838a83e9b3d3f81c3b",
+    "35612179cdee5ab833b1"
+  ],
+  "tasks": 8,
+  "teacherDecisions": 94,
+  "teacherTasks": 8,
+  "torch": "2.14.1+cu130",
+  "updatesPerRound": 500,
+  "variants": [
+    "gin",
+    "gcn",
+    "sage",
+    "gat",
+    "mlp"
+  ]
+}

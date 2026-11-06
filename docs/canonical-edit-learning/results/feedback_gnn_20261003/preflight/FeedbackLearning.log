@@ -1,0 +1,10 @@
+'FeedbackLearning.metadata_preserves_metric' does not depend on any axioms
+'FeedbackLearning.edge_roundtrip' depends on axioms: [propext]
+'FeedbackLearning.role_retained' does not depend on any axioms
+'FeedbackLearning.position_retained' does not depend on any axioms
+'FeedbackLearning.multiplicity_retained' depends on axioms: [propext]
+'FeedbackLearning.label_private_noninterference' does not depend on any axioms
+'FeedbackLearning.prediction_noninterference' does not depend on any axioms
+'FeedbackLearning.query_limit' depends on axioms: [propext, Quot.sound]
+'FeedbackLearning.failed_gate_stops' does not depend on any axioms
+'FeedbackLearning.below_threshold_not_pass' depends on axioms: [propext, Quot.sound]

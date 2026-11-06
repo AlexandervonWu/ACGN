@@ -1,0 +1,3946 @@
+[
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "e735996fd626db77ca82",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "9ed0d60c0da121fe01e1",
+    "maxGraphRows": 664,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "059245bd7dd19649646c",
+    "maxGraphRows": 788,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "f5441049d06e5b2afbea",
+    "maxGraphRows": 587,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "aa2a65c1c1de1a0dc3ff",
+    "maxGraphRows": 504,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "c9ad3fdcb97ac6f362ff",
+    "maxGraphRows": 551,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "4e6021b203fd1aaf0ccc",
+    "maxGraphRows": 732,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "00650522c0d753ba413a",
+    "maxGraphRows": 543,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "b5ee88d402436f1ba205",
+    "maxGraphRows": 352,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "489dadc38dde3aa065af",
+    "maxGraphRows": 919,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "39132000d67b6ce48d50",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "f1840050f46b3a454131",
+    "maxGraphRows": 722,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "fffe6a40b4d1e1a271a0",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "1ee124e448ea1b2011c1",
+    "maxGraphRows": 579,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "70b90ebacde6d5d80f52",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "e06f678a38bf2680d2ee",
+    "maxGraphRows": 426,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "ed1ef05da90822ee547d",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv5",
+    "id": "3d415d45a331918b41e3",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 26,
+    "group": "cv_v1:inv3",
+    "id": "fa91ef7ad8f7e8b8763e",
+    "maxGraphRows": 624,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "653ae6181718a69f73b5",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "caefebd34b045917620b",
+    "maxGraphRows": 684,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "a8c658aacbebb41070e2",
+    "maxGraphRows": 980,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "d99fb48fead011ee379a",
+    "maxGraphRows": 386,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "a653c704f59b75d1d006",
+    "maxGraphRows": 977,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "9c6be1dce31525588567",
+    "maxGraphRows": 444,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "9148701e6686fdfc8efc",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "42f078d7701e8a7d9d64",
+    "maxGraphRows": 366,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "375290302f53a14b3e87",
+    "maxGraphRows": 329,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "351bd2d9dc3e516e406e",
+    "maxGraphRows": 608,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "e04ab5485f26e8f440f8",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "6b128b6ca61a92e82eb7",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "e85dc08f6c3d00d92001",
+    "maxGraphRows": 639,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "23f632a4aac419bf093a",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "7478d0a742355448e7a8",
+    "maxGraphRows": 583,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "6c341645c514d3132bad",
+    "maxGraphRows": 497,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "ab64f0ac067bfe137740",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "de976c9eda677caa1de5",
+    "maxGraphRows": 816,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "3e0c64e8257b198eb856",
+    "maxGraphRows": 646,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "8c25b6581781740281a2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "ccf0f5d57e38b456adf9",
+    "maxGraphRows": 892,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "b3728c99d01ce66b90a1",
+    "maxGraphRows": 318,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "classroom_fol:inv9",
+    "id": "4367698cee257d468372",
+    "maxGraphRows": 613,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "9c53c6bfe539fc35f810",
+    "maxGraphRows": 444,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "9b4549a6e8069b47f0e5",
+    "maxGraphRows": 511,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "05ded5354eaf6b1f5559",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "11c254cd1ff68145658b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 26,
+    "group": "cv_v1:inv3",
+    "id": "e9a98ca1b1eb66674089",
+    "maxGraphRows": 745,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "506356df798599dbb886",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "eedc142fc0ad8445db20",
+    "maxGraphRows": 1016,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv5",
+    "id": "ff2a38ded0d2de8fd1d9",
+    "maxGraphRows": 246,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "23afa78c9ec6e33383c2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED",
+    "group": "classroom_fol:inv13",
+    "id": "baa398588013a07237ed",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "77dd2df453d1f21387c3",
+    "maxGraphRows": 851,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "0858741f5506f4c6595c",
+    "maxGraphRows": 656,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "6022907923d1f65276d8",
+    "maxGraphRows": 612,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "d29ae50f52bc7ac67629",
+    "maxGraphRows": 365,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "02e5e6b1a840bae16031",
+    "maxGraphRows": 918,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv8",
+    "id": "e76dd64b9123c43f32bd",
+    "maxGraphRows": 315,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv4",
+    "id": "7c96d85850af6b48fea6",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "3036f23bcd22da457d93",
+    "maxGraphRows": 650,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "c105bc99004db5279d88",
+    "maxGraphRows": 526,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "460a263b53eb91d7b351",
+    "maxGraphRows": 422,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "ba72c6f29dda18f0d165",
+    "maxGraphRows": 577,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "1e04a893434c3a0d897b",
+    "maxGraphRows": 721,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "72cb8e9ea108eb69b20e",
+    "maxGraphRows": 632,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "4a6e168997475495afbf",
+    "maxGraphRows": 472,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "dc30b3081f99657eca73",
+    "maxGraphRows": 672,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "50f3399666a671f8ad53",
+    "maxGraphRows": 518,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "e568245ae6f8e55850ed",
+    "maxGraphRows": 521,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "4589d7850ae46f1fd602",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "81cf5150d9d24ecfc8d5",
+    "maxGraphRows": 569,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "cd83f0ac7796ff779bd6",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "ac71722a17cfc73cc0c1",
+    "maxGraphRows": 891,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "1f2eb1f73c2bf9ac1f7e",
+    "maxGraphRows": 644,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "23c3f3431c58f9d3037b",
+    "maxGraphRows": 888,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "cafda01ffdc389a62e1a",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "f4cc77c098b71f8a5316",
+    "maxGraphRows": 320,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "c80442f50f86f4a9feeb",
+    "maxGraphRows": 442,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "078a74700ad0b30c58a8",
+    "maxGraphRows": 846,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "8c8156e640a8a7ccefd1",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "96df3a124e449ebba7cb",
+    "maxGraphRows": 428,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 6,
+    "group": "trash_fol:inv1",
+    "id": "d93eb1bc41a41d0ff57d",
+    "maxGraphRows": 318,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "eb09bc30940a2ec479a8",
+    "maxGraphRows": 841,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "e1a6f0678587920c2d60",
+    "maxGraphRows": 864,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "b14c6cda59468c213ba2",
+    "maxGraphRows": 635,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 7,
+    "group": "classroom_fol:inv1",
+    "id": "fd0fa801be30c815940b",
+    "maxGraphRows": 484,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "6f49ce3228b9aca3d57f",
+    "maxGraphRows": 569,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "426c027264a7aef46361",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv5",
+    "id": "eacef8387f773a8599cd",
+    "maxGraphRows": 230,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "c24ed6e903d4ddd2a441",
+    "maxGraphRows": 536,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "75186d3272c110069eee",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "796cdc248e40edb55d96",
+    "maxGraphRows": 764,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "c556d3068ef0c83b956c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "ce1c43af17be3072798a",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "9ee90e5d584191685495",
+    "maxGraphRows": 393,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "d95e8953c9c051645938",
+    "maxGraphRows": 372,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "4d393d50100025a80b80",
+    "maxGraphRows": 261,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "b617f6b3cc9cec4c1c74",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv1",
+    "id": "94d90b7677c2a4630b74",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "71c9e757c4aedc52710a",
+    "maxGraphRows": 822,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "350855ecc3f59e76aab2",
+    "maxGraphRows": 396,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "f52b1f668ca99fc68e87",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "6a219895e58095023089",
+    "maxGraphRows": 333,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "e4bfadf81b9096dfaf5f",
+    "maxGraphRows": 562,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv8",
+    "id": "0da3b4c892c0093745d3",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "b2a33ed3a57dcaf406c2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "36d2cbf95a1e653fa001",
+    "maxGraphRows": 354,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "e3b416011dddff5a573a",
+    "maxGraphRows": 665,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "69ea23575358854c488d",
+    "maxGraphRows": 728,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "885562d81a75ec305953",
+    "maxGraphRows": 825,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "76c913c6e91789accb15",
+    "maxGraphRows": 611,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "cb5bf5209f1717912ab4",
+    "maxGraphRows": 549,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "3291831574ec91f5be89",
+    "maxGraphRows": 682,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "868249d0928a98b16e5f",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "ba3a3102d9c73ade4a25",
+    "maxGraphRows": 1001,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "01fe082add80a53efec3",
+    "maxGraphRows": 885,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "c244e2cdd7b9da4912bf",
+    "maxGraphRows": 526,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "9ad83616a1c2cd7677ab",
+    "maxGraphRows": 900,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "7f1507248b4ed7c6e479",
+    "maxGraphRows": 489,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv3",
+    "id": "ad53194de17e501eacae",
+    "maxGraphRows": 622,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "fe4178bcad8f4de6a8d6",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "5b279dff38406748142a",
+    "maxGraphRows": 514,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "b32c3b7f9be49408d1f6",
+    "maxGraphRows": 313,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "faf5fa5ac8c637803cb9",
+    "maxGraphRows": 519,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "8cf2b26e37503df93f93",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "3247d505320a9de0d569",
+    "maxGraphRows": 511,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "967e7e04aaccf9b89597",
+    "maxGraphRows": 608,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "1ad3def0dfab2b1113c6",
+    "maxGraphRows": 668,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "ceeb3512b2376406e4fc",
+    "maxGraphRows": 496,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "d482129dac2f9016db0a",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 26,
+    "group": "cv_v1:inv3",
+    "id": "b3ae476c3e1dc6ca82a6",
+    "maxGraphRows": 803,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "b9a41093000e8b016a89",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "cbec472a08d73e444228",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "50e032b1db6888844c62",
+    "maxGraphRows": 704,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "52c47089c00762e773e7",
+    "maxGraphRows": 709,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "5195041e551172cc5383",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv7",
+    "id": "7b67821d869dcaea1813",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "c397480bfe494b3e812b",
+    "maxGraphRows": 518,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv4",
+    "id": "ddd7bc516f1b0070e15f",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "458c268982c69153123a",
+    "maxGraphRows": 554,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "cd6cee3207968918bc24",
+    "maxGraphRows": 520,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "43fb27dac9e851e8626a",
+    "maxGraphRows": 740,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "ac17f44370f8840fb53b",
+    "maxGraphRows": 494,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "bc5e290eacba7bbe8154",
+    "maxGraphRows": 362,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "89fa8884a8e43ad952c0",
+    "maxGraphRows": 392,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv8",
+    "id": "a3424535bfb25cbb65d0",
+    "maxGraphRows": 267,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "818a0dbfaa2c5fb3efb5",
+    "maxGraphRows": 586,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "6e33f4ee225e3d0e40bb",
+    "maxGraphRows": 567,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "8d87e39c7ddf8de0687b",
+    "maxGraphRows": 850,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "72490a3ae73d9a458563",
+    "maxGraphRows": 516,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "995c00a663bbb5f9001c",
+    "maxGraphRows": 838,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "bce76a3b7350f8951019",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "779b38dd6743f1d28209",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "755f87f0c180632a633d",
+    "maxGraphRows": 604,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "3461134d378b0affc8ab",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "b6b775870c0dc845b342",
+    "maxGraphRows": 569,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "7de0f1d9e1b132b14181",
+    "maxGraphRows": 900,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "beba4144c7e7e5e96a50",
+    "maxGraphRows": 817,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "af77147643c292ac5354",
+    "maxGraphRows": 866,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "03fa18b7bb863d395246",
+    "maxGraphRows": 529,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "70041c2e39d839fdab65",
+    "maxGraphRows": 843,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "d414d9892565cf13a611",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "0c81951bdd8ed41597ab",
+    "maxGraphRows": 682,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "b3caf7f4794ef83b4fa5",
+    "maxGraphRows": 766,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "4bb36f3446e8f175bcdc",
+    "maxGraphRows": 696,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "30956b203f76acef7de4",
+    "maxGraphRows": 501,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "6de0a09f17b893938e13",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "0959ecaaba19ae4bf67b",
+    "maxGraphRows": 593,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "fc65894b220cc8d4e0b5",
+    "maxGraphRows": 490,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "1c1bd93a61d2235cbd1e",
+    "maxGraphRows": 871,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "6a037870274cf20a36e1",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv7",
+    "id": "422d9648ebdc03a77e33",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "90abfa0756cb570127f1",
+    "maxGraphRows": 362,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "44e91af0ccdf7d965a7e",
+    "maxGraphRows": 926,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "c4036edeae66e8446afd",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "be6e188372472a7001db",
+    "maxGraphRows": 824,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "88813a9846f6b16df4e0",
+    "maxGraphRows": 471,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "908352df4f04c7113d54",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "02928ebbf33730cfedd9",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv3",
+    "id": "ca245beaf8f79789a752",
+    "maxGraphRows": 286,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "c0cfb2582ccdbccdd252",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "fd27a9d736c734755043",
+    "maxGraphRows": 529,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "8c264586a822f5a24002",
+    "maxGraphRows": 658,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "442c176d47674a761a9a",
+    "maxGraphRows": 744,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "3b258aa736b9ab34d32f",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "bb58511580bac26af2bd",
+    "maxGraphRows": 584,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "c03768a1b55f9c99cd19",
+    "maxGraphRows": 645,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "435118e633ee7b7f6acc",
+    "maxGraphRows": 838,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "ae5261ecc8f9aec690d4",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "b01678e56adcf7c1b701",
+    "maxGraphRows": 643,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "2822efc3ad4fcfa5d8b3",
+    "maxGraphRows": 796,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "cbfcba407a6149822f02",
+    "maxGraphRows": 462,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "601e343d1c4d91d364e3",
+    "maxGraphRows": 854,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "4b5499219ebc2c57b000",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "8e07c743ac374efc1a8b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "28b7ec54f0a77e71026e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "72ad56eda31ffd4c9db5",
+    "maxGraphRows": 560,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "4c11c5e918ba286d42d5",
+    "maxGraphRows": 557,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "d2afcf63a3ceda7452f6",
+    "maxGraphRows": 512,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "c4b12db2c8511b10fdd8",
+    "maxGraphRows": 939,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "591c355a11da333b89b0",
+    "maxGraphRows": 480,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "86c0aba88c0d111eb163",
+    "maxGraphRows": 844,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv7",
+    "id": "8f953d42a03e76bb82d7",
+    "maxGraphRows": 645,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "858affbdf3cf9e1af521",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "7ba1e749d2f15f1337c8",
+    "maxGraphRows": 981,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "fe2769fce4967dea2311",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "36a8de049e340031c85e",
+    "maxGraphRows": 378,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "80f8b7f4b5b798e75568",
+    "maxGraphRows": 511,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "ac5505fc215e70381453",
+    "maxGraphRows": 544,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "34c313cd16a51a46c843",
+    "maxGraphRows": 595,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "socialMedia:inv5",
+    "id": "1cd1165703b2049c7572",
+    "maxGraphRows": 598,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "c7a3214c46a592caf692",
+    "maxGraphRows": 479,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "da1420a8a81982051628",
+    "maxGraphRows": 250,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "351129d07aa2511f8f14",
+    "maxGraphRows": 199,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv8",
+    "id": "0ce23d85b3587abfc906",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "4f872847452bd16b39b8",
+    "maxGraphRows": 471,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "b40c279b954c8ffacea0",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "42cd3179c927ae0cc12c",
+    "maxGraphRows": 640,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "6952f681c4a64417e4c9",
+    "maxGraphRows": 549,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "87de316a019f60441e4b",
+    "maxGraphRows": 494,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "294549ea5d2ce600f2e8",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "15056d1c7febab6bf0e7",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "c2e850ba249b37fe1e30",
+    "maxGraphRows": 372,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "5b31aa6fa83c09264f29",
+    "maxGraphRows": 694,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "3b6b77693558fa6ba030",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "a40e260e6014b96026fd",
+    "maxGraphRows": 601,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "35a5782f0be9f193f981",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "9683f1f333618f86bb75",
+    "maxGraphRows": 764,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "96aa409bfcc77b95072c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "8554fc55f3b15ea92470",
+    "maxGraphRows": 525,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "classroom_fol:inv7",
+    "id": "77f79cb88470150c8f12",
+    "maxGraphRows": 641,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "24670c26a20320f51899",
+    "maxGraphRows": 374,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "92d6df105ad4e4b385ea",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "b64d9035bdac5b227332",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "654e8cef81dfa0c72170",
+    "maxGraphRows": 684,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "47263bb5b42080635b15",
+    "maxGraphRows": 689,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "9cc5ea901e0fe453b795",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "e2f87a8b04a2ddf78f0d",
+    "maxGraphRows": 599,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "627c7c80271e3b8d9dc1",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "3cc2ed49423c2445e670",
+    "maxGraphRows": 277,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "0124e6b02233287f90b1",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "02f57ad9b56807ee4e14",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "204a3f766fd72e7feb3e",
+    "maxGraphRows": 284,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "7a04ae1448b77228ecd6",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "78058a985a8a39e9c2dd",
+    "maxGraphRows": 1053,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "6943c3f96b4ee08925d4",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "d1c0d78d2eff01f01091",
+    "maxGraphRows": 702,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "4c5422023044d91c1f26",
+    "maxGraphRows": 812,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "c9bc58097f138c1f1c24",
+    "maxGraphRows": 846,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "cafa788dbc6361478f95",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "722b7fb72cec70db0444",
+    "maxGraphRows": 544,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "10d1963e8375b9774786",
+    "maxGraphRows": 849,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "5018d1c0265d481ea528",
+    "maxGraphRows": 447,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED",
+    "group": "trash_fol:inv9",
+    "id": "619a4b62c2b6901310b4",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "classroom_fol:inv9",
+    "id": "200614bfccaf1696cc9c",
+    "maxGraphRows": 675,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "e853a42a2e672f19f3be",
+    "maxGraphRows": 817,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv3",
+    "id": "3c331b49528b7067a356",
+    "maxGraphRows": 298,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "14f60659cbe91849ee00",
+    "maxGraphRows": 496,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "dc321b5d59478f43eb5d",
+    "maxGraphRows": 967,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "d103527f80c5b8bc15d2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "4928301a320d1b0e349b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "71a4b4926ada9fd73b95",
+    "maxGraphRows": 730,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "b30814033f6be0daa6cd",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "e49ce87d7441007dbd65",
+    "maxGraphRows": 574,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "683bee56f1b06211aca4",
+    "maxGraphRows": 258,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "4cad74ac0e7d7cce961a",
+    "maxGraphRows": 303,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "bc92f3fbe59a3759ea4d",
+    "maxGraphRows": 764,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "827d72d4c7b299d7e33e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "08c1058be0b6d2fd3261",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "79eaa5af0d5557024c79",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "444cf2a061b9fa7647f8",
+    "maxGraphRows": 922,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "aad05bcbdf5a02a33271",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "aa8849252bfa4d43f2ca",
+    "maxGraphRows": 637,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "059047ef490349853801",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED",
+    "group": "trash_fol:inv9",
+    "id": "ad43cf10c2b801006c21",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "47fd323d80d4ee4995d5",
+    "maxGraphRows": 396,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "a7b06e0a67e4e0e2c96e",
+    "maxGraphRows": 810,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "bf6604915b22111dcdcf",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "23343680385f431f9521",
+    "maxGraphRows": 801,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "e2b5afec03ff0091edd8",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "991c93de3a6489a8f2e5",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "2b90b7e06e4f03cdf9ec",
+    "maxGraphRows": 529,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "deab62e5533dabecd1de",
+    "maxGraphRows": 315,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "graphs:inv7",
+    "id": "1ef06a856b9da4eba690",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "b3c8d96fb1f4b6a9a7ff",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "dccc7078751b2ab65e45",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv7",
+    "id": "2416397c662a005692ed",
+    "maxGraphRows": 489,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv9",
+    "id": "b771075b5cbf8e3acbce",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv4",
+    "id": "ad9d50c801aaa7b04d1b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "2342035fc3e96303974c",
+    "maxGraphRows": 428,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "ea28cf240c92af915b83",
+    "maxGraphRows": 731,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "40d6c3015a9414a85aae",
+    "maxGraphRows": 573,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "51e78f8b134beda5b1fe",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "3281953df38f85d15fdf",
+    "maxGraphRows": 308,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "63dc759f2f82ef818b4e",
+    "maxGraphRows": 401,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "8ca5240764b3e33f7880",
+    "maxGraphRows": 428,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "19cec52f31129892595c",
+    "maxGraphRows": 438,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "6520740cfd756462c357",
+    "maxGraphRows": 505,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "3e3e0d6a63f0e92ed77b",
+    "maxGraphRows": 892,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "e53a75c2ea9597ecc00d",
+    "maxGraphRows": 326,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "feb07de362d24b4b3e39",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "fb4dac85c1e3212b352d",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "99adef21e66aa784e34b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "524822bfd4f8804e6563",
+    "maxGraphRows": 871,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "51a7746005014c75c0c2",
+    "maxGraphRows": 805,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "1a72e92f75a0380d9d64",
+    "maxGraphRows": 536,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "2743e7ff57a95ed6c05f",
+    "maxGraphRows": 415,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "9307af7ac0e645bc1855",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "d3a2c7df191b47e1e9a1",
+    "maxGraphRows": 517,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "58af0929e11af7b2bec2",
+    "maxGraphRows": 428,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "4e258141d375a4d55ce0",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv7",
+    "id": "6dc55f5c93fe2a1eb91f",
+    "maxGraphRows": 275,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "7bc97ace71dc467620bf",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "8c86a305e31f27bf164c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "8ad0ad468731ea6a251b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "7dff3aef5d2fde28667c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "bd0516f14d497b935df9",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "655ed2e99e193f027d9d",
+    "maxGraphRows": 892,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "8e8332ddeb047eb1e2fd",
+    "maxGraphRows": 1068,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "89f4199d24c75f6f96fd",
+    "maxGraphRows": 599,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "a308785f9385b31c21a8",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "cdd52a55065dec39b103",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "b2de0cf5b41bd62a9d07",
+    "maxGraphRows": 920,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 13,
+    "group": "cv_v1:inv1",
+    "id": "b2505e49390b0d35f502",
+    "maxGraphRows": 558,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "19142e55dbbec77521ea",
+    "maxGraphRows": 664,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv7",
+    "id": "32350a3bb5a9323336d2",
+    "maxGraphRows": 369,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "b168e9d0914da8376853",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "b77c244cc79bc0795a1d",
+    "maxGraphRows": 569,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "0bd4211ee33205c9eb74",
+    "maxGraphRows": 665,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "04be8d49a208d4c24acb",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 26,
+    "group": "cv_v1:inv3",
+    "id": "18bc5f689da6ae81817e",
+    "maxGraphRows": 718,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "fcbd01a997cbcc7511c5",
+    "maxGraphRows": 527,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv3",
+    "id": "4cca70bb2ff882e8646b",
+    "maxGraphRows": 482,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "f3e5b043d0b003405913",
+    "maxGraphRows": 628,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv1",
+    "id": "0ded373cfb860a4eeb6f",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "6e703c66f24298e2d2ee",
+    "maxGraphRows": 415,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "91832544e75d4cf2bf70",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv3",
+    "id": "ed04a0ffd7e046773003",
+    "maxGraphRows": 352,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "6d8fa47e241899072828",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "05bcfe685aeeaa004397",
+    "maxGraphRows": 873,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "473d622bf230633b1152",
+    "maxGraphRows": 415,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "0de5301b876474ce0a91",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "graphs:inv1",
+    "id": "bb6c89b219e867a76b16",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "96c111091319ac737530",
+    "maxGraphRows": 859,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "68ec5d8e799ea69612c1",
+    "maxGraphRows": 328,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "5c0f146cf1fce022920f",
+    "maxGraphRows": 767,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "af08adf5d926eb61d76b",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "ba824cd767c0b2f0baa1",
+    "maxGraphRows": 765,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "cdcd3a271e0ccfb0a38a",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "73aa8ece2f760c9e9476",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "5ef4d40a22e2ea0b3671",
+    "maxGraphRows": 823,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "318970ca101c549341c7",
+    "maxGraphRows": 620,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "4b63fd68e741d35292ae",
+    "maxGraphRows": 679,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "fc9e83e4030ec479efa1",
+    "maxGraphRows": 426,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "f3eceaa055048058be21",
+    "maxGraphRows": 739,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "ea16f50b09153fa944b1",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "8f39c6a7e7b77b196e67",
+    "maxGraphRows": 340,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "socialMedia:inv1",
+    "id": "caadcddf31b24b1b94a1",
+    "maxGraphRows": 623,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "f7a65eb01097042fc30b",
+    "maxGraphRows": 727,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "876a59cabf3236b70920",
+    "maxGraphRows": 400,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "e4ca07e11f212415823e",
+    "maxGraphRows": 714,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "0885bd2acfb3d4d82e3e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED",
+    "group": "graphs:inv2",
+    "id": "83d1deff1aaa2f86d230",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv5",
+    "id": "0b381543d9e9ff4f0208",
+    "maxGraphRows": 216,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "34dd177968ee2065026d",
+    "maxGraphRows": 848,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv5",
+    "id": "d0a9cfffd0f151ced49e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "1857298c93f376534de4",
+    "maxGraphRows": 654,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "e4a593d128ec993eb3f8",
+    "maxGraphRows": 785,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv11",
+    "id": "57b667c4277d4f6b2401",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "436fce691ffabc2d5d8c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "c3608e5eee79c63ce1dd",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 6,
+    "group": "trash_fol:inv1",
+    "id": "e1e7d7167657fb564209",
+    "maxGraphRows": 231,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "d7ac93ac20f866e73488",
+    "maxGraphRows": 313,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "a4f5b3ce0aff39f0d4b0",
+    "maxGraphRows": 408,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "020bd97c4a25c73ae13d",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "372891a693e0fc464159",
+    "maxGraphRows": 530,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "cca3259adecf97863a7b",
+    "maxGraphRows": 910,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "1d00a3533a62ff313b0d",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv1",
+    "id": "a023e25e7b0ca0c702ae",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "6f19ed0d65399b8c5fca",
+    "maxGraphRows": 745,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "cf8690d25e327fc89501",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "69fb20a6ecf3598a2b14",
+    "maxGraphRows": 628,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "bcfd3457551eebaec03b",
+    "maxGraphRows": 403,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "c3b5cbf9d4b1430bf6df",
+    "maxGraphRows": 553,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "665adb4c3c234751e8cf",
+    "maxGraphRows": 677,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "trash_fol:inv9",
+    "id": "ac79ba632de443ff578c",
+    "maxGraphRows": 480,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv1",
+    "id": "380d2a72712c03cc9d80",
+    "maxGraphRows": 204,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "e18d4fa286882cb3f01f",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "ba1847aa43c27f7534b4",
+    "maxGraphRows": 448,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "1829337b2056e7633a73",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "5ceaf9593b1b87e91877",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "trash_fol:inv9",
+    "id": "cd73fb10596c4a35519d",
+    "maxGraphRows": 486,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "95d88474a29ebc5c7cdd",
+    "maxGraphRows": 805,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "b4cbd65022c98ef3119e",
+    "maxGraphRows": 885,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "d80432307c78a66fcaa8",
+    "maxGraphRows": 572,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "81bfa614cf45711cf2c0",
+    "maxGraphRows": 629,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 21,
+    "group": "socialMedia:inv8",
+    "id": "0c9b4f13f66574bdb950",
+    "maxGraphRows": 785,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "2290085e386efef8ca70",
+    "maxGraphRows": 667,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "7e13da3c5a7773164adc",
+    "maxGraphRows": 671,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "eacf4911318a675c0266",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "b334e0161fed9d8bb3a0",
+    "maxGraphRows": 400,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "45874555a31df08ec7d1",
+    "maxGraphRows": 506,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "33e50736d9d77aa11b7a",
+    "maxGraphRows": 363,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CALL_TABLE_UNSUPPORTED",
+    "group": "socialMedia:inv6",
+    "id": "ea1dcd1083f4e15e85e7",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 9,
+    "group": "graphs:inv2",
+    "id": "1fc0f8646659a8f3d2f3",
+    "maxGraphRows": 265,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "84e05bcf31362363a0a3",
+    "maxGraphRows": 517,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "54ed40257d8531f6cef6",
+    "maxGraphRows": 780,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "bee05d9207b019bf17e2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "fee4f5f6c20079323ae8",
+    "maxGraphRows": 645,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "b49abe5f3ddd9c3916a0",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "929359675e71ebb0cb6c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "208613647009b6fc2e81",
+    "maxGraphRows": 550,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 6,
+    "group": "trash_fol:inv8",
+    "id": "562c9065630975a8ab34",
+    "maxGraphRows": 262,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "7fd5d295c6df66b26cb0",
+    "maxGraphRows": 1021,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "282d1bb17510b6d9e9c2",
+    "maxGraphRows": 356,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "be396fb9c1e7a77d5ce8",
+    "maxGraphRows": 854,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "13635bd6bf831201969e",
+    "maxGraphRows": 936,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "4e0a5c525ea17de6152d",
+    "maxGraphRows": 722,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "288e16487b148eff4cfb",
+    "maxGraphRows": 621,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv1",
+    "id": "ea09e289c74bb3badaec",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "ee8bbb51a111c3203629",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "270584d9e796db41334e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "91e333054bcd4017df8e",
+    "maxGraphRows": 834,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv10",
+    "id": "ee21548b294514da10ca",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "52978eaeb55b83645cf8",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 26,
+    "group": "cv_v1:inv3",
+    "id": "f0c4e3d89744be87f06c",
+    "maxGraphRows": 784,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "edb9cf2246add0bd44b7",
+    "maxGraphRows": 627,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 17,
+    "group": "classroom_fol:inv11",
+    "id": "7fbff312a5befb56b228",
+    "maxGraphRows": 857,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "4120740cfa378f3adfad",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "05dda428649c44cefe82",
+    "maxGraphRows": 298,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv4",
+    "id": "4873355b37c241c32326",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "96bfa4981accdcb17fd3",
+    "maxGraphRows": 576,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "5167819f20f25674fdb6",
+    "maxGraphRows": 320,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv4",
+    "id": "1b1ddf19acf4130f7e82",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "4bb030553dd5925ada54",
+    "maxGraphRows": 711,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "af14d44f0cd2a308b10e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 23,
+    "group": "classroom_fol:inv14",
+    "id": "b799fbd0b18af8952467",
+    "maxGraphRows": 942,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv3",
+    "id": "87ad08c81bbe3308e416",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "1a292bca6d49ee03ec3a",
+    "maxGraphRows": 387,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "c27cfa5b96fa4ae4fd07",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "3952858cd61a1548b006",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 19,
+    "group": "cv_v1:inv4",
+    "id": "14472630cc822f050446",
+    "maxGraphRows": 1110,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "82cb1a8d85814e315956",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "e13aa799fad742a02203",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 16,
+    "group": "socialMedia:inv6",
+    "id": "11fdb7db35c88e86c375",
+    "maxGraphRows": 637,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "059eec4bbf1ef90895a0",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "423d618900f1be96c500",
+    "maxGraphRows": 341,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 12,
+    "group": "graphs:inv7",
+    "id": "0f810bad1d695a36c136",
+    "maxGraphRows": 384,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 6,
+    "group": "trash_fol:inv1",
+    "id": "7167f3ccae8204e5e1b0",
+    "maxGraphRows": 380,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "2581345927512a8e15ba",
+    "maxGraphRows": 427,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "classroom_fol:inv13",
+    "id": "c2cad75ee59d16820a1d",
+    "maxGraphRows": 613,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "dd3d548ee3f6fecaad8c",
+    "maxGraphRows": 241,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "506bf8e45eb803926e26",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 12,
+    "group": "classroom_fol:inv9",
+    "id": "ba713222e2b2f2a284bb",
+    "maxGraphRows": 387,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "2c1c15df7d3745126018",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "ecc5e92d76224cbb0e52",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "graphs:inv6",
+    "id": "56c07c8f2f030a8d413f",
+    "maxGraphRows": 328,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 10,
+    "group": "classroom_fol:inv6",
+    "id": "79f68844904991ab2be9",
+    "maxGraphRows": 376,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv5",
+    "id": "8bcba39a85f15e3c1d24",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 15,
+    "group": "cv_v1:inv2",
+    "id": "5e731d78910230c88313",
+    "maxGraphRows": 548,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "91008220e3406e73e191",
+    "maxGraphRows": 353,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "3b1d32001abd6f16c513",
+    "maxGraphRows": 609,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "c5ab99a280a784d8801c",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 9,
+    "group": "trash_fol:inv6",
+    "id": "bee7533f1691f0f617d8",
+    "maxGraphRows": 487,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv13",
+    "id": "e852b1fd630ffa70ce3e",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "classroom_fol:inv5",
+    "id": "de79b82e0bc5b0e97923",
+    "maxGraphRows": 633,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "decisions": 11,
+    "group": "socialMedia:inv2",
+    "id": "d579e2b0752ed00a5821",
+    "maxGraphRows": 394,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "socialMedia:inv6",
+    "id": "6e9c95efa64c45d76879",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "group": "classroom_fol:inv14",
+    "id": "843a80e69b6aaf5135b7",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv6",
+    "id": "3ff5ada06a6668267567",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv5",
+    "id": "4d63b4c8c5e84194064d",
+    "maxGraphRows": 246,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv12",
+    "id": "f6ac562fb4e8f8c87b58",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "error": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "group": "coursesNew:inv8",
+    "id": "d8c4bdb874396814e7b2",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH"
+  },
+  {
+    "decisions": 8,
+    "group": "graphs:inv5",
+    "id": "021df1a2064acc398012",
+    "maxGraphRows": 286,
+    "queries": 2,
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER"
+  }
+]

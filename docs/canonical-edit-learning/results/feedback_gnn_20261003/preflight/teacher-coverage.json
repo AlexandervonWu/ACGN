@@ -1,0 +1,512 @@
+[
+  {
+    "id": "be563a3a9ebe9062107c",
+    "group": "graphs:inv5",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 8,
+    "queries": 2
+  },
+  {
+    "id": "841b47d7a6530bdcdc29",
+    "group": "socialMedia:inv7",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "e925b59446448a4c679a",
+    "group": "trash_fol:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 6,
+    "queries": 2
+  },
+  {
+    "id": "45e3b214d8e2c259bcdf",
+    "group": "socialMedia:inv5",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 13,
+    "queries": 2
+  },
+  {
+    "id": "880a7087b92b5ece2a43",
+    "group": "socialMedia:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 10,
+    "queries": 2
+  },
+  {
+    "id": "763d065c3ac245b08ec5",
+    "group": "classroom_fol:inv11",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 17,
+    "queries": 2
+  },
+  {
+    "id": "7b838a83e9b3d3f81c3b",
+    "group": "cv_v1:inv4",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 19,
+    "queries": 2
+  },
+  {
+    "id": "35612179cdee5ab833b1",
+    "group": "socialMedia:inv5",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 13,
+    "queries": 2
+  },
+  {
+    "id": "7b548b97db1453c93c70",
+    "group": "socialMedia:inv7",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "56a735cfb6fd4d9ea94b",
+    "group": "socialMedia:inv7",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "52ec408160a189e64b75",
+    "group": "socialMedia:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "f852e8dec0a3382fc6bb",
+    "group": "socialMedia:inv7",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "e2c01a2ed104f1745dc2",
+    "group": "socialMedia:inv5",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 13,
+    "queries": 2
+  },
+  {
+    "id": "c46d1fe0fac771787d51",
+    "group": "graphs:inv3",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 12,
+    "queries": 2
+  },
+  {
+    "id": "2aeda657eb32bc427cef",
+    "group": "classroom_fol:inv11",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 17,
+    "queries": 2
+  },
+  {
+    "id": "539762d264f87178579b",
+    "group": "trash_fol:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "ae1005bc105b6803a89e",
+    "group": "socialMedia:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 16,
+    "queries": 2
+  },
+  {
+    "id": "c4919a04eac66305a854",
+    "group": "graphs:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "67f908addb09c9c703e9",
+    "group": "socialMedia:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 16,
+    "queries": 2
+  },
+  {
+    "id": "468435d3183d2fa36e6e",
+    "group": "socialMedia:inv6",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH",
+    "reason": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL"
+  },
+  {
+    "id": "ba5dd940f899f3d1e802",
+    "group": "cv_v1:inv3",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 26,
+    "queries": 2
+  },
+  {
+    "id": "f70279d49d687acc0956",
+    "group": "classroom_fol:inv13",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "4ef9db0594ee46d493eb",
+    "group": "classroom_fol:inv14",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 23,
+    "queries": 2
+  },
+  {
+    "id": "930f90b8fd4978263097",
+    "group": "classroom_fol:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 7,
+    "queries": 2
+  },
+  {
+    "id": "19fa26af3571f224eacc",
+    "group": "socialMedia:inv5",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 13,
+    "queries": 2
+  },
+  {
+    "id": "5e731d78910230c88313",
+    "group": "cv_v1:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "e1c2009f98b9020b53d3",
+    "group": "graphs:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "d4d3782bb93c265c71e2",
+    "group": "classroom_fol:inv11",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 17,
+    "queries": 2
+  },
+  {
+    "id": "6367f47a086245a47e49",
+    "group": "trash_fol:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "0b3099fd2dbb56bfcb51",
+    "group": "classroom_fol:inv14",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 23,
+    "queries": 2
+  },
+  {
+    "id": "9a4a7746df4e4f77a4e7",
+    "group": "graphs:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "c44a0fb82108da00c1a0",
+    "group": "socialMedia:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 10,
+    "queries": 2
+  },
+  {
+    "id": "1ddd20a1fa78a0439c3e",
+    "group": "graphs:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 8,
+    "queries": 2
+  },
+  {
+    "id": "e8f3935358943b19cc34",
+    "group": "graphs:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "f999ade4d45541ef1f7e",
+    "group": "classroom_fol:inv11",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 17,
+    "queries": 2
+  },
+  {
+    "id": "00e482af43106022ace7",
+    "group": "graphs:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "90bb4cad38ee3eff6d05",
+    "group": "trash_fol:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "a653c704f59b75d1d006",
+    "group": "socialMedia:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "e61a45ead85d60479e07",
+    "group": "socialMedia:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 16,
+    "queries": 2
+  },
+  {
+    "id": "63a32a3b5901162158fa",
+    "group": "cv_v1:inv3",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 26,
+    "queries": 2
+  },
+  {
+    "id": "64d34a2596721dc34953",
+    "group": "trash_fol:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 6,
+    "queries": 2
+  },
+  {
+    "id": "09d522e4b40833622e57",
+    "group": "classroom_fol:inv14",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 23,
+    "queries": 2
+  },
+  {
+    "id": "0787a307cb300a7d8b07",
+    "group": "cv_v1:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "df8ff4f6c078a6f745b5",
+    "group": "socialMedia:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 10,
+    "queries": 2
+  },
+  {
+    "id": "fe5915180aba69dd6a33",
+    "group": "cv_v1:inv3",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 26,
+    "queries": 2
+  },
+  {
+    "id": "5e5b6b2203ae2819b1c2",
+    "group": "graphs:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "3e066da6cc9766f1c2b9",
+    "group": "socialMedia:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "be14895f2c3589fb44dd",
+    "group": "socialMedia:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 21,
+    "queries": 2
+  },
+  {
+    "id": "8d6349d73f380a96a488",
+    "group": "classroom_fol:inv14",
+    "split": "train",
+    "status": "NO_ADMITTED_PATH",
+    "reason": "is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL"
+  },
+  {
+    "id": "c1be72530814d10328f4",
+    "group": "cv_v1:inv4",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 19,
+    "queries": 2
+  },
+  {
+    "id": "fc627dab866ad0c3f9e9",
+    "group": "socialMedia:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 11,
+    "queries": 2
+  },
+  {
+    "id": "7b52d53851354439309b",
+    "group": "cv_v1:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 15,
+    "queries": 2
+  },
+  {
+    "id": "ce5f91cb14373bdd9487",
+    "group": "trash_fol:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 6,
+    "queries": 2
+  },
+  {
+    "id": "60bf759ea91ccddf36ed",
+    "group": "graphs:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 8,
+    "queries": 2
+  },
+  {
+    "id": "b561b3819f7e0afbffd6",
+    "group": "graphs:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 8,
+    "queries": 2
+  },
+  {
+    "id": "b7a6dc8535c160334bf4",
+    "group": "graphs:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "080d266553e9e757ab26",
+    "group": "socialMedia:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 10,
+    "queries": 2
+  },
+  {
+    "id": "2cf4841745329fabe9dd",
+    "group": "cv_v1:inv1",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 13,
+    "queries": 2
+  },
+  {
+    "id": "60fa446b75de7c35173a",
+    "group": "cv_v1:inv4",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 19,
+    "queries": 2
+  },
+  {
+    "id": "dc9282be9d7b3ff3e1ac",
+    "group": "graphs:inv2",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "07acd52b3f247064347a",
+    "group": "graphs:inv8",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 8,
+    "queries": 2
+  },
+  {
+    "id": "685690dc48270c49b7e7",
+    "group": "classroom_fol:inv9",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 12,
+    "queries": 2
+  },
+  {
+    "id": "fd286b52b007d120c618",
+    "group": "trash_fol:inv6",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  },
+  {
+    "id": "6b784011a509b119253a",
+    "group": "classroom_fol:inv13",
+    "split": "train",
+    "status": "REPLAY_VALIDATED_TEACHER",
+    "decisions": 9,
+    "queries": 2
+  }
+]

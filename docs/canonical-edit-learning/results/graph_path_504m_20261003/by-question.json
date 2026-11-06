@@ -1,0 +1,127 @@
+{
+  "classroom_fol:inv10": {
+    "count": 21,
+    "exact": 0,
+    "valid": 0
+  },
+  "classroom_fol:inv15": {
+    "count": 32,
+    "exact": 0,
+    "valid": 0
+  },
+  "classroom_fol:inv4": {
+    "count": 14,
+    "exact": 0,
+    "valid": 1
+  },
+  "classroom_fol:inv8": {
+    "count": 12,
+    "exact": 0,
+    "valid": 0
+  },
+  "coursesNew:inv14": {
+    "count": 15,
+    "exact": 0,
+    "valid": 3
+  },
+  "coursesNew:inv2": {
+    "count": 3,
+    "exact": 0,
+    "valid": 1
+  },
+  "coursesOld:inv12": {
+    "count": 29,
+    "exact": 0,
+    "valid": 18
+  },
+  "coursesOld:inv9": {
+    "count": 104,
+    "exact": 0,
+    "valid": 51
+  },
+  "cv_v2:inv4": {
+    "count": 14,
+    "exact": 0,
+    "valid": 5
+  },
+  "lts:inv1": {
+    "count": 7,
+    "exact": 0,
+    "valid": 0
+  },
+  "productionLineNew:inv8": {
+    "count": 9,
+    "exact": 0,
+    "valid": 7
+  },
+  "productionLine_v2:inv10": {
+    "count": 23,
+    "exact": 0,
+    "valid": 12
+  },
+  "productionLine_v2:inv3": {
+    "count": 3,
+    "exact": 0,
+    "valid": 2
+  },
+  "socialMedia:inv3": {
+    "count": 158,
+    "exact": 0,
+    "valid": 157
+  },
+  "trainStationNew:inv3": {
+    "count": 66,
+    "exact": 0,
+    "valid": 34
+  },
+  "trainStationNew:inv5": {
+    "count": 60,
+    "exact": 0,
+    "valid": 43
+  },
+  "trainStationNew:inv9": {
+    "count": 44,
+    "exact": 0,
+    "valid": 30
+  },
+  "trainStationOld:inv11": {
+    "count": 1,
+    "exact": 0,
+    "valid": 1
+  },
+  "trainStationOld:inv6": {
+    "count": 6,
+    "exact": 0,
+    "valid": 6
+  },
+  "trash_fol:inv10": {
+    "count": 12,
+    "exact": 0,
+    "valid": 1
+  },
+  "trash_fol:inv5": {
+    "count": 6,
+    "exact": 0,
+    "valid": 1
+  },
+  "trash_ltl:inv1": {
+    "count": 2,
+    "exact": 0,
+    "valid": 0
+  },
+  "trash_ltl:inv14": {
+    "count": 7,
+    "exact": 0,
+    "valid": 3
+  },
+  "trash_rl:inv3": {
+    "count": 3,
+    "exact": 0,
+    "valid": 0
+  },
+  "trash_rl:inv4": {
+    "count": 1,
+    "exact": 0,
+    "valid": 0
+  }
+}

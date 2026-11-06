@@ -1,0 +1,131 @@
+{
+  "commands": [
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-gates-20261003-v3/IntentRepair.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/IntentRepair.lean"
+      ],
+      "exitCode": 0,
+      "log": "IntentRepair.log"
+    },
+    {
+      "command": [
+        "lean",
+        "-o",
+        "/tmp/acgn-feedback-gates-20261003-v3/FeedbackSession.olean",
+        "/home/augustus/ACGN/docs/canonical-edit-learning/formal/FeedbackSession.lean"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackSession.log"
+    },
+    {
+      "command": [
+        "javac",
+        "--release",
+        "17",
+        "-encoding",
+        "UTF-8",
+        "-cp",
+        "/home/augustus/ACGN/lib/*",
+        "-d",
+        "/tmp/acgn-feedback-gates-20261003-v3/classes",
+        "@/tmp/acgn-feedback-gates-20261003-v3/sources.args"
+      ],
+      "exitCode": 0,
+      "log": "compile.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-gates-20261003-v3/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.FeedbackRepairTest"
+      ],
+      "exitCode": 0,
+      "log": "FeedbackRepairTest.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-gates-20261003-v3/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.RepairEnvironmentTest"
+      ],
+      "exitCode": 0,
+      "log": "RepairEnvironmentTest.log"
+    },
+    {
+      "command": [
+        "java",
+        "-ea",
+        "-Xmx2g",
+        "-cp",
+        "/tmp/acgn-feedback-gates-20261003-v3/classes:/home/augustus/ACGN/lib/*",
+        "is.fivefivefive.ACGN.repair.RepairLearningTest"
+      ],
+      "exitCode": 0,
+      "log": "RepairLearningTest.log"
+    },
+    {
+      "command": [
+        "/home/augustus/anaconda3/bin/python3",
+        "-m",
+        "unittest",
+        "experiments.feedback_repair.test_replay",
+        "-v"
+      ],
+      "exitCode": 0,
+      "log": "ReplayTest.log"
+    }
+  ],
+  "contract": "feedback-intent-path-v1",
+  "coverage": {
+    "OBSERVATION_AND_QUERY_PASS": 104
+  },
+  "dirty": true,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "openGates": [
+    "Certified canonical projection numeric tables and round-trip/transport checks are not yet implemented.",
+    "Draft masks expose coarse sorts; exact incremental dependent type inference remains a commit-time check.",
+    "Training-only teacher coverage is measured; 1/8/64 free-running learnability and matched controls have not run.",
+    "All three model consumers still require migration; historical trainers are not invoked."
+  ],
+  "schema": "feedback-training-preflight-v1",
+  "seconds": 151.99600988999737,
+  "stages": [
+    {
+      "name": "GNN",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    },
+    {
+      "name": "Qwen local adaptation",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    },
+    {
+      "name": "~500M scratch transformer",
+      "optimizerUpdates": 0,
+      "status": "NOT_STARTED_GATE_INCOMPLETE"
+    }
+  ],
+  "status": "BLOCKED_BEFORE_TRAINING",
+  "taskCount": 104,
+  "teacherCoverage": {
+    "REPLAY_VALIDATED_TEACHER": 64
+  },
+  "teacherTasks": 64,
+  "tests": {
+    "CausalReplayTest": 14,
+    "FeedbackRepairTest": 114,
+    "RepairEnvironmentTest": 64,
+    "RepairLearningTest": 38
+  }
+}

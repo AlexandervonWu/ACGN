@@ -485,7 +485,7 @@ public final class RepairProjection {
                 primary.containerKind(),
                 primary.orderInsensitive(),
                 primary.children(),
-                alternatives);
+                alternatives).withObservationFrom(primary);
     }
 
     private static int permutedCoordinate(
@@ -594,7 +594,8 @@ public final class RepairProjection {
         if (source.getOpcode() != Opcode.VARIABLE) {
             return new Node(
                     operator, payload, repairSemanticPayload(source), null, -1, containerKind,
-                    source.isOrderInsensitive(), children);
+                    source.isOrderInsensitive(), children).withObservation(
+                            isRelDecl(source.getOpcode()) ? null : requireExactResultType(source), List.of(), null);
         }
 
         String variable = firstNonempty(source.getAlphaName(), source.getSourceName());
@@ -604,17 +605,19 @@ public final class RepairProjection {
         }
         if (localVariable != null) {
             return new Node(operator, null, localVariable, -1, containerKind,
-                    source.isOrderInsensitive(), children);
+                    source.isOrderInsensitive(), children).withObservation(
+                            dependentLeafType(source, aliasTypes, localTypes), List.of(), null);
         }
         Integer bindingIndex = aliases.get(variable);
         if (bindingIndex == null && source.getSourceName() != null) {
             bindingIndex = aliases.get(source.getSourceName());
         }
-        return bindingIndex == null
+        return (bindingIndex == null
                 ? new Node(operator, null, variable, -1, containerKind,
                         source.isOrderInsensitive(), children)
                 : new Node(operator, null, variable, bindingIndex, containerKind,
-                        source.isOrderInsensitive(), children);
+                        source.isOrderInsensitive(), children)).withObservation(
+                                dependentLeafType(source, aliasTypes, localTypes), List.of(), null);
     }
 
     private static Node projectDependentChain(
@@ -667,7 +670,7 @@ public final class RepairProjection {
         }
         return new Node(
                 opcode.name(), null, repairSemanticPayload(source), null, -1,
-                ContainerKind.SEQUENCE, false, children);
+                ContainerKind.SEQUENCE, false, children).withObservation(requireExactResultType(source), List.of(), null);
     }
 
     private static void collectDependentChainLeaves(
@@ -782,7 +785,7 @@ public final class RepairProjection {
                 left.bindingIndex(),
                 left.containerKind(),
                 left.orderInsensitive(),
-                children);
+                children).withObservationFrom(left);
     }
 
     private static boolean sameProjectedNode(Node left, Node right) {
@@ -869,7 +872,7 @@ public final class RepairProjection {
                 primary.containerKind(),
                 primary.orderInsensitive(),
                 primary.children(),
-                unique);
+                unique).withObservationFrom(primary);
     }
 
     private static ContainerKind containerKind(EGraphNode node) {
@@ -957,7 +960,8 @@ public final class RepairProjection {
                 variable.getDisjointnessClass(),
                 domain,
                 exchangeClass,
-                dependencies);
+                dependencies).withObservation(bindingType(variable),
+                        StructuralKey.leaf("alloy-binder-domain", variable.getCarrierTypeName()));
     }
 
     private static Declaration certifiedDeclaration(
@@ -979,7 +983,7 @@ public final class RepairProjection {
                 variable,
                 coordinate.domain().stableString(),
                 coordinate.exchangeClass(),
-                dependencies);
+                dependencies).withObservation(coordinate.canonicalSlot().type(), coordinate.domain());
     }
 
     private static Map<TypedSlot, Integer> coordinateIndices(
@@ -1253,7 +1257,9 @@ public final class RepairProjection {
                         node.containerKind(),
                         node.orderInsensitive(),
                         Collections.emptyList(),
-                        Collections.emptyList());
+                        Collections.emptyList()).withObservation(node.observationType(),
+                                java.util.Arrays.stream(reference.branches).map(canonicalIndices::get).boxed().toList(),
+                                reference.label);
             }
             List<Node> children = new ArrayList<>(node.children().size());
             for (Node child : node.children()) {
@@ -1273,7 +1279,7 @@ public final class RepairProjection {
                     node.containerKind(),
                     node.orderInsensitive(),
                     children,
-                    alternatives);
+                    alternatives).withObservationFrom(node);
         }
 
         private List<TemporalNode> temporalChildren(int phaseIndex) {

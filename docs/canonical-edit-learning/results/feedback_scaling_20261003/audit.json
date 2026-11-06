@@ -1,0 +1,234 @@
+{
+  "archivedReplayFiles": 986,
+  "archivedSchedules": 7,
+  "clippedUpdates": 19698,
+  "finiteNonzeroGradientUpdates": 21000,
+  "hashChecks": {
+    "datasetOutputs": 2452,
+    "inputs": 1178,
+    "preflightOutputs": 1286,
+    "studyOutputs": 1157
+  },
+  "hostProcessMaxRssKiB": 3095584,
+  "pairedScreeningScheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+  "peakTrainingCudaAllocatedBytes": 833097216,
+  "peakTrainingCudaReservedBytes": 887095296,
+  "pipelineSeconds": 2692.6532681239914,
+  "selectionHash": "52045403c9e2c66ed1652ccbd6e1122f9b3afae10195d9dfe1fea62699b6cc99",
+  "studySeconds": 2243.6573214399978,
+  "teacherControls": {
+    "0": 313,
+    "2": 1070,
+    "4": 606,
+    "5": 5,
+    "6": 1325,
+    "7": 259,
+    "8": 313,
+    "11": 313,
+    "12": 313,
+    "14": 89,
+    "15": 71
+  },
+  "teacherObservationStatuses": {
+    "0": 4051,
+    "1": 313,
+    "4": 313
+  },
+  "trainingSeconds": 1702.899448806973,
+  "trials": {
+    "gin-128x3-17/evaluation/rollouts.json": {
+      "budgetExhausted": 31,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 91,
+      "rejectedControls": {
+        "8": 7551
+      },
+      "rejections": 7551,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "gin-128x3-17/validation/rollouts.json": {
+      "budgetExhausted": 7,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "queries": 59,
+      "rejectedControls": {
+        "8": 1742
+      },
+      "rejections": 1742,
+      "repairs": 0,
+      "tasks": 62
+    },
+    "gin-128x3-29/evaluation/rollouts.json": {
+      "budgetExhausted": 32,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 90,
+      "rejectedControls": {
+        "8": 7399
+      },
+      "rejections": 7399,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "gin-128x3-43/evaluation/rollouts.json": {
+      "budgetExhausted": 34,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 88,
+      "rejectedControls": {
+        "8": 8281
+      },
+      "rejections": 8281,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "gin-256x4-17/validation/rollouts.json": {
+      "budgetExhausted": 5,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "queries": 61,
+      "rejectedControls": {
+        "8": 1217
+      },
+      "rejections": 1217,
+      "repairs": 0,
+      "tasks": 62
+    },
+    "gin-512x4-17/validation/rollouts.json": {
+      "budgetExhausted": 11,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "queries": 52,
+      "rejectedControls": {
+        "8": 2679
+      },
+      "rejections": 2679,
+      "repairs": 0,
+      "tasks": 62
+    },
+    "mlp-256x4-17/validation/rollouts.json": {
+      "budgetExhausted": 11,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "queries": 55,
+      "rejectedControls": {
+        "8": 2717
+      },
+      "rejections": 2717,
+      "repairs": 0,
+      "tasks": 62
+    },
+    "noop-17/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 61,
+      "rejectedControls": {},
+      "rejections": 0,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "noop-29/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 61,
+      "rejectedControls": {},
+      "rejections": 0,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "noop-43/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 61,
+      "rejectedControls": {},
+      "rejections": 0,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "sage-256x4-17/validation/rollouts.json": {
+      "budgetExhausted": 8,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 6,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 23
+      },
+      "queries": 51,
+      "rejectedControls": {
+        "8": 1959
+      },
+      "rejections": 1959,
+      "repairs": 0,
+      "tasks": 62
+    },
+    "uniform-17/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 48,
+      "rejectedControls": {
+        "8": 3,
+        "9": 16
+      },
+      "rejections": 19,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "uniform-29/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 50,
+      "rejectedControls": {
+        "8": 1,
+        "9": 14
+      },
+      "rejections": 15,
+      "repairs": 0,
+      "tasks": 89
+    },
+    "uniform-43/rollouts.json": {
+      "budgetExhausted": 0,
+      "errors": {
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL": 14,
+        "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1": 14
+      },
+      "queries": 52,
+      "rejectedControls": {
+        "8": 1,
+        "9": 15
+      },
+      "rejections": 16,
+      "repairs": 0,
+      "tasks": 89
+    }
+  },
+  "updates": 21000
+}

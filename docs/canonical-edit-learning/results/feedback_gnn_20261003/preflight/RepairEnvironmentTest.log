@@ -1,0 +1,471 @@
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: DummySymbol{type='field'}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/AlloyASG-Release.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/home/augustus/ACGN/lib/slf4j-simple-1.7.36.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.slf4j.impl.SimpleLoggerFactory]
+[main] INFO kodkod.engine.config.Reporter - detecting symmetries ...
+[main] INFO kodkod.engine.config.Reporter - detected 17 equivalence classes of atoms ...
+[main] INFO kodkod.engine.config.Reporter - optimizing bounds and formula (breaking predicate symmetries, inlining, skolemizing) ...
+[main] INFO kodkod.engine.config.Reporter - translating to boolean ...
+[main] INFO kodkod.engine.config.Reporter - generating lex-leader symmetry breaking predicate ...
+[main] INFO kodkod.engine.config.Reporter - translating to cnf ...
+[main] INFO kodkod.engine.config.Reporter - detecting symmetries ...
+[main] INFO kodkod.engine.config.Reporter - detected 17 equivalence classes of atoms ...
+[main] INFO kodkod.engine.config.Reporter - optimizing bounds and formula (breaking predicate symmetries, inlining, skolemizing) ...
+[main] INFO kodkod.engine.config.Reporter - translating to boolean ...
+[main] INFO kodkod.engine.config.Reporter - generating lex-leader symmetry breaking predicate ...
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='LIST_FORMULA_2', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_MINUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='BOPEXPR_PLUS', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_GT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@30
+Adding key: MiddleSymbol{name='UNOPE_CARDINALITY', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='LIST_FORMULA_1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOP_IMPLIES', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: ShadowSymbol{signature=0.0}
+[main] INFO kodkod.engine.config.Reporter - detecting symmetries ...
+[main] INFO kodkod.engine.config.Reporter - detected 19 equivalence classes of atoms ...
+[main] INFO kodkod.engine.config.Reporter - optimizing bounds and formula (breaking predicate symmetries, inlining, skolemizing) ...
+[main] INFO kodkod.engine.config.Reporter - translating to boolean ...
+[main] INFO kodkod.engine.config.Reporter - generating lex-leader symmetry breaking predicate ...
+[main] INFO kodkod.engine.config.Reporter - detecting symmetries ...
+[main] INFO kodkod.engine.config.Reporter - detected 19 equivalence classes of atoms ...
+[main] INFO kodkod.engine.config.Reporter - optimizing bounds and formula (breaking predicate symmetries, inlining, skolemizing) ...
+[main] INFO kodkod.engine.config.Reporter - translating to boolean ...
+[main] INFO kodkod.engine.config.Reporter - generating lex-leader symmetry breaking predicate ...
+[main] INFO kodkod.engine.config.Reporter - translating to cnf ...
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='QT_FORMULA_SOME2', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: DummySymbol{type='field'}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_LONE4', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='QT_FORMULA_NO3', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ONE5', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='QT_FORMULA_SOME2', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: MiddleSymbol{name='UNOPF_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DummySymbol{type='field'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='QT_FORMULA_NO3', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_LONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DummySymbol{type='field'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPF_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='QT_FORMULA_NO3', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_LONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+Adding key: is.fivefivefive.ACGN.alloy.EndSymbol@0
+Adding key: DummySymbol{type='sig'}
+Adding key: DummySymbol{type='predroot'}
+Adding key: MiddleSymbol{name='UNOPE_ONE', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DummySymbol{type='local_var'}
+Adding key: is.fivefivefive.ACGN.alloy.ConstSymbol@5cb1923
+Adding key: MiddleSymbol{name='UNOPF_NOT', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='BOPEXPR_JOIN', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='QT_FORMULA_ALL1', infiniteRoot=true, typeConfinerOp= false}
+Adding key: DummySymbol{type='field'}
+Adding key: MiddleSymbol{name='FIELD_DECL', infiniteRoot=false, typeConfinerOp= false}
+Adding key: DeclRootSymbol{semantic=0}
+Adding key: MiddleSymbol{name='UNOPF_SOME', infiniteRoot=false, typeConfinerOp= false}
+Adding key: MiddleSymbol{name='UNOPF_NO', infiniteRoot=false, typeConfinerOp= false}
+Adding key: ShadowSymbol{signature=0.0}
+RESULT,RepairEnvironmentTest,64,b35e7d6f6e3be508de336fd3214bf0d474e91c18dd1c47d2da5ba4c6e0c55d02

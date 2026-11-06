@@ -1,0 +1,14 @@
+test_external_source_root_rollout (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_lazy_cache_preserves_replayed_example (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_only_ast_exclusions_leave_denominator (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_paired_schedules_and_bank_namespace (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_question_split_and_quotas (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_selection_order_independent (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_selection_uses_validation_and_size_only (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_teacher_refuses_heldout_before_io (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+test_training_index_rejects_heldout (experiments.feedback_repair.test_scaling.ScalingTest) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.668s
+
+OK

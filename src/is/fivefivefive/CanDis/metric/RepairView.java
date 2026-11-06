@@ -8,6 +8,7 @@ import java.util.Objects;
 import is.fivefivefive.CanDis.canonical.CanonicalObservation;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
 import is.fivefivefive.CanDis.theory.StructuralKey;
+import is.fivefivefive.CanDis.theory.GraphType;
 
 /**
  * Immutable repair-domain observation. Production values are sealed by
@@ -71,6 +72,8 @@ public final class RepairView {
         private final String certifiedDomain;
         private final int exchangeClass;
         private final List<Integer> dependencies;
+        private final GraphType observationType;
+        private final StructuralKey observationDomain;
 
         Declaration(
                 String quantifier,
@@ -80,6 +83,13 @@ public final class RepairView {
                 String certifiedDomain,
                 int exchangeClass,
                 List<Integer> dependencies) {
+            this(quantifier, type, cardinality, disjointnessClass, certifiedDomain,
+                    exchangeClass, dependencies, null, null);
+        }
+
+        private Declaration(String quantifier, String type, String cardinality,
+                int disjointnessClass, String certifiedDomain, int exchangeClass,
+                List<Integer> dependencies, GraphType observationType, StructuralKey observationDomain) {
             this.quantifier = requireText(quantifier, "quantifier");
             this.type = requireText(type, "type");
             this.cardinality = requireText(cardinality, "cardinality");
@@ -87,7 +97,18 @@ public final class RepairView {
             this.certifiedDomain = requireText(certifiedDomain, "certified domain");
             this.exchangeClass = exchangeClass;
             this.dependencies = immutableIntegers(dependencies);
+            this.observationType = observationType;
+            this.observationDomain = observationDomain;
         }
+
+        Declaration withObservation(GraphType type, StructuralKey domain) {
+            return new Declaration(quantifier, this.type, cardinality, disjointnessClass,
+                    certifiedDomain, exchangeClass, dependencies, type, domain);
+        }
+
+        /** Structured observation metadata; never an additional metric charge. */
+        public GraphType observationType() { return observationType; }
+        public StructuralKey observationDomain() { return observationDomain; }
 
         public String quantifier() {
             return quantifier;
@@ -279,6 +300,9 @@ public final class RepairView {
         private final List<Node> children;
         private final List<Node> certifiedAlternatives;
         private final int size;
+        private final GraphType observationType;
+        private final List<Integer> observationPhases;
+        private final String observationTemporalOperator;
 
         Node(
                 String operator,
@@ -352,6 +376,14 @@ public final class RepairView {
                 boolean orderInsensitive,
                 List<? extends Node> children,
                 List<? extends Node> certifiedAlternatives) {
+            this(operator, payload, semanticPayload, lexicalVariable, bindingIndex, containerKind,
+                    orderInsensitive, children, certifiedAlternatives, null, List.of(), null);
+        }
+
+        private Node(String operator, String payload, String semanticPayload, String lexicalVariable,
+                int bindingIndex, ContainerKind containerKind, boolean orderInsensitive,
+                List<? extends Node> children, List<? extends Node> certifiedAlternatives,
+                GraphType observationType, List<Integer> observationPhases, String observationTemporalOperator) {
             this.operator = requireText(operator, "operator");
             this.payload = payload;
             this.semanticPayload = semanticPayload;
@@ -380,7 +412,24 @@ public final class RepairView {
                 computed = Math.addExact(computed, child.size);
             }
             this.size = computed;
+            this.observationType = observationType;
+            this.observationPhases = immutableIntegers(observationPhases);
+            this.observationTemporalOperator = observationTemporalOperator;
         }
+
+        Node withObservation(GraphType type, List<Integer> phases, String temporalOperator) {
+            return new Node(operator, payload, semanticPayload, lexicalVariable, bindingIndex, containerKind,
+                    orderInsensitive, children, certifiedAlternatives, type, phases, temporalOperator);
+        }
+
+        Node withObservationFrom(Node source) {
+            return withObservation(source.observationType, source.observationPhases, source.observationTemporalOperator);
+        }
+
+        /** Null means a structural control node or an unannotated test fixture. */
+        public GraphType observationType() { return observationType; }
+        public List<Integer> observationPhases() { return observationPhases; }
+        public String observationTemporalOperator() { return observationTemporalOperator; }
 
         public String operator() {
             return operator;

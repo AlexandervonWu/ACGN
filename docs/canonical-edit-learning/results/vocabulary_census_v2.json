@@ -1,0 +1,429 @@
+{
+  "historical_rows": [
+    {
+      "id": 0,
+      "symbol": "LIST_FORMULA_2"
+    },
+    {
+      "id": 1,
+      "symbol": "UNOPF_SOME"
+    },
+    {
+      "id": 2,
+      "symbol": "QT_FORMULA_ALL"
+    },
+    {
+      "id": 3,
+      "symbol": "RELDECL_0"
+    },
+    {
+      "id": 4,
+      "symbol": "BOPEXPR_JOIN"
+    },
+    {
+      "id": 5,
+      "symbol": "Dummy for field"
+    },
+    {
+      "id": 6,
+      "symbol": "<END>"
+    },
+    {
+      "id": 7,
+      "symbol": "BOPEXPR_ARROW"
+    },
+    {
+      "id": 8,
+      "symbol": "Dummy for sig"
+    },
+    {
+      "id": 9,
+      "symbol": "BOPEXPR_MINUS"
+    },
+    {
+      "id": 10,
+      "symbol": "UNOPF_LONE"
+    },
+    {
+      "id": 11,
+      "symbol": "UNOPE_CLOSURE"
+    },
+    {
+      "id": 12,
+      "symbol": "BOPEXPR_ANY_ARROW_LONE"
+    },
+    {
+      "id": 13,
+      "symbol": "QT_FORMULA_SOME"
+    },
+    {
+      "id": 14,
+      "symbol": "BOP_IN"
+    },
+    {
+      "id": 15,
+      "symbol": "LIST_FORMULA_1"
+    },
+    {
+      "id": 16,
+      "symbol": "UNOPF_NO"
+    },
+    {
+      "id": 17,
+      "symbol": "UNOPF_ALWAYS"
+    },
+    {
+      "id": 18,
+      "symbol": "QT_FORMULA_ONE"
+    },
+    {
+      "id": 19,
+      "symbol": "CALL_EXPR"
+    },
+    {
+      "id": 20,
+      "symbol": "BOPEXPR_INTERSECT"
+    },
+    {
+      "id": 21,
+      "symbol": "BOPEXPR_ONE_ARROW_ONE"
+    },
+    {
+      "id": 22,
+      "symbol": "<SHADOW>"
+    },
+    {
+      "id": 23,
+      "symbol": "UNOPF_ONCE"
+    },
+    {
+      "id": 24,
+      "symbol": "BOP_NOT_IN"
+    },
+    {
+      "id": 25,
+      "symbol": "UNOPF_EVENTUALLY"
+    },
+    {
+      "id": 26,
+      "symbol": "BOP_EQ"
+    },
+    {
+      "id": 27,
+      "symbol": "BOPEXPR_PLUS"
+    },
+    {
+      "id": 28,
+      "symbol": "BOP_NEQ"
+    },
+    {
+      "id": 29,
+      "symbol": "QT_FORMULA_NO"
+    },
+    {
+      "id": 30,
+      "symbol": "BOP_IMPLIES"
+    },
+    {
+      "id": 31,
+      "symbol": "Dummy for ref"
+    },
+    {
+      "id": 32,
+      "symbol": "BOP_SINCE"
+    },
+    {
+      "id": 33,
+      "symbol": "BOP_RELEASES"
+    },
+    {
+      "id": 34,
+      "symbol": "3"
+    },
+    {
+      "id": 35,
+      "symbol": "UNOPF_ONE"
+    },
+    {
+      "id": 36,
+      "symbol": "Dummy for predroot"
+    },
+    {
+      "id": 37,
+      "symbol": "BOP_UNTIL"
+    },
+    {
+      "id": 38,
+      "symbol": "BOPEXPR_DOMAIN"
+    },
+    {
+      "id": 39,
+      "symbol": "ITE_FORMULA"
+    },
+    {
+      "id": 40,
+      "symbol": "UNOPE_PRIME"
+    },
+    {
+      "id": 41,
+      "symbol": "UNOPF_NOT"
+    },
+    {
+      "id": 42,
+      "symbol": "Dummy for var"
+    },
+    {
+      "id": 43,
+      "symbol": "RELDECL_1"
+    },
+    {
+      "id": 44,
+      "symbol": "false"
+    },
+    {
+      "id": 45,
+      "symbol": "QT_FORMULA_LONE"
+    },
+    {
+      "id": 46,
+      "symbol": "BOP_LT"
+    },
+    {
+      "id": 47,
+      "symbol": "2"
+    },
+    {
+      "id": 48,
+      "symbol": "BOPEXPR_RANGE"
+    },
+    {
+      "id": 49,
+      "symbol": "UNOPE_ONE"
+    },
+    {
+      "id": 50,
+      "symbol": "iden"
+    },
+    {
+      "id": 51,
+      "symbol": "LIST_EXPR_1"
+    },
+    {
+      "id": 52,
+      "symbol": "UNOPF_AFTER"
+    },
+    {
+      "id": 53,
+      "symbol": "UNOPF_BEFORE"
+    },
+    {
+      "id": 54,
+      "symbol": "UNOPE_TRANSPOSE"
+    },
+    {
+      "id": 55,
+      "symbol": "QT_EXPR_COMP"
+    },
+    {
+      "id": 56,
+      "symbol": "UNOPF_HISTORICALLY"
+    },
+    {
+      "id": 57,
+      "symbol": "UNOPE_RCLOSURE"
+    },
+    {
+      "id": 58,
+      "symbol": "1"
+    },
+    {
+      "id": 59,
+      "symbol": "UNOPE_CARDINALITY"
+    },
+    {
+      "id": 60,
+      "symbol": "BOP_GTE"
+    },
+    {
+      "id": 61,
+      "symbol": "BOPEXPR_SOME_ARROW_ANY"
+    },
+    {
+      "id": 62,
+      "symbol": "BOP_IFF"
+    },
+    {
+      "id": 63,
+      "symbol": "BOPEXPR_LONE_ARROW_ANY"
+    },
+    {
+      "id": 64,
+      "symbol": "BOPEXPR_ANY_ARROW_SOME"
+    },
+    {
+      "id": 65,
+      "symbol": "BOP_GT"
+    },
+    {
+      "id": 66,
+      "symbol": "0"
+    }
+  ],
+  "historical_unique_symbols": 67,
+  "historical_csv_sha256": "ea291a2c911aa31079dd5f28d2f4c8261dbcc12ed78f2371af36feefcd1ef12c",
+  "requested_missing_constants": [
+    "4",
+    "none",
+    "true",
+    "univ"
+  ],
+  "historical_plus_requested_constants_collapsed": 71,
+  "historical_semantic_only_expanded": 92,
+  "warning": "Historical observed symbols, not a complete Alloy inventory or transport alphabet",
+  "source_commit": "0e0cdc8745b3f92b6ad98f4ef1dec519f177dc97",
+  "source_path": "node_id.csv",
+  "pilot_profile": "relational-pilot-v2",
+  "pilot_vocab_size": 128,
+  "pilot_assigned": 97,
+  "pilot_reserved": [
+    57,
+    58,
+    59,
+    60,
+    61,
+    62,
+    63,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118,
+    119,
+    120,
+    121,
+    122,
+    123,
+    124,
+    125,
+    126,
+    127
+  ],
+  "pilot_collapsed_to_existing_operator_tags": 73,
+  "pilot_named_tokens": {
+    "PAD": 0,
+    "BOS": 1,
+    "EOS": 2,
+    "GRAPH": 3,
+    "CLASS": 4,
+    "NODE": 5,
+    "PORT": 6,
+    "TYPE": 7,
+    "BINDING": 8,
+    "SOURCE": 9,
+    "WORLD": 10,
+    "ATOM": 11,
+    "TUPLE": 12,
+    "ACTION": 13,
+    "END": 14,
+    "QUERY": 15,
+    "SEQ": 16,
+    "SET": 17,
+    "BAG": 18,
+    "ROOT": 19,
+    "PROFILE": 20,
+    "GLOBAL": 21,
+    "DEPENDENCY": 22,
+    "DISJOINT": 23,
+    "OP_AND": 24,
+    "OP_OR": 25,
+    "OP_NOT": 26,
+    "OP_TRUE": 27,
+    "OP_FALSE": 28,
+    "OP_IN": 29,
+    "OP_EQ": 30,
+    "OP_SOME": 31,
+    "OP_NO": 32,
+    "OP_ONE": 33,
+    "OP_LONE": 34,
+    "OP_UNION": 35,
+    "OP_INTERSECT": 36,
+    "OP_DIFFERENCE": 37,
+    "OP_JOIN": 38,
+    "OP_ARROW": 39,
+    "OP_VAR": 40,
+    "OP_SIG": 41,
+    "OP_FIELD": 42,
+    "OP_NONE": 43,
+    "OP_UNIV": 44,
+    "QUANT_ALL": 45,
+    "QUANT_SOME": 46,
+    "BOOLEAN_REPLACE": 47,
+    "CARDINALITY_REPLACE": 48,
+    "SET_REPLACE": 49,
+    "QUANTIFIER_REPLACE": 50,
+    "OP_IDEN": 51,
+    "INT_0": 52,
+    "INT_1": 53,
+    "INT_2": 54,
+    "INT_3": 55,
+    "INT_4": 56,
+    "$sig0": 80,
+    "$sig1": 81,
+    "$sig2": 82,
+    "$sig3": 83,
+    "$sig4": 84,
+    "$sig5": 85,
+    "$sig6": 86,
+    "$sig7": 87,
+    "$0": 88,
+    "$1": 89,
+    "$2": 90,
+    "$3": 91,
+    "$4": 92,
+    "$5": 93,
+    "$6": 94,
+    "$7": 95,
+    "$rel0": 96,
+    "$rel1": 97,
+    "$rel2": 98,
+    "$rel3": 99,
+    "$rel4": 100,
+    "$rel5": 101,
+    "$rel6": 102,
+    "$rel7": 103
+  },
+  "numeric_digit_tokens": [
+    64,
+    65,
+    66,
+    67,
+    68,
+    69,
+    70,
+    71,
+    72,
+    73,
+    74,
+    75,
+    76,
+    77,
+    78,
+    79
+  ],
+  "correspondence": "pilot alphabet is a scoped subset plus record tags, not a raw AST ID remap",
+  "input_hashes": {
+    "experiments/hybrid_edit/audit_vocabulary.py": "d2c5c3258bcc4ca13dd08faeca5caa86bf3c9dad3c2890e5e72fe824c64d9a9c",
+    "experiments/hybrid_edit/scope.py": "30a2348af310f027234813065f97ff787935e383907613a369349e0832b53050",
+    "docs/canonical-edit-learning/formal/HybridRepair.lean": "dbc1acfeeaa6d600770cd335e8d1559d1cbf51e3bfacddb3f09a23f69ea70009"
+  }
+}

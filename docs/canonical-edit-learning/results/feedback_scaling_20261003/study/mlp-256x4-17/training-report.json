@@ -1,0 +1,41 @@
+{
+  "before": {
+    "decisions": 128,
+    "headAccuracy": 0.2591093117408907,
+    "jointAccuracy": 0.0,
+    "loss": 1.9382620714604855
+  },
+  "clippedUpdates": 2994,
+  "config": {
+    "layers": 4,
+    "name": "mlp-256x4",
+    "variant": "mlp",
+    "width": 256
+  },
+  "encoderUpdateNorm": 4.071804046630859,
+  "finiteNonzeroGradientUpdates": 3000,
+  "hostMaxRssKiB": 3095584,
+  "parameters": 6008833,
+  "peakCudaAllocatedBytes": 357815296,
+  "peakCudaReservedBytes": 396361728,
+  "probes": [
+    {
+      "decisions": 128,
+      "headAccuracy": 0.7246963562753036,
+      "jointAccuracy": 0.6328125,
+      "loss": 0.7727004417411081,
+      "update": 1000
+    },
+    {
+      "decisions": 128,
+      "headAccuracy": 0.8461538461538461,
+      "jointAccuracy": 0.7578125,
+      "loss": 0.41753766563033423,
+      "update": 3000
+    }
+  ],
+  "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+  "seconds": 207.79458516999148,
+  "seed": 17,
+  "updates": 3000
+}

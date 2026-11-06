@@ -1,0 +1,2069 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 2,
+          "site": 1
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "dcc988ec4eff1532d967",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 1.2454130989935948,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 7,
+          "site": 3
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 4,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "a62767333fbe881cafd2",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 2,
+    "seconds": 0.3876604329998372,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "613bd0bd22ec9c09572e",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.0805601000029128,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "eebaf4b77c17b6bbfd48",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 1.1434474530105945,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 5,
+          "site": 4
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "23506118b9ca76e776b5",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.341275542989024,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 5,
+          "site": 4
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "4f9a4bb27d4b8dbbb241",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 2,
+    "seconds": 0.9969348710001213,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 15,
+          "site": 9
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "ccb78a0cc0edbb5077ab",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.8505757870007074,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "4cb81c44c14e5415afec",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.08206645600148477,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 4,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 9,
+          "site": 7
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "d5fddd455c93ed655658",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 2,
+    "seconds": 0.5388719550101086,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 6
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 49
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "8510f89808411736f0e7",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.4843535099935252,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "dd42fe519689470315dc",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7644355130032636,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "693f60e48f2d1de6bd44",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.1552614649990574,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "55416087c483eb6680a5",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7640979449934093,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "cc252587d35ee35d7191",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07818743500683922,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "e9530ead9b85319ba1b5",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.9335847020120127,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 0,
+          "site": 8
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 23
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "ddcc89ed4c3aa11e4ca3",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.4966164759971434,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "4890db0866e6c38df334",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 1.1493779420125065,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "330c7a175dd53e6ca135",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.565880330002983,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "1e9441f849c7951edc36",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.0138815540121868,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "bb1ce87453d67de2b347",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07229365200328175,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "d5fd64924882ba2a5575",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.6612633939948864,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 0,
+          "site": 4
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "21816aeb840adf84864c",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.35310871800174937,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "bead76de96573945445c",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.6175793540023733,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "038b0d3d4236297090c8",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.48078990301291924,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 8,
+          "site": 4
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 15
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 5,
+          "value": 4
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 17,
+          "site": 9
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "f9fac8b484bf0835de64",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 1.5670143860043027,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "0c927fe41a845f5319ea",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.08169813100539614,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "7c6d85aad9527b79a729",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.6088161299994681,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "3c1fa2e9c6f016fb05a4",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07780196999374311,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "fc6a8550a7ad3045b844",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.9986700650042621,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 12,
+          "site": 11
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "420d89b6a2e288a34afe",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.324022619999596,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "c723d142f053b9b4e37d",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.4664960779919056,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "4ddf903d9f5887b4635f",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.4258831119950628,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "bdf9af7eb79f3ca4129c",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.012341491994448,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 11,
+          "site": 10
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "723b32cfb7d37ab9e82e",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 1.5368025939969812,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 1,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "9f1c863d4fb3a57a74a9",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.30956136400345713,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 5,
+          "site": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 1,
+          "control": 7,
+          "count": 13,
+          "disjoint": 0,
+          "operator": 90
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 1,
+          "pointer": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 0,
+          "control": 14,
+          "count": 7,
+          "disjoint": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 5,
+          "value": 4
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "724c70f58f5e587adaba",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.6753297109971754,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 4
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "fffca2e5234d7ecd4b25",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.36849526200967375,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "79daeda9af3afccf86e6",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7835735120024765,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 0,
+          "site": 7
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "da6a8b7a649d958df774",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.7047703549906146,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "17882df3a591a6743259",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.1947621010040166,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "c81672aa01ee7c6c09bc",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 1.2062111549894325,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "9e272cec8cf38ffab89a",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.0011617330019362,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "8024659e0e431c009bca",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.6641346319956938,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 2,
+          "site": 1
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "4ffef4415f86777f718d",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7561052200035192,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "7fa992a4446864eab938",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.777965404005954,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 9,
+          "site": 5
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "8f4075327924b51ce950",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.7475287540000863,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "049994c6dda31c8840d3",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.2138977870054077,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "60fd190dba7b14dee645",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.9908195470052306,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "d12fd2bfbd4a63b7221e",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 1.3371353230031673,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "b3a9b5644692a39a5876",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.9132457880041329,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "97c0bee9229063cb42d9",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.8438114300079178,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "578a2c8749e26bdca47d",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.5593310559925158,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 5,
+          "site": 3
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "8ba23a348902a40e5390",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 1,
+    "seconds": 0.34050787999876775,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "2f534df0ff27cd929ed4",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.8667850760102738,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 0,
+          "site": 29
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "ed84c6913bc887560224",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 3.0010528639977565,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "194f4b3a08d3bf04399f",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.0754955120064551,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "60d6b7ebc173a3326fdc",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.1818852330034133,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 14,
+          "site": 12
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "f24a099f360c9c4ccc62",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.8222276290034642,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "d26a7bb6077187f6be99",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.4836885050026467,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 5
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 1,
+          "pointer": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 24,
+          "site": 22
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 21
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 3,
+          "value": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "bac5c1896acae5913e5c",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 1,
+    "seconds": 1.1251926299883053,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 24,
+          "site": 20
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "1ea650e249657e99e9a6",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 1.1911843540001428,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "8edeea0d8525cd7bf3b4",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.3685903379955562,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 6,
+          "site": 5
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "633751aaad5bf37e2219",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 1,
+    "seconds": 3.1336648269934813,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "6b3e16d816a984cfc7e2",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.08202921898919158,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "d8093de1646e7ed56097",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.38896433600166347,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "4e3bf976fdc22e186d96",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.08161721299984492,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "8e754790541b5fb13e84",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.40092194099270273,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "096bdae234bf5fe20d95",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.0805856219958514,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "5f9beaaefa856ea7470d",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5958222649933305,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "a82042853328c4b9c40c",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.27832036900508683,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "46f5fc86c6c1b8799f4f",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07426161599869374,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "c6ea39c194e22d95fba4",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07234100499772467,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "5ae394d883ed308f404e",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 1.1614412630005972,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "e1a4d93809217062f8bb",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.5850977170048282,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 13
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 1,
+          "value": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 29
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "345262359e44e056f8c2",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 3.52196280399221,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "d5c316e9023bb4a327b2",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 1.0282766120071756,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "c8357eb702efcce614a8",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.08414015699236188,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 2,
+          "control": 7,
+          "count": 16,
+          "disjoint": 0,
+          "operator": 90
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "ac9f005676a3b781f9d5",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5058803580031963,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "359334703f42aa0acefb",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.3240978109970456,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "2605e062a7afaeb3d35a",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07995147400652058,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "f2d7c95c256d6ce19336",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.8692236259958008,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 9
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 3,
+          "site": 7
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 2,
+          "control": 7,
+          "count": 3,
+          "disjoint": 1,
+          "operator": 88
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 0,
+          "value": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 4,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "c4bc12b9afdb5105a937",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.5148503109958256,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "9cc61bd0e6ec4bd37dba",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.8168582189973677,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 4
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 39
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 1
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 1,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "fc3b83c1e55559a18d68",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 1,
+    "seconds": 0.28164766800182406,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "63e44b3cfe7c56bd8a8c",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.4248259699961636,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "9a6bc15487e52c9f2849",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5653421659953892,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "1e84cec9ecb1b2c38746",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.7023147930012783,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: CANONICAL_OBSERVATION_UNSUPPORTED:NODE:GENERICRELDECL",
+    "id": "09d08634a2958f9dc654",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.5963339479931165,
+    "solved": false,
+    "wellFormed": false
+  },
+  {
+    "decisions": [],
+    "error": "WorkerError: is.fivefivefive.ACGN.repair.RepairTask$UnsupportedInput: Explicit imports are not editable in repair slice v1",
+    "id": "eab9e2bdef033aaf315a",
+    "mode": "uniform",
+    "queries": 0,
+    "seconds": 0.07196007001039106,
+    "solved": false,
+    "wellFormed": false
+  }
+]

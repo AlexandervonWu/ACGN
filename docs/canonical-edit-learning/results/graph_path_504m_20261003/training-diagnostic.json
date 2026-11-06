@@ -1,0 +1,17 @@
+{
+  "count": 64,
+  "programExact": 0,
+  "validReplay": 30,
+  "rootShape": 0,
+  "targetGraphExact": 0,
+  "unchangedGraph": 0,
+  "seconds": 195.65583633100323,
+  "stopCounts": {
+    "EOS": 30,
+    "INVALID": 27,
+    "TOKEN_LIMIT": 7
+  },
+  "behavioralRepair": "NOT_EVALUATED: graph-to-Alloy realization and solver gate required",
+  "interpretation": "Training-set diagnostic only; never used for checkpoint selection or held-out success",
+  "selection": "First 64 training record IDs in lexical order, fixed before generation"
+}

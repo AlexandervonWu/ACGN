@@ -1,0 +1,32 @@
+{
+  "eligible": {
+    "evaluation": 89,
+    "train": 474,
+    "validation": 62
+  },
+  "preflight": "/tmp/acgn-feedback-scale-preflight-20261003-v2",
+  "preflightHash": "fe9710c6f0b61a7a07524f0aff095f3e890609f6a3c9f5ac6758679c26797e0d",
+  "preparation": {
+    "DUPLICATE_AST_PAIR": 47,
+    "SOURCE_READY": 625
+  },
+  "questionGroups": {
+    "evaluation": 9,
+    "train": 39,
+    "validation": 8
+  },
+  "schema": "feedback-scale-data-v1",
+  "seconds": 292.8844962499861,
+  "selected": {
+    "evaluation": 96,
+    "train": 512,
+    "validation": 64
+  },
+  "status": "FROZEN",
+  "teachers": {
+    "NO_ADMITTED_PATH": 161,
+    "REPLAY_VALIDATED_TEACHER": 313
+  },
+  "trainingDecisions": 4677,
+  "workers": 4
+}

@@ -8,16 +8,18 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.checkpoint import checkpoint
 
+from experiments.hybrid_edit.scope import VOCAB_SIZE
+
 
 @dataclass(frozen=True)
 class Config:
-    vocab: int = 4096
-    width: int = 3072
-    layers: int = 32
-    heads: int = 24
-    kv_heads: int = 8
+    vocab: int = VOCAB_SIZE
+    width: int = 1536
+    layers: int = 20
+    heads: int = 12
+    kv_heads: int = 4
     head_dim: int = 128
-    ff: int = 8192
+    ff: int = 4096
     weight_bits: int = 16
     group_size: int = 128
     max_tokens: int = 2048
@@ -51,10 +53,18 @@ class Config:
         return high + (q * self.weight_bits + 7) // 8 + scales
 
 
-def candidates():
-    return {f"l{layers}-w{bits}a16": Config(layers=layers, weight_bits=bits)
-            for bits, depths in ((16, (16, 24, 32)), (8, (32, 40)), (4, (32, 40, 48)))
-            for layers in depths}
+def candidates(study="pilot"):
+    if study == "pilot":
+        sizes = {"508m": {}, "710m": {"layers": 28},
+                 "911m": {"width": 2048, "heads": 16, "ff": 5632}}
+        return {f"{size}-w{bits}a16": Config(weight_bits=bits, **overrides)
+                for size, overrides in sizes.items() for bits in (16, 8, 4)}
+    if study == "scale":
+        return {f"l{layers}-w{bits}a16": Config(vocab=4096, width=3072, heads=24,
+                                             kv_heads=8, ff=8192, layers=layers, weight_bits=bits)
+                for bits, depths in ((16, (16, 24, 32)), (8, (32, 40)), (4, (32, 40, 48)))
+                for layers in depths}
+    raise ValueError("Unknown candidate study")
 
 
 def quantize_groups(weight, bits, group_size):
@@ -195,7 +205,15 @@ class HybridEditTransformer(nn.Module):
             raise ValueError("Every action must precede the final QUERY token")
         hidden = self.encode(tokens)
         action_hidden = hidden.gather(1, action_positions[..., None].expand(-1, -1, self.config.width))
-        query = hidden[:, -1]
+        # Corpus packets are right-padded after QUERY. Causal attention prevents
+        # those suffix tokens from influencing any action or the query state.
+        indices = torch.arange(tokens.shape[1], device=tokens.device).expand_as(tokens)
+        query_positions = indices.masked_fill(tokens.eq(0), -1).amax(dim=1)
+        if bool((query_positions < 0).any()):
+            raise ValueError("Empty padded packet")
+        if bool(((action_positions >= query_positions[:, None]) & legal).any()):
+            raise ValueError("Legal action pointers must precede the unpadded query")
+        query = hidden[torch.arange(tokens.shape[0], device=tokens.device), query_positions]
         logits = (self.query(query).float()[:, None] * self.action_key(action_hidden).float()).sum(-1)
         logits = logits / math.sqrt(self.config.width)
         if not bool(torch.isfinite(logits[legal]).all()):

@@ -256,4 +256,137 @@ theorem arbitrary_policy_preserves_commit_gate {S A : Type}
     legal s (policy s) = true ∧ realize s (policy s) = some next ∧
       accept s next = true := checked_commit_requirements legal realize accept s next (policy s) h
 
+-- Pilot scope is a restriction of the experiment, never a new semantic rule.
+inductive PilotTemplate where
+  | booleanReplace | cardinalityReplace | setReplace | quantifierReplace
+  deriving DecidableEq, Repr
+
+def pilotFamily : PilotTemplate → EditFamily
+  | .quantifierReplace => .bindingUpdate
+  | _ => .matrixUpdate
+
+theorem pilot_families_are_updates (t : PilotTemplate) :
+    pilotFamily t = .matrixUpdate ∨ pilotFamily t = .bindingUpdate := by
+  cases t <;> simp [pilotFamily]
+
+def pilotAllowed (sourceOK budgetOK typeOK : Bool) : Bool :=
+  sourceOK && budgetOK && typeOK
+
+theorem pilot_admission_requires_all_checks (s b t : Bool)
+    (h : pilotAllowed s b t = true) : s = true ∧ b = true ∧ t = true := by
+  simpa [pilotAllowed, Bool.and_eq_true, and_assoc] using h
+
+-- Four base-16 digits in a reserved token band encode a bounded numeric ID.
+def pilotDigits (n : Fin 65536) : List Nat :=
+  [64 + n.val % 16, 64 + n.val / 16 % 16,
+   64 + n.val / 256 % 16, 64 + n.val / 4096]
+
+theorem pilot_digits_in_vocabulary (n : Fin 65536) :
+    ∀ token ∈ pilotDigits n, token < 128 := by
+  have hn := n.isLt
+  intro token ht
+  simp only [pilotDigits, List.mem_cons, List.not_mem_nil, or_false] at ht
+  rcases ht with h | h | h | h <;> subst token <;> omega
+
+theorem pilot_numeric_roundtrip (n : Fin 65536) :
+    n.val % 16 + 16 * (n.val / 16 % 16) +
+      256 * (n.val / 256 % 16) + 4096 * (n.val / 4096) = n.val := by
+  omega
+
+theorem pilot_508m_parameters :
+    modelParameters 128 1536 20 12 4 128 4096 = 508313088 := by decide
+
+theorem pilot_710m_parameters :
+    modelParameters 128 1536 28 12 4 128 4096 = 709664256 := by decide
+
+theorem pilot_911m_parameters :
+    modelParameters 128 2048 20 16 4 128 5632 = 910534656 := by decide
+
+-- Compact banks consume previously reserved IDs without renumbering v1 tags.
+def signatureToken (index : Fin 8) : Nat := 80 + index.val
+def slotToken (index : Fin 8) : Nat := 88 + index.val
+def relationToken (index : Fin 8) : Nat := 96 + index.val
+def integerLiteralToken (value : Fin 5) : Nat := 52 + value.val
+
+theorem compact_token_bounds (sig slot relation : Fin 8) (literal : Fin 5) :
+    signatureToken sig < 128 ∧ slotToken slot < 128 ∧ relationToken relation < 128 ∧
+      integerLiteralToken literal < 128 := by
+  have hs := sig.isLt
+  have hb := slot.isLt
+  have hr := relation.isLt
+  have hi := literal.isLt
+  simp only [signatureToken, slotToken, relationToken, integerLiteralToken]
+  omega
+
+theorem signature_token_roundtrip (index : Fin 8) : signatureToken index - 80 = index.val := by
+  simp [signatureToken]
+
+theorem slot_token_roundtrip (index : Fin 8) : slotToken index - 88 = index.val := by
+  simp [slotToken]
+
+theorem relation_token_roundtrip (index : Fin 8) : relationToken index - 96 = index.val := by
+  simp [relationToken]
+
+theorem integer_literal_token_roundtrip (value : Fin 5) :
+    integerLiteralToken value - 52 = value.val := by
+  simp [integerLiteralToken]
+
+theorem signature_token_injective (a b : Fin 8)
+    (h : signatureToken a = signatureToken b) : a = b := by
+  apply Fin.ext
+  simp only [signatureToken] at h
+  omega
+
+theorem slot_token_injective (a b : Fin 8)
+    (h : slotToken a = slotToken b) : a = b := by
+  apply Fin.ext
+  simp only [slotToken] at h
+  omega
+
+theorem relation_token_injective (a b : Fin 8)
+    (h : relationToken a = relationToken b) : a = b := by
+  apply Fin.ext
+  simp only [relationToken] at h
+  omega
+
+theorem compact_banks_distinct (sig slot relation : Fin 8) (literal : Fin 5) (digit : Fin 16) :
+    signatureToken sig ≠ slotToken slot ∧
+    signatureToken sig ≠ relationToken relation ∧ slotToken slot ≠ relationToken relation ∧
+    integerLiteralToken literal ≠ signatureToken sig ∧
+    integerLiteralToken literal ≠ slotToken slot ∧
+    integerLiteralToken literal ≠ relationToken relation ∧
+    integerLiteralToken literal ≠ 64 + digit.val ∧
+    signatureToken sig ≠ 64 + digit.val ∧ slotToken slot ≠ 64 + digit.val ∧
+    relationToken relation ≠ 64 + digit.val := by
+  have hs := sig.isLt
+  have hb := slot.isLt
+  have hr := relation.isLt
+  have hi := literal.isLt
+  have hd := digit.isLt
+  simp only [signatureToken, slotToken, relationToken, integerLiteralToken]
+  omega
+
+-- Accumulation preserves an exact scalar gradient numerator when each example
+-- is evaluated at the same weights. Autodiff and floating-point error are TCB.
+theorem accumulated_sum_matches_flat_batch (chunks : List (List Int)) :
+    (chunks.map List.sum).sum = chunks.flatten.sum := by
+  induction chunks with
+  | nil => simp
+  | cons chunk rest ih => simp [List.sum_append, ih]
+
+theorem accumulation_preserves_example_count (chunks : List (List Int)) :
+    (chunks.map List.length).sum = chunks.flatten.length := by
+  induction chunks with
+  | nil => simp
+  | cons chunk rest ih =>
+    simp only [List.map_cons, List.sum_cons, List.flatten_cons, List.length_append, ih]
+
+theorem accumulated_mean_matches_flat_batch (chunks : List (List Int)) :
+    ((chunks.map List.sum).sum : Rat) / (chunks.flatten.length : Rat) =
+      (chunks.flatten.sum : Rat) / (chunks.flatten.length : Rat) := by
+  rw [accumulated_sum_matches_flat_batch]
+
+theorem requested_effective_batch_counts :
+    8 * 16 = 128 ∧ 8 * 12 = 96 ∧ 4 * 16 = 64 := by decide
+
 end HybridRepair

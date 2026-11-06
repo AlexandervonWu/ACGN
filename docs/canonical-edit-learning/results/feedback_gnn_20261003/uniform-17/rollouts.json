@@ -1,0 +1,209 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 4,
+          "site": 3
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 1,
+    "seconds": 0.2403412669955287,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.7591911689960398,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 4,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 4,
+          "site": 3
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 0,
+          "site": 5
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 23
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 1,
+          "pointer": 7
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 2,
+    "seconds": 0.36940686899470165,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.667535188003967,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.2570617849996779,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5304994440011797,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.34475063999707345,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 8
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.22909173700463725,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  }
+]

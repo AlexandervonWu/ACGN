@@ -1,0 +1,27 @@
+test_all_target_prefixes_legal (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_boolean_is_not_integer (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_complete_path (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_invalid_copy (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_invalid_graph_reference (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_lossless_labels (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_no_trailing_program (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_source_sharing (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_target_not_in_key (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_temporal_bindings (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_unused_source_names_available (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_whole_pair_bound (experiments.graph_repair.test_graph.CodecTests) ... ok
+test_alpha_renaming_preserves_key (experiments.graph_repair.test_graph.LiveExportTests) ... ok
+test_oracle_changes_only_value (experiments.graph_repair.test_graph.LiveExportTests) ... ok
+test_temporal_branch_and_multistep_target (experiments.graph_repair.test_graph.LiveExportTests) ... ok
+test_all_parameters_train (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_cached_logits (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_complete_program_overfit_and_reload (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_left_padding (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_mask_and_shift (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_parameter_count (experiments.graph_repair.test_graph.ModelTests) ... ok
+test_token_weighted_accumulation (experiments.graph_repair.test_graph.ModelTests) ... ok
+
+----------------------------------------------------------------------
+Ran 22 tests in 2.431s
+
+OK

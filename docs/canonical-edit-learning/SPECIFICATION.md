@@ -1,10 +1,22 @@
 # Hybrid Edit Transformer: Specification And Research Plan
 
+**Historical design.** For new work, use
+[Predicate-Only, Counterexample-Conditioned Repair Paths](INTENT-PATH-SPECIFICATION.md)
+and its [proof/implementation ledger](INTENT-PATH-OBLIGATIONS.md). The model sees
+only the faulty predicate's derived views, its own candidate history and actual
+returned counterexamples. The task contract stays private. Typed tables and
+pointer decisions replace long graph-token streams for multi-step repair. This
+document is retained to explain the earlier experiments; its menu, serialization
+and model-scaling plans are not the current next-run specification. The metric
+and semantic acceptance requirements below remain in force.
+
 Status: specification-first, from-scratch model prototype. This is not a trained
 4B repair model or a claim of corpus-level improvement. The user selected
 from-scratch training; no pretrained/frozen random backbone is substituted.
-The approximate 4B target is subordinate to the 16-GB RTX 5080 and available
-host RAM. Lean model contracts were compiled before this document and code.
+The first study is now 508M-911M with the narrow
+[relational pilot scope](PILOT-SCOPE.md) and a 128-ID vocabulary. Approximately
+4B remains a later option, subordinate to the 16-GB RTX 5080 and available host
+RAM. Lean model contracts were compiled before this document and code.
 
 ## Objective
 
@@ -144,11 +156,14 @@ probabilities and targets equivariantly or sum target probability over the orbit
 Do not identify actions that lead to different source occurrences without a
 checked action-realization correspondence.
 
-The wire vocabulary has 4,096 IDs: structural tags, versioned operator/edit tags,
+The general future wire vocabulary has 4,096 IDs: structural tags, versioned operator/edit tags,
 bytes, numeric delimiters and reserved tokens. Minimal length-delimited integers
 and byte strings retain exact payloads. No hash bucket or clipped count is an
 equality key. Require `decode(encode(x)) = x` for normalized records. The full
 source exporter/atom canonicalizer is a separate obligation from this codec.
+The initial pilot instead uses the closed 128-ID grammar in PILOT-SCOPE.md,
+with numeric symbol/type references and a source-bound sidecar for spelling
+and provenance. Do not claim that the pilot observation recovers raw source text.
 
 ## Dataset And Labels
 
@@ -207,7 +222,13 @@ dataset aggregation may update weights only from training questions.
 
 ## From-Scratch Transformer
 
-Reference backbone: decoder-only GQA, RMSNorm, rotary positions, SwiGLU, no
+Initial pilot backbones share decoder-only GQA, RMSNorm, rotary positions,
+SwiGLU, no biases and a 128-token tied vocabulary. The 508M/710M models use
+width 1,536, 12 query heads, 4 KV heads, FF width 4,096 and 20/28 layers. The
+911M model uses width 2,048, 16 query heads, 4 KV heads, FF width 5,632 and 20
+layers. All head dimensions are 128. Exact counts include every task head.
+
+Deferred large reference backbone: decoder-only GQA, RMSNorm, rotary positions, SwiGLU, no
 biases, 4,096-token tied input/output vocabulary. Width 3,072; 24 query heads,
 8 KV heads of dimension 128; feed-forward width 8,192; 32/36/40 layers.
 Forty layers have 4,039,363,584 backbone parameters and 4,058,274,816 including
@@ -217,7 +238,9 @@ and are trainable; no frozen-random prefix is called from-scratch full training.
 
 ### Precision/Capacity Study
 
-The user also permits INT4 and requests a precision/capacity tradeoff. Start with
+The initial grid tests each 508M/710M/911M model at W16/W8/W4, starting with
+BF16 for a stable reference. No precision label implies actual training fit.
+The user also permits the following deferred larger precision/capacity tradeoff:
 the same width/head/FF configuration and vary depth and weight precision:
 
 - BF16: 16, 24 and 32 layers (1.642, 2.448 and 3.253B parameters).
@@ -307,6 +330,10 @@ host RSS, reserve host RAM, and shrink layers/context/microbatch only with a new
 recorded configuration. Use no GPU memory padding. Choose the largest fitting
 configuration only for the size study, not as a presumed performance winner.
 No full 4B training begins before real-data labels and coverage gates below pass.
+The smaller pilot also requires real-data and scope gates before claiming any
+repair result. Its nominal Adam state costs are about 7.57/10.57/13.57 GiB;
+activations, workspace and optimizer temporaries are additional. The 911M
+candidate is not presumed to fit Adam within this GPU merely from its count.
 The initial tiny QAT prototype is resident and uses ordinary SGD; the deferred
 CPU-gradient probe above is a subsequent backend task, not an implemented claim.
 

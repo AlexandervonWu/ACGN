@@ -1,0 +1,1042 @@
+[
+  {
+    "group": "graphs:inv5",
+    "id": "be563a3a9ebe9062107c",
+    "initialRows": 135,
+    "queryRows": 206,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv7",
+    "id": "841b47d7a6530bdcdc29",
+    "initialRows": 299,
+    "queryRows": 517,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv4",
+    "id": "d309e3ecec9059feb7f0",
+    "initialRows": 329,
+    "queryRows": 592,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv1",
+    "id": "e925b59446448a4c679a",
+    "initialRows": 147,
+    "queryRows": 281,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv5",
+    "id": "45e3b214d8e2c259bcdf",
+    "initialRows": 236,
+    "queryRows": 463,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv1",
+    "id": "880a7087b92b5ece2a43",
+    "initialRows": 58,
+    "queryRows": 316,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "id": "763d065c3ac245b08ec5",
+    "initialRows": 292,
+    "queryRows": 387,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "cv_v1:inv4",
+    "id": "7b838a83e9b3d3f81c3b",
+    "initialRows": 210,
+    "queryRows": 345,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv5",
+    "id": "35612179cdee5ab833b1",
+    "initialRows": 195,
+    "queryRows": 462,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv7",
+    "id": "7b548b97db1453c93c70",
+    "initialRows": 404,
+    "queryRows": 562,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv7",
+    "id": "56a735cfb6fd4d9ea94b",
+    "initialRows": 444,
+    "queryRows": 688,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv8",
+    "id": "52ec408160a189e64b75",
+    "initialRows": 183,
+    "queryRows": 335,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv7",
+    "id": "f852e8dec0a3382fc6bb",
+    "initialRows": 235,
+    "queryRows": 471,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv5",
+    "id": "e2c01a2ed104f1745dc2",
+    "initialRows": 268,
+    "queryRows": 541,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv3",
+    "id": "dd02cbbb47f50f4b21c3",
+    "initialRows": 374,
+    "queryRows": 603,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv3",
+    "id": "c46d1fe0fac771787d51",
+    "initialRows": 122,
+    "queryRows": 195,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "id": "2aeda657eb32bc427cef",
+    "initialRows": 207,
+    "queryRows": 457,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv3",
+    "id": "75232801b709e17fb930",
+    "initialRows": 1002,
+    "queryRows": 1235,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv3",
+    "id": "39be56f72f50434c2fe9",
+    "initialRows": 387,
+    "queryRows": 628,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv6",
+    "id": "539762d264f87178579b",
+    "initialRows": 129,
+    "queryRows": 270,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv6",
+    "id": "ae1005bc105b6803a89e",
+    "initialRows": 200,
+    "queryRows": 338,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv2",
+    "id": "c4919a04eac66305a854",
+    "initialRows": 83,
+    "queryRows": 159,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "id": "9dfbebfbf540909b1e11",
+    "initialRows": 105,
+    "queryRows": 366,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv6",
+    "id": "67f908addb09c9c703e9",
+    "initialRows": 155,
+    "queryRows": 412,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv3",
+    "id": "8c749f9b167e0c49e245",
+    "initialRows": 981,
+    "queryRows": 1230,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv4",
+    "id": "4021f10fd8f4484947e3",
+    "initialRows": 463,
+    "queryRows": 593,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv6",
+    "id": "468435d3183d2fa36e6e",
+    "initialRows": 367,
+    "queryRows": 501,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "id": "250794767a4a7c94ffed",
+    "initialRows": 411,
+    "queryRows": 674,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv3",
+    "id": "ba5dd940f899f3d1e802",
+    "initialRows": 237,
+    "queryRows": 368,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv4",
+    "id": "56174adff0f7d3c255c5",
+    "initialRows": 275,
+    "queryRows": 419,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv4",
+    "id": "8592ccb26f893e822497",
+    "initialRows": 142,
+    "queryRows": 222,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv13",
+    "id": "f70279d49d687acc0956",
+    "initialRows": 98,
+    "queryRows": 362,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "id": "4ef9db0594ee46d493eb",
+    "initialRows": 429,
+    "queryRows": 695,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv10",
+    "id": "cafc7f1383dcfca22826",
+    "initialRows": 76,
+    "queryRows": 155,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "id": "ba151eec06127108e585",
+    "initialRows": 117,
+    "queryRows": 263,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv1",
+    "id": "930f90b8fd4978263097",
+    "initialRows": 99,
+    "queryRows": 245,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv5",
+    "id": "19fa26af3571f224eacc",
+    "initialRows": 209,
+    "queryRows": 476,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv2",
+    "id": "5e731d78910230c88313",
+    "initialRows": 290,
+    "queryRows": 419,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv6",
+    "id": "e1c2009f98b9020b53d3",
+    "initialRows": 226,
+    "queryRows": 309,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "id": "d4d3782bb93c265c71e2",
+    "initialRows": 467,
+    "queryRows": 624,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv5",
+    "id": "a0a86a4785202f92ef19",
+    "initialRows": 103,
+    "queryRows": 241,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "id": "6c5b6032abfee69d76e9",
+    "initialRows": 465,
+    "queryRows": 675,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv6",
+    "id": "6367f47a086245a47e49",
+    "initialRows": 323,
+    "queryRows": 405,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "id": "0b3099fd2dbb56bfcb51",
+    "initialRows": 436,
+    "queryRows": 638,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv6",
+    "id": "9a4a7746df4e4f77a4e7",
+    "initialRows": 135,
+    "queryRows": 209,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv1",
+    "id": "c44a0fb82108da00c1a0",
+    "initialRows": 124,
+    "queryRows": 263,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv1",
+    "id": "1ddd20a1fa78a0439c3e",
+    "initialRows": 100,
+    "queryRows": 240,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "id": "e25f4209713c97ea93c9",
+    "initialRows": 454,
+    "queryRows": 719,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv6",
+    "id": "e8f3935358943b19cc34",
+    "initialRows": 220,
+    "queryRows": 291,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv11",
+    "id": "f999ade4d45541ef1f7e",
+    "initialRows": 463,
+    "queryRows": 555,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv6",
+    "id": "00e482af43106022ace7",
+    "initialRows": 220,
+    "queryRows": 291,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv5",
+    "id": "e753767fb99748219661",
+    "initialRows": 103,
+    "queryRows": 241,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv6",
+    "id": "90bb4cad38ee3eff6d05",
+    "initialRows": 181,
+    "queryRows": 323,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv10",
+    "id": "2dd96b0f416bdb62444c",
+    "initialRows": 142,
+    "queryRows": 293,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv8",
+    "id": "a653c704f59b75d1d006",
+    "initialRows": 518,
+    "queryRows": 771,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv6",
+    "id": "e61a45ead85d60479e07",
+    "initialRows": 379,
+    "queryRows": 614,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv3",
+    "id": "63a32a3b5901162158fa",
+    "initialRows": 315,
+    "queryRows": 438,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv1",
+    "id": "64d34a2596721dc34953",
+    "initialRows": 57,
+    "queryRows": 189,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv4",
+    "id": "b4ccb79dc4d98dc71a8b",
+    "initialRows": 387,
+    "queryRows": 599,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "id": "09d522e4b40833622e57",
+    "initialRows": 573,
+    "queryRows": 824,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv2",
+    "id": "0787a307cb300a7d8b07",
+    "initialRows": 462,
+    "queryRows": 571,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv1",
+    "id": "df8ff4f6c078a6f745b5",
+    "initialRows": 132,
+    "queryRows": 403,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "id": "420d89b6a2e288a34afe",
+    "initialRows": 598,
+    "queryRows": 713,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv12",
+    "id": "0bbbe0c30764061c7ba3",
+    "initialRows": 411,
+    "queryRows": 655,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv3",
+    "id": "fe5915180aba69dd6a33",
+    "initialRows": 230,
+    "queryRows": 460,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv10",
+    "id": "917063500dfffe1168d7",
+    "initialRows": 297,
+    "queryRows": 438,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv2",
+    "id": "5e5b6b2203ae2819b1c2",
+    "initialRows": 72,
+    "queryRows": 205,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv8",
+    "id": "3e066da6cc9766f1c2b9",
+    "initialRows": 524,
+    "queryRows": 763,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "socialMedia:inv8",
+    "id": "be14895f2c3589fb44dd",
+    "initialRows": 291,
+    "queryRows": 419,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv14",
+    "id": "8d6349d73f380a96a488",
+    "initialRows": 582,
+    "queryRows": 790,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv4",
+    "id": "c1be72530814d10328f4",
+    "initialRows": 291,
+    "queryRows": 420,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv2",
+    "id": "fc627dab866ad0c3f9e9",
+    "initialRows": 83,
+    "queryRows": 337,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv2",
+    "id": "7b52d53851354439309b",
+    "initialRows": 297,
+    "queryRows": 424,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv8",
+    "id": "ce5f91cb14373bdd9487",
+    "initialRows": 181,
+    "queryRows": 260,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv1",
+    "id": "60bf759ea91ccddf36ed",
+    "initialRows": 67,
+    "queryRows": 140,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv1",
+    "id": "b561b3819f7e0afbffd6",
+    "initialRows": 72,
+    "queryRows": 205,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv10",
+    "id": "a2f97235d3a19d3af37b",
+    "initialRows": 241,
+    "queryRows": 383,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv4",
+    "id": "f2a2485d0c89cb96b5cb",
+    "initialRows": 142,
+    "queryRows": 222,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv2",
+    "id": "b7a6dc8535c160334bf4",
+    "initialRows": 100,
+    "queryRows": 173,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "socialMedia:inv1",
+    "id": "080d266553e9e757ab26",
+    "initialRows": 194,
+    "queryRows": 337,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "cv_v1:inv1",
+    "id": "2cf4841745329fabe9dd",
+    "initialRows": 16,
+    "queryRows": 121,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "id": "63f6679962b5370b86b7",
+    "initialRows": 245,
+    "queryRows": 527,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "cv_v1:inv4",
+    "id": "60fa446b75de7c35173a",
+    "initialRows": 177,
+    "queryRows": 401,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv2",
+    "id": "dc9282be9d7b3ff3e1ac",
+    "initialRows": 111,
+    "queryRows": 244,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv7",
+    "id": "ff17284c15b7dafce481",
+    "initialRows": 87,
+    "queryRows": 223,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "id": "5d028b0beb304c11115b",
+    "initialRows": 466,
+    "queryRows": 627,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv8",
+    "id": "07acd52b3f247064347a",
+    "initialRows": 127,
+    "queryRows": 207,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv9",
+    "id": "685690dc48270c49b7e7",
+    "initialRows": 128,
+    "queryRows": 388,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv6",
+    "id": "fd286b52b007d120c618",
+    "initialRows": 426,
+    "queryRows": 509,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv13",
+    "id": "6b784011a509b119253a",
+    "initialRows": 189,
+    "queryRows": 302,
+    "split": "train",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv5",
+    "id": "f6c556cc0a69bb54c013",
+    "initialRows": 127,
+    "queryRows": 267,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv15",
+    "id": "e41104184c451ac0b9fd",
+    "initialRows": 575,
+    "queryRows": 799,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv7",
+    "id": "5f3ec1fe5a905c3cb62f",
+    "initialRows": 133,
+    "queryRows": 275,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "id": "5e9b3b85719fa9c2bb6b",
+    "initialRows": 155,
+    "queryRows": 404,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "id": "597d70bbe0936f60a072",
+    "initialRows": 375,
+    "queryRows": 626,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "id": "b01b6a109cb8e5e17f2b",
+    "initialRows": 95,
+    "queryRows": 241,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv7",
+    "id": "dfd5c944a4f83e9395bd",
+    "initialRows": 245,
+    "queryRows": 327,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv8",
+    "id": "4a9a60e0c87d89d16f8c",
+    "initialRows": 285,
+    "queryRows": 435,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "id": "3f7cea27518440a34761",
+    "initialRows": 168,
+    "queryRows": 417,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "trash_fol:inv10",
+    "id": "451c8dd2aa91f29a35a6",
+    "initialRows": 265,
+    "queryRows": 343,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "graphs:inv4",
+    "id": "6c1ad0f62c69ab70bd15",
+    "initialRows": 162,
+    "queryRows": 242,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "classroom_fol:inv4",
+    "id": "fe2b7e5460cffef019ec",
+    "initialRows": 155,
+    "queryRows": 410,
+    "split": "evaluation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  },
+  {
+    "group": "graphs:inv4",
+    "id": "639748788692fc6fb4cd",
+    "initialRows": 267,
+    "queryRows": 347,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 1
+  },
+  {
+    "group": "trash_fol:inv4",
+    "id": "cd50c9fb7c6051d6da6e",
+    "initialRows": 61,
+    "queryRows": 202,
+    "split": "validation",
+    "status": "OBSERVATION_AND_QUERY_PASS",
+    "validatorStatus": 4,
+    "worlds": 2
+  }
+]

@@ -1,0 +1,194 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.3200323330020183,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.8138224909998826,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.3692760990015813,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.7296635019956739,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.28187886199884815,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.5786127219980699,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.4691166839984362,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "mode": "learned-250",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.33625891400151886,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  }
+]

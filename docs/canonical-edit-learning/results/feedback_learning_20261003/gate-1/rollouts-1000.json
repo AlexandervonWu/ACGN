@@ -1,0 +1,69 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 50
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 5,
+          "operator": 2,
+          "value": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 5
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.3838378379950882,
+    "solved": true,
+    "status": 5,
+    "wellFormed": true
+  }
+]

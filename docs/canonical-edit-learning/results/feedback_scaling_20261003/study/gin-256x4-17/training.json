@@ -1,0 +1,272 @@
+[
+  {
+    "cacheEstimatedBytes": 1072187168,
+    "encodedExamples": 13552,
+    "lr": 0.0003,
+    "meanLoss100": 1.2236428958148462,
+    "preClipNorm": 4.851072788238525,
+    "seconds": 7.768986781986314,
+    "update": 100
+  },
+  {
+    "cacheEstimatedBytes": 1073590350,
+    "encodedExamples": 13937,
+    "lr": 0.0002992086242158385,
+    "meanLoss100": 0.9589556900630123,
+    "preClipNorm": 3.7343859672546387,
+    "seconds": 15.483405212988146,
+    "update": 200
+  },
+  {
+    "cacheEstimatedBytes": 1068903672,
+    "encodedExamples": 14338,
+    "lr": 0.00029684377502086165,
+    "meanLoss100": 0.7421295852428375,
+    "preClipNorm": 1.8250776529312134,
+    "seconds": 24.386845653993078,
+    "update": 300
+  },
+  {
+    "cacheEstimatedBytes": 1072567656,
+    "encodedExamples": 14713,
+    "lr": 0.0002929331781096783,
+    "meanLoss100": 0.7382628496587494,
+    "preClipNorm": 2.1563265323638916,
+    "seconds": 32.40029259498988,
+    "update": 400
+  },
+  {
+    "cacheEstimatedBytes": 1072323702,
+    "encodedExamples": 15100,
+    "lr": 0.00028752268165557917,
+    "meanLoss100": 0.7066477770706843,
+    "preClipNorm": 2.463796615600586,
+    "seconds": 41.442686402995605,
+    "update": 500
+  },
+  {
+    "cacheEstimatedBytes": 1070883668,
+    "encodedExamples": 15505,
+    "lr": 0.0002806757187826245,
+    "meanLoss100": 0.6664206316155651,
+    "preClipNorm": 3.0051207542419434,
+    "seconds": 49.375597725986154,
+    "update": 600
+  },
+  {
+    "cacheEstimatedBytes": 1072186246,
+    "encodedExamples": 15899,
+    "lr": 0.00027247256387026185,
+    "meanLoss100": 0.5955990472527674,
+    "preClipNorm": 3.5976226329803467,
+    "seconds": 58.162902788986685,
+    "update": 700
+  },
+  {
+    "cacheEstimatedBytes": 1071223716,
+    "encodedExamples": 16272,
+    "lr": 0.0002630093914096226,
+    "meanLoss100": 0.5451569597126036,
+    "preClipNorm": 2.6234989166259766,
+    "seconds": 66.05886603999534,
+    "update": 800
+  },
+  {
+    "cacheEstimatedBytes": 1069994768,
+    "encodedExamples": 16649,
+    "lr": 0.0002523971484455467,
+    "meanLoss100": 0.5258161874708094,
+    "preClipNorm": 2.07572865486145,
+    "seconds": 73.73222606499621,
+    "update": 900
+  },
+  {
+    "cacheEstimatedBytes": 1071968372,
+    "encodedExamples": 17011,
+    "lr": 0.0002407602538239216,
+    "meanLoss100": 0.4425163611197695,
+    "preClipNorm": 3.6973695755004883,
+    "seconds": 82.52855616799206,
+    "update": 1000
+  },
+  {
+    "cacheEstimatedBytes": 1070389380,
+    "encodedExamples": 17431,
+    "lr": 0.00022823513949447164,
+    "meanLoss100": 0.4622682063825323,
+    "preClipNorm": 3.4535365104675293,
+    "seconds": 90.43460821599001,
+    "update": 1100
+  },
+  {
+    "cacheEstimatedBytes": 1072885312,
+    "encodedExamples": 17806,
+    "lr": 0.0002149686509708884,
+    "meanLoss100": 0.3932391887930589,
+    "preClipNorm": 3.632762908935547,
+    "seconds": 99.12231845098722,
+    "update": 1200
+  },
+  {
+    "cacheEstimatedBytes": 1073537468,
+    "encodedExamples": 18197,
+    "lr": 0.0002011163257014448,
+    "meanLoss100": 0.36094863712697134,
+    "preClipNorm": 2.025247573852539,
+    "seconds": 107.25673355998879,
+    "update": 1300
+  },
+  {
+    "cacheEstimatedBytes": 1068245684,
+    "encodedExamples": 18612,
+    "lr": 0.00018684056953462323,
+    "meanLoss100": 0.32723689208119366,
+    "preClipNorm": 3.8048574924468994,
+    "seconds": 116.77232598599221,
+    "update": 1400
+  },
+  {
+    "cacheEstimatedBytes": 1070625280,
+    "encodedExamples": 18993,
+    "lr": 0.00017230875265903135,
+    "meanLoss100": 0.28519499616828625,
+    "preClipNorm": 0.9936560988426208,
+    "seconds": 124.9212106729974,
+    "update": 1500
+  },
+  {
+    "cacheEstimatedBytes": 1073415108,
+    "encodedExamples": 19362,
+    "lr": 0.00015769124734096862,
+    "meanLoss100": 0.2528617440725657,
+    "preClipNorm": 1.7372007369995117,
+    "seconds": 134.07793372598826,
+    "update": 1600
+  },
+  {
+    "cacheEstimatedBytes": 1071464662,
+    "encodedExamples": 19741,
+    "lr": 0.00014315943046537674,
+    "meanLoss100": 0.22713674713107365,
+    "preClipNorm": 1.589317798614502,
+    "seconds": 141.75588207799592,
+    "update": 1700
+  },
+  {
+    "cacheEstimatedBytes": 1073613414,
+    "encodedExamples": 20110,
+    "lr": 0.0001288836742985552,
+    "meanLoss100": 0.20734907053796406,
+    "preClipNorm": 2.734351873397827,
+    "seconds": 150.8562321799982,
+    "update": 1800
+  },
+  {
+    "cacheEstimatedBytes": 1072694190,
+    "encodedExamples": 20515,
+    "lr": 0.00011503134902911157,
+    "meanLoss100": 0.1657914408523584,
+    "preClipNorm": 3.71146559715271,
+    "seconds": 158.6337980209937,
+    "update": 1900
+  },
+  {
+    "cacheEstimatedBytes": 1069442068,
+    "encodedExamples": 20916,
+    "lr": 0.00010176486050552833,
+    "meanLoss100": 0.17765823932547165,
+    "preClipNorm": 4.470534801483154,
+    "seconds": 167.99714235898864,
+    "update": 2000
+  },
+  {
+    "cacheEstimatedBytes": 1067557670,
+    "encodedExamples": 21289,
+    "lr": 8.923974617607838e-05,
+    "meanLoss100": 0.17412129569431956,
+    "preClipNorm": 2.804948091506958,
+    "seconds": 176.30713913499494,
+    "update": 2100
+  },
+  {
+    "cacheEstimatedBytes": 1072677170,
+    "encodedExamples": 21648,
+    "lr": 7.760285155445327e-05,
+    "meanLoss100": 0.1402064933779127,
+    "preClipNorm": 0.7549026012420654,
+    "seconds": 184.09693031899224,
+    "update": 2200
+  },
+  {
+    "cacheEstimatedBytes": 1066824334,
+    "encodedExamples": 22005,
+    "lr": 6.699060859037733e-05,
+    "meanLoss100": 0.12171485708771229,
+    "preClipNorm": 0.604524552822113,
+    "seconds": 192.697053854994,
+    "update": 2300
+  },
+  {
+    "cacheEstimatedBytes": 1073359656,
+    "encodedExamples": 22382,
+    "lr": 5.752743612973812e-05,
+    "meanLoss100": 0.11163060514267102,
+    "preClipNorm": 0.7303988337516785,
+    "seconds": 200.6042719759862,
+    "update": 2400
+  },
+  {
+    "cacheEstimatedBytes": 1073065756,
+    "encodedExamples": 22776,
+    "lr": 4.9324281217375474e-05,
+    "meanLoss100": 0.09671746780036074,
+    "preClipNorm": 2.111572265625,
+    "seconds": 209.772062981996,
+    "update": 2500
+  },
+  {
+    "cacheEstimatedBytes": 1064855074,
+    "encodedExamples": 23165,
+    "lr": 4.247731834442079e-05,
+    "meanLoss100": 0.08211935613375373,
+    "preClipNorm": 0.3663364350795746,
+    "seconds": 217.413215898996,
+    "update": 2600
+  },
+  {
+    "cacheEstimatedBytes": 1068844670,
+    "encodedExamples": 23542,
+    "lr": 3.7066821890321684e-05,
+    "meanLoss100": 0.07556469489230323,
+    "preClipNorm": 0.620516300201416,
+    "seconds": 226.92843280200032,
+    "update": 2700
+  },
+  {
+    "cacheEstimatedBytes": 1073204730,
+    "encodedExamples": 23883,
+    "lr": 3.3156224979138284e-05,
+    "meanLoss100": 0.08119989851643027,
+    "preClipNorm": 4.50214958190918,
+    "seconds": 234.5091919439874,
+    "update": 2800
+  },
+  {
+    "cacheEstimatedBytes": 1072133358,
+    "encodedExamples": 24232,
+    "lr": 3.0791375784161455e-05,
+    "meanLoss100": 0.07139349880808708,
+    "preClipNorm": 0.7600948810577393,
+    "seconds": 243.49189680999552,
+    "update": 2900
+  },
+  {
+    "cacheEstimatedBytes": 1073477724,
+    "encodedExamples": 24569,
+    "lr": 3e-05,
+    "meanLoss100": 0.06173735973648945,
+    "preClipNorm": 0.4313870072364807,
+    "seconds": 251.0331254789926,
+    "update": 3000
+  }
+]

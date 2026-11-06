@@ -1,10 +1,11 @@
-"""Tiny functionality only. Never automatically allocates a full-sized candidate."""
+"""Synthetic functionality only. Full pilot allocation requires --candidate."""
 
 import argparse
 from contextlib import nullcontext
 from dataclasses import asdict
 import hashlib
 import json
+import math
 from pathlib import Path
 import platform
 import resource
@@ -16,9 +17,9 @@ from torch.nn import functional as F
 from experiments.hybrid_edit.model import Config, HybridEditTransformer, candidates, optimal_set_loss
 
 
-def plan():
+def plan(study="pilot"):
     rows = []
-    for name, config in candidates().items():
+    for name, config in candidates(study).items():
         rows.append({"id": name, "config": asdict(config), "parameters": config.parameters(),
                      "mixed_packed_weights_bytes": config.packed_weight_bytes(),
                      "fp32_master_and_gradient_bytes": 8 * config.parameters(),
@@ -27,22 +28,28 @@ def plan():
     return rows
 
 
-def smoke(device, bits):
+def smoke(device, bits, config=None, steps=8, token_count=12, learning_rate=0.03):
     torch.manual_seed(19)
-    config = Config(vocab=64, width=64, layers=2, heads=4, kv_heads=2,
-                    head_dim=16, ff=128, weight_bits=bits, group_size=16, max_tokens=32)
+    config = config or Config(vocab=64, width=64, layers=2, heads=4, kv_heads=2,
+                              head_dim=16, ff=128, weight_bits=bits, group_size=16, max_tokens=32)
+    if not 2 <= steps <= 8 or not 8 <= token_count <= min(config.max_tokens, 128):
+        raise ValueError("Bounded probe requires 2-8 steps and 8-128 in-context tokens")
+    if not math.isfinite(learning_rate) or not 0 < learning_rate <= 0.1:
+        raise ValueError("Probe learning rate must be finite and in (0, 0.1]")
     if device.type == "cuda":
         torch.cuda.empty_cache()
         torch.cuda.reset_peak_memory_stats()
     start = time.monotonic()
-    model = HybridEditTransformer(config, checkpoint_blocks=True).to(device)
-    optimizer = torch.optim.SGD(model.parameters(), lr=0.03)
-    tokens = torch.randint(0, config.vocab, (2, 12), device=device)
-    positions = torch.tensor([[3, 6, 9], [3, 6, 9]], device=device)
+    with torch.device(device):
+        model = HybridEditTransformer(config, checkpoint_blocks=True)
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+    tokens = torch.randint(0, config.vocab, (2, token_count), device=device)
+    pointers = [token_count // 4, token_count // 2, 3 * token_count // 4]
+    positions = torch.tensor([pointers, pointers], device=device)
     legal = torch.tensor([[True, True, False], [True, True, True]], device=device)
     targets = torch.tensor([[False, True, False], [False, True, True]], device=device)
     losses = []
-    for _ in range(8):
+    for _ in range(steps):
         optimizer.zero_grad(set_to_none=True)
         context = torch.autocast("cuda", dtype=torch.bfloat16) if device.type == "cuda" else nullcontext()
         with context:
@@ -58,23 +65,34 @@ def smoke(device, bits):
         torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=True)
         optimizer.step()
         losses.append(float(loss.detach()))
-    if not losses[-1] < losses[0]:
-        raise RuntimeError("Tiny fixed-fixture loss did not decrease")
     if device.type == "cuda":
         torch.cuda.synchronize()
     return {"weight_bits": bits, "config": asdict(config), "parameters": config.parameters(),
             "master_dtype": "float32", "activation_autocast": "bfloat16" if device.type == "cuda" else "none",
-            "steps": 8, "losses": losses, "elapsed_seconds": time.monotonic() - start,
+            "steps": steps, "tokens_per_packet": token_count, "batch_size": 2,
+            "optimizer": "SGD-no-momentum", "learning_rate": learning_rate,
+            "losses": losses, "elapsed_seconds": time.monotonic() - start,
             "peak_torch_allocated_bytes": torch.cuda.max_memory_allocated() if device.type == "cuda" else None,
             "peak_torch_reserved_bytes": torch.cuda.max_memory_reserved() if device.type == "cuda" else None,
-            "status": "TINY_FIXTURE_FUNCTIONAL_ONLY"}
+            "status": ("SYNTHETIC_FIXTURE_FUNCTIONAL_ONLY" if losses[-1] < losses[0]
+                       else "SYNTHETIC_LOSS_DID_NOT_DECREASE")}
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--device", choices=("cpu", "cuda"), default="cpu")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--study", choices=("pilot", "scale"), default="pilot")
+    parser.add_argument("--candidate", help="Explicit pilot model for a short synthetic fit probe")
+    parser.add_argument("--steps", type=int, default=8)
+    parser.add_argument("--tokens", type=int, default=12)
+    parser.add_argument("--learning-rate", type=float, default=0.03)
     args = parser.parse_args()
+    selected = None
+    if args.candidate:
+        if args.study != "pilot" or args.candidate not in candidates("pilot"):
+            parser.error("Only explicitly named pilot candidates can be allocated by this probe")
+        selected = candidates("pilot")[args.candidate]
     device = torch.device(args.device)
     if device.type == "cuda":
         if not torch.cuda.is_available():
@@ -83,17 +101,24 @@ def main():
     torch.set_num_threads(2)
     files = [*Path("experiments/hybrid_edit").glob("*.py"),
              Path("docs/canonical-edit-learning/formal/HybridRepair.lean")]
-    report = {"scope": "synthetic small-model functionality; no corpus or large-model fit claim",
+    report = {"scope": "synthetic short-context SGD functionality; no corpus or production optimizer fit claim",
               "python": platform.python_version(), "torch": torch.__version__, "cuda": torch.version.cuda,
               "device": torch.cuda.get_device_name() if device.type == "cuda" else "cpu",
               "input_hashes": {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(files)},
-              "candidates": plan(), "smoke": [smoke(device, b) for b in (16, 8, 4)],
+              "study": args.study, "candidate": args.candidate,
+              "candidates": plan(args.study),
+              "smoke": ([smoke(device, selected.weight_bits, selected, args.steps, args.tokens, args.learning_rate)]
+                        if selected else [smoke(device, b, steps=args.steps, token_count=args.tokens,
+                                               learning_rate=args.learning_rate)
+                                          for b in (16, 8, 4)]),
               "maximum_host_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
               "open_gates": ["certified_export", "source_edit_coverage", "checked_real_data_labels",
                              "whole_codec_correspondence", "packed_training_backend", "large_training_fit"]}
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"output": str(args.output), "smoke": report["smoke"]}, indent=2))
+    if any(row["status"] != "SYNTHETIC_FIXTURE_FUNCTIONAL_ONLY" for row in report["smoke"]):
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

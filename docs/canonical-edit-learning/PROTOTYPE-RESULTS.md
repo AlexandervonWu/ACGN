@@ -3,6 +3,11 @@
 Scope: specification, model-level proofs, and a from-scratch neural prototype.
 This is not a corpus training result or an end-to-end closure claim.
 
+This report preserves the initial check at commit `67cb5f3d`; its retained JSON
+hashes identify that earlier source, not the subsequently changed prototype.
+The smaller scoped follow-up is described in [PILOT-SCOPE.md](PILOT-SCOPE.md)
+and [PILOT-RESULTS.md](PILOT-RESULTS.md).
+
 ## Checks Run
 
 - The standalone `HybridRepair.lean` compiled with 30 named theorems. They cover

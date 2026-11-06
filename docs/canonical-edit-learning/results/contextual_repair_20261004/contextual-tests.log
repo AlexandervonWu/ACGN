@@ -1,0 +1,15 @@
+test_actual_failed_attempt_then_repaired (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_changed_source_and_false_feedback_refused (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_contextual_mask_and_prediction_are_not_acceptance (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_heldout_admission_refused_before_replay (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_policy_cannot_terminate_with_unchecked_stop (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_prefix_memory_and_reset (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_real_episode_gradients_and_historical_addresses (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_replay_requires_verification_after_commit (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_unreplayed_loss_refused (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+test_unsolved_budget_limited_episode_is_retained (experiments.feedback_repair.test_contextual.ContextualTest) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 5.213s
+
+OK

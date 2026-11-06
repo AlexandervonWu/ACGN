@@ -1,0 +1,11 @@
+{
+  "count": 192,
+  "train_all_actions_tied": 475,
+  "heldout_all_actions_tied": 74,
+  "teacher_optimal_top1": 140,
+  "random_expected_teacher_optimal": 128.8194805194805,
+  "initial_mean_distance": 16.317708333333332,
+  "learned_mean_remaining_distance": 16.625,
+  "random_expected_mean_remaining_distance": 16.91283369408369,
+  "mean_menu_size": 2.515625
+}

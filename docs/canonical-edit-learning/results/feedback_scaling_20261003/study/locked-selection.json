@@ -1,0 +1,20 @@
+{
+  "config": {
+    "layers": 3,
+    "name": "gin-128x3",
+    "variant": "gin",
+    "width": 128
+  },
+  "datasetHash": "fcbba907cf5f384ba2832075e7f8f3e58b85da72d39a4a72cc218dbce714dc0e",
+  "parameters": 1541252,
+  "seed17CheckpointHash": "624ff3d00980db3ee37b591df8e76996c544112e28a42c3e356565c115e95a5f",
+  "selection": "validation repairs, parameter count, fixed order",
+  "validation": {
+    "errors": 29,
+    "queries": 59,
+    "rejections": 1742,
+    "repairs": 0,
+    "tasks": 62,
+    "wellFormed": 33
+  }
+}

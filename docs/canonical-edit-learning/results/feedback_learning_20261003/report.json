@@ -1,0 +1,79 @@
+{
+  "contract": "feedback-intent-path-v1",
+  "decisionBudget": 256,
+  "device": "cuda",
+  "dirty": true,
+  "eligibleTrainTasks": 64,
+  "encodedTeachers": 62,
+  "gates": [
+    {
+      "baselines": {
+        "noop": {
+          "queries": 1,
+          "repairs": 0,
+          "tasks": 1
+        },
+        "uniform": {
+          "queries": 0,
+          "repairs": 0,
+          "tasks": 1
+        }
+      },
+      "parameters": 482049,
+      "passed": true,
+      "repairs": 1,
+      "requiredRepairs": 1,
+      "tasks": 1,
+      "updateCap": 1000,
+      "updates": 1000,
+      "wellFormedEpisodes": 1
+    },
+    {
+      "baselines": {
+        "noop": {
+          "queries": 8,
+          "repairs": 0,
+          "tasks": 8
+        },
+        "uniform": {
+          "queries": 5,
+          "repairs": 0,
+          "tasks": 8
+        }
+      },
+      "failure": "FREE_RUNNING_LEARNABILITY",
+      "parameters": 482049,
+      "passed": false,
+      "repairs": 0,
+      "requiredRepairs": 8,
+      "tasks": 8,
+      "updateCap": 1000,
+      "updates": 1000,
+      "wellFormedEpisodes": 8
+    }
+  ],
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "gpu": "NVIDIA GeForce RTX 5080",
+  "host": "Linux-7.0.0-34-generic-x86_64-with-glibc2.39",
+  "laterStages": {
+    "GNN held-out comparison": "NOT_RUN",
+    "Qwen adaptation": "NOT_RUN",
+    "~500M scratch": "NOT_RUN"
+  },
+  "limitations": [
+    "Training-set diagnostic, not held-out or three-seed evidence.",
+    "Draft masks use coarse sorts; exact dependent types are mandatory at commit.",
+    "Local canonical binders/unrepresentable domains and old revision histories fail explicitly.",
+    "Bounded search control and larger model consumers are not yet migrated."
+  ],
+  "peakCudaAllocatedBytes": 92027392,
+  "peakCudaReservedBytes": 113246208,
+  "preflight": "/tmp/acgn-feedback-learning-preflight-20261003",
+  "preflightHash": "dc245826ddce36782f5101522b6298f8d1e0b083fa12cdfaa4f913f2b55d054c",
+  "queryBudget": 2,
+  "schema": "feedback-learnability-v1",
+  "seconds": 90.38654863400006,
+  "seed": 17,
+  "status": "STOPPED_AT_FAILED_GATE",
+  "torch": "2.14.1+cu130"
+}

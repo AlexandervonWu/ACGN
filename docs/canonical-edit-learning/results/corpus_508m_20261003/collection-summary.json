@@ -1,0 +1,16 @@
+{
+  "attempted": 4096,
+  "accepted": {
+    "train": 1192,
+    "evaluation": 230,
+    "validation": 221
+  },
+  "exclusions": {
+    "ScopeExclusion": 797,
+    "WorkerError": 1194,
+    "DUPLICATE_AST_PAIR": 462
+  },
+  "seconds": 1534.9783195100026,
+  "retried": 1,
+  "retrySeconds": 0.4007639810006367
+}

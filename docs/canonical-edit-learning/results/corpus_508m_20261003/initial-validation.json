@@ -1,0 +1,25 @@
+{
+  "count": 221,
+  "questions": 7,
+  "budgets": {
+    "1": {
+      "learned_solved": 12,
+      "learned_rate": 0.05429864253393665,
+      "random_expected_solved": 14.116666666666669,
+      "random_expected_rate": 0.06387631975867271,
+      "counterexample_score_solved": 27,
+      "counterexample_score_rate": 0.12217194570135746
+    },
+    "3": {
+      "learned_solved": 28,
+      "learned_rate": 0.12669683257918551,
+      "random_expected_solved": 27.85,
+      "random_expected_rate": 0.1260180995475113,
+      "counterexample_score_solved": 29,
+      "counterexample_score_rate": 0.13122171945701358
+    }
+  },
+  "counterexample_score_cost": "All menu candidates scored before ranking; not a matched-attempt baseline",
+  "one_step_upper_bound": 29,
+  "loss": 4.221787994263938
+}

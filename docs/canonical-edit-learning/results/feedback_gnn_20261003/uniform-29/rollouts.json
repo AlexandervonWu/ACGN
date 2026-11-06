@@ -1,0 +1,257 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 1,
+    "seconds": 0.23345096800039755,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 14,
+          "site": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 11,
+          "site": 10
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.8139089910037001,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 6,
+          "site": 1
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 15,
+          "pointer": 6
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 10
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.3834233210000093,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "mode": "uniform",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.7267882230007672,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.25972295599785866,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 5,
+          "site": 4
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 1,
+          "site": 0
+        },
+        "status": 2
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 1,
+    "seconds": 0.7273177780007245,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 9,
+          "family": 7,
+          "pointer": 4,
+          "site": 3
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "mode": "uniform",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 0.5174524239992024,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 13
+        },
+        "status": 8
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "mode": "uniform",
+    "queries": 0,
+    "rejected": 0,
+    "seconds": 0.23357547899649944,
+    "solved": false,
+    "status": 8,
+    "wellFormed": true
+  }
+]

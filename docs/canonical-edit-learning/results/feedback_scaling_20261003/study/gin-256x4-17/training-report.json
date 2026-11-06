@@ -1,0 +1,41 @@
+{
+  "before": {
+    "decisions": 128,
+    "headAccuracy": 0.13765182186234817,
+    "jointAccuracy": 0.03125,
+    "loss": 2.17370688309893
+  },
+  "clippedUpdates": 2637,
+  "config": {
+    "layers": 4,
+    "name": "gin-256x4",
+    "variant": "gin",
+    "width": 256
+  },
+  "encoderUpdateNorm": 3.7868645191192627,
+  "finiteNonzeroGradientUpdates": 3000,
+  "hostMaxRssKiB": 3004104,
+  "parameters": 6303749,
+  "peakCudaAllocatedBytes": 403573248,
+  "peakCudaReservedBytes": 444596224,
+  "probes": [
+    {
+      "decisions": 128,
+      "headAccuracy": 0.8097165991902834,
+      "jointAccuracy": 0.7109375,
+      "loss": 0.5078802433336023,
+      "update": 1000
+    },
+    {
+      "decisions": 128,
+      "headAccuracy": 0.9878542510121457,
+      "jointAccuracy": 0.9765625,
+      "loss": 0.05300813983106423,
+      "update": 3000
+    }
+  ],
+  "scheduleHash": "13c45aef0d47a89de2fbd63863f359a7e86dcee196640e24ab1266704a3d6574",
+  "seconds": 251.2829178009997,
+  "seed": 17,
+  "updates": 3000
+}

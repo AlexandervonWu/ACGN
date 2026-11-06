@@ -1,0 +1,345 @@
+{
+  "status": "PASS",
+  "records": 7,
+  "checked": [
+    {
+      "id": "d1fc40d317fb5b2704ab",
+      "source": "classified-data/socialMedia/both/EoyzvDWcKFwSj6YuN_inv3.als",
+      "group": "socialMedia:inv3",
+      "checkedActions": [
+        0,
+        1,
+        2
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 500,
+            "sourceHash": "134e5af1de80f846da2d4118b61a7e8b88ac78a2da221795fa116390a2a241c9",
+            "distance": 17,
+            "index": 3,
+            "solved": false,
+            "body": "\nsome x:User | some y:x.sees | y in Ad or y in x.follows.posts\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 4,
+              "newVersion": 6
+            }
+          },
+          {
+            "valid": true,
+            "score": 1000,
+            "sourceHash": "0da9c91e9804351dcc7c7430347ef2b4ffae0d8df7f517e167e6a0f245fe05b2",
+            "distance": 16,
+            "index": 5,
+            "solved": true,
+            "body": "\nall x:User | all y:x.sees | y in Ad or y in x.follows.posts\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "SOLVED_WITHIN_PROFILE",
+              "extra": "UNSAT",
+              "missing": "UNSAT",
+              "oldVersion": 6,
+              "newVersion": 6
+            }
+          },
+          {
+            "valid": true,
+            "score": 500,
+            "sourceHash": "6fc1808464030ae65e0ae7f5ef1f639a6a6320383c9e3a17873ebabab44304d2",
+            "distance": 16,
+            "index": 10,
+            "solved": false,
+            "body": "\nall x:User | some y:x.sees | ((y in Ad) and (y in x.follows.posts))\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 6,
+              "newVersion": 8
+            }
+          }
+        ],
+        "initialDistance": 16,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "b12e0e2f785eb2b4fb58",
+      "source": "classified-data/socialMedia/both/ohetZqbfxdB8MocZ4_inv3.als",
+      "group": "socialMedia:inv3",
+      "checkedActions": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 250,
+            "sourceHash": "f4d89904484e8068f30791f53af5f11e73949718999389c51eaebb29d2551c86",
+            "distance": 23,
+            "index": 3,
+            "solved": false,
+            "body": "\nsome u1:User | some p:Photo| (u1->p in sees and p not in Ad) => (some u2:User| u1->u2 in follows and u2->p in posts)\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 4,
+              "newVersion": 6
+            }
+          },
+          {
+            "valid": true,
+            "score": 1000,
+            "sourceHash": "60d2a3f549551d1f9cf9b0d81ca539bbc565137d61325a2ec1479fba10d7baf7",
+            "distance": 23,
+            "index": 4,
+            "solved": true,
+            "body": "\nall u1:User | all p:Photo| (u1->p in sees and p not in Ad) => (some u2:User| u1->u2 in follows and u2->p in posts)\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "SOLVED_WITHIN_PROFILE",
+              "extra": "UNSAT",
+              "missing": "UNSAT",
+              "oldVersion": 6,
+              "newVersion": 6
+            }
+          },
+          {
+            "valid": true,
+            "score": 250,
+            "sourceHash": "0e4e3b2ee54ecc08a276a2cdc69d0f43d96ccd118ec5b238872cc6576f0ea5cd",
+            "distance": 24,
+            "index": 8,
+            "solved": false,
+            "body": "\nall u1:User | some p:Photo| (((u1->p in sees) or (p not in Ad))) => (some u2:User| u1->u2 in follows and u2->p in posts)\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 6,
+              "newVersion": 8
+            }
+          },
+          {
+            "valid": true,
+            "score": 250,
+            "sourceHash": "c1ae4c3d7ab820c8d74e7fa736534f512a6d2e856e39a9fa97309869e794662e",
+            "distance": 23,
+            "index": 12,
+            "solved": false,
+            "body": "\nall u1:User | some p:Photo| (u1->p in sees and p not in Ad) => (all u2:User| u1->u2 in follows and u2->p in posts)\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 8,
+              "newVersion": 10
+            }
+          },
+          {
+            "valid": true,
+            "score": 250,
+            "sourceHash": "bfedaf51442a66e30d7885c6af9e1f7198ef2f99b0697b8e3be5378150ed95ae",
+            "distance": 20,
+            "index": 17,
+            "solved": false,
+            "body": "\nall u1:User | some p:Photo| (u1->p in sees and p not in Ad) => (some u2:User| ((u1->u2 in follows) or (u2->p in posts)))\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 10,
+              "newVersion": 11
+            }
+          }
+        ],
+        "initialDistance": 23,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "5be0dc2d3c5980284d8e",
+      "source": "classified-data/socialMedia/both/wzvMw5WYXDgQjJaZM_inv3.als",
+      "group": "socialMedia:inv3",
+      "checkedActions": [
+        1
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 500,
+            "sourceHash": "3c45b831fc1c26b61e3c920c17e83807a4a0fef9089bc0bb7365b0644f39b279",
+            "distance": 21,
+            "index": 14,
+            "solved": false,
+            "body": "\nall u1, u2 : User, p: Photo | u1->p in posts implies ((p not in Ad) or (u2->p in sees)) implies u2->u1 in follows\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 4,
+              "newVersion": 6
+            }
+          }
+        ],
+        "initialDistance": 20,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "15e9b860b8d98027bb68",
+      "source": "classified-data/classroom_fol/over/XBEQABE6EYPdWiY4S_inv15.als",
+      "group": "classroom_fol:inv15",
+      "checkedActions": [
+        0
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 1000,
+            "sourceHash": "4c068745010ca1689524d26b15c4ee7d882f43050f85757adac0e02e71539bb1",
+            "distance": 21,
+            "index": 3,
+            "solved": false,
+            "body": "\nsome p1, p2, p3 : Person \n  \t\t|\n  \t\t  ( (p2->p1 in Tutors and p2 in Teacher) and\n            (p3->p2 in Tutors and p2->p1 in Tutors and p3 in Teacher))\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 3,
+              "newVersion": 5
+            }
+          }
+        ],
+        "initialDistance": 20,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "40f3b04807a6d254fd91",
+      "source": "classified-data/classroom_fol/both/cqg55KHY58aLbDF7z_inv4.als",
+      "group": "classroom_fol:inv4",
+      "checkedActions": [
+        4
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 0,
+            "sourceHash": "9bbdf008a5572fc6c062cceeb9024e615c8937d2d1a2f39802c2de03ea9b0328",
+            "distance": 4,
+            "index": 4,
+            "solved": false,
+            "body": "\nno (((Student) - (Teacher)))\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 3,
+              "newVersion": 4
+            }
+          }
+        ],
+        "initialDistance": 3,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "8cb99bec98a58c3fdf4e",
+      "source": "classified-data/trash_fol/over/Fkri2azgbHb7NxR9r_inv5.als",
+      "group": "trash_fol:inv5",
+      "checkedActions": [
+        1
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 250,
+            "sourceHash": "649cd0f62c6b9dbc1725ffa95a3ef1789932355dda8744494fed7218e6a47ef8",
+            "distance": 8,
+            "index": 5,
+            "solved": false,
+            "body": "\nall f : File | ((f not in Protected) or (f in Trash))\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 3,
+              "newVersion": 3
+            }
+          }
+        ],
+        "initialDistance": 8,
+        "id": 2,
+        "ok": true
+      }
+    },
+    {
+      "id": "46688f76ae4e55fb60f7",
+      "source": "classified-data/classroom_fol/both/Li9ax75S6jRyS5ADc_inv10.als",
+      "group": "classroom_fol:inv10",
+      "checkedActions": [
+        0
+      ],
+      "results": {
+        "protocol": "repair-worker-v1",
+        "outcomes": [
+          {
+            "valid": true,
+            "score": 750,
+            "sourceHash": "8025165993286ddcc8a1a436857bd9ab6ff212d6acc6d9bb2687fa761359b3c4",
+            "distance": 13,
+            "index": 3,
+            "solved": false,
+            "body": "\nsome c : Class, p : Person, g : Group | c->p->g in Groups\n",
+            "validation": {
+              "certificateReplay": "NOT_REQUESTED",
+              "verdict": "COUNTEREXAMPLE",
+              "extra": "SAT",
+              "missing": "SAT",
+              "oldVersion": 4,
+              "newVersion": 6
+            }
+          }
+        ],
+        "initialDistance": 11,
+        "id": 2,
+        "ok": true
+      }
+    }
+  ]
+}

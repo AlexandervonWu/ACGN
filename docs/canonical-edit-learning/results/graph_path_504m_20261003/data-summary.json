@@ -1,0 +1,17 @@
+{
+  "attempts": 4096,
+  "statuses": {
+    "ACCEPTED": 3184,
+    "EXCLUDED": 912
+  },
+  "splits": {
+    "train": 2088,
+    "validation": 444,
+    "evaluation": 652
+  },
+  "exclusions": {
+    "TOKEN_BOUND": 127,
+    "CROSS_SPLIT_INPUT_DUPLICATE": 59,
+    "DUPLICATE_GRAPH_PAIR": 726
+  }
+}

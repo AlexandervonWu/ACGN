@@ -1,0 +1,3928 @@
+[
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.34136739899986424,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.8661667630003649,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 5
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.40602255800331477,
+    "solved": true,
+    "status": 5,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.7888634349947097,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 0,
+          "control": 7,
+          "count": 1,
+          "disjoint": 0,
+          "operator": 86
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 74
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "mode": "learned-1000",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.444921301001159,
+    "solved": false,
+    "status": 0,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 3
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.6161390420020325,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "cardinality": 0,
+          "control": 7,
+          "count": 1,
+          "disjoint": 0,
+          "operator": 86
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 74
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 47
+        },
+        "status": 0
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "mode": "learned-1000",
+    "queries": 1,
+    "rejected": 0,
+    "seconds": 1.5907637900018017,
+    "solved": false,
+    "status": 0,
+    "wellFormed": true
+  },
+  {
+    "decisions": [
+      {
+        "action": {
+          "control": 11
+        },
+        "status": 4
+      },
+      {
+        "action": {
+          "control": 0,
+          "family": 8,
+          "site": 0
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 6,
+          "operator": 18
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 2,
+          "pointer": 2
+        },
+        "status": 0
+      },
+      {
+        "action": {
+          "control": 8
+        },
+        "status": 1
+      },
+      {
+        "action": {
+          "control": 12
+        },
+        "status": 4
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "mode": "learned-1000",
+    "queries": 2,
+    "rejected": 0,
+    "seconds": 0.3753028419960174,
+    "solved": false,
+    "status": 4,
+    "wellFormed": true
+  }
+]

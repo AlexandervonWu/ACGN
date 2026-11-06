@@ -1,0 +1,114 @@
+[
+  {
+    "decisions": 8,
+    "edits": [
+      {
+        "copiedOperands": 1,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "be563a3a9ebe9062107c",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "be563a3a9ebe9062107c-trajectory.json"
+  },
+  {
+    "decisions": 13,
+    "edits": [
+      {
+        "copiedOperands": 5,
+        "root": false,
+        "site": 3
+      }
+    ],
+    "id": "841b47d7a6530bdcdc29",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "841b47d7a6530bdcdc29-trajectory.json"
+  },
+  {
+    "decisions": 6,
+    "edits": [
+      {
+        "copiedOperands": 1,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "e925b59446448a4c679a",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "e925b59446448a4c679a-trajectory.json"
+  },
+  {
+    "decisions": 13,
+    "edits": [
+      {
+        "copiedOperands": 3,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "45e3b214d8e2c259bcdf",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "45e3b214d8e2c259bcdf-trajectory.json"
+  },
+  {
+    "decisions": 10,
+    "edits": [
+      {
+        "copiedOperands": 1,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "880a7087b92b5ece2a43",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "880a7087b92b5ece2a43-trajectory.json"
+  },
+  {
+    "decisions": 12,
+    "edits": [
+      {
+        "copiedOperands": 4,
+        "root": false,
+        "site": 3
+      }
+    ],
+    "id": "763d065c3ac245b08ec5",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "763d065c3ac245b08ec5-trajectory.json"
+  },
+  {
+    "decisions": 19,
+    "edits": [
+      {
+        "copiedOperands": 4,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "7b838a83e9b3d3f81c3b",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "7b838a83e9b3d3f81c3b-trajectory.json"
+  },
+  {
+    "decisions": 13,
+    "edits": [
+      {
+        "copiedOperands": 3,
+        "root": true,
+        "site": 0
+      }
+    ],
+    "id": "35612179cdee5ab833b1",
+    "kind": "continuation",
+    "status": "REPLAY_ADMITTED",
+    "trajectory": "35612179cdee5ab833b1-trajectory.json"
+  }
+]

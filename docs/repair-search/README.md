@@ -18,6 +18,9 @@ counterexamples. No stable superiority is claimed.
 
 The [failure-mode ledger](FAILURE-MODES.md) separates observations, repaired
 engineering incidents, untested explanations and open proof boundaries.
+The [cross-study failure analysis](LEARNING-FAILURE-ANALYSIS.md) reviews the
+graph policies, scratch-trained transformers and LLM adapters against primary
+literature, distinguishing measured bottlenecks from untested explanations.
 This is a documentation/evidence publication; the new runtime sources and
 launchers remain local development work, not packaged by this commit. Commands
 below describe that workspace, not a standalone reproducible release.

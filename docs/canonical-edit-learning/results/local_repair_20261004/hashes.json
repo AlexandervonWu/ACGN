@@ -1,0 +1,10 @@
+{
+  "audit.json": "b51cfa2b14d5c5b4dc064f2f78225990fa19c993bd028d5464b50de74378e5f9",
+  "evidence.tar.gz": "83cb448e53270bf478021c9ed8a78244d675beafc4725364477083f6a6bd47d1",
+  "input-hashes.json": "be05397ad3b9884f8fdaef1b26102f8e91da0769df4f4b58d9326f179669088b",
+  "original-preflight-output-hashes.json": "5667fa4c859770310d7d58265c93aa4c7fc4cde7729fdd1456f7ed5c4611ee66",
+  "original-study-output-hashes.json": "cf49ff768c4d22b79190011025e1adac126d2082918d6d7f2973f1a12ef34c20",
+  "report.json": "e3a9156e115b1ef0e0bfa114fc08d24ad9f52cc59e5c91d2819ba8433347a247",
+  "tasks.json": "eaf8c8699facd7c7a72f1071fa66c98e4685e85bf0bdaa3e3861383cc6beb297",
+  "teacher-coverage.json": "c27f46fd0f355182c9c6597c8aa10e4abaf4f1653b7cdc4c359de7764ddcee73"
+}

@@ -1,0 +1,38 @@
+{
+  "changes": [
+    {
+      "before": {
+        "id": "bca09fc244e5da99f539",
+        "source": "classified-data/cv_v1/under/7bRgJci2y3uFx53kq_inv1.als",
+        "sourceHash": "ca84b9b2c68f46213f88c137d0455df3affc57023809ce009020130e76134a0e",
+        "group": "cv_v1:inv1",
+        "split": "train",
+        "status": "FAILED",
+        "reason": "JSONDecodeError: Expecting ',' delimiter: line 1 column 7 (char 6)"
+      },
+      "after": {
+        "id": "bca09fc244e5da99f539",
+        "source": "classified-data/cv_v1/under/7bRgJci2y3uFx53kq_inv1.als",
+        "sourceHash": "ca84b9b2c68f46213f88c137d0455df3affc57023809ce009020130e76134a0e",
+        "group": "cv_v1:inv1",
+        "split": "train",
+        "status": "EXCLUDED",
+        "metadata": {
+          "studentAstHash": "a2da0c8a1df76a73dd2f1446963e48943af55e6fe0d6e1efda90f252e97cb1f8",
+          "oracle": "inv1c",
+          "oracleAstHash": "560a52e567dc9837b7128535f3690994c9577277da51dcb14faa9fe82767bd05",
+          "originalHash": "ca84b9b2c68f46213f88c137d0455df3affc57023809ce009020130e76134a0e",
+          "profile": "appended-independent-run-scope-3",
+          "derivedHash": "bd787e53e686ebc9cdbcb23372ec141479596ea1250dedf1b2539b61f1648e42",
+          "command": 3,
+          "target": "inv1"
+        },
+        "reason": "ScopeExclusion: UNKNOWN_SYMBOL"
+      }
+    }
+  ],
+  "seconds": 0.37174177200358827,
+  "initialLedgerHash": "1d977386af32e2e39bf96e1c590aad80fa13822d583223e15ce61cad3421cfb4",
+  "collectorHash": "027df7e57ada54be779654ebfbf0f285fc359c2f2d2ec84d0fd57793d609d209",
+  "retryHash": "3c6223decba92424b1279b113d593f7d5b89e92a2e45ec419c41366ce8e7ee47"
+}

@@ -1,0 +1,139 @@
+{
+  "protocol": "hybrid-batch-fit-v1",
+  "profile": "relational-pilot-v2",
+  "status": "PASS_FUNCTIONAL_NOT_REPAIR_EVIDENCE",
+  "config": {
+    "vocab": 128,
+    "width": 2048,
+    "layers": 20,
+    "heads": 16,
+    "kv_heads": 4,
+    "head_dim": 128,
+    "ff": 5632,
+    "weight_bits": 16,
+    "group_size": 128,
+    "max_tokens": 2048
+  },
+  "parameters": 910534656,
+  "candidate": "911m-w16a16",
+  "effective_batch": 64,
+  "microbatch": 4,
+  "accumulation_steps": 16,
+  "tokens": 512,
+  "requested_updates": 2,
+  "master_dtype": "float32",
+  "autocast": "bfloat16",
+  "allocator_fraction": 0.8,
+  "optimizer": "torch.optim.Adafactor",
+  "learning_rate": 0.001,
+  "python": "3.10.11",
+  "torch": "2.14.1+cu130",
+  "cuda": "13.0",
+  "input_hashes": {
+    "/home/augustus/.venvs/acgn-rl-cu130/lib/python3.10/site-packages/torch/optim/__init__.py": "525077e1dc0bd2a00b55b39f996ff3dc0d56ea34e2bd56a9da2459dcdd688757",
+    "docs/canonical-edit-learning/BATCH-STUDY.md": "22acfeb5ffbacc2848453fff2d49d0e8befd3b99830a1877771eb80db0f112da",
+    "docs/canonical-edit-learning/formal/HybridRepair.lean": "89f27f0b1056273b7586c3449eebfe66c89483397bfc393da41701aec7d62e1d",
+    "experiments/hybrid_edit/__init__.py": "a16f527d3168204e27d1b99f82ab28d008da791e587a5f92f1b85b1293638a98",
+    "experiments/hybrid_edit/audit_vocabulary.py": "d2c5c3258bcc4ca13dd08faeca5caa86bf3c9dad3c2890e5e72fe824c64d9a9c",
+    "experiments/hybrid_edit/batch_probe.py": "ae7068d296570b93c359b8b37a822bf00f066a3583e35b1c76d6720e72f7b8f9",
+    "experiments/hybrid_edit/batching.py": "4322284a7e0e321a120ee94629df423a8761159ad6b5e0d95e6ba6ee10e40957",
+    "experiments/hybrid_edit/model.py": "90193432f106cbc3306de6a715d677182273cf66d7cbae02a574a28786358174",
+    "experiments/hybrid_edit/probe.py": "94f3b114b39d2b5e54f7b844867f4f22050856013aecbcf195086bc60cba7e65",
+    "experiments/hybrid_edit/scope.py": "30a2348af310f027234813065f97ff787935e383907613a369349e0832b53050",
+    "experiments/hybrid_edit/test_batching.py": "6a9c6dda0c6a24e7015f2ebb9be94161594d14fe03a8509a8beb999eb24638d3",
+    "experiments/hybrid_edit/test_model.py": "c5c5c2662801de2c784ea00fa6964ab0444835833d8385e22a40d4c9ce56a0b1",
+    "experiments/hybrid_edit/test_scope.py": "4d470f4a356f873590e0ed4160f67637d3f8d5a589a294b6ac525ff04f6c072f",
+    "experiments/hybrid_edit/test_vocabulary_audit.py": "7955c67bb18a229cb399026e09c0743eee0c977d4ec73acbb5309b5b46650712"
+  },
+  "updates": [
+    {
+      "loss": 4.883970230817795,
+      "gradient_norm_before_clip": 139.68385314941406,
+      "examples": 64,
+      "chunk_sizes": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "index": 1,
+      "seconds": 3.9083226880029542,
+      "optimizer_state_bytes": 3310876
+    },
+    {
+      "loss": 34.80820840597153,
+      "gradient_norm_before_clip": 1043.7567138671875,
+      "examples": 64,
+      "chunk_sizes": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "index": 2,
+      "seconds": 3.58168795399979,
+      "optimizer_state_bytes": 3310876
+    }
+  ],
+  "open_gates": [
+    "source_exporter",
+    "real_teacher_labels",
+    "repair_efficacy"
+  ],
+  "device": "NVIDIA GeForce RTX 5080",
+  "optimizer_defaults": {
+    "lr": 0.001,
+    "beta2_decay": -0.8,
+    "eps": [
+      null,
+      0.001
+    ],
+    "d": 1.0,
+    "weight_decay": 0.0,
+    "foreach": false,
+    "maximize": false
+  },
+  "fixture": {
+    "kind": "SYNTHETIC_FIXED_BATCH_NOT_EXPORTED_ALLOY",
+    "unique_token_packets": 64,
+    "sha256": "664afe3027b38999723ca4b60c4d27464d61132026a207dad72f0f1b781b0544",
+    "seed": 20,
+    "warning": "Alphabet-valid tensors and synthetic targets, not a full packet parser or teacher"
+  },
+  "post_update_fixed_batch_loss": 112.96590852737427,
+  "loss_decreased": false,
+  "memory_sampler": {
+    "sample_count": 17,
+    "sampled_peak_process_mib": 9894,
+    "sampled_peak_device_mib": 10682,
+    "errors": []
+  },
+  "elapsed_seconds": 8.96603684799993,
+  "host_max_rss_kib": 2232140,
+  "peak_allocated_bytes": 9607305728,
+  "peak_reserved_bytes": 10022289408
+}

@@ -1,0 +1,49 @@
+{
+  "status": "AUDIT_PASSED",
+  "inputs": 445,
+  "outputs": 1068,
+  "runtimeCheckExecutions": 352,
+  "newLeanDeclarations": 16,
+  "fixtureOutcomes": [
+    {
+      "fixture": 0,
+      "demoSolved": true,
+      "learnedSolved": true,
+      "learnedCheckStatuses": [
+        4,
+        4,
+        5
+      ],
+      "learnedQueries": 3,
+      "learnedEnd": "TERMINAL"
+    },
+    {
+      "fixture": 1,
+      "demoSolved": true,
+      "learnedSolved": true,
+      "learnedCheckStatuses": [
+        4,
+        4,
+        4,
+        5
+      ],
+      "learnedQueries": 4,
+      "learnedEnd": "TERMINAL"
+    },
+    {
+      "fixture": 2,
+      "demoSolved": false,
+      "learnedSolved": false,
+      "learnedCheckStatuses": [
+        4,
+        4,
+        4,
+        4
+      ],
+      "learnedQueries": 4,
+      "learnedEnd": "QUERY_LIMIT"
+    }
+  ],
+  "reporterHash": "c77d1a2865d3f8fe4d385e9cc6bd8b9f97e55388aa06d27abb4a0f241dec9694",
+  "scope": "Finite prototype evidence, not generalization or universal implementation refinement"
+}

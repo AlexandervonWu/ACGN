@@ -1,0 +1,34 @@
+{
+  "checkpointHash": "6bca559259ad0009293f00a021659b0da692a42ea9416a83bb70f5cf00f95598",
+  "contextualTests": 10,
+  "contract": "contextual-feedback-repair-v1",
+  "corpus": "NOT_RUN",
+  "demoQueries": [
+    3,
+    4,
+    4
+  ],
+  "demoSolved": 2,
+  "device": "cpu",
+  "dirty": true,
+  "git": "67cb5f3dfe226b15e2647fe6d18534fa03995cbc",
+  "heldout": "NOT_RUN",
+  "learnedEnds": [
+    "TERMINAL",
+    "TERMINAL",
+    "QUERY_LIMIT"
+  ],
+  "learnedErrors": 0,
+  "learnedSolved": 2,
+  "parameters": 119277,
+  "peakCudaAllocatedBytes": 0,
+  "proofDeclarations": 16,
+  "queryBudget": 4,
+  "requestedUpdates": 120,
+  "scope": "Three synthetic training fixtures, not held-out or corpus performance",
+  "seconds": 71.374794802,
+  "status": "PROTOTYPE_CHECKED",
+  "tasks": 3,
+  "torch": "2.14.1+cu130",
+  "updates": 120
+}
