@@ -43,10 +43,12 @@ public final class EGraphAblationSuite {
 
     public static void main(String[] args) throws Exception {
         Options options = Options.parse(args);
+        List<String> engines = options.slotTyping
+                ? List.of("slotted-egraph", "slotted-egraph-typed") : ENGINES;
         Files.createDirectories(options.output);
         AblationRunManifest.Context context;
         if (options.reportOnly) {
-            context = AblationRunManifest.loadCompatibleArms(options.output, ENGINES);
+            context = AblationRunManifest.loadCompatibleArms(options.output, engines);
             Path requestedInput = options.input.toAbsolutePath().normalize();
             if (!requestedInput.equals(Paths.get(context.datasetRoot))) {
                 throw new IllegalStateException("Report input " + requestedInput
@@ -68,11 +70,11 @@ public final class EGraphAblationSuite {
         ExperimentProgress progress = ExperimentProgress.start(
                 System.err,
                 "EGraphAblationSuite/arms",
-                ENGINES.size(),
+                engines.size(),
                 "arms",
                 options.reportOnly ? "in report-only mode" : "in isolated JVMs");
         int completedArms = 0;
-        for (String engine : ENGINES) {
+        for (String engine : engines) {
             if (options.reportOnly) {
                 Path engineDir = options.output.resolve(engine);
                 runs.add(RunMetrics.read(
@@ -87,13 +89,24 @@ public final class EGraphAblationSuite {
         }
         progress.finish(completedArms);
         validateParallelism(options, runs);
+        if (options.slotTyping && (runs.stream().anyMatch(run -> run.failures != 0)
+                || !runs.get(0).statusByPath.equals(runs.get(1).statusByPath))) {
+            throw new IllegalStateException("Slot-typing comparison requires successful matched input pairs; inspect arm logs");
+        }
         writeComparisonJson(options.output.resolve("comparison.json"), options, context, runs);
         writeMinimumDistances(options.output.resolve("minimum_distances.csv"), runs);
         writeDisagreements(options.output.resolve("equivalence_disagreements.csv"), runs);
-        writeCanonicalOnly(options.output.resolve("canonical_only_vs_slotted.md"), context, runs);
-        writeMarkdown(options.output.resolve("summary.md"), options, context, runs);
+        if (options.slotTyping) {
+            Files.writeString(options.output.resolve("canonical_only_vs_slotted.md"),
+                    "# Not Applicable\n\nThis paired slot-typing study does not run either canonical arm.\n",
+                    StandardCharsets.UTF_8);
+            writeSlotTypingMarkdown(options.output.resolve("summary.md"), options, context, runs);
+        } else {
+            writeCanonicalOnly(options.output.resolve("canonical_only_vs_slotted.md"), context, runs);
+            writeMarkdown(options.output.resolve("summary.md"), options, context, runs);
+        }
         AblationRunManifest.writeRoot(
-                options.output, context, AblationRunManifest.allGeneratedOutputs(ENGINES));
+                options.output, context, AblationRunManifest.allGeneratedOutputs(engines));
         System.out.println("Wrote " + options.output.resolve("comparison.json"));
         System.out.println("Wrote " + options.output.resolve("minimum_distances.csv"));
         System.out.println("Wrote " + options.output.resolve("equivalence_disagreements.csv"));
@@ -188,7 +201,10 @@ public final class EGraphAblationSuite {
         }
         root.put("runs", runArray);
         JSONArray transitions = new JSONArray();
-        for (String[] transition : TRANSITIONS) {
+        List<String[]> edges = options.slotTyping
+                ? java.util.Collections.singletonList(new String[] {"slotted-egraph", "slotted-egraph-typed"})
+                : TRANSITIONS;
+        for (String[] transition : edges) {
             transitions.put(transitionJson(
                     findRun(runs, transition[0]), findRun(runs, transition[1])));
         }
@@ -566,6 +582,44 @@ public final class EGraphAblationSuite {
         Files.writeString(path, markdown.toString(), StandardCharsets.UTF_8);
     }
 
+    private static void writeSlotTypingMarkdown(Path path, Options options,
+            AblationRunManifest.Context context, List<RunMetrics> runs) throws IOException {
+        RunMetrics untyped = findRun(runs, "slotted-egraph");
+        RunMetrics typed = findRun(runs, "slotted-egraph-typed");
+        StringBuilder md = new StringBuilder("# Untyped Versus Typed Slots\n\n");
+        md.append("- Run: `").append(context.runId).append("`\n")
+                .append("- Source: `").append(context.gitSha).append("`; dirty: ").append(context.dirtyTree).append("\n")
+                .append("- Dataset SHA-256: `").append(context.datasetSha256).append("`\n")
+                .append("- Workers: ").append(options.threads).append("; heap: ").append(options.maxHeap)
+                .append("; file limit: ").append(options.limit).append(" (0 means full corpus)\n\n")
+                .append("Same raw ASTs, scope handling, variadic rewrite rules, permutation bounds and distance algorithm. ")
+                .append("The treatment preserves exact parser-derived variable type colors in slot identity and mappings. ")
+                .append("Declaration domains remain in both arms. Neither arm is certificate-bearing.\n\n")
+                .append("| Arm | Successful | Skipped AST-identical | Failures | Zero distance | Avg distance | Wall s | Engine CPU s | Peak heap MiB | Max RSS MiB | Avg eclasses | Avg enodes |\n")
+                .append("| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n");
+        for (RunMetrics run : runs) {
+            md.append("| ").append(run.engine).append(" | ").append(run.successes).append(" | ")
+                    .append(run.skipped).append(" | ").append(run.failures).append(" | ")
+                    .append(run.equivalentPairs).append(" | ").append(number(run.averageDistance())).append(" | ")
+                    .append(number(run.processElapsedSeconds)).append(" | ")
+                    .append(number(run.engineCpuNanos / 1e9)).append(" | ")
+                    .append(number(mib(run.peakUsedHeapBytes))).append(" | ")
+                    .append(number(run.maxRssKb / 1024.0)).append(" | ")
+                    .append(number(run.averageEclasses)).append(" | ").append(number(run.averageEnodes)).append(" |\n");
+        }
+        md.append("\n- Retained zeroes: ").append(intersectionSize(untyped.equivalentPaths, typed.equivalentPaths))
+                .append("\n- Newly zero: ").append(differenceSize(typed.equivalentPaths, untyped.equivalentPaths))
+                .append("\n- No longer zero: ").append(differenceSize(untyped.equivalentPaths, typed.equivalentPaths))
+                .append("\n\nSingle runs are not stable performance estimates. Zero distance here is an engine result, ")
+                .append("not an independently checked semantic certificate. Fresh JVM process time/RSS include parsing; ")
+                .append("engine CPU excludes parsing. Exact type equality does not implement subtype exchange.\n\n")
+                .append("```sh\n./scripts/run_egraph_ablation.sh --slot-typing --input ").append(options.input)
+                .append(" --output ").append(options.output).append(" --threads ").append(options.threads)
+                .append(" --max-heap ").append(options.maxHeap).append(" --limit ").append(options.limit)
+                .append("\n```\n");
+        Files.writeString(path, md.toString(), StandardCharsets.UTF_8);
+    }
+
     private static RunMetrics findRun(List<RunMetrics> runs, String engine) {
         for (RunMetrics run : runs) {
             if (engine.equals(run.engine)) {
@@ -596,6 +650,7 @@ public final class EGraphAblationSuite {
         private String maxHeap = "3g";
         private boolean verbose;
         private boolean reportOnly;
+        private boolean slotTyping;
 
         private static Options parse(String[] args) {
             Options options = new Options();
@@ -625,11 +680,18 @@ public final class EGraphAblationSuite {
                     case "--report-only":
                         options.reportOnly = true;
                         break;
+                    case "--slot-typing":
+                        options.slotTyping = true;
+                        break;
                     default:
                         throw new IllegalArgumentException("Unknown option: " + args[i]);
                 }
             }
             options.threads = AblationParallelism.effectiveWorkers(options.threads);
+            if (options.slotTyping && options.output.toAbsolutePath().normalize()
+                    .equals(Paths.get("egraph_ablation").toAbsolutePath().normalize())) {
+                throw new IllegalArgumentException("Use a separate --output directory for --slot-typing");
+            }
             return options;
         }
 

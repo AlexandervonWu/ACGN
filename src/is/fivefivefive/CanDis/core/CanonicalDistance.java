@@ -103,9 +103,14 @@ public final class CanonicalDistance {
     }
 
     public static List<String> irTemporalFol(Prepared prepared) {
+        return sourceIrTemporalFol(prepared.normalForms);
+    }
+
+    /** Render retained source forms without constructing the Fast metric projection. */
+    public static List<String> sourceIrTemporalFol(List<NormalForm> normalForms) {
         List<String> formulas = new ArrayList<>();
-        for (int i = 0; i < prepared.normalForms.size(); i++) {
-            NormalForm normalForm = prepared.normalForms.get(i);
+        for (int i = 0; i < normalForms.size(); i++) {
+            NormalForm normalForm = normalForms.get(i);
             formulas.add(normalFormPath(normalForm, i) + " := " + quantifierPrefix(normalForm.getMatrixQuantiVars())
                     + eGraphFormula(normalForm.getMatrixEGraph()));
         }
@@ -127,6 +132,7 @@ public final class CanonicalDistance {
                 normalForm.freezeForCertification();
             }
         }
+        snapshot.replaceAll(NormalForm::fastComparisonView);
         return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
     }
 

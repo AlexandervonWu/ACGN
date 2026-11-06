@@ -767,6 +767,21 @@ Report-only mode verifies per-arm output hashes and rejects incompatible
 manifests. It also regenerates `canonical_only_vs_slotted.md`,
 `minimum_distances.csv`, and `equivalence_disagreements.csv`.
 
+For a controlled **untyped versus typed slot** comparison on the same slotted
+baseline engine, use the separate opt-in study:
+
+```bash
+./scripts/run_egraph_ablation.sh --slot-typing \
+  --input classified-data --output /tmp/acgn-slot-typing \
+  --threads 16 --max-heap 8g
+```
+
+This compares `slotted-egraph` with `slotted-egraph-typed`, not with the full
+Certificate-Integrated pipeline. Neither paired baseline issues certificates.
+The seven-arm default is unchanged. See the
+[proof scope, tests, and bounded results](docs/slot-typing-ablation/README.md)
+and the [source-level explanation of the 14 certificate-only matches](docs/fast-rewrite-certificate-equality-disagreements.md#source-level-follow-up-2026-11-06).
+
 ### Capability and memory studies
 
 ```bash
@@ -952,7 +967,9 @@ asset candidate; its SHA-256 is
 
 ## Further Documentation
 
+- [Current documentation map and historical evidence policy](docs/README.md)
 - [Iterative repair learning: search, model structure, scaling results and failure modes](docs/repair-search/MULTISTEP-ITERATION-ANALYSIS.md)
+- [Repair-learning negative results: evidence, possible causes, and research](docs/repair-search/LEARNING-FAILURE-ANALYSIS.md)
 - [CanDis architecture, APIs, runners, and generated outputs](documentation/README.md)
 - [Ordered rewrite system and side conditions](documentation/REWRITE_SYSTEM.md)
 - [Phase I exact-engine integration, invariants, faults, and reproduction](docs/theory-phase-i-artifact-integration.md)

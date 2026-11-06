@@ -228,6 +228,30 @@ public class NormalForm {
         this.nextDisjointnessClass = 1;
     }
 
+    /** Read-only metric projection; source/certificate ownership stays on this form. */
+    NormalForm fastComparisonView() {
+        synchronized (lifecycleLock) {
+            if (!frozenForCertification) {
+                throw new IllegalStateException("Fast comparison requires a frozen normal form");
+            }
+            NormalForm copy = new NormalForm();
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(matrixEGraphRoot);
+            copy.certificationMatrixEGraphRoot = certificationMatrixEGraphRoot;
+            copy.params = params;
+            copy.matrixQuantiVars = matrixQuantiVars;
+            copy.inheritedQuantiVars = inheritedQuantiVars;
+            copy.phaseLocalBindingImports = phaseLocalBindingImports;
+            copy.temporalChildBindingImports.putAll(temporalChildBindingImports);
+            copy.localBindingSeeds.putAll(localBindingSeeds);
+            copy.phasePath = phasePath;
+            copy.temporalChildren = temporalChildren;
+            copy.temporalReferenceAuthorities.putAll(temporalReferenceAuthorities);
+            copy.temporalOp = temporalOp;
+            copy.frozenForCertification = true;
+            return copy;
+        }
+    }
+
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {
         this(parent, temporalOp, egid,
                 childSemanticProfile(parent));

@@ -240,8 +240,9 @@ public final class EGraphAblationStudy {
             } else if (options.engine == Engine.TYPED_SLOTTED_PORT) {
                 runTypedSlottedPort(module, model, pair, result);
             } else {
-                AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left);
-                AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right);
+                boolean typedSlots = options.engine == Engine.SLOTTED_TYPED;
+                AlloyTerm left = AlloyAstTermAdapter.fromPredicate(pair.left, typedSlots);
+                AlloyTerm right = AlloyAstTermAdapter.fromPredicate(pair.right, typedSlots);
                 AblationEngine.Result comparison = options.engine.newEngine().compare(left, right);
                 result.distance = comparison.distance;
                 result.equivalent = comparison.equivalent;
@@ -665,6 +666,7 @@ public final class EGraphAblationStudy {
         EGGLOG_DEBRUIJN("java-egglog-debruijn",
                 "Java egglog core storing bound variables as De Bruijn indices"),
         SLOTTED("slotted-egraph", "Retained slotted e-graph with shared variadic rules, renamed IDs, and permutation groups"),
+        SLOTTED_TYPED("slotted-egraph-typed", "Matched slotted baseline with exact parser slot types and type-preserving mappings; not certificate-bearing"),
         CANONICAL("canonical",
                 "Fast Rewrite IR temporal/prenex/slotted method with bounded rewrite saturation"),
         TYPED_SLOTTED_PORT(
@@ -691,6 +693,8 @@ public final class EGraphAblationStudy {
                     return new JavaEgglogDeBruijn();
                 case SLOTTED:
                     return new SlottedEGraph();
+                case SLOTTED_TYPED:
+                    return new SlottedEGraph(true);
                 default:
                     throw new IllegalStateException("Canonical uses the production pipeline directly");
             }

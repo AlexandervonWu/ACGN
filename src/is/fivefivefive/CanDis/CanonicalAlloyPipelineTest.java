@@ -784,10 +784,10 @@ public final class CanonicalAlloyPipelineTest {
             QuotientRepairDistance.Result localGroupingRepair =
                     QuotientRepairDistance.evaluate(
                             localGroupingLeft.repairView(), localGroupingRight.repairView());
-            int localGroupingLegacy = legacyDistance(
+            int localGroupingFast = legacyDistance(
                     visitor, "localGroupingLeft", "localGroupingRight");
-            check(localGroupingLegacy > 0,
-                    "the local-grouping fixture must expose the documented Fast Rewrite ambiguity");
+            check(localGroupingFast == 0,
+                    "Fast Rewrite must normalize local declaration grouping without changing the certified source");
             check(localGroupingRepair.distance() == 0,
                     "equivalent local declaration grouping must lie in the repair zero kernel");
             check(localGroupingRepair.kernelAuthority()

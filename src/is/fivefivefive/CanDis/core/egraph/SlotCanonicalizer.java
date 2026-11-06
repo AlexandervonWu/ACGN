@@ -40,7 +40,7 @@ final class SlotCanonicalizer {
             ScopeCounter counter) {
         if (term.isVariable()) {
             String scoped = environment.get(term.atom());
-            return scoped == null ? term : AlloyTerm.atom("VAR", scoped);
+            return scoped == null ? term : term.renameVariable(scoped);
         }
         if (term.children().isEmpty()) {
             return term;
@@ -64,7 +64,7 @@ final class SlotCanonicalizer {
             Map<String, String> local = new HashMap<>(environment);
             if (variable.isVariable()) {
                 String scoped = "@scope:" + counter.next++;
-                children.set(0, AlloyTerm.atom("VAR", scoped));
+                children.set(0, variable.renameVariable(scoped));
                 local.put(variable.atom(), scoped);
             }
             for (int i = 2; i < children.size(); i++) {
@@ -95,7 +95,7 @@ final class SlotCanonicalizer {
         List<AlloyTerm> children = new ArrayList<>(declaration.children().size());
         for (AlloyTerm variable : variables) {
             String scoped = "@scope:" + counter.next++;
-            children.add(AlloyTerm.atom("VAR", scoped));
+            children.add(variable.renameVariable(scoped));
             environment.put(variable.atom(), scoped);
         }
         children.addAll(domains);
@@ -163,7 +163,7 @@ final class SlotCanonicalizer {
             if (name == null) {
                 name = freeNames.computeIfAbsent(term.atom(), ignored -> "@free:" + freeNames.size());
             }
-            return AlloyTerm.atom("VAR", name);
+            return term.renameVariable(name);
         }
         if (term.children().isEmpty()) {
             return term;
@@ -210,7 +210,7 @@ final class SlotCanonicalizer {
 
     private static AlloyTerm localSlotKey(AlloyTerm term, Map<String, String> slots) {
         if (term.isVariable()) {
-            return AlloyTerm.atom("VAR", slots.computeIfAbsent(
+            return term.renameVariable(slots.computeIfAbsent(
                     term.atom(), ignored -> "@local:" + slots.size()));
         }
         if (term.children().isEmpty()) {

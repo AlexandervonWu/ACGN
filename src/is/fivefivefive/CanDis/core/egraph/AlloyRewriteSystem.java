@@ -573,7 +573,7 @@ final class AlloyRewriteSystem {
             if (substitutionVisible && renamed.equals(variable)) {
                 return replacement;
             }
-            return renamed.equals(term.atom()) ? term : AlloyTerm.atom("VAR", renamed);
+            return renamed.equals(term.atom()) ? term : term.renameVariable(renamed);
         }
         if (term.children().isEmpty()) {
             return term;
@@ -592,7 +592,7 @@ final class AlloyRewriteSystem {
                     renamed = freshName(usedNames, nextFresh);
                 }
                 localRenames.put(original, renamed);
-                children.add(AlloyTerm.atom("VAR", renamed));
+                children.add(binder.renameVariable(renamed));
                 if (renamed.equals(variable) || original.equals(variable)) {
                     bodyVisible = false;
                 }
@@ -635,7 +635,7 @@ final class AlloyRewriteSystem {
                         renamed = freshName(usedNames, nextFresh);
                     }
                     localRenames.put(original, renamed);
-                    renamedVariables.add(AlloyTerm.atom("VAR", renamed));
+                    renamedVariables.add(declaredVariable.renameVariable(renamed));
                     if (renamed.equals(variable) || original.equals(variable)) {
                         bodyVisible = false;
                     }

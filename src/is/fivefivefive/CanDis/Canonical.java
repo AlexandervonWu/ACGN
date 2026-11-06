@@ -48,6 +48,10 @@ public final class Canonical {
         return CanonicalDistance.irTemporalFol(prepared.delegate);
     }
 
+    static List<String> certificationIrTemporalFol(Prepared prepared) {
+        return CanonicalDistance.sourceIrTemporalFol(prepared.normalizedForms);
+    }
+
     public static int canonicalFormSize(Multigraph graph) {
         return canonicalFormSize(prepare(graph));
     }

@@ -1,0 +1,554 @@
+{
+  "scope": "Focused source-backed audit; in-process observations, not standalone certificate replay",
+  "generatedAt": "2026-11-06T16:29:44Z",
+  "rows": [
+    {
+      "fastDistance": 5,
+      "leftFastIr": [
+        "root normal form := inv2(((NO Teacher) && (NO Teacher)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv2c((NO Teacher))"
+      ],
+      "rightObservationDigest": "712d49be8c99bc795f1bfb62cbe70f6cab8c4ad7655050c29577aabb99adc0b3",
+      "path": "classroom_rl/correct/JciokBgXnkPdk9czg_inv2.als",
+      "sourceSha256": "c953f4213d1dc5edbad8eec9af99818b2dbd1666393c281fc3a53e8f663af195",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no Teacher)\n}",
+      "leftObservationDigest": "712d49be8c99bc795f1bfb62cbe70f6cab8c4ad7655050c29577aabb99adc0b3",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all p: (one Person) {\n(p !in Teacher)\n}) && (no Teacher))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 5,
+      "leftFastIr": [
+        "root normal form := inv2(((NO Teacher) && (NO Teacher)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv2c((NO Teacher))"
+      ],
+      "rightObservationDigest": "712d49be8c99bc795f1bfb62cbe70f6cab8c4ad7655050c29577aabb99adc0b3",
+      "path": "classroom_rl/correct/p4JYisEfRMFCepECC_inv2.als",
+      "sourceSha256": "c953f4213d1dc5edbad8eec9af99818b2dbd1666393c281fc3a53e8f663af195",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no Teacher)\n}",
+      "leftObservationDigest": "712d49be8c99bc795f1bfb62cbe70f6cab8c4ad7655050c29577aabb99adc0b3",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all p: (one Person) {\n(p !in Teacher)\n}) && (no Teacher))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 4,
+      "leftFastIr": [
+        "root normal form := ALL c : one Course . inv11(((c . (grades . Grade)) in (enrolled . c)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := ALL c : one Course . inv11c((((c . grades) . Grade) in (enrolled . c)))"
+      ],
+      "rightObservationDigest": "413e3a044e5058e65042cb0f02cc44f14324faedcf049772fa4ac4bf5ebdfc5c",
+      "path": "coursesOld/correct/smfDkm59tx3cQ7YQm_inv11.als",
+      "sourceSha256": "9ca39fe862910f1bbe0877031709d97870d4ca19d1782726c79b9f8ce0d95c4e",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(all c: (one Course) {\n(((c.grades).Grade) in (enrolled.c))\n})\n}",
+      "leftObservationDigest": "413e3a044e5058e65042cb0f02cc44f14324faedcf049772fa4ac4bf5ebdfc5c",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n(all c: (one Course) {\n((c.(grades.Grade)) in (enrolled.c))\n})\n}",
+      "leftNoMetadata": [],
+      "rightNoMetadata": []
+    },
+    {
+      "fastDistance": 4,
+      "leftFastIr": [
+        "root normal form := inv6((Event = (State . (trans . State))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv6c((Event = ((State . trans) . State)))"
+      ],
+      "rightObservationDigest": "0d62e4a37a0ee18b8eeda015350cef40f30da7fafa7d8adc4c898a957dd4cc1f",
+      "path": "lts/correct/25aYiS9MBG72qzTtk_inv6.als",
+      "sourceSha256": "339bf63d9f6c5d742eb1bf78dd9a4a0a6577d6e41170b5b4b7032bc69f36a467",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(((State.trans).State) = Event)\n}",
+      "leftObservationDigest": "0d62e4a37a0ee18b8eeda015350cef40f30da7fafa7d8adc4c898a957dd4cc1f",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((State.(trans.State)) = Event)\n}",
+      "leftNoMetadata": [],
+      "rightNoMetadata": []
+    },
+    {
+      "fastDistance": 8,
+      "leftFastIr": [
+        "root normal form := ALL s1 : one State ALL s2 : one State . inv5(((s1 . (trans . State)) = (s2 . (trans . State))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := ALL s1 : one State ALL s2 : one State . inv5c((((s1 . trans) . State) = ((s2 . trans) . State)))"
+      ],
+      "rightObservationDigest": "322da7c8577795bae4e03e53469955259c910e1e13d97b46bb01da183bc59ba1",
+      "path": "lts/correct/GTGqqEHPniMaebYx2_inv5.als",
+      "sourceSha256": "4a5f3e191e98af47bb5e51333903a428c28315cc1eef72054cb363e45c107ba0",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(all s1,s2: (one State) {\n(((s1.trans).State) = ((s2.trans).State))\n})\n}",
+      "leftObservationDigest": "322da7c8577795bae4e03e53469955259c910e1e13d97b46bb01da183bc59ba1",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n(all s1,s2: (one State) {\n((s1.(trans.State)) = (s2.(trans.State)))\n})\n}",
+      "leftNoMetadata": [],
+      "rightNoMetadata": []
+    },
+    {
+      "fastDistance": 5,
+      "leftFastIr": [
+        "root normal form := ALL s : one State SOME i : one State . inv4(((s in (i . (CLOSURE QT_EXPR_COMP2(DECLROOT_default((ONE State), x), DECLROOT_default((ONE State), y), QT_FORMULA_SOME2(DECLROOT_default((ONE Event), e), ((x -> (e -> y)) in trans)))))) && (i in Init)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := ALL s : one State SOME i : one State . inv4c(((s in (i . (CLOSURE QT_EXPR_COMP2(DECLROOT_default((ONE State), s1, s2), QT_FORMULA_SOME2(DECLROOT_default((ONE Event), e), ((s1 -> (e -> s2)) in trans)))))) && (i in Init)))"
+      ],
+      "rightObservationDigest": "9b610fbb4ea846f944f81cf984424c0381b358a2f662751102987f308182f7e9",
+      "path": "lts/correct/viZeRLo7kTSfXQ6zE_inv4.als",
+      "sourceSha256": "1c77fa54594e937167b7457a909e62c31f28a84b517386b8f0009c7f457ee759",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(let ts = ({ s1,s2: (one State) {\n(some e: (one Event) {\n((s1->(e->s2)) in trans)\n})\n} }) {\n(all s: (one State) {\n(some i: (one Init) {\n(s in (i.(^ts)))\n})\n})\n})\n}",
+      "leftObservationDigest": "9b610fbb4ea846f944f81cf984424c0381b358a2f662751102987f308182f7e9",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n(let t = ({ x: (one State),y: (one State) {\n(some e: (one Event) {\n((x->(e->y)) in trans)\n})\n} }) {\n(all s: (one State) {\n(some i: (one Init) {\n(s in (i.(^t)))\n})\n})\n})\n}",
+      "leftNoMetadata": [],
+      "rightNoMetadata": []
+    },
+    {
+      "fastDistance": 29,
+      "leftFastIr": [
+        "root normal form := ALL ws : one Workstation . inv5((((NO (Human & (ws . workers))) || (NO (Robot & (ws . workers)))) && ((NO (Robot & (ws . workers))) || (NO (Human & (ws . workers))))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := ALL c : one Workstation . inv5c(((NO (Human & (c . workers))) || (NO (Robot & (c . workers)))))"
+      ],
+      "rightObservationDigest": "5e532caa690484555cd8d85d9b8c936274c48a389bee8a291be0029b338c1c7a",
+      "path": "productionLineNew/correct/EmXPfAqaT6gPytThg_inv5.als",
+      "sourceSha256": "2421cc10cf81551f9661a0031a16af93d00dded7437bc56f79842f670ed0d24f",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(all c: (one Workstation) {\n((no ((c.workers) & Human)) || (no ((c.workers) & Robot)))\n})\n}",
+      "leftObservationDigest": "5e532caa690484555cd8d85d9b8c936274c48a389bee8a291be0029b338c1c7a",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all ws: (one Workstation) {\n((some (Human & (ws.workers))) => (no (Robot & (ws.workers))))\n}) && (all ws: (one Workstation) {\n((some (Robot & (ws.workers))) => (no (Human & (ws.workers))))\n}))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "null",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "null",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 29,
+      "leftFastIr": [
+        "root normal form := ALL w : one Workstation . inv5((((NO (Human & (w . workers))) || (NO (Robot & (w . workers)))) && ((NO (Robot & (w . workers))) || (NO (Human & (w . workers))))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := ALL c : one Workstation . inv5c(((NO (Human & (c . workers))) || (NO (Robot & (c . workers)))))"
+      ],
+      "rightObservationDigest": "5e532caa690484555cd8d85d9b8c936274c48a389bee8a291be0029b338c1c7a",
+      "path": "productionLine_v2/correct/BfhJLg4KcEzuaj6Qj_inv5.als",
+      "sourceSha256": "14e916651c61def3b420443cdc03b69b21c51cef87cef5c73501586b81e02eb4",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(all c: (one Workstation) {\n((no ((c.workers) & Human)) || (no ((c.workers) & Robot)))\n})\n}",
+      "leftObservationDigest": "5e532caa690484555cd8d85d9b8c936274c48a389bee8a291be0029b338c1c7a",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all w: (one Workstation) {\n((some ((w.workers) & Robot)) => (no ((w.workers) & Human)))\n}) && (all w: (one Workstation) {\n((some ((w.workers) & Human)) => (no ((w.workers) & Robot)))\n}))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "null",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "null",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 5,
+      "leftFastIr": [
+        "root normal form := inv1(((NO Trash) && (NO Trash)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv1c((NO Trash))"
+      ],
+      "rightObservationDigest": "356c588b164f1e8e213cef92d847a4eeaa361fdafdfa3818ff943320c54c6365",
+      "path": "trash_fol/correct/WCR5D69gK742b7gav_inv1.als",
+      "sourceSha256": "793c5fc971dccb9afe24877ed8293a40a09da73270cb0744b534511b2f8eda5f",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no Trash)\n}",
+      "leftObservationDigest": "356c588b164f1e8e213cef92d847a4eeaa361fdafdfa3818ff943320c54c6365",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((no Trash) && (all f: (one File) {\n(f !in Trash)\n}))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 4,
+      "leftFastIr": [
+        "root normal form := inv1(((NO Protected) && (NO Trash) && (NO Protected) && (NO Trash)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv1c(((NO Protected) && (NO Trash)))"
+      ],
+      "rightObservationDigest": "510ac9f396b60c711066d42e3926f6f6d6beafa684296714676d8cdd727db9f9",
+      "path": "trash_ltl/correct/cRMZnYefJc4Wc7znp_inv1.als",
+      "sourceSha256": "b95b2bfc0964547ca0c70950dae0ef25d892c99dbd8b5da529174826ee49549f",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no (Trash + Protected))\n}",
+      "leftObservationDigest": "510ac9f396b60c711066d42e3926f6f6d6beafa684296714676d8cdd727db9f9",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((no (Trash + Protected)) && (no Trash) && (no Protected))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 10,
+      "leftFastIr": [
+        "root normal form := inv4(((NO (Protected & Trash)) && (NO (Protected & Trash))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv4c((NO (Protected & Trash)))"
+      ],
+      "rightObservationDigest": "162d1328ae73987bfca5da2f52748b085876ea3c33e9d946ebdeaf234ec52c5b",
+      "path": "trash_rl/correct/EaFXvGDyn4yrKr2xg_inv4.als",
+      "sourceSha256": "45b592a05bf319be284d3527e1f8e11b654562f803b454817501ccdaa6931496",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no (Protected & Trash))\n}",
+      "leftObservationDigest": "162d1328ae73987bfca5da2f52748b085876ea3c33e9d946ebdeaf234ec52c5b",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all p: (one Protected) {\n(p !in Trash)\n}) && (no (Protected & Trash)))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 14,
+      "leftFastIr": [
+        "root normal form := inv7(((NO (Trash & (File . link))) && (NO (Trash & (File . link)))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv7c((NO (Trash & (File . link))))"
+      ],
+      "rightObservationDigest": "baf3429159e6efd1b57a15188e19ac0aa828f61f270ea3b2b7a0aaa4d7146659",
+      "path": "trash_rl/correct/LDsh3QputAuFYAwk7_inv7.als",
+      "sourceSha256": "1e9f50336fef34cf7e60a9db09ea6b91a8aad726c0ad5a91416f182f42651fe7",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no ((File.link) & Trash))\n}",
+      "leftObservationDigest": "baf3429159e6efd1b57a15188e19ac0aa828f61f270ea3b2b7a0aaa4d7146659",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((no ((File.link) & Trash)) && (all f: (one (File.link)) {\n(f !in Trash)\n}))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 10,
+      "leftFastIr": [
+        "root normal form := inv4(((NO (Protected & Trash)) && (NO (Protected & Trash))))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv4c((NO (Protected & Trash)))"
+      ],
+      "rightObservationDigest": "162d1328ae73987bfca5da2f52748b085876ea3c33e9d946ebdeaf234ec52c5b",
+      "path": "trash_rl/correct/N7r5bmzP3cquMsFou_inv4.als",
+      "sourceSha256": "9332bdae91fc4ba372fea3b409313cf1b14df00952467d10d90ef6134b3f31cc",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no (Protected & Trash))\n}",
+      "leftObservationDigest": "162d1328ae73987bfca5da2f52748b085876ea3c33e9d946ebdeaf234ec52c5b",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all p: (one Protected) {\n(p !in Trash)\n}) && (no (Protected & Trash)))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    },
+    {
+      "fastDistance": 5,
+      "leftFastIr": [
+        "root normal form := inv1(((NO Trash) && (NO Trash)))"
+      ],
+      "integratedDistance": 0,
+      "rightFastIr": [
+        "root normal form := inv1c((NO Trash))"
+      ],
+      "rightObservationDigest": "356c588b164f1e8e213cef92d847a4eeaa361fdafdfa3818ff943320c54c6365",
+      "path": "trash_rl/correct/b3LQRvSN97bZcbchu_inv1.als",
+      "sourceSha256": "b75d145453a7e1e0884731be604ea5d2917c9ce4a161aa9c7739aa2c693658d8",
+      "counterexample": false,
+      "observationsEqual": true,
+      "rightSource": "{\n(no Trash)\n}",
+      "leftObservationDigest": "356c588b164f1e8e213cef92d847a4eeaa361fdafdfa3818ff943320c54c6365",
+      "boundedCheck": "Check correct",
+      "leftSource": "{\n((all f: (one File) {\n(f !in Trash)\n}) && (no Trash))\n}",
+      "leftNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        },
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K[1]",
+          "container": "FIXED",
+          "type": "BOOL"
+        }
+      ],
+      "rightNoMetadata": [
+        {
+          "sourceName": "UNOPF_NO",
+          "arity": "K>=1",
+          "container": "SEQUENCE",
+          "type": "BOOL"
+        }
+      ]
+    }
+  ]
+}

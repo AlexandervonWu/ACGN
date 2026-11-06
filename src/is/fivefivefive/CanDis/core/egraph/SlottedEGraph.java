@@ -21,6 +21,15 @@ import java.util.Set;
  */
 public final class SlottedEGraph implements AblationEngine {
     private static final int MAX_TERM_SIZE = 50_000;
+    private final boolean typedSlots;
+
+    public SlottedEGraph() {
+        this(false);
+    }
+
+    public SlottedEGraph(boolean typedSlots) {
+        this.typedSlots = typedSlots;
+    }
 
     /** Exposes the slot-shape alpha representative for audits and regression tests. */
     public static AlloyTerm alphaRepresentative(AlloyTerm term) {
@@ -43,7 +52,11 @@ public final class SlottedEGraph implements AblationEngine {
 
     @Override
     public Result compare(AlloyTerm left, AlloyTerm right) {
-        Core graph = new Core();
+        if (!typedSlots) {
+            left = left.eraseSlotTypes();
+            right = right.eraseSlotTypes();
+        }
+        Core graph = new Core(typedSlots);
         AlloyTerm leftFrontier = SlotCanonicalizer.canonicalize(left);
         AlloyTerm rightFrontier = SlotCanonicalizer.canonicalize(right);
         Invocation leftRoot = graph.add(leftFrontier);
@@ -92,17 +105,31 @@ public final class SlottedEGraph implements AblationEngine {
         private final List<Integer> ranks = new ArrayList<>();
         private final List<int[]> childToParent = new ArrayList<>();
         private final List<ShapeRecord> records = new ArrayList<>();
-        private final Map<String, Integer> externalSlots = new HashMap<>();
+        private final Map<AlloyTerm, Integer> externalSlots = new HashMap<>();
+        private final List<String> externalTypes = new ArrayList<>();
+        private final boolean typedSlots;
         private Map<Shape, Invocation> hashcons = new HashMap<>();
         private long unions;
         private long rebuilds;
         private long redundantSlots;
 
+        private Core(boolean typedSlots) {
+            this.typedSlots = typedSlots;
+        }
+
         private Invocation add(AlloyTerm term) {
             if (term.isVariable()) {
-                int external = externalSlots.computeIfAbsent(term.atom(), ignored -> externalSlots.size());
+                if (typedSlots && term.slotType().isEmpty()) {
+                    throw new IllegalArgumentException("Typed slotted input has an untyped variable: " + term.atom());
+                }
+                int external = externalSlots.computeIfAbsent(term, ignored -> {
+                    if (typedSlots) {
+                        externalTypes.add(term.slotType());
+                    }
+                    return externalSlots.size();
+                });
                 return intern(
-                        new Shape("SLOT", "", 1, Collections.emptyList()),
+                        new Shape("SLOT", term.slotType(), 1, Collections.emptyList()),
                         new int[] { external },
                         new int[] { 0 });
             }
@@ -162,7 +189,7 @@ public final class SlottedEGraph implements AblationEngine {
             if ("LetExpr".equals(term.head()) && !term.children().isEmpty()) {
                 AlloyTerm variable = term.children().get(0);
                 if (variable.isVariable()) {
-                    Integer slot = externalSlots.get(variable.atom());
+                    Integer slot = externalSlots.get(variable);
                     if (slot != null) {
                         hidden.add(slot);
                     }
@@ -177,7 +204,7 @@ public final class SlottedEGraph implements AblationEngine {
                     if (!declarationChild.isVariable()) {
                         continue;
                     }
-                    Integer slot = externalSlots.get(declarationChild.atom());
+                    Integer slot = externalSlots.get(declarationChild);
                     if (slot != null) {
                         hidden.add(slot);
                     }
@@ -191,7 +218,13 @@ public final class SlottedEGraph implements AblationEngine {
             Invocation owner = hashcons.get(shape);
             if (owner == null) {
                 int id = classes.size();
-                EClass eclass = new EClass(id, exposedShapeSlots.length);
+                List<String> colors = typedSlots ? new ArrayList<>() : Collections.emptyList();
+                if (typedSlots) {
+                    for (int slot : exposedShapeSlots) {
+                        colors.add(externalTypes.get(shapeSlotToExternal[slot]));
+                    }
+                }
+                EClass eclass = new EClass(id, exposedShapeSlots.length, colors);
                 classes.add(eclass);
                 parents.add(id);
                 ranks.add(0);
@@ -289,13 +322,35 @@ public final class SlottedEGraph implements AblationEngine {
                     if (loserToWinner[i] >= 0) {
                         continue;
                     }
-                    while (next < occupied.length && occupied[next]) {
+                    if (typedSlots) {
+                        next = 0;
+                    }
+                    while (next < occupied.length && (occupied[next]
+                            || !sameColor(loser.eclass, i, winner.eclass, next))) {
                         next++;
                     }
                     if (next < occupied.length) {
                         loserToWinner[i] = next;
                         occupied[next] = true;
                         mapped++;
+                    }
+                }
+            }
+
+            if (typedSlots) {
+                boolean[] covered = new boolean[winner.toExternal.length];
+                for (int i = 0; i < loserToWinner.length; i++) {
+                    int target = loserToWinner[i];
+                    if (target >= 0) {
+                        if (!sameColor(loser.eclass, i, winner.eclass, target)) {
+                            return left;
+                        }
+                        covered[target] = true;
+                    }
+                }
+                for (boolean present : covered) {
+                    if (!present) {
+                        return left;
                     }
                 }
             }
@@ -308,6 +363,11 @@ public final class SlottedEGraph implements AblationEngine {
             redundantSlots += Math.max(0, loserToWinner.length - mapped);
             unions++;
             return find(winner);
+        }
+
+        private boolean sameColor(int sourceClass, int sourceSlot, int targetClass, int targetSlot) {
+            return !typedSlots || classes.get(sourceClass).slotTypes.get(sourceSlot)
+                    .equals(classes.get(targetClass).slotTypes.get(targetSlot));
         }
 
         private void recordSymmetry(Invocation left, Invocation right) {
@@ -327,6 +387,11 @@ public final class SlottedEGraph implements AblationEngine {
         private void addPermutationClosure(EClass eclass, int[] generator) {
             if (generator.length != eclass.slotCount) {
                 return;
+            }
+            for (int i = 0; i < generator.length; i++) {
+                if (!sameColor(eclass.id, i, eclass.id, generator[i])) {
+                    return;
+                }
             }
             Queue<IntArrayKey> queue = new ArrayDeque<>();
             IntArrayKey initial = new IntArrayKey(generator);
@@ -473,6 +538,12 @@ public final class SlottedEGraph implements AblationEngine {
                 slots += eclass.slotCount;
                 mappings += (long) eclass.symmetries.size() * eclass.slotCount;
                 bytes += 64L + 4L * eclass.slotCount;
+                if (typedSlots) {
+                    bytes += 24L + 8L * eclass.slotTypes.size();
+                    for (String type : eclass.slotTypes) {
+                        bytes += 40L + 2L * type.length();
+                    }
+                }
                 for (IntArrayKey symmetry : eclass.symmetries) {
                     bytes += 24L + 4L * symmetry.values.length;
                 }
@@ -556,11 +627,13 @@ public final class SlottedEGraph implements AblationEngine {
     private static final class EClass {
         private final int id;
         private final int slotCount;
+        private final List<String> slotTypes;
         private final Set<IntArrayKey> symmetries = new HashSet<>();
 
-        private EClass(int id, int slotCount) {
+        private EClass(int id, int slotCount, List<String> slotTypes) {
             this.id = id;
             this.slotCount = slotCount;
+            this.slotTypes = List.copyOf(slotTypes);
             symmetries.add(new IntArrayKey(Core.identity(slotCount)));
         }
     }

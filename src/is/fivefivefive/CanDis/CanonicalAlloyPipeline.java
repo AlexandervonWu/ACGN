@@ -78,7 +78,7 @@ public final class CanonicalAlloyPipeline {
                 .requireCertificateExportAuthority(false);
         Canonical.Prepared normalized = Canonical.prepare(graph, semanticProfile);
         byte[] normalizedInput = String.join(
-                "\n", Canonical.irTemporalFol(normalized))
+                "\n", Canonical.certificationIrTemporalFol(normalized))
                 .getBytes(StandardCharsets.UTF_8);
         return prepareForVerification(
                 normalized,
@@ -91,7 +91,7 @@ public final class CanonicalAlloyPipeline {
         Objects.requireNonNull(normalized, "normalized").semanticProfile()
                 .requireCertificateExportAuthority(false);
         byte[] normalizedInput = String.join(
-                "\n", Canonical.irTemporalFol(normalized))
+                "\n", Canonical.certificationIrTemporalFol(normalized))
                 .getBytes(StandardCharsets.UTF_8);
         return prepareForVerification(
                 normalized,
@@ -104,7 +104,7 @@ public final class CanonicalAlloyPipeline {
     public static Prepared prepareCompatibilityForVerification(Multigraph graph) {
         Canonical.Prepared normalized = Canonical.prepare(graph);
         byte[] normalizedInput = String.join(
-                "\n", Canonical.irTemporalFol(normalized))
+                "\n", Canonical.certificationIrTemporalFol(normalized))
                 .getBytes(StandardCharsets.UTF_8);
         return prepareForVerification(
                 normalized,

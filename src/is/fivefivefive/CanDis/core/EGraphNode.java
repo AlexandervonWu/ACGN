@@ -6998,10 +6998,189 @@ public final class EGraphNode {
         return key.toString();
     }
 
-    private EGraphNode snapshot() {
-        EGraphNode copy = new EGraphNode(
-                id, opcode, Collections.emptyList(), isCommutative, maxArity, flexibleArity,
-                metatype, semanticProfile, false, arena);
+    /** Detached, metric-only projection. Never replaces a certification source. */
+    static EGraphNode fastComparisonMatrix(EGraphNode source) {
+        if (source == null) {
+            return null;
+        }
+        EGraphNode result = new FastComparison().copy(
+                source, Collections.emptyMap(), Collections.emptyMap(), 0, true);
+        result.freezeForCertification();
+        return result;
+    }
+
+    private static final class FastComparison {
+        private final EGraphArena target = new EGraphArena();
+
+        private EGraphNode head(EGraphNode source, List<EGraphNode> children) {
+            EGraphNode copy = new EGraphNode(source.id, source.opcode, children,
+                    source.isCommutative, source.maxArity, source.flexibleArity,
+                    source.metatype, source.semanticProfile, true, target);
+            source.copyPayloadTo(copy);
+            return copy;
+        }
+
+        private EGraphNode child(EClassRef ref, Map<String, String> ambient,
+                Map<String, String> scope, int depth, boolean rename) {
+            Map<String, String> slots = new LinkedHashMap<>();
+            ref.getSlotMap().forEach((key, value) ->
+                    slots.put(key, ambient.getOrDefault(value, value)));
+            return copy(ref.getEClass().getRepresentative(), slots, scope, depth, rename);
+        }
+
+        private static String name(EGraphNode variable, Map<String, String> ambient) {
+            String key = variable.alphaName == null ? variable.sourceName : variable.alphaName;
+            return ambient.getOrDefault(key, key);
+        }
+
+        private static boolean declaration(EGraphNode node) {
+            return node.opcode == Opcode.GENERICRELDECL || node.opcode == Opcode.DISJ
+                    || node.opcode == Opcode.VAR || node.opcode == Opcode.DISJVAR;
+        }
+
+        private static boolean localBinder(EGraphNode node) {
+            switch (node.opcode) {
+                case COMPREHENSION: case SUM: case FORALL: case EXISTS:
+                case NO: case ONE: case LONE:
+                    return node.getChildren().stream().anyMatch(FastComparison::declaration);
+                default:
+                    return false;
+            }
+        }
+
+        private static boolean containsTemporalReference(EGraphNode node) {
+            if (node.temporalReferenceAuthorityId >= 0) {
+                return true;
+            }
+            for (EGraphNode child : node.getChildren()) {
+                if (containsTemporalReference(child)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private EGraphNode copy(EGraphNode source, Map<String, String> ambient,
+                Map<String, String> scope, int depth, boolean rename) {
+            if (source.opcode == Opcode.VARIABLE) {
+                EGraphNode variable = head(source, Collections.emptyList());
+                String key = name(source, ambient);
+                variable.alphaName = scope.getOrDefault(key, key);
+                return variable;
+            }
+            List<EGraphNode> children = new ArrayList<>();
+            if (rename && localBinder(source) && !containsTemporalReference(source)) {
+                Map<String, String> bodyScope = new LinkedHashMap<>(scope);
+                int coordinate = 0;
+                for (EClassRef ref : source.childClasses) {
+                    EGraphNode decl = ref.getEClass().getRepresentative();
+                    if (!declaration(decl)) {
+                        children.add(child(ref, ambient, bodyScope, depth + 1, true));
+                        continue;
+                    }
+                    Map<String, String> declAmbient = new LinkedHashMap<>();
+                    ref.getSlotMap().forEach((key, value) ->
+                            declAmbient.put(key, ambient.getOrDefault(value, value)));
+                    List<EGraphNode> parts = new ArrayList<>();
+                    // All variables in one declaration see the same outer domain.
+                    parts.add(child(decl.childClasses.get(0), declAmbient,
+                            bodyScope, depth + 1, true));
+                    for (int i = 1; i < decl.childClasses.size(); i++) {
+                        EGraphNode variable = child(decl.childClasses.get(i), declAmbient,
+                                Collections.emptyMap(), depth + 1, false);
+                        if (variable.opcode != Opcode.VARIABLE) {
+                            throw new IllegalStateException("A local declaration contains a non-variable");
+                        }
+                        String local = "@fast-local:" + depth + ":" + coordinate++;
+                        bodyScope.put(variable.alphaName, local);
+                        variable.alphaName = local;
+                        parts.add(variable);
+                    }
+                    if (source.opcode == Opcode.COMPREHENSION
+                            && decl.opcode == Opcode.GENERICRELDECL) {
+                        for (int i = 1; i < parts.size(); i++) {
+                            children.add(head(decl, List.of(parts.get(0), parts.get(i))));
+                        }
+                    } else {
+                        children.add(head(decl, parts));
+                    }
+                }
+            } else {
+                boolean childRename = rename && !localBinder(source);
+                for (EClassRef ref : source.childClasses) {
+                    children.add(child(ref, ambient, scope, depth, childRename));
+                }
+            }
+            EGraphNode result = head(source, children);
+            if ((result.opcode == Opcode.NO || result.opcode == Opcode.SOME
+                    || result.opcode == Opcode.ONE || result.opcode == Opcode.LONE)
+                    && hasBooleanFormulaType(result) && children.size() == 1
+                    && !declaration(children.get(0))
+                    && children.get(0).exactAlloyType != null
+                    && children.get(0).exactAlloyType.kind() != ExactAlloyType.Kind.BOOL) {
+                result.maxArity = 1;
+                result.flexibleArity = false;
+                result.isCommutative = false;
+                result.sourceName = null;
+            }
+            if ((result.opcode == Opcode.AND || result.opcode == Opcode.OR)
+                    && hasBooleanRewriteAuthority(result) && hasBooleanOperands(result)) {
+                result.derivedBooleanRewriteOpcode = result.opcode;
+                result.sourceName = null;
+                List<EClassRef> flat = new ArrayList<>();
+                for (EClassRef ref : result.childClasses) {
+                    EGraphNode operand = ref.getEClass().getRepresentative();
+                    if (result.sameFlatOperatorInstance(operand)) {
+                        flat.addAll(operand.childClasses);
+                    } else {
+                        flat.add(ref);
+                    }
+                }
+                result.childClasses = removeDuplicateInvocations(flat);
+                if (result.childClasses.size() == 1) {
+                    return result.childClasses.get(0).getEClass().getRepresentative();
+                }
+            }
+            return leftAssociateJoin(result);
+        }
+
+        private EGraphNode leftAssociateJoin(EGraphNode outer) {
+            if (outer.opcode != Opcode.JOIN || outer.childClasses.size() != 2) {
+                return outer;
+            }
+            EGraphNode a = outer.getChildren().get(0);
+            EGraphNode inner = outer.getChildren().get(1);
+            if (inner.opcode != Opcode.JOIN || inner.childClasses.size() != 2) {
+                return outer;
+            }
+            EGraphNode b = inner.getChildren().get(0);
+            EGraphNode c = inner.getChildren().get(1);
+            if (a.exactAlloyType == null || b.exactAlloyType == null
+                    || c.exactAlloyType == null || b.exactAlloyType.relationArity() < 2) {
+                return outer;
+            }
+            ExactAlloyType ab;
+            try {
+                ExactAlloyType bc = ExactAlloyType.parserCertifiedRelationalJoin(
+                        b.exactAlloyType, c.exactAlloyType);
+                ab = ExactAlloyType.parserCertifiedRelationalJoin(a.exactAlloyType, b.exactAlloyType);
+                ExactAlloyType original = ExactAlloyType.parserCertifiedRelationalJoin(a.exactAlloyType, bc);
+                ExactAlloyType rotated = ExactAlloyType.parserCertifiedRelationalJoin(ab, c.exactAlloyType);
+                if (!bc.equals(inner.exactAlloyType) || !original.equals(outer.exactAlloyType)
+                        || !original.equals(rotated)) {
+                    return outer;
+                }
+            } catch (IllegalArgumentException unsupported) {
+                return outer;
+            }
+            EGraphNode left = head(inner, List.of(a, b));
+            left.exactAlloyType = ab;
+            left = leftAssociateJoin(left);
+            return leftAssociateJoin(head(outer, List.of(left, c)));
+        }
+    }
+
+    private void copyPayloadTo(EGraphNode copy) {
         copy.sourceName = sourceName;
         copy.sourceType = sourceType;
         copy.exactAlloyType = exactAlloyType;
@@ -7017,6 +7196,13 @@ public final class EGraphNode {
         copy.derivedBooleanRewriteOpcode = derivedBooleanRewriteOpcode;
         copy.temporalReferenceAuthorityId = temporalReferenceAuthorityId;
         copy.temporalSnapshotBinding = temporalSnapshotBinding;
+    }
+
+    private EGraphNode snapshot() {
+        EGraphNode copy = new EGraphNode(
+                id, opcode, Collections.emptyList(), isCommutative, maxArity, flexibleArity,
+                metatype, semanticProfile, false, arena);
+        copyPayloadTo(copy);
         copy.childClasses = new ArrayList<>(childClasses);
         copy.eClass = eClass;
         return copy;

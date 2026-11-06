@@ -1,6 +1,20 @@
 # Fast Rewrite and Certificate-Integrated Equality Disagreements
 
-This note characterizes the current disagreement between the Fast Rewrite IR
+## Working-tree repair (2026-11-06)
+
+Fast Rewrite now closes all 14 recorded paired-oracle misses in the focused
+source-backed regression. The repair normalizes unary relation-test metadata
+before Boolean ACI deduplication, applies parser-typed guarded JOIN
+reassociation, and normalizes comprehension-local alpha names and independent
+declaration grouping. The ten historical incorrect-to-truth counterexamples
+remain nonzero. Retained certificate input text and both certified observation
+digests for every target pair are unchanged.
+
+The measurements below remain the archived publication measurements; this
+patch has not rerun or overwritten the full-corpus results. See
+[the repair specification and tests](fast-rewrite-parity/README.md).
+
+This note characterizes the published disagreement between the Fast Rewrite IR
 and Certificate-Integrated IR and retains the preceding false-zero incident as
 historical evidence. Current measurements are tied to publication run
 `df4d8d4c-6265-4fe7-88d5-3aceee60398b` and natural-corpus ablation run
@@ -100,6 +114,173 @@ identity.
 These 14 rows are completeness gains: Certificate-Integrated equality admits
 sound quotient steps that the Fast Rewrite representative and metric do not
 fully expose as zero on these inputs.
+
+## Source-Level Follow-Up: 2026-11-06
+
+All fourteen published disagreements were rechecked on the current working
+tree, based on `7c4d66c13820462053f07560a06c785b2b9421ee`. Each reproduced its
+listed Fast distance, an integrated distance of zero, and equal observation
+keys. Each file's existing `check correct` command returned no counterexample
+with SAT4J. These are bounded Alloy checks under the files' existing commands,
+not unbounded solver proofs and not standalone certificate replay. The tree
+already contained unrelated repair-learning edits; this is a focused working-
+tree audit, not a replacement publication run.
+
+[The audit JSON](fast-rewrite-certificate-equality-audit.json) retains source
+hashes, parsed predicate bodies, both Fast matrices, observation digests, and
+the relevant `NO` operator metadata. No published results were overwritten.
+
+### What "Rejected" Means Here
+
+Fast Rewrite does not throw an exception or prove these predicates unequal.
+It prepares them successfully but charges a positive repair cost because its
+retained representation still distinguishes them. Its exact pairwise alpha
+minimization and minimum-cost unordered matching are not the problem: neither
+operation can remove a structural distinction that has not been quotiented.
+The integrated path first constructs a checked quotient, then supplies those
+identifications to the repair projection. It does not add a discretionary
+zero-cost discount or change the corpus labels.
+
+### Ten ACI Cases: Representation Metadata Survives
+
+The earlier phrase "idempotence after recursive normalization" describes the
+outcome but omits the immediate mechanism. Fast Rewrite **already has** ACI
+flattening and duplicate removal. Its `removeDuplicateInvocations` compares
+`invocationKey`, whose recursive `appendSemanticHead` includes arity policy,
+container policy, exact type, and source labels. Two operands can therefore
+print the same formula while having different identity keys.
+
+For `classroom_rl/correct/JciokBgXnkPdk9czg_inv2.als`, the student writes:
+
+```alloy
+all p: Person | p not in Teacher
+no Teacher
+```
+
+The oracle is `no Teacher`. Since `Teacher in Person`, the quantified formula
+says exactly that Teacher is empty. Fast Rewrite reaches
+`AND(NO Teacher, NO Teacher)`, but one `NO` has arity policy `K>=1` and container
+`SEQUENCE`, while the other has `K[1]` and container `FIXED`. Both have exactly
+one actual child, Boolean output, the same signature identity, and empty slot
+maps. The two identity keys differ on constructor metadata, not meaning.
+Fast distance remains 5. The second classroom row is byte-identical to this
+file, so these are two corpus rows, not two independent semantic patterns.
+
+`TheoryAlloyAdapter.constructNode` reconstructs both as the same `ALLOY/NO`
+operation with one typed relation port and Boolean output. Its semantic head
+does not retain incidental unary parser labels. Certified flat construction
+then identifies the two AND operands, records their Set quotient fiber, and
+collapses the singleton. The partition is transferred to the repair matrix
+by source lineage and checked shape/arity correspondence, not by blindly
+deduplicating printed text.
+
+The other ACI examples expose the same issue through different source steps:
+
+- `trash_fol/...WCR5D69gK742b7gav_inv1` and
+  `trash_rl/...b3LQRvSN97bZcbchu_inv1`: `all f: File | f not in Trash`
+  plus `no Trash`. Both matrices reach duplicate `NO Trash`; distance 5.
+- `trash_rl/...EaFXvGDyn4yrKr2xg_inv4` and
+  `...N7r5bmzP3cquMsFou_inv4`: `all p: Protected | p not in Trash`
+  plus `no (Protected & Trash)`. Both conjuncts say that the intersection is
+  empty; the duplicated larger subtree costs 10.
+- `trash_rl/...LDsh3QputAuFYAwk7_inv7`: the same law with domain `File.link`.
+  The two `NO(Trash & (File.link))` occurrences cost 14 before quotienting.
+- `trash_ltl/...cRMZnYefJc4Wc7znp_inv1`: `no (Trash + Protected)` plus
+  `no Trash and no Protected`. Union emptiness yields two copies of each
+  unary emptiness test. Fast keeps four conjuncts versus two, costing 4.
+  This predicate contains no temporal operator; mutable signatures do not
+  justify combining different time phases, nor is that needed here.
+- The two production-line rows are a composition of implication elimination,
+  atomic negation, commutativity, and idempotence. For one workstation let
+  `H = Human & ws.workers`, `R = Robot & ws.workers`. Then
+  `(some H => no R) and (some R => no H)` becomes
+  `(no H or no R) and (no R or no H)`. The ORs are equal modulo commutativity,
+  so the conjunction reduces to one OR. Both inputs already reach these
+  disjunctions in Fast Rewrite. However, the source `NO` occurrences retain
+  `UNOPF_NO`/`K>=1` while negation-derived ones have a null label/`K[1]`.
+  Their keys differ; the duplicate disjunction costs 29. The integrated
+  construction normalizes these typed operations before Set quotienting.
+
+Thus these ten gains are not evidence of a new logical axiom unavailable to
+Fast Rewrite. They expose incomplete semantic identity normalization at the
+Fast representation boundary. Copying constructor flags or dropping all
+metadata indiscriminately would not be a justified repair: field identity,
+scope, type, and operator distinctions must remain meaningful.
+
+### Three JOIN Cases: Ordered, Type-Justified Reassociation
+
+In `coursesOld/...smfDkm59tx3cQ7YQm_inv11`, the difference is
+`c.(grades.Grade)` versus `(c.grades).Grade`, both inside the same inclusion.
+Here `c: Course`, `grades: Course -> Person -> Grade`, and `Grade` is unary.
+Both parenthesizations select the same people:
+
+```text
+{ p | exists c0 in c, g in Grade: (c0,p,g) in grades }
+```
+
+The intermediate relation is respectively `Course -> Person` or
+`Person -> Grade`; each contraction is well typed. Fast's common operator
+policy intentionally keeps JOIN binary, so a differently nested subtree
+costs 4. The dependent-chain constructor proves the concrete column equations
+and preserves the ordered leaves `[c, grades, Grade]` in a Seq. The repair
+projection consumes that certificate and the cost becomes zero.
+
+For `lts/...25aYiS9MBG72qzTtk_inv6`, replace the leaves by
+`[State, trans, State]`, with `trans: State -> Event -> State`. Both evaluate
+to the events on some transition; cost 4 becomes zero. For
+`lts/...GTGqqEHPniMaebYx2_inv5` the two sides of an equality each contain that
+reassociation with `s1` and `s2`, explaining the Fast cost 8.
+
+This is not unrestricted associativity of Alloy JOIN. A unary middle operand
+can make the two associations contract different coordinates. Order is never
+discarded, and the concrete type/association checks are essential. No global
+"all JOINs are AC" rule is implied by these three successes.
+
+### One Binder Case: Grouping As Well As Alpha-Renaming
+
+In `lts/...viZeRLo7kTSfXQ6zE_inv4`, compare:
+
+```alloy
+{ x: State, y: State | some e: Event | x->e->y in trans }
+{ s1,s2: State       | some e: Event | s1->e->s2 in trans }
+```
+
+Both denote `{(a,b) | exists e: Event. (a,e,b) in trans}`. The surrounding
+let is beta-reduced in both inputs, and the closure and reachability condition
+are otherwise identical. The Fast matrix still has two `DECLROOT` children
+versus one multi-variable `DECLROOT`, plus different local variable names.
+These matrix-local comprehension bindings are not the outer prenex tuple
+alignment problem; the Fast cost is 5.
+
+`buildLocalBinder` extracts an ordered coordinate for each variable with its
+domain, multiplicity, quantifier, type, and disjointness class. Declaration
+packaging disappears, and corresponding usages resolve to those coordinates.
+For a comprehension, `localBinderPlan` uses a separate exchange class for each
+result column: it does **not** freely swap the two columns. The valid mapping
+is coherently `x -> s1`, `y -> s2`, `e -> e`. This grouping normalization plus
+scoped alpha-equivalence produces the shared certified observation.
+
+### Implementation Anchors
+
+- Fast identity and duplicate removal:
+  `core/EGraphNode.java`, `invocationKey`, `appendSemanticHead`,
+  `removeDuplicateInvocations`.
+- Fast matrix cost:
+  `core/CanonicalDistance.java`, `EGraphDistanceContext.distance` and
+  `unorderedChildDistance`; assignment remains exact over retained operands.
+- Certified operation and Set construction:
+  `theory/TheoryAlloyAdapter.java`, `constructNode`, `semanticHead`,
+  `constructCertifiedFlatOperand`, `mirrorCertifiedSetPartitionsToRepairMatrices`.
+- JOIN association witness: `theory/DependentChainApplication.java`;
+  adapter `constructDependentChainOperand` and the metric's
+  `RepairProjection.projectDependentChain`.
+- Binder grouping: adapter `buildLocalBinder` and `localBinderPlan`;
+  `RepairProjection` consumes the certified local descriptors.
+
+These observations also explain why the new untyped-versus-typed **slotted
+baseline** arm cannot alone explain the fourteen gains. That controlled arm
+changes slot type colors, not unary-constructor normalization, dependent JOIN
+proofs, or the integrated local-binder representation.
 
 ## Historical Ten Fast-Rewrite-Only Incorrect Nearest-Truth Zeroes
 
