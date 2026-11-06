@@ -17,15 +17,15 @@ import run_next_obligation_repairs as runner
 
 
 HERE = Path(__file__).resolve().parent
-PIN = "leanprover/lean4:v4.33.0"
-VERSION = "Lean (version 4.33.0, x86_64-unknown-linux-gnu, Release)\n"
+PIN = "leanprover/lean4:v4.35.0"
+VERSION = "Lean (version 4.35.0, x86_64-unknown-linux-gnu, Release)\n"
 PROOF = "namespace Example\ntheorem valid : True := by trivial\n#print axioms valid\nend Example\n"
 REPLAY = "theorem replay : True := by trivial\n#print axioms replay\n"
 
 
 def configuration():
     return {
-        "schemaVersion": 1, "leanVersion": "4.33.0", "requiredCleanBuilds": 2, "timeoutSeconds": 30,
+        "schemaVersion": 1, "leanVersion": "4.35.0", "requiredCleanBuilds": 2, "timeoutSeconds": 30,
         "networkDuringVerification": False,
         "statusPolicy": {"unresolvedIsBlocking": True, "manualOverrideAllowed": False},
         "trusted": ["Lean kernel", "javac/JVM 17", "Python, SHA-256, OS, hardware"],
@@ -260,21 +260,21 @@ class PinAndCommandTests(unittest.TestCase):
             env = {"ELAN_HOME": str(home), "LEAN_BIN": str(home / "bin/lean")}
             with self.assertRaises(FileNotFoundError):
                 runner.lean_executable(env)
-            write(home / "toolchains/leanprover--lean4---v4.33.0/bin/lean", "installed")
+            write(home / "toolchains/leanprover--lean4---v4.35.0/bin/lean", "installed")
             self.assertEqual(runner.lean_executable(env), str(home / "bin/lean"))
 
     def test_explicit_pin_overrides_absent_or_conflicting_default(self):
         for environment in ({}, {"ELAN_TOOLCHAIN": "stable"}, {"ELAN_TOOLCHAIN": "leanprover/lean4:v4.33.1"}):
             original = dict(environment)
-            self.assertEqual(runner.pinned_lean_environment(environment, PIN + "\n", "4.33.0")["ELAN_TOOLCHAIN"], PIN)
+            self.assertEqual(runner.pinned_lean_environment(environment, PIN + "\n", "4.35.0")["ELAN_TOOLCHAIN"], PIN)
             self.assertEqual(environment, original)
         for pin in ("", "stable", "leanprover/lean4:v4.33.1"):
             with self.assertRaises(runner.Blocked):
-                runner.pinned_lean_environment({}, pin, "4.33.0")
+                runner.pinned_lean_environment({}, pin, "4.35.0")
 
     def test_real_elan_with_no_default_in_isolated_directory(self):
         home = Path(os.environ.get("ELAN_HOME", str(Path.home() / ".elan")))
-        installed = home / "toolchains/leanprover--lean4---v4.33.0"
+        installed = home / "toolchains/leanprover--lean4---v4.35.0"
         shim = home / "bin/lean"
         if not installed.is_dir() or not shim.is_file():
             self.skipTest("installed pinned elan toolchain unavailable; never download during tests")
@@ -288,11 +288,11 @@ class PinAndCommandTests(unittest.TestCase):
             env.pop("LEAN_PATH", None)
             absent = subprocess.run([str(shim), "--version"], cwd=formal, env=env, capture_output=True, timeout=15)
             self.assertNotEqual(absent.returncode, 0)
-            env = runner.pinned_lean_environment(env, PIN, "4.33.0")
+            env = runner.pinned_lean_environment(env, PIN, "4.35.0")
             pinned = subprocess.run([str(shim), "--version"], cwd=formal, env=env, capture_output=True,
                                     text=True, timeout=15)
             self.assertEqual(pinned.returncode, 0, pinned.stderr)
-            self.assertIn("version 4.33.0,", pinned.stdout)
+            self.assertIn("version 4.35.0,", pinned.stdout)
             self.assertFalse((formal / "lean-toolchain").exists())
 
     def test_command_rejections_and_infrastructure_logs(self):

@@ -148,7 +148,7 @@ def live(output):
     root_hash = hashlib.sha256(manifest.encode()).hexdigest()
     (output/"manifest.json").write_text(manifest)
     report = {"kind": "standalone-area-tests-not-shared-closure", "inputRootHash": root_hash,
-              "builds": [], "commands": [], "trusted": ["Lean 4.33.0 kernel and standard axioms", "JDK17/JVM/javac",
+              "builds": [], "commands": [], "trusted": ["Lean 4.35.0 kernel and standard axioms", "JDK17/JVM/javac",
               "Python and bridge encoder", "JSON library", "OS/filesystem/hardware", "SHA256 collision resistance"],
               "excluded": ["universal JVM/byte-parser refinement", "publication authority", "parent ledger discharge"]}
     env = dict(os.environ, ELAN_TOOLCHAIN=(ROOT/"lean-toolchain").read_text().strip(), PYTHONDONTWRITEBYTECODE="1")

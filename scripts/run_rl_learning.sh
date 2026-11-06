@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
-PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu130/bin/python"}
+PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu132-py312/bin/python"}
 WORK=$(mktemp -d "${TMPDIR:-/tmp}/acgn-rl-learning-build.XXXXXXXX")
 trap 'rm -rf -- "$WORK"' EXIT
 lean -o "$WORK/RepairKernel.olean" "$ROOT/docs/rl-repair/formal/RepairKernel.lean"

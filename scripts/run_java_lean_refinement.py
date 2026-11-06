@@ -250,7 +250,7 @@ def run(root: Path, output: Path) -> int:
         if lean is None:
             raise OSError("Lean is not installed")
         lean_version = command("lean-version", [lean, "--version"], root).read_text().strip()
-        if not lean_version.startswith("Lean (version 4.33.0,") or (root / "lean-toolchain").read_text().strip() != "leanprover/lean4:v4.33.0":
+        if not lean_version.startswith("Lean (version 4.35.0,") or (root / "lean-toolchain").read_text().strip() != "leanprover/lean4:v4.35.0":
             raise Blocked("Lean toolchain mismatch")
         report["environment"] = {"lean": lean_version, "python": sys.version,
             "java": command("java-version", ["java", "-version"], root).read_text().strip(),

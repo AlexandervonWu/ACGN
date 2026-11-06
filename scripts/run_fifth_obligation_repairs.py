@@ -21,7 +21,7 @@ from fifth_obligation_replays import AREAS
 PACKAGE = Path("docs/obligation-repair/fifth-five")
 CONFIG = PACKAGE / "closure-config.json"
 PLUGIN = "scripts/fifth_obligation_replays.py"
-BASE_SHA256 = "d3006d1b0e093cd7fc5e9c277c19a36e0828329dc6c4f3cacff7201ef8c48f55"
+BASE_SHA256 = "fabcf1617e8d6b4aad4f677c42ba06a4a8c953c2b200247ecf180d0527ca731f"
 PARENT_HASHES = {
     "P3-04": "3991aa4c4db10ffcd0bcc1bc0197fda0b30377e422d4804b44dd05fd89bdab89",
     "P3-05": "55424471ff9ad348d3c3603257809bba4b768fcf53a389c5cb7c799e490ab620",

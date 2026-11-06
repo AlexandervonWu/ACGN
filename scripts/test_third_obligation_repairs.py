@@ -186,7 +186,7 @@ end Outer
     def test_pinned_lean_works_without_an_elan_default_and_missing_pin_is_offline(self):
         runner = profile.load_runner()
         home = Path(os.environ.get("ELAN_HOME", str(Path.home() / ".elan")))
-        installed = home / "toolchains/leanprover--lean4---v4.33.0/bin/lean"
+        installed = home / "toolchains/leanprover--lean4---v4.35.0/bin/lean"
         with tempfile.TemporaryDirectory() as directory:
             temp = Path(directory)
             shim = temp / "elan"
@@ -194,16 +194,16 @@ end Outer
             link = temp / "lean"
             link.symlink_to(shim)
             env = runner.pinned_lean_environment(dict(os.environ, ELAN_HOME=str(temp), LEAN_BIN=str(link),
-                                                    ELAN_TOOLCHAIN="wrong-default"), PIN + "\n", "4.33.0")
+                                                    ELAN_TOOLCHAIN="wrong-default"), PIN + "\n", "4.35.0")
             self.assertEqual(env["ELAN_TOOLCHAIN"], PIN)
             with self.assertRaises(FileNotFoundError):
                 runner.lean_executable(env)
             if not installed.is_file():
-                self.skipTest("real Lean smoke requires the offline installed 4.33.0 toolchain")
+                self.skipTest("real Lean smoke requires the offline installed 4.35.0 toolchain")
             env["LEAN_BIN"] = str(installed)
             lean = runner.lean_executable(env)
             version = REAL_RUN([lean, "--version"], cwd=temp, env=env, capture_output=True, text=True, check=True)
-            self.assertTrue(version.stdout.startswith("Lean (version 4.33.0,"))
+            self.assertTrue(version.stdout.startswith("Lean (version 4.35.0,"))
             for number in (1, 2):
                 build = temp / str(number)
                 write(build / "Smoke.lean", theorem("Smoke"))
@@ -567,7 +567,7 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(report["commands"][-1]["status"], "BLOCKED")
 
     def test_real_lean_panic_cannot_support_a_control_pass(self):
-        lean = Path.home() / ".elan/toolchains/leanprover--lean4---v4.33.0/bin/lean"
+        lean = Path.home() / ".elan/toolchains/leanprover--lean4---v4.35.0/bin/lean"
         if not lean.is_file():
             self.skipTest("offline pinned Lean unavailable; closure requires it separately")
         path = self.root / "scripts" / replay.AREAS[0]["plugin"]

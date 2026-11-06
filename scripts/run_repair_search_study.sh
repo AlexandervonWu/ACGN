@@ -2,7 +2,7 @@
 set -euo pipefail
 ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 OUT=${1:?Pass a new absolute output directory}
-PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu130/bin/python"}
+PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu132-py312/bin/python"}
 TRAIN_PYTHON=/home/augustus/AIx/.venv-finetune/bin/python
 [[ "$OUT" = /* && ! -e "$OUT" ]] || { printf '%s\n' 'Use a new absolute output directory' >&2; exit 2; }
 mkdir -p "$OUT/classes"

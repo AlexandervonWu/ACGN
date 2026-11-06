@@ -23,7 +23,7 @@ from third_obligation_replays import AREAS
 PACKAGE = Path("docs/obligation-repair/third-five")
 CONFIG = PACKAGE / "closure-config.json"
 PLUGIN = "scripts/third_obligation_replays.py"
-BASE_SHA256 = "d3006d1b0e093cd7fc5e9c277c19a36e0828329dc6c4f3cacff7201ef8c48f55"
+BASE_SHA256 = "fabcf1617e8d6b4aad4f677c42ba06a4a8c953c2b200247ecf180d0527ca731f"
 PARENT_HASHES = {
     "P1-06": "30fb21fcb2a524cc57aa6a240c4380ce349da552b012527be9e41ff988e810f9",
     "P1-09": "88fab51f179dd66df7b0703a9e3d93dac32ffde6432e699709e6ce3ab9bb02d3",

@@ -1,0 +1,30 @@
+{
+  "schema": "slot-binding-stress-v1",
+  "observedNativeOperators": [
+    "binary:IN",
+    "binary:INTERSECT",
+    "binary:JOIN",
+    "binary:RELEASES",
+    "binary:UNTIL",
+    "list:AND",
+    "quantifier:ALL",
+    "unary:NOOP",
+    "unary:ONEOF",
+    "unary:SOME"
+  ],
+  "alloyVersion": "6.2.0.202503101506",
+  "failures": 0,
+  "checkedPairs": 1,
+  "alloyBuild": 1741619181150,
+  "repositoryAstAdapterChecked": false,
+  "rows": [{
+    "path": "probes/future_binary/generated_stress1017.als",
+    "counterexample": false,
+    "success": true,
+    "solverCheck": "bounded",
+    "parsed": true,
+    "astDifferent": true,
+    "outerBindings": 4
+  }],
+  "datasetHash": "5ea708c3968f2b6a2219cf24663e3a7c700db9cb417bff517fc463d2e1299af8"
+}

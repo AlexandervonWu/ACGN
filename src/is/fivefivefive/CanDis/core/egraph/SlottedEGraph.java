@@ -98,7 +98,7 @@ public final class SlottedEGraph implements AblationEngine {
     }
 
     private static final class Core {
-        private static final int MAX_GROUP_SIZE = 720;
+        private static final int MAX_GROUP_SIZE = 40_320; // 8!
 
         private final List<EClass> classes = new ArrayList<>();
         private final List<Integer> parents = new ArrayList<>();

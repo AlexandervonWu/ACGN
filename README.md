@@ -563,15 +563,21 @@ The reusable `CanDis.core` and `CanDis.core.egraph` packages depend only on
 - Bash and standard Linux utilities for the supplied scripts.
 - GNU `/usr/bin/time` for process-level ablation timing.
 - Python 3 and Matplotlib only when regenerating plots.
-- Node.js 18 or newer and npm only when developing or building the optional
+- Node.js 26.13.0 LTS (minimum 22.12) and npm only when developing or building the optional
   web explorer; the deployed frontend is static and does not require Node.js.
 - Dependency JARs under repository-root `lib/`; there is no Maven or Gradle
   build file.
+- Lean 4.35.0 via the checked-in `lean-toolchain`; Alloy 6.2.0 via `lib/alloy.jar`.
+- Optional GPU learning: Python 3.12+, PyTorch 2.15.0 and its matched CUDA 13.2
+  dependencies, installed with `scripts/setup_rl_cuda.sh`.
 - Git LFS for the publication `distances.json` and augmented `index.json`
   payloads.
 
 Commands below assume a Unix classpath separator and run from the repository
 root.
+
+The [November dependency refresh](docs/dependency-refresh-2026-11.md) records
+compatibility changes, bounded checks, and the distinction from archived results.
 
 After cloning, materialize and verify the publication snapshot before using
 its pair-level JSON data:

@@ -37,6 +37,18 @@ semantic-completeness or certification claim.
 
 ## Reproduction
 
+The [efficiency protocol](efficiency-protocol.md) defines paired repetitions,
+phase timers, cap accounting, watchdogs, and separate latency/throughput studies.
+It explicitly distinguishes current runner features from instrumentation still
+to be implemented. Both slotted permutation limits are now 40,320 (8!), rather
+than 720; larger and multi-block searches remain bounded. Historical smoke
+results below used the former budget and must not be pooled with new runs.
+
+For long mixed-type and temporal binding edge cases, use the new
+[500-predicate synthetic stress corpus](../../synthetic-data/slot-binding-stress/README.md).
+It includes deterministic generation, native Alloy 6.2 and bundled-parser
+validation, reduced solver probes, and commands for the same paired arms.
+
 Use a fresh output directory, leaving published snapshots untouched:
 
 ```sh
@@ -50,6 +62,12 @@ the paired report. Both arm manifests retain the common dataset, source,
 resource configuration, and generated-output hashes.
 
 ## Bounded Validation
+
+Pre-run 8! update: the focused suite now passes **31 checks**, including parsed
+eight-binding reversal witnesses under both typed and erased alpha alignment,
+plus the existing e-graph ablation suite and all eight Lean lemmas. This validates
+the larger search budget, not its full-corpus performance. No timed stress run
+has been performed with this budget.
 
 `./scripts/run_slot_typing_ablation_tests.sh` checks all eight Lean lemmas,
 compiles the Java sources, runs 28 new slot-typing checks (including parsed

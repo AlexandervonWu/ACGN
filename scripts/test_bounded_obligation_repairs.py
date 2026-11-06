@@ -12,16 +12,16 @@ from run_bounded_obligation_repairs import (
 
 class PolicyMappingTest(unittest.TestCase):
     def test_toolchain_pin_across_working_directories(self):
-        pin = "leanprover/lean4:v4.33.0"
+        pin = "leanprover/lean4:v4.35.0"
         for old in ({}, {"ELAN_TOOLCHAIN": "leanprover/lean4:stable"},
                     {"ELAN_TOOLCHAIN": "leanprover/lean4:v4.33.1", "PATH": "/test/bin"}):
             original = dict(old)
-            result = pinned_lean_environment(old, pin + "\n", "4.33.0")
+            result = pinned_lean_environment(old, pin + "\n", "4.35.0")
             self.assertEqual(result, dict(old, ELAN_TOOLCHAIN=pin))
             self.assertEqual(old, original)
         for bad in ("", "leanprover/lean4:stable", "leanprover/lean4:v4.33.1"):
             with self.assertRaises(Blocked):
-                pinned_lean_environment({}, bad, "4.33.0")
+                pinned_lean_environment({}, bad, "4.35.0")
 
     def test_builtin_codec(self):
         rows = []

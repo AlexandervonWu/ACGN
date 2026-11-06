@@ -5,7 +5,7 @@ export LC_ALL=C
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CATALOG="$ROOT/docs/section3-repair-audit/rewrite-rule-traceability.tsv"
-EXPECTED_TOOLCHAIN="leanprover/lean4:v4.33.0"
+EXPECTED_TOOLCHAIN="leanprover/lean4:v4.35.0"
 
 if ! command -v grep >/dev/null 2>&1; then
   printf 'grep is required for fail-closed proof-escape scanning\n' >&2
@@ -32,7 +32,7 @@ if [[ -z "$lean_bin" || ! -x "$lean_bin" ]]; then
   exit 1
 fi
 lean_version="$("$lean_bin" --version | head -n 1)"
-if [[ "$lean_version" != "Lean (version 4.33.0,"* ]]; then
+if [[ "$lean_version" != "Lean (version 4.35.0,"* ]]; then
   printf 'unexpected Lean executable: %s\n' "$lean_version" >&2
   exit 1
 fi

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "profile": "third-five-v1",
-  "leanVersion": "4.33.0",
+  "leanVersion": "4.35.0",
   "timeoutSeconds": 300,
   "requiredCleanBuilds": 2,
   "proofDependencies": [
@@ -288,7 +288,7 @@
     }
   ],
   "trusted": [
-    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "Lean 4.35.0 kernel; only propext, Quot.sound and Classical.choice",
     "javac/JVM 17 and Java standard-library contracts",
     "Git deterministic commits in isolated frozen snapshots for TEST_ONLY certificate provenance, never workspace, release or experiment provenance",
     "Pinned v2.13 engine, counted profile adapter, hashed area plugins and compiler extractors; tested, not Lean-verified",

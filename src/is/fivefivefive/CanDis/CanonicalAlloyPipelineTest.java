@@ -1867,7 +1867,7 @@ public final class CanonicalAlloyPipelineTest {
 
         edu.mit.csail.sdg.translator.A4Options options =
                 new edu.mit.csail.sdg.translator.A4Options();
-        options.solver = edu.mit.csail.sdg.translator.A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         List<edu.mit.csail.sdg.ast.Command> commands = module.getAllCommands();
         for (int index = 0; index < commands.size(); index++) {
             edu.mit.csail.sdg.translator.A4Solution result =
@@ -1953,7 +1953,7 @@ public final class CanonicalAlloyPipelineTest {
 
         edu.mit.csail.sdg.translator.A4Options options =
                 new edu.mit.csail.sdg.translator.A4Options();
-        options.solver = edu.mit.csail.sdg.translator.A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         List<edu.mit.csail.sdg.ast.Command> commands = module.getAllCommands();
         for (int index = 0; index < commands.size(); index++) {
             edu.mit.csail.sdg.translator.A4Solution result =
@@ -2885,7 +2885,7 @@ public final class CanonicalAlloyPipelineTest {
 
         edu.mit.csail.sdg.translator.A4Options options =
                 new edu.mit.csail.sdg.translator.A4Options();
-        options.solver = edu.mit.csail.sdg.translator.A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         List<edu.mit.csail.sdg.ast.Command> commands = module.getAllCommands();
         for (int index = 0; index < commands.size(); index++) {
             edu.mit.csail.sdg.translator.A4Solution result =
@@ -3420,7 +3420,7 @@ public final class CanonicalAlloyPipelineTest {
                         ExactAlloyType.from(componentType)));
 
         PrimSig syntheticParent = new PrimSig("SyntheticParent");
-        PrimSig syntheticChild = new PrimSig("SyntheticChild", syntheticParent);
+        PrimSig syntheticChild = new PrimSig(null, "SyntheticChild", edu.mit.csail.sdg.alloy4.Pos.UNKNOWN, syntheticParent);
         ExactAlloyType synthetic = ExactAlloyType.from(syntheticChild.type());
         check(!synthetic.hasParserAuthenticatedAncestry(),
                 "public PrimSig constructors must not mint parser ancestry authority");
@@ -3429,7 +3429,9 @@ public final class CanonicalAlloyPipelineTest {
 
         PrimSig parsedComponent = componentType.iterator().next().get(0);
         PrimSig transplanted = new PrimSig(
+                null,
                 "TransplantedChild",
+                edu.mit.csail.sdg.alloy4.Pos.UNKNOWN,
                 syntheticParent,
                 parsedComponent.attributes.toArray(new Attr[0]));
         ExactAlloyType transplantedType = ExactAlloyType.fromParser(

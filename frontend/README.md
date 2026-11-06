@@ -23,7 +23,7 @@ Graph construction is bounded before React Flow receives any nodes. The default 
 
 ## Requirements
 
-- Node.js 18 or newer for development and builds
+- Node.js 26.13.0 LTS for development and builds (pinned in `.node-version`; minimum 22.12)
 - npm 9 or newer
 - Java 17 or newer for live Alloy parsing and certified e-graph analysis
 - A current Chromium, Firefox, or Edge browser

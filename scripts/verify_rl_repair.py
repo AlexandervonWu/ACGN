@@ -113,7 +113,7 @@ def main():
         tools["python"] = {"path": sys.executable, "version": sys.version,
                            "executableHash": digest(Path(sys.executable).resolve())}
         tools["os"] = platform.platform()
-        require("4.33.0" in tools["lean"]["version"], "UNDECLARED_DEPENDENCY: Lean version")
+        require("4.35.0" in tools["lean"]["version"], "UNDECLARED_DEPENDENCY: Lean version")
         require(re.search(r'\b17[.\s]', tools["javac"]["version"]), "UNDECLARED_DEPENDENCY: javac version")
         require(re.search(r'version "17[.\"]', tools["java"]["version"]), "UNDECLARED_DEPENDENCY: JVM version")
         require(len(registry) == len(claims["claims"]) == 6, "Ambiguous verifier/claim registry")

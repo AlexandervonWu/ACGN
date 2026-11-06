@@ -156,7 +156,7 @@ public final class FastRewriteParityTest {
     private static boolean counterexample(CompModule module) throws Exception {
         Command command = module.getAllCommands().stream().filter(c -> c.check).findFirst().orElseThrow();
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         return TranslateAlloyToKodkod.execute_command(A4Reporter.NOP,
                 module.getAllReachableSigs(), command, options).satisfiable();
     }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 /** Canonicalizes slot names modulo alpha-renaming and declaration-group permutations. */
 final class SlotCanonicalizer {
-    private static final int MAX_PERMUTATIONS = 720;
+    private static final int MAX_PERMUTATIONS = 40_320; // 8!
     private static final Set<String> COMMUTATIVE_HEADS = Set.of(
             "BF/AND", "LF/AND", "BOOL/AND",
             "BF/OR", "LF/OR", "BOOL/OR",

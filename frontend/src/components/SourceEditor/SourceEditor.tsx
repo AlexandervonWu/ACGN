@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Editor, { type BeforeMount, type Monaco, type OnMount } from "@monaco-editor/react";
-import type { editor } from "monaco-editor/esm/vs/editor/editor.api";
+import type { editor } from "monaco-editor/editor/editor.api.js";
 import { FileUp } from "lucide-react";
 import type { Diagnostic, SourceMapping } from "../../api/types";
 import {
@@ -32,7 +32,7 @@ interface SourceEditorProps {
 }
 
 const configureAlloy: BeforeMount = (monaco) => {
-  if (!monaco.languages.getLanguages().some((language) => language.id === "alloy")) {
+  if (!monaco.languages.getLanguages().some((language: { id: string }) => language.id === "alloy")) {
     monaco.languages.register({ id: "alloy", extensions: [".als"] });
     monaco.languages.setMonarchTokensProvider("alloy", {
       keywords: [
@@ -101,9 +101,9 @@ export function SourceEditor({
   onMappingsSelected,
   onMappingSelected,
 }: SourceEditorProps) {
-  const editorRef = useRef<editor.IStandaloneCodeEditor>();
-  const monacoRef = useRef<Monaco>();
-  const decorationsRef = useRef<editor.IEditorDecorationsCollection>();
+  const editorRef = useRef<editor.IStandaloneCodeEditor | undefined>(undefined);
+  const monacoRef = useRef<Monaco | undefined>(undefined);
+  const decorationsRef = useRef<editor.IEditorDecorationsCollection | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const analyzeRef = useRef(onAnalyze);
   const [runtimeState, setRuntimeState] = useState<"loading" | "ready" | "error">(

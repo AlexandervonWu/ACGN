@@ -75,7 +75,23 @@ public final class SlotTypingAblationTest {
         }
         check(new SlottedEGraph(true).compare(AlloyTerm.node("BF/AND", f, f), f).equivalent,
                 "typed ACI duplicate elimination");
+        checkEightBindingPermutation();
         System.out.println("SlotTypingAblationTest: " + checks + " checks passed");
+    }
+
+    private static void checkEightBindingPermutation() throws Exception {
+        List<Predicate> predicates = new ArrayList<>();
+        collect(new ModelUnit(null, CompUtil.parseEverything_fromString(A4Reporter.NOP,
+                "sig A {} one sig Store { r: A->A->A->A->A->A->A->A }\n"
+                + "pred p { all a,b,c,d,e,f,g,h:A | a->b->c->d->e->f->g->h in Store.r }\n"
+                + "pred q { all a,b,c,d,e,f,g,h:A | h->g->f->e->d->c->b->a in Store.r }\n")), predicates);
+        AlloyTerm left = term(predicates, "p"), right = term(predicates, "q");
+        check(!left.equals(right), "eight-binding witness is structurally distinct");
+        check(SlottedEGraph.alphaRepresentative(left).equals(SlottedEGraph.alphaRepresentative(right)),
+                "typed eight-binding reversal beyond the former 720-candidate prefix");
+        check(SlottedEGraph.alphaRepresentative(left.eraseSlotTypes()).equals(
+                        SlottedEGraph.alphaRepresentative(right.eraseSlotTypes())),
+                "untyped eight-binding reversal beyond the former 720-candidate prefix");
     }
 
     private static boolean allSlotsTyped(AlloyTerm term) {

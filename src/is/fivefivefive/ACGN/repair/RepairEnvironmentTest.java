@@ -173,7 +173,7 @@ public final class RepairEnvironmentTest {
         Expr mismatch = CompUtil.parseOneExpression_fromString(module, "not (candidate[] iff oracle[])");
         Command command = module.getAllCommands().get(0).change(module.getAllReachableFacts().and(mismatch));
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         var solution = TranslateAlloyToKodkod.execute_command(A4Reporter.NOP, module.getAllReachableSigs(), command, options);
         check(solution != null, "Solver must return an actual result");
         return solution.satisfiable();

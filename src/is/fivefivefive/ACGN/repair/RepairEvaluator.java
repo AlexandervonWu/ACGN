@@ -272,7 +272,7 @@ public final class RepairEvaluator {
 
     private A4Solution solve(Expr expression) {
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         solverCalls++;
         A4Solution solution = TranslateAlloyToKodkod.execute_command(A4Reporter.NOP,
                 model.module().getAllReachableSigs(), model.command().change(expression), options);

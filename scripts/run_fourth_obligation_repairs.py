@@ -21,7 +21,7 @@ from fourth_obligation_replays import AREAS
 PACKAGE = Path("docs/obligation-repair/fourth-five")
 CONFIG = PACKAGE / "closure-config.json"
 PLUGIN = "scripts/fourth_obligation_replays.py"
-BASE_SHA256 = "d3006d1b0e093cd7fc5e9c277c19a36e0828329dc6c4f3cacff7201ef8c48f55"
+BASE_SHA256 = "fabcf1617e8d6b4aad4f677c42ba06a4a8c953c2b200247ecf180d0527ca731f"
 PARENT_HASHES = {
     "P2-20": "96b8ce07afc0aad611a36396786a36cd235e5c553f40611962d168721e70b936",
     "P2-18": "4dff4190a5709dd2253c47a941bd934e2b276bd595b7d9a4a581fd647b772735",

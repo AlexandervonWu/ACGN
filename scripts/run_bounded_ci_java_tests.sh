@@ -23,6 +23,7 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
 
 tests=(
+  is.fivefivefive.CanDis.DependencyCompatibilityTest
   is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
   is.fivefivefive.CanDis.assurance.ContractDecompositionTest
   is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest

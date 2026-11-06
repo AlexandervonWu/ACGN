@@ -79,7 +79,7 @@ export function App() {
   const [comparisonTarget, setComparisonTarget] = useState<string>();
   const [comparison, setComparison] = useState<CallableComparison>();
   const [analysisError, setAnalysisError] = useState<unknown>();
-  const abortRef = useRef<AbortController>();
+  const abortRef = useRef<AbortController | undefined>(undefined);
   const queryClient = useQueryClient();
   const debouncedModel = useDebouncedValue(model, 450);
 

@@ -1,6 +1,6 @@
 import { loader } from "@monaco-editor/react";
-import * as monaco from "monaco-editor/esm/vs/editor/editor.api";
-import EditorWorker from "monaco-editor/esm/vs/editor/editor.worker?worker";
+import * as monaco from "monaco-editor/editor/editor.api.js";
+import EditorWorker from "monaco-editor/editor/editor.worker.js?worker";
 
 let configured = false;
 

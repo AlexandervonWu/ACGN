@@ -184,7 +184,7 @@ public final class RepairTask {
         }
         scan(selected.getBody(), forbidden, new HashSet<>(), 0);
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         SemanticProfile selectedProfile = AlloySemanticProfileFactory.fromExactlyOne(
                 module, List.of(command), options);
         return new Parsed(module, selected, selectedProfile);

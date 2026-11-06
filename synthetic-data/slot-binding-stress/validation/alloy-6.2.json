@@ -1,0 +1,1815 @@
+{
+  "schema": "slot-binding-stress-v1",
+  "observedNativeOperators": [
+    "binary:ARROW",
+    "binary:DOMAIN",
+    "binary:EQUALS",
+    "binary:GTE",
+    "binary:IFF",
+    "binary:IMPLIES",
+    "binary:IN",
+    "binary:INTERSECT",
+    "binary:ISSEQ_ARROW_LONE",
+    "binary:JOIN",
+    "binary:MINUS",
+    "binary:PLUS",
+    "binary:PLUSPLUS",
+    "binary:RANGE",
+    "binary:RELEASES",
+    "binary:SINCE",
+    "binary:TRIGGERED",
+    "binary:UNTIL",
+    "call",
+    "constant:IDEN",
+    "constant:NUMBER",
+    "ite",
+    "let",
+    "list:AND",
+    "list:OR",
+    "quantifier:ALL",
+    "quantifier:COMPREHENSION",
+    "quantifier:LONE",
+    "quantifier:NO",
+    "quantifier:ONE",
+    "quantifier:SOME",
+    "quantifier:SUM",
+    "unary:AFTER",
+    "unary:ALWAYS",
+    "unary:BEFORE",
+    "unary:CARDINALITY",
+    "unary:CAST2INT",
+    "unary:CAST2SIGINT",
+    "unary:CLOSURE",
+    "unary:EVENTUALLY",
+    "unary:HISTORICALLY",
+    "unary:LONEOF",
+    "unary:NO",
+    "unary:NOOP",
+    "unary:NOT",
+    "unary:ONCE",
+    "unary:ONEOF",
+    "unary:PRIME",
+    "unary:RCLOSURE",
+    "unary:SETOF",
+    "unary:SOME",
+    "unary:TRANSPOSE"
+  ],
+  "alloyVersion": "6.2.0.202503101506",
+  "failures": 0,
+  "checkedPairs": 250,
+  "alloyBuild": 1741619181150,
+  "repositoryAstAdapterChecked": false,
+  "rows": [
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0000.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0001.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0002.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0003.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0004.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0005.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0006.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0007.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0008.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/homogeneous_alpha/CORRECT/generated_stress0009.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0010.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0011.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0012.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0013.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0014.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0015.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0016.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0017.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0018.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/heterogeneous_alpha/CORRECT/generated_stress0019.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0020.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0021.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0022.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0023.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0024.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0025.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0026.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0027.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0028.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/same_type_permutation/CORRECT/generated_stress0029.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0030.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0031.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0032.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0033.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0034.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0035.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0036.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0037.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0038.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/declaration_grouping/CORRECT/generated_stress0039.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0040.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0041.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0042.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0043.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0044.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0045.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0046.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0047.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0048.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/independent_block_exchange/CORRECT/generated_stress0049.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0050.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0051.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0052.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0053.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0054.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0055.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0056.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0057.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0058.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_stress0059.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0060.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0061.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0062.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0063.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0064.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0065.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0066.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0067.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0068.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/implication/CORRECT/generated_stress0069.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0070.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0071.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0072.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0073.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0074.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0075.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0076.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0077.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0078.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/iff/CORRECT/generated_stress0079.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0080.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0081.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0082.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0083.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0084.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0085.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0086.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0087.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0088.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/conditional/CORRECT/generated_stress0089.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0090.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0091.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0092.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0093.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0094.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0095.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0096.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0097.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0098.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/let_beta/CORRECT/generated_stress0099.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0100.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0101.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0102.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0103.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0104.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0105.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0106.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0107.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0108.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/function_inline/CORRECT/generated_stress0109.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0110.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0111.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0112.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0113.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0114.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0115.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0116.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0117.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0118.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/relational_algebra/CORRECT/generated_stress0119.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0120.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0121.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0122.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0123.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0124.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0125.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0126.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0127.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0128.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/comprehension/CORRECT/generated_stress0129.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0130.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0131.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0132.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0133.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0134.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0135.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0136.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0137.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0138.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/cardinality_quantifiers/CORRECT/generated_stress0139.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0140.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0141.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0142.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0143.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0144.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0145.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0146.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0147.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0148.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/integer_sequence/CORRECT/generated_stress0149.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0150.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0151.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0152.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0153.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0154.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0155.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0156.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0157.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0158.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/future_unary/CORRECT/generated_stress0159.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0160.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0161.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0162.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0163.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0164.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0165.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0166.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0167.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0168.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/past_unary/CORRECT/generated_stress0169.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0170.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0171.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0172.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0173.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0174.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0175.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0176.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0177.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0178.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/future_binary/CORRECT/generated_stress0179.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0180.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0181.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0182.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0183.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0184.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0185.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0186.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0187.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0188.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/past_binary/CORRECT/generated_stress0189.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0190.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0191.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0192.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0193.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0194.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0195.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0196.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0197.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0198.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/temporal_imports/CORRECT/generated_stress0199.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0200.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0201.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0202.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0203.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0204.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0205.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0206.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0207.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0208.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/dependent_shadowing/CORRECT/generated_stress0209.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0210.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0211.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0212.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0213.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0214.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0215.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0216.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0217.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0218.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/negative_cross_type/NEGATIVE/generated_stress0219.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0220.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0221.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0222.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0223.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0224.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0225.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0226.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0227.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0228.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/negative_disjoint_groups/NEGATIVE/generated_stress0229.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0230.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0231.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0232.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0233.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0234.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0235.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0236.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0237.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0238.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/negative_quantifier_order/NEGATIVE/generated_stress0239.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0240.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0241.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 16
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0242.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 32
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0243.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 64
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0244.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 96
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0245.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 128
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0246.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 160
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0247.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 192
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0248.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 224
+    },
+    {
+      "path": "models/negative_temporal_endpoint/NEGATIVE/generated_stress0249.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 256
+    }
+  ],
+  "datasetHash": "5ea708c3968f2b6a2219cf24663e3a7c700db9cb417bff517fc463d2e1299af8"
+}

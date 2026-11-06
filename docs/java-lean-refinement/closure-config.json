@@ -5,7 +5,7 @@
   "scope": "The compiler-extracted target-selection fragment of TypedENode.flatConstructCertified, and the enumerated production-certified Boolean construction traces.",
   "requiredCleanBuilds": 2,
   "javaRelease": 17,
-  "leanVersion": "4.33.0",
+  "leanVersion": "4.35.0",
   "timeoutSeconds": 300,
   "heap": "1g",
   "bounds": {"alphabetSize": 3, "maxLeaves": 4, "heads": ["AND", "OR"], "profiles": ["FORBID", "MODULAR"], "expectedRows": 2356, "expectedEmptyRejections": 4},
@@ -22,7 +22,7 @@
     {"id": "JDK", "description": "Javac's Java parsing, symbol resolution, compilation, JVM execution, and Java library contracts. This is a source-fragment refinement, not a verified whole-JVM semantics."},
     {"id": "EXTRACTOR", "description": "Hashed, compiler-resolved Java statement/effect extractor and typed execution probe. Their implementations are checked and mutation-tested, not proved in Lean."},
     {"id": "ENCODER", "description": "Hashed JSON-to-Lean literal encoder and finite source census; unsupported forms reject."},
-    {"id": "LEAN", "description": "Pinned Lean 4.33.0 kernel and standard library; only propext, Quot.sound, and Classical.choice are allowed in audited theorem dependencies."},
+    {"id": "LEAN", "description": "Pinned Lean 4.35.0 kernel and standard library; only propext, Quot.sound, and Classical.choice are allowed in audited theorem dependencies."},
     {"id": "PLATFORM", "description": "Python standard library, SHA-256, operating system, filesystem, and hardware."}
   ],
   "excluded": ["unbounded Java heap/loop refinement", "Alloy parser refinement", "unbounded flattenVisible and certificate-factory refinement", "production theory authority expansion", "source empty-form normalization before FlatApplication", "mixed-head sealing", "whole-corpus soundness"],

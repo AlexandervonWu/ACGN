@@ -1,0 +1,10 @@
+'SlotStress.alpha' does not depend on any axioms
+'SlotStress.exchange' does not depend on any axioms
+'SlotStress.conjunction' does not depend on any axioms
+'SlotStress.implication' depends on axioms: [propext, Classical.choice, Quot.sound]
+'SlotStress.iff_expansion' does not depend on any axioms
+'SlotStress.ite_expansion' depends on axioms: [propext]
+'SlotStress.beta' does not depend on any axioms
+'SlotStress.union_commute' does not depend on any axioms
+'SlotStress.context' does not depend on any axioms
+'SlotStress.context2' does not depend on any axioms

@@ -120,7 +120,7 @@ def run(root, output):
 
     command("reporting-tests", [sys.executable, "-B", "scripts/test_obligation_repair_reporting.py"])
     lean = command("lean-version", ["lean", "--version"]).read_text()
-    if not lean.startswith("Lean (version 4.33.0,"):
+    if not lean.startswith("Lean (version 4.35.0,"):
         raise ValueError("the pinned Lean toolchain is required")
     command("compile", ["javac", "-J-Xmx256m", "--release", "17", "-encoding", "UTF-8",
                         "-d", str(classes), *map(str, SOURCES)])

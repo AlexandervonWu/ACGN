@@ -1,0 +1,2 @@
+6037cbeee0e8423c1c468447ed10f5fcf2f2743a2ffc39cb1c81f2905c0fdb9d  /home/augustus/.m2/repository/org/alloytools/org.alloytools.alloy.dist/6.2.0/org.alloytools.alloy.dist-6.2.0.jar
+ac0ee637172ed035a4ca43327d5e09c05990aa0d073887308e30f88c2471370c  /home/augustus/ACGN/lib/alloy.jar

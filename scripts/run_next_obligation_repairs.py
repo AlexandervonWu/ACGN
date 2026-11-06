@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the frozen v2.13 next-five package in exactly two clean builds.
 
-Config (JSON, duplicate keys forbidden): schemaVersion=1, leanVersion="4.33.0",
+Config (JSON, duplicate keys forbidden): schemaVersion=1, leanVersion="4.35.0",
 requiredCleanBuilds=2, timeoutSeconds, trusted/excluded/permittedNondeterminism
 string lists, networkDuringVerification=false, and statusPolicy containing
 unresolvedIsBlocking=true and manualOverrideAllowed=false. Exactly five phases
@@ -127,7 +127,7 @@ def validate_config(config):
     require(isinstance(config, dict), "config must be an object")
     require(type(config.get("schemaVersion")) is int and config["schemaVersion"] == 1,
             "unsupported schemaVersion")
-    require(config.get("leanVersion") == "4.33.0", "Lean must be explicitly pinned to 4.33.0")
+    require(config.get("leanVersion") == "4.35.0", "Lean must be explicitly pinned to 4.35.0")
     require(type(config.get("requiredCleanBuilds")) is int and config["requiredCleanBuilds"] == 2,
             "exactly two clean builds required")
     require(type(config.get("timeoutSeconds")) is int and 0 < config["timeoutSeconds"] <= 3600,
@@ -493,9 +493,9 @@ def lean_executable(environment):
     path = Path(shutil.which(selected) or selected).absolute()
     # Elan otherwise attempts a network installation when a pin is unavailable.
     if path.resolve().name == "elan":
-        installed = home / "toolchains/leanprover--lean4---v4.33.0/bin/lean"
+        installed = home / "toolchains/leanprover--lean4---v4.35.0/bin/lean"
         if not installed.is_file():
-            raise FileNotFoundError("offline pinned Lean 4.33.0 toolchain is not installed")
+            raise FileNotFoundError("offline pinned Lean 4.35.0 toolchain is not installed")
     return str(path)
 
 
@@ -764,7 +764,7 @@ def execute(root, output, config_path=CONFIG):
         lean = lean_executable(env)
         commands = Commands(output, report, env, config["timeoutSeconds"])
         version = commands.run("lean-version", [lean, "--version"], root).read_text(encoding="utf-8")
-        require(version.startswith("Lean (version 4.33.0,"), "Lean differs from frozen version", "UNDECLARED_DEPENDENCY")
+        require(version.startswith("Lean (version 4.35.0,"), "Lean differs from frozen version", "UNDECLARED_DEPENDENCY")
         for tool in ("java", "javac"):
             log = commands.run(tool + "-version", [tool, "-version"], root)
             report["environment"][tool] = log.read_text(encoding="utf-8").strip()

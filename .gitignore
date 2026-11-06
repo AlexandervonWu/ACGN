@@ -8,3 +8,6 @@ __pycache__/
 /build/
 /certificate-verifier/build/classes/
 /certificate-verifier/build/test-classes/
+node_modules/
+/frontend/dist/
+.lake/

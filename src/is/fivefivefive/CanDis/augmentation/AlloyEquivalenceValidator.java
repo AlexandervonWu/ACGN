@@ -70,7 +70,7 @@ public final class AlloyEquivalenceValidator {
             int decomposeThreads) {
         public ExecutionOptions {
             solverId = requireText(solverId, "solverId");
-            if (A4Options.SatSolver.parse(solverId) == null) {
+            if (kodkod.engine.satlab.SATFactory.find(solverId).orElse(null) == null) {
                 throw new IllegalArgumentException("Unknown Alloy solver: " + solverId);
             }
         }
@@ -100,7 +100,7 @@ public final class AlloyEquivalenceValidator {
             result.skolemDepth = skolemDepth;
             result.coreMinimization = coreMinimization;
             result.coreGranularity = coreGranularity;
-            result.solver = A4Options.SatSolver.parse(solverId);
+            result.solver = kodkod.engine.satlab.SATFactory.find(solverId).orElse(null);
             if (result.solver == null || !solverId.equals(result.solver.id())) {
                 throw new IllegalArgumentException(
                         "Alloy solver identity cannot be replayed: " + solverId);
@@ -558,7 +558,7 @@ public final class AlloyEquivalenceValidator {
         if (expectedProfile == null) {
             if (context == null) {
                 A4Options options = new A4Options();
-                options.solver = A4Options.SatSolver.SAT4J;
+                options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
                 return new ExecutionPlan(
                         -1,
                         options,
@@ -587,7 +587,7 @@ public final class AlloyEquivalenceValidator {
                     "A source command context cannot be attached to a fixed-profile fixture");
         }
         A4Options options = new A4Options();
-        options.solver = A4Options.SatSolver.SAT4J;
+        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
         options.noOverflow = expectedProfile.overflowMode()
                 == SemanticProfile.OverflowMode.FORBID;
         return new ExecutionPlan(
@@ -659,6 +659,7 @@ public final class AlloyEquivalenceValidator {
                 source.maxstring,
                 source.scope,
                 source.additionalExactScopes,
+                generatedValidation.commandKeyword,
                 guardedCounterexample,
                 null);
     }
@@ -833,7 +834,7 @@ public final class AlloyEquivalenceValidator {
 
         private static ExecutionPlan unresolved(SemanticProfile profile) {
             A4Options options = new A4Options();
-            options.solver = A4Options.SatSolver.SAT4J;
+            options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
             return new ExecutionPlan(
                     -1,
                     options,

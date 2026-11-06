@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "leanVersion": "4.33.0",
+  "leanVersion": "4.35.0",
   "timeoutSeconds": 300,
   "requiredCleanBuilds": 2,
   "replayPlugin": "scripts/next_obligation_replays.py",
@@ -54,7 +54,7 @@
     {"id": "ordered-calls", "class": "CallValidationExtractor", "source": "scripts/java/CallValidationExtractor.java", "sources": ["scripts/java/JoinGuardExtractor.java"], "output": "call-validation-source.tsv"}
   ],
   "trusted": [
-    "Lean 4.33.0 kernel; only propext, Quot.sound and Classical.choice",
+    "Lean 4.35.0 kernel; only propext, Quot.sound and Classical.choice",
     "javac/JVM 17 and Java standard-library contracts",
     "Git deterministic commits of isolated frozen inputs for TEST_ONLY certificate provenance; these are not release or experiment commits",
     "Hashed compiler extractors and observation encoders, tested but not Lean-verified",

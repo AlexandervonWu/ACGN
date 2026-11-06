@@ -4,7 +4,7 @@ ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 OUT=${1:?Supply a fresh absolute output directory}
 ATTEMPTS=${2:-4096}
 EPOCHS=${3:-8}
-PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu130/bin/python"}
+PYTHON=${ACGN_RL_PYTHON:-"$HOME/.venvs/acgn-rl-cu132-py312/bin/python"}
 [[ "$OUT" = /* && ! -e "$OUT" ]] || { printf '%s\n' 'Use a fresh absolute output directory' >&2; exit 2; }
 mkdir -p "$OUT/classes"
 cd "$ROOT"

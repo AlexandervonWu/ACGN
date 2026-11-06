@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 const id = z.string().min(1);
-const openRecord = z.record(z.unknown());
+const openRecord = z.record(z.string(), z.unknown());
 
 export const SourcePositionSchema = z.object({
   line: z.number().int().positive(),

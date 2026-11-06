@@ -3,7 +3,7 @@
   "closureFamily": "submission-container-replay-v1",
   "scope": "Finite Java container-constructor traces checked by Lean, and the Boolean smart-constructor model. No whole-Java, parser, law-authority, or corpus-refinement claim.",
   "requiredCleanBuilds": 2,
-  "leanVersion": "4.33.0",
+  "leanVersion": "4.35.0",
   "bounds": {
     "alphabetSize": 3,
     "maxLength": 4,
@@ -89,7 +89,7 @@
   "trusted": [
     {
       "id": "TCB-LEAN",
-      "description": "Pinned Lean 4.33.0 kernel and installed standard library; standard logical assumptions propext, Quot.sound, and Classical.choice are explicitly allowed and inventoried."
+      "description": "Pinned Lean 4.35.0 kernel and installed standard library; standard logical assumptions propext, Quot.sound, and Classical.choice are explicitly allowed and inventoried."
     },
     {
       "id": "TCB-JAVA",
