@@ -28,6 +28,17 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
+### Final experimental results (2026-11-07)
+
+The [final natural-corpus report](docs/experimental-results/2026-11-07/README.md)
+retains the completed 66,080-file evaluation and all original evidence. The
+[bounded synthetic slot-typing report](docs/experimental-results/2026-11-07/synthetic-grid/RESULTS.md)
+covers every 2..10-variable / 1..N-type combination with balanced, seeded type
+assignments, eight workers, and five-minute deadlines. It includes measured
+log-speedup surfaces, success rates, median/P95 runtimes, timeout coverage, and
+the documented resource-guard continuation. These reports are separate from
+historical release measurements below.
+
 ### Assurance status
 
 This repository establishes no general assurance of implementation correctness

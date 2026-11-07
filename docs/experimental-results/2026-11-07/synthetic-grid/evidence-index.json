@@ -1,0 +1,26 @@
+{
+  "status": "FINAL_SYNTHETIC_RESULTS",
+  "runId": "232dea4d-0814-4c6e-8a1d-7e00eed953fd",
+  "rawEvidenceRoot": "/media/augustus/8618-0ED0/ACGN/final-results/slot-typing-grid-20261107",
+  "naturalEvidenceIndex": "../evidence-index.json",
+  "sourceCommit": "3ef7d93bcab87ecd30ffba4c02e01c690981a137",
+  "dirtyTree": true,
+  "sourceSnapshot": "/media/augustus/8618-0ED0/ACGN/final-results/slot-typing-grid-20261107/preflight/source-snapshot.tar.gz",
+  "sourceSnapshotSha256": "847cd82d2707d016d15c64c4dd8c58610f11215fc9292330c59d4acb5b42cc04",
+  "manifestSha256": "d2dcae266a7470e498de10fe26c2aebe40d2432a7bd59386739c6e29c6a6b222",
+  "plotScriptSha256": "32223c01faf62ea4285e19188ed7fb9951e037849cace268459e947de3b4c134",
+  "generatorSha256": "cb21dc4b28a2384259af176be234fb312b03727206b02e83d5fcb18122bf592e",
+  "datasetManifestSha256": "a885e298da79170aea98384cda15d85673ff760ec177c16fa52e9de2dfc3206c",
+  "continuation": {
+    "continuationManifestSha256": "16b40e600b35f5843ad4846b63c2faeaf5aa1e3abfd48658e80a006e5f70ab41",
+    "continuationRun": "/media/augustus/8618-0ED0/ACGN/final-results/slot-typing-grid-20261107/resume-01",
+    "continuationTrialsSha256": "1be6590476171d0fdba79eee914a893bbfb75fa00208b9910f7496136f329571",
+    "parentManifestSha256": "acc9bb6834d39526b3fc8c8d8ef1726fd2e827b637d7f46ff45d7e3d62f56cb9",
+    "parentRun": "/media/augustus/8618-0ED0/ACGN/final-results/slot-typing-grid-20261107/run",
+    "parentRunId": "e7b98ff5-6f11-4f0e-bd71-6a9e9f44dbd3",
+    "parentTrialsSha256": "4659c2f3bdfc832b77294be208a37d9975c4536302bccac5439d86dcfb797132",
+    "preservedCompleted": 866,
+    "reason": "Host reserve guard; resumed after user freed memory; identical frozen implementation and limits",
+    "resumed": 214
+  }
+}

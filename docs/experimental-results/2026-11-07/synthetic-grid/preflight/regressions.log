@@ -1,0 +1,12 @@
+'SlotTypingDeadline.timeout_is_failure' does not depend on any axioms
+'SlotTypingDeadline.incomplete_is_failure' does not depend on any axioms
+'SlotTypingDeadline.success_requires_completion' does not depend on any axioms
+'SlotTypingDeadline.success_count_bounded' depends on axioms: [propext, Quot.sound]
+............
+----------------------------------------------------------------------
+Ran 12 tests in 1.546s
+
+OK
+SlotTypingSyntheticTest: 18 checks passed
+SlotTypingAblationTest: 46 checks passed
+EGraph ablation tests passed.

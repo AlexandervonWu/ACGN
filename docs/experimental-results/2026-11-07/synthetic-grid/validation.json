@@ -1,0 +1,1917 @@
+{
+  "schema": "slot-typing-grid-v1",
+  "observedNativeOperators": [
+    "binary:IMPLIES",
+    "binary:IN",
+    "binary:INTERSECT",
+    "binary:JOIN",
+    "list:AND",
+    "list:OR",
+    "quantifier:ALL",
+    "unary:ALWAYS",
+    "unary:EVENTUALLY",
+    "unary:NOOP",
+    "unary:NOT",
+    "unary:ONCE",
+    "unary:ONEOF",
+    "unary:SOME"
+  ],
+  "alloyVersion": "6.2.0.202503101506",
+  "failures": 0,
+  "checkedPairs": 270,
+  "alloyBuild": 1741619181150,
+  "repositoryAstAdapterChecked": true,
+  "rows": [
+    {
+      "path": "models/alpha/CORRECT/generated_grid0000.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0001.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0002.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0003.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0004.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0005.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0006.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0007.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0008.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0009.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 2
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0010.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0011.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0012.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0013.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0014.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0015.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0016.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0017.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0018.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0019.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0020.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0021.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0022.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0023.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0024.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 3
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0025.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0026.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0027.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0028.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0029.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0030.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0031.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0032.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0033.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0034.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0035.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0036.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0037.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0038.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0039.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0040.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0041.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0042.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0043.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0044.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 4
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0045.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0046.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0047.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0048.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0049.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0050.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0051.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0052.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0053.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0054.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0055.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0056.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0057.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0058.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0059.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0060.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0061.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0062.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0063.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0064.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0065.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0066.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0067.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0068.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0069.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 5
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0070.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0071.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0072.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0073.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0074.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0075.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0076.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0077.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0078.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0079.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0080.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0081.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0082.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0083.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0084.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0085.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0086.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0087.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0088.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0089.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0090.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0091.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0092.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0093.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0094.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0095.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0096.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0097.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0098.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0099.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 6
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0100.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0101.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0102.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0103.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0104.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0105.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0106.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0107.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0108.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0109.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0110.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0111.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0112.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0113.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0114.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0115.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0116.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0117.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0118.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0119.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0120.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0121.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0122.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0123.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0124.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0125.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0126.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0127.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0128.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0129.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0130.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0131.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0132.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0133.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0134.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 7
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0135.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0136.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0137.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0138.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0139.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0140.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0141.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0142.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0143.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0144.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0145.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0146.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0147.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0148.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0149.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0150.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0151.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0152.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0153.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0154.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0155.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0156.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0157.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0158.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0159.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0160.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0161.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0162.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0163.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0164.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0165.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0166.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0167.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0168.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0169.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0170.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0171.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0172.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0173.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0174.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 8
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0175.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0176.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0177.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0178.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0179.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0180.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0181.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0182.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0183.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0184.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0185.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0186.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0187.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0188.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0189.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0190.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0191.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0192.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0193.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0194.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0195.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0196.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0197.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0198.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0199.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0200.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0201.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0202.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0203.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0204.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0205.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0206.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0207.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0208.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0209.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0210.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0211.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0212.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0213.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0214.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0215.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0216.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0217.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0218.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0219.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 9
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0220.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0221.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0222.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0223.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0224.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0225.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0226.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0227.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0228.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0229.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0230.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0231.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0232.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0233.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0234.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0235.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0236.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0237.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0238.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0239.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0240.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0241.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0242.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0243.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0244.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0245.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0246.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0247.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0248.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0249.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0250.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0251.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0252.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0253.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0254.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0255.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0256.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0257.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0258.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0259.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0260.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0261.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0262.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0263.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0264.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/alpha/CORRECT/generated_grid0265.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/boolean_aci/CORRECT/generated_grid0266.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/implication/CORRECT/generated_grid0267.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/future_temporal/CORRECT/generated_grid0268.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    },
+    {
+      "path": "models/past_temporal/CORRECT/generated_grid0269.als",
+      "success": true,
+      "parsed": true,
+      "astDifferent": true,
+      "outerBindings": 10
+    }
+  ],
+  "datasetHash": "c490b2bb1e6199f2ed221aa3f1b2d22b1da5dd8604341f305302c27a45de6b5f"
+}

@@ -1,0 +1,5 @@
+'BalancedGrid.allocation_total' depends on axioms: [propext]
+'BalancedGrid.each_type_inhabited' depends on axioms: [propext, Quot.sound]
+'BalancedGrid.balanced' depends on axioms: [propext, Quot.sound]
+'BalancedGrid.remainder_fits' does not depend on any axioms
+'BalancedGrid.bounded_grid' depends on axioms: [propext, Quot.sound]

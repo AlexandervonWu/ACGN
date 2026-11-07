@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -66,8 +68,21 @@ public final class SlotBindingDatasetValidator {
                     body.accept(scan);
                     require(scan.used.containsAll(outer), "unused outer binder");
                     Set<String> types = new HashSet<>();
+                    Map<String, Integer> histogram = new HashMap<>();
                     for (ExprVar v : outer) types.add(v.type().toString());
+                    for (ExprVar v : outer) histogram.merge(v.type().toString(), 1, Integer::sum);
                     require(types.size() == entry.getInt("outerTypeCount"), "outer type count mismatch");
+                    if (manifest.getString("schema").equals("slot-typing-grid-v1")) {
+                        require(expected >= 2 && expected <= 10, "grid binder bound");
+                        require(entry.getInt("totalBindingsPerPredicate") == expected, "grid total metadata mismatch");
+                        require(scan.declared == 0, "grid body has additional binders");
+                        List<Integer> actualCounts = histogram.values().stream().sorted().toList();
+                        JSONObject stated = entry.getJSONObject("outerTypeHistogram");
+                        List<Integer> statedCounts = stated.keySet().stream().map(stated::getInt).sorted().toList();
+                        require(actualCounts.equals(statedCounts), "grid histogram mismatch");
+                        require(actualCounts.get(actualCounts.size() - 1) - actualCounts.get(0) <= 1,
+                                "grid type allocation is not balanced");
+                    }
                     fn.getBody().accept(scan);
                     operators.addAll(scan.operators);
                 }
@@ -102,7 +117,9 @@ public final class SlotBindingDatasetValidator {
             }
             rows.put(row);
         }
-        require(rows.length() == (args.length == 3 ? 1 : 250), "unexpected validation population");
+        require(rows.length() == (args.length == 3 ? 1 : manifest.getInt("targetPairs")), "unexpected validation population");
+        require(manifest.getInt("targetPairs") > 0
+                && manifest.getInt("targetPredicates") == 2 * manifest.getInt("targetPairs"), "invalid population metadata");
         JSONObject report = new JSONObject().put("schema", manifest.getString("schema"))
                 .put("datasetHash", manifest.getString("filesSha256"))
                 .put("alloyVersion", Version.version()).put("alloyBuild", Version.buildNumber())
@@ -130,6 +147,7 @@ public final class SlotBindingDatasetValidator {
     private static final class Scan extends VisitReturn<Void> {
         final Set<ExprVar> used = new HashSet<>();
         final Set<String> operators = new TreeSet<>();
+        int declared;
         public Void visit(ExprBinary x) throws edu.mit.csail.sdg.alloy4.Err {
             operators.add("binary:" + x.op.name()); x.left.accept(this); x.right.accept(this); return null;
         }
@@ -144,10 +162,12 @@ public final class SlotBindingDatasetValidator {
             operators.add("ite"); x.cond.accept(this); x.left.accept(this); x.right.accept(this); return null;
         }
         public Void visit(ExprLet x) throws edu.mit.csail.sdg.alloy4.Err {
+            declared++;
             operators.add("let"); x.expr.accept(this); x.sub.accept(this); return null;
         }
         public Void visit(ExprQt x) throws edu.mit.csail.sdg.alloy4.Err {
             operators.add("quantifier:" + x.op.name());
+            for (Decl d : x.decls) declared += d.names.size();
             for (Decl d : x.decls) d.expr.accept(this);
             x.sub.accept(this); return null;
         }

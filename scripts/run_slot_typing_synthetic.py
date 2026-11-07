@@ -66,6 +66,8 @@ def run_process(command, log, timeout, stop):
                     pass
                 process.wait()
     elapsed = time.monotonic() - started
+    if status is None and stop.is_set():
+        status = "INTERRUPTED"
     if status is None and elapsed >= timeout:
         status = "TIMEOUT"
     return status, process.returncode, elapsed
@@ -77,7 +79,7 @@ def run_trial(trial, output, java, classpath, heap, timeout, stop):
     directory.mkdir(parents=True)
     result_file = directory / "result.json"
     command = [java, "-Xms256m", "-Xmx" + heap, "-Xss16m", "-XX:+UseG1GC",
-               "-XX:ActiveProcessorCount=1", "-cp", classpath,
+               "-XX:ActiveProcessorCount=1", "-XX:+ExitOnOutOfMemoryError", "-cp", classpath,
                "is.fivefivefive.CanDis.SlotTypingSyntheticWorker",
                trial["source"], trial["predicate"], trial["arm"], str(result_file)]
     try:
@@ -216,11 +218,16 @@ def main():
                         help="At most 300; smaller values are for explicitly labeled smoke checks")
     parser.add_argument("--limit-pairs", type=int, default=0)
     parser.add_argument("--seed", type=int, default=20261106)
+    parser.add_argument("--min-available-gib", type=float, default=0,
+                        help="Linux host available-memory reserve; zero disables this optional guard")
+    parser.add_argument("--min-free-disk-gib", type=float, default=0)
     args = parser.parse_args()
     if os.name != "posix":
         parser.error("This supervisor requires POSIX process groups (Linux/macOS)")
     if args.workers < 1 or args.limit_pairs < 0 or not 0 < args.timeout_seconds <= 300:
         parser.error("workers >=1, limit-pairs >=0, and 0 < timeout-seconds <=300 required")
+    if args.min_available_gib < 0 or args.min_free_disk_gib < 0:
+        parser.error("Resource reserves cannot be negative")
     import re
     if not re.fullmatch(r"[1-9][0-9]*[gGmM]", args.heap):
         parser.error("heap must be a positive JVM size, e.g. 4g")
@@ -229,6 +236,16 @@ def main():
     if output.is_relative_to(dataset):
         parser.error("Output must be outside the source dataset")
     output.mkdir(parents=True, exist_ok=False)
+    def resource_check():
+        if shutil.disk_usage(output).free < args.min_free_disk_gib * 2**30:
+            return "Disk reserve breached"
+        if args.min_available_gib:
+            memory = dict(line.split(":", 1) for line in Path("/proc/meminfo").read_text().splitlines())
+            if int(memory["MemAvailable"].split()[0]) * 1024 < args.min_available_gib * 2**30:
+                return "Host available-memory reserve breached"
+        return None
+    if resource_check():
+        raise RuntimeError(resource_check())
     data = json.loads((dataset / "manifest.json").read_text(encoding="utf-8"))
     pairs = list(data["pairs"])
     random.Random(args.seed).shuffle(pairs)
@@ -271,6 +288,7 @@ def main():
                 "dirtyTree": bool(command_text(["git", "status", "--porcelain"])),
                 "datasetManifestSha256": sha(dataset / "manifest.json"), "seed": args.seed,
                 "timeoutSeconds": args.timeout_seconds, "workers": args.workers, "heap": args.heap,
+                "minAvailableGiB": args.min_available_gib, "minFreeDiskGiB": args.min_free_disk_gib,
                 "host": platform.node(), "platform": platform.platform(), "logicalProcessors": os.cpu_count(),
                 "java": command_text([java, "-version"]), "javac": command_text(["javac", "-version"]),
                 "limits": "synthetic-uncapped-v1", "trials": trials,
@@ -314,6 +332,11 @@ def main():
             for _ in range(args.workers):
                 submit()
             while active:
+                reason = resource_check()
+                if reason:
+                    manifest["interruptionReason"] = reason
+                    print(reason, flush=True)
+                    raise KeyboardInterrupt
                 done, _ = wait(active, timeout=30, return_when=FIRST_COMPLETED)
                 if not done:
                     print(f'{len(rows)}/{len(trials)} complete; {len(active)} predicates in flight', flush=True)
