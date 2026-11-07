@@ -12,6 +12,11 @@ The previously authorized diagnostic mode remains distinct from strict mode.
 2. Reproduce the next retained residual against the current frozen build, or
    run a fresh manifest-bound diagnostic corpus scan that stops on its first
    discrepancy. Do not edit the checkout during a manifest-bound run.
+   If full-scan startup lacks resource headroom, continue one independently
+   reproduced data-discrepancy residual with bounded
+   serial tests, provided the host reserve is preserved. Record that owner
+   before dispatch; do not launch a corpus scan while the repair is active,
+   even if memory recovers. Resource refusal never permits weaker guards.
 3. Stop all run descendants and retain the source/hash, predicate identities,
    component costs, native operation receipts, build identity and fingerprint.
 4. Assign one actual `gpt-6-astra` repair owner. Replay the shorter sequence
@@ -35,6 +40,17 @@ The previously authorized diagnostic mode remains distinct from strict mode.
 - One corpus run or one recovery owner at a time; no competing recovery agents.
 - Preserve the established worker, heap, service cap, host reserve and storage
   guards. Resource refusal is not permission to weaken an OOM safeguard.
+  The author subsequently approved relaxing the diagnostic startup threshold:
+  use 17 GiB MemAvailable rather than 18 GiB for the workstation parity runner.
+  The runtime host reserve remains 6 GiB, with 16 workers, 8g heap, 12 GiB
+  service cap, 10 GiB high watermark, zero service swap and OOM stops unchanged.
+  This is an admission threshold, not a claim that the full cap is reserved.
+  Prioritize the next fresh full-input first-discrepancy scan and sequential
+  pattern repairs. The author redirected work away from independent exporter
+  and certification prerequisites: park the unfinished collision-export work
+  separately and do not resume it unless it directly explains a measured
+  distance or edit-sequence discrepancy. Keep certification blocked honestly;
+  do not spend this repair cycle trying to clear unrelated release gates.
 - Two recurrences of the same fingerprint after investigated repairs require
   user attention. Do not launch an unchanged semantic failure again.
 - Preserve original final natural and synthetic evidence, completed useful
