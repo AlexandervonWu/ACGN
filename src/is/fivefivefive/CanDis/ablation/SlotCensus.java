@@ -9,6 +9,7 @@ import parser.ast.nodes.Node;
 import parser.ast.nodes.Predicate;
 import parser.ast.nodes.RelDecl;
 import parser.ast.nodes.VarExpr;
+import parser.util.AlloyUtil;
 
 /** Source binder occurrences, not variable usages or e-class interface slots. */
 public record SlotCensus(long total, Map<String, Long> byType) {
@@ -28,6 +29,7 @@ public record SlotCensus(long total, Map<String, Long> byType) {
     }
 
     private static void visit(Node node, Map<String, Long> counts) {
+        node = AlloyUtil.unwrapAst(node);
         if (node == null) return;
         if (node instanceof RelDecl declaration) {
             for (var variable : declaration.getVariables()) count(variable, counts);
@@ -46,6 +48,7 @@ public record SlotCensus(long total, Map<String, Long> byType) {
     }
 
     private static void count(Node node, Map<String, Long> counts) {
+        node = AlloyUtil.unwrapAst(node);
         if (!(node instanceof VarExpr variable)) {
             throw new IllegalArgumentException("Binding is not a variable");
         }

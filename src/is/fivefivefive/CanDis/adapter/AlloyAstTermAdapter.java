@@ -24,6 +24,7 @@ import parser.ast.nodes.SigExpr;
 import parser.ast.nodes.UnaryExpr;
 import parser.ast.nodes.UnaryFormula;
 import parser.ast.nodes.VarExpr;
+import parser.util.AlloyUtil;
 
 /** Converts parser AST nodes into the parser-independent e-graph term model. */
 public final class AlloyAstTermAdapter {
@@ -55,6 +56,7 @@ public final class AlloyAstTermAdapter {
     }
 
     public static AlloyTerm fromAst(Node node, boolean typedSlots) {
+        node = AlloyUtil.unwrapAst(node);
         if (node == null) {
             return AlloyTerm.atom("NULL", "");
         }

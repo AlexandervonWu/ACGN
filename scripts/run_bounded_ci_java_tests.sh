@@ -23,6 +23,7 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
 
 tests=(
+  is.fivefivefive.CanDis.AstWrapperErasureTest
   is.fivefivefive.CanDis.DependencyCompatibilityTest
   is.fivefivefive.ACGN.learn.RewarderConcurrencyTest
   is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
@@ -81,6 +82,7 @@ tests=(
   "$ROOT/docs/temporal-capability-solver/TemporalCommandGuard.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/PartitionedPermutation.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/IndependentBindingBlocks.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/AstWrapperErasure.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import parser.ast.nodes.Assertion;
+import parser.ast.nodes.Body;
 import parser.ast.nodes.Fact;
 import parser.ast.nodes.ModelUnit;
 import parser.ast.nodes.Node;
@@ -100,6 +101,19 @@ public class AlloyUtil {
       cur = unaryExpr.getSub();
     }
     return cur;
+  }
+
+  /** Transparent AST view; retains the original semantic node and source ownership. */
+  public static Node unwrapAst(Node node) {
+    while (true) {
+      if (node instanceof UnaryExpr unary && unary.getOp() == UnaryOp.NOOP) {
+        node = java.util.Objects.requireNonNull(unary.getSub(), "NOOP has no child");
+      } else if (node instanceof Body body) {
+        node = java.util.Objects.requireNonNull(body.getBodyExpr(), "Body has no child");
+      } else {
+        return node;
+      }
+    }
   }
 
   public static Node getFirstNonNOOPParent(Node node) {

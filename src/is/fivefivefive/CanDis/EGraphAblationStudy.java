@@ -443,6 +443,7 @@ public final class EGraphAblationStudy {
     }
 
     private static int astSize(Node node) {
+        node = AlloyUtil.unwrapAst(node);
         if (node == null) {
             return 0;
         }
