@@ -398,6 +398,68 @@ No new full-corpus mean, zero subset or operation-sequence parity claim follows
 from this repair. A fresh bounded diagnostic still finds **0/8** on
 `partial-join.als`; that source-linked completeness gap is the next incident.
 
+### Guarded Chain Edit Units And Incident Capture
+
+The next Fast metric increment uses the already-proved guarded JOIN sequence
+geometry without mutating retained binary source syntax. The existing
+`GuardedJoinChain.lean` dependencies and new `FastChainGeometry.lean` compiled
+before the Java edit. Every internal JOIN must retain matching parser-derived
+result-type evidence from the same module; every interior flattened operand
+must have at least two columns. Ordered occurrences, duplicate operands, and
+unary endpoint types remain intact. Unsupported trees retain their binary
+boundary; traversal budget exhaustion fails instead of publishing a minimum.
+
+The reduced `chain-cost.als` and natural
+`productionLine_v1/correct/Nc6rBGbJRWcFSpGY8_inv2.als` now replay at **1/1**,
+previously **3/1**, in both directions. The focused test has 61 checks,
+including wrong-module and missing-intermediate-type refusals. Evidence is
+at `ACGN/intermediate/fast-chain-20261107-PHiw00/`. This repairs the P05 edit
+unit witness; it does not establish the full representation-union minimum.
+
+`IncidentReplay.lean` precedes the first-incident latch change. The latch is
+published before IO or diagnostic work, and the immutable small incident is
+written before capturing a separate `parity-native-replay.json`. Other workers
+cannot dispatch another pair while capture runs. The sidecar retains native
+operations from the already-prepared arms, not fabricated public plans.
+Capture failure, changed source or failed persistence cannot clear the stop.
+Focused concurrency, failure and CLI tests are retained at
+`ACGN/intermediate/incident-replay-20261107-68PaDt/`.
+
+A fresh diagnostic of `classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als` still
+finds **17/11**: temporal **2/1**, matrix **15/10**. Fast retains two identical
+native child-phase snapshots while the certified live projection retains one.
+`temporal-next.json` in the chain evidence directory preserves this incident.
+The CLI fail-stop regression now uses that unresolved witness, because the
+former binary/flat witness has been repaired. Complete public replay remains
+unavailable and no new full-corpus assessment is claimed.
+
+### Certified Partial JOIN Repair
+
+Astra's occurrence-linked rotation/realization repair now gives **0/0 in both
+directions** on `partial-join.als` and both README P03 natural pairs, with equal
+producer observations. The eight spurious edits in the longer certified path
+come from the missing path `r.((s.D).C) -> (r.(s.D)).C -> ((r.s).D).C`.
+Each rotation checks the distinct middle boundary columns and result type;
+derived child nodes carry exact insertion equalities. The original occurrence
+ledger remains authoritative, and flat `[r,s,D,C]` is still rejected.
+
+`GuardedJoinRotation.lean` compiled before the Java repair. Thirty source
+checks and fourteen kernel controls pass, including source/ledger substitution,
+missing insertion evidence and an independently satisfiable unary-middle
+counterexample. Compact evidence is in
+`stopped-investigation/opseq-astra-20261107/partial-join-4YdiEpf5/evidence.json`.
+The independent exporter explicitly refuses the new unsupported wire evidence;
+this is not a complete public-certification claim.
+
+The combined runner exited zero: sixteen Lean files, 13,226 numbered Java
+checks, both CLI stop/replay suites and ten Python checks passed. The pre-run
+input SHA inventory verified unchanged afterward. Log and inventory:
+`ACGN/intermediate/join-integration-20261107-fgCFYL/`. The author's current rule
+is shorter-replay-first fault diagnosis, not scalar selection, with full
+source/certificate/typed-representation/edit alignment required on the
+certified track. The remaining public-alignment and temporal gaps still block
+a corpus-wide invariant claim or release.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

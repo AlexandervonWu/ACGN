@@ -21,6 +21,21 @@ program. Resource exhaustion must fail, not return a partial minimum as exact.
 Sharing the algorithm must not secretly run the entire certified producer in
 the Fast arm and continue reporting it as a separate lightweight engine.
 
+The author's subsequent clarification requires replaying the shorter sequence
+first. If replay fails, locate and repair the shorter path's fault. If it
+succeeds, locate the longer path's extra/misclassified edits or missed admitted
+representation, and repair that producer. Incomplete replay is not a pass.
+Do not select a scalar minimum or keep two competing final distances.
+
+The certified track must retain full alignment: original occurrence, Lean
+contract, source-linked typed construction, certificate premises, selected
+representation, edit operations, replay endpoints and charged cost. Result
+types, binder scope and temporal ownership remain part of that alignment.
+Agreement with Fast cannot supply a missing certificate or correspondence.
+An unavailable or failed alignment/replay check still stops the scan; native
+cost coverage does not discharge the independent public-proof boundary.
+Do not pad results or change units merely to keep a release mean in range.
+
 ## Proof-First Increment: Result Types
 
 `IncidentLaws.lean` proves that changing the result type of an otherwise equal

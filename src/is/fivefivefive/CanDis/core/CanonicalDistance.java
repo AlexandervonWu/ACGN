@@ -19,6 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
+    public static final String VERSION = "typed-fast-distance-v2-guarded-chain";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -85,7 +86,7 @@ public final class CanonicalDistance {
                             .put(n.getFlexibleArityKind().toString()).put(n.isOrderInsensitive())
                             .put(new java.util.TreeMap<>(mapping).toString()).toString();
                 }
-                public List<EGraphNode> children(EGraphNode n) { return n.getChildren(); }
+                public List<EGraphNode> children(EGraphNode n) { return FastChainGeometry.children(n); }
                 public List<EGraphNode> alternatives(EGraphNode n) { return List.of(); }
                 public boolean unordered(EGraphNode a, EGraphNode b) {
                     return a.getOpcode() == b.getOpcode() && a.isOrderInsensitive() && b.isOrderInsensitive();
@@ -107,7 +108,8 @@ public final class CanonicalDistance {
         }
         if (cost != nativeResult.matrixDistance())
             throw new IllegalStateException("MATRIX_REPLAY_NATIVE_COST_MISMATCH");
-        return new org.json.JSONObject().put("arm", "fast").put("distance", nativeResult.distance())
+        return new org.json.JSONObject().put("arm", "fast").put("metricVersion", VERSION)
+                .put("chainGeometryVersion", FastChainGeometry.VERSION).put("distance", nativeResult.distance())
                 .put("temporalDistance", nativeResult.temporalDistance())
                 .put("quantifierDistance", nativeResult.quantifierDistance())
                 .put("matrixDistance", nativeResult.matrixDistance()).put("replayedMatrixCost", cost)
@@ -1193,8 +1195,8 @@ public final class CanonicalDistance {
             edits.add(path + ": replace result type " + resultType(left)
                     + " -> " + resultType(right));
         }
-        List<EGraphNode> leftChildren = left.getChildren();
-        List<EGraphNode> rightChildren = right.getChildren();
+        List<EGraphNode> leftChildren = FastChainGeometry.children(left);
+        List<EGraphNode> rightChildren = FastChainGeometry.children(right);
         if (left.getOpcode() == right.getOpcode() && left.isOrderInsensitive() && right.isOrderInsensitive()) {
             leftChildren = sortedForMapping(leftChildren, variableMapping);
             rightChildren = sortedForMapping(rightChildren, java.util.Collections.emptyMap());
@@ -1255,8 +1257,9 @@ public final class CanonicalDistance {
             return;
         }
         edits.add(path + ": insert " + nodeSummary(node));
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            collectInsertedEGraph(node.getChildren().get(i), path + ".child[" + i + "]", edits);
+        List<EGraphNode> children = FastChainGeometry.children(node);
+        for (int i = 0; i < children.size(); i++) {
+            collectInsertedEGraph(children.get(i), path + ".child[" + i + "]", edits);
         }
     }
 
@@ -1265,8 +1268,9 @@ public final class CanonicalDistance {
             return;
         }
         edits.add(path + ": delete " + nodeSummary(node));
-        for (int i = 0; i < node.getChildren().size(); i++) {
-            collectDeletedEGraph(node.getChildren().get(i), path + ".child[" + i + "]", edits);
+        List<EGraphNode> children = FastChainGeometry.children(node);
+        for (int i = 0; i < children.size(); i++) {
+            collectDeletedEGraph(children.get(i), path + ".child[" + i + "]", edits);
         }
     }
 
@@ -1307,7 +1311,7 @@ public final class CanonicalDistance {
             key.append(atomIdentity(node));
         }
         key.append('[');
-        List<EGraphNode> children = new ArrayList<>(node.getChildren());
+        List<EGraphNode> children = new ArrayList<>(FastChainGeometry.children(node));
         if (node.isOrderInsensitive()) {
             children = sortedForMapping(children, variableMapping);
         }
@@ -1425,6 +1429,7 @@ public final class CanonicalDistance {
     private static final class EGraphMetadata {
         private final IdentityHashMap<EGraphNode, Integer> sizes = new IdentityHashMap<>();
         private final IdentityHashMap<EGraphNode, GraphType> resultTypes = new IdentityHashMap<>();
+        private final IdentityHashMap<EGraphNode, List<EGraphNode>> metricChildren = new IdentityHashMap<>();
 
         private EGraphMetadata(List<NormalForm> normalForms) {
             for (NormalForm normalForm : normalForms) {
@@ -1436,7 +1441,8 @@ public final class CanonicalDistance {
             if (node == null || sizes.containsKey(node)) {
                 return;
             }
-            List<EGraphNode> children = node.getChildren();
+            List<EGraphNode> children = FastChainGeometry.children(node);
+            metricChildren.put(node, children);
             int size = 1;
             for (int i = 0; i < children.size(); i++) {
                 EGraphNode child = children.get(i);
@@ -1466,6 +1472,11 @@ public final class CanonicalDistance {
             return resultTypes.get(node);
         }
 
+        private List<EGraphNode> children(EGraphNode node) {
+            if (!metricChildren.containsKey(node)) prepare(node);
+            return metricChildren.get(node);
+        }
+
     }
 
     private static final class EGraphDistanceContext {
@@ -1490,8 +1501,10 @@ public final class CanonicalDistance {
                 return nodeSize(left, true);
             }
 
-            List<EGraphNode> leftChildren = left.getChildren();
-            List<EGraphNode> rightChildren = right.getChildren();
+            List<EGraphNode> leftChildren = leftMetadata == null
+                    ? FastChainGeometry.children(left) : leftMetadata.children(left);
+            List<EGraphNode> rightChildren = rightMetadata == null
+                    ? FastChainGeometry.children(right) : rightMetadata.children(right);
             int childCost = left.getOpcode() == right.getOpcode()
                     && left.isOrderInsensitive()
                     && right.isOrderInsensitive()
@@ -1650,7 +1663,7 @@ public final class CanonicalDistance {
             return 0;
         }
         int size = 1;
-        List<EGraphNode> children = node.getChildren();
+        List<EGraphNode> children = FastChainGeometry.children(node);
         for (int i = 0; i < children.size(); i++) {
             size += eGraphSize(children.get(i));
         }

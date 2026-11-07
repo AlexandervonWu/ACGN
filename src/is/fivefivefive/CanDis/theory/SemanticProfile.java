@@ -12,11 +12,11 @@ public final class SemanticProfile {
     public static final String SOURCE_COMMAND_CONTEXT_TAG =
             "alloy-source-command-context-v1";
     public static final String PRODUCTION_ADAPTER_VERSION =
-            "typed-alloy-normal-form-adapter-v14";
+            "typed-alloy-normal-form-adapter-v15";
     public static final String PRODUCTION_REWRITE_MODE =
             "repaired-normal-form-v3;" + PRODUCTION_ADAPTER_VERSION;
     public static final String PRODUCTION_SIGNATURE_VERSION =
-            "canonical-alloy-signature-v9";
+            "canonical-alloy-signature-v10";
 
     public enum OverflowMode {
         FORBID,

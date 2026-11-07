@@ -123,14 +123,16 @@ No automatic unchanged retry or release is authorized by this diagnostic loop.
 ## Known Open Issues And Publication
 
 The [parity ledger](distance-parity-20261107/IMPLEMENTATION.md) remains applicable.
-Two correct-pool partial-JOIN pairs are known to return Fast 0 / certified 8;
-binary/flat and temporal edit geometry still differ. Thus this candidate is
-expected to fail some parity gates. The module-less prelude export defect now
+The two correct-pool partial-JOIN pairs now return 0/0 in bounded source-backed
+tests after occurrence-linked local rotation and insertion proofs. The known
+binary/flat edit-unit witness now returns 1/1. Temporal projection and complete
+public-sequence alignment remain unresolved, so these repairs do not establish
+the full-corpus parity gates. The module-less prelude export defect now
 has a Lean-first lexer/span repair and 31 bounded regression checks; a new
 complete corpus export/parse assessment is still required. Successful distance
 computation does not establish that all exported Alloy files parse. Independent
 certificate export also remains blocked for the new source-linked flat exposure
-records and the older redundant-coordinate cases.
+records, new guarded JOIN rotation records and older redundant-coordinate cases.
 Do not interpret passing empirical gates as proof of the unfinished common
 representation minimum or complete Java-Lean refinement.
 

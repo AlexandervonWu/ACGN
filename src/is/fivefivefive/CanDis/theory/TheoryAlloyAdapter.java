@@ -761,6 +761,7 @@ public final class TheoryAlloyAdapter {
                 new ArrayList<>();
         private final List<DependentChainCertificate> dependentChainConstructions =
                 new ArrayList<>();
+        private final List<GuardedJoinCertificate> guardedJoinConstructions = new ArrayList<>();
         private final List<CallOccurrenceCertificate> callOccurrenceCertificates =
                 new ArrayList<>();
         private final Map<Long, CallOccurrenceCertificate> callOccurrencesById =
@@ -974,6 +975,7 @@ public final class TheoryAlloyAdapter {
                     containerConstructions,
                     dependentChainConstructions,
                     callOccurrenceCertificates,
+                    guardedJoinConstructions,
                     constructionSources.build(),
                     semanticProfile);
             CertificateExportSession exportSession = recordingSink == null
@@ -1735,6 +1737,9 @@ public final class TheoryAlloyAdapter {
                         new HashSet<>());
             } catch (UnsupportedDependentChain
                     | DependentChainTheory.UnsupportedFlattening exception) {
+                if (kind == DependentChainKind.JOIN) {
+                    return constructGuardedJoin(source, slotNames, context, bindings, temporalReferences);
+                }
                 return null;
             }
             requireDependentResultProof(source, application);
@@ -1769,6 +1774,76 @@ public final class TheoryAlloyAdapter {
                     construction, graph.coherentWitnessFamily());
             return OnePort.invocation(
                     context, finishInsertion(context, insertion));
+        }
+
+        private OnePort constructGuardedJoin(EGraphNode source, Map<String, String> names,
+                TypedSlotContext context, Map<String, TypedSlot> bindings,
+                Map<String, TemporalReferencePlan> temporalReferences) {
+            GuardedJoinTree tree, normalized;
+            try {
+                tree = guardedJoinTree(source, names, context, bindings,
+                        temporalReferences, new int[]{127}, 0);
+                normalized = GuardedJoinCertificate.normalized(tree);
+            } catch (IllegalArgumentException unsupported) {
+                // This optional, single-product slice cannot authorize any
+                // change when a local type, boundary, or finite budget fails.
+                return null;
+            }
+            GuardedJoinNodeCertificate realization = realizeGuardedJoin(normalized);
+            GuardedJoinCertificate certificate = GuardedJoinCertificate.create(source,
+                    sourceOccurrencePaths.get(source), tree, semanticProfile, realization);
+            constructionSources.recordGuardedJoin(certificate.source(), certificate.sourceOccurrenceCommitment());
+            guardedJoinConstructions.add(certificate);
+            ensureQuiescent();
+            CertifiedInsertionResult inserted = graph.insertNodeConstructed(certificate, graph.coherentWitnessFamily());
+            return OnePort.invocation(context, finishInsertion(context, inserted));
+        }
+
+        private GuardedJoinNodeCertificate realizeGuardedJoin(GuardedJoinTree tree) {
+            List<GuardedJoinNodeCertificate.Child> children = new ArrayList<>();
+            for (GuardedJoinTree operand : tree.presentationOperands()) {
+                if (operand.isLeaf()) continue;
+                GuardedJoinNodeCertificate child = realizeGuardedJoin(operand);
+                ensureQuiescent();
+                CertifiedInsertionResult inserted = graph.insertNodeConstructed(child, graph.coherentWitnessFamily());
+                TypedInvocation returned = finishInsertion(tree.context(), inserted);
+                TypedFindResult found = graph.findWithProvenance(inserted.returnedInvocation());
+                TypedEqualityCertificate proof = EqualityCertificates.transitive(
+                        inserted.sourceToReturnedInvocation(), found.parentCertificate());
+                if (!found.leaderInvocation().callerContext().equals(tree.context()))
+                    proof = EqualityCertificates.rename(proof, TypedEmbedding.inclusion(
+                            found.leaderInvocation().callerContext(), tree.context()));
+                children.add(new GuardedJoinNodeCertificate.Child(child,
+                        OnePort.invocation(tree.context(), returned), proof));
+            }
+            return new GuardedJoinNodeCertificate(tree, children, semanticProfile);
+        }
+
+        private GuardedJoinTree guardedJoinTree(EGraphNode source, Map<String, String> names,
+                TypedSlotContext context, Map<String, TypedSlot> bindings,
+                Map<String, TemporalReferencePlan> temporalReferences, int[] budget, int depth) {
+            if (--budget[0] < 0 || depth > 64)
+                throw new IllegalArgumentException("Guarded JOIN source budget exceeded");
+            DependentTypeDag exact = dependentTypeDagForSource(source, new HashSet<>());
+            if (exact.alternatives().size() != 1)
+                throw new IllegalArgumentException("Guarded JOIN source is not one exact product");
+            if (source.getOpcode() != Opcode.JOIN) {
+                OnePort port = buildOperand(source, names, context, bindings, temporalReferences);
+                return GuardedJoinTree.leaf(new DependentChainLeaf(port, exact, source.getExactAlloyType()));
+            }
+            if (source.getChildClasses().size() != 2)
+                throw new IllegalArgumentException("Guarded JOIN source is not binary");
+            List<GuardedJoinTree> children = new ArrayList<>();
+            for (EClassRef child : source.getChildClasses()) {
+                EClassRef ref = child.canonical();
+                children.add(guardedJoinTree(ref.getEClass().getRepresentative(),
+                        composeSlotNames(ref.getSlotMap(), names), context, bindings,
+                        temporalReferences, budget, depth+1));
+            }
+            GuardedJoinTree tree = GuardedJoinTree.join(children.get(0), children.get(1));
+            if (!tree.type().equals(exact))
+                throw new IllegalArgumentException("Guarded JOIN result differs from parser type");
+            return tree;
         }
 
         private DependentChainApplication dependentChainApplication(

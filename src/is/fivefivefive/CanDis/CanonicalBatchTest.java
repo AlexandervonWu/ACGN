@@ -431,7 +431,8 @@ public class CanonicalBatchTest {
                 new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
                     result.legacyQuantifierDistance, result.legacyMatrixDistance},
                 new int[]{result.distance, result.quotientTemporalDistance,
-                    result.quotientQuantifierDistance, result.quotientMatrixDistance});
+                    result.quotientQuantifierDistance, result.quotientMatrixDistance},
+                () -> DistanceReplayDiagnostics.capture(leftCanonical, rightCanonical, leftExact, rightExact));
         result.exactDistanceNanos = System.nanoTime() - exactStarted;
         result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
         result.quotientBinderAlignments = quotient.binderAlignments();
@@ -732,6 +733,7 @@ public class CanonicalBatchTest {
         writer.write("  \"canonicalEngine\": \"CanonicalAlloyPipeline\",\n");
         writer.write("  \"certificateIntegratedEngine\": \"CanonicalAlloyPipeline\",\n");
         writer.write("  \"fastRewriteEngine\": \"Canonical/CanonicalDistance\",\n");
+        writer.write("  \"fastRewriteMetricVersion\": \"" + CanonicalDistance.VERSION + "\",\n");
         writer.write("  \"canonicalPipelineVersion\": \"" + CanonicalAlloyPipeline.PIPELINE_VERSION + "\",\n");
         writer.write("  \"measurementProjectionVersion\": \""
                 + CanonicalAlloyPipeline.MEASUREMENT_PROJECTION_VERSION + "\",\n");

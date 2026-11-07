@@ -16,7 +16,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     results = []
     for label, relative, reason in (
-            ("distance", "productionLine_v1/correct/Nc6rBGbJRWcFSpGY8_inv2.als", "DISTANCE_MISMATCH"),
+            ("distance", "classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "DISTANCE_MISMATCH"),
             ("missing-replay", "classroom_rl/over/Se6vis3cGzgX7GkN3_inv5.als", "REPLAY_WITNESS_UNAVAILABLE")):
         source = root / "classified-data" / relative
         target = args.output / label
@@ -37,6 +37,16 @@ def main():
         assert incident["reason"] == reason, incident
         assert incident["sourceSha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
         assert incident["sourceText"] == source.read_text()
+        native = json.loads((target / incident["nativeReplayFile"]).read_text())
+        assert native["sourceSha256"] == incident["sourceSha256"]
+        assert native["captureStatus"] == "CAPTURED", native
+        assert not native["complete"] and not native["parityAuthority"]
+        diagnostic = native["diagnostic"]
+        assert diagnostic["status"] == "BLOCKED" and not diagnostic["parityAuthority"]
+        for arm in ("fast", "certified"):
+            assert diagnostic[arm]["distance"] == incident[arm][0]
+            assert diagnostic[arm]["numericalCostCoverage"]
+            assert diagnostic[arm]["orderedDiagnosticActions"]
         partial = json.loads((target / "distances.partial.json").read_text())
         assert partial["summary"]["successes"] == 0
         assert not (target / "distances.json").exists()

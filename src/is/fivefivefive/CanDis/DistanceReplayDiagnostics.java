@@ -22,13 +22,24 @@ public final class DistanceReplayDiagnostics {
     private DistanceReplayDiagnostics() { }
 
     public static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right) {
+        return capture(left, right, () -> QuotientRepairDistance.replayWithSlices(
+                CanonicalAlloyPipeline.prepare(left).repairView(),
+                CanonicalAlloyPipeline.prepare(right).repairView()));
+    }
+
+    static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right,
+            CanonicalAlloyPipeline.Prepared leftExact, CanonicalAlloyPipeline.Prepared rightExact) {
+        return capture(left, right, () -> QuotientRepairDistance.replayWithSlices(
+                leftExact.repairView(), rightExact.repairView()));
+    }
+
+    private static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right,
+            Supplier<JSONObject> certified) {
         JSONObject report = envelope();
         report.put("fast", arm(() -> CanonicalDistance.replayWithSlices(
                 CanonicalDistance.prepare(left.normalizedForms()),
                 CanonicalDistance.prepare(right.normalizedForms()))));
-        report.put("certified", arm(() -> QuotientRepairDistance.replayWithSlices(
-                CanonicalAlloyPipeline.prepare(left).repairView(),
-                CanonicalAlloyPipeline.prepare(right).repairView())));
+        report.put("certified", arm(certified));
         return report;
     }
 

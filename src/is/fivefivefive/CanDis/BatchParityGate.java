@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.HexFormat;
 import java.util.concurrent.CancellationException;
+import java.util.function.Supplier;
 
 import org.json.JSONObject;
 
@@ -32,21 +33,29 @@ final class BatchParityGate {
     }
 
     void requireParity(Path source, String left, String right, int[] fast, int[] certified) {
+        requireParity(source, left, right, fast, certified, null);
+    }
+
+    void requireParity(Path source, String left, String right, int[] fast, int[] certified,
+            Supplier<JSONObject> nativeReplay) {
         checkRunning();
         if (fast.length != 4 || certified.length != 4) {
             throw new IllegalArgumentException("Expected total, temporal, quantifier, matrix distances");
         }
         if (!java.util.Arrays.equals(fast, certified)) {
-            stop(source, left, right, fast, certified, "DISTANCE_MISMATCH");
+            stop(source, left, right, fast, certified, "DISTANCE_MISMATCH", nativeReplay);
         }
         // Legacy diagnostic strings are not DP backtraces and cannot grant replay authority.
         // Remove this blocker only when both engines emit independently replay-checked plans.
-        stop(source, left, right, fast, certified, "REPLAY_WITNESS_UNAVAILABLE");
+        stop(source, left, right, fast, certified, "REPLAY_WITNESS_UNAVAILABLE", nativeReplay);
     }
 
     private synchronized void stop(Path source, String left, String right,
-            int[] fast, int[] certified, String reason) {
+            int[] fast, int[] certified, String reason, Supplier<JSONObject> nativeReplay) {
         if (first != null) throw first;
+        Violation failure = new Violation(reason + ": " + source + " (" + left + ", " + right + ")");
+        // Publish the latch before IO or replay work so other workers stop immediately.
+        first = failure;
         JSONObject incident = new JSONObject()
                 .put("schema", "acgn-parity-incident-v1")
                 .put("status", "STOPPED")
@@ -59,8 +68,8 @@ final class BatchParityGate {
                 .put("fastReplayPlan", JSONObject.NULL)
                 .put("certifiedReplayPlan", JSONObject.NULL)
                 .put("replayStatus", "UNAVAILABLE")
+                .put("nativeReplayFile", nativeReplay == null ? JSONObject.NULL : "parity-native-replay.json")
                 .put("nextAction", "Inspect this source pair; do not retry or restart unchanged.");
-        Violation failure = new Violation(reason + ": " + source + " (" + left + ", " + right + ")");
         try {
             byte[] contents = Files.readAllBytes(source);
             incident.put("sourceSha256", HexFormat.of().formatHex(
@@ -69,13 +78,35 @@ final class BatchParityGate {
             incident.put("sourceText", new String(contents, StandardCharsets.UTF_8));
             Files.writeString(incidentPath, incident.toString(2) + "\n", StandardCharsets.UTF_8,
                     StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+            // The small immutable incident survives even if bounded diagnostic capture fails.
+            if (nativeReplay != null) retainNativeReplay(source, contents, incident, nativeReplay);
         } catch (IOException | NoSuchAlgorithmException error) {
             failure.addSuppressed(error);
-        } finally {
-            // Also stop on failed evidence persistence; never continue silently.
-            first = failure;
         }
         throw failure;
+    }
+
+    private void retainNativeReplay(Path source, byte[] original, JSONObject incident,
+            Supplier<JSONObject> capture) throws IOException {
+        JSONObject evidence = new JSONObject().put("schema", "acgn-incident-native-replay-v1")
+                .put("status", "BLOCKED").put("complete", false).put("parityAuthority", false)
+                .put("source", incident.getString("source"))
+                .put("sourceSha256", incident.getString("sourceSha256"))
+                .put("leftPredicate", incident.getString("leftPredicate"))
+                .put("rightPredicate", incident.getString("rightPredicate"))
+                .put("incidentReason", incident.getString("reason"));
+        try {
+            JSONObject report = capture.get();
+            if (!java.util.Arrays.equals(original, Files.readAllBytes(source)))
+                throw new IllegalStateException("Source changed during native replay capture");
+            if (report == null) throw new IllegalStateException("Native replay capture returned null");
+            evidence.put("captureStatus", "CAPTURED").put("diagnostic", report);
+        } catch (RuntimeException error) {
+            evidence.put("captureStatus", "FAILED").put("errorType", error.getClass().getName())
+                    .put("error", String.valueOf(error.getMessage()));
+        }
+        Files.writeString(incidentPath.resolveSibling("parity-native-replay.json"), evidence.toString(2) + "\n",
+                StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
     }
 
     static final class Violation extends RuntimeException {

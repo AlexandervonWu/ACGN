@@ -35,6 +35,9 @@ import is.fivefivefive.CanDis.theory.ContainerLawDeclaration;
 import is.fivefivefive.CanDis.theory.DependentChainCertificate;
 import is.fivefivefive.CanDis.theory.DependentChainKind;
 import is.fivefivefive.CanDis.theory.DependentChainTheory;
+import is.fivefivefive.CanDis.theory.GuardedJoinCertificate;
+import is.fivefivefive.CanDis.theory.GuardedJoinTree;
+import is.fivefivefive.CanDis.theory.CertificateVerifier;
 import is.fivefivefive.CanDis.theory.GraphType;
 import is.fivefivefive.CanDis.theory.OnePortSchema;
 import is.fivefivefive.CanDis.theory.PortPath;
@@ -55,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v16";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v17";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -126,7 +129,7 @@ public final class RepairProjection {
         CertifiedContainers containers = CertifiedContainers.from(
                 artifact, evidence.certifiedSetOperandPartitions());
         CertifiedDependentChains chains = CertifiedDependentChains.from(
-                artifact, dependentChainSourceBindings);
+                artifact, dependentChainSourceBindings, normalForms);
         OriginIndex origins = new OriginIndex(
                 normalForms, phaseDescriptors, phaseSourceCoordinates);
         List<Phase> phases = new ArrayList<>(normalForms.size());
@@ -522,6 +525,23 @@ public final class RepairProjection {
             CertifiedContainers containers,
             CertifiedDependentChains chains,
             boolean mergeLocalDeclarations) {
+        GuardedJoinCertificate rotation = chains.rotations.get(source);
+        if (rotation != null) {
+            rotation.requireMatches(source);
+            List<EGraphNode> leaves = new ArrayList<>();
+            collectDependentChainLeaves(source, Opcode.JOIN, leaves,
+                    Collections.newSetFromMap(new IdentityHashMap<>()));
+            List<GuardedJoinTree> proofLeaves = rotation.source().leaves();
+            if (leaves.size() != proofLeaves.size())
+                throw new IllegalStateException("Guarded JOIN occurrence count differs");
+            Map<GuardedJoinTree, Node> projected = new IdentityHashMap<>();
+            for (int index = 0; index < leaves.size(); index++) {
+                projected.put(proofLeaves.get(index), projectNode(leaves.get(index), aliases,
+                        aliasTypes, localAliases, localTypes, localDepth, localBinderDescriptors,
+                        localBinderSourceCoordinates, containers, chains));
+            }
+            return projectGuardedJoin(rotation.target(), projected);
+        }
         DependentChainCertificate dependentChain = chains.certificateFor(source);
         if (dependentChain != null) {
             return projectDependentChain(
@@ -624,6 +644,15 @@ public final class RepairProjection {
                 : new Node(operator, null, variable, bindingIndex, containerKind,
                         source.isOrderInsensitive(), children)).withObservation(
                                 dependentLeafType(source, aliasTypes, localTypes), List.of(), null);
+    }
+
+    private static Node projectGuardedJoin(GuardedJoinTree tree, Map<GuardedJoinTree, Node> leaves) {
+        if (tree.isLeaf()) return Objects.requireNonNull(leaves.get(tree), "guarded JOIN leaf occurrence");
+        List<GuardedJoinTree> operands = tree.presentationOperands();
+        List<Node> children = operands.stream().map(child -> projectGuardedJoin(child, leaves)).toList();
+        GraphType type = tree.type().relationType();
+        return new Node("JOIN", null, "identity=;type=" + type, null, -1,
+                ContainerKind.SEQUENCE, false, children).withObservation(type, List.of(), null);
     }
 
     private static Node projectDependentChain(
@@ -1809,15 +1838,19 @@ public final class RepairProjection {
     /** Identity-bound bridge from repaired syntax to checked chain certificates. */
     private static final class CertifiedDependentChains {
         private final Map<EGraphNode, DependentChainCertificate> certificates;
+        private final Map<EGraphNode, GuardedJoinCertificate> rotations;
 
         private CertifiedDependentChains(
-                Map<EGraphNode, DependentChainCertificate> certificates) {
+                Map<EGraphNode, DependentChainCertificate> certificates,
+                Map<EGraphNode, GuardedJoinCertificate> rotations) {
             this.certificates = certificates;
+            this.rotations = rotations;
         }
 
         private static CertifiedDependentChains from(
                 CertifiedSemanticArtifact artifact,
-                Map<EGraphNode, DependentChainSourceBinding> sourceBindings) {
+                Map<EGraphNode, DependentChainSourceBinding> sourceBindings,
+                List<NormalForm> normalForms) {
             Set<DependentChainCertificate> admitted = Collections.newSetFromMap(
                     new IdentityHashMap<>());
             admitted.addAll(artifact.dependentChainConstructions());
@@ -1853,7 +1886,28 @@ public final class RepairProjection {
                 }
                 checked.put(source, certificate);
             }
-            return new CertifiedDependentChains(Collections.unmodifiableMap(checked));
+            Map<Long, GuardedJoinCertificate> byLineage = new java.util.HashMap<>();
+            for (var certificate : artifact.guardedJoinConstructions()) {
+                CertificateVerifier.verify(certificate);
+                if (byLineage.putIfAbsent(certificate.sourceOccurrenceLineage(), certificate) != null)
+                    throw new IllegalArgumentException("Repeated guarded JOIN source lineage");
+            }
+            Map<EGraphNode, GuardedJoinCertificate> rotations = new IdentityHashMap<>();
+            Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
+            java.util.ArrayDeque<EGraphNode> pending = new java.util.ArrayDeque<>();
+            for (NormalForm form : normalForms) if (form.getMatrixEGraph() != null) pending.add(form.getMatrixEGraph());
+            while (!pending.isEmpty()) {
+                EGraphNode node = pending.removeFirst();
+                if (!visited.add(node)) continue;
+                var certificate = byLineage.remove(node.getSourceOccurrenceLineage());
+                if (certificate != null) {
+                    certificate.requireMatches(node);
+                    rotations.put(node, certificate);
+                }
+                pending.addAll(node.getChildren());
+            }
+            if (!byLineage.isEmpty()) throw new IllegalArgumentException("Guarded JOIN source is absent from projection");
+            return new CertifiedDependentChains(Collections.unmodifiableMap(checked), Collections.unmodifiableMap(rotations));
         }
 
         private static boolean matchesCertifiedResultType(

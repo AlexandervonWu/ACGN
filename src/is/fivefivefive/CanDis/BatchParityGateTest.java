@@ -4,6 +4,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.TimeUnit;
 import org.json.JSONObject;
 
 /** No solver or corpus run: exercise fatal classification, persistence and cancellation. */
@@ -65,6 +67,58 @@ public final class BatchParityGateTest {
             for (Thread worker : workers) worker.join(5000);
             require(failures.get() == 8);
             new JSONObject(Files.readString(raced.resolve("parity-incident.json")));
+            Path replay = Files.createDirectory(root.resolve("replay"));
+            BatchParityGate replayGate = new BatchParityGate(replay);
+            CountDownLatch entered = new CountDownLatch(1), release = new CountDownLatch(1);
+            AtomicInteger captures = new AtomicInteger();
+            AtomicReference<Throwable> unexpected = new AtomicReference<>();
+            Thread capturing = new Thread(() -> {
+                try {
+                    replayGate.requireParity(source, "lhs", "rhs", new int[]{1,0,0,1}, new int[]{2,0,0,2}, () -> {
+                        captures.incrementAndGet();
+                        entered.countDown();
+                        try {
+                            if (!release.await(5, TimeUnit.SECONDS)) throw new AssertionError("Replay wait timed out");
+                        } catch (InterruptedException error) { throw new IllegalStateException(error); }
+                        return new JSONObject().put("nativeOnly", true);
+                    });
+                    unexpected.set(new AssertionError("Native diagnostics incorrectly granted parity"));
+                } catch (BatchParityGate.Violation expected) {
+                    // Native replay is evidence only, never a permit to continue.
+                } catch (Throwable error) { unexpected.set(error); }
+            });
+            capturing.start();
+            try {
+                require(entered.await(5, TimeUnit.SECONDS));
+                require(Files.exists(replay.resolve("parity-incident.json")));
+                expectViolation(replayGate::checkRunning);
+                expectViolation(() -> replayGate.requireParity(source, "later", "rhs",
+                        new int[]{1,0,0,1}, new int[]{1,0,0,1}, () -> { captures.incrementAndGet(); return null; }));
+            } finally { release.countDown(); capturing.join(5000); }
+            require(!capturing.isAlive() && unexpected.get() == null && captures.get() == 1);
+            JSONObject nativeEvidence = new JSONObject(Files.readString(replay.resolve("parity-native-replay.json")));
+            require(nativeEvidence.getString("captureStatus").equals("CAPTURED"));
+            require(nativeEvidence.getJSONObject("diagnostic").getBoolean("nativeOnly"));
+            require(!nativeEvidence.getBoolean("complete") && !nativeEvidence.getBoolean("parityAuthority"));
+            for (String mode : new String[]{"throws", "null", "source-changed"}) {
+                Path failureDir = Files.createDirectory(root.resolve(mode));
+                BatchParityGate failed = new BatchParityGate(failureDir);
+                String original = Files.readString(source);
+                expectViolation(() -> failed.requireParity(source, "lhs", "rhs",
+                        new int[]{1,0,0,1}, new int[]{1,0,0,1}, () -> {
+                    if (mode.equals("throws")) throw new IllegalArgumentException("Bounded replay refused");
+                    if (mode.equals("source-changed")) try { Files.writeString(source, "changed"); }
+                        catch (java.io.IOException error) { throw new java.io.UncheckedIOException(error); }
+                    return null;
+                }));
+                JSONObject diagnosticFailure = new JSONObject(Files.readString(failureDir.resolve("parity-native-replay.json")));
+                require(diagnosticFailure.getString("captureStatus").equals("FAILED"));
+                require(!diagnosticFailure.has("diagnostic"));
+                require(new JSONObject(Files.readString(failureDir.resolve("parity-incident.json")))
+                        .getString("sourceText").equals(original));
+                expectViolation(failed::checkRunning);
+                Files.writeString(source, original);
+            }
             BatchParityGate unwritable = new BatchParityGate(root.resolve("nonexistent"));
             expectViolation(() -> unwritable.requireParity(source, "lhs", "rhs",
                     new int[]{1, 0, 0, 1}, new int[]{2, 0, 0, 2}));
