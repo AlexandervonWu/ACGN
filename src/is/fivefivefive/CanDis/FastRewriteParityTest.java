@@ -88,6 +88,15 @@ public final class FastRewriteParityTest {
         fixture("nested-shadowing", "sig S { r: set S } one sig A,B in S {}",
                 "A->B in { x,y:S | some x:S | x->y in r }",
                 "A->B in { a,b:S | some c:S | c->b in r }", true);
+        fixture("derived-membership-labels", "sig P {} sig A,B in P {}",
+                "all p:P | p not in A or p not in B",
+                "all p:P | (p in A implies p not in B) and (p in B implies p not in A)", true);
+        fixture("local-all-grouping", "sig U { posts:set P } sig P {}",
+                "(all x,y:U | all p:P | p in x.posts and p in y.posts implies x=y) and P in U.posts",
+                "(all x:U,y:U | all p:P | p in x.posts and p in y.posts implies x=y) and P in U.posts", true);
+        fixture("duplicate-slot-map-order", "sig W {} sig H,R in W {} sig S {workers:set W}",
+                "all h:H,r:R,w:S | h in w.workers implies r not in w.workers",
+                "all h:H,r:R,w:S | (h in w.workers implies r not in w.workers) and (r in w.workers implies h not in w.workers)", true);
         historicalNegativePairs();
         System.out.println("FastRewriteParityTest: " + checks + " checks passed");
     }

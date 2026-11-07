@@ -39,6 +39,13 @@ log-speedup surfaces, success rates, median/P95 runtimes, timeout coverage, and
 the documented resource-guard continuation. These reports are separate from
 historical release measurements below.
 
+The subsequent [distance-parity audit](docs/distance-parity-20261107/README.md)
+identifies per-instance disagreements in both directions. Fast comparison now
+includes exact result types in node-update costs and removes the documented
+ACI/local-binder presentation mismatches. These are post-run changes, not new
+full-corpus measurements. Common representation coverage and minimum-distance
+parity remain explicit implementation targets.
+
 ### Assurance status
 
 This repository establishes no general assurance of implementation correctness
@@ -496,6 +503,13 @@ sequences, multiplicity-aware assignment for bags, minimum assignment for
 sets, direct comparison for `one`, and pairwise binder-orbit minimization.
 Canonical-representative TED remains available only as
 `CanonicalRepresentativeTreeDistance`; no isometry theorem is claimed for it.
+
+Sharing this decomposition does not yet make the two executable distances
+identical: their chain and live temporal representations still differ. The
+[parity implementation ledger](docs/distance-parity-20261107/IMPLEMENTATION.md)
+tracks these gaps. In Fast comparison, a node-head update now costs one when
+its identity or exact result type changes, not one for each of those changes.
+Binding type costs remain at declarations rather than repeated variable uses.
 
 The `CanonicalDistance` specification is the sum of:
 

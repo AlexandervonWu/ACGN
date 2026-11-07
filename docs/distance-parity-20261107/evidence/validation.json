@@ -1,0 +1,47 @@
+{
+  "scope": "Fast result-type costs and detached ACI/local-ALL presentation coverage",
+  "baselineCommit": "c07f74bfaa7bb56e3e7a7224fa731a9b8ab518c6",
+  "sourceState": "post-baseline working tree; changed source hashes below",
+  "command": "bash scripts/run_distance_parity_tests.sh",
+  "exitCode": 0,
+  "leanVersion": "4.35.0",
+  "javaVersion": "17.0.20.1",
+  "checks": {
+    "FastResultTypeCostTest": 36,
+    "FastRewriteParityTest": 208,
+    "EGraphSaturationTest": "PASS",
+    "QuotientRepairDistanceTest": 2266,
+    "CanonicalAlloyPipelineTest": 2041,
+    "standaloneLeanTheorems": 14,
+    "beforeAfterReplays": 293,
+    "pairedCorrectZeroDisagreementsClosed": 282,
+    "boundedAlloyScope4Checks": 13
+  },
+  "replayInvariants": [
+    "both source hashes unchanged",
+    "both retained matrix diagnostics unchanged",
+    "both certified projection diagnostics unchanged",
+    "certified observation-equality decision unchanged",
+    "certified distance components unchanged",
+    "Fast and certified costs each symmetric"
+  ],
+  "open": [
+    "two Fast-only partial-JOIN correct-pool pairs remain 0 versus 8",
+    "common binary/flat and live temporal representation space",
+    "full-corpus equality and finite-space minimum validation",
+    "separate module-less prelude export defect"
+  ],
+  "sha256": {
+    "src/is/fivefivefive/CanDis/core/CanonicalDistance.java": "24e3835eb7fce3cf7122e181bbdaff38a7257b01d9ef5ef857f0d06092f89f87",
+    "src/is/fivefivefive/CanDis/core/EGraphNode.java": "3ace000b9a6e0fdbeb0d9d17588b6d3ffd8b5707c706b1f440c6c4fec254b05f",
+    "src/is/fivefivefive/CanDis/FastResultTypeCostTest.java": "6971d008e3fc7b795b0d05a9993d56384ca89f92a6d226ba954c4b3eb8ee0847",
+    "src/is/fivefivefive/CanDis/FastRewriteParityTest.java": "39b0ef88160b0f321daa5ba8dfefc17500aca80aef7c418f7d62f616958e0e24",
+    "src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java": "e0b531919abf25d024d59845e81c8f92b689446aa07fff09025e4f6aacbfe156",
+    "docs/distance-parity-20261107/IncidentLaws.lean": "bdfd4f28100ae30a7fc5c47d411158d8be2d2f48d20c4246a97e1581fb0fbebc",
+    "docs/distance-parity-20261107/UnionMinimum.lean": "fa627beb175c71531155f9f8190e7f54a8697b54b301a25cacc913eab4462280",
+    "scripts/run_distance_parity_tests.sh": "6b083b59fe7be1a7572d27e05a7d0e2652a35e75264708c6d1872fb3cfa12e95",
+    "docs/distance-parity-20261107/evidence/baseline-replays.jsonl": "9f0d02d307726fee87d7f869945b88dbaf8ffa8e607b2780e0da7a5fcb9d9ecd",
+    "docs/distance-parity-20261107/evidence/after-replays.jsonl": "aa58d0b1961bc7f203fa0b3af272fca77dd7f6b1195ea3539aeba11e64d9e008",
+    "docs/distance-parity-20261107/evidence/bounded-tests.log": "f3431a21015c57a434248ed0baed24fa784c48c2dc4ce1572522eabba7b37447"
+  }
+}

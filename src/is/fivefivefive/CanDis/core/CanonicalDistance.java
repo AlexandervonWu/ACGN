@@ -6,9 +6,12 @@ import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
+import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
+import is.fivefivefive.CanDis.theory.GraphType;
 
 /**
  * Specification and reference implementation of the CanDis repair metric over
@@ -1079,6 +1082,10 @@ public final class CanonicalDistance {
                 && !safeEquals(atomIdentity(left), atomIdentity(right))) {
             edits.add(path + ": replace binding " + atomDisplay(left)
                     + " -> " + atomDisplay(right));
+        } else if (left.getOpcode() != EGraphNode.Opcode.VARIABLE
+                && !Objects.equals(resultType(left), resultType(right))) {
+            edits.add(path + ": replace result type " + resultType(left)
+                    + " -> " + resultType(right));
         }
         List<EGraphNode> leftChildren = left.getChildren();
         List<EGraphNode> rightChildren = right.getChildren();
@@ -1227,7 +1234,8 @@ public final class CanonicalDistance {
         return key.append(']').toString();
     }
 
-    private static int nodeUpdateCost(EGraphNode left, EGraphNode right, Map<String, String> variableMapping) {
+    private static int nodeUpdateCost(EGraphNode left, EGraphNode right, Map<String, String> variableMapping,
+            EGraphMetadata leftMetadata, EGraphMetadata rightMetadata) {
         if (left.getOpcode() != right.getOpcode()) {
             return 1;
         }
@@ -1240,6 +1248,11 @@ public final class CanonicalDistance {
             }
             return leftName.equals(rightName) ? 0 : 1;
         }
+        GraphType leftType = leftMetadata == null ? resultType(left) : leftMetadata.type(left);
+        GraphType rightType = rightMetadata == null ? resultType(right) : rightMetadata.type(right);
+        if (!Objects.equals(leftType, rightType)) {
+            return 1;
+        }
         if (left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
                 || left.getOpcode() == EGraphNode.Opcode.CONSTANT
                 || left.getOpcode() == EGraphNode.Opcode.REF) {
@@ -1249,6 +1262,25 @@ public final class CanonicalDistance {
             return safeEquals(callIdentity(left), callIdentity(right)) ? 0 : 1;
         }
         return 0;
+    }
+
+    private static GraphType resultType(EGraphNode node) {
+        switch (node.getOpcode()) {
+            case VARIABLE: case GENERICRELDECL: case DISJ: case VAR: case DISJVAR:
+                return null;
+            default:
+                break;
+        }
+        if (node.getMetatype() == EGraphNode.Metatype.BOOLEAN) {
+            return GraphType.BOOL;
+        }
+        if (node.getOpcode() == EGraphNode.Opcode.CARDINALITY
+                || node.getOpcode() == EGraphNode.Opcode.CAST2INT) {
+            return GraphType.INT;
+        }
+        // Untyped historical core fixtures remain non-certifying inputs.
+        return node.getExactAlloyType() == null
+                ? null : AlloyTypeBridge.graphType(node.getExactAlloyType());
     }
 
     private static String callIdentity(EGraphNode node) {
@@ -1286,6 +1318,7 @@ public final class CanonicalDistance {
 
     private static final class EGraphMetadata {
         private final IdentityHashMap<EGraphNode, Integer> sizes = new IdentityHashMap<>();
+        private final IdentityHashMap<EGraphNode, GraphType> resultTypes = new IdentityHashMap<>();
 
         private EGraphMetadata(List<NormalForm> normalForms) {
             for (NormalForm normalForm : normalForms) {
@@ -1305,6 +1338,7 @@ public final class CanonicalDistance {
                 size += sizes.get(child);
             }
             sizes.put(node, size);
+            resultTypes.put(node, resultType(node));
         }
 
         private int size(EGraphNode node) {
@@ -1317,6 +1351,13 @@ public final class CanonicalDistance {
                 size = sizes.get(node);
             }
             return size;
+        }
+
+        private GraphType type(EGraphNode node) {
+            if (!resultTypes.containsKey(node)) {
+                prepare(node);
+            }
+            return resultTypes.get(node);
         }
 
     }
@@ -1350,7 +1391,7 @@ public final class CanonicalDistance {
                     && right.isOrderInsensitive()
                     ? unorderedChildDistance(leftChildren, rightChildren)
                     : childDistance(leftChildren, rightChildren);
-            return nodeUpdateCost(left, right, variableMapping) + childCost;
+            return nodeUpdateCost(left, right, variableMapping, leftMetadata, rightMetadata) + childCost;
         }
 
         private int unorderedChildDistance(List<EGraphNode> left, List<EGraphNode> right) {

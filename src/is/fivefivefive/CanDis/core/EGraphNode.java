@@ -7111,7 +7111,32 @@ public final class EGraphNode {
                     children.add(child(ref, ambient, scope, depth, childRename));
                 }
             }
+            if (rename && source.opcode == Opcode.FORALL && !containsTemporalReference(source)) {
+                List<EGraphNode> grouped = new ArrayList<>();
+                for (EGraphNode next : children) {
+                    EGraphNode previous = grouped.isEmpty() ? null : grouped.get(grouped.size() - 1);
+                    if (previous != null && previous.opcode == Opcode.GENERICRELDECL
+                            && next.opcode == Opcode.GENERICRELDECL
+                            && !previous.childClasses.isEmpty() && !next.childClasses.isEmpty()
+                            && certifiedContainerInvocationKey(previous.childClasses.get(0))
+                                    .equals(certifiedContainerInvocationKey(next.childClasses.get(0)))) {
+                        List<EGraphNode> parts = new ArrayList<>(previous.getChildren());
+                        parts.addAll(next.getChildren().subList(1, next.getChildren().size()));
+                        grouped.set(grouped.size() - 1, head(previous, parts));
+                    } else {
+                        grouped.add(next);
+                    }
+                }
+                children = grouped;
+            }
             EGraphNode result = head(source, children);
+            if ((result.opcode == Opcode.IN || result.opcode == Opcode.NOT_IN
+                    || result.opcode == Opcode.EQUALS || result.opcode == Opcode.NOT_EQUALS)
+                    && hasBooleanFormulaType(result) && children.size() == 2
+                    && children.get(0).exactAlloyType != null
+                    && children.get(1).exactAlloyType != null) {
+                result.sourceName = null;
+            }
             if ((result.opcode == Opcode.NO || result.opcode == Opcode.SOME
                     || result.opcode == Opcode.ONE || result.opcode == Opcode.LONE)
                     && hasBooleanFormulaType(result) && children.size() == 1
@@ -7136,7 +7161,11 @@ public final class EGraphNode {
                         flat.add(ref);
                     }
                 }
-                result.childClasses = removeDuplicateInvocations(flat);
+                Map<String, EClassRef> unique = new LinkedHashMap<>();
+                for (EClassRef ref : flat) {
+                    unique.putIfAbsent(certifiedContainerInvocationKey(ref), ref);
+                }
+                result.childClasses = new ArrayList<>(unique.values());
                 if (result.childClasses.size() == 1) {
                     return result.childClasses.get(0).getEClass().getRepresentative();
                 }

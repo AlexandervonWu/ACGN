@@ -1655,8 +1655,8 @@ public final class CanonicalAlloyPipelineTest {
                 visitor, "fastFieldWrongOwner");
         check(Canonical.distance(fieldLeft, fieldAlpha) == 0,
                 "Fast Rewrite field identity must preserve alpha-equivalence");
-        check(Canonical.distance(fieldLeft, fieldWrongOwner) == 1,
-                "Fast Rewrite must distinguish same-spelled fields owned by different signatures");
+        check(Canonical.distance(fieldLeft, fieldWrongOwner) == 2,
+                "Fast Rewrite must charge the field identity and changed JOIN result type");
         check(CanonicalAlloyPipeline.distance(
                         CanonicalAlloyPipeline.prepare(fieldLeft),
                         CanonicalAlloyPipeline.prepare(fieldWrongOwner)) == 2,

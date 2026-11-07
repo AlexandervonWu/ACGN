@@ -1,0 +1,159 @@
+{
+  "sourceArtifacts": "/media/augustus/8618-0ED0/ACGN/intermediate/full-corpus-8g-20261107T062202Z/artifacts",
+  "paired": {
+    "successful": 61598,
+    "equal": 40870,
+    "zeroDisagreements": 0,
+    "fastSum": 860530,
+    "certifiedSum": 863710,
+    "fastGreater": 7777,
+    "certifiedGreater": 12951
+  },
+  "components": {
+    "Temporal": 19,
+    "Quantifier": 5,
+    "Matrix": 20726
+  },
+  "byClass": {
+    "classroom_fol": {
+      "equal": 2527,
+      "fastGreater": 1267,
+      "certifiedGreater": 209
+    },
+    "classroom_rl": {
+      "equal": 2502,
+      "certifiedGreater": 626,
+      "fastGreater": 255
+    },
+    "coursesNew": {
+      "fastGreater": 709,
+      "equal": 2610,
+      "certifiedGreater": 1602
+    },
+    "coursesOld": {
+      "fastGreater": 1844,
+      "equal": 5259,
+      "certifiedGreater": 2385
+    },
+    "cv_v1": {
+      "equal": 452,
+      "fastGreater": 108,
+      "certifiedGreater": 248
+    },
+    "cv_v2": {
+      "equal": 188,
+      "certifiedGreater": 67,
+      "fastGreater": 18
+    },
+    "graphs": {
+      "equal": 1798,
+      "certifiedGreater": 254,
+      "fastGreater": 100
+    },
+    "lts": {
+      "equal": 346,
+      "fastGreater": 803,
+      "certifiedGreater": 367
+    },
+    "productionLineNew": {
+      "equal": 1796,
+      "certifiedGreater": 279,
+      "fastGreater": 151
+    },
+    "productionLine_v1": {
+      "equal": 302,
+      "certifiedGreater": 159,
+      "fastGreater": 44
+    },
+    "productionLine_v2": {
+      "fastGreater": 247,
+      "equal": 2675,
+      "certifiedGreater": 447
+    },
+    "socialMedia": {
+      "equal": 7563,
+      "certifiedGreater": 4575,
+      "fastGreater": 1862
+    },
+    "trainStationNew": {
+      "equal": 5144,
+      "certifiedGreater": 712,
+      "fastGreater": 61
+    },
+    "trainStationOld": {
+      "equal": 499,
+      "fastGreater": 139,
+      "certifiedGreater": 238
+    },
+    "trash_fol": {
+      "equal": 2320,
+      "certifiedGreater": 35,
+      "fastGreater": 10
+    },
+    "trash_ltl": {
+      "equal": 2933,
+      "certifiedGreater": 697,
+      "fastGreater": 100
+    },
+    "trash_rl": {
+      "equal": 1956,
+      "certifiedGreater": 51,
+      "fastGreater": 59
+    }
+  },
+  "signedDeltaCertifiedMinusFast": {
+    "-32": 2,
+    "-22": 4,
+    "-21": 3,
+    "-20": 1,
+    "-19": 1,
+    "-18": 2,
+    "-15": 6,
+    "-14": 8,
+    "-12": 13,
+    "-11": 21,
+    "-10": 20,
+    "-9": 50,
+    "-8": 79,
+    "-7": 61,
+    "-6": 51,
+    "-5": 89,
+    "-4": 418,
+    "-3": 1475,
+    "-2": 1954,
+    "-1": 3519,
+    "0": 40870,
+    "1": 8394,
+    "2": 2644,
+    "3": 1427,
+    "4": 429,
+    "5": 24,
+    "6": 16,
+    "7": 5,
+    "8": 8,
+    "9": 1,
+    "10": 1,
+    "15": 2
+  },
+  "ablationMismatchInventoryAgrees": true,
+  "incorrectIndependentNearestTruth": {
+    "rows": 42386,
+    "equal": 27545,
+    "fastZeroes": 0,
+    "certifiedZeroes": 0,
+    "fastGreater": 5214,
+    "certifiedGreater": 9627
+  },
+  "correctPool": {
+    "certifiedOnlyZero": 282,
+    "fastOnlyZero": 2
+  },
+  "inputSha256": {
+    "distance_results/distances.json": "626c4b5ab7ff403300a4813dd5912af857c3e754d0d2df64d621a0b5439bb752",
+    "egraph_ablation/canonical/pairs.csv": "ee7f117f9cec787d13846c4a189bd88df913fdf2845a780be90c6a180a09769a",
+    "egraph_ablation/typed-slotted-port-egraph/pairs.csv": "f5b469bbb2edf552a5ec5e86ff6f56d32e40acbaa2fc9045d4758f9ea5f3ce82",
+    "alloy4fun-augmented/canonical_reward_points.csv": "25beeed39267df2f8e4973918d6873caa477c7c09d4877e368d9c07a290becc3",
+    "alloy4fun-augmented/correct_ast_diff_canonical_equiv.json": "84915c73c648b4d1332ee4ccebd05618e6f1c7d11384c2b276395525be7a9ed5",
+    "alloy4fun-augmented/correct_ast_diff_fast_rewrite_equiv.json": "6ed05b60219c2a2bab1567b887b46edaac9e790ab155bd1d050fdca5eda27a82"
+  }
+}
