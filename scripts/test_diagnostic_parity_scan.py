@@ -25,6 +25,7 @@ def main():
         ("equal-product", root / "classified-data/classroom_fol/both/2S5sD2BA5mvLdj46b_inv12.als", None),
         ("equal-scoped-temporal", root / "classified-data/trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als", None),
         ("equal-injective-variables", root / "classified-data/classroom_fol/both/2vLMTEbEhvra9ad9z_inv12.als", None),
+        ("equal-paid-declarations", root / "classified-data/classroom_fol/both/5dmBQdag4unR6mf3t_inv14.als", None),
         ("identical", identical, None),
         ("false-zero", false_zero, "INCORRECT_ZERO"),
     ]
@@ -58,7 +59,7 @@ def main():
         else:
             assert not (output / "parity-incident.json").exists()
             expected_distance = {"equal": 11, "equal-product": 14, "equal-scoped-temporal": 21,
-                                 "equal-injective-variables": 18}.get(label)
+                                 "equal-injective-variables": 18, "equal-paid-declarations": 29}.get(label)
             assert report["summary"]["successes"] == (1 if expected_distance is not None else 0)
             assert report["summary"]["skippedIdenticalRawAstPairs"] == (1 if label == "identical" else 0)
             if expected_distance is not None:

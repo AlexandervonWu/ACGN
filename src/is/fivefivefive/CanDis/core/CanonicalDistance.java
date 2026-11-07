@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v5-injective-variable-fallback";
+    public static final String VERSION = "typed-fast-distance-v6-paid-declaration-links";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -108,25 +108,35 @@ public final class CanonicalDistance {
         }
         if (cost != nativeResult.matrixDistance())
             throw new IllegalStateException("MATRIX_REPLAY_NATIVE_COST_MISMATCH");
-        return new org.json.JSONObject().put("arm", "fast").put("metricVersion", VERSION)
+        org.json.JSONObject result = new org.json.JSONObject().put("arm", "fast").put("metricVersion", VERSION)
                 .put("chainGeometryVersion", FastChainGeometry.VERSION).put("distance", nativeResult.distance())
                 .put("temporalDistance", nativeResult.temporalDistance())
                 .put("quantifierDistance", nativeResult.quantifierDistance())
                 .put("matrixDistance", nativeResult.matrixDistance()).put("replayedMatrixCost", cost)
                 .put("matrixReplayChecked", true).put("complete", false).put("phases", phases);
+        if (coherent.paidCorrespondence != null) result.put("selectedPaidDeclarationCorrespondence",
+                new org.json.JSONObject(new java.util.TreeMap<>(coherent.paidCorrespondence)));
+        return result;
     }
 
     /** Adds fixed-order declaration and executable native temporal replay; public linkage remains incomplete. */
     public static org.json.JSONObject replayWithSlices(Prepared left, Prepared right) {
         org.json.JSONObject matrix = matrixReplay(left,right);
         return is.fivefivefive.CanDis.metric.PhaseReplay.attach(matrix,
-                () -> declarationReplay(left,right,matrix.getInt("quantifierDistance")),
+                () -> declarationReplay(left,right,matrix),
                 () -> is.fivefivefive.CanDis.metric.TemporalReplay.capture(
                         left.temporalTree,right.temporalTree,matrix.getInt("temporalDistance"),
                         node -> node.label,node -> node.children));
     }
 
-    private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,int expected) {
+    private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,org.json.JSONObject matrix) {
+        int expected = matrix.getInt("quantifierDistance");
+        Map<String,String> paid = new HashMap<>();
+        boolean linked = matrix.has("selectedPaidDeclarationCorrespondence");
+        if (linked) {
+            org.json.JSONObject selected = matrix.getJSONObject("selectedPaidDeclarationCorrespondence");
+            for (String key : selected.keySet()) paid.put(key,selected.getString(key));
+        }
         org.json.JSONArray components = new org.json.JSONArray();
         int cost = 0;
         for (int phase = 0; phase < Math.max(left.normalForms.size(),right.normalForms.size()); phase++) {
@@ -139,7 +149,14 @@ public final class CanonicalDistance {
             var aAtoms = declarationAtoms(aSource,a,phase);
             var bAtoms = declarationAtoms(bSource,b,phase);
             org.json.JSONObject receipt = is.fivefivefive.CanDis.metric.DeclarationReplay.capture(
-                    aAtoms,bAtoms,quantificationDp(a,b),(i,j) -> true);
+                    aAtoms,bAtoms,quantificationDp(a,b),(i,j) -> {
+                        if (!linked) return true;
+                        if (i < 0) return !paid.containsValue(b.get(j).getName());
+                        if (j < 0) return !paid.containsKey(a.get(i).getName());
+                        if (quantifierUpdateCost(a.get(i),b.get(j)) != 0)
+                            return b.get(j).getName().equals(paid.get(a.get(i).getName()));
+                        return !paid.containsKey(a.get(i).getName()) && !paid.containsValue(b.get(j).getName());
+                    });
             cost = Math.addExact(cost,is.fivefivefive.CanDis.metric.DeclarationReplay.verify(aAtoms,bAtoms,receipt));
             components.put(new org.json.JSONObject().put("phase",phase).put("receipt",receipt));
         }
@@ -147,7 +164,9 @@ public final class CanonicalDistance {
         return new org.json.JSONObject().put("cost",cost).put("replayedCost",cost)
                 .put("components",components).put("sliceReplayChecked",true).put("complete",false)
                 .put("matrixChoiceAdmissionChecked",false).put("orderingAdmissionChecked",false)
-                .put("bindingRelationship","Fast independently minimizes declaration and matrix phases");
+                .put("selectedPaidCorrespondenceChecked",linked)
+                .put("bindingRelationship",linked ? "Paid declaration diagonals carried into native matrix mapping"
+                        : "Fast independently minimizes declaration and matrix phases");
     }
 
     private static List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom> declarationAtoms(
@@ -533,6 +552,8 @@ public final class CanonicalDistance {
             List<NormalForm> right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
+        if (FastPaidDeclarationAlignment.supports(left) && FastPaidDeclarationAlignment.supports(right))
+            return paidDeclarationMatrixAlignment(left.get(0),right.get(0),leftMetadata,rightMetadata);
         // One source binder imported into several temporal phases must consume
         // one alpha mapping; phase-local binders remain independently aligned.
         CoherentVariableSpace leftSpace = coherentVariableSpace(left);
@@ -584,6 +605,26 @@ public final class CanonicalDistance {
                 best.mapping,
                 lockedLeftNames,
                 lockedRightNames);
+    }
+
+    private static MatrixAlignment paidDeclarationMatrixAlignment(NormalForm left,NormalForm right,
+            EGraphMetadata leftMetadata,EGraphMetadata rightMetadata) {
+        List<QuantiVar> a = canonicalQuantifierOrder(left.getMatrixQuantiVars());
+        List<QuantiVar> b = canonicalQuantifierOrder(right.getMatrixQuantiVars());
+        if (a.size() > FastPaidDeclarationAlignment.MAX_DECLARATIONS
+                || b.size() > FastPaidDeclarationAlignment.MAX_DECLARATIONS)
+            throw new IllegalStateException("PAID_DECLARATION_SIZE_BUDGET");
+        MatrixAlignment[] best = {null};
+        FastPaidDeclarationAlignment.enumerate(a,b,quantificationDp(a,b),CanonicalDistance::quantifierUpdateCost,paid -> {
+            Set<String> lockedLeft = paid.keySet(), lockedRight = new HashSet<>(paid.values());
+            int distance = matrixDistance(left,right,paid,lockedLeft,lockedRight,leftMetadata,rightMetadata);
+            if (best[0] == null || distance < best[0].distance) {
+                best[0] = new MatrixAlignment(distance,paid,lockedLeft,lockedRight);
+                best[0].paidCorrespondence = Map.copyOf(paid);
+            }
+        });
+        if (best[0] == null) throw new IllegalStateException("PAID_DECLARATION_NO_MINIMUM_PATH");
+        return best[0];
     }
 
     private static void closeCoherentCandidateRegion(
@@ -2264,6 +2305,7 @@ public final class CanonicalDistance {
     }
 
     private static final class MatrixAlignment {
+        private Map<String,String> paidCorrespondence;
         private final int distance;
         private final Map<String, String> mapping;
         private final Set<String> lockedLeftNames;

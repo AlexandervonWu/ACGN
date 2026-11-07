@@ -735,6 +735,48 @@ Python checks and eleven local supervisor tests. The input hash inventory
 was unchanged after execution. Logs and hashes are retained at
 `ACGN/intermediate/next-repair-integration-20261107-A4ysvE/`.
 
+### Paid Declaration Correspondence Repair
+
+Fresh diagnostic run `diagnostic-parity-20261107T210446Z`, from commit
+`d258558a909eb96bdfdddd759eb71b00a381b703`, stopped after 81 successful
+ordered rows on `classroom_fol/both/5dmBQdag4unR6mf3t_inv14.als`,
+`inv14` / `inv14c`. Fast was `[30,0,4,26]`, certified `[29,0,4,25]`.
+The service and all descendants exited before recovery; manifest checks
+passed before and after the native replay. This prefix is not a corpus mean.
+
+The shorter certified receipt passed bounded independent fixed-choice replay
+against fresh source/type/binder endpoints, including the paid declaration
+links. This does not discharge public source/certificate admission. Fast had
+discarded those paid links before its matrix alpha search. Carrying the
+selected paid `s -> p` update into matrix matching permits a cheaper child
+alignment; both directions become `[29,0,4,25]`, with certified receipts
+unchanged. No scalar is copied or clamped.
+
+`PaidDeclarationAlignment.lean` precedes the Java refinement. The added
+search covers one closed non-temporal homogeneous ALL or SOME block with
+parser-authenticated types, ONE multiplicities and no disjointness, imports,
+parameters, CALL or REF. Unsupported scopes retain their prior path. Explicit
+declaration, graph and path-visit budgets fail closed rather than returning
+an approximate result. Selected paid links must be realized by the native
+declaration receipt. Full public operation alignment remains **BLOCKED**.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix29-Pa2gmDpd/evidence.json`,
+SHA-256 `6bc13f8579dde8f939343c6ba651d9063ba8a803b916a18105b377b138953f65`.
+The original incident SHA-256 is
+`01aa4f66881bca817082e9aeb4d5876c21c80765d3058b96db0e375ad97ac9f7`;
+original native receipt SHA-256 is
+`b366af661447245435d9a1f345694c9e23ff9bf3d7a2ed89bb711ebe8e87351c`.
+All original and final receipts, source hashes, bounded controls and build
+identity are retained externally. Parent integration logs and inventory are
+under `ACGN/intermediate/paid-declaration-integration-20261107-2MPAEi/`.
+
+Parent integration passed 23 Lean files, 15,136 numbered Java checks, three
+strict CLI stop cases, seven diagnostic CLI cases, native replay CLI checks,
+ten Python checks and eleven local supervisor tests. The frozen input hash
+inventory was unchanged after the suite. This is bounded repair validation,
+not a claim of full-corpus distance or operation-sequence equality.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
