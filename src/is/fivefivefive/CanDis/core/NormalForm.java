@@ -639,6 +639,9 @@ public class NormalForm {
         for (QuantiVar variable : inheritedQuantiVars) {
             variable.freezeForCertification();
         }
+        for (LocalBindingSeed seed : localBindingSeeds.values()) {
+            seed.variable.freezeForCertification();
+        }
         for (PhaseLocalBindingImport imported : phaseLocalBindingImports) {
             imported.variable().freezeForCertification();
         }

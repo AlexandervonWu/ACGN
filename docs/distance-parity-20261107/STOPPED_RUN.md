@@ -816,6 +816,47 @@ Full public operation-sequence alignment, standalone source-certificate wire
 replay and Java/Lean correspondence remain **BLOCKED**. Actual checked
 construction evidence is retained; numerical parity does not replace proof.
 
+### Outer Paid Links With A Retained Local Binder
+
+Diagnostic run `diagnostic-parity-20261107T221300Z`, from commit
+`eaa40cbe0d1b9241a914a3a916961ac48c44cb43`, stopped on
+`classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als`, `inv12` / `inv12c`.
+Fast was `[28,0,3,25]`, certified `[27,0,3,24]`. All descendants exited and
+the manifest checks passed before recovery. This prefix is not a corpus mean.
+
+The shorter certified receipt passed fixed-choice replay against fresh typed
+endpoints, actual construction premises and source/owner links. Fast excluded
+all local-binder matrices from outer paid declaration alignment, unnecessarily
+charging an `s -> x` variable update despite a paid outer declaration link.
+The repair yields `[27,0,3,24]` in both directions. Certified receipts stay
+unchanged; the paid declaration and Student-to-Teacher guard costs remain.
+
+The new eligibility check is limited to one retained single-variable EXISTS
+with ONE multiplicity and a closed typed global domain, paired with an endpoint
+without local binders. Original owner, declaration, variable and domain
+occurrence links justify the Fast local spelling. Capture, escaping uses,
+foreign modules, nested or multiple local owners and unsupported scopes reject.
+Traversal and depth budgets fail closed. Local binding seeds are now frozen
+with the rest of the certified NormalForm, including inactive seeds.
+
+`LocalPaidDeclarationAlignment.lean` preceded production changes. It proves
+outer transport/local-owner separation, retained existential congruence and an
+empty-domain counterexample to hoisting. Source-equivalence checks at Alloy
+scopes 0 through 4 and empty-Teacher controls supplement these formal laws;
+they are not a universal source-normalization proof.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix27-8LtePnzz/evidence.json`,
+SHA-256 `f249fe289f7e967324b789f3f2f5e4d852b50af07a59f973481d22716c984d76`.
+Parent integration evidence is under
+`ACGN/intermediate/local-paid-integration-20261107-ANyVlM/`.
+The combined suite passed 25 Lean files, 15,351 numbered Java checks, nine
+diagnostic CLI cases, three strict CLI cases, native replay CLI checks, ten
+Python checks and fourteen local supervisor tests. Input hashes were unchanged.
+Full public/wire operation alignment and Java/Lean correspondence remain
+**BLOCKED**; the actual checked construction evidence is not replaced by
+numerical agreement.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

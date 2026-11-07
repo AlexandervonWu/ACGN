@@ -11,13 +11,19 @@ final class FastPaidDeclarationAlignment {
 
     private FastPaidDeclarationAlignment() { }
 
+    static boolean supportsPair(List<NormalForm> left,List<NormalForm> right) {
+        if(!supports(left) || !supports(right)) return false;
+        // No new cross-owner local/local alignment is admitted by this slice.
+        return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty();
+    }
+
     static boolean supports(List<NormalForm> forms) {
         if (forms.size() != 1) return false;
         NormalForm f = forms.get(0);
         if (!f.isFrozenForCertification() || f.getMatrixEGraph() == null
                 || f.getTemporalOp() != NormalForm.TemporalOp.NONE || !f.getTemporalChildren().isEmpty()
                 || !f.getParams().isEmpty() || !f.getInheritedQuantiVars().isEmpty()
-                || !f.getLocalQuantiVars().isEmpty() || !f.getPhaseLocalBindingImports().isEmpty()) return false;
+                || !f.getPhaseLocalBindingImports().isEmpty()) return false;
         List<QuantiVar> qs = f.getMatrixQuantiVars();
         if (qs.isEmpty()) return false;
         Set<String> names = new HashSet<>(), paths = new HashSet<>();
@@ -33,6 +39,7 @@ final class FastPaidDeclarationAlignment {
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
         }
+        if(!f.getLocalQuantiVars().isEmpty()) return FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         pending.add(f.getMatrixEGraph());

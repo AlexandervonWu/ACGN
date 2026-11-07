@@ -26,7 +26,7 @@ public final class FastPaidDeclarationAlignmentTest {
     }
     private static String variable(EGraphNode n) { return n.getAlphaName()==null?n.getSourceName():n.getAlphaName(); }
     private static GraphType type(EGraphNode n) {
-        if(n.getOpcode()==EGraphNode.Opcode.VARIABLE) return null;
+        if(n.getOpcode()==EGraphNode.Opcode.VARIABLE || n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL) return null;
         if(n.getMetatype()==EGraphNode.Metatype.BOOLEAN) return GraphType.BOOL;
         return AlloyTypeBridge.graphType(Objects.requireNonNull(n.getExactAlloyType()));
     }
@@ -198,6 +198,11 @@ public final class FastPaidDeclarationAlignmentTest {
         var mixedA=prepare(mixedNatural,"inv14"); var mixedB=prepare(mixedNatural,"inv14c");
         check(FastPaidDeclarationAlignment.supports(mixedA.forms()),"closed mixed source admitted for paid edits");
         pair(mixedA,mixedB,19);
+        var localNatural=CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(
+                Path.of("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als")));
+        var localA=prepare(localNatural,"inv12"); var localB=prepare(localNatural,"inv12c");
+        check(FastPaidDeclarationAlignment.supportsPair(localA.forms(),localB.forms()),"outer paid link with retained local binder");
+        pair(localA,localB,27);
         var model=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 sig B {}

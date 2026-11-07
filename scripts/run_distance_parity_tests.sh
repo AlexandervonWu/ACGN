@@ -23,6 +23,7 @@ lean docs/distance-parity-20261107/TemporalOccurrenceAccounting.lean
 lean docs/distance-parity-20261107/InjectiveVariableFallback.lean
 lean docs/distance-parity-20261107/PaidDeclarationAlignment.lean
 lean docs/distance-parity-20261107/MixedPaidDeclarationAlignment.lean
+lean docs/distance-parity-20261107/LocalPaidDeclarationAlignment.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -36,6 +37,10 @@ for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureT
 done
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.MixedPaidDeclarationShorterReplayTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.FastLocalPaidScopeTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.LocalPaidDeclarationShorterReplayTest
 python3 -B scripts/test_batch_parity_stop.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/parity-stop-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
