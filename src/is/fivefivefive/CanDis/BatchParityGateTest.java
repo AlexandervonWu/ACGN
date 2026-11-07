@@ -44,6 +44,28 @@ public final class BatchParityGateTest {
                     new int[]{2, 0, 1, 1}, new int[]{2, 1, 0, 1}));
             require(new JSONObject(Files.readString(component.resolve("parity-incident.json")))
                     .getString("reason").equals("DISTANCE_MISMATCH"));
+            Path diagnostic = Files.createDirectory(root.resolve("diagnostic"));
+            BatchParityGate diagnosticGate = new BatchParityGate(diagnostic, BatchParityGate.Mode.DIAGNOSTIC_COMPONENTS);
+            diagnosticGate.requireParity(source, "lhs", "rhs", new int[]{1,0,0,1}, new int[]{1,0,0,1});
+            diagnosticGate.checkRunning();
+            require(!Files.exists(diagnostic.resolve("parity-incident.json")));
+            expectViolation(() -> diagnosticGate.requireParity(source, "lhs", "rhs",
+                    new int[]{2,0,1,1}, new int[]{2,1,0,1}));
+            JSONObject diagnosticIncident = new JSONObject(Files.readString(diagnostic.resolve("parity-incident.json")));
+            require(diagnosticIncident.getString("scanMode").equals("DIAGNOSTIC_COMPONENTS"));
+            require(diagnosticIncident.getString("certificationStatus").equals("BLOCKED"));
+            require(!diagnosticIncident.getBoolean("publicationAllowed"));
+            expectViolation(diagnosticGate::checkRunning);
+            for (String reason : new String[]{"INCORRECT_ZERO", "INEXACT_SEARCH"}) {
+                Path target = Files.createDirectory(root.resolve(reason));
+                BatchParityGate safety = new BatchParityGate(target, BatchParityGate.Mode.DIAGNOSTIC_COMPONENTS);
+                expectViolation(() -> safety.requireSoundObservation(source,"lhs","rhs",
+                        new int[]{0,0,0,0},new int[]{0,0,0,0},reason.equals("INCORRECT_ZERO"),
+                        !reason.equals("INEXACT_SEARCH"),null));
+                require(new JSONObject(Files.readString(target.resolve("parity-incident.json")))
+                        .getString("reason").equals(reason));
+                expectViolation(safety::checkRunning);
+            }
             Path raced = Files.createDirectory(root.resolve("race"));
             BatchParityGate shared = new BatchParityGate(raced);
             CountDownLatch start = new CountDownLatch(1);

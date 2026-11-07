@@ -14,6 +14,7 @@ lean docs/distance-parity-20261107/DeclarationReplay.lean
 lean docs/distance-parity-20261107/TemporalReplay.lean
 lean docs/distance-parity-20261107/LocalDomainOperand.lean
 lean docs/distance-parity-20261107/IncidentReplay.lean
+lean docs/distance-parity-20261107/DiagnosticScanMode.lean
 lean docs/distance-parity-20261107/GuardedJoinRotation.lean
 lean docs/distance-parity-20261107/ShorterReplayBoundary.lean
 lean docs/distance-parity-20261107/ClosedTemporalPhase.lean
@@ -30,6 +31,8 @@ for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureT
 done
 python3 -B scripts/test_batch_parity_stop.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/parity-stop-cli"
+python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
+    --output "$BUILD_DIR/diagnostic-stop-cli"
 python3 -B scripts/test_distance_replay_diagnostics.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/replay-cli"
 python3 -B -m unittest discover -s scripts -p test_classify_distance_mismatches.py

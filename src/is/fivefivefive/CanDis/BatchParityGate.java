@@ -16,10 +16,17 @@ import org.json.JSONObject;
 
 /** First-incident latch: mismatches are fatal, never ordinary retryable file errors. */
 final class BatchParityGate {
+    enum Mode { STRICT_CERTIFIED, DIAGNOSTIC_COMPONENTS }
     private final Path incidentPath;
+    private final Mode mode;
     private volatile Violation first;
 
     BatchParityGate(Path output) {
+        this(output, Mode.STRICT_CERTIFIED);
+    }
+
+    BatchParityGate(Path output, Mode mode) {
+        this.mode = java.util.Objects.requireNonNull(mode);
         incidentPath = output.resolve("parity-incident.json");
         if (Files.exists(incidentPath)) {
             throw new IllegalStateException("Refusing to overwrite an unresolved parity incident: " + incidentPath);
@@ -47,7 +54,17 @@ final class BatchParityGate {
         }
         // Legacy diagnostic strings are not DP backtraces and cannot grant replay authority.
         // Remove this blocker only when both engines emit independently replay-checked plans.
-        stop(source, left, right, fast, certified, "REPLAY_WITNESS_UNAVAILABLE", nativeReplay);
+        if (mode == Mode.STRICT_CERTIFIED)
+            stop(source, left, right, fast, certified, "REPLAY_WITNESS_UNAVAILABLE", nativeReplay);
+    }
+
+    void requireSoundObservation(Path source, String left, String right, int[] fast, int[] certified,
+            boolean nonCorrect, boolean exactSearch, Supplier<JSONObject> nativeReplay) {
+        checkRunning();
+        if (nonCorrect && (fast[0] == 0 || certified[0] == 0))
+            stop(source, left, right, fast, certified, "INCORRECT_ZERO", nativeReplay);
+        if (!exactSearch)
+            stop(source, left, right, fast, certified, "INEXACT_SEARCH", nativeReplay);
     }
 
     private synchronized void stop(Path source, String left, String right,
@@ -59,6 +76,8 @@ final class BatchParityGate {
         JSONObject incident = new JSONObject()
                 .put("schema", "acgn-parity-incident-v1")
                 .put("status", "STOPPED")
+                .put("scanMode", mode.name()).put("publicationAllowed", false)
+                .put("certificationStatus", "BLOCKED")
                 .put("reason", reason)
                 .put("observedAt", Instant.now().toString())
                 .put("source", source.toAbsolutePath().normalize().toString())

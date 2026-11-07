@@ -60,10 +60,12 @@ public class CanonicalBatchTest {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
         Options options = Options.parse(args);
         Files.createDirectories(options.outputDir);
-        options.parityGate = new BatchParityGate(options.outputDir);
-        Path jsonPath = options.outputDir.resolve("distances.json");
-        Path partialJsonPath = options.outputDir.resolve("distances.partial.json");
-        Path markdownPath = options.outputDir.resolve("summary.md");
+        options.parityGate = new BatchParityGate(options.outputDir, options.diagnosticComponents
+                ? BatchParityGate.Mode.DIAGNOSTIC_COMPONENTS : BatchParityGate.Mode.STRICT_CERTIFIED);
+        String prefix = options.diagnosticComponents ? "diagnostic-" : "";
+        Path jsonPath = options.outputDir.resolve(prefix + "distances.json");
+        Path partialJsonPath = options.outputDir.resolve(prefix + "distances.partial.json");
+        Path markdownPath = options.outputDir.resolve(prefix + "summary.md");
         if (Files.exists(jsonPath) || Files.exists(partialJsonPath) || Files.exists(markdownPath)) {
             throw new IOException("Use a fresh output directory; completed and partial evidence must be preserved");
         }
@@ -265,10 +267,6 @@ public class CanonicalBatchTest {
             Semaphore memoryIntensivePermits) {
         options.parityGate.checkRunning();
         FileResult result = processFile(options.inputDir, file, options, memoryIntensivePermits);
-        if (result.error != null) {
-            options.parityGate.checkRunning();
-            result = processFile(options.inputDir, file, options, memoryIntensivePermits);
-        }
         return new IndexedResult(index, result);
     }
 
@@ -427,6 +425,13 @@ public class CanonicalBatchTest {
         result.quotientTemporalDistance = quotient.temporalDistance();
         result.quotientQuantifierDistance = quotient.quantifierDistance();
         result.quotientMatrixDistance = quotient.matrixDistance();
+        gate.requireSoundObservation(source, result.leftPredicate, result.rightPredicate,
+                new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
+                    result.legacyQuantifierDistance, result.legacyMatrixDistance},
+                new int[]{result.distance, result.quotientTemporalDistance,
+                    result.quotientQuantifierDistance, result.quotientMatrixDistance},
+                !"CORRECT".equals(result.statusFolder), quotient.exactForStoredOrbits(),
+                () -> DistanceReplayDiagnostics.capture(leftCanonical, rightCanonical, leftExact, rightExact));
         gate.requireParity(source, result.leftPredicate, result.rightPredicate,
                 new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
                     result.legacyQuantifierDistance, result.legacyMatrixDistance},
@@ -724,7 +729,11 @@ public class CanonicalBatchTest {
         writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
         writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
         writer.write("  \"fileCount\": " + fileCount + ",\n");
-        writer.write("  \"parityPolicy\": \"stop-on-first-distance-or-replay-incident-v1\",\n");
+        writer.write("  \"parityPolicy\": \"" + (options.diagnosticComponents
+                ? "diagnostic-stop-first-component-mismatch-v1" : "stop-on-first-distance-or-replay-incident-v1") + "\",\n");
+        writer.write("  \"diagnosticOnly\": " + options.diagnosticComponents + ",\n");
+        writer.write("  \"publicationAllowed\": false,\n");
+        writer.write("  \"certificationStatus\": \"BLOCKED\",\n");
         writer.write("  \"replayWitnessStatus\": \"UNIMPLEMENTED\",\n");
         writer.write("  \"threadCount\": " + options.threadCount + ",\n");
         writer.write("  \"memoryIntensiveWorkerLimit\": "
@@ -996,6 +1005,8 @@ public class CanonicalBatchTest {
     private static void writeMarkdown(Path path, Options options, Summary summary) throws IOException {
         try (Writer writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write("# Canonical Rewrite Distance Summary\n\n");
+            if (options.diagnosticComponents)
+                writer.write("DIAGNOSTIC ONLY: component agreement is not certified edit-sequence parity. Publication remains BLOCKED.\n\n");
             writer.write("- Input root: `" + options.inputDir + "`\n");
             writer.write("- Thread count: " + options.threadCount + "\n");
             writer.write("- Memory-intensive worker limit: "
@@ -1217,6 +1228,7 @@ public class CanonicalBatchTest {
         private int threadCount = DEFAULT_THREAD_COUNT;
         private boolean verbose;
         private boolean skipRewards;
+        private boolean diagnosticComponents;
         private BatchParityGate parityGate;
 
         private static Options parse(String[] args) {
@@ -1233,12 +1245,18 @@ public class CanonicalBatchTest {
                     options.verbose = true;
                 } else if ("--skip-rewards".equals(args[i])) {
                     options.skipRewards = true;
+                } else if ("--diagnostic-components".equals(args[i])) {
+                    options.diagnosticComponents = true;
+                } else if (args[i].startsWith("--")) {
+                    throw new IllegalArgumentException("Unknown or incomplete option: " + args[i]);
                 } else if (positional == 0) {
                     options.inputDir = Paths.get(args[i]);
                     positional++;
                 } else if (positional == 1) {
                     options.outputDir = Paths.get(args[i]);
                     positional++;
+                } else {
+                    throw new IllegalArgumentException("Unexpected argument: " + args[i]);
                 }
             }
             return options;

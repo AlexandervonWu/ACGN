@@ -112,6 +112,26 @@ Until replay exporters are implemented, even equal scalar distances stop with
 `REPLAY_WITNESS_UNAVAILABLE`. Diagnostic probes may examine known failures;
 they are not full-corpus validation runs or an override of this gate.
 
+### Separately Authorized Diagnostic Scan
+
+The author subsequently authorized a full-input **diagnostic component scan**
+while explicitly keeping certification blocked. `--diagnostic-components` is
+opt-in; omitting it retains the strict behavior above. This mode uses the same
+natural input population, raw-AST exclusions and both independent producers.
+It permits equal distance decompositions to continue without claiming ordered
+operation-sequence agreement. The first unequal total/temporal/quantifier/matrix
+tuple, non-CORRECT zero, or inexact search latches a stop and preserves the source
+and native replay evidence. It does not silently retry a failed input.
+
+Outputs use `diagnostic-distances[.partial].json` and `diagnostic-summary.md`,
+with `diagnosticOnly=true`, `publicationAllowed=false`, and
+`certificationStatus=BLOCKED`. They are not release-gate replacements, cannot
+establish zero operation-sequence disagreements, and cannot establish the
+full-corpus invariant before every eligible pair completes. Preserve the same
+workers, heap, memory/disk/mount guards and fresh committed run identity.
+After a stop, confirm all descendants have exited before one Astra recovery
+extracts the operation pattern and prepares a Lean-first, bounded-tested repair.
+
 The first-incident latch is set before diagnostic capture or filesystem writes.
 The batch writes the primary incident first, then attempts a native replay
 sidecar from the already-prepared arms. Capture failure leaves the latch set
