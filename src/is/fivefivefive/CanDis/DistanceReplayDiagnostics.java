@@ -23,10 +23,10 @@ public final class DistanceReplayDiagnostics {
 
     public static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right) {
         JSONObject report = envelope();
-        report.put("fast", arm(() -> CanonicalDistance.matrixReplay(
+        report.put("fast", arm(() -> CanonicalDistance.replayWithSlices(
                 CanonicalDistance.prepare(left.normalizedForms()),
                 CanonicalDistance.prepare(right.normalizedForms()))));
-        report.put("certified", arm(() -> QuotientRepairDistance.matrixReplay(
+        report.put("certified", arm(() -> QuotientRepairDistance.replayWithSlices(
                 CanonicalAlloyPipeline.prepare(left).repairView(),
                 CanonicalAlloyPipeline.prepare(right).repairView())));
         return report;
@@ -43,15 +43,18 @@ public final class DistanceReplayDiagnostics {
 
     private static JSONObject envelope() {
         return new JSONObject().put("schema", SCHEMA).put("status", "BLOCKED")
+                .put("supplementalSliceVersion","fixed-order-declaration-and-temporal-identity-v1")
                 .put("complete", false).put("parityAuthority", false)
                 .put("temporalReplayChecked", false).put("quantifierReplayChecked", false)
                 .put("choiceAdmissionIndependentlyChecked", false)
                 .put("sourceCertificateWireReplayChecked", false)
-                .put("blockingReasons", new JSONArray().put("TEMPORAL_PLAN_NOT_EXPORTED")
-                        .put("QUANTIFIER_PLAN_NOT_EXPORTED").put("CHOICE_ADMISSION_NOT_INDEPENDENTLY_REPLAYED")
+                .put("javaLeanCorrespondenceChecked", false).put("publicSequenceLinked", false)
+                .put("blockingReasons", new JSONArray().put("PUBLIC_TEMPORAL_PLAN_NOT_LINKED")
+                        .put("PUBLIC_QUANTIFIER_PLAN_NOT_LINKED").put("ORDERING_ADMISSION_NOT_INDEPENDENTLY_REPLAYED")
+                        .put("CHOICE_ADMISSION_NOT_INDEPENDENTLY_REPLAYED")
                         .put("SOURCE_CERTIFICATE_WIRE_REPLAY_NOT_PERFORMED")
                         .put("JAVA_LEAN_CORRESPONDENCE_NOT_PROVED"))
-                .put("scope", "Fixed native matrix representatives and bindings; tree derivation replay, not a complete public operation sequence")
+                .put("scope", "Fixed native matrix/declaration receipts and temporal identity slice; receipt-addressed diagnostic order, not a complete public operation sequence")
                 .put("trusted", new JSONArray().put("native preparation and choice search")
                         .put("native head-cost and subtree-size rules")
                         .put("Java replay checker, JSON library, SHA-256, JVM and OS"));

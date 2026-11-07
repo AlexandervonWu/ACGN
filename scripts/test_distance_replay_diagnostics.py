@@ -14,11 +14,9 @@ def main():
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     args.output.mkdir(parents=True, exist_ok=False)
-    source = root / 'classified-data/coursesOld/both/xJnitBpFv9K74WNvf_inv14.als'
-    source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
     commands = []
 
-    def run(left, right, output, label):
+    def run(source, left, right, output, label):
         memory = Path('/proc/meminfo')
         if memory.exists():
             available = next(int(line.split()[1]) * 1024 for line in memory.read_text().splitlines()
@@ -32,10 +30,21 @@ def main():
         commands.append(dict(label=label, command=command, exitCode=result.returncode))
         return result.returncode
 
-    costs = []
-    for label, left, right in [('forward', 'inv14', 'inv14c'), ('reverse', 'inv14c', 'inv14')]:
+    costs = {}
+    cases = [
+        ('outlier', 'coursesOld/both/xJnitBpFv9K74WNvf_inv14.als', 'inv14', 'inv14c'),
+        ('first-incident', 'classroom_fol/both/2KmASqDBmqEueukiz_inv5.als', 'inv5', 'inv5c')]
+    directed_cases = []
+    for family, relative, left_name, right_name in cases:
+        costs[family] = []
+        directed_cases.extend([(family, relative, 'forward', left_name, right_name),
+                               (family, relative, 'reverse', right_name, left_name)])
+    for family, relative, direction, left, right in directed_cases:
+        source = root / 'classified-data' / relative
+        source_hash = hashlib.sha256(source.read_bytes()).hexdigest()
+        label = family + '-' + direction
         output = args.output / (label + '.json')
-        assert run(left, right, output, label) == 0
+        assert run(source, left, right, output, label) == 0
         report = json.loads(output.read_text())
         assert report['schema'] == 'acgn-matrix-replay-v1'
         assert report['status'] == 'BLOCKED'
@@ -53,15 +62,29 @@ def main():
             assert arm['distance'] == arm['temporalDistance'] + arm['quantifierDistance'] + arm['matrixDistance']
             assert arm['replayedMatrixCost'] == arm['matrixDistance']
             assert sum(phase['receipt']['replayedCost'] for phase in arm['phases']) == arm['matrixDistance']
+            if family == 'first-incident':
+                assert arm['distance'] == arm['orderedDiagnosticCost'] == 10
+                assert arm['numericalCostCoverage'] is True and arm['publicSequenceLinked'] is False
+                assert arm['temporalIdentitySlice']['sliceReplayChecked'] is True
+                declarations = arm['declarationSlice']
+                assert declarations['sliceReplayChecked'] is True
+                assert declarations['cost'] == declarations['replayedCost'] == 2
+                operations = [op for component in declarations['components']
+                              for op in component['receipt']['operations']]
+                expected = 'delete' if direction == 'forward' else 'insert'
+                assert [op['kind'] for op in operations] == [expected, expected]
+                assert [op['cost'] for op in operations] == [1, 1]
+                assert sum(op['cost'] for op in arm['orderedDiagnosticActions']) == 10
             arm_costs.append(arm['distance'])
-        costs.append(arm_costs)
+        costs[family].append(arm_costs)
         before = output.read_bytes()
-        assert run(left, right, output, label + '-existing') != 0
+        assert run(source, left, right, output, label + '-existing') != 0
         assert output.read_bytes() == before, 'Existing diagnostic evidence overwritten'
-    assert costs[0] == costs[1], 'Native residual distances changed with direction'
-    assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
+        assert hashlib.sha256(source.read_bytes()).hexdigest() == source_hash
+    for forward, reverse in costs.values():
+        assert forward == reverse, 'Native distances changed with direction'
     (args.output / 'checks.json').write_text(json.dumps(commands, indent=2) + '\n')
-    print('PASS: forward/reverse matrix receipts match native costs; incomplete authority and existing evidence protected')
+    print('PASS: residual and first-incident native replay costs; ordered declaration edits; incomplete authority and evidence protected')
 
 
 if __name__ == '__main__':

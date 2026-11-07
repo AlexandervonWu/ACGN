@@ -112,6 +112,56 @@ public final class CanonicalDistance {
                 .put("matrixReplayChecked", true).put("complete", false).put("phases", phases);
     }
 
+    /** Adds fixed-order declaration replay and identity-only temporal replay; still incomplete. */
+    public static org.json.JSONObject replayWithSlices(Prepared left, Prepared right) {
+        org.json.JSONObject matrix = matrixReplay(left,right);
+        return is.fivefivefive.CanDis.metric.PhaseReplay.attach(matrix,
+                () -> declarationReplay(left,right,matrix.getInt("quantifierDistance")),
+                () -> is.fivefivefive.CanDis.metric.PhaseReplay.temporalIdentity(
+                        left.temporalTree,right.temporalTree,matrix.getInt("temporalDistance"),
+                        node -> node.label,node -> node.children));
+    }
+
+    private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,int expected) {
+        org.json.JSONArray components = new org.json.JSONArray();
+        int cost = 0;
+        for (int phase = 0; phase < left.normalForms.size(); phase++) {
+            List<QuantiVar> aSource = left.normalForms.get(phase).getMatrixQuantiVars();
+            List<QuantiVar> bSource = right.normalForms.get(phase).getMatrixQuantiVars();
+            is.fivefivefive.CanDis.metric.DeclarationReplay.requireBounded(aSource.size(),bSource.size());
+            List<QuantiVar> a = canonicalQuantifierOrder(aSource), b = canonicalQuantifierOrder(bSource);
+            var aAtoms = declarationAtoms(aSource,a,phase);
+            var bAtoms = declarationAtoms(bSource,b,phase);
+            org.json.JSONObject receipt = is.fivefivefive.CanDis.metric.DeclarationReplay.capture(
+                    aAtoms,bAtoms,quantificationDp(a,b),(i,j) -> true);
+            cost = Math.addExact(cost,is.fivefivefive.CanDis.metric.DeclarationReplay.verify(aAtoms,bAtoms,receipt));
+            components.put(new org.json.JSONObject().put("phase",phase).put("receipt",receipt));
+        }
+        if (cost != expected) throw new IllegalStateException("DECLARATION_REPLAY_NATIVE_COST_MISMATCH");
+        return new org.json.JSONObject().put("cost",cost).put("replayedCost",cost)
+                .put("components",components).put("sliceReplayChecked",true).put("complete",false)
+                .put("matrixChoiceAdmissionChecked",false).put("orderingAdmissionChecked",false)
+                .put("bindingRelationship","Fast independently minimizes declaration and matrix phases");
+    }
+
+    private static List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom> declarationAtoms(
+            List<QuantiVar> source,List<QuantiVar> ordered,int phase) {
+        IdentityHashMap<QuantiVar,java.util.ArrayDeque<Integer>> indices = new IdentityHashMap<>();
+        for (int i = 0; i < source.size(); i++) indices.computeIfAbsent(source.get(i),
+                ignored -> new java.util.ArrayDeque<>()).addLast(i);
+        List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom> result = new ArrayList<>();
+        for (QuantiVar q : ordered) {
+            int original = indices.get(q).removeFirst();
+            String identity = "phase/"+phase+"/declaration/"+original;
+            String admission = new org.json.JSONArray().put(q.getName()).put(q.getOriginalName())
+                    .put(q.getBindingPath()).put(q.getCarrierTypeName()).put(String.valueOf(q.getExactAlloyType())).toString();
+            result.add(new is.fivefivefive.CanDis.metric.DeclarationReplay.Atom(identity,
+                    List.of(q.getQuantifier().name(),normalizeType(typeKey(q)),q.getCardinality().name(),
+                            Integer.toString(q.getDisjointnessClass())),admission));
+        }
+        return result;
+    }
+
     public static final class DistanceBreakdown {
         private final int temporalDistance;
         private final int quantifierDistance;

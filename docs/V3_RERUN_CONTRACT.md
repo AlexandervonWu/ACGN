@@ -80,9 +80,12 @@ G18 because complete operation-sequence evidence is unavailable. The existing
 batch archive has only `legacyDiagnosticEdits`. The new
 `DistanceReplayDiagnostics` postmortem emits independently obtained native
 matrix derivations and checks their costs/occurrence coverage, but explicitly
-sets `complete=false` and `parityAuthority=false`. Temporal and quantifier
-plans, independent choice admission and source-certificate wire replay remain
-unimplemented in that diagnostic. This is a fail-closed blocker, not a complete
+sets `complete=false` and `parityAuthority=false`. The first stopped incident
+also has fixed-native-order declaration receipts and an identity-only temporal
+slice, with a receipt-addressed diagnostic action order. These do not establish
+common public coordinates or admitted scope-valid public operation sequences.
+General temporal plans, independent ordering/choice admission and
+source-certificate wire replay remain incomplete. This is a fail-closed blocker, not a complete
 public-plan replay verifier. Full exporters and checking still need
 implementation and bounded validation. See
 [the stopped-run investigation](distance-parity-20261107/STOPPED_RUN.md).

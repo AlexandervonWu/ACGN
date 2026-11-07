@@ -103,6 +103,79 @@ public final class QuotientRepairDistance {
                         ? new org.json.JSONObject() : new org.json.JSONObject(stats.selectedCorrespondence));
     }
 
+    /** Keeps native matrix choices and backtraces compatible minimum declaration paths. */
+    public static org.json.JSONObject replayWithSlices(RepairView left, RepairView right) {
+        org.json.JSONObject matrix = matrixReplay(left,right);
+        return PhaseReplay.attach(matrix,() -> declarationReplay(left,right,matrix),
+                () -> PhaseReplay.temporalIdentity(left.temporalRoot(),right.temporalRoot(),
+                        matrix.getInt("temporalDistance"),TemporalNode::label,TemporalNode::children));
+    }
+
+    private static org.json.JSONObject declarationReplay(RepairView left,RepairView right,
+            org.json.JSONObject matrix) {
+        DeclarationReplay.requireBounded(QuantificationAlignmentSpace.parameterDeclarations(left.phases()).size(),
+                QuantificationAlignmentSpace.parameterDeclarations(right.phases()).size());
+        for (int i = 0; i < left.phases().size(); i++) DeclarationReplay.requireBounded(
+                left.phases().get(i).quantifiers().size(),right.phases().get(i).quantifiers().size());
+        QuantificationAlignmentSpace space = QuantificationAlignmentSpace.create(left.phases(),right.phases());
+        GlobalBindingIndex a = GlobalBindingIndex.create(left.phases(),left.phases().size());
+        GlobalBindingIndex b = GlobalBindingIndex.create(right.phases(),right.phases().size());
+        Map<Integer,Integer> selected = new LinkedHashMap<>(), actual = new LinkedHashMap<>();
+        org.json.JSONObject chosen = matrix.getJSONObject("selectedQuantifierCorrespondence");
+        for (String key : chosen.keySet()) addInjectiveCorrespondence(selected,Integer.parseInt(key),
+                DeclarationReplay.integer(chosen,key));
+        org.json.JSONArray components = new org.json.JSONArray();
+        int cost = 0;
+        for (int index = 0; index < space.components.size(); index++) {
+            QuantifierEditComponent component = space.components.get(index);
+            List<DeclarationReplay.Atom> as = declarationAtoms(component.left);
+            List<DeclarationReplay.Atom> bs = declarationAtoms(component.right);
+            org.json.JSONObject receipt = DeclarationReplay.capture(as,bs,component.distance,(i,j) -> {
+                Integer ai = i < 0 ? null : a.indices.get(component.left.get(i).identity);
+                Integer bj = j < 0 ? null : b.indices.get(component.right.get(j).identity);
+                if (i < 0) return !selected.containsValue(bj);
+                if (j < 0) return !selected.containsKey(ai);
+                boolean carries = QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j)) != 0
+                        || component.left.get(i).identity.parameter;
+                return carries ? bj != null && bj.equals(selected.get(ai))
+                        : !selected.containsKey(ai) && !selected.containsValue(bj);
+            });
+            cost = Math.addExact(cost,DeclarationReplay.verify(as,bs,receipt));
+            org.json.JSONArray ops = receipt.getJSONArray("operations");
+            for (int k = 0; k < ops.length(); k++) {
+                org.json.JSONObject op = ops.getJSONObject(k);
+                int i = op.getInt("leftIndex"), j = op.getInt("rightIndex");
+                if (i >= 0 && j >= 0 && (op.getInt("cost") != 0 || component.left.get(i).identity.parameter))
+                    addInjectiveCorrespondence(actual,Objects.requireNonNull(a.indices.get(component.left.get(i).identity)),
+                            Objects.requireNonNull(b.indices.get(component.right.get(j).identity)));
+            }
+            components.put(new org.json.JSONObject().put("phase",index-1)
+                    .put("component",index == 0 ? "parameters" : "quantifiers").put("receipt",receipt));
+        }
+        DeclarationReplay.require(selected.equals(actual),"Selected paid/parameter correspondence mismatch");
+        DeclarationReplay.require(cost == space.cost && cost == matrix.getInt("quantifierDistance"),"Native declaration cost");
+        return new org.json.JSONObject().put("components",components).put("cost",cost).put("replayedCost",cost)
+                .put("sliceReplayChecked",true).put("complete",false).put("selectedPaidCorrespondenceChecked",true)
+                .put("selectedPaidCorrespondence",new org.json.JSONObject(actual))
+                .put("orderingAdmissionChecked",false).put("matrixChoiceAdmissionChecked",false);
+    }
+
+    private static List<DeclarationReplay.Atom> declarationAtoms(List<IndexedDeclaration> declarations) {
+        List<DeclarationReplay.Atom> result = new ArrayList<>();
+        for (IndexedDeclaration indexed : declarations) {
+            Declaration d = indexed.declaration;
+            GlobalBindingIdentity id = indexed.identity;
+            String occurrence = new org.json.JSONArray().put(id.parameter).put(id.ownerPhase)
+                    .put(id.ownerContext).put(id.coordinate).put(indexed.ordinal).toString();
+            String admission = new org.json.JSONArray().put(d.certifiedDomain()).put(d.exchangeClass())
+                    .put(new org.json.JSONArray(d.dependencies())).put(String.valueOf(d.observationType()))
+                    .put(String.valueOf(d.observationDomain())).toString();
+            result.add(new DeclarationReplay.Atom(occurrence,List.of(d.quantifier(),d.type(),d.cardinality(),
+                    Integer.toString(d.disjointnessClass())),admission));
+        }
+        return result;
+    }
+
     public static Result evaluate(RepairView left, RepairView right) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");

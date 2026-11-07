@@ -10,9 +10,10 @@ lean docs/distance-parity-20261107/SingletonComposition.lean
 lean docs/distance-parity-20261107/FlatExposure.lean
 lean docs/distance-parity-20261107/AugmentedPrelude.lean
 lean docs/distance-parity-20261107/MatrixReplay.lean
+lean docs/distance-parity-20261107/DeclarationReplay.lean
 mapfile -t sources < <(rg --files src -g '*.java' | sort)
 javac -J-Xmx512m --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
-for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest DistanceReplayDiagnosticsTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
+for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.PhaseReplayTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
     java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
         -cp "$BUILD_DIR:$ROOT/lib/*" "is.fivefivefive.CanDis.$test"
 done

@@ -289,6 +289,67 @@ edit plans, independent choice admission, source-certificate wire replay and
 complete Java/Lean correspondence remain blockers. No corpus-wide zero-gap
 claim follows from these bounded diagnostics.
 
+### First Guarded Replay Scan
+
+The author-authorized stop-first natural scan used clean local commit
+`a6831f4cc602db194aaea21f4b47ba2a8367a3c7` and fresh run
+`parity-opseq-20261107T182651Z`, with 16 workers, 8g heap, reward pool 100 and the
+unchanged 12 GiB service cap / 6 GiB host reserve. Its frozen JAR SHA-256 is
+`582454303ebf54630c359b61c95bb8351a404378ebe69e858aca6b15b2cbc3e3`.
+
+The first observed incident was
+`classroom_fol/both/2KmASqDBmqEueukiz_inv5.als`, `inv5` versus `inv5c`:
+both decompositions are **[10, 0, 2, 8]**. The batch stopped nonzero with
+`REPLAY_WITNESS_UNAVAILABLE`; afterward both native matrix receipts independently
+replayed to 8. This is a missing complete-witness failure, not a measured
+scalar disagreement. The partial archive contains zero completed result rows;
+its placeholder summary averages are not corpus measurements.
+
+The controller checked the frozen manifest before and after the bounded
+postmortem. The service exited with status 1, MainPID became 0, and no batch or
+postmortem JVM remained before recovery dispatch. The original incident and
+diagnostic are preserved separately. Incident fingerprint:
+`269b76f366cb92db3463e10ad9f6a91ecce65a972763d4ff0fdd440e8a78f59c`.
+The actual `gpt-6-astra` agent
+`01a1b6f9-4f81-7571-9191-e45c72efe56f` received the incident for one bounded
+proof-first repair attempt; ownership and dispatch are recorded externally.
+No automatic retry, heartbeat restart, push, tag or release occurred.
+
+The bounded Astra follow-up checked `DeclarationReplay.lean` before implementing
+fixed-native-order declaration backtraces and a separate occurrence/cost replay
+checker. The missing two units are deletion of `ALL Class ONE` and
+`ALL Person ONE`; reverse replay inserts those declarations. The certified
+backtrace is constrained to the paid/parameter correspondence selected by its
+matrix search. Identity-only temporal receipts account for zero temporal cost;
+nonidentity temporal edits remain unsupported by this supplemental checker.
+
+For this incident, each arm now has numerical diagnostic coverage of
+**10 = 2 declaration units + 8 matrix units**, in both directions. Their matrix
+operation shapes, child indices and costs match; that restricted comparison
+does not equate their full labels or public action identities. An ordered
+receipt-addressed diagnostic list is checked against the component receipts,
+but is not represented as an executable common public-source repair plan.
+All `complete`/`parityAuthority` flags remain false. No scalar metric was changed,
+the original 49/50 residual is untouched, and the full batch gate still blocks.
+
+The follow-up evidence, summary and hashes are under
+`stopped-investigation/opseq-astra-20261107/first-incident-F4QFo6Pn/`.
+Remaining obligations include canonical-order admission, scope-valid public
+sequence linkage in common coordinates, general temporal replay, independent
+source-certificate replay and Java/Lean correspondence. The new bounded tests
+reject omitted/repeated/reordered/substituted declaration occurrences and
+altered diagnostic action order; numerical coverage is not promoted to parity.
+
+The parent's final combined runner exits 0: seven Lean contracts compile,
+4,786 numbered Java checks pass, saturation and fatal-gate suites pass, both
+batch stop CLI cases pass, and the residual/first-incident replay CLI checks
+pass in both directions with overwrite refusal. Classification and release-gate
+Python suites pass (4 and 6 tests), as do the 9 local controller tests. Java,
+proof, tool and dependency hash inventories match the tested inputs. Logs and
+inventories are in `opseq-controller-20261107/validation-after-astra/`.
+This is bounded regression evidence, not full mechanical closure or a new
+corpus measurement. The controller remains blocked with no automatic restart.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
