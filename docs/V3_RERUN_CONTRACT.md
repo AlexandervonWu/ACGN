@@ -55,6 +55,16 @@ or substitute 60 seconds as an exact completion time in speedup statistics.
    replay/comparison check block publication, never count as zero disagreements.
    This requirement concerns public repair-operation sequences, not identical
    internal certificate construction or solver execution traces.
+   The certified path must retain full alignment from the original occurrence,
+   through the Lean contract and source-linked typed construction/certificate,
+   to the selected representation, executable edits, endpoints and cost.
+   Result types, binder scope and temporal ownership cannot be erased to obtain
+   agreement. Native cost coverage or agreement with Fast does not discharge a
+   missing certificate/correspondence link. For unequal distances, replay the
+   shorter first: repair it if replay fails; if complete replay succeeds,
+   investigate the longer path's excess edits or missed admitted representation.
+   Incomplete alignment is unresolved, not a successful shorter replay. Never
+   replace either distance with a scalar minimum or bypass the failed check.
 6. 181 question groups, 4,315 AST-unique student references plus 181 oracles,
    42,386 ranked incorrect predicates, and zero parse/reference/ranking failures.
 7. Identical unordered correct-pool zero-pair sets in both arms, with exact
@@ -102,8 +112,12 @@ Until replay exporters are implemented, even equal scalar distances stop with
 `REPLAY_WITNESS_UNAVAILABLE`. Diagnostic probes may examine known failures;
 they are not full-corpus validation runs or an override of this gate.
 
-For the newly authorized stop-first investigation, retain the original incident
-unchanged. Only after the batch process and descendants have stopped, run
+The first-incident latch is set before diagnostic capture or filesystem writes.
+The batch writes the primary incident first, then attempts a native replay
+sidecar from the already-prepared arms. Capture failure leaves the latch set
+and the primary incident intact; that sidecar never authorizes further work.
+For a separate postmortem, retain the original incident unchanged. Only after
+the batch process and descendants have stopped, run
 `DistanceReplayDiagnostics SOURCE LEFT RIGHT FRESH_OUTPUT_JSON` against the
 same frozen JAR. Bound this postmortem to one worker, a 1 GiB heap and 300 seconds,
 preserving the host reserve. Bind the diagnostic's source hash, predicate IDs
@@ -125,14 +139,18 @@ No automatic unchanged retry or release is authorized by this diagnostic loop.
 The [parity ledger](distance-parity-20261107/IMPLEMENTATION.md) remains applicable.
 The two correct-pool partial-JOIN pairs now return 0/0 in bounded source-backed
 tests after occurrence-linked local rotation and insertion proofs. The known
-binary/flat edit-unit witness now returns 1/1. Temporal projection and complete
-public-sequence alignment remain unresolved, so these repairs do not establish
+binary/flat edit-unit witness now returns 1/1. The closed duplicate temporal
+phase witness now returns 11/11 instead of 17/11, without changing certified
+construction. The scoped temporal witness `trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als`
+still returns 21/22. General temporal projection and complete public-sequence
+alignment remain unresolved, so these repairs do not establish
 the full-corpus parity gates. The module-less prelude export defect now
 has a Lean-first lexer/span repair and 31 bounded regression checks; a new
 complete corpus export/parse assessment is still required. Successful distance
 computation does not establish that all exported Alloy files parse. Independent
 certificate export also remains blocked for the new source-linked flat exposure
-records, new guarded JOIN rotation records and older redundant-coordinate cases.
+records, new guarded JOIN rotation records, retired collision records and older
+redundant-coordinate cases.
 Do not interpret passing empirical gates as proof of the unfinished common
 representation minimum or complete Java-Lean refinement.
 

@@ -88,21 +88,44 @@ alpha-equivalence, declaration-only type changes and integer results. The older
 field-owner pipeline assertion now expects two edits (field and JOIN result),
 not the previous type-insensitive one. Its certified expectation remains two.
 
-`bash scripts/run_distance_parity_tests.sh` passes: 36 result-type checks,
-208 Fast parity checks, EGraphSaturationTest, 2,266 quotient-distance checks,
-and 2,041 pipeline checks. The script first compiles both standalone Lean files
-(eight incident laws and six finite-minimum laws). Java source-backed checks
-provide bounded correspondence evidence, not a verified Java compiler or a
-complete proof of candidate enumeration.
+At checkpoint `f34de688892ea914bea41c99b10473ceed12df68`,
+`bash scripts/run_distance_parity_tests.sh` passes 13,226 numbered Java checks,
+the unnumbered batch/saturation checks, both replay/stop CLI suites, and ten
+Python checks. Sixteen Lean files compile, including the four existing guarded
+chain dependencies. The frozen input inventory was unchanged after execution.
+Evidence is retained in the workstation's external
+`ACGN/intermediate/join-integration-20261107-fgCFYL/` directory.
+Java source-backed checks provide bounded correspondence evidence, not a
+verified Java compiler or a complete proof of candidate enumeration.
+
+This checkpoint repairs the archived local-domain pair from 49/50 to 49/49,
+the reduced partial-JOIN pair from 0/8 to 0/0, and the reduced/natural guarded
+chain cost pair from 3/1 to 1/1. These are individual regression results, not a
+new full-corpus measurement or proof of complete ordered-sequence agreement.
+
+The subsequent closed-temporal-phase increment repairs the archived 17/11
+witness to 11/11 in both directions. The combined regression passes 13,314
+numbered Java checks, eighteen Lean files, three one-pair fail-stop CLI checks,
+the diagnostic replay CLI checks, and ten Python checks. Its 66,694-file input
+inventory (including the natural inputs) was unchanged afterward. Evidence is
+under `ACGN/intermediate/temporal-integration-20261107-FLmXNU/`; the repeated
+CLI checks and their raw incidents are retained under `retained-parity-stop-cli/`.
+This is bounded regression evidence, not full-corpus closure.
 
 ## Remaining Representation Transfers
 
-1. Certified dependent JOIN construction must admit composed, individually
-   guarded rotations across a partially flattenable tree. Do not weaken the
-   full-chain unary-interior guard. Each rotation needs source-linked evidence
-   accepted by the verifier; a standalone Lean theorem is not that bridge.
-2. Both metrics need a common representation of binary/flat chain alternatives
-   and canonical live temporal phases, plus common declaration alignment.
+1. Source-linked partial-JOIN rotations now have an in-memory typed certificate
+   with exact insertion premises and source-ledger checks. Independent wire
+   replay for this new certificate is not implemented; export explicitly
+   rejects it. Extend that boundary without dropping source or typed premises.
+2. Guarded JOIN operand units now agree in the tested chain cases. Complete
+   binary/flat alternative coverage, canonical live temporal phases, and common
+   declaration alignment remain open. Closed, binding-free duplicate temporal
+   leaves now reduce the tested 17/11 witness to 11/11; original owner references
+   remain untouched and only detached metric coordinates are transported.
+   The retained scoped temporal witness
+   `trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als` still returns 21/22 and stops.
+   Native numerical replay is not a full source-to-public-sequence certificate.
 3. Re-run all archived disagreements and negative controls, then the full
    paired corpus and truth-pool comparisons. Gate on per-row equality, not
    aggregate averages or matching zero counts. Independently check minimization

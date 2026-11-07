@@ -16,7 +16,8 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     results = []
     for label, relative, reason in (
-            ("distance", "classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "DISTANCE_MISMATCH"),
+            ("distance", "trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als", "DISTANCE_MISMATCH"),
+            ("repaired-temporal", "classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "REPLAY_WITNESS_UNAVAILABLE"),
             ("missing-replay", "classroom_rl/over/Se6vis3cGzgX7GkN3_inv5.als", "REPLAY_WITNESS_UNAVAILABLE")):
         source = root / "classified-data" / relative
         target = args.output / label
@@ -35,6 +36,8 @@ def main():
             raise AssertionError("Parity violation exited successfully")
         incident = json.loads((target / "parity-incident.json").read_text())
         assert incident["reason"] == reason, incident
+        if label == "repaired-temporal":
+            assert incident["fast"] == incident["certified"] == [11, 1, 0, 10], incident
         assert incident["sourceSha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
         assert incident["sourceText"] == source.read_text()
         native = json.loads((target / incident["nativeReplayFile"]).read_text())
@@ -53,7 +56,7 @@ def main():
         assert not (target / "summary.md").exists()
         results.append(dict(case=label, exitCode=result.returncode, reason=reason, command=command))
     (args.output / "checks.json").write_text(json.dumps(results, indent=2) + "\n")
-    print("PASS: both one-pair CLI checks stopped, retained witnesses, and published no complete results")
+    print("PASS: all three one-pair CLI checks stopped, retained witnesses, and published no complete results")
 
 
 if __name__ == "__main__":

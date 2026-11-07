@@ -44,6 +44,7 @@ public class NormalForm {
     private final Map<String, LocalBindingSeed> localBindingSeeds;
     private String phasePath;
     private List<NormalForm> temporalChildren;
+    private List<NormalForm> comparisonTemporalChildren;
     private final Map<Long, TemporalReferenceAuthority> temporalReferenceAuthorities;
     private final Object lifecycleLock;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
@@ -250,6 +251,101 @@ public class NormalForm {
             copy.frozenForCertification = true;
             return copy;
         }
+    }
+
+    /** Metric-only forest. Original temporal authorities and child indices are
+     * never rewritten; the pruned child list is used only for metric traversal. */
+    static List<NormalForm> fastComparisonViews(List<NormalForm> sources) {
+        Map<NormalForm, NormalForm> copies = new java.util.IdentityHashMap<>();
+        Map<NormalForm, Integer> incoming = new java.util.IdentityHashMap<>();
+        for (NormalForm source : sources) copies.put(source, source.fastComparisonView());
+        for (NormalForm source : sources) for (NormalForm child : source.temporalChildren) {
+            if (!copies.containsKey(child)) return sources.stream().map(NormalForm::fastComparisonView).toList();
+            incoming.merge(child, 1, Math::addExact);
+        }
+        java.util.Set<NormalForm> dropped = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        Map<NormalForm, Map<Long, String>> keysByOwner = new java.util.IdentityHashMap<>();
+        for (NormalForm source : sources) {
+            NormalForm copy = copies.get(source);
+            Map<Long, String> keys = new HashMap<>();
+            int keyBytes = 0;
+            java.util.Set<Long> before = comparisonReferenceIds(source.matrixEGraphRoot);
+            if (before == null) continue;
+            for (TemporalReferenceAuthority authority : source.temporalReferenceAuthorities.values()) {
+                if (authority.owner != source || authority.children.size() != 1
+                        || !before.contains(authority.authorityId)) continue;
+                NormalForm child = authority.children.get(0);
+                if (incoming.getOrDefault(child, 0) != 1 || !closedComparisonPhase(child)) continue;
+                String body = EGraphNode.closedFastMatrixKey(copies.get(child).matrixEGraphRoot);
+                if (body != null) {
+                    keyBytes = Math.addExact(keyBytes, body.length());
+                    if (keyBytes > 1_000_000) { keys.clear(); break; }
+                    keys.put(authority.authorityId, child.temporalOp.name()+":"+body);
+                }
+            }
+            if (keys.size() < 2) continue;
+            keysByOwner.put(source, keys);
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys);
+            java.util.Set<Long> after = comparisonReferenceIds(copy.matrixEGraphRoot);
+            if (after == null) throw new IllegalStateException("Fast phase projection increased reference traversal budget");
+            for (TemporalReferenceAuthority authority : source.temporalReferenceAuthorities.values()) {
+                if (keys.containsKey(authority.authorityId) && !after.contains(authority.authorityId))
+                    dropped.add(authority.children.get(0));
+            }
+        }
+        for (NormalForm source : sources) {
+            NormalForm copy = copies.get(source);
+            copy.comparisonTemporalChildren = source.temporalChildren.stream()
+                    .filter(child -> !dropped.contains(child)).map(copies::get).toList();
+            Map<Long, String> keys = keysByOwner.get(source);
+            if (keys == null) continue;
+            int[] positions = new int[source.temporalChildren.size()];
+            int next = 0;
+            for (int i=0; i<positions.length; i++)
+                positions[i] = dropped.contains(source.temporalChildren.get(i)) ? -1 : next++;
+            Map<Long, String> coordinates = new HashMap<>();
+            java.util.Set<Long> surviving = comparisonReferenceIds(copy.matrixEGraphRoot);
+            for (TemporalReferenceAuthority authority : source.temporalReferenceAuthorities.values()) {
+                if (!surviving.contains(authority.authorityId)) continue;
+                int start = positions[authority.childIndex];
+                if (start < 0) throw new IllegalStateException("Fast phase pruning removed a surviving reference");
+                for (int offset=0; offset<authority.children.size(); offset++)
+                    if (positions[authority.childIndex+offset] != start+offset)
+                        throw new IllegalStateException("Fast phase pruning split a temporal occurrence");
+                coordinates.put(authority.authorityId, temporalReferenceName(start, authority.children.size()));
+            }
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys, coordinates);
+        }
+        return sources.stream().filter(source -> !dropped.contains(source)).map(copies::get).toList();
+    }
+
+    List<NormalForm> comparisonTemporalChildren() {
+        return comparisonTemporalChildren == null ? getTemporalChildren() : comparisonTemporalChildren;
+    }
+
+    private static boolean closedComparisonPhase(NormalForm child) {
+        if (!child.params.isEmpty() || !child.matrixQuantiVars.isEmpty() || !child.inheritedQuantiVars.isEmpty()
+                || !child.phaseLocalBindingImports.isEmpty() || !child.localBindingSeeds.isEmpty()
+                || !child.temporalChildren.isEmpty()) return false;
+        return switch (child.temporalOp) {
+            case ALWAYS, EVENTUALLY, AFTER, BEFORE, HISTORICALLY, ONCE -> true;
+            default -> false;
+        };
+    }
+
+    private static java.util.Set<Long> comparisonReferenceIds(EGraphNode root) {
+        java.util.Set<Long> result = new java.util.HashSet<>();
+        java.util.Set<EGraphNode> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        java.util.ArrayDeque<EGraphNode> pending = new java.util.ArrayDeque<>();
+        if (root != null) pending.add(root);
+        while (!pending.isEmpty()) {
+            EGraphNode node = pending.removeFirst();
+            if (!seen.add(node)) continue;
+            if (seen.size() > 4096) return null;
+            if (node.getOpcode() == Opcode.REF) result.add(node.temporalReferenceAuthorityId());
+            pending.addAll(node.getChildren());
+        }
+        return result;
     }
 
     public NormalForm(NormalForm parent, TemporalOp temporalOp, int egid) {

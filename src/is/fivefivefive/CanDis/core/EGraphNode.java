@@ -78,6 +78,7 @@ public final class EGraphNode {
     /* Internal derivation evidence; generic Bool metadata alone is not authority. */
     private Opcode derivedBooleanRewriteOpcode;
     /* Owner-issued temporal REF provenance; excluded from semantic keys. */
+    private String comparisonTemporalReferenceName;
     private long temporalReferenceAuthorityId = -1L;
     private final SemanticProfile semanticProfile;
     private enum BuiltinConstantKind {
@@ -7000,10 +7001,19 @@ public final class EGraphNode {
 
     /** Detached, metric-only projection. Never replaces a certification source. */
     static EGraphNode fastComparisonMatrix(EGraphNode source) {
+        return fastComparisonMatrix(source, Collections.emptyMap());
+    }
+
+    static EGraphNode fastComparisonMatrix(EGraphNode source, Map<Long, String> closedPhaseKeys) {
+        return fastComparisonMatrix(source, closedPhaseKeys, Collections.emptyMap());
+    }
+
+    static EGraphNode fastComparisonMatrix(EGraphNode source, Map<Long, String> closedPhaseKeys,
+            Map<Long, String> referenceCoordinates) {
         if (source == null) {
             return null;
         }
-        EGraphNode result = new FastComparison().copy(
+        EGraphNode result = new FastComparison(closedPhaseKeys, referenceCoordinates).copy(
                 source, Collections.emptyMap(), Collections.emptyMap(), 0, true);
         result.freezeForCertification();
         return result;
@@ -7011,12 +7021,21 @@ public final class EGraphNode {
 
     private static final class FastComparison {
         private final EGraphArena target = new EGraphArena();
+        private final Map<Long, String> closedPhaseKeys;
+        private final Map<Long, String> referenceCoordinates;
+
+        private FastComparison(Map<Long, String> closedPhaseKeys, Map<Long, String> referenceCoordinates) {
+            this.closedPhaseKeys = Map.copyOf(closedPhaseKeys);
+            this.referenceCoordinates = Map.copyOf(referenceCoordinates);
+        }
 
         private EGraphNode head(EGraphNode source, List<EGraphNode> children) {
             EGraphNode copy = new EGraphNode(source.id, source.opcode, children,
                     source.isCommutative, source.maxArity, source.flexibleArity,
                     source.metatype, source.semanticProfile, true, target);
             source.copyPayloadTo(copy);
+            if (copy.opcode == Opcode.REF && referenceCoordinates.containsKey(copy.temporalReferenceAuthorityId))
+                copy.comparisonTemporalReferenceName = referenceCoordinates.get(copy.temporalReferenceAuthorityId);
             return copy;
         }
 
@@ -7163,7 +7182,13 @@ public final class EGraphNode {
                 }
                 Map<String, EClassRef> unique = new LinkedHashMap<>();
                 for (EClassRef ref : flat) {
-                    unique.putIfAbsent(certifiedContainerInvocationKey(ref), ref);
+                    EGraphNode operand = ref.getEClass().getRepresentative();
+                    String phaseKey = operand.opcode == Opcode.REF && operand.childClasses.isEmpty()
+                            && ref.getSlotMap().isEmpty()
+                            ? closedPhaseKeys.get(operand.temporalReferenceAuthorityId) : null;
+                    String key = phaseKey == null ? certifiedContainerInvocationKey(ref)
+                            : "closed-temporal-phase/" + phaseKey;
+                    unique.putIfAbsent(key, ref);
                 }
                 result.childClasses = new ArrayList<>(unique.values());
                 if (result.childClasses.size() == 1) {
@@ -7209,7 +7234,52 @@ public final class EGraphNode {
         }
     }
 
+    /** Conservative equality key for a closed leaf phase, not a binder alpha key.
+     * Ordered syntax and every exact type/head are retained. Expanded DAG visits
+     * and emitted text are bounded before recursive serialization can grow. */
+    static String closedFastMatrixKey(EGraphNode root) {
+        if (root == null || root.opcode != Opcode.TEMPORALROOT) return null;
+        StringBuilder key = new StringBuilder();
+        return appendClosedFastKey(root, key, new int[]{1024}, 0) ? key.toString() : null;
+    }
+
+    private static boolean appendClosedFastKey(EGraphNode node, StringBuilder key, int[] visits, int depth) {
+        if (--visits[0] < 0 || depth > 64) return false;
+        if (node.opcode != Opcode.TEMPORALROOT && node.exactAlloyType == null) return false;
+        switch (node.opcode) {
+            case TEMPORALROOT:
+                if (depth != 0 || node.metatype != Metatype.BOOLEAN || node.childClasses.size() != 1
+                        || node.sourceName != null || node.semanticIdentity != null || node.alphaName != null
+                        || !node.eClass.getSlots().isEmpty()
+                        || (node.exactAlloyType != null && node.exactAlloyType.kind() != ExactAlloyType.Kind.BOOL)) return false;
+                EGraphNode body = node.childClasses.get(0).getEClass().getRepresentative();
+                if (body.exactAlloyType == null || body.exactAlloyType.kind() != ExactAlloyType.Kind.BOOL) return false;
+                break;
+            case GLOBALBINDING:
+                if (node.semanticIdentity == null || !node.childClasses.isEmpty()) return false;
+                break;
+            case CONSTANT: case NOT: case NO: case SOME: case ONE: case LONE:
+            case AND: case OR: case IN: case NOT_IN: case EQUALS: case NOT_EQUALS:
+            case INTERSECT: case PLUS: case MINUS: case JOIN: case ARROW:
+            case TRANSPOSE: case DOMAIN: case RANGE: case CLOSURE: case RCLOSURE:
+                break;
+            default:
+                return false;
+        }
+        StringBuilder head = new StringBuilder(); appendSemanticHead(node, head);
+        if (head.length() > 8192 || key.length() + head.length() + 32 > 131072) return false;
+        appendLengthEncoded(key, head.toString());
+        key.append('[').append(node.childClasses.size()).append(':');
+        for (EClassRef child : node.childClasses) {
+            if (!child.getSlotMap().isEmpty()
+                    || !appendClosedFastKey(child.getEClass().getRepresentative(), key, visits, depth+1)) return false;
+        }
+        key.append(']');
+        return key.length() <= 131072;
+    }
+
     private void copyPayloadTo(EGraphNode copy) {
+        copy.comparisonTemporalReferenceName = comparisonTemporalReferenceName;
         copy.sourceName = sourceName;
         copy.sourceType = sourceType;
         copy.exactAlloyType = exactAlloyType;
@@ -7225,6 +7295,14 @@ public final class EGraphNode {
         copy.derivedBooleanRewriteOpcode = derivedBooleanRewriteOpcode;
         copy.temporalReferenceAuthorityId = temporalReferenceAuthorityId;
         copy.temporalSnapshotBinding = temporalSnapshotBinding;
+    }
+
+    String comparisonTemporalReferenceName() {
+        return comparisonTemporalReferenceName == null ? sourceName : comparisonTemporalReferenceName;
+    }
+
+    boolean hasComparisonTemporalReferenceName() {
+        return comparisonTemporalReferenceName != null;
     }
 
     private EGraphNode snapshot() {

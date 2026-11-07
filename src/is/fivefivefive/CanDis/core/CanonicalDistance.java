@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v2-guarded-chain";
+    public static final String VERSION = "typed-fast-distance-v3-closed-temporal-phase";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -243,7 +243,7 @@ public final class CanonicalDistance {
                 normalForm.freezeForCertification();
             }
         }
-        snapshot.replaceAll(NormalForm::fastComparisonView);
+        snapshot = NormalForm.fastComparisonViews(snapshot);
         return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
     }
 
@@ -1398,6 +1398,8 @@ public final class CanonicalDistance {
     }
 
     private static String atomIdentity(EGraphNode node) {
+        if (node.getOpcode() == EGraphNode.Opcode.REF && node.hasComparisonTemporalReferenceName())
+            return node.comparisonTemporalReferenceName();
         if (node.getSemanticIdentity() != null) {
             return node.getSemanticIdentity();
         }
@@ -1679,13 +1681,13 @@ public final class CanonicalDistance {
         if (nfs.isEmpty()) {
             return root;
         }
-        appendTemporalChildren(root, nfs.get(0).getTemporalChildren());
+        appendTemporalChildren(root, nfs.get(0).comparisonTemporalChildren());
         return root;
     }
 
     private static TemporalTree temporalTree(NormalForm nf) {
         TemporalTree tree = new TemporalTree(naturalTemporalLabel(nf.getTemporalOp()));
-        appendTemporalChildren(tree, nf.getTemporalChildren());
+        appendTemporalChildren(tree, nf.comparisonTemporalChildren());
         return tree;
     }
 
@@ -1696,8 +1698,8 @@ public final class CanonicalDistance {
                     && i + 1 < children.size()
                     && matchingRightBinaryTemporal(child.getTemporalOp()) == children.get(i + 1).getTemporalOp()) {
                 TemporalTree binary = new TemporalTree(naturalTemporalLabel(child.getTemporalOp()));
-                appendTemporalChildren(binary, child.getTemporalChildren());
-                appendTemporalChildren(binary, children.get(i + 1).getTemporalChildren());
+                appendTemporalChildren(binary, child.comparisonTemporalChildren());
+                appendTemporalChildren(binary, children.get(i + 1).comparisonTemporalChildren());
                 parent.children.add(binary);
                 i++;
             } else {

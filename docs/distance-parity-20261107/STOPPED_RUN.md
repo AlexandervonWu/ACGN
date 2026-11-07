@@ -460,6 +460,60 @@ source/certificate/typed-representation/edit alignment required on the
 certified track. The remaining public-alignment and temporal gaps still block
 a corpus-wide invariant claim or release.
 
+### Shorter Replay And Closed Temporal Phases
+
+The next bounded incident was
+`classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als`, `inv4` / `inv4c`:
+Fast 17 `[2,0,15]`, certified 11 `[1,0,10]` (temporal, quantifier, matrix).
+Actual Astra agent `01a1b6f9-4f81-7571-9191-e45c72efe56f` first replayed the
+archived shorter receipt against freshly prepared certified native endpoints.
+The matrix checker forbids invoking distance search; endpoint/cost tampering
+is rejected. Ten matrix edits plus one temporal edit replay to eleven, but
+this does not discharge original-source/public certificate alignment.
+
+Fast retained two identical closed `ALWAYS` phases with bodies
+`NO(INTERSECT(Student,Teacher))`. Its extra charges were one temporal deletion
+and a five-node duplicate matrix deletion. `ClosedTemporalPhase.lean` states
+the local idempotence, Boolean-wrapper and reference-transport laws before the
+Java refinement. The detached Fast view now admits only same-owner unary,
+same-operator, typed closed leaves with no parameters, local/inherited bindings,
+imports or child phases. It prunes only an admitted leaf whose reference was
+removed by existing Boolean AND/OR deduplication. Original source names,
+temporal authorities and certified child lists remain unchanged. A separate
+metric coordinate transports later references without changing ordinary REF
+semantic identity. Both directions now return **11/11**, `[1,0,10]`.
+
+`ClosedTemporalPhaseTest` passes 69 checks, including mixed/binary tails,
+different operators/parents, scope exclusions, identity preservation and key
+budgets. A first solver test emitted a warning about possibly unsound static
+reduction; those results are explicitly excluded. Replacement checks assert
+temporal mode and 2..4-step bounds: scopes 1, 2 and 4 give UNSAT for the mixed-tail
+equivalence counterexample and SAT for a mutable-time control impossible in
+static semantics. The replacement log has no such warnings. These remain
+bounded checks, not an unbounded proof or Java-Lean correspondence theorem.
+
+The combined suite passes **13,314 numbered Java checks**, eighteen Lean files,
+the unnumbered gate/saturation checks, three one-pair stop checks, the native
+diagnostic CLI checks and ten Python tests. The 66,694-file input inventory was
+unchanged after both the complete suite and a second clean Java build with
+repeated retained stop checks. Evidence:
+
+- `ACGN/intermediate/temporal-integration-20261107-FLmXNU/`, input inventory
+  SHA-256 `a9137a1d0b812bc281f16b14dc84615d1efcce1f1c72819fd47a75289c10a03e`.
+- Astra's compact record is under
+  `ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/p06-shorter-ixbQgXM0/evidence.json`,
+  SHA-256 `514ca543d8159c88817424a3264d0935c542cc19187b9ae25310d2cab0df5377`.
+
+The certified producer was not changed by this increment. Full alignment stays
+**BLOCKED**: an actual test-only export fails with
+`UNCHECKABLE: retired collision records are not exportable`; public coordinates,
+ordering/choice admission and source/Java-Lean correspondence remain unresolved.
+The repaired 11/11 CLI pair therefore still stops with
+`REPLAY_WITNESS_UNAVAILABLE`. A separate scoped temporal pair,
+`trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als`, still stops at 21/22
+(`[1,0,20]` / `[2,0,20]`). Both raw incidents are retained. No full-corpus run,
+new mean, push, tag or release is implied by this checkpoint.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
