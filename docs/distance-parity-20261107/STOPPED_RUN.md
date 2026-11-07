@@ -677,6 +677,64 @@ are retained at `ACGN/intermediate/occurrence-integration-20261107-OjxwYx/`.
 This checkpoint advances to the next guarded diagnostic scan under the
 author's sequential-continuation instruction; it is not a corpus parity claim.
 
+### Next Automatic First-Stop Incident
+
+Fresh diagnostic run `diagnostic-parity-20261107T205112Z` used commit
+`9f6ef979b1a7077ea8afdbfa9d6d452ce7e8cac1` and the unchanged guarded resource
+policy. It selected 66,080 inputs and emitted twelve successful ordered rows
+before stopping at `classroom_fol/both/2vLMTEbEhvra9ad9z_inv12.als`,
+`inv12` / `inv12c`: Fast 17 `[0,3,14]`, certified 18 `[0,3,15]`.
+This is a new fingerprint, not recurrence of either preceding repaired pair.
+The partial prefix is not a new corpus mean or a complete parity assessment.
+
+All descendants stopped, and frozen manifest checks succeeded before and
+after the bounded native replay. Both matrix receipts replay at their native
+costs, with full alignment explicitly blocked. Immutable evidence under
+`ACGN/intermediate/diagnostic-parity-20261107T205112Z/` includes:
+
+- `artifacts/distance_results/parity-incident.json`, SHA-256
+  `fcc0bc009e72ec3290f9e74cc26617ff1a7b52bdc16f96487aacaab53612b564`.
+- `artifacts/incident-matrix-replay.json`, SHA-256
+  `95590e8aa027791ea66f99167f0715746ff7d13f879d05268721006682a55225`.
+- `artifacts/build/acgn-parity-scan.jar`, SHA-256
+  `638fb97f131337e02f9b2ab35debb0f4fb5eb6defdd7c010f5bcb9c1b50fc580`.
+
+The controller assigned the same sole actual Astra agent to shorter-first
+replay and Lean-first repair, without requesting another user confirmation.
+No competing corpus run or release was started.
+
+### Injective Variable Fallback Repair
+
+Independent replay rejected the shorter 17-edit witness under the selected
+one-to-one binder correspondence. Its map already assigned source `_q1` to
+target `_q0`, but the unmapped source `_q0` also matched that target for free
+through equal alpha spelling. Those source binders have distinct Class and
+Person carrier roles; lexical spelling did not authorize a second preimage.
+
+`InjectiveVariableFallback.lean` was compiled before production edits. It
+proves that identity extension at unused targets preserves injectivity and
+that a reserved target rejects fallback. The Java cost and edit-description
+paths now share this rule. No source normalization, certificate, selected
+mapping, declaration receipt or certified receipt changed. Forward Fast
+17 becomes 18; reverse already was 18. Both arms and directions are now
+`[18,0,3,15]`. This is a repaired undercount, not a copied certified scalar.
+
+The bounded evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix17-BMBLjuDA/evidence.json`,
+SHA-256 `c8400b62dfdefce4aac466a4d5fb0434c732c75e2af15e547e665675ff4c7ff9`.
+It retains the rejected old receipt, fresh receipts in both directions,
+source hashes and the frozen candidate build. Focused checks include all 34
+injective partial maps over three names, endpoint substitution, occupied
+target rejection, explicit/self mappings, unused identity, binder renaming
+and symmetry. Complete public operation alignment and Java/Lean
+correspondence remain **BLOCKED**.
+
+Parent integration passed 22 Lean files, 14,529 numbered Java checks, three
+strict CLI cases, six diagnostic CLI cases, native replay CLI checks, ten
+Python checks and eleven local supervisor tests. The input hash inventory
+was unchanged after execution. Logs and hashes are retained at
+`ACGN/intermediate/next-repair-integration-20261107-A4ysvE/`.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

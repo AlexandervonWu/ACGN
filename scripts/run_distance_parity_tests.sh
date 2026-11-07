@@ -20,6 +20,7 @@ lean docs/distance-parity-20261107/ShorterReplayBoundary.lean
 lean docs/distance-parity-20261107/ClosedTemporalPhase.lean
 lean docs/distance-parity-20261107/FastProductGeometry.lean
 lean docs/distance-parity-20261107/TemporalOccurrenceAccounting.lean
+lean docs/distance-parity-20261107/InjectiveVariableFallback.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -27,7 +28,7 @@ done
 LEAN_PATH="$BUILD_DIR" lean docs/distance-parity-20261107/FastChainGeometry.lean
 mapfile -t sources < <(rg --files src -g '*.java' | sort)
 javac -J-Xmx512m --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
-for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest theory.GuardedJoinRotationTest PartialJoinCompositionTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.TemporalReplayTest metric.PhaseReplayTest NativePhaseReplayTest LocalDomainSingletonTest FastChainGeometryTest P06ShorterReplayTest ProductShorterReplayTest FastProductGeometryTest core.ScopedTemporalShorterReplayTest core.TemporalOccurrenceAccountingTest core.ClosedTemporalPhaseTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
+for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest theory.GuardedJoinRotationTest PartialJoinCompositionTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.TemporalReplayTest metric.PhaseReplayTest NativePhaseReplayTest LocalDomainSingletonTest FastChainGeometryTest P06ShorterReplayTest ProductShorterReplayTest FastProductGeometryTest core.ScopedTemporalShorterReplayTest core.TemporalOccurrenceAccountingTest core.InjectiveVariableFallbackTest core.InjectiveVariableReplayTest core.ClosedTemporalPhaseTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
     java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
         -cp "$BUILD_DIR:$ROOT/lib/*" "is.fivefivefive.CanDis.$test"
 done

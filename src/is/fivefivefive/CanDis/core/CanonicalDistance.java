@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v4-plain-product";
+    public static final String VERSION = "typed-fast-distance-v5-injective-variable-fallback";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -1178,10 +1178,7 @@ public final class CanonicalDistance {
         } else if (left.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             String leftName = variableName(left);
             String rightName = variableName(right);
-            String mappedName = variableMapping.get(leftName);
-            if (mappedName != null && !mappedName.equals(rightName)) {
-                edits.add(path + ": replace variable " + nodeVariableDisplay(left) + " -> " + nodeVariableDisplay(right));
-            } else if (mappedName == null && !leftName.equals(rightName)) {
+            if (variableUpdateCost(leftName, rightName, variableMapping) != 0) {
                 edits.add(path + ": replace variable " + nodeVariableDisplay(left) + " -> " + nodeVariableDisplay(right));
             }
         } else if ((left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
@@ -1352,11 +1349,7 @@ public final class CanonicalDistance {
         if (left.getOpcode() == EGraphNode.Opcode.VARIABLE) {
             String leftName = variableName(left);
             String rightName = variableName(right);
-            String mappedName = variableMapping.get(leftName);
-            if (mappedName != null) {
-                return mappedName.equals(rightName) ? 0 : 1;
-            }
-            return leftName.equals(rightName) ? 0 : 1;
+            return variableUpdateCost(leftName, rightName, variableMapping);
         }
         GraphType leftType = leftMetadata == null ? resultType(left) : leftMetadata.type(left);
         GraphType rightType = rightMetadata == null ? resultType(right) : rightMetadata.type(right);
@@ -1372,6 +1365,14 @@ public final class CanonicalDistance {
             return safeEquals(callIdentity(left), callIdentity(right)) ? 0 : 1;
         }
         return 0;
+    }
+
+    static int variableUpdateCost(String leftName, String rightName, Map<String, String> variableMapping) {
+        String mappedName = variableMapping.get(leftName);
+        if (mappedName != null) return mappedName.equals(rightName) ? 0 : 1;
+        // Identity fallback must not create a second preimage of a target
+        // already consumed by the selected source-linked binder alignment.
+        return leftName.equals(rightName) && !variableMapping.containsValue(rightName) ? 0 : 1;
     }
 
     private static GraphType resultType(EGraphNode node) {
