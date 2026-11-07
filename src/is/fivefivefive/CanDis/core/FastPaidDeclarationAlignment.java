@@ -28,18 +28,24 @@ final class FastPaidDeclarationAlignment {
         if (qs.isEmpty()) return false;
         Set<String> names = new HashSet<>(), paths = new HashSet<>();
         var firstType = qs.get(0).getExactAlloyType();
+        boolean hasLone = false;
         for (QuantiVar q : qs) {
             var type = q.getExactAlloyType();
             // Paid diagonals are edits, not exchanges across quantifier blocks.
             // CanonicalDistance retains each contiguous ALL/SOME run in place.
             if (!q.isFrozenForCertification()
-                    || (q.getQuantifier() != QuantiVar.Quantifier.ALL && q.getQuantifier() != QuantiVar.Quantifier.SOME)
+                    || (q.getQuantifier() != QuantiVar.Quantifier.ALL
+                        && q.getQuantifier() != QuantiVar.Quantifier.SOME
+                        && q.getQuantifier() != QuantiVar.Quantifier.LONE)
                     || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() != 0
                     || q.getBindingPath().isEmpty() || !paths.add(q.getBindingPath())
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
+            hasLone |= q.getQuantifier() == QuantiVar.Quantifier.LONE;
         }
-        if(!f.getLocalQuantiVars().isEmpty()) return FastLocalPaidScope.supports(f);
+        // LONE stays a fixed prefix barrier; its local-binder combinations are
+        // outside this extension. Only charged paths over the prefix are added.
+        if(!f.getLocalQuantiVars().isEmpty()) return !hasLone && FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         pending.add(f.getMatrixEGraph());

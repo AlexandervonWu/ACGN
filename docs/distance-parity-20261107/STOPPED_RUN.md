@@ -857,6 +857,44 @@ Full public/wire operation alignment and Java/Lean correspondence remain
 **BLOCKED**; the actual checked construction evidence is not replaced by
 numerical agreement.
 
+### Fixed LONE Prefix Paid Declaration Repair
+
+Diagnostic run `diagnostic-parity-20261107T223950Z`, from commit
+`6fb30743b1c0aa501f016e98dd75d8692dd692bc`, stopped on
+`classroom_fol/both/83RWHQkLc3bdocWg4_inv12.als`, `inv12` / `inv12c`.
+Fast was `[16,0,3,13]`, certified `[15,0,3,12]`. The service and all descendants
+stopped, and frozen-input checks passed before investigation.
+
+The shorter certified receipt replayed against fresh typed endpoints and actual
+source-linked construction premises. Fast excluded the whole prefix from paid
+declaration search because it contained LONE. Admitting that charged search
+changes the selected matrix operations from `1+6+6=13` to `1+3+5+3=12`.
+Both directions now return `[15,0,3,12]`; the declaration charge remains three
+and certified receipts are unchanged. No scalar minimum is substituted.
+
+LONE remains a fixed prefix barrier. Only existing independent ALL/SOME runs
+can reorder; the paid Class/SOME-to-Person/ALL link is not a free type or
+quantifier equality. LONE with retained local binders remains outside this
+extension, as do unsupported cardinality and disjointness cases.
+
+`LonePaidDeclarationAlignment.lean` compiled before Java changes. Its laws
+cover guarded subtype LONE, inner existential exchange, exact charged
+occurrence endpoints, and an empty-domain counterexample to hoisting across
+LONE. Alloy checks at scopes zero through four supplement these laws.
+Negative controls reject foreign source, owner, domain, mapping, order and
+cost evidence. These are bounded tests and native replay checks, not a proof
+of Java/Lean correspondence or a common public action sequence.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix15-HRpCIwuT/evidence.json`,
+SHA-256 `6164b6a71faf57e196b822bfd9410d37233be04849dc1ccf68c7dce7c2c635a3`.
+Parent integration logs and frozen input inventory are under
+`ACGN/intermediate/lone-paid-integration-20261107-dgQ76O/`.
+The combined suite passed 26 Lean files, 19,709 numbered Java checks, ten
+diagnostic CLI cases, three strict CLI cases, native replay CLI checks, ten
+Python checks and fourteen local supervisor tests. Frozen input hashes match.
+Full public/wire alignment and Java/Lean correspondence remain **BLOCKED**.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

@@ -79,8 +79,12 @@ public final class FastPaidDeclarationAlignmentTest {
         List<Integer> order=new ArrayList<>(); for(int i=0;i<qs.size();i++) order.add(i);
         for(int start=0;start<order.size();) {
             int end=start+1;
-            while(end<order.size() && qs.get(end).getQuantifier()==qs.get(start).getQuantifier()) end++;
-            order.subList(start,end).sort(Comparator.comparing(i -> qs.get(i).getCarrierTypeName())); start=end;
+            var kind=qs.get(start).getQuantifier();
+            if(kind==QuantiVar.Quantifier.ALL || kind==QuantiVar.Quantifier.SOME) {
+                while(end<order.size() && qs.get(end).getQuantifier()==kind) end++;
+                order.subList(start,end).sort(Comparator.comparing(i -> qs.get(i).getCarrierTypeName()));
+            }
+            start=end;
         }
         List<DeclarationReplay.Atom> result=new ArrayList<>();
         for(int i:order) {
@@ -203,6 +207,11 @@ public final class FastPaidDeclarationAlignmentTest {
         var localA=prepare(localNatural,"inv12"); var localB=prepare(localNatural,"inv12c");
         check(FastPaidDeclarationAlignment.supportsPair(localA.forms(),localB.forms()),"outer paid link with retained local binder");
         pair(localA,localB,27);
+        var loneNatural=CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(
+                Path.of("classified-data/classroom_fol/both/83RWHQkLc3bdocWg4_inv12.als")));
+        var loneA=prepare(loneNatural,"inv12"); var loneB=prepare(loneNatural,"inv12c");
+        check(FastPaidDeclarationAlignment.supportsPair(loneA.forms(),loneB.forms()),"LONE fixed-prefix paid path");
+        pair(loneA,loneB,15);
         var model=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 sig B {}

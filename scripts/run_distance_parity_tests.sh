@@ -24,6 +24,7 @@ lean docs/distance-parity-20261107/InjectiveVariableFallback.lean
 lean docs/distance-parity-20261107/PaidDeclarationAlignment.lean
 lean docs/distance-parity-20261107/MixedPaidDeclarationAlignment.lean
 lean docs/distance-parity-20261107/LocalPaidDeclarationAlignment.lean
+lean docs/distance-parity-20261107/LonePaidDeclarationAlignment.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -41,6 +42,10 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.FastLocalPaidScopeTest
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.LocalPaidDeclarationShorterReplayTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.LonePaidDeclarationAlignmentTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.LonePaidDeclarationShorterReplayTest
 python3 -B scripts/test_batch_parity_stop.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/parity-stop-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
