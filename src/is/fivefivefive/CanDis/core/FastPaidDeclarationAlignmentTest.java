@@ -212,6 +212,12 @@ public final class FastPaidDeclarationAlignmentTest {
         var loneA=prepare(loneNatural,"inv12"); var loneB=prepare(loneNatural,"inv12c");
         check(FastPaidDeclarationAlignment.supportsPair(loneA.forms(),loneB.forms()),"LONE fixed-prefix paid path");
         pair(loneA,loneB,15);
+        var groupedNatural=CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(
+                Path.of("classified-data/classroom_fol/both/8dTfKqTs26w6fL87K_inv15.als")));
+        var groupedA=prepare(groupedNatural,"inv15"); var groupedB=prepare(groupedNatural,"inv15c");
+        check(FastPaidDeclarationAlignment.supportsPair(groupedA.forms(),groupedB.forms()),
+                "distinct slots of one original declaration retain paid links");
+        pair(groupedA,groupedB,18);
         var model=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 sig B {}

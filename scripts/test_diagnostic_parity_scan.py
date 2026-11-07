@@ -29,6 +29,7 @@ def main():
         ("equal-mixed-paid-declarations", root / "classified-data/classroom_fol/both/7KzgkuDqY7Q4ZfQ4Z_inv14.als", None),
         ("equal-local-paid-declarations", root / "classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als", None),
         ("equal-lone-paid-declarations", root / "classified-data/classroom_fol/both/83RWHQkLc3bdocWg4_inv12.als", None),
+        ("equal-grouped-paid-declarations", root / "classified-data/classroom_fol/both/8dTfKqTs26w6fL87K_inv15.als", None),
         ("identical", identical, None),
         ("false-zero", false_zero, "INCORRECT_ZERO"),
     ]
@@ -65,7 +66,8 @@ def main():
                                  "equal-injective-variables": 18, "equal-paid-declarations": 29,
                                  "equal-mixed-paid-declarations": 19,
                                  "equal-local-paid-declarations": 27,
-                                 "equal-lone-paid-declarations": 15}.get(label)
+                                 "equal-lone-paid-declarations": 15,
+                                 "equal-grouped-paid-declarations": 18}.get(label)
             assert report["summary"]["successes"] == (1 if expected_distance is not None else 0)
             assert report["summary"]["skippedIdenticalRawAstPairs"] == (1 if label == "identical" else 0)
             if expected_distance is not None:

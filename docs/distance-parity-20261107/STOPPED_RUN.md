@@ -895,6 +895,43 @@ diagnostic CLI cases, three strict CLI cases, native replay CLI checks, ten
 Python checks and fourteen local supervisor tests. Frozen input hashes match.
 Full public/wire alignment and Java/Lean correspondence remain **BLOCKED**.
 
+### Grouped Declaration Slot Identity Repair
+
+Diagnostic run `diagnostic-parity-20261107T225721Z`, from commit
+`5a16bab87909c96e26101102bceb31d0dc854280`, stopped on
+`classroom_fol/both/8dTfKqTs26w6fL87K_inv15.als`, `inv15` / `inv15c`.
+Fast was `[19,0,3,16]`, certified `[18,0,3,15]`. All run descendants exited
+and manifest checks passed before the next sole repair owner was dispatched.
+
+Fixed-choice replay checked the shorter 18 first against fresh original
+endpoints and actual source-linked construction evidence. Fast treated a
+shared declaration owner as duplicate variable identity, excluding the paid
+`_q2 -> _q0` link. It then charged `p3 -> p` again in the matrix. The repair
+recognizes distinct source-linked slots of an independent ALL/SOME declaration.
+Both directions now return `[18,0,3,15]`. Exactly one matrix head charge changes
+from one to zero; operation ordering, literal type costs and the entire
+certified receipts remain unchanged. The SOME-to-ALL declaration edit remains
+charged, and the original predicates are not claimed semantically equivalent.
+
+`GroupedPaidDeclarationAlignment.lean` compiled before the production edit.
+It proves distinct owner/slot identities, grouped SOME/ALL product semantics
+including empty types, and exact charged endpoints. Java admission checks
+contiguous source slot keys, disjoint original aliases, matching parser-derived
+type evidence and original matrix uses. Grouped LONE/ONE, unsupported
+multiplicity, local scopes, unobserved slots and foreign-source evidence reject.
+Alloy grouped/nested equivalence checks at scopes zero through four and empty
+Person controls supplement the formal laws; they do not prove Java extraction.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix18-cD514zgR/evidence.json`,
+SHA-256 `80e0234924aef6ab20e7a43c79f7e4bc9bbc98eb8ba3302f3a250e8a1228cba7`.
+Parent integration logs, receipt hashes and input inventory are under
+`ACGN/intermediate/grouped-paid-integration-20261107-h2V50B/`.
+Combined regressions passed 27 Lean files, 19,843 numbered Java checks, eleven
+diagnostic CLI cases, three strict CLI cases, native replay CLI checks, ten
+Python checks and fourteen supervisor tests. Input and receipt hashes match.
+Full public/wire action linkage and Java/Lean correspondence remain **BLOCKED**.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

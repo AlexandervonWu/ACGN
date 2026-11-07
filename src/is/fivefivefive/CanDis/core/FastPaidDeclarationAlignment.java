@@ -26,7 +26,8 @@ final class FastPaidDeclarationAlignment {
                 || !f.getPhaseLocalBindingImports().isEmpty()) return false;
         List<QuantiVar> qs = f.getMatrixQuantiVars();
         if (qs.isEmpty()) return false;
-        Set<String> names = new HashSet<>(), paths = new HashSet<>();
+        Set<String> names = new HashSet<>();
+        Map<String,List<QuantiVar>> declarations = new LinkedHashMap<>();
         var firstType = qs.get(0).getExactAlloyType();
         boolean hasLone = false;
         for (QuantiVar q : qs) {
@@ -38,11 +39,13 @@ final class FastPaidDeclarationAlignment {
                         && q.getQuantifier() != QuantiVar.Quantifier.SOME
                         && q.getQuantifier() != QuantiVar.Quantifier.LONE)
                     || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() != 0
-                    || q.getBindingPath().isEmpty() || !paths.add(q.getBindingPath())
+                    || q.getBindingPath().isEmpty()
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
             hasLone |= q.getQuantifier() == QuantiVar.Quantifier.LONE;
+            declarations.computeIfAbsent(q.getBindingPath(), ignored -> new ArrayList<>()).add(q);
         }
+        if (!groupedSlotsMatchSource(f, declarations)) return false;
         // LONE stays a fixed prefix barrier; its local-binder combinations are
         // outside this extension. Only charged paths over the prefix are added.
         if(!f.getLocalQuantiVars().isEmpty()) return !hasLone && FastLocalPaidScope.supports(f);
@@ -61,6 +64,55 @@ final class FastPaidDeclarationAlignment {
             pending.addAll(node.getChildren());
         }
         return true;
+    }
+
+    // A shared declaration path is an owner, not a slot. Only independent,
+    // source-observed ALL/SOME slots extend the old distinct-path slice.
+    private static boolean groupedSlotsMatchSource(NormalForm form, Map<String,List<QuantiVar>> declarations) {
+        Map<String,QuantiVar> grouped = new HashMap<>();
+        Set<String> aliases = new HashSet<>();
+        for (var group : declarations.values()) {
+            if (group.size() < 2) continue;
+            if (!form.getLocalQuantiVars().isEmpty()) return false;
+            var first = group.get(0);
+            if (first.getQuantifier() != QuantiVar.Quantifier.ALL
+                    && first.getQuantifier() != QuantiVar.Quantifier.SOME) return false;
+            for (int slot=0;slot<group.size();slot++) {
+                var q = group.get(slot);
+                String type = q.getTypeName();
+                if (type == null) return false;
+                if (type.startsWith("VAR_")) type = type.substring(4);
+                String expectedKey = q.getBindingPath()+"#"+slot+":"+q.getCardinality()+":"+type;
+                if (!q.getDeBruijnKey().equals(expectedKey)
+                        || q.getQuantifier() != first.getQuantifier()
+                        || !q.getCarrierTypeName().equals(first.getCarrierTypeName())
+                        || !q.getExactAlloyType().sameOccurrenceEvidenceAs(first.getExactAlloyType())) return false;
+                for (String alias : q.getOriginalNames()) if (!aliases.add(alias)) return false;
+                grouped.put(q.getName(),q);
+            }
+        }
+        if (grouped.isEmpty()) return true;
+        EGraphNode source = form.getCertificationMatrixEGraph();
+        if (source == null) return false;
+        Set<String> observed = new HashSet<>();
+        Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
+        ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
+        pending.add(source);
+        while (!pending.isEmpty()) {
+            EGraphNode node = pending.removeFirst();
+            if (!seen.add(node)) continue;
+            if (seen.size() > 4096) throw new IllegalStateException("PAID_DECLARATION_GRAPH_BUDGET");
+            QuantiVar q = node.getOpcode() == EGraphNode.Opcode.VARIABLE ? grouped.get(node.getAlphaName()) : null;
+            if (q != null) {
+                if (node.getSemanticIdentity() == null || !q.getOriginalNames().contains(node.getSemanticIdentity())
+                        || !q.getOriginalNames().contains(node.getSourceName())
+                        || node.getExactAlloyType() == null
+                        || !q.getExactAlloyType().sameOccurrenceEvidenceAs(node.getExactAlloyType())) return false;
+                observed.add(q.getName());
+            }
+            pending.addAll(node.getChildren());
+        }
+        return observed.equals(grouped.keySet());
     }
 
     static void enumerate(List<QuantiVar> left, List<QuantiVar> right, int[][] dp,
