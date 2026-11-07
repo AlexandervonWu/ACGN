@@ -36,9 +36,9 @@ or substitute 60 seconds as an exact completion time in speedup statistics.
    AST-distinct comparisons, not a sampled or CORRECT-only subset) in [13,15], the
    operational interpretation of "around 14" approved by the author before launch. A later
    user refinement must be recorded; never tune this range to observed results.
-   Separately report both all-66,080 means including the 4,482 AST-identical
-   pairs as zero. Keep these denominators distinct; the gate uses the same
-   denominator as the prior 13.9701 / 14.0217 measurements.
+   Use exactly the original scope and denominator of the prior 13.9701 /
+   14.0217 measurements. Do not add zero-padded all-file means or restrict
+   the population to CORRECT-labelled predicates.
 4. No non-CORRECT zeroes in either paired arm or incorrect-to-any-truth rankings.
 5. Identical paired zero subsets and identical per-pair distances between Fast
    and Certificate-Integrated; matching means or counts is insufficient.

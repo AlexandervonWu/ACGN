@@ -122,8 +122,7 @@ def verify(art, baseline):
     check("G03-means", all(near_fourteen(v) for v in means),
           dict(fast=means[0], certified=means[1], inclusiveRange=[13, 15],
                denominator=len(seen), population="full eligible natural corpus",
-               totalFiles=66080, astIdenticalExcluded=4482,
-               allFilesMeansIncludingAstIdenticalZeroes=[s / 66080 for s in sums]))
+               totalFiles=66080, astIdenticalExcluded=4482))
     check("G04-no-incorrect-paired-zero", not incorrect and not invalid and not inexact,
           dict(incorrect=incorrect, invalid=invalid, inexact=inexact))
     check("G05-identical-paired-zero-subset", zeros[0] == zeros[1],
