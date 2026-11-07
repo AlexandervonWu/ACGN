@@ -114,11 +114,11 @@ public final class CertifiedSingletonCompositionTest {
         check(Canonical.distance(x, y) == 49, "outlier Fast remains 49");
         var cx = CanonicalAlloyPipeline.prepare(x);
         var cy = CanonicalAlloyPipeline.prepare(y);
-        check(CanonicalAlloyPipeline.distance(cx, cy) == 50
-                && CanonicalAlloyPipeline.distance(cy, cx) == 50, "outlier retains uncertified singleton wrapper");
+        check(CanonicalAlloyPipeline.distance(cx, cy) == 49
+                && CanonicalAlloyPipeline.distance(cy, cx) == 49, "outlier uses source-certified singleton collapse");
         check(cx.repairView().phases().get(0).matrix().children().get(0).children().stream()
-                .anyMatch(node -> node.operator().equals("AND") && node.children().size() == 1),
-                "one-edit residual is AND(ONE(...)), not a forced scalar adjustment");
+                .noneMatch(node -> node.operator().equals("AND") && node.children().size() == 1),
+                "certified original operands remove the residual wrapper");
         System.out.println("CertifiedSingletonCompositionTest: " + checks + " checks passed");
     }
 

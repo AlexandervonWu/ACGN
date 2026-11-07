@@ -2335,6 +2335,7 @@ public final class TheoryAlloyAdapter {
                 Map<String, TypedSlot> bindings,
                 Map<String, TemporalReferencePlan> temporalReferences) {
             List<LocalCoordinate> locals = new ArrayList<>();
+            List<OnePort> explicitDomains = new ArrayList<>();
             int nextDisjointnessClass = 1;
             for (EClassRef childRef : source.getChildClasses()) {
                 EClassRef canonical = childRef.canonical();
@@ -2352,6 +2353,18 @@ public final class TheoryAlloyAdapter {
                 EGraphNode domain = Objects.requireNonNull(
                         declarationChildren.get(0), "local declaration domain");
                 StructuralKey domainKey = domainKey(domain, declarationNames, locals);
+                EClassRef domainRef = child.getChildClasses().get(0);
+                if (ambientDomainReferences(domainRef, declarationNames, context, bindings,
+                        locals, new int[] {4096}, 0) > 0) {
+                    // The descriptor indexes an actual typed operand. Never erase
+                    // an ambient dependency into a generated-name-free annotation.
+                    OnePort operand = buildChildOperand(domainRef, declarationNames,
+                            context, bindings, temporalReferences);
+                    domainKey = StructuralKey.of("alloy-local-domain-port",
+                            List.of(Integer.toString(explicitDomains.size())),
+                            List.of(TheoryKeys.type(operand.schema().type())));
+                    explicitDomains.add(operand);
+                }
                 String multiplicity = domainMultiplicity(domain);
                 int disjointnessClass = isDisjointDecl(child.getOpcode())
                         ? nextDisjointnessClass++
@@ -2453,16 +2466,70 @@ public final class TheoryAlloyAdapter {
                     context,
                     plan.occurrence,
                     OnePort.invocation(bodyContext, body));
+            List<PortSchema> schemas = new ArrayList<>();
+            List<PortValue> ports = new ArrayList<>();
+            for (OnePort domain : explicitDomains) {
+                schemas.add(domain.schema());
+                ports.add(domain);
+            }
+            schemas.add(schema);
+            ports.add(block);
             OperatorDeclaration declaration = OperatorDeclaration.monomorphic(
-                    "ALLOY/LOCAL-BIND/" + source.getOpcode(),
-                    Collections.singletonList(schema),
+                    (explicitDomains.isEmpty() ? "ALLOY/LOCAL-BIND/" : "ALLOY/LOCAL-BIND-DOMAINS/")
+                            + source.getOpcode(),
+                    schemas,
                     outputType(source),
                     Collections.emptyMap(),
                     null);
             return insert(TypedENode.construct(
                     declaration.instantiateMonomorphic(),
                     context,
-                    Collections.singletonList(block)));
+                    ports));
+        }
+
+        // -1 is outside this slice; 0 is closed; positive means ambient-dependent.
+        // Follow invocation maps exactly as buildChildOperand does, and exclude
+        // current-block dependencies, binders, temporal operators and opaque calls.
+        private int ambientDomainReferences(EClassRef reference, Map<String, String> outerNames,
+                TypedSlotContext context, Map<String, TypedSlot> bindings,
+                List<LocalCoordinate> preceding, int[] budget, int depth) {
+            if (depth > 128 || --budget[0] < 0) {
+                throw new IllegalStateException("Local domain operand admission budget exceeded");
+            }
+            EClassRef canonical = reference.canonical();
+            EGraphNode node = canonical.getEClass().getRepresentative();
+            Map<String, String> names = composeSlotNames(canonical.getSlotMap(), outerNames);
+            if (node.getExactAlloyType() == null
+                    || node.getExactAlloyType().kind() != ExactAlloyType.Kind.RELATION
+                    || isLocalBinder(node)) return -1;
+            if (node.getOpcode() == Opcode.VARIABLE) {
+                String local = firstNonempty(node.getAlphaName(), node.getSourceName());
+                String resolved = names.getOrDefault(local, local);
+                for (LocalCoordinate earlier : preceding) {
+                    if (earlier.name.equals(resolved)) return -1;
+                }
+                TypedSlot slot = bindings.get(resolved);
+                // Admission requires the resolved occurrence, not a same-spelled
+                // fallback that could refer to a shadowed ambient declaration.
+                return slot != null && context.contains(slot) && slot.type().equals(bindingType(node)) ? 1 : -1;
+            }
+            switch (node.getOpcode()) {
+                case GLOBALBINDING: case CONSTANT:
+                    return node.getChildClasses().isEmpty() ? 0 : -1;
+                case ONE: case LONE: case SOME: case SETOF: case EXACTLY:
+                case MINUS: case JOIN: case ARROW: case PLUS: case INTERSECT:
+                case TRANSPOSE: case DOMAIN: case RANGE: case CLOSURE: case RCLOSURE: case PLUSPLUS:
+                    break;
+                default:
+                    return -1;
+            }
+            int references = 0;
+            for (EClassRef child : node.getChildClasses()) {
+                int count = ambientDomainReferences(child, names, context, bindings, preceding, budget, depth+1);
+                if (count < 0) return -1;
+                references = Math.addExact(references, count);
+            }
+            return references;
         }
 
         private BinderPlan binderPlan(List<QuantiVar> variables, TypedSlotContext ambient) {

@@ -56,18 +56,20 @@ public final class QuotientRepairDistance {
     /** Diagnostic only: native selected matrix edits, with no complete-plan authority. */
     public static org.json.JSONObject matrixReplay(RepairView left, RepairView right) {
         Result nativeResult = evaluate(left, right);
-        if (left.phases().size() != right.phases().size())
-            throw new IllegalStateException("MATRIX_REPLAY_UNALIGNED_PHASES");
-        if (left.phases().size() > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
+        int aligned = Math.min(left.phases().size(),right.phases().size());
+        int phaseCount = Math.max(left.phases().size(),right.phases().size());
+        if (phaseCount > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
         MutableStats stats = new MutableStats();
         stats.capture = true;
         int searched = matrixDistance(left.phases(), right.phases(),
                 QuantificationAlignmentSpace.create(left.phases(), right.phases()), stats);
         int cost = 0;
         org.json.JSONArray phases = new org.json.JSONArray();
-        for (int i = 0; i < left.phases().size(); i++) {
-            if (stats.selectedMapping == null) throw new IllegalStateException("MATRIX_REPLAY_MISSING_CHOICE");
-            int[] mapping = phaseMapping(stats.selectedLeft, stats.selectedRight, stats.selectedMapping, i);
+        for (int i = 0; i < phaseCount; i++) {
+            if (i < aligned && stats.selectedMapping == null)
+                throw new IllegalStateException("MATRIX_REPLAY_MISSING_CHOICE");
+            int[] mapping = i < aligned
+                    ? phaseMapping(stats.selectedLeft, stats.selectedRight, stats.selectedMapping, i) : new int[0];
             MatrixDistanceContext context = new MatrixDistanceContext(mapping);
             MatrixReplay<Node> replay = new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
                 public String label(Node n) {
@@ -85,7 +87,8 @@ public final class QuotientRepairDistance {
                 public int update(Node a, Node b) { return context.updateCost(a, b); }
                 public int distance(Node a, Node b) { return context.distance(a, b); }
             });
-            Node a = left.phases().get(i).matrix(), b = right.phases().get(i).matrix();
+            Node a = i < left.phases().size() ? left.phases().get(i).matrix() : null;
+            Node b = i < right.phases().size() ? right.phases().get(i).matrix() : null;
             org.json.JSONObject receipt = replay.capture(a, b);
             cost = Math.addExact(cost, replay.verify(a, b, receipt));
             phases.put(new org.json.JSONObject().put("phase", i)
@@ -107,7 +110,7 @@ public final class QuotientRepairDistance {
     public static org.json.JSONObject replayWithSlices(RepairView left, RepairView right) {
         org.json.JSONObject matrix = matrixReplay(left,right);
         return PhaseReplay.attach(matrix,() -> declarationReplay(left,right,matrix),
-                () -> PhaseReplay.temporalIdentity(left.temporalRoot(),right.temporalRoot(),
+                () -> TemporalReplay.capture(left.temporalRoot(),right.temporalRoot(),
                         matrix.getInt("temporalDistance"),TemporalNode::label,TemporalNode::children));
     }
 
@@ -115,11 +118,13 @@ public final class QuotientRepairDistance {
             org.json.JSONObject matrix) {
         DeclarationReplay.requireBounded(QuantificationAlignmentSpace.parameterDeclarations(left.phases()).size(),
                 QuantificationAlignmentSpace.parameterDeclarations(right.phases()).size());
-        for (int i = 0; i < left.phases().size(); i++) DeclarationReplay.requireBounded(
-                left.phases().get(i).quantifiers().size(),right.phases().get(i).quantifiers().size());
+        int aligned = Math.min(left.phases().size(),right.phases().size());
+        for (int i = 0; i < Math.max(left.phases().size(),right.phases().size()); i++) DeclarationReplay.requireBounded(
+                i < left.phases().size() ? left.phases().get(i).quantifiers().size() : 0,
+                i < right.phases().size() ? right.phases().get(i).quantifiers().size() : 0);
         QuantificationAlignmentSpace space = QuantificationAlignmentSpace.create(left.phases(),right.phases());
-        GlobalBindingIndex a = GlobalBindingIndex.create(left.phases(),left.phases().size());
-        GlobalBindingIndex b = GlobalBindingIndex.create(right.phases(),right.phases().size());
+        GlobalBindingIndex a = GlobalBindingIndex.create(left.phases(),aligned);
+        GlobalBindingIndex b = GlobalBindingIndex.create(right.phases(),aligned);
         Map<Integer,Integer> selected = new LinkedHashMap<>(), actual = new LinkedHashMap<>();
         org.json.JSONObject chosen = matrix.getJSONObject("selectedQuantifierCorrespondence");
         for (String key : chosen.keySet()) addInjectiveCorrespondence(selected,Integer.parseInt(key),
@@ -151,6 +156,19 @@ public final class QuotientRepairDistance {
             }
             components.put(new org.json.JSONObject().put("phase",index-1)
                     .put("component",index == 0 ? "parameters" : "quantifiers").put("receipt",receipt));
+        }
+        for (int phase = aligned; phase < Math.max(left.phases().size(),right.phases().size()); phase++) {
+            List<IndexedDeclaration> ls = phase < left.phases().size()
+                    ? QuantificationAlignmentSpace.quantifiedDeclarations(left.phases().get(phase),phase) : List.of();
+            List<IndexedDeclaration> rs = phase < right.phases().size()
+                    ? QuantificationAlignmentSpace.quantifiedDeclarations(right.phases().get(phase),phase) : List.of();
+            QuantifierEditComponent component = QuantifierEditComponent.create(ls,rs,true);
+            var as = declarationAtoms(component.left);
+            var bs = declarationAtoms(component.right);
+            org.json.JSONObject receipt = DeclarationReplay.capture(as,bs,component.distance,(i,j) -> true);
+            cost = Math.addExact(cost,DeclarationReplay.verify(as,bs,receipt));
+            components.put(new org.json.JSONObject().put("phase",phase).put("component","quantifiers")
+                    .put("receipt",receipt));
         }
         DeclarationReplay.require(selected.equals(actual),"Selected paid/parameter correspondence mismatch");
         DeclarationReplay.require(cost == space.cost && cost == matrix.getInt("quantifierDistance"),"Native declaration cost");
@@ -1376,6 +1394,17 @@ public final class QuotientRepairDistance {
     }
 
     static int minimumAssignmentCost(int[][] costs) {
+        return solveAssignment(costs,null);
+    }
+
+    /** Deterministic attaining columns from the same native Hungarian solve. */
+    static int[] minimumAssignmentColumns(int[][] costs) {
+        int[] columns = new int[costs.length];
+        solveAssignment(costs,columns);
+        return columns;
+    }
+
+    private static int solveAssignment(int[][] costs,int[] columns) {
         Objects.requireNonNull(costs, "costs");
         int size = costs.length;
         for (int row = 0; row < size; row++) {
@@ -1442,6 +1471,8 @@ public final class QuotientRepairDistance {
                 column = previous;
             } while (column != 0);
         }
+        if (columns != null) for (int column = 1; column <= size; column++)
+            columns[columnMatch[column]-1] = column-1;
         return Math.toIntExact(Math.negateExact(columnPotential[0]));
     }
 

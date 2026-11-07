@@ -43,7 +43,7 @@ public final class DistanceReplayDiagnostics {
 
     private static JSONObject envelope() {
         return new JSONObject().put("schema", SCHEMA).put("status", "BLOCKED")
-                .put("supplementalSliceVersion","fixed-order-declaration-and-temporal-identity-v1")
+                .put("supplementalSliceVersion","fixed-order-declaration-and-temporal-edits-v2")
                 .put("complete", false).put("parityAuthority", false)
                 .put("temporalReplayChecked", false).put("quantifierReplayChecked", false)
                 .put("choiceAdmissionIndependentlyChecked", false)
@@ -54,7 +54,7 @@ public final class DistanceReplayDiagnostics {
                         .put("CHOICE_ADMISSION_NOT_INDEPENDENTLY_REPLAYED")
                         .put("SOURCE_CERTIFICATE_WIRE_REPLAY_NOT_PERFORMED")
                         .put("JAVA_LEAN_CORRESPONDENCE_NOT_PROVED"))
-                .put("scope", "Fixed native matrix/declaration receipts and temporal identity slice; receipt-addressed diagnostic order, not a complete public operation sequence")
+                .put("scope", "Fixed native matrix/declaration receipts and executable temporal tree edits; receipt-addressed diagnostic order, not a complete public operation sequence")
                 .put("trusted", new JSONArray().put("native preparation and choice search")
                         .put("native head-cost and subtree-size rules")
                         .put("Java replay checker, JSON library, SHA-256, JVM and OS"));

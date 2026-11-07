@@ -13,18 +13,48 @@ public final class PhaseReplay {
     public static JSONObject attach(JSONObject matrix, Supplier<JSONObject> declarations,
             Supplier<JSONObject> temporal) {
         JSONObject q = attempt(declarations), t = attempt(temporal);
-        matrix.put("declarationSlice",q).put("temporalIdentitySlice",t)
+        matrix.put("declarationSlice",q).put("temporalSlice",t)
                 .put("publicSequenceLinked",false).put("numericalCostCoverage",false);
+        if (t.optBoolean("sliceReplayChecked") && t.optInt("cost",-1) == 0
+                && t.getJSONArray("operations").isEmpty()) matrix.put("temporalIdentitySlice",t);
         if (q.optBoolean("sliceReplayChecked") && t.optBoolean("sliceReplayChecked")) {
             try {
-                JSONArray actions = diagnosticOrder(q,matrix.getJSONArray("phases"));
-                int cost = verifyDiagnosticOrder(q,matrix.getJSONArray("phases"),actions);
+                JSONArray actions = diagnosticOrder(t,q,matrix.getJSONArray("phases"));
+                int cost = verifyDiagnosticOrder(t,q,matrix.getJSONArray("phases"),actions);
                 DeclarationReplay.require(cost == matrix.getInt("distance"), "Diagnostic cost coverage");
                 matrix.put("orderedDiagnosticActions",actions).put("orderedDiagnosticSequenceChecked",true)
                         .put("orderedDiagnosticCost",cost).put("numericalCostCoverage",true);
             } catch (RuntimeException ex) { matrix.put("orderedDiagnosticBlocker",ex.toString()); }
         }
         return matrix;
+    }
+
+    public static JSONArray diagnosticOrder(JSONObject temporal,JSONObject declarations,JSONArray phases) {
+        JSONArray actions = new JSONArray();
+        JSONArray operations = temporal.getJSONArray("operations");
+        DeclarationReplay.require(operations.length() <= 512,"Temporal diagnostic budget");
+        for (int i = 0; i < operations.length(); i++) actions.put(new JSONObject()
+                .put("phaseKind","temporal").put("receiptPath","/temporalSlice/operations/"+i)
+                .put("operation",new JSONObject(operations.getJSONObject(i).toString()))
+                .put("cost",DeclarationReplay.integer(operations.getJSONObject(i),"cost")));
+        for (Object action : diagnosticOrder(declarations,phases)) actions.put(action);
+        return actions;
+    }
+
+    public static int verifyDiagnosticOrder(JSONObject temporal,JSONObject declarations,
+            JSONArray phases,JSONArray actions) {
+        DeclarationReplay.require(diagnosticOrder(temporal,declarations,phases).similar(actions),
+                "Temporal/declaration/matrix diagnostic order");
+        int cost = 0;
+        for (int i = 0; i < actions.length(); i++) {
+            int charge = DeclarationReplay.integer(actions.getJSONObject(i),"cost");
+            DeclarationReplay.require(charge >= 0,"Negative action cost");
+            cost = Math.addExact(cost,charge);
+        }
+        int expected = Math.addExact(DeclarationReplay.integer(temporal,"cost"),
+                verifyDiagnosticOrder(declarations,phases,diagnosticOrder(declarations,phases)));
+        DeclarationReplay.require(cost == expected,"Temporal/phase cost conservation");
+        return cost;
     }
 
     private static JSONObject attempt(Supplier<JSONObject> producer) {

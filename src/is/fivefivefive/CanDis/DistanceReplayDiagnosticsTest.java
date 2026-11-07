@@ -37,14 +37,14 @@ public final class DistanceReplayDiagnosticsTest {
     public static void main(String[] args) throws Exception {
         CompModule outlier = CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(Path.of(
                 "classified-data/coursesOld/both/xJnitBpFv9K74WNvf_inv14.als")));
-        JSONObject report = capture(outlier,"inv14","inv14c",49,50);
+        JSONObject report = capture(outlier,"inv14","inv14c",49,49);
         JSONObject f = branch(report,"fast"), c = branch(report,"certified");
-        check(f.getInt("cost") == 40 && c.getInt("cost") == 41);
+        check(f.getInt("cost") == 40 && c.getInt("cost") == 40);
         check(f.getString("sourceHead").startsWith("[\"ONE\"")
-                && c.getString("sourceHead").startsWith("[\"AND\""));
+                && c.getString("sourceHead").startsWith("[\"ONE\""));
         check(f.getString("targetHead").startsWith("[\"IN\"")
                 && c.getString("targetHead").startsWith("[\"IN\""));
-        capture(outlier,"inv14c","inv14",49,50);
+        capture(outlier,"inv14c","inv14",49,49);
         CompModule reduced = CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig W { workers: set Worker }
                 sig Worker {}

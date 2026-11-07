@@ -11,6 +11,7 @@ public final class MatrixReplayTest {
     private static N node(String h, boolean u, N... c) { return new N(h, u, List.of(c), List.of()); }
     private static final class Cost implements MatrixReplay.NativeCost<N> {
         boolean forbidDistance;
+        boolean minimizeAbsentRoot;
         String bindingContext = "original";
         public String label(N n) { return n.head + ":" + n.unordered + ":" + bindingContext; }
         public List<N> children(N n) { return n.children; }
@@ -20,7 +21,12 @@ public final class MatrixReplayTest {
         public int update(N a, N b) { return a.head.equals(b.head) ? 0 : 1; }
         public int distance(N a, N b) {
             if (forbidDistance) throw new AssertionError("Verifier called native distance");
-            if (a == null || b == null) return size(a == null ? b : a);
+            if (a == null || b == null) {
+                N present = a == null ? b : a;
+                if (minimizeAbsentRoot && present != null && !present.alternatives.isEmpty())
+                    return present.alternatives.stream().mapToInt(n -> distance(n,null)).min().orElseThrow();
+                return size(present);
+            }
             if (!a.alternatives.isEmpty() || !b.alternatives.isEmpty()) {
                 List<N> as = a.alternatives.isEmpty() ? List.of(a) : a.alternatives;
                 List<N> bs = b.alternatives.isEmpty() ? List.of(b) : b.alternatives;
@@ -99,6 +105,31 @@ public final class MatrixReplayTest {
         check(selection.getInt("cost") == 0);
         selection.getJSONObject("derivation").put("leftAlternative",0);
         reject(() -> new MatrixReplay<>(cost).verify(alt,leaf("a"),selection));
+        cost.minimizeAbsentRoot = true;
+        N wholePhase = new N("packed",false,List.of(leaf("x"),leaf("y")),
+                List.of(node("large",false,leaf("x")),leaf("small")));
+        JSONObject removedPhase = new MatrixReplay<>(cost).capture(wholePhase,null);
+        JSONObject addedPhase = new MatrixReplay<>(cost).capture(null,wholePhase);
+        check(removedPhase.getInt("cost") == 1 && addedPhase.getInt("cost") == 1);
+        cost.forbidDistance = true;
+        check(new MatrixReplay<>(cost).verify(wholePhase,null,removedPhase) == 1);
+        check(new MatrixReplay<>(cost).verify(null,wholePhase,addedPhase) == 1);
+        JSONObject wrongAlternative = copy(removedPhase);
+        wrongAlternative.getJSONObject("derivation").put("leftAlternative",0);
+        reject(() -> new MatrixReplay<>(cost).verify(wholePhase,null,wrongAlternative));
+        JSONObject wrongAbsent = copy(removedPhase);
+        wrongAbsent.getJSONObject("derivation").put("rightAlternative",0);
+        reject(() -> new MatrixReplay<>(cost).verify(wholePhase,null,wrongAbsent));
+        cost.forbidDistance = false;
+        N wrapped = node("parent",false,wholePhase), bare = node("parent",false);
+        JSONObject rawChild = new MatrixReplay<>(cost).capture(wrapped,bare);
+        check(rawChild.getInt("cost") == 3);
+        JSONObject cheaperChild = copy(rawChild).put("cost",1).put("replayedCost",1);
+        cheaperChild.getJSONObject("derivation").put("cost",1).getJSONArray("children")
+                .getJSONObject(0).put("edit",copy(removedPhase.getJSONObject("derivation")));
+        cost.forbidDistance = true;
+        reject(() -> new MatrixReplay<>(cost).verify(wrapped,bare,cheaperChild));
+        cost.forbidDistance = false;
         reject(() -> new MatrixReplay<>(cost,1).capture(a,b));
         N dag = leaf("x");
         for (int i = 0; i < 40; i++) dag = node("DAG",false,dag,dag);
@@ -119,7 +150,10 @@ public final class MatrixReplayTest {
             public int update(N x,N y) { return 0; }
             public int distance(N x,N y) { return 0; }
         };
-        reject(() -> new MatrixReplay<>(large).capture(many,many));
+        JSONObject wide = new MatrixReplay<>(large).capture(many,many);
+        check(new MatrixReplay<>(large).verify(many,many,wide) == 0);
+        N overBudget = new N("AND",true,java.util.Collections.nCopies(65,leaf("a")),List.of());
+        reject(() -> new MatrixReplay<>(large).capture(overBudget,overBudget));
         System.out.println("MatrixReplayTest: " + checks + " checks passed");
     }
 }

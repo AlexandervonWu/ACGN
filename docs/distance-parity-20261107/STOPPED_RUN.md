@@ -350,6 +350,54 @@ inventories are in `opseq-controller-20261107/validation-after-astra/`.
 This is bounded regression evidence, not full mechanical closure or a new
 corpus measurement. The controller remains blocked with no automatic restart.
 
+### Continued Regression: Local Domains And Native Replay
+
+The author requested further regression rather than restarting the unchanged
+fail-closed scan. The actual Astra owner remains
+`01a1b6f9-4f81-7571-9191-e45c72efe56f` (`gpt-6-astra`). The next source-level
+repair first checks `LocalDomainOperand.lean`, then represents an admitted
+ambient-dependent local declaration domain as a real typed operand. It no
+longer leaves that dependency only in a generated-name-sensitive descriptor.
+Current-block dependencies and unsupported domains retain their existing path.
+
+This lets the original two ONE operands produce the same typed invocation and
+the actual source-linked singleton fiber `[[0,1]]`. The existing certificate
+verifier and occurrence guard are retained; no projection-only equality or
+scalar override is used. The original `xJnitBpFv9K74WNvf_inv14.als` pair now
+returns **49/49 in both directions**, and both replay branches cost 40. The
+local-domain regression also rejects substituting another source occurrence
+or omitting its singleton evidence, distinguishes different ambient domains,
+and checks reduced positive and negative examples with bounded Alloy scopes.
+This supersedes the unresolved 49/50 status above, not its preserved evidence.
+
+`TemporalReplay.lean` precedes a native Zhang-Shasha backtrace and separate
+executable ordered-tree replay checker. Internal node deletion promotes its
+children; insertion wraps a contiguous forest; relabeling keeps children.
+The checker validates endpoint snapshots, current paths, unit charges and the
+exact resulting tree without calling the distance search. Native phase
+insertion/deletion is now covered for both arms, including explicit admitted
+root-alternative selection. Ordinary child deletion still charges its raw
+subtree; tests reject using a cheaper phase selection at that boundary.
+
+Unordered matrix backtracing now obtains the attaining column assignment from
+the existing Hungarian solver instead of the diagnostic's exponential subset
+DP. Input traversal, assignment work, receipt size and recursion remain
+bounded. Bounded exhaustive assignment and ordered-tree mapping oracles check
+the attained costs; these tests are not a proof of all Java search behavior.
+All public completeness/authority flags remain false and the batch stop gate
+is unchanged.
+
+The parent integration evidence is external at
+`ACGN/intermediate/temporal-replay-20261107-O9K6GZ/`; Astra's local-domain
+evidence is at `stopped-investigation/opseq-astra-20261107/singleton-equality-C7gHze2v/`.
+The combined runner exited zero with all nine Lean contracts, 13,121 numbered
+Java checks, CLI fail-stop/replay checks and ten Python checks passing.
+`integration-inputs.sha256` was verified unchanged after the run; the complete
+log is `integration-regressions.log` in the parent evidence directory.
+No new full-corpus mean, zero subset or operation-sequence parity claim follows
+from this repair. A fresh bounded diagnostic still finds **0/8** on
+`partial-join.als`; that source-linked completeness gap is the next incident.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

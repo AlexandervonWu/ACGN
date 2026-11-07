@@ -55,7 +55,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v15";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v16";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;

@@ -36,6 +36,19 @@ theorem changed_source_rejected (source target reportedSource reportedTarget : S
     ¬ EndpointsMatch source target reportedSource reportedTarget :=
   fun matched => changed matched.1
 
+-- A whole-phase edit may choose a representative only through admitted evidence.
+-- This law does not permit minimizing raw child-deletion charges instead.
+theorem admitted_phase_selection (meaning : S → V) (source selected : S)
+    (admitted : meaning source = meaning selected) (target : V)
+    (replayed : meaning selected = target) : meaning source = target :=
+  admitted.trans replayed
+
+-- Backtracing any attaining assignment preserves the native minimum. The
+-- Java solver's refinement is tested against bounded exhaustive permutations.
+theorem attaining_assignment_cost (native selected replayed : Nat)
+    (attains : selected = native) (checked : replayed = selected) :
+    replayed = native := checked.trans attains
+
 structure Receipt where
   temporal : Nat
   quantifier : Nat
@@ -65,6 +78,8 @@ theorem complete_cost (r : Receipt) (h : complete r = true) :
 #print axioms occurrence_count
 #print axioms no_duplicate_consumption
 #print axioms changed_source_rejected
+#print axioms admitted_phase_selection
+#print axioms attaining_assignment_cost
 #print axioms matrix_only_not_complete
 #print axioms complete_cost
 end MatrixReplay

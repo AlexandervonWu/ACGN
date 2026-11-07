@@ -62,6 +62,8 @@ def main():
             assert arm['distance'] == arm['temporalDistance'] + arm['quantifierDistance'] + arm['matrixDistance']
             assert arm['replayedMatrixCost'] == arm['matrixDistance']
             assert sum(phase['receipt']['replayedCost'] for phase in arm['phases']) == arm['matrixDistance']
+            if family == 'outlier':
+                assert arm['distance'] == 49, 'Source-linked local-domain singleton regression'
             if family == 'first-incident':
                 assert arm['distance'] == arm['orderedDiagnosticCost'] == 10
                 assert arm['numericalCostCoverage'] is True and arm['publicSequenceLinked'] is False

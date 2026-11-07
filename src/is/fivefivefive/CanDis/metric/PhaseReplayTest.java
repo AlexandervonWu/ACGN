@@ -84,6 +84,18 @@ public final class PhaseReplayTest {
         actions.getJSONObject(0).getJSONObject("operation").put("cost",0);
         reject(()->PhaseReplay.verifyDiagnosticOrder(q,new JSONArray(),actions));
         check(DeclarationReplay.verify(a,empty,deletion) == 2);
+        Tree collapsed = new Tree("NONE",List.of());
+        JSONObject temporal = TemporalReplay.capture(root,collapsed,1,Tree::label,Tree::children);
+        JSONObject attached = PhaseReplay.attach(new JSONObject().put("distance",3)
+                .put("phases",new JSONArray()),() -> copy(q).put("sliceReplayChecked",true),() -> temporal);
+        check(attached.getBoolean("numericalCostCoverage"));
+        check(attached.getInt("orderedDiagnosticCost") == 3);
+        check(!attached.has("temporalIdentitySlice"));
+        JSONArray all = attached.getJSONArray("orderedDiagnosticActions");
+        check(all.getJSONObject(0).getString("phaseKind").equals("temporal"));
+        JSONArray swapped = new JSONArray().put(all.getJSONObject(1)).put(all.getJSONObject(0))
+                .put(all.getJSONObject(2));
+        reject(() -> PhaseReplay.verifyDiagnosticOrder(temporal,q,new JSONArray(),swapped));
         System.out.println("PhaseReplayTest: " + checks + " checks passed");
     }
 }

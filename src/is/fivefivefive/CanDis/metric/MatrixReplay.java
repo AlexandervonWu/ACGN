@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HexFormat;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -25,7 +24,7 @@ public final class MatrixReplay<N> {
     }
 
     private static final int MAX_DEPTH = 128;
-    private static final int MAX_ASSIGNMENT_DIMENSION = 16;
+    private static final int MAX_ASSIGNMENT_DIMENSION = 128;
     private final NativeCost<N> nativeCost;
     private final IdentityHashMap<N, JSONArray> snapshots = new IdentityHashMap<>();
     private final IdentityHashMap<N, String> hashes = new IdentityHashMap<>();
@@ -94,9 +93,9 @@ public final class MatrixReplay<N> {
 
     public JSONObject capture(N left, N right) {
         JSONArray source = snapshot(left, 0), target = snapshot(right, 0);
-        JSONObject derivation = trace(left, right, 0);
+        JSONObject derivation = traceRoot(left, right, 0);
         int expected = nativeCost.distance(left, right);
-        int replayed = verifyNode(left, right, derivation, 0);
+        int replayed = verifyRoot(left, right, derivation, 0);
         require(expected == replayed, "Native matrix cost disagrees with replay");
         // Do not expose cached snapshots: callers may edit their receipt before replay.
         return new JSONObject().put("source", new JSONArray(source.toString()))
@@ -112,10 +111,44 @@ public final class MatrixReplay<N> {
         require(snapshot(right, 0).similar(receipt.getJSONArray("target")), "Wrong target snapshot");
         require(hash(left).equals(receipt.getString("sourceSha256")), "Wrong source hash");
         require(hash(right).equals(receipt.getString("targetSha256")), "Wrong target hash");
-        int result = verifyNode(left, right, receipt.getJSONObject("derivation"), 0);
+        int result = verifyRoot(left, right, receipt.getJSONObject("derivation"), 0);
         require(result == integer(receipt, "cost") && result == integer(receipt, "replayedCost"),
                 "Wrong receipt charge");
         return result;
+    }
+
+    private JSONObject traceRoot(N left, N right, int depth) {
+        enter(depth);
+        N present = left == null ? right : right == null ? left : null;
+        if (present == null || nativeCost.alternatives(present).isEmpty()) return trace(left,right,depth);
+        int expected = nativeCost.distance(left,right);
+        List<N> alternatives = nativeCost.alternatives(present);
+        for (int i = 0; i < alternatives.size(); i++) {
+            N a = left == null ? null : alternatives.get(i);
+            N b = right == null ? null : alternatives.get(i);
+            if (nativeCost.distance(a,b) == expected) return base(left,right,"select",expected)
+                    .put("leftAlternative",left == null ? -1 : i)
+                    .put("rightAlternative",right == null ? -1 : i)
+                    .put("selected",traceRoot(a,b,depth+1));
+        }
+        throw new IllegalStateException("MATRIX_REPLAY_NULL_ALTERNATIVE_ROOT");
+    }
+
+    private int verifyRoot(N left,N right,JSONObject proof,int depth) {
+        enter(depth);
+        if ((left != null && right != null) || !proof.getString("kind").equals("select"))
+            return verifyNode(left,right,proof,depth);
+        require(hash(left).equals(proof.getString("sourceSha256"))
+                && hash(right).equals(proof.getString("targetSha256")),"Substituted phase occurrence");
+        require((left == null ? "" : nativeCost.label(left)).equals(proof.getString("sourceHead"))
+                && (right == null ? "" : nativeCost.label(right)).equals(proof.getString("targetHead")),
+                "Substituted phase head");
+        N a = select(left,integer(proof,"leftAlternative"));
+        N b = select(right,integer(proof,"rightAlternative"));
+        require(a != left || b != right,"Empty phase alternative selection");
+        int cost = verifyRoot(a,b,proof.getJSONObject("selected"),depth+1);
+        require(cost == integer(proof,"cost"),"Wrong phase selection charge");
+        return cost;
     }
 
     private JSONObject base(N left, N right, String kind, int cost) {
@@ -198,26 +231,12 @@ public final class MatrixReplay<N> {
         int n = left.size(), m = right.size(), dimension = Math.addExact(n, m);
         if (n == 0 || m == 0) return sequence(left, right);
         if (dimension > MAX_ASSIGNMENT_DIMENSION) throw new IllegalStateException("MATRIX_REPLAY_ASSIGNMENT_BUDGET");
-        int count = 1 << dimension;
-        spend(Math.multiplyExact((long)count, dimension));
+        spend(Math.multiplyExact(Math.multiplyExact((long)dimension, dimension),dimension));
         int[][] costs = new int[dimension][dimension];
         for (int i = 0; i < dimension; i++) for (int j = 0; j < dimension; j++)
             costs[i][j] = i < n && j < m ? nativeCost.distance(left.get(i), right.get(j))
                     : i < n ? nativeCost.size(left.get(i)) : j < m ? nativeCost.size(right.get(j)) : 0;
-        int[] dp = new int[count], chosen = new int[count];
-        Arrays.fill(dp, Integer.MAX_VALUE); dp[0] = 0;
-        for (int mask = 1; mask < count; mask++) {
-            int row = Integer.bitCount(mask) - 1;
-            for (int col = 0; col < dimension; col++) if ((mask & (1 << col)) != 0) {
-                int previous = mask ^ (1 << col);
-                int candidate = Math.addExact(dp[previous], costs[row][col]);
-                if (candidate < dp[mask]) { dp[mask] = candidate; chosen[mask] = col; }
-            }
-        }
-        int[] columns = new int[dimension];
-        for (int mask = count - 1, row = dimension - 1; row >= 0; row--) {
-            columns[row] = chosen[mask]; mask ^= 1 << columns[row];
-        }
+        int[] columns = QuotientRepairDistance.minimumAssignmentColumns(costs);
         List<int[]> pairs = new ArrayList<>();
         for (int i = 0; i < dimension; i++) {
             int j = columns[i];
@@ -277,6 +296,7 @@ public final class MatrixReplay<N> {
     }
 
     private N select(N node, int index) {
+        if (node == null) { require(index == -1,"Selection from absent phase"); return null; }
         List<N> alternatives = nativeCost.alternatives(node);
         if (alternatives.isEmpty()) { require(index == -1, "Spurious selection"); return node; }
         require(index >= 0 && index < alternatives.size(), "Invalid alternative index");

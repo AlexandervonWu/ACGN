@@ -63,16 +63,16 @@ public final class CanonicalDistance {
     /** Native matrix-only backtrace. Never a replacement for a complete public edit plan. */
     public static org.json.JSONObject matrixReplay(Prepared left, Prepared right) {
         DistanceBreakdown nativeResult = evaluate(left, right);
-        if (left.normalForms.size() != right.normalForms.size())
-            throw new IllegalStateException("MATRIX_REPLAY_UNALIGNED_PHASES");
-        if (left.normalForms.size() > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
+        int phaseCount = Math.max(left.normalForms.size(),right.normalForms.size());
+        if (phaseCount > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
         MatrixAlignment coherent = bestCoherentMatrixAlignment(
                 left.normalForms, right.normalForms, left.metadata, right.metadata);
         org.json.JSONArray phases = new org.json.JSONArray();
         int cost = 0;
-        for (int i = 0; i < left.normalForms.size(); i++) {
-            NormalForm a = left.normalForms.get(i), b = right.normalForms.get(i);
-            Map<String, String> mapping = bestVariableMapping(a, b, coherent.mapping,
+        for (int i = 0; i < phaseCount; i++) {
+            NormalForm a = i < left.normalForms.size() ? left.normalForms.get(i) : null;
+            NormalForm b = i < right.normalForms.size() ? right.normalForms.get(i) : null;
+            Map<String, String> mapping = a == null || b == null ? Map.of() : bestVariableMapping(a, b, coherent.mapping,
                     coherent.lockedLeftNames, coherent.lockedRightNames);
             EGraphDistanceContext context = new EGraphDistanceContext(mapping, left.metadata, right.metadata);
             var replay = new is.fivefivefive.CanDis.metric.MatrixReplay<EGraphNode>(
@@ -96,8 +96,10 @@ public final class CanonicalDistance {
                 }
                 public int distance(EGraphNode a, EGraphNode b) { return context.distance(a, b); }
             });
-            org.json.JSONObject receipt = replay.capture(a.getMatrixEGraph(), b.getMatrixEGraph());
-            int checked = replay.verify(a.getMatrixEGraph(), b.getMatrixEGraph(), receipt);
+            EGraphNode source = a == null ? null : a.getMatrixEGraph();
+            EGraphNode target = b == null ? null : b.getMatrixEGraph();
+            org.json.JSONObject receipt = replay.capture(source,target);
+            int checked = replay.verify(source,target,receipt);
             cost = Math.addExact(cost, checked);
             phases.put(new org.json.JSONObject().put("phase", i)
                     .put("alphaMapping", new org.json.JSONObject(new java.util.TreeMap<>(mapping)))
@@ -112,12 +114,12 @@ public final class CanonicalDistance {
                 .put("matrixReplayChecked", true).put("complete", false).put("phases", phases);
     }
 
-    /** Adds fixed-order declaration replay and identity-only temporal replay; still incomplete. */
+    /** Adds fixed-order declaration and executable native temporal replay; public linkage remains incomplete. */
     public static org.json.JSONObject replayWithSlices(Prepared left, Prepared right) {
         org.json.JSONObject matrix = matrixReplay(left,right);
         return is.fivefivefive.CanDis.metric.PhaseReplay.attach(matrix,
                 () -> declarationReplay(left,right,matrix.getInt("quantifierDistance")),
-                () -> is.fivefivefive.CanDis.metric.PhaseReplay.temporalIdentity(
+                () -> is.fivefivefive.CanDis.metric.TemporalReplay.capture(
                         left.temporalTree,right.temporalTree,matrix.getInt("temporalDistance"),
                         node -> node.label,node -> node.children));
     }
@@ -125,9 +127,11 @@ public final class CanonicalDistance {
     private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,int expected) {
         org.json.JSONArray components = new org.json.JSONArray();
         int cost = 0;
-        for (int phase = 0; phase < left.normalForms.size(); phase++) {
-            List<QuantiVar> aSource = left.normalForms.get(phase).getMatrixQuantiVars();
-            List<QuantiVar> bSource = right.normalForms.get(phase).getMatrixQuantiVars();
+        for (int phase = 0; phase < Math.max(left.normalForms.size(),right.normalForms.size()); phase++) {
+            List<QuantiVar> aSource = phase < left.normalForms.size()
+                    ? left.normalForms.get(phase).getMatrixQuantiVars() : List.of();
+            List<QuantiVar> bSource = phase < right.normalForms.size()
+                    ? right.normalForms.get(phase).getMatrixQuantiVars() : List.of();
             is.fivefivefive.CanDis.metric.DeclarationReplay.requireBounded(aSource.size(),bSource.size());
             List<QuantiVar> a = canonicalQuantifierOrder(aSource), b = canonicalQuantifierOrder(bSource);
             var aAtoms = declarationAtoms(aSource,a,phase);
