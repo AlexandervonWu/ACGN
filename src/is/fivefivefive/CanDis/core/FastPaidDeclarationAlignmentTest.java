@@ -193,12 +193,21 @@ public final class FastPaidDeclarationAlignmentTest {
         var a=prepare(natural,"inv14"); var b=prepare(natural,"inv14c");
         check(FastPaidDeclarationAlignment.supports(a.forms()) && FastPaidDeclarationAlignment.supports(b.forms()),"actual closed homogeneous scope");
         pair(a,b,29);
+        var mixedNatural=CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(
+                Path.of("classified-data/classroom_fol/both/7KzgkuDqY7Q4ZfQ4Z_inv14.als")));
+        var mixedA=prepare(mixedNatural,"inv14"); var mixedB=prepare(mixedNatural,"inv14c");
+        check(FastPaidDeclarationAlignment.supports(mixedA.forms()),"closed mixed source admitted for paid edits");
+        pair(mixedA,mixedB,19);
         var model=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 sig B {}
                 pred someA { some x:A | x in x.r }
                 pred allA { all renamed:A | renamed in renamed.r }
                 pred mixed { some x:A | all y:B | x->y in A->B }
+                pred alternating { all x:A | some y:A | all z:A | x->y in r and y->z in r }
+                pred alternatingRenamed { all first:A | some second:A | all third:A | first->second in r and second->third in r }
+                pred forward { all x:A | some y:A | x = y }
+                pred swapped { some y:A | all x:A | x = y }
                 pred param[x:A] { some y:A | x in y }
                 pred temporal { some x:A | always x in A }
                 pred local { one x:A | x in A }
@@ -207,7 +216,17 @@ public final class FastPaidDeclarationAlignmentTest {
                 """);
         var some=prepare(model,"someA"); var all=prepare(model,"allA");
         pair(some,all,1);
-        for(String name:List.of("mixed","param","temporal","local","setVar","disjoint")) {
+        check(FastPaidDeclarationAlignment.supports(prepare(model,"mixed").forms()),"mixed blocks retain paid-link eligibility");
+        var alternating=prepare(model,"alternating"); var renamed=prepare(model,"alternatingRenamed");
+        check(alternating.forms().get(0).getMatrixQuantiVars().stream().map(q -> q.getQuantifier().name()).toList()
+                .equals(List.of("ALL","SOME","ALL")),"three original blocks are not globally sorted");
+        check(FastPaidDeclarationAlignment.supports(alternating.forms()),"repeated carrier with alternating blocks");
+        check(Canonical.distance(alternating.prepared(),renamed.prepared())==0
+                && Canonical.distance(renamed.prepared(),alternating.prepared())==0,"scope-preserving alpha renaming both ways");
+        var forward=prepare(model,"forward"); var swapped=prepare(model,"swapped");
+        int mixedCost=Canonical.distance(forward.prepared(),swapped.prepared());
+        check(mixedCost>0 && mixedCost==Canonical.distance(swapped.prepared(),forward.prepared()),"mixed exchange never free");
+        for(String name:List.of("param","temporal","local","setVar","disjoint")) {
             var unsupported=prepare(model,name);
             check(!FastPaidDeclarationAlignment.supports(unsupported.forms()),"unsupported scope "+name);
         }

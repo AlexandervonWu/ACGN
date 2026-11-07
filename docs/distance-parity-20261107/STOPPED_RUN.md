@@ -777,6 +777,45 @@ ten Python checks and eleven local supervisor tests. The frozen input hash
 inventory was unchanged after the suite. This is bounded repair validation,
 not a claim of full-corpus distance or operation-sequence equality.
 
+### Mixed-Prefix Paid Declaration Repair
+
+Diagnostic run `diagnostic-parity-20261107T215012Z`, from commit
+`adec5eaec3e6375d78c5341d22b01c53b5650b5c`, stopped on
+`classroom_fol/both/7KzgkuDqY7Q4ZfQ4Z_inv14.als`, `inv14` / `inv14c`.
+Fast was `[21,0,4,17]`, certified `[19,0,4,15]`. The service and all
+descendants stopped before repair. This incident is not a corpus mean.
+
+The shorter certified receipt was replayed against freshly parsed endpoints
+with its actual construction certificates, source occurrence commitments,
+typed binders and paid declaration links. Fast's homogeneous-prefix guard
+excluded those links for mixed ALL/SOME prefixes, charging two unnecessary
+`c -> c` matrix updates. Admitting paid links for these prefixes gives
+`[19,0,4,15]` in both directions, with certified receipts unchanged. No scalar
+is copied, no cost is changed and no quantifier block is exchanged.
+
+`MixedPaidDeclarationAlignment.lean` was compiled before the Java change.
+It proves charged occurrence-link laws, rejects mixed-quantifier exchange,
+and proves the incident's implication/existential lift using the outer Person
+witness without assuming an inhabited signature. Focused checks validate
+actual source-linked construction premises, declaration order and binder
+admission, and reject missing premises, foreign sources, reordered binders
+and corrupted costs. Alloy scopes 0 through 4 test the incident prenex law;
+empty-domain and mixed-exchange controls are included. These finite tests
+are not a universal parser/normalization proof.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/matrix19-LqlNrP8q/evidence.json`,
+SHA-256 `1f059dc8144093c6cd9f297fb40e41230eadbcbbdd41214d9191669d200b1099`.
+Parent integration evidence is under
+`ACGN/intermediate/mixed-paid-integration-20261107-VgYMWk/`.
+The combined suite passed 24 Lean files, 15,235 numbered Java checks, eight
+diagnostic CLI cases, three strict CLI stop cases, native replay CLI checks,
+ten Python checks and fourteen local supervisor tests. The input hash
+inventory remained unchanged after execution.
+Full public operation-sequence alignment, standalone source-certificate wire
+replay and Java/Lean correspondence remain **BLOCKED**. Actual checked
+construction evidence is retained; numerical parity does not replace proof.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

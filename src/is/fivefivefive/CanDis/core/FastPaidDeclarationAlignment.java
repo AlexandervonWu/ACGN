@@ -20,13 +20,14 @@ final class FastPaidDeclarationAlignment {
                 || !f.getLocalQuantiVars().isEmpty() || !f.getPhaseLocalBindingImports().isEmpty()) return false;
         List<QuantiVar> qs = f.getMatrixQuantiVars();
         if (qs.isEmpty()) return false;
-        QuantiVar.Quantifier kind = qs.get(0).getQuantifier();
-        if (kind != QuantiVar.Quantifier.ALL && kind != QuantiVar.Quantifier.SOME) return false;
         Set<String> names = new HashSet<>(), paths = new HashSet<>();
         var firstType = qs.get(0).getExactAlloyType();
         for (QuantiVar q : qs) {
             var type = q.getExactAlloyType();
-            if (!q.isFrozenForCertification() || q.getQuantifier() != kind
+            // Paid diagonals are edits, not exchanges across quantifier blocks.
+            // CanonicalDistance retains each contiguous ALL/SOME run in place.
+            if (!q.isFrozenForCertification()
+                    || (q.getQuantifier() != QuantiVar.Quantifier.ALL && q.getQuantifier() != QuantiVar.Quantifier.SOME)
                     || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() != 0
                     || q.getBindingPath().isEmpty() || !paths.add(q.getBindingPath())
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
