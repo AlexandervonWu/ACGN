@@ -22,6 +22,7 @@ def main():
     false_zero.write_text("sig A {}\npred inv { some A and some A }\npred invc { some A }\n")
     cases = [
         ("equal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", None),
+        ("equal-product", root / "classified-data/classroom_fol/both/2S5sD2BA5mvLdj46b_inv12.als", None),
         ("mismatch", root / "classified-data/trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als", "DISTANCE_MISMATCH"),
         ("identical", identical, None),
         ("false-zero", false_zero, "INCORRECT_ZERO"),
@@ -55,10 +56,11 @@ def main():
             assert not (output / "diagnostic-summary.md").exists()
         else:
             assert not (output / "parity-incident.json").exists()
-            assert report["summary"]["successes"] == (1 if label == "equal" else 0)
+            expected_distance = {"equal": 11, "equal-product": 14}.get(label)
+            assert report["summary"]["successes"] == (1 if expected_distance is not None else 0)
             assert report["summary"]["skippedIdenticalRawAstPairs"] == (1 if label == "identical" else 0)
-            if label == "equal":
-                assert report["results"][0]["distance"] == report["results"][0]["legacyCanonicalDistance"] == 11
+            if expected_distance is not None:
+                assert report["results"][0]["distance"] == report["results"][0]["legacyCanonicalDistance"] == expected_distance
             assert "BLOCKED" in (output / "diagnostic-summary.md").read_text()
         checks.append(dict(case=label, reason=reason, exitCode=result.returncode))
     (args.output / "checks.json").write_text(json.dumps(checks, indent=2) + "\n")

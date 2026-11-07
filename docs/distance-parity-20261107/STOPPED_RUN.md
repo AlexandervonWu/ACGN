@@ -1,5 +1,10 @@
 # Stopped v3 Candidate: Distance And Operation Parity
 
+Current follow-up: the author separately authorized a diagnostic component
+scan while keeping certification blocked. The November 7 diagnostic attempt
+described below stopped at its first discrepancy; the historical v3 candidate
+and its final evidence were not restarted or relabeled.
+
 ## Status And Scope
 
 The author stopped candidate run `d5bebb92-d7b5-422d-ad58-aac95162f171`
@@ -513,6 +518,117 @@ The repaired 11/11 CLI pair therefore still stops with
 `trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als`, still stops at 21/22
 (`[1,0,20]` / `[2,0,20]`). Both raw incidents are retained. No full-corpus run,
 new mean, push, tag or release is implied by this checkpoint.
+
+### Authorized Diagnostic Scan: First Matrix Incident
+
+The explicitly authorized diagnostic mode uses separate `diagnostic-*`
+outputs and never grants publication or operation-sequence certification.
+`DiagnosticScanMode.lean` was checked before the Java gate change. Strict
+mode still stops on missing replay evidence even when components agree;
+diagnostic mode continues only for equal components, rejecting incorrect
+zeroes and inexact stored-orbit search. The unchanged-failure file retry was
+removed. Four bounded CLI cases exercise these mode boundaries, along with
+the existing strict checks. The full preflight suite passed with nineteen
+Lean files, 13,314 numbered Java checks and ten Python tests; eleven local
+controller tests also passed. Preflight inputs were hashed and rechecked.
+
+The first launch was refused by the 18 GiB startup guard before creating a
+run directory. Following improved available memory, fresh diagnostic run
+`diagnostic-parity-20261107T202000Z` started at 20:18:22 UTC from commit
+`60b73e53fecd62a8c0bb5c4262bc875d21631fe0`. It selected all 66,080 inputs,
+with sixteen workers, 8g heap and reward pool 100, under the 12 GiB service
+cap and 6 GiB host reserve. The run label is an identifier, not its actual
+start timestamp. It stopped at the first observed parallel-worker mismatch:
+
+- Source: `classroom_fol/both/2S5sD2BA5mvLdj46b_inv12.als`.
+- Predicates: `inv12` / `inv12c`.
+- Fast: total 15, temporal 0, quantifier 3, matrix 12.
+- Certificate-integrated: total 14, temporal 0, quantifier 3, matrix 11.
+
+The process exited, all service descendants stopped, and manifest checks
+completed both before and after the bounded native replay. Both native
+matrix receipts replay at their reported costs. This does not discharge
+the full source/certificate/phase alignment or assign fault by itself.
+The result remains `STOPPED_PARITY_INCIDENT`, certification **BLOCKED**.
+No ordered successful rows were emitted before the stop. Empty-summary
+zeroes are not natural-corpus measurements or a completed parity count.
+
+Immutable evidence under `ACGN/intermediate/diagnostic-parity-20261107T202000Z/`:
+
+- `artifacts/distance_results/parity-incident.json`, SHA-256
+  `8af8858366a25932ce7601c7c1cde07db0c3eda3db20f090502f2810fbc24487`.
+- `artifacts/incident-matrix-replay.json`, SHA-256
+  `def9bd34b9ae73d0dd36dd990c987c90419e86345afec5b9ae4ed601cda7ec90`.
+- `artifacts/build/acgn-parity-scan.jar`, SHA-256
+  `3aa73ddc733cd1f15e6302123ffac8610490c0d9a9f8f1be928f0580260b24ca`.
+- `artifacts/astra-escalation-request.json` binds source, JAR, incident and
+  replay identity. Recovery ownership is separately recorded in the mutable
+  controller state; frozen handoff evidence is not rewritten.
+
+Actual Astra agent `01a1b6f9-4f81-7571-9191-e45c72efe56f` owns this incident's
+shorter-first investigation and Lean-first repair. No concurrent corpus scan,
+automatic retry, push, tag or release was started.
+
+### Plain Product Incident Repair
+
+The shorter certified native receipt was independently replayed first against
+freshly parsed endpoints from the frozen JAR: matrix 11, declaration deletions
+3, temporal 0. The replay cost adapter forbids distance search. Changed alpha
+mapping, endpoint substitution, altered charge and foreign declaration owner
+are rejected. Public declaration-permutation admission and complete source
+certificate alignment are still not established by this fixed-choice replay.
+
+Fast retained `ARROW(c,ARROW(p,g))` where the certified repair view used
+ordered `ARROW(c,p,g)`. Before repair, Fast deleted the seven-node product
+membership subtree and transformed the other branch for five edits. After
+ordered product exposure, it transforms the product branch for six edits and
+deletes the other five-node branch. The optimal branch matching changes; the
+repair is not a scalar subtraction or copying the certified result.
+
+`FastProductGeometry.lean` was compiled before the Java production change.
+It proves ordered plain-product reassociation while retaining repetitions.
+The Fast metric helper now exposes only plain `ARROW` operands with exact
+parser-derived types from the same module. Every original intermediate type
+and the folded result type must match. The bounded slice has at most 64
+columns and one correlated product alternative, with a 4,096-visit limit.
+Other operators remain atomic, including multiplicity-qualified arrows;
+unsupported input retains its original geometry. Source/certificate trees
+and the certified producer are unchanged. Literal result-type charges remain:
+the reduced three-factor to two-factor product costs two, not one.
+
+Both directions of the actual natural pair now measure **14/14**, each
+`[temporal 0, quantifier 3, matrix 11]`. Focused geometry checks (91) cover
+ordering, repetitions, scoped binders, exact operand identity, module/type
+substitution, missing evidence and operator barriers. Archived shorter replay
+passes 16 checks, and direct Alloy checks at scopes 1, 2 and 4 find product
+reassociation counterexamples UNSAT and order-changing controls SAT. These
+are local proof and bounded test results, not full Java/Lean correspondence.
+
+Astra's evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/arrow-incident-jckH34Ow/evidence.json`,
+SHA-256 `d1df5bf5063ce29d0b15cc3ba28131290c2b9ac1e2a864f12deeabe7ab5c3fbe`.
+It binds before/after native receipts, source identity and focused test logs.
+The original stopped run remains immutable. Full public operation parity and
+the requested 0/61,598 corpus invariant remain **BLOCKED**, not inferred from
+the repaired witness.
+
+Parent integration also passed: twenty Lean files, 13,420 numbered Java
+checks, strict stop/replay CLI checks, five diagnostic CLI cases, and ten
+Python checks. A second clean Java build repeated the five diagnostic cases
+and retains their raw results. The actual repaired row has one diagnostic
+success, zero errors, equal distance 14, and explicit `BLOCKED` certification
+and `publicationAllowed=false` metadata. The frozen input inventory was
+rechecked after both runs without changes.
+
+Parent evidence is `ACGN/intermediate/product-integration-20261107-DMFECA/`:
+`regressions.log`, `diagnostic-cli/`, and `retained-outputs.sha256`. The input
+inventory SHA-256 is
+`7294ddd967e0fa343e781fa4258c0df3a1fb1b22bc6c5dbea4d26bcfddcf6bf3`;
+the retained second-build JAR SHA-256 is
+`b23e0bea080f695ed81f289fbff0fac3cab1fb7081bbf8a08c9b02f9e3f56fe7`.
+This is bounded validation, not a completed mechanical closure or a new
+full-corpus measurement. No corpus process or recovery agent remains active
+at this checkpoint.
 
 ### Frozen Corpus Evidence
 
