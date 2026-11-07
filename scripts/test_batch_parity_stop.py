@@ -16,7 +16,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     results = []
     for label, relative, reason in (
-            ("distance", "trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als", "DISTANCE_MISMATCH"),
+            ("repaired-scoped-temporal", "trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als", "REPLAY_WITNESS_UNAVAILABLE"),
             ("repaired-temporal", "classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "REPLAY_WITNESS_UNAVAILABLE"),
             ("missing-replay", "classroom_rl/over/Se6vis3cGzgX7GkN3_inv5.als", "REPLAY_WITNESS_UNAVAILABLE")):
         source = root / "classified-data" / relative
@@ -38,6 +38,8 @@ def main():
         assert incident["reason"] == reason, incident
         if label == "repaired-temporal":
             assert incident["fast"] == incident["certified"] == [11, 1, 0, 10], incident
+        if label == "repaired-scoped-temporal":
+            assert incident["fast"] == incident["certified"] == [21, 1, 0, 20], incident
         assert incident["sourceSha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
         assert incident["sourceText"] == source.read_text()
         native = json.loads((target / incident["nativeReplayFile"]).read_text())

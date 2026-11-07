@@ -58,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v17";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v18-source-temporal-occurrences";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -1439,7 +1439,13 @@ public final class RepairProjection {
 
         private List<TemporalNode> temporalChildren(int phaseIndex) {
             List<TemporalNode> result = new ArrayList<>();
+            Set<SourceTemporalOccurrence> seen = new LinkedHashSet<>();
             for (TemporalReference reference : orderedReferences(phaseIndex)) {
+                // IFF/Boolean expansion can use one admitted source occurrence
+                // twice. Count its owner/branch identity once, not its matrix
+                // use count. Equal bodies with distinct source branches remain.
+                if (!seen.add(new SourceTemporalOccurrence(phaseIndex,
+                        java.util.Arrays.stream(reference.branches).boxed().toList()))) continue;
                 List<TemporalNode> descendants = new ArrayList<>();
                 for (int branch : reference.branches) {
                     descendants.addAll(temporalChildren(branch));
@@ -1663,6 +1669,10 @@ public final class RepairProjection {
         private static String nullToEmpty(String value) {
             return value == null ? "" : value;
         }
+    }
+
+    private record SourceTemporalOccurrence(int ownerPhase, List<Integer> branches) {
+        private SourceTemporalOccurrence { branches = List.copyOf(branches); }
     }
 
     private static final class TemporalReference {

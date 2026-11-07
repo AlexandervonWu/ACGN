@@ -123,8 +123,10 @@ This is bounded regression evidence, not full-corpus closure.
    declaration alignment remain open. Closed, binding-free duplicate temporal
    leaves now reduce the tested 17/11 witness to 11/11; original owner references
    remain untouched and only detached metric coordinates are transported.
-   The retained scoped temporal witness
-   `trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als` still returns 21/22 and stops.
+   The subsequent scoped temporal occurrence accounting repair changes
+   `trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als` from 21/22 to 21/21 by counting
+   one source-owned temporal occurrence once while preserving its matrix uses.
+   See `STOPPED_RUN.md` for the replay, contract and bounded evidence.
    Native numerical replay is not a full source-to-public-sequence certificate.
 3. Re-run all archived disagreements and negative controls, then the full
    paired corpus and truth-pool comparisons. Gate on per-row equality, not

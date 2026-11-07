@@ -630,6 +630,53 @@ This is bounded validation, not a completed mechanical closure or a new
 full-corpus measurement. No corpus process or recovery agent remains active
 at this checkpoint.
 
+### Scoped Temporal Occurrence Repair
+
+The author authorized automatic sequential continuation; see
+`SEQUENTIAL_REPAIR.md`. The next retained residual was
+`trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als`: Fast 21 `[1,0,20]`, certified
+22 `[2,0,20]`. Astra reproduced it against the product-repair checkpoint and
+replayed the shorter Fast receipt against fresh source-linked endpoints before
+changing production Java. The native replay covers the temporal relabel,
+all four matrix phases, declaration ownership/type endpoints and diagnostic
+ordering. It does not establish full public action admission or wire replay.
+
+The certified temporal inventory counted two matrix uses of one owner-issued
+`AFTER` source occurrence as two temporal nodes. That introduced an extra
+deletion of cost one before `AFTER -> RELEASES`. The Lean inventory contract
+`TemporalOccurrenceAccounting.lean` compiled before the Java refinement.
+`RepairProjection` now registers each source owner/ordered branch group once
+per temporal inventory, while retaining both matrix uses, original phases,
+inherited binder ownership, certificate/source links and binary branch order.
+It does not identify equal bodies from distinct source occurrences.
+
+The actual pair now gives **21/21 in both directions**, `[1,0,20]`. The entire
+Fast receipt and the certified matrix/declaration receipts are unchanged.
+Focused accounting tests pass 51 checks and archived shorter replay passes
+22. Controls reject foreign source bundles and owner references, retain
+distinct equal-body occurrences, and distinguish actual normalized temporal
+operators and different parent scopes. Initial assertions that assumed
+surface operator spellings were corrected using the retained normalized
+source inventory, not by relaxing occurrence distinctions. Direct temporal
+Alloy checks assert temporal mode and explicit 2..4 steps; scopes 1, 2 and 4
+give UNSAT equivalence counterexamples and SAT mutable-time controls without
+static-reduction warnings. These remain bounded checks.
+
+Evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/scoped-temporal-kW3ssr22/evidence.json`,
+SHA-256 `6d0cd5e3595ce504bb441aa7dd5656ce131d442b9592b9bb44bf171852b537ee`.
+Strict CLI mode still stops on missing replay evidence for this repaired pair;
+diagnostic mode must accept its equal components without granting certification.
+Full source/public-sequence/Java-Lean alignment remains **BLOCKED**.
+
+Parent integration passed twenty-one Lean files, 13,492 numbered Java checks,
+the three strict CLI stop checks, five diagnostic CLI cases, native replay CLI
+checks and ten Python checks. Eleven local supervisor tests also passed.
+The input hash inventory was unchanged after the suite. Logs and inventory
+are retained at `ACGN/intermediate/occurrence-integration-20261107-OjxwYx/`.
+This checkpoint advances to the next guarded diagnostic scan under the
+author's sequential-continuation instruction; it is not a corpus parity claim.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
