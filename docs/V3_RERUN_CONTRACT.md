@@ -42,6 +42,19 @@ or substitute 60 seconds as an exact completion time in speedup statistics.
 4. No non-CORRECT zeroes in either paired arm or incorrect-to-any-truth rankings.
 5. Identical paired zero subsets and identical per-pair distances between Fast
    and Certificate-Integrated; matching means or counts is insufficient.
+   Author refinement after stopping the candidate on November 7: require
+   **0/61,598 distance disagreements AND 0/61,598 operation-sequence
+   disagreements**, with the same original eligible population. Both tracks
+   must emit their own structured edit witnesses under a common operation
+   vocabulary, canonical coordinates, cost policy and deterministic tie-break
+   for equally optimal plans. Each witness must replay from its admitted source
+   representation to its admitted target and have cost equal to the reported
+   minimum. Comparison must preserve operation order; sorting away different
+   edit sequences, copying one track's output into the other, or substituting
+   diagnostic strings is not validation. Missing witnesses or an unimplemented
+   replay/comparison check block publication, never count as zero disagreements.
+   This requirement concerns public repair-operation sequences, not identical
+   internal certificate construction or solver execution traces.
 6. 181 question groups, 4,315 AST-unique student references plus 181 oracles,
    42,386 ranked incorrect predicates, and zero parse/reference/ranking failures.
 7. Identical unordered correct-pool zero-pair sets in both arms, with exact
@@ -56,19 +69,63 @@ or substitute 60 seconds as an exact completion time in speedup statistics.
     declared limits; only SUCCESS/TIMEOUT are acceptable completed outcomes.
 
 Gate reports bind raw input hashes and the verifier hash. `--record-only`
-allows a complete measurement schedule to preserve a **BLOCKED** report; it
-does not convert that report to release approval. Parse/schema/tool failures
+may preserve a **BLOCKED** assessment of existing evidence; it no longer
+authorizes continuing a measurement after a parity incident. It does not
+convert that report to release approval. Parse/schema/tool failures
 are INFRASTRUCTURE_FAILURE, never a pass. Unit tests cover equal-count/different-
 subset mistakes, duplicate records, timeout censoring, identity and grid bounds.
+
+The current registered empirical verifier explicitly returns **BLOCKED** at
+G18 because complete operation-sequence evidence is unavailable. The existing
+batch archive has only `legacyDiagnosticEdits`. The new
+`DistanceReplayDiagnostics` postmortem emits independently obtained native
+matrix derivations and checks their costs/occurrence coverage, but explicitly
+sets `complete=false` and `parityAuthority=false`. Temporal and quantifier
+plans, independent choice admission and source-certificate wire replay remain
+unimplemented in that diagnostic. This is a fail-closed blocker, not a complete
+public-plan replay verifier. Full exporters and checking still need
+implementation and bounded validation. See
+[the stopped-run investigation](distance-parity-20261107/STOPPED_RUN.md).
+
+`CanonicalBatchTest` now latches the first component/distance disagreement or
+missing replay witness before reward evaluation. It writes `parity-incident.json`
+with the exact source text/hash, predicate pair and both decompositions; stops
+dispatch, cancels workers, exits nonzero and does not retry the incident. A
+stopped batch keeps `distances.partial.json`, never a completed `distances.json`
+or summary. Use a fresh output directory; existing evidence is not overwritten.
+Until replay exporters are implemented, even equal scalar distances stop with
+`REPLAY_WITNESS_UNAVAILABLE`. Diagnostic probes may examine known failures;
+they are not full-corpus validation runs or an override of this gate.
+
+For the newly authorized stop-first investigation, retain the original incident
+unchanged. Only after the batch process and descendants have stopped, run
+`DistanceReplayDiagnostics SOURCE LEFT RIGHT FRESH_OUTPUT_JSON` against the
+same frozen JAR. Bound this postmortem to one worker, a 1 GiB heap and 300 seconds,
+preserving the host reserve. Bind the diagnostic's source hash, predicate IDs
+and native costs to the incident; verify the run manifest again before and
+afterward. Exit zero from this CLI means only that a diagnostic file was
+written, not that any parity or publication gate passed. Missing, incomplete
+or failed replay evidence is retained as a blocker.
+
+Escalation requires one actual `gpt-6-astra` agent and recorded ownership/ID,
+with the incident, postmortem, source commit and JAR hash. A local request file
+is not evidence that an agent was dispatched. The controller must check agent
+status before sending work and must not overlap a run with repair. Patches
+begin with a Lean contract, followed by Java refinement and bounded regression
+checks; any subsequent scan uses a fresh committed manifest and external root.
+No automatic unchanged retry or release is authorized by this diagnostic loop.
 
 ## Known Open Issues And Publication
 
 The [parity ledger](distance-parity-20261107/IMPLEMENTATION.md) remains applicable.
 Two correct-pool partial-JOIN pairs are known to return Fast 0 / certified 8;
 binary/flat and temporal edit geometry still differ. Thus this candidate is
-expected to fail some parity gates. The documented module-less prelude export
-defect is also unresolved: successful distance computation does not establish
-that all exported Alloy files parse. Do not publish with this unresolved defect.
+expected to fail some parity gates. The module-less prelude export defect now
+has a Lean-first lexer/span repair and 31 bounded regression checks; a new
+complete corpus export/parse assessment is still required. Successful distance
+computation does not establish that all exported Alloy files parse. Independent
+certificate export also remains blocked for the new source-linked flat exposure
+records and the older redundant-coordinate cases.
 Do not interpret passing empirical gates as proof of the unfinished common
 representation minimum or complete Java-Lean refinement.
 
@@ -81,7 +138,9 @@ the repository's artifact packaging workflow. Do not rebuild a different JAR
 and describe it as the measured one. A failure or unresolved gate means no tag
 and no release, with preserved evidence and a concrete blocker report.
 
-Terra checks one bounded cycle every five minutes, correlating live processes,
+The author stopped the candidate and its heartbeat. Do not resume either as
+part of this investigation. For a future authorized run, Terra checks one
+bounded cycle every five minutes, correlating live processes,
 systemd and logs. Quiet or RUNNING JSON alone is not proof of liveness. Remain
 quiet on unchanged healthy checks; notify on failure, required action, recovery
 or completion. No competing supervisors, unchanged blind retries, or weakening

@@ -128,6 +128,12 @@ def verify(art, baseline):
     check("G05-identical-paired-zero-subset", zeros[0] == zeros[1],
           dict(fast=len(zeros[0]), certified=len(zeros[1]), symmetricDifference=sorted(zeros[0] ^ zeros[1])))
     check("G06-equal-paired-distances", not differences, dict(count=len(differences), paths=differences))
+    # Equal distances (including zero) and legacy diagnostic strings are not replay evidence.
+    # Fail closed until a registered verifier consumes both independently emitted plans.
+    check("G18-replay-edit-sequences", False,
+          dict(reason="Independent replayable edit-plan exporters/verifier are not implemented",
+               requiredPopulation=61598, requiredDistanceDisagreements=0,
+               requiredSequenceDisagreements=0, verifiedReplayPairs=0))
     aug = summary(pin(art / "alloy4fun-augmented/index.json"))
     required = dict(parsedModels=61598, parseFailures=0, incorrectModels=42386,
                     incorrectModelsWithNearestDistances=42386, rewardSuccesses=42386,
@@ -183,7 +189,7 @@ def verify(art, baseline):
     observations = [json.loads(line) for line in pin(synthetic / "trials.jsonl").read_text().splitlines()]
     check("G17-synthetic", synthetic_checks(manifest, observations),
           dict(rows=len(observations), statuses=dict(Counter(r["status"] for r in observations))))
-    return dict(schema="acgn-v3-empirical-gates-v1", status="VERIFIED" if all(c["status"] == "PASS" for c in checks) else "BLOCKED",
+    return dict(schema="acgn-v3-empirical-gates-v2", status="VERIFIED" if all(c["status"] == "PASS" for c in checks) else "BLOCKED",
                 checks=checks, inputSha256=inputs, verifierSha256=sha256(Path(__file__)),
                 trusted=["Python", "jq", "JVM/Alloy results", "OS/hardware", "SHA-256"],
                 excluded=["unbounded semantic soundness", "full Java-Lean refinement", "global minimum over all Alloy-equivalent programs"],

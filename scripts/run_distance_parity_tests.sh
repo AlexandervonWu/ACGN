@@ -6,9 +6,19 @@ BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/acgn-distance-parity.XXXXXX")"
 trap 'rm -rf "$BUILD_DIR"' EXIT
 lean docs/distance-parity-20261107/IncidentLaws.lean
 lean docs/distance-parity-20261107/UnionMinimum.lean
+lean docs/distance-parity-20261107/SingletonComposition.lean
+lean docs/distance-parity-20261107/FlatExposure.lean
+lean docs/distance-parity-20261107/AugmentedPrelude.lean
+lean docs/distance-parity-20261107/MatrixReplay.lean
 mapfile -t sources < <(rg --files src -g '*.java' | sort)
 javac -J-Xmx512m --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
-for test in FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
+for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest DistanceReplayDiagnosticsTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
     java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
         -cp "$BUILD_DIR:$ROOT/lib/*" "is.fivefivefive.CanDis.$test"
 done
+python3 -B scripts/test_batch_parity_stop.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
+    --output "$BUILD_DIR/parity-stop-cli"
+python3 -B scripts/test_distance_replay_diagnostics.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
+    --output "$BUILD_DIR/replay-cli"
+python3 -B -m unittest discover -s scripts -p test_classify_distance_mismatches.py
+python3 -B -m unittest discover -s scripts -p test_v3_release_gates.py

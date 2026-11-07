@@ -1,0 +1,108 @@
+{
+  "schema": "acgn-distance-mismatch-classification-v1",
+  "currentMismatches": 15331,
+  "previousMismatches": 20728,
+  "resolved": 6533,
+  "introduced": 1136,
+  "classes": [
+    {
+      "components": "matrix",
+      "direction": "certified-greater",
+      "count": 6346,
+      "absoluteGapSum": 10722,
+      "changes": {
+        "improved": 1713,
+        "introduced": 1,
+        "same-absolute-gap": 4632
+      },
+      "largestWitnesses": [
+        "coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+        "coursesOld/under/4xr6nrBoWmntGpsje_inv15.als",
+        "coursesOld/under/JRgTKXsfiTFzijz27_inv15.als"
+      ]
+    },
+    {
+      "components": "matrix",
+      "direction": "fast-greater",
+      "count": 8961,
+      "absoluteGapSum": 19082,
+      "changes": {
+        "improved": 93,
+        "introduced": 1135,
+        "same-absolute-gap": 5933,
+        "worsened": 1800
+      },
+      "largestWitnesses": [
+        "trainStationOld/both/YQx2G8fYMZJYt7GMs_inv5.als",
+        "trainStationOld/under/6RXWL5zEjiMrjsJjj_inv5.als",
+        "socialMedia/both/cXKNdXPgWThXhfFsq_inv3.als"
+      ]
+    },
+    {
+      "components": "quantifier+matrix",
+      "direction": "fast-greater",
+      "count": 5,
+      "absoluteGapSum": 20,
+      "changes": {
+        "same-absolute-gap": 5
+      },
+      "largestWitnesses": [
+        "trash_ltl/over/C8fwykgcniKQBrybn_inv12.als",
+        "trash_ltl/over/JHLrP5kHozfi5gn94_inv12.als",
+        "trash_ltl/over/TjNTP2jnxjZWKKgAt_inv12.als"
+      ]
+    },
+    {
+      "components": "temporal",
+      "direction": "certified-greater",
+      "count": 2,
+      "absoluteGapSum": 2,
+      "changes": {
+        "same-absolute-gap": 2
+      },
+      "largestWitnesses": [
+        "trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als",
+        "trash_ltl/both/zEzT5f72uzYudEzyu_inv18.als"
+      ]
+    },
+    {
+      "components": "temporal+matrix",
+      "direction": "certified-greater",
+      "count": 2,
+      "absoluteGapSum": 9,
+      "changes": {
+        "same-absolute-gap": 2
+      },
+      "largestWitnesses": [
+        "trash_ltl/both/ZXmB8Q9qwwERJwvqZ_inv18.als",
+        "trainStationOld/over/DCyf3Q3tbQvyyRjGh_inv17.als"
+      ]
+    },
+    {
+      "components": "temporal+matrix",
+      "direction": "fast-greater",
+      "count": 15,
+      "absoluteGapSum": 128,
+      "changes": {
+        "same-absolute-gap": 15
+      },
+      "largestWitnesses": [
+        "trainStationOld/under/DLfgqgehLztgbf68Y_inv3.als",
+        "trainStationOld/under/DRg6tLdWBuuFfnGfh_inv3.als",
+        "trainStationOld/under/XqznFbPEqmRj3y7TT_inv3.als"
+      ]
+    }
+  ],
+  "confirmedWitnessCauses": {
+    "P05-binary-versus-flat-chain": 1,
+    "P06-live-temporal-projection": 3,
+    "P08-order-sensitive-certified-duplicate": 1,
+    "UNCLASSIFIED": 15326
+  },
+  "operationSequenceStatus": "NOT_MEASURED: neither archived arm exported replayable plans",
+  "interpretation": "Component classes are symptoms, not inferred semantic root causes.",
+  "inputSha256": {
+    "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/natural-assessment-20261107/paired-mismatches.csv": "4450cec7cc366322f319c258f243f9559b97a32c0435d7ebcdbe8ddf99355c5e",
+    "/home/augustus/ACGN/docs/distance-parity-20261107/evidence/paired-mismatches.csv": "bf9ca165d493dd19fe9accb6b9458f19951640b75ae48da4d76aed3c290f5f6b"
+  }
+}

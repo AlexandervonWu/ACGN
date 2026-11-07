@@ -55,7 +55,10 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v13";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v15";
+    private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
+    private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
+    private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
 
     private RepairProjection() {
     }
@@ -592,10 +595,13 @@ public final class RepairProjection {
         String operator = source.getOpcode().name();
         String payload = repairPayload(source);
         if (source.getOpcode() != Opcode.VARIABLE) {
-            return new Node(
+            Node projected = new Node(
                     operator, payload, repairSemanticPayload(source), null, -1, containerKind,
                     source.isOrderInsensitive(), children).withObservation(
                             isRelDecl(source.getOpcode()) ? null : requireExactResultType(source), List.of(), null);
+            return (source.getOpcode() == Opcode.AND || source.getOpcode() == Opcode.OR)
+                    && source.hasFlatLicense() && containerKind == ContainerKind.SET
+                    ? flattenProjectedBoolean(projected) : projected;
         }
 
         String variable = firstNonempty(source.getAlphaName(), source.getSourceName());
@@ -789,6 +795,11 @@ public final class RepairProjection {
     }
 
     private static boolean sameProjectedNode(Node left, Node right) {
+        return sameProjectedNode(left, right, new int[] { MAX_PROJECTED_COMPARISON_STEPS });
+    }
+
+    private static boolean sameProjectedNode(Node left, Node right, int[] budget) {
+        requireProjectedComparisonStep(budget);
         if (!left.certifiedAlternatives().isEmpty()
                 || !right.certifiedAlternatives().isEmpty()) {
             List<Node> leftAlternatives = left.certifiedAlternatives().isEmpty()
@@ -799,7 +810,7 @@ public final class RepairProjection {
                     : right.certifiedAlternatives();
             for (Node leftAlternative : leftAlternatives) {
                 for (Node rightAlternative : rightAlternatives) {
-                    if (sameProjectedNode(leftAlternative, rightAlternative)) {
+                    if (sameProjectedNode(leftAlternative, rightAlternative, budget)) {
                         return true;
                     }
                 }
@@ -815,13 +826,128 @@ public final class RepairProjection {
                 || left.children().size() != right.children().size()) {
             return false;
         }
+        if (left.orderInsensitive()) {
+            int[] matched = new int[right.children().size()];
+            int[] leftMatches = new int[left.children().size()];
+            java.util.Arrays.fill(matched, -1);
+            java.util.Arrays.fill(leftMatches, -1);
+            for (int index = 0; index < left.children().size(); index++) {
+                if (!matchProjectedChild(index, left.children(), right.children(), matched,
+                        leftMatches, budget)) {
+                    return false;
+                }
+            }
+            return true;
+        }
         for (int index = 0; index < left.children().size(); index++) {
             if (!sameProjectedNode(
-                    left.children().get(index), right.children().get(index))) {
+                    left.children().get(index), right.children().get(index), budget)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private static boolean matchProjectedChild(int index, List<Node> left, List<Node> right,
+            int[] matched, int[] leftMatches, int[] budget) {
+        int[] parent = new int[right.size()];
+        java.util.Arrays.fill(parent, -1);
+        boolean[] queued = new boolean[left.size()];
+        java.util.ArrayDeque<Integer> pending = new java.util.ArrayDeque<>();
+        pending.add(index);
+        queued[index] = true;
+        // A perfect matching preserves Bag multiplicity and handles overlapping
+        // certified alternatives without greedy matches or recursive augmenting paths.
+        while (!pending.isEmpty()) {
+            int current = pending.removeFirst();
+            for (int candidate = 0; candidate < right.size(); candidate++) {
+                requireProjectedComparisonStep(budget);
+                if (parent[candidate] >= 0
+                        || !sameProjectedNode(left.get(current), right.get(candidate), budget)) {
+                    continue;
+                }
+                parent[candidate] = current;
+                if (matched[candidate] < 0) {
+                    while (candidate >= 0) {
+                        int owner = parent[candidate];
+                        int previous = leftMatches[owner];
+                        matched[candidate] = owner;
+                        leftMatches[owner] = candidate;
+                        candidate = previous;
+                    }
+                    return true;
+                }
+                if (!queued[matched[candidate]]) {
+                    queued[matched[candidate]] = true;
+                    pending.addLast(matched[candidate]);
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void requireProjectedComparisonStep(int[] budget) {
+        if (budget[0] <= 0) {
+            throw new IllegalStateException("Projected duplicate comparison exceeds its finite step budget");
+        }
+        budget[0]--;
+    }
+
+    private static Node flattenProjectedBoolean(Node source) {
+        if (source.children().stream().noneMatch(child -> canFlattenBooleanChild(source, child))) {
+            return source;
+        }
+        List<List<Node>> alternatives = new ArrayList<>();
+        alternatives.add(new ArrayList<>());
+        for (Node child : source.children()) {
+            if (!canFlattenBooleanChild(source, child)) {
+                requireBooleanFlattenBudget(alternatives.size(), alternatives.stream()
+                        .mapToLong(prefix -> (long) prefix.size() + 1).sum());
+                for (List<Node> prefix : alternatives) prefix.add(child);
+                continue;
+            }
+            List<Node> choices = child.certifiedAlternatives().isEmpty()
+                    ? List.of(child) : child.certifiedAlternatives();
+            long product = Math.multiplyExact((long) alternatives.size(), choices.size());
+            long prefixes = alternatives.stream().mapToLong(List::size).sum();
+            long suffixes = choices.stream().mapToLong(choice -> choice.children().size()).sum();
+            requireBooleanFlattenBudget(product, Math.addExact(
+                    Math.multiplyExact(prefixes, choices.size()),
+                    Math.multiplyExact(suffixes, alternatives.size())));
+            List<List<Node>> next = new ArrayList<>((int) product);
+            for (List<Node> prefix : alternatives) {
+                for (Node choice : choices) {
+                    List<Node> combined = new ArrayList<>(prefix);
+                    combined.addAll(choice.children());
+                    next.add(combined);
+                }
+            }
+            alternatives = next;
+        }
+        List<Node> results = new ArrayList<>(alternatives.size());
+        for (List<Node> children : alternatives) {
+            results.add(new Node(source.operator(), source.payload(), source.semanticPayload(),
+                    null, -1, source.containerKind(), source.orderInsensitive(),
+                    deduplicateSetChildren(children)).withObservationFrom(source));
+        }
+        return certifiedAlternativeNode(results);
+    }
+
+    private static boolean canFlattenBooleanChild(Node parent, Node child) {
+        List<Node> choices = child.certifiedAlternatives().isEmpty()
+                ? List.of(child) : child.certifiedAlternatives();
+        return choices.stream().allMatch(choice -> parent.operator().equals(choice.operator())
+                && Objects.equals(parent.semanticPayload(), choice.semanticPayload())
+                && Objects.equals(parent.observationType(), choice.observationType())
+                && choice.containerKind() == ContainerKind.SET && choice.orderInsensitive());
+    }
+
+    private static void requireBooleanFlattenBudget(long alternatives, long references) {
+        if (alternatives > MAX_BOOLEAN_FLATTEN_ALTERNATIVES
+                || references > MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES) {
+            throw new IllegalStateException("Certified Boolean flattening exceeds its finite budget: "
+                    + alternatives + " alternatives, " + references + " child references");
+        }
     }
 
     private static List<Node> deduplicateSetChildren(List<Node> children) {

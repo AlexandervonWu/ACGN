@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.CompletionService;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
@@ -59,8 +60,13 @@ public class CanonicalBatchTest {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
         Options options = Options.parse(args);
         Files.createDirectories(options.outputDir);
+        options.parityGate = new BatchParityGate(options.outputDir);
         Path jsonPath = options.outputDir.resolve("distances.json");
+        Path partialJsonPath = options.outputDir.resolve("distances.partial.json");
         Path markdownPath = options.outputDir.resolve("summary.md");
+        if (Files.exists(jsonPath) || Files.exists(partialJsonPath) || Files.exists(markdownPath)) {
+            throw new IOException("Use a fresh output directory; completed and partial evidence must be preserved");
+        }
 
         List<Path> files = alloyFiles(options.inputDir);
         if (options.limit > 0 && options.limit < files.size()) {
@@ -68,24 +74,31 @@ public class CanonicalBatchTest {
         }
 
         Summary summary = new Summary(!options.skipRewards);
-        try (Writer json = Files.newBufferedWriter(jsonPath, StandardCharsets.UTF_8)) {
+        try (Writer json = Files.newBufferedWriter(partialJsonPath, StandardCharsets.UTF_8,
+                java.nio.file.StandardOpenOption.CREATE_NEW, java.nio.file.StandardOpenOption.WRITE)) {
             writeJsonHeader(json, options, files.size());
             int[] written = {0};
-            processFiles(files, options, result -> {
-                summary.add(result);
-                if (result.skipped) {
-                    return;
-                }
-                if (written[0]++ > 0) {
-                    json.write(",\n");
-                }
-                writeJsonResult(json, result);
-                if (options.verbose) {
-                    System.err.println(result.relativePath + " -> " + result.status());
-                }
-            });
+            try {
+                processFiles(files, options, result -> {
+                    summary.add(result);
+                    if (result.skipped) {
+                        return;
+                    }
+                    if (written[0]++ > 0) {
+                        json.write(",\n");
+                    }
+                    writeJsonResult(json, result);
+                    if (options.verbose) {
+                        System.err.println(result.relativePath + " -> " + result.status());
+                    }
+                });
+            } catch (BatchParityGate.Violation failure) {
+                writeJsonFooter(json, summary);
+                throw failure;
+            }
             writeJsonFooter(json, summary);
         }
+        Files.move(partialJsonPath, jsonPath);
         writeMarkdown(markdownPath, options, summary);
         System.out.println("Wrote " + jsonPath);
         System.out.println("Wrote " + markdownPath);
@@ -113,7 +126,12 @@ public class CanonicalBatchTest {
                 : workers * 4;
         int memoryIntensiveWorkers = ExperimentMemoryBudget.effectiveWorkers(workers);
         Semaphore memoryIntensivePermits = new Semaphore(memoryIntensiveWorkers, true);
-        ExecutorService executor = Executors.newFixedThreadPool(workers);
+        ExecutorService executor = Executors.newFixedThreadPool(workers, task -> {
+            Thread worker = new Thread(task, "canonical-batch-worker");
+            // The CLI must terminate even if an interrupted parser/solver ignores cancellation.
+            worker.setDaemon(true);
+            return worker;
+        });
         try {
             CompletionService<IndexedResult> completions =
                     new ExecutorCompletionService<>(executor);
@@ -132,6 +150,7 @@ public class CanonicalBatchTest {
                     + maximumInFlight + " tasks in flight; memory-intensive concurrency "
                     + memoryIntensiveWorkers + ".");
             while (submitted < files.size() && submitted - emitted < maximumInFlight) {
+                options.parityGate.checkRunning();
                 int index = submitted++;
                 Future<IndexedResult> future = completions.submit(
                         () -> processIndexedFile(
@@ -140,14 +159,19 @@ public class CanonicalBatchTest {
             }
 
             while (completed < files.size()) {
+                options.parityGate.checkRunning();
                 Future<IndexedResult> future;
                 try {
-                    future = completions.poll(30, TimeUnit.SECONDS);
+                    future = completions.poll(100, TimeUnit.MILLISECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new IOException("Canonical batch processing was interrupted", e);
                 }
                 if (future == null) {
+                    options.parityGate.checkRunning();
+                    if (System.nanoTime() - lastProgress < TimeUnit.SECONDS.toNanos(30)) {
+                        continue;
+                    }
                     String unresolved = emitted < files.size()
                             ? options.inputDir.relativize(files.get(emitted)).toString()
                             : "<none>";
@@ -167,6 +191,9 @@ public class CanonicalBatchTest {
                     }
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause() == null ? e : e.getCause();
+                    if (cause instanceof BatchParityGate.Violation) {
+                        throw (BatchParityGate.Violation) cause;
+                    }
                     if (cause instanceof VirtualMachineError) {
                         throw (VirtualMachineError) cause;
                     }
@@ -208,6 +235,7 @@ public class CanonicalBatchTest {
                 }
 
                 while (submitted < files.size() && submitted - emitted < maximumInFlight) {
+                    options.parityGate.checkRunning();
                     int index = submitted++;
                     Future<IndexedResult> next = completions.submit(
                             () -> processIndexedFile(
@@ -217,6 +245,11 @@ public class CanonicalBatchTest {
             }
         } finally {
             executor.shutdownNow();
+            try {
+                executor.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException interrupted) {
+                Thread.currentThread().interrupt();
+            }
             if (!options.verbose) {
                 System.setOut(originalOut);
                 System.setErr(originalErr);
@@ -230,8 +263,10 @@ public class CanonicalBatchTest {
             Path file,
             Options options,
             Semaphore memoryIntensivePermits) {
+        options.parityGate.checkRunning();
         FileResult result = processFile(options.inputDir, file, options, memoryIntensivePermits);
         if (result.error != null) {
+            options.parityGate.checkRunning();
             result = processFile(options.inputDir, file, options, memoryIntensivePermits);
         }
         return new IndexedResult(index, result);
@@ -318,7 +353,8 @@ public class CanonicalBatchTest {
             result.rightVertices = right.size();
             acquireMemoryIntensivePermit(memoryIntensivePermits);
             try {
-                computeDistanceMetrics(left, right, result);
+                options.parityGate.checkRunning();
+                computeDistanceMetrics(left, right, result, file, options.parityGate);
             } finally {
                 memoryIntensivePermits.release();
             }
@@ -333,6 +369,8 @@ public class CanonicalBatchTest {
                 }
             }
             return result;
+        } catch (BatchParityGate.Violation | CancellationException failure) {
+            throw failure;
         } catch (VirtualMachineError error) {
             throw error;
         } catch (Throwable t) {
@@ -347,7 +385,9 @@ public class CanonicalBatchTest {
     private static void computeDistanceMetrics(
             Multigraph left,
             Multigraph right,
-            FileResult result) {
+            FileResult result,
+            Path source,
+            BatchParityGate gate) {
         Canonical.Prepared leftCanonical = Canonical.prepare(left);
         Canonical.Prepared rightCanonical = Canonical.prepare(right);
         result.leftLegacyCanonicalFormSize = Canonical.canonicalFormSize(leftCanonical);
@@ -387,6 +427,11 @@ public class CanonicalBatchTest {
         result.quotientTemporalDistance = quotient.temporalDistance();
         result.quotientQuantifierDistance = quotient.quantifierDistance();
         result.quotientMatrixDistance = quotient.matrixDistance();
+        gate.requireParity(source, result.leftPredicate, result.rightPredicate,
+                new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
+                    result.legacyQuantifierDistance, result.legacyMatrixDistance},
+                new int[]{result.distance, result.quotientTemporalDistance,
+                    result.quotientQuantifierDistance, result.quotientMatrixDistance});
         result.exactDistanceNanos = System.nanoTime() - exactStarted;
         result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
         result.quotientBinderAlignments = quotient.binderAlignments();
@@ -678,6 +723,8 @@ public class CanonicalBatchTest {
         writer.write("  \"generatedAt\": \"" + escape(Instant.now().toString()) + "\",\n");
         writer.write("  \"inputRoot\": \"" + escape(options.inputDir.toString()) + "\",\n");
         writer.write("  \"fileCount\": " + fileCount + ",\n");
+        writer.write("  \"parityPolicy\": \"stop-on-first-distance-or-replay-incident-v1\",\n");
+        writer.write("  \"replayWitnessStatus\": \"UNIMPLEMENTED\",\n");
         writer.write("  \"threadCount\": " + options.threadCount + ",\n");
         writer.write("  \"memoryIntensiveWorkerLimit\": "
                 + ExperimentMemoryBudget.effectiveWorkers(options.threadCount) + ",\n");
@@ -1168,6 +1215,7 @@ public class CanonicalBatchTest {
         private int threadCount = DEFAULT_THREAD_COUNT;
         private boolean verbose;
         private boolean skipRewards;
+        private BatchParityGate parityGate;
 
         private static Options parse(String[] args) {
             Options options = new Options();

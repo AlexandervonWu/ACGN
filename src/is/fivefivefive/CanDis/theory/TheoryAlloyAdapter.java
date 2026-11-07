@@ -750,6 +750,7 @@ public final class TheoryAlloyAdapter {
         private final CertificateProvenance provenance;
         private final SemanticProfile semanticProfile;
         private final Map<InvocationKey, TypedInvocation> memo = new HashMap<>();
+        private final Map<OnePort, FlatOperandExposure> flatExposures = new HashMap<>();
         private final Map<RelationalCoercionKey, TypedInvocation> relationalCoercions =
                 new HashMap<>();
         private final Map<String, List<ContainerLawDeclaration>> certifiedContainerLaws =
@@ -2012,10 +2013,16 @@ public final class TheoryAlloyAdapter {
                     new HashSet<>());
             constructionSources.recordFlat(application);
             CertifiedFlatConstruction construction = TypedENode.flatConstructCertified(
-                    application, this::insert, semanticProfile);
+                    application, this::insert, semanticProfile,
+                    source.getOpcode() == Opcode.AND || source.getOpcode() == Opcode.OR
+                            ? flatExposures : Map.of());
             FlatConstructionCertificate certificate = construction.certificate();
             flatConstructions.add(certificate);
-            recordCertifiedSetPartition(source, certificate.containerTrace());
+            // Exposed occurrences have different coordinates from the original
+            // source children; never mislabel their trace as a source partition.
+            if (!certificate.hasExposures()) {
+                recordCertifiedSetPartition(source, certificate.containerTrace());
+            }
             if (construction.collapsedToSingleton()) {
                 return construction.singleton();
             }
@@ -2696,7 +2703,22 @@ public final class TheoryAlloyAdapter {
             ensureQuiescent();
             CertifiedInsertionResult insertion = graph.insertNodeConstructed(
                     construction, graph.coherentWitnessFamily());
-            return finishInsertion(callerContext, insertion);
+            TypedInvocation returned = finishInsertion(callerContext, insertion);
+            if (construction.node().ports().get(0) instanceof SetPort
+                    && (construction.node().operator().operator().equals("ALLOY/AND")
+                            || construction.node().operator().operator().equals("ALLOY/OR"))) {
+                TypedFindResult found = graph.findWithProvenance(insertion.returnedInvocation());
+                TypedEqualityCertificate proof = EqualityCertificates.transitive(
+                        insertion.sourceToReturnedInvocation(), found.parentCertificate());
+                if (!found.leaderInvocation().callerContext().equals(callerContext)) {
+                    proof = EqualityCertificates.rename(proof, TypedEmbedding.inclusion(
+                            found.leaderInvocation().callerContext(), callerContext));
+                }
+                OnePort leaf = OnePort.invocation(callerContext, returned);
+                flatExposures.putIfAbsent(leaf, new FlatOperandExposure(
+                        leaf, construction.node(), proof, semanticProfile));
+            }
+            return returned;
         }
 
         private TypedInvocation insert(NodeConstruction construction) {

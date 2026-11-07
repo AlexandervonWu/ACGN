@@ -53,6 +53,56 @@ public final class QuotientRepairDistance {
         return evaluate(left, right).distance();
     }
 
+    /** Diagnostic only: native selected matrix edits, with no complete-plan authority. */
+    public static org.json.JSONObject matrixReplay(RepairView left, RepairView right) {
+        Result nativeResult = evaluate(left, right);
+        if (left.phases().size() != right.phases().size())
+            throw new IllegalStateException("MATRIX_REPLAY_UNALIGNED_PHASES");
+        if (left.phases().size() > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
+        MutableStats stats = new MutableStats();
+        stats.capture = true;
+        int searched = matrixDistance(left.phases(), right.phases(),
+                QuantificationAlignmentSpace.create(left.phases(), right.phases()), stats);
+        int cost = 0;
+        org.json.JSONArray phases = new org.json.JSONArray();
+        for (int i = 0; i < left.phases().size(); i++) {
+            if (stats.selectedMapping == null) throw new IllegalStateException("MATRIX_REPLAY_MISSING_CHOICE");
+            int[] mapping = phaseMapping(stats.selectedLeft, stats.selectedRight, stats.selectedMapping, i);
+            MatrixDistanceContext context = new MatrixDistanceContext(mapping);
+            MatrixReplay<Node> replay = new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
+                public String label(Node n) {
+                    return new org.json.JSONArray().put(n.operator()).put(n.semanticPayload())
+                            .put(n.bindingIndex()).put(String.valueOf(n.lexicalVariable()))
+                            .put(n.containerKind().toString()).put(n.orderInsensitive())
+                            .put(Arrays.toString(mapping)).toString();
+                }
+                public List<Node> children(Node n) { return n.children(); }
+                public List<Node> alternatives(Node n) { return n.certifiedAlternatives(); }
+                public boolean unordered(Node a, Node b) {
+                    return a.operator().equals(b.operator()) && a.orderInsensitive() && b.orderInsensitive();
+                }
+                public int size(Node n) { return n.size(); }
+                public int update(Node a, Node b) { return context.updateCost(a, b); }
+                public int distance(Node a, Node b) { return context.distance(a, b); }
+            });
+            Node a = left.phases().get(i).matrix(), b = right.phases().get(i).matrix();
+            org.json.JSONObject receipt = replay.capture(a, b);
+            cost = Math.addExact(cost, replay.verify(a, b, receipt));
+            phases.put(new org.json.JSONObject().put("phase", i)
+                    .put("alphaMapping", new org.json.JSONArray(mapping)).put("receipt", receipt));
+        }
+        if (cost != searched || cost != nativeResult.matrixDistance())
+            throw new IllegalStateException("MATRIX_REPLAY_NATIVE_COST_MISMATCH");
+        return new org.json.JSONObject().put("arm", "certified").put("distance", nativeResult.distance())
+                .put("temporalDistance", nativeResult.temporalDistance())
+                .put("quantifierDistance", nativeResult.quantifierDistance())
+                .put("matrixDistance", nativeResult.matrixDistance()).put("replayedMatrixCost", cost)
+                .put("matrixReplayChecked", true).put("complete", false).put("phases", phases)
+                .put("selectedGlobalMapping", new org.json.JSONArray(stats.selectedMapping == null ? new int[0] : stats.selectedMapping))
+                .put("selectedQuantifierCorrespondence", stats.selectedCorrespondence == null
+                        ? new org.json.JSONObject() : new org.json.JSONObject(stats.selectedCorrespondence));
+    }
+
     public static Result evaluate(RepairView left, RepairView right) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
@@ -589,6 +639,12 @@ public final class QuotientRepairDistance {
                 leftBindings, rightBindings, correspondence -> {
             int candidate = matrixDistanceForAlignment(
                     leftBindings, rightBindings, correspondence, stats);
+            if (stats.capture && candidate < best[0]) {
+                stats.selectedMapping = stats.candidateMapping.clone();
+                stats.selectedLeft = leftBindings;
+                stats.selectedRight = rightBindings;
+                stats.selectedCorrespondence = new java.util.TreeMap<>(correspondence);
+            }
             best[0] = Math.min(best[0], candidate);
         }, stats);
         if (best[0] == Integer.MAX_VALUE) {
@@ -622,6 +678,7 @@ public final class QuotientRepairDistance {
 
         int[] maximum = {-1};
         int[] minimum = {Integer.MAX_VALUE};
+        if (stats.capture) stats.candidateMapping = null;
         forEachGlobalScopeAlignment(leftBindings, rightBindings, scope -> {
             stats.consumeScopeAlignment();
             List<Integer> leftOrder = new ArrayList<>(leftBindings.used);
@@ -639,6 +696,7 @@ public final class QuotientRepairDistance {
             if (requiredMatches > maximum[0]) {
                 maximum[0] = requiredMatches;
                 minimum[0] = Integer.MAX_VALUE;
+                if (stats.capture) stats.candidateMapping = null;
             }
             minimum[0] = searchGlobalMappings(
                     leftBindings,
@@ -681,7 +739,9 @@ public final class QuotientRepairDistance {
                 return best;
             }
             stats.consumeAlphaAlignment();
-            return Math.min(best, globallyMappedMatrixDistance(left, right, mapping));
+            int candidate = globallyMappedMatrixDistance(left, right, mapping);
+            if (stats.capture && candidate < best) stats.candidateMapping = mapping.clone();
+            return Math.min(best, candidate);
         }
         int leftIndex = leftOrder.get(index);
         GlobalBinding leftBinding = left.binding(leftIndex);
@@ -786,24 +846,26 @@ public final class QuotientRepairDistance {
         for (int phaseIndex = 0; phaseIndex < left.phaseCount; phaseIndex++) {
             Phase leftPhase = left.phases.get(phaseIndex);
             Phase rightPhase = right.phases.get(phaseIndex);
-            int[] localMapping = new int[leftPhase.bindings().size()];
-            Arrays.fill(localMapping, -1);
-            int[] localToGlobal = left.localToGlobal.get(phaseIndex);
-            for (int local = 0; local < localToGlobal.length; local++) {
-                int leftGlobal = localToGlobal[local];
-                int rightGlobal = globalMapping[leftGlobal];
-                if (rightGlobal >= 0) {
-                    Integer rightLocal = right.usedLocalByGlobal
-                            .get(phaseIndex).get(rightGlobal);
-                    if (rightLocal != null) {
-                        localMapping[local] = rightLocal;
-                    }
-                }
-            }
+            int[] localMapping = phaseMapping(left, right, globalMapping, phaseIndex);
             result = Math.addExact(
                     result,
                     new MatrixDistanceContext(localMapping).distance(
                             leftPhase.matrix(), rightPhase.matrix()));
+        }
+        return result;
+    }
+
+    private static int[] phaseMapping(GlobalBindingIndex left, GlobalBindingIndex right,
+            int[] globalMapping, int phaseIndex) {
+        int[] result = new int[left.phases.get(phaseIndex).bindings().size()];
+        Arrays.fill(result, -1);
+        int[] localToGlobal = left.localToGlobal.get(phaseIndex);
+        for (int local = 0; local < localToGlobal.length; local++) {
+            int rightGlobal = globalMapping[localToGlobal[local]];
+            if (rightGlobal >= 0) {
+                Integer rightLocal = right.usedLocalByGlobal.get(phaseIndex).get(rightGlobal);
+                if (rightLocal != null) result[local] = rightLocal;
+            }
         }
         return result;
     }
@@ -1586,6 +1648,12 @@ public final class QuotientRepairDistance {
     }
 
     private static final class MutableStats {
+        private boolean capture;
+        private int[] candidateMapping;
+        private int[] selectedMapping;
+        private GlobalBindingIndex selectedLeft;
+        private GlobalBindingIndex selectedRight;
+        private Map<Integer, Integer> selectedCorrespondence;
         private long alphaAlignments;
         private long quantifierAlignments;
         private long scopeAlignments;

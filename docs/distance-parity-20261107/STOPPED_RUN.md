@@ -1,0 +1,301 @@
+# Stopped v3 Candidate: Distance And Operation Parity
+
+## Status And Scope
+
+The author stopped candidate run `d5bebb92-d7b5-422d-ad58-aac95162f171`
+on November 7, 2026. Its source is
+`5d9b127e476cb6edf8938780069b7b730ca5ff46`. The service was stopped, no
+matching experiment workers remained, and the heartbeat was deleted. No
+restart, tag, push or release is authorized by this investigation.
+
+All completed natural stages and completed synthetic observations are retained.
+The interrupted synthetic cohort is not a complete benchmark. Natural results
+remain useful evidence; cancellation is not authorization to delete them.
+The source manifest and measured JAR still describe the frozen run, not this
+later investigation and patches. Earlier final cohorts remain unchanged.
+
+The comparison below uses exactly 61,598 successful AST-distinct paired-oracle
+rows, excluding the original 4,482 identical-AST rows. A streaming comparison
+confirmed identical eligible paths, labels, predicate names and raw-AST
+distances against the retained pre-repair run. Separate nearest-truth
+measurements use 42,386 incorrect predicates and independent truth minima.
+
+## What Widened
+
+The signed mean gap (Fast minus certified) changed from -0.051625 to +0.137943.
+Fast's sum changed from 860,530 to 872,207; the certified sum stayed 863,710.
+The certified distance was unchanged on EVERY paired row, not only in aggregate.
+Fast changed on 11,425 rows.
+
+The larger absolute difference between means does not mean that overall
+per-row agreement worsened. Previously, opposite-signed discrepancies canceled
+more closely:
+
+- Paired mismatches: 20,728 -> 15,331 (26.04% fewer).
+- Sum of absolute paired discrepancies: 36,906 -> 29,963 (18.81% lower).
+- Mean absolute paired discrepancy: 0.599143 -> 0.486428.
+- Rows with smaller absolute discrepancy: 8,339; larger: 2,936; unchanged: 50,323.
+- Old mismatch becoming equal: 6,533; old equality becoming a mismatch: 1,136.
+- Nearest-truth mismatches: 14,841 -> 10,808.
+- Sum of absolute nearest-truth discrepancies: 24,355 -> 18,955.
+
+These improvements DO NOT satisfy the author's zero-disagreement requirement.
+Both paired means remain in [13,15], but that is only an auxiliary gate.
+
+## Mismatch Classification
+
+`scripts/classify_distance_mismatches.py` classifies all 15,331 archived
+disagreements, without rerunning the corpus or interpreting equal aggregate
+means as parity. Its compact output is
+`evidence/stopped-classification.json`. The exhaustive classified CSV and 52
+selected diagnostic witnesses are retained externally under
+`stopped-investigation/classification-20261107/` beside the supervision state.
+
+- Matrix only: 15,307 rows (8,961 Fast-greater, 6,346 certified-greater).
+- Temporal and matrix: 17 rows (15 Fast-greater, two certified-greater).
+- Temporal only: two rows, both certified-greater.
+- Quantifier and matrix: five rows, all Fast-greater.
+
+These are disjoint symptom classes, not inferred root-cause counts. Each row
+also records its signed gap, prior gap, introduced/improved/worsened status,
+and confirmed contributing mechanism only where a source-backed witness
+exists. Uninvestigated rows explicitly retain `UNCLASSIFIED`; assigning a JOIN
+or binder bug to every matrix discrepancy would be unsupported. The six
+correct-pool zero disagreements are a separate population, not extra members
+of the 15,331 paired-oracle rows. Operation-sequence disagreement counts cannot
+be reconstructed from these archives because no replay plans were exported.
+
+## Mechanisms And Concrete Witnesses
+
+The production changes in the candidate were confined to Fast comparison:
+result-type-aware node costs in `CanonicalDistance.nodeUpdateCost`, and
+presentation cleanup, local ALL grouping and ACI deduplication in
+`EGraphNode.FastComparison.copy`. The certified producer was not repaired.
+Adding result-type costs generally raises Fast costs; presentation quotienting
+can lower them. The combined aggregate shift is not a measurement of either
+change in isolation.
+
+The existing audit already identified unequal binary/flat JOIN edit units,
+unequal live temporal projections, and missing certified partial JOIN rotation
+coverage. A shared scalar head-cost rule does not fix different operand
+geometry or admitted representatives. There is still no implemented common
+finite representation union/minimum connecting both tracks.
+
+The largest newly worsened paired witness is
+`coursesOld/both/xJnitBpFv9K74WNvf_inv14.als`: Fast 88 -> 49, certified 88 -> 88.
+Its student body conjoins two quantified formulas related by exchanging the
+two universally bound students. A source/projection replay confirms that Fast
+retains one equivalent local ONE branch while the certified primary projection
+retains both. The projected duplicate fallback compares nested OR operands
+positionally despite their order-insensitive semantics. This is a confirmed
+contributor, not evidence that it explains every remaining unit of distance.
+
+The correct-truth pool changed from 282 certified-only and two Fast-only zero
+pairs to zero certified-only and six Fast-only pairs. The two previously known
+`classroom_rl/inv12` partial-JOIN pairs still give Fast 0 / certified 8.
+The four new `productionLineNew/inv5` pairs all involve
+`vxzQHEki2BEDvK5Fc_inv5.als` and give Fast 0 / certified 16; its body conjoins
+two quantified implications expressing the same human/robot exclusion.
+Independent source-based investigation identifies singleton collapse followed
+by a missing parent flatten: the source child has head AND, but its certified
+construction collapses to an OR invocation. The parent wraps that invocation
+as a leaf without reconsidering same-instance OR associativity. The resulting
+projection is `OR(OR(c,d),a,b)` versus flat `OR(c,d,a,b)`. Four original-source
+inequivalence checks are UNSAT at scope 4; three reduced equivalences are UNSAT
+at scopes 1 through 6, with satisfiable changed-membership controls. These are
+bounded checks, not a universal soundness proof. Detailed evidence is in
+`stopped-investigation/four-fast-only-20261107-a/README.txt`.
+
+All paired-oracle zero subsets still match (4,088 each). Neither main path
+gave an incorrect zero in paired or nearest-truth results. This distinguishes
+the observed completeness/cost problem from a demonstrated unsound collapse.
+
+## Operation-Sequence Blocker
+
+The author now requires zero differing distances AND zero differing operation
+sequences on all 61,598 eligible paired rows. Current evidence cannot establish
+the latter: `CanonicalBatchTest` writes `legacyDiagnosticEdits` produced by
+`Canonical.edits`. `QuotientRepairDistance.Result` exposes the total,
+temporal/quantifier/matrix costs, orbit-exactness, authority and alignment count,
+but no structured edit plan. Legacy strings are diagnostics, not a certified
+backtrace or independently replayed minimal witness.
+
+Required implementation boundary:
+
+1. Define common admitted representation coordinates and typed edit operations.
+2. Both paths independently produce optimal plans with the same deterministic
+   tie-break. Equal scalar minima can otherwise select different valid plans.
+3. Replay each plan and check its cost and admitted endpoints; preserve type,
+   binder, temporal-phase and certificate-authority boundaries.
+4. Compare exact ordered plans and costs over the original complete population.
+   Missing, incomplete or unvalidated plans must block, not pass vacuously.
+
+This investigation patches projected duplicate comparison; it does not yet
+implement full repair-plan extraction or the missing singleton-composition
+certificate bridge. Existing
+`IncidentLaws.lean` and `UnionMinimum.lean` cover their documented laws and
+conditional finite minima, not implemented plan extraction, deterministic
+tie-breaking, replay correctness or Java refinement. Those new obligations
+remain open. The empirical verifier now explicitly blocks G18 while independent
+replay evidence is unavailable. `BatchParityGate` makes distance/component
+mismatches fatal, retains a first-incident source/hash and both decompositions,
+cancels dispatch and prevents ordinary file retries. Equal scalars also stop
+with `REPLAY_WITNESS_UNAVAILABLE`; this is not a claim of implemented replay.
+Partial JSON stays explicitly partial and no completed summary is published.
+There is no bypass flag authorizing another corpus run with missing witnesses.
+
+## Patch Boundary
+
+The retained `RepairProjection.sameProjectedNode` change compares children of
+order-insensitive nodes using a bijective matching, not their incidental list
+positions. The matching preserves multiplicity, retains ordered comparison
+for sequence nodes, and keeps operator, semantic payload, binding coordinate
+and container-kind checks. A shared finite step budget fails rather than
+returning a partial equality. Projection identity advances to v14.
+
+The bounded source regression now measures Fast 49 / certified 50 for the
+largest outlier, instead of the archived 49 / 88. Its residual is an explicit
+singleton `AND(ONE(...))` in the certified repair projection, not an unexplained
+scalar adjustment. The repair removes 38 units of this witness's 39-unit gap;
+it does not satisfy exact parity. Four original production-line pairs still
+measure 0 / 16 in both directions, and their missing composition stays visible
+in the tests rather than being mislabeled a completed fix.
+
+A separate singleton/parent-flattening prototype reached 0/0 on the reduced
+witness, but is **not retained**: the source-to-expanded-construction evidence
+link still needs a justified certificate bridge. The independent exporter
+also reports `UNCHECKABLE: redundant shape coordinates are outside the
+supported slice` on that witness. Recording an expanded construction as an
+extra source root is not a substitute for proving its link to the original.
+The conditional associativity and permutation lemmas in
+`SingletonComposition.lean` do not discharge that Java/certificate obligation.
+The four new correct-pool zero discrepancies therefore remain open.
+
+No full-corpus replay, new performance measurement or 0/61,598 parity claim is
+made for the patch. Partial JOIN rotations, binary/flat edit geometry, live
+temporal phase ordering, complete admitted-space minimization and public
+replay-plan extraction remain blockers before the next authorized corpus run.
+
+## Bounded Validation
+
+The final integrated `scripts/run_distance_parity_tests.sh` exits 0: three Lean
+files compile (20 lemmas), 4,590 numbered Java checks pass, and the saturation
+suite and fatal-gate unit checks pass. Two one-pair CLI tests exit nonzero as
+required, retain their witnesses, and produce no completed results. Four
+classification tests and six existing release-gate tests also pass. Known
+0/16 and 49/50 cases are expected BLOCKED boundaries in those tests, not parity
+successes. No full-corpus post-patch mismatch count has been measured.
+
+The integrated log is
+`stopped-investigation/gate-tests-20261107/final-regressions.log`; accompanying
+`final-source-hashes.txt` and `final-proof-tool-hashes.txt` bind the tested Java,
+proofs, runner, Python checks and JAR dependencies. Both hash inventories still
+match after the run. This is bounded regression evidence, not a completed
+mechanical closure or an independent certificate replay for unsupported inputs.
+The earlier `regressions.log` tested the withdrawn prototype and is not evidence
+for the final retained implementation. The independent investigation's
+`singleton-patch-20261107/FINAL.txt` records the rejected source-exposure step,
+both export failures and cleanup of its stopped disposable build.
+
+## Evidence
+
+### Proof-First Follow-Up Repairs
+
+The preceding v14 measurements and withdrawn prototype are historical. The
+follow-up v15 patch first checked `FlatExposure.lean`, then implemented a
+source-linked Java exposure step. It retains the original flat source endpoint
+and uses the graph's actual node-to-returned-invocation insertion/find equality
+as a certificate premise. Exact leaf, context, operator, result type and
+semantic profile are checked. It does **not** register an expanded expression
+as an additional trusted source root. The repair projection composes Boolean
+flattening after certified child collapse, retaining alternative representations
+under explicit finite budgets. JOIN, binder and temporal boundaries are not
+opened by this rule.
+
+The reduced singleton witness and all four original production-line correct-pool
+witnesses now measure **Fast 0 / certified 0** in both directions, with equal
+canonical observations. These are bounded correct-pool checks, not a new
+61,598-row paired-corpus measurement. The changed-membership negative control
+remains nonzero in both paths. The largest outlier remains **49 / 50**; its
+uncertified singleton-AND residual was not forcibly eliminated.
+
+Independent bundle replay for the new source-linked exposure record is still
+**BLOCKED**. The exporter rejects these records explicitly before emitting a
+bundle; the test verifies that no bundle is written. Local certificate checks
+and the Lean model do not establish universal Java refinement or independent
+wire verification. The older redundant-coordinate export limitation also
+remains open. Do not treat this patch as a completed certificate closure.
+
+The second repair checked `AugmentedPrelude.lean` before changing the augmented
+model writer. It uses Alloy's lexer and source positions to rename only the
+module-name span. A module-less input is preserved in full after a new header;
+existing module parameters, signatures, imports and surrounding text are not
+discarded. The previous unconditional first-line removal is gone. Thirty-one
+tests cover missing headers, first-line imports/signatures, comments, inline
+declarations, CRLF/tabs, path names and multiline parameterized modules.
+
+The final follow-up runner exits 0: five Lean files compile, 4,647 numbered Java
+checks pass, the saturation and fatal-gate suites pass, both one-pair CLI stop
+checks pass, and the four classification plus six release-gate Python tests
+pass. The exposure unit tests include wrong leaf/node/context/type/profile,
+missing insertion proof, repeated occurrences and a different-head barrier.
+
+On this workstation the final log and Java/proof/tool/dependency hashes are in
+`stopped-investigation/proof-first-patches-20261107/`. This remains bounded
+regression evidence. Full-corpus execution, heartbeat supervision, publication
+and tagging were not restarted. Remaining work includes independent exposure
+wire replay, the 49/50 residual, partial JOIN rotations, common positive-distance
+representation geometry, temporal-phase presentation, and independently
+generated/replayed ordered edit plans. The fail-closed replay gate stays active.
+
+### Residual Native Matrix Replay
+
+The next bounded Astra investigation added `MatrixReplay.lean` before the Java
+matrix replay APIs and the `DistanceReplayDiagnostics` postmortem CLI. Each
+engine supplies its own native representatives, selected bindings and cost
+functions. The checker consumes every child occurrence exactly once, checks
+ordered versus unordered matching and recomputes derivation charges without
+calling the distance search. Search/choice admission and native cost rules
+remain trusted here. Receipts explicitly say `complete=false` and do not grant
+public repair-plan or independent certificate authority.
+
+Replaying `coursesOld/both/xJnitBpFv9K74WNvf_inv14.als`, `inv14` versus `inv14c`,
+reproduces Fast **49 = 0 + 2 + 47** and certified **50 = 0 + 2 + 48**. The
+diverging matrix branch is Fast `ONE -> IN` at cost 40 versus certified
+`AND(ONE(...)) -> IN` at cost 41. The wrapper changes downstream child matching,
+not merely a separately adjustable scalar charge. Both directions are covered
+by bounded replay tests.
+
+The original source AND has two ONE children. Its recorded certificate has
+two fibers `[[0],[1]]` and distinct operand invocations (`e25` and `e47` in this
+probe), not a singleton partition. Projection-level deduplication does not
+establish the missing source-level equality certificate. The existing source
+partition/singleton guards are retained: **the 49/50 metric residual is not
+patched**. A sound repair must establish that occurrence-linked equality and
+its composition before admitting the collapsed representative.
+
+Parent review also reproduced a mutable-receipt aliasing bug: returning the
+checker's cached JSON snapshots allowed a caller to tamper with a source
+snapshot and verify it with that same checker. After checking the Lean
+endpoint-separation contract, the Java emitter now returns independent JSON
+copies. The regression failed before the patch and passes afterward. This is
+a diagnostic-integrity repair, not a change to either metric.
+
+Postmortem evidence is retained on the workstation under
+`stopped-investigation/opseq-astra-20261107/replay-SCotAJw9/`; controller tests,
+the aliasing reproducer and combined regressions are under
+`stopped-investigation/opseq-controller-20261107/`. Full temporal/quantifier
+edit plans, independent choice admission, source-certificate wire replay and
+complete Java/Lean correspondence remain blockers. No corpus-wide zero-gap
+claim follows from these bounded diagnostics.
+
+### Frozen Corpus Evidence
+
+The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
+On this workstation, the new read-only audit lives in
+`/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/natural-assessment-20261107/`.
+Its `summary.json` pins input hashes, `paired-mismatches.csv` lists all differing
+paired components, and `correct-pool-zero-disagreements.json` retains the six
+exact source pairs. Raw completed outputs remain in the run's original
+external directory. Do not mix these measurements with the older cohort or
+relabel the frozen JAR as a later implementation.

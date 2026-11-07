@@ -60,6 +60,58 @@ public final class CanonicalDistance {
                 temporalDistance, quantificationDistance, matrixDistance);
     }
 
+    /** Native matrix-only backtrace. Never a replacement for a complete public edit plan. */
+    public static org.json.JSONObject matrixReplay(Prepared left, Prepared right) {
+        DistanceBreakdown nativeResult = evaluate(left, right);
+        if (left.normalForms.size() != right.normalForms.size())
+            throw new IllegalStateException("MATRIX_REPLAY_UNALIGNED_PHASES");
+        if (left.normalForms.size() > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
+        MatrixAlignment coherent = bestCoherentMatrixAlignment(
+                left.normalForms, right.normalForms, left.metadata, right.metadata);
+        org.json.JSONArray phases = new org.json.JSONArray();
+        int cost = 0;
+        for (int i = 0; i < left.normalForms.size(); i++) {
+            NormalForm a = left.normalForms.get(i), b = right.normalForms.get(i);
+            Map<String, String> mapping = bestVariableMapping(a, b, coherent.mapping,
+                    coherent.lockedLeftNames, coherent.lockedRightNames);
+            EGraphDistanceContext context = new EGraphDistanceContext(mapping, left.metadata, right.metadata);
+            var replay = new is.fivefivefive.CanDis.metric.MatrixReplay<EGraphNode>(
+                    new is.fivefivefive.CanDis.metric.MatrixReplay.NativeCost<EGraphNode>() {
+                public String label(EGraphNode n) {
+                    return new org.json.JSONArray().put(n.getOpcode().toString())
+                            .put(String.valueOf(resultType(n))).put(String.valueOf(n.getSourceName()))
+                            .put(String.valueOf(atomIdentity(n)))
+                            .put(n.getOpcode() == EGraphNode.Opcode.CALL ? callIdentity(n) : "")
+                            .put(n.getFlexibleArityKind().toString()).put(n.isOrderInsensitive())
+                            .put(new java.util.TreeMap<>(mapping).toString()).toString();
+                }
+                public List<EGraphNode> children(EGraphNode n) { return n.getChildren(); }
+                public List<EGraphNode> alternatives(EGraphNode n) { return List.of(); }
+                public boolean unordered(EGraphNode a, EGraphNode b) {
+                    return a.getOpcode() == b.getOpcode() && a.isOrderInsensitive() && b.isOrderInsensitive();
+                }
+                public int size(EGraphNode n) { return eGraphSize(n); }
+                public int update(EGraphNode a, EGraphNode b) {
+                    return nodeUpdateCost(a, b, mapping, left.metadata, right.metadata);
+                }
+                public int distance(EGraphNode a, EGraphNode b) { return context.distance(a, b); }
+            });
+            org.json.JSONObject receipt = replay.capture(a.getMatrixEGraph(), b.getMatrixEGraph());
+            int checked = replay.verify(a.getMatrixEGraph(), b.getMatrixEGraph(), receipt);
+            cost = Math.addExact(cost, checked);
+            phases.put(new org.json.JSONObject().put("phase", i)
+                    .put("alphaMapping", new org.json.JSONObject(new java.util.TreeMap<>(mapping)))
+                    .put("receipt", receipt));
+        }
+        if (cost != nativeResult.matrixDistance())
+            throw new IllegalStateException("MATRIX_REPLAY_NATIVE_COST_MISMATCH");
+        return new org.json.JSONObject().put("arm", "fast").put("distance", nativeResult.distance())
+                .put("temporalDistance", nativeResult.temporalDistance())
+                .put("quantifierDistance", nativeResult.quantifierDistance())
+                .put("matrixDistance", nativeResult.matrixDistance()).put("replayedMatrixCost", cost)
+                .put("matrixReplayChecked", true).put("complete", false).put("phases", phases);
+    }
+
     public static final class DistanceBreakdown {
         private final int temporalDistance;
         private final int quantifierDistance;
