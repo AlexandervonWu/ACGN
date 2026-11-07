@@ -33,7 +33,7 @@ if [[ -n "${ACGN_EXPERIMENT_JAR:-}" ]]; then
     || { printf 'ACGN_EXPERIMENT_JAR is missing: %s\n' "$ACGN_EXPERIMENT_JAR" >&2; exit 2; }
   classpath="$ACGN_EXPERIMENT_JAR:$ROOT/lib/*"
 else
-  BUILD_DIR="$(mktemp -d /tmp/acgn-capability-benchmark.XXXXXX)"
+  BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/acgn-capability-benchmark.XXXXXX")"
   trap 'rm -rf "$BUILD_DIR"' EXIT
   mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)
   javac --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" \

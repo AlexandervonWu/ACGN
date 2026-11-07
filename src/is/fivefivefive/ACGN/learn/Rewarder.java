@@ -147,7 +147,8 @@ public class Rewarder {
                 null,
                 negativeExpression);
         A4Options options = new A4Options();
-        options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
+        // Alloy 6.2 DEFAULT is SAT4J; name lookup probes unrelated native solvers.
+        options.solver = kodkod.engine.satlab.SATFactory.DEFAULT;
         A4Solution posInstance = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), commandPositive, options);
         A4Solution negInstance = TranslateAlloyToKodkod.execute_command(rep, cm.getAllReachableSigs(), commandNegative, options);
         if (posInstance == null || negInstance == null) {
@@ -266,7 +267,7 @@ public class Rewarder {
             };
 
             A4Options options = new A4Options();
-            options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
+            options.solver = kodkod.engine.satlab.SATFactory.DEFAULT;
             Expr satCommand1 = CompUtil.parseOneExpression_fromString(cm, satCommandText1);
             Expr satCommand2 = CompUtil.parseOneExpression_fromString(cm, satCommandText2);
             // cm.addGlobal("l", CompUtil.parseOneExpression_fromString(cm, "List"));

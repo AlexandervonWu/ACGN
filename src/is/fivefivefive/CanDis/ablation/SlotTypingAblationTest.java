@@ -76,7 +76,34 @@ public final class SlotTypingAblationTest {
         check(new SlottedEGraph(true).compare(AlloyTerm.node("BF/AND", f, f), f).equivalent,
                 "typed ACI duplicate elimination");
         checkEightBindingPermutation();
+        checkSlotCensus();
         System.out.println("SlotTypingAblationTest: " + checks + " checks passed");
+    }
+
+    private static void checkSlotCensus() throws Exception {
+        List<Predicate> predicates = new ArrayList<>();
+        collect(new ModelUnit(null, CompUtil.parseEverything_fromString(A4Reporter.NOP,
+                "sig A {} sig B {}\n"
+                + "pred p[a:A] { all x,y:A | (some x:B | some x) and (let z=a | z in A) }\n"
+                + "pred q { all x:A | once some x implies always some x }\n"
+                + "pred r { some {x:A | some x} }\n"
+                + "pred empty { some A }\n")), predicates);
+        SlotCensus census = SlotCensus.fromPredicate(find(predicates, "p"));
+        check(census.total() == 5, "parameters, unused, shadowed, and let binders counted once");
+        check(census.byType().size() == 2 && census.byType().containsValue(4L)
+                && census.byType().containsValue(1L), "source slots partitioned by exact type");
+        check(SlotCensus.fromPredicate(find(predicates, "q")).total() == 1,
+                "sibling temporal usages do not duplicate source binder");
+        check(SlotCensus.fromPredicate(find(predicates, "r")).total() == 1, "comprehension binder counted");
+        check(SlotCensus.fromPredicate(find(predicates, "empty")).total() == 0, "zero slots is measured zero");
+        for (boolean typed : List.of(false, true)) {
+            AlloyTerm p = AlloyAstTermAdapter.fromPredicate(find(predicates, "p"), typed);
+            var stats = new SlottedEGraph(typed).compare(p, p).stats;
+            check(stats.slotsByType.values().stream().mapToLong(Long::longValue).sum() == stats.slots,
+                    "interface type histogram partitions slot total");
+            check(typed || stats.slotsByType.keySet().equals(java.util.Set.of("<erased>")),
+                    "erased slots are not reported as univ");
+        }
     }
 
     private static void checkEightBindingPermutation() throws Exception {

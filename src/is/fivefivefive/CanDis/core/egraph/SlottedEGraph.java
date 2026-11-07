@@ -20,6 +20,7 @@ import java.util.Set;
  * group. No temporal partitioning, prenexing, or project normal forms are used.
  */
 public final class SlottedEGraph implements AblationEngine {
+    public static final String VERSION = "slotted-independent-binding-blocks-v3";
     private static final int MAX_TERM_SIZE = 50_000;
     private final boolean typedSlots;
 
@@ -40,8 +41,7 @@ public final class SlottedEGraph implements AblationEngine {
     public static AlloyTerm normalForm(AlloyTerm term) {
         AlloyTerm current = SlotCanonicalizer.canonicalize(term);
         for (int iteration = 0; iteration < AlloyRewriteSystem.MAX_ITERATIONS; iteration++) {
-            AlloyRewriteSystem.Pass pass = AlloyRewriteSystem.rewriteOnce(
-                    current, AlloyRewriteSystem.ArityMode.VARIADIC);
+            AlloyRewriteSystem.Pass pass = AlloyRewriteSystem.rewriteSlottedOnce(current);
             if (pass.applications == 0 || pass.term.size() > MAX_TERM_SIZE) {
                 return current;
             }
@@ -49,6 +49,34 @@ public final class SlottedEGraph implements AblationEngine {
         }
         return current;
     }
+
+    /** Synthetic-only construction; callers MUST enforce an external process deadline. */
+    public Representation representUnbounded(AlloyTerm term) {
+        if (!typedSlots) term = term.eraseSlotTypes();
+        Core graph = new Core(typedSlots, true);
+        AlloyTerm frontier = SlotCanonicalizer.canonicalize(term, true);
+        Invocation root = graph.add(frontier);
+        long applications = 0;
+        long iterations = 0;
+        while (true) {
+            AlloyRewriteSystem.Pass pass = AlloyRewriteSystem.rewriteSlottedOnce(frontier);
+            if (pass.applications == 0) {
+                graph.rebuild();
+                return new Representation(frontier, graph.stats(applications, iterations));
+            }
+            applications += pass.applications;
+            iterations++;
+            AlloyTerm next = SlotCanonicalizer.canonicalize(pass.term, true);
+            graph.union(root, graph.add(next));
+            graph.rebuild();
+            if (next.equals(frontier)) {
+                return new Representation(next, graph.stats(applications, iterations));
+            }
+            frontier = next;
+        }
+    }
+
+    public record Representation(AlloyTerm frontier, EGraphStats stats) {}
 
     @Override
     public Result compare(AlloyTerm left, AlloyTerm right) {
@@ -69,10 +97,8 @@ public final class SlottedEGraph implements AblationEngine {
         long iterations = 0;
 
         for (int iteration = 0; iteration < AlloyRewriteSystem.MAX_ITERATIONS; iteration++) {
-            AlloyRewriteSystem.Pass leftPass = AlloyRewriteSystem.rewriteOnce(
-                    leftFrontier, AlloyRewriteSystem.ArityMode.VARIADIC);
-            AlloyRewriteSystem.Pass rightPass = AlloyRewriteSystem.rewriteOnce(
-                    rightFrontier, AlloyRewriteSystem.ArityMode.VARIADIC);
+            AlloyRewriteSystem.Pass leftPass = AlloyRewriteSystem.rewriteSlottedOnce(leftFrontier);
+            AlloyRewriteSystem.Pass rightPass = AlloyRewriteSystem.rewriteSlottedOnce(rightFrontier);
             int roundApplications = leftPass.applications + rightPass.applications;
             if (roundApplications == 0) {
                 break;
@@ -108,13 +134,19 @@ public final class SlottedEGraph implements AblationEngine {
         private final Map<AlloyTerm, Integer> externalSlots = new HashMap<>();
         private final List<String> externalTypes = new ArrayList<>();
         private final boolean typedSlots;
+        private final boolean uncapped;
         private Map<Shape, Invocation> hashcons = new HashMap<>();
         private long unions;
         private long rebuilds;
         private long redundantSlots;
 
         private Core(boolean typedSlots) {
+            this(typedSlots, false);
+        }
+
+        private Core(boolean typedSlots, boolean uncapped) {
             this.typedSlots = typedSlots;
+            this.uncapped = uncapped;
         }
 
         private Invocation add(AlloyTerm term) {
@@ -398,7 +430,7 @@ public final class SlottedEGraph implements AblationEngine {
             if (eclass.symmetries.add(initial)) {
                 queue.add(initial);
             }
-            while (!queue.isEmpty() && eclass.symmetries.size() < MAX_GROUP_SIZE) {
+            while (!queue.isEmpty() && (uncapped || eclass.symmetries.size() < MAX_GROUP_SIZE)) {
                 IntArrayKey next = queue.remove();
                 List<IntArrayKey> known = new ArrayList<>(eclass.symmetries);
                 for (IntArrayKey existing : known) {
@@ -410,7 +442,7 @@ public final class SlottedEGraph implements AblationEngine {
                     if (eclass.symmetries.add(composed)) {
                         queue.add(composed);
                     }
-                    if (eclass.symmetries.size() >= MAX_GROUP_SIZE) {
+                    if (!uncapped && eclass.symmetries.size() >= MAX_GROUP_SIZE) {
                         break;
                     }
                 }
@@ -475,7 +507,7 @@ public final class SlottedEGraph implements AblationEngine {
                 hashcons = rebuilt;
                 merged = unions != unionsBefore;
                 rounds++;
-            } while (merged && rounds < 16);
+            } while (merged && (uncapped || rounds < 16));
         }
 
         private CompactedShape compact(Shape shape, Invocation owner) {
@@ -525,6 +557,7 @@ public final class SlottedEGraph implements AblationEngine {
         }
 
         private EGraphStats stats(long applications, long iterations) {
+            Map<String, Long> slotsByType = new java.util.TreeMap<>();
             long eclasses = 0;
             long slots = 0;
             long mappings = 0;
@@ -536,6 +569,11 @@ public final class SlottedEGraph implements AblationEngine {
                 EClass eclass = classes.get(id);
                 eclasses++;
                 slots += eclass.slotCount;
+                if (typedSlots) {
+                    for (String type : eclass.slotTypes) slotsByType.merge(type, 1L, Long::sum);
+                } else if (eclass.slotCount > 0) {
+                    slotsByType.merge("<erased>", (long) eclass.slotCount, Long::sum);
+                }
                 mappings += (long) eclass.symmetries.size() * eclass.slotCount;
                 bytes += 64L + 4L * eclass.slotCount;
                 if (typedSlots) {
@@ -556,7 +594,7 @@ public final class SlottedEGraph implements AblationEngine {
             }
             bytes += classes.size() * 12L + hashcons.size() * 48L;
             return new EGraphStats(eclasses, records.size(), unions, rebuilds,
-                    applications, iterations, slots, mappings, redundantSlots, bytes);
+                    applications, iterations, slots, mappings, redundantSlots, bytes, slotsByType);
         }
 
         private static int[] correspondence(int[] sourceToContext, int[] targetToContext) {

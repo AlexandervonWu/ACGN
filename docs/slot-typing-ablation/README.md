@@ -37,6 +37,11 @@ semantic-completeness or certification claim.
 
 ## Reproduction
 
+For the synthetic experiment, use the implemented
+[uncapped, five-minute-per-predicate runtime pipeline](synthetic-runtime.md).
+It reports construction success rates and successful-runtime median/P95 for
+typed and untyped slots. The existing paired runner below still has finite caps.
+
 The [efficiency protocol](efficiency-protocol.md) defines paired repetitions,
 phase timers, cap accounting, watchdogs, and separate latency/throughput studies.
 It explicitly distinguishes current runner features from instrumentation still

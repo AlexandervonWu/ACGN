@@ -4,6 +4,23 @@ Status: experimental design, not measured results. The two arms already exist;
 additional timing/cap instrumentation and repeated-run supervision described
 below are implementation prerequisites, not available command-line features.
 
+The November 2026 instrumentation update implements source-slot and interface-slot
+censuses and separates AST-adapter CPU from comparison CPU in the natural-corpus
+arms. See [the census and CPU investigation](natural-slot-census-and-cpu.md).
+The finer phase timers, search-attempt counters, and repeated-run supervisor below
+remain planned. Previously recorded runs are not retroactively populated.
+
+## Synthetic execution update
+
+The synthetic-only [five-minute runner](synthetic-runtime.md) implements the
+subsequent requested policy: no permutation/symmetry/pass/term-size cutoffs,
+one isolated construction per predicate and arm, a 300-second process deadline,
+and success-only median/P95 with full-denominator success rates. For synthetic
+runs this supersedes the finite-budget, 30-second, repeated pair-comparison plan
+below. The remaining sections retain the original broader efficiency design;
+their optional warm/throughput/counter studies are not implied to be implemented
+by the synthetic runner. Existing non-synthetic arms retain their 8! limits.
+
 ## Question and treatment
 
 Does retaining parser-derived slot types reduce the cost of the same bounded
@@ -34,10 +51,12 @@ it. A result of no improvement is valid.
 - `EGraphAblationSuite` already runs isolated arm JVMs, records process CPU/RSS,
   samples heap every 10 ms, and writes manifest-bound reports. It currently runs
   untyped first, typed second, without a warm-up or repetition protocol.
-- `SlotCanonicalizer` enumerates declaration-local groups. These groups often
-  already have homogeneous domains even in the untyped arm. It does not simply
-  enumerate all type-erased variables globally. Therefore `n! / product(n_t!)`
-  is an illustrative upper-envelope ratio, not an implemented speedup prediction.
+- `SlotPermutationSearch` originally enumerated declaration-local groups, often
+  already homogeneous in both arms. Version `slotted-independent-binding-blocks-v3`
+  first combines eligible independent scalar ALL/SOME blocks; see
+  [the current contract](independent-binding-blocks.md). Other scope/dependency/
+  disjointness barriers remain. `n! / product(n_t!)` is a candidate-space ratio
+  for an admitted combined block, not a runtime speedup prediction.
 - The declaration-candidate and e-class symmetry-group limits are now both
   **40,320 (8!)**, raised from 720. A single eight-variable declaration fits its
   candidate limit; multiple declarations share the search budget. Larger

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-work="$(mktemp -d /tmp/acgn-bounded-java-tests.XXXXXX)"
+work="$(mktemp -d "${TMPDIR:-/tmp}/acgn-bounded-java-tests.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
 classes="$work/classes"
 mkdir -p "$classes"
@@ -24,6 +24,7 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
 
 tests=(
   is.fivefivefive.CanDis.DependencyCompatibilityTest
+  is.fivefivefive.ACGN.learn.RewarderConcurrencyTest
   is.fivefivefive.CanDis.Section3AssuranceTraceabilityTest
   is.fivefivefive.CanDis.assurance.ContractDecompositionTest
   is.fivefivefive.CanDis.AssuranceTestExecutionCoverageTest
@@ -58,6 +59,8 @@ tests=(
   is.fivefivefive.CanDis.VisualizationAnalysisServiceTest
   is.fivefivefive.CanDis.VisualizationProcessRunnerTest
   is.fivefivefive.CanDis.ablation.EGraphAblationTest
+  is.fivefivefive.CanDis.core.egraph.SlotPermutationSearchTest
+  is.fivefivefive.CanDis.core.egraph.SlotBindingBlocksTest
   is.fivefivefive.CanDis.metric.QuotientRepairDistanceTest
   is.fivefivefive.CanDis.theory.TheoryFoundationsTest
   is.fivefivefive.CanDis.theory.TheoryPortsTest
@@ -76,6 +79,8 @@ tests=(
 
 "${LEAN_BIN:-lean}" -o "$work/TemporalCommandGuard.olean" \
   "$ROOT/docs/temporal-capability-solver/TemporalCommandGuard.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/PartitionedPermutation.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/IndependentBindingBlocks.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"

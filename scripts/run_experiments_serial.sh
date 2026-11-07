@@ -160,7 +160,7 @@ if [[ -n "${ACGN_EXPERIMENT_JAR:-}" ]]; then
   stage "Using frozen experiment JAR $ACGN_EXPERIMENT_JAR"
   classpath="$ACGN_EXPERIMENT_JAR:$ROOT/lib/*"
 else
-  BUILD_DIR="$(mktemp -d /tmp/acgn-serial-experiments.XXXXXX)"
+  BUILD_DIR="$(mktemp -d "${TMPDIR:-/tmp}/acgn-serial-experiments.XXXXXX")"
   trap 'rm -rf "$BUILD_DIR"' EXIT
   stage "Compiling experiment classes"
   mapfile -t sources < <(find "$ROOT/src" -name '*.java' -type f | sort)

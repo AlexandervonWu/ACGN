@@ -11,3 +11,7 @@ __pycache__/
 node_modules/
 /frontend/dist/
 .lake/
+
+# Bulk experiment data lives on external storage; retain reports in Git.
+/distance_results/distances.json
+/alloy4fun-augmented/index.json

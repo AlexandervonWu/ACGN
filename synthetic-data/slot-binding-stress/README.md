@@ -106,6 +106,13 @@ changed files. Use `--output /tmp/new-slot-corpus` to generate independently.
 
 ## Later rewriting benchmark
 
+The dedicated [synthetic runtime runner](../../docs/slot-typing-ablation/synthetic-runtime.md)
+now constructs each of the 500 predicates independently in both arms, without
+search/pass/term-size caps and with a five-minute process deadline per predicate.
+Use it for the requested success rates and successful-runtime median/P95.
+The commands below remain the older finite-budget **pair-comparison** experiment,
+not the new per-predicate runtime measurement.
+
 The controlled arms are `slotted-egraph` and `slotted-egraph-typed`. Both keep
 declarations and scopes; only slot type colors differ. Use `models/`, never the
 dataset root (which also contains validation probes). Start with a smoke run:

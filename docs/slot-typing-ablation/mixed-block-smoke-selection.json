@@ -1,0 +1,20 @@
+{
+  "schema": "mixed-independent-bind-block-smoke-v1",
+  "root": ".",
+  "smokeDeadlineSeconds": 15,
+  "note": "Existing source files only. Larger cases are stress inputs; deadlines and finite search caps must be reported separately from equivalence results.",
+  "natural": [
+    "classified-data/classroom_fol/correct/fMt3ZNQtXfsRyeJAT_inv9.als",
+    "classified-data/classroom_fol/under/9GoZNixvEDdXBx6g6_inv14.als",
+    "classified-data/socialMedia/over/drFaWXS9HNw6ouc4s_inv3.als"
+  ],
+  "synthetic": [
+    {"path": "synthetic-data/slot-binding-stress/models/declaration_grouping/CORRECT/generated_stress0030.als", "bindings": 8, "types": 2, "postCombinationSmoke": true},
+    {"path": "synthetic-data/slot-binding-stress/models/declaration_grouping/CORRECT/generated_stress0031.als", "bindings": 16, "types": 2, "postCombinationSmoke": false},
+    {"path": "synthetic-data/slot-binding-stress/models/declaration_grouping/CORRECT/generated_stress0032.als", "bindings": 32, "types": 4, "postCombinationSmoke": false},
+    {"path": "synthetic-data/slot-binding-stress/models/independent_block_exchange/CORRECT/generated_stress0040.als", "bindings": 8, "types": 2, "postCombinationSmoke": true},
+    {"path": "synthetic-data/slot-binding-stress/models/independent_block_exchange/CORRECT/generated_stress0041.als", "bindings": 16, "types": 2, "postCombinationSmoke": false},
+    {"path": "synthetic-data/slot-binding-stress/models/independent_block_exchange/CORRECT/generated_stress0042.als", "bindings": 32, "types": 4, "postCombinationSmoke": false},
+    {"path": "synthetic-data/slot-binding-stress/models/negative_cross_type/NEGATIVE/generated_stress0210.als", "bindings": 8, "types": 2, "postCombinationSmoke": true}
+  ]
+}
