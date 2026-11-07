@@ -28,7 +28,7 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v12";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v14-canonical-orbit-ties";
     private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
@@ -103,7 +103,10 @@ public final class QuotientRepairDistance {
                 .put("matrixReplayChecked", true).put("complete", false).put("phases", phases)
                 .put("selectedGlobalMapping", new org.json.JSONArray(stats.selectedMapping == null ? new int[0] : stats.selectedMapping))
                 .put("selectedQuantifierCorrespondence", stats.selectedCorrespondence == null
-                        ? new org.json.JSONObject() : new org.json.JSONObject(stats.selectedCorrespondence));
+                        ? new org.json.JSONObject() : new org.json.JSONObject(stats.selectedCorrespondence))
+                .put("selectedDeclarationPermutation",new org.json.JSONObject()
+                        .put("left",new org.json.JSONArray(stats.selectedDeclarationLeft == null ? new int[0] : stats.selectedDeclarationLeft))
+                        .put("right",new org.json.JSONArray(stats.selectedDeclarationRight == null ? new int[0] : stats.selectedDeclarationRight)));
     }
 
     /** Keeps native matrix choices and backtraces compatible minimum declaration paths. */
@@ -125,6 +128,9 @@ public final class QuotientRepairDistance {
         QuantificationAlignmentSpace space = QuantificationAlignmentSpace.create(left.phases(),right.phases());
         GlobalBindingIndex a = GlobalBindingIndex.create(left.phases(),aligned);
         GlobalBindingIndex b = GlobalBindingIndex.create(right.phases(),aligned);
+        org.json.JSONObject permutation = matrix.getJSONObject("selectedDeclarationPermutation");
+        int[] leftPermutation = declarationPermutation(a,permutation.getJSONArray("left"));
+        int[] rightPermutation = declarationPermutation(b,permutation.getJSONArray("right"));
         Map<Integer,Integer> selected = new LinkedHashMap<>(), actual = new LinkedHashMap<>();
         org.json.JSONObject chosen = matrix.getJSONObject("selectedQuantifierCorrespondence");
         for (String key : chosen.keySet()) addInjectiveCorrespondence(selected,Integer.parseInt(key),
@@ -132,7 +138,10 @@ public final class QuotientRepairDistance {
         org.json.JSONArray components = new org.json.JSONArray();
         int cost = 0;
         for (int index = 0; index < space.components.size(); index++) {
-            QuantifierEditComponent component = space.components.get(index);
+            QuantifierEditComponent original = space.components.get(index);
+            QuantifierEditComponent component = new QuantifierEditComponent(
+                    permuteDeclarations(original.left,a,leftPermutation),
+                    permuteDeclarations(original.right,b,rightPermutation),original.distance);
             List<DeclarationReplay.Atom> as = declarationAtoms(component.left);
             List<DeclarationReplay.Atom> bs = declarationAtoms(component.right);
             org.json.JSONObject receipt = DeclarationReplay.capture(as,bs,component.distance,(i,j) -> {
@@ -176,6 +185,34 @@ public final class QuotientRepairDistance {
                 .put("sliceReplayChecked",true).put("complete",false).put("selectedPaidCorrespondenceChecked",true)
                 .put("selectedPaidCorrespondence",new org.json.JSONObject(actual))
                 .put("orderingAdmissionChecked",false).put("matrixChoiceAdmissionChecked",false);
+    }
+
+    private static List<Binding> orbitBindings(GlobalBindingIndex index) {
+        return index.bindings.stream().map(value -> value.binding).toList();
+    }
+
+    private static int[] declarationPermutation(GlobalBindingIndex index,org.json.JSONArray wire) {
+        if(wire.length()==0) return CertifiedDeclarationOrbit.identity(index.bindings.size());
+        int[] permutation=new int[wire.length()];
+        for(int i=0;i<permutation.length;i++) permutation[i]=DeclarationReplay.integer(
+                new org.json.JSONObject().put("coordinate",wire.get(i)),"coordinate");
+        CertifiedDeclarationOrbit.requirePermutation(orbitBindings(index),permutation);
+        if(index.phases.size()!=1)
+            for(int i=0;i<permutation.length;i++) DeclarationReplay.require(permutation[i]==i,"Multiphase declaration orbit unsupported");
+        return permutation;
+    }
+
+    private static List<IndexedDeclaration> permuteDeclarations(List<IndexedDeclaration> source,
+            GlobalBindingIndex bindings,int[] permutation) {
+        var result=new ArrayList<IndexedDeclaration>();
+        for(var value:source) {
+            Integer index=bindings.indices.get(value.identity);
+            if(index==null || permutation[index]==index) { result.add(value); continue; }
+            var target=bindings.binding(permutation[index]);
+            DeclarationReplay.require(value.declaration.sameRepairTuple(target.binding.declaration()),"Changed orbit tuple");
+            result.add(new IndexedDeclaration(target.binding.declaration(),target.identity,target.binding.ordinal()));
+        }
+        return result;
     }
 
     private static List<DeclarationReplay.Atom> declarationAtoms(List<IndexedDeclaration> declarations) {
@@ -726,17 +763,34 @@ public final class QuotientRepairDistance {
 
         int fixedUnalignedCost = result;
         int[] best = {Integer.MAX_VALUE};
+        boolean[] bestCanonical = {false};
         quantification.forEachEditAlignment(
                 leftBindings, rightBindings, correspondence -> {
-            int candidate = matrixDistanceForAlignment(
-                    leftBindings, rightBindings, correspondence, stats);
-            if (stats.capture && candidate < best[0]) {
-                stats.selectedMapping = stats.candidateMapping.clone();
-                stats.selectedLeft = leftBindings;
-                stats.selectedRight = rightBindings;
-                stats.selectedCorrespondence = new java.util.TreeMap<>(correspondence);
-            }
-            best[0] = Math.min(best[0], candidate);
+            Consumer<CertifiedDeclarationOrbit.Choice> evaluate = choice -> {
+                int candidate = matrixDistanceForAlignment(
+                        leftBindings, rightBindings, choice.correspondence(), stats);
+                boolean canonical = CertifiedDeclarationOrbit.isIdentity(choice);
+                // An orbit from an early DP path can tie a later canonical path.
+                // Apply witness priority globally, without changing the minimum.
+                if (CertifiedDeclarationOrbit.prefer(candidate,best[0],canonical,bestCanonical[0])) {
+                    if (stats.capture) {
+                        stats.selectedMapping = stats.candidateMapping.clone();
+                        stats.selectedLeft = leftBindings;
+                        stats.selectedRight = rightBindings;
+                        stats.selectedCorrespondence = new java.util.TreeMap<>(choice.correspondence());
+                        stats.selectedDeclarationLeft = choice.left().clone();
+                        stats.selectedDeclarationRight = choice.right().clone();
+                    }
+                    best[0] = candidate;
+                    bestCanonical[0] = canonical;
+                }
+            };
+            if(left.size()==1 && right.size()==1)
+                CertifiedDeclarationOrbit.forEach(orbitBindings(leftBindings),orbitBindings(rightBindings),correspondence,evaluate,
+                        stats.declarationOrbitBudget);
+            else evaluate.accept(new CertifiedDeclarationOrbit.Choice(correspondence,
+                    CertifiedDeclarationOrbit.identity(leftBindings.bindings.size()),
+                    CertifiedDeclarationOrbit.identity(rightBindings.bindings.size())));
         }, stats);
         if (best[0] == Integer.MAX_VALUE) {
             throw new IllegalStateException(
@@ -1758,6 +1812,9 @@ public final class QuotientRepairDistance {
         private GlobalBindingIndex selectedLeft;
         private GlobalBindingIndex selectedRight;
         private Map<Integer, Integer> selectedCorrespondence;
+        private int[] selectedDeclarationLeft;
+        private int[] selectedDeclarationRight;
+        private final CertifiedDeclarationOrbit.Budget declarationOrbitBudget = new CertifiedDeclarationOrbit.Budget();
         private long alphaAlignments;
         private long quantifierAlignments;
         private long scopeAlignments;

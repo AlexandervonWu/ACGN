@@ -932,6 +932,72 @@ diagnostic CLI cases, three strict CLI cases, native replay CLI checks, ten
 Python checks and fourteen supervisor tests. Input and receipt hashes match.
 Full public/wire action linkage and Java/Lean correspondence remain **BLOCKED**.
 
+### Certified Declaration Orbit Repair
+
+Diagnostic run `diagnostic-parity-20261107T231400Z`, from commit
+`bdc23faf1a38029aa21655e90bfc99877f6a6859`, stopped on
+`classroom_fol/both/SASEHD8jPo2HgsuoJ_inv14.als`, `inv14` / `inv14c`.
+Fast was `[27,0,1,26]`, certified `[28,0,1,27]`. Processes stopped and both
+manifest identity checks passed before the sole repair assignment.
+
+The shorter Fast receipt was examined first. Its matrix replay costs 26 and
+standalone declaration replay costs one, but their original fixed links
+conflict (`s -> c` versus `s -> p`). They are not a common public sequence.
+Supplemental replay uses an actual source-certified swap of the two outer
+ALL Person coordinates: paid `t -> c`, unchanged `s -> p`. The same matrix
+operations replay at 26 under that compatible mapping. This source-linked
+local completion supports the 27-cost witness without pretending the old
+unlinked receipts were already sufficient.
+
+Certified search omitted that admitted declaration permutation. It now
+transports paid correspondences within the full symmetric classes checked
+by the existing projection, retaining source/type/owner premises and recording
+the selected permutation for declaration replay. Both directions produce
+`[27,0,1,26]`; Fast receipts remain unchanged. One certified matrix head charge
+changes from one to zero, with literal types and operation topology retained.
+Nested local binders stay in place; no domain is silently assumed inhabited.
+
+`CertifiedDeclarationOrbit.lean` compiled before the Java edit. It proves
+homogeneous ALL/SOME exchange, typed charge preservation, owner isolation and
+the impossibility of conflicting fixed receipt links. Admission additionally
+requires actual certified orbits, path-erasure evidence and matching observed
+types/domains. Enumeration is streaming, identity-first on ties, and limited
+to 64 bindings with a shared 100,000-visit budget that fails closed. Multiphase
+permutation remains outside this extension. Bounded Alloy and corrupted-source,
+ownership, permutation and adversarial-budget controls supplement these laws.
+
+Frozen Astra evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/nested28-e167DdZT/evidence.json`,
+SHA-256 `da4671026a57d5a7f54420e9833fb0c8725cbfedcf12043d1275655df4168c2f`.
+Parent integration logs, receipt hashes and input inventory are under
+`ACGN/intermediate/declaration-orbit-integration-20261107-ZTHLQ4/`.
+The first parent combined run stopped at `PaidDeclarationShorterReplayTest`
+with `AssertionError: archived scoped mapping`. Frozen inputs were unchanged.
+No commit or corpus restart followed that failed integration. The follow-up
+independently replayed both 29-cost witnesses in both directions using actual
+source-certified whole permutations. Both were valid. Identity-first search
+was local to each declaration-DP path, allowing an earlier orbit alternative
+to defeat a later canonical witness on an equal-cost tie. Global canonical
+tie priority restores the archived witness while retaining strictly shorter
+orbit alternatives. A Lean minimum-preservation contract preceded this Java
+fix; no CLI scalar expectation changed.
+
+Revised evidence is `opseq-astra-20261107/orbit-regression-Jv6nCC8j/evidence.json`
+under the same investigation root, SHA-256
+`5084ce6263eb08b605309881c5631eb11fb5388044ffac1739bee6678b408259`.
+It records 9,587 focused checks, actual source/permutation certificate checks,
+both witnesses in both directions, corrupted-evidence controls and prior
+focused replays. Parent combined reintegration passed from a fresh build:
+28 Lean files, 22,550 numbered Java checks, 12 diagnostic CLI cases, three
+strict CLI cases, replay CLI checks, 10 Python tests and 14 launcher tests.
+Source/dataset and receipt inventories remained unchanged. Logs and inventories
+are retained under
+`ACGN/intermediate/declaration-orbit-reintegration-20261107-Fde2m8/`;
+the regression log SHA-256 is
+`549f0461c2921c82376d8fa66888ffefb407df6499f0524c4a7e4d0b240b9712`.
+Full public operation linkage, independent wire replay and Java/Lean
+correspondence remain **BLOCKED**; no full-corpus completion is claimed.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
