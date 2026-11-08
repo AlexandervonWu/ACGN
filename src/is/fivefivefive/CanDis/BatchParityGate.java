@@ -16,10 +16,13 @@ import org.json.JSONObject;
 
 /** First-incident latch: mismatches are fatal, never ordinary retryable file errors. */
 final class BatchParityGate {
-    enum Mode { STRICT_CERTIFIED, DIAGNOSTIC_COMPONENTS }
+    enum Mode { STRICT_CERTIFIED, DIAGNOSTIC_COMPONENTS, DIAGNOSTIC_OPERATIONS }
     private final Path incidentPath;
     private final Mode mode;
     private volatile Violation first;
+    private final long[] operationCounts=new long[NativeOperationComparison.Status.values().length];
+    private final java.util.Map<String,Long> uncheckedReasons=new java.util.TreeMap<>();
+    private final org.json.JSONArray uncheckedExamples=new org.json.JSONArray();
 
     BatchParityGate(Path output) {
         this(output, Mode.STRICT_CERTIFIED);
@@ -28,7 +31,8 @@ final class BatchParityGate {
     BatchParityGate(Path output, Mode mode) {
         this.mode = java.util.Objects.requireNonNull(mode);
         incidentPath = output.resolve("parity-incident.json");
-        if (Files.exists(incidentPath)) {
+        if (Files.exists(incidentPath) || mode==Mode.DIAGNOSTIC_OPERATIONS
+                && Files.exists(incidentPath.resolveSibling("parity-native-replay.json"))) {
             throw new IllegalStateException("Refusing to overwrite an unresolved parity incident: " + incidentPath);
         }
     }
@@ -67,8 +71,62 @@ final class BatchParityGate {
             stop(source, left, right, fast, certified, "INEXACT_SEARCH", nativeReplay);
     }
 
+    boolean checksOperations() { return mode==Mode.DIAGNOSTIC_OPERATIONS; }
+
+    NativeOperationComparison.Result requireOperations(Path source,String left,String right,int[] fast,int[] certified,
+            Supplier<NativeOperationComparison.Result> comparison) {
+        checkRunning();
+        if(!checksOperations()) return null;
+        NativeOperationComparison.Result result;
+        byte[] originalSource=null;
+        try {
+            byte[] before=Files.readAllBytes(source);originalSource=before;
+            result=comparison.get();
+            if(result==null || !java.util.Arrays.equals(before,Files.readAllBytes(source)))
+                result=NativeOperationComparison.invalid("SOURCE_CHANGED_OR_MISSING_OPERATION_RESULT");
+            result=result.bindScanCosts(fast,certified);
+        } catch(IOException | RuntimeException error) {
+            if(error instanceof Violation violation) throw violation;
+            result=NativeOperationComparison.invalid("OPERATION_COMPARISON_EXECUTION_FAILURE: "+error.getClass().getSimpleName());
+        }
+        synchronized(this) {
+            checkRunning();
+            operationCounts[result.status().ordinal()]++;
+            if(result.status()==NativeOperationComparison.Status.UNCHECKABLE) {
+                String reason=result.reason();
+                if(!uncheckedReasons.containsKey(reason) && uncheckedReasons.size()>=32) reason="OTHER_UNCHECKABLE";
+                uncheckedReasons.merge(reason,1L,Long::sum);
+                if(uncheckedExamples.length()<8) uncheckedExamples.put(new JSONObject()
+                        .put("source",source.toString()).put("leftPredicate",left).put("rightPredicate",right).put("reason",reason));
+            }
+            if(result.status()==NativeOperationComparison.Status.MISMATCH || result.status()==NativeOperationComparison.Status.INVALID_REPLAY) {
+                final var retained=result;
+                stop(source,left,right,fast,certified,result.status()==NativeOperationComparison.Status.MISMATCH
+                        ?"NATIVE_OPERATION_MISMATCH":"INVALID_NATIVE_REPLAY",retained::evidence,originalSource);
+            }
+        }
+        return result;
+    }
+
+    synchronized JSONObject operationCoverage() {
+        long attempted=0;for(long count:operationCounts)attempted+=count;
+        return new JSONObject().put("schema",NativeOperationComparison.SCHEMA).put("attempted",attempted)
+                .put("matched",operationCounts[NativeOperationComparison.Status.MATCHED.ordinal()])
+                .put("unchecked",operationCounts[NativeOperationComparison.Status.UNCHECKABLE.ordinal()])
+                .put("mismatches",operationCounts[NativeOperationComparison.Status.MISMATCH.ordinal()])
+                .put("invalidReplay",operationCounts[NativeOperationComparison.Status.INVALID_REPLAY.ordinal()])
+                .put("uncheckedReasons",new JSONObject(uncheckedReasons))
+                .put("examples",new org.json.JSONArray(uncheckedExamples.toString()))
+                .put("certificationStatus","BLOCKED").put("coverageUnit","completed pair comparison attempts; workers may finish ahead of ordered result writing");
+    }
+
     private synchronized void stop(Path source, String left, String right,
             int[] fast, int[] certified, String reason, Supplier<JSONObject> nativeReplay) {
+        stop(source,left,right,fast,certified,reason,nativeReplay,null);
+    }
+
+    private synchronized void stop(Path source,String left,String right,int[] fast,int[] certified,String reason,
+            Supplier<JSONObject> nativeReplay,byte[] originalSource) {
         if (first != null) throw first;
         Violation failure = new Violation(reason + ": " + source + " (" + left + ", " + right + ")");
         // Publish the latch before IO or replay work so other workers stop immediately.
@@ -89,8 +147,9 @@ final class BatchParityGate {
                 .put("replayStatus", "UNAVAILABLE")
                 .put("nativeReplayFile", nativeReplay == null ? JSONObject.NULL : "parity-native-replay.json")
                 .put("nextAction", "Inspect this source pair; do not retry or restart unchanged.");
+        if(checksOperations()) incident.put("nativeOperationReplay",operationCoverage());
         try {
-            byte[] contents = Files.readAllBytes(source);
+            byte[] contents = originalSource==null?Files.readAllBytes(source):originalSource;
             incident.put("sourceSha256", HexFormat.of().formatHex(
                     MessageDigest.getInstance("SHA-256").digest(contents)));
             // Retain the exact source, including declarations needed to replay this pair.

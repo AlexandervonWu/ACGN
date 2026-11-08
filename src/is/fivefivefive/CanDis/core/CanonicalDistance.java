@@ -131,6 +131,26 @@ public final class CanonicalDistance {
                         node -> node.label,node -> node.children));
     }
 
+    /** Fixed-choice diagnostic verifier; performs no distance search or admission. */
+    public static int verifyFixedMatrixReplay(Prepared left,Prepared right,Map<String,String> labels,
+            Map<String,String> completed,org.json.JSONObject receipt) {
+        if(left.normalForms.size()!=1 || right.normalForms.size()!=1)
+            throw new IllegalArgumentException("Single-phase fixed replay required");
+        return matrixReplayEngine(labels,completed,left,right,false).verify(
+                left.normalForms.get(0).getMatrixEGraph(),right.normalForms.get(0).getMatrixEGraph(),receipt);
+    }
+
+    /** Original-coordinate declaration snapshots, not permission to reorder them. */
+    public static List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom> diagnosticDeclarationAtoms(NormalForm form) {
+        return List.copyOf(declarationAtoms(form.getMatrixQuantiVars(),form.getMatrixQuantiVars(),0));
+    }
+
+    public static List<Integer> diagnosticDeclarationOrder(NormalForm form) {
+        var source=form.getMatrixQuantiVars(); var indices=new IdentityHashMap<QuantiVar,Integer>();
+        for(int i=0;i<source.size();i++) indices.put(source.get(i),i);
+        return canonicalQuantifierOrder(source).stream().map(indices::get).toList();
+    }
+
     private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,org.json.JSONObject matrix) {
         int expected = matrix.getInt("quantifierDistance");
         Map<String,String> paid = new HashMap<>();
@@ -425,6 +445,9 @@ public final class CanonicalDistance {
         private final int size;
         private final EGraphMetadata metadata;
         private final EGraphNode.ReachabilityStats eGraphStats;
+
+        /** Frozen metric views for bounded endpoint-linked diagnostic replay. */
+        public List<NormalForm> comparisonForms() { return List.copyOf(normalForms); }
 
         private Prepared(List<NormalForm> sourceForms,List<NormalForm> normalForms, TemporalTree temporalTree, int size) {
             this.sourceForms=sourceForms;

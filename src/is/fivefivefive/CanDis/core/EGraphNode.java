@@ -7027,7 +7027,7 @@ public final class EGraphNode {
         return result;
     }
 
-    boolean hasComparisonLocalCoordinate() { return comparisonLocalCoordinate; }
+    public boolean hasComparisonLocalCoordinate() { return comparisonLocalCoordinate; }
     boolean hasComparisonRegisteredBinding() { return comparisonRegisteredBinding; }
 
     private static final class FastComparison {

@@ -1,11 +1,38 @@
 # Walkthrough-First Replay-Guided Repairs
 
+## Current Overnight Authorization
+
+The latest user instruction supersedes the foreground-only scheduling below:
+rerun the full corpus, stop at the first concrete mismatch between replayed
+Fast Rewrite and Certificate-Integrated operations, extract its pattern,
+locate the earliest faulty stage with a minimal bounded static walkthrough of
+the data traces, repair, run the combined regression once, and restart from
+the beginning in a fresh manifest-bound directory. Do not bypass walkthroughs
+or launch competing runs/owners. Retain all earlier focused witnesses.
+
+The operation scan must compare independently replayed, endpoint-linked
+selected actions, including zero-cost actions and original binding coordinates.
+Component equality alone is not operation equality. Unsupported/ambiguous
+correspondence is explicitly unchecked, never matched; report checked and
+unchecked coverage separately. A concrete action mismatch, invalid replay,
+distance/component discrepancy or execution/soundness failure stops the run.
+Missing public certification remains BLOCKED and does not become a false
+operation mismatch. No unrelated exporter/collision detours are authorized.
+
+Use the workstation controller's current overnight SOP for coordination and
+the existing resource/retention boundaries below. After a tested repair,
+verify source/dataset hashes and make a local commit before restarting.
+No push, tag, release or dataset edits are authorized. A completed scan with
+unchecked pairs is an incomplete assessment, not full-corpus parity.
+
+## Prior Scheduling Context
+
 The author authorized automatic progression from one validated repair to the
 next on 2026-11-07. This does not authorize publication, scalar substitution,
 weaker certification, changes to classified-data, or concurrent recovery.
 The previously authorized diagnostic mode remains distinct from strict mode.
 
-The latest authorization replaces isolated witness-by-witness patching with a
+The earlier authorization replaced isolated witness-by-witness patching with a
 foreground walkthrough-and-repair cycle. The competing heartbeat was cancelled;
 do not recreate it or restart the corpus after individual patches. Retained mismatches are
 focused diagnostic inputs and regression controls, not permission to bypass the

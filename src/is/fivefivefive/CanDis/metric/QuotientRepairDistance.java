@@ -93,6 +93,14 @@ public final class QuotientRepairDistance {
                         .put("right",new org.json.JSONArray(stats.selectedDeclarationRight == null ? new int[0] : stats.selectedDeclarationRight)));
     }
 
+    /** Fixed-choice diagnostic verifier; neither chooses a mapping nor grants admission. */
+    public static int verifyFixedMatrixReplay(RepairView left,RepairView right,int[] labels,int[] completed,
+            org.json.JSONObject receipt) {
+        if(left.phases().size()!=1 || right.phases().size()!=1)
+            throw new IllegalArgumentException("Single-phase fixed replay required");
+        return matrixReplayEngine(labels,completed,false).verify(left.phases().get(0).matrix(),right.phases().get(0).matrix(),receipt);
+    }
+
     private static MatrixReplay<Node> matrixReplayEngine(int[] labels,int[] costs,boolean search) {
         var context=new MatrixDistanceContext(costs);
         return new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
