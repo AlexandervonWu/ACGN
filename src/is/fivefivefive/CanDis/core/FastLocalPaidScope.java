@@ -12,6 +12,7 @@ final class FastLocalPaidScope {
     private final Set<String> usedOwners = new HashSet<>();
     private final Map<Long,LocalPlan> sourcePlans = new HashMap<>();
     private final Map<Long,QuantiVar> sourceVariables = new HashMap<>();
+    private final Set<QuantiVar> outerBindings = Collections.newSetFromMap(new IdentityHashMap<>());
     private final ExactAlloyType module;
     private int visits;
     private boolean checkingSource = true;
@@ -29,6 +30,7 @@ final class FastLocalPaidScope {
         for(var q:form.getMatrixQuantiVars()) if(outer.put(q.getName(),q)!=null) return 0;
         if(outer.isEmpty()) return 0;
         var check=new FastLocalPaidScope(form.getMatrixQuantiVars().get(0).getExactAlloyType());
+        check.outerBindings.addAll(form.getMatrixQuantiVars());
         for(var q:form.getLocalQuantiVars()) {
             if(outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return 0;
         }
@@ -66,6 +68,40 @@ final class FastLocalPaidScope {
         };
     }
 
+    private boolean retainedDomain(EGraphNode domain,QuantiVar q,Map<String,QuantiVar> visible,
+            int depth,long parent) {
+        if(domain.getOpcode()!=EGraphNode.Opcode.ONE || domain.getChildren().size()!=1
+                || !typed(domain,q)) return false;
+        var expression=domain.getChildren().get(0);
+        if(!typed(expression,q)) return false;
+        if(expression.getOpcode()==EGraphNode.Opcode.GLOBALBINDING)
+            return expression.getChildren().isEmpty();
+        // A retained unary carrier-minus-outer domain is not hoisted or erased.
+        // Check its dependency before introducing the local owner (Lean:
+        // RetainedDifferenceDomain.no_capture/domain_transport).
+        if(expression.getOpcode()!=EGraphNode.Opcode.MINUS || expression.getChildren().size()!=2
+                || q.getExactAlloyType().relationArity()!=1) return false;
+        var carrier=expression.getChildren().get(0); var dependency=expression.getChildren().get(1);
+        var outer=visible.get(dependency.getAlphaName());
+        return carrier.getOpcode()==EGraphNode.Opcode.GLOBALBINDING && carrier.getChildren().isEmpty()
+                && typed(carrier,q) && dependency.getOpcode()==EGraphNode.Opcode.VARIABLE
+                && typed(dependency,q) && outerBindings.contains(outer)
+                && walk(dependency,visible,depth+1,parent);
+    }
+
+    /** Called only after both endpoints satisfy the at-most-five-node domain grammar. */
+    private static boolean sameDomain(EGraphNode original,EGraphNode comparison) {
+        if(original.getOpcode()!=comparison.getOpcode()
+                || original.getSourceOccurrenceLineage()!=comparison.getSourceOccurrenceLineage()
+                || !original.getExactAlloyType().sameOccurrenceEvidenceAs(comparison.getExactAlloyType())
+                || !Objects.equals(original.getSemanticIdentity(),comparison.getSemanticIdentity())
+                || !Objects.equals(original.getSourceName(),comparison.getSourceName())
+                || original.getChildren().size()!=comparison.getChildren().size()) return false;
+        for(int i=0;i<original.getChildren().size();i++)
+            if(!sameDomain(original.getChildren().get(i),comparison.getChildren().get(i))) return false;
+        return true;
+    }
+
     private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,long parent) {
         if(++visits>MAX_VISITS || depth>MAX_DEPTH)
             throw new IllegalStateException("PAID_DECLARATION_LOCAL_SCOPE_BUDGET");
@@ -96,30 +132,21 @@ final class FastLocalPaidScope {
             var decl=n.getChildren().get(0);
             if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()!=2) return false;
             var domain=decl.getChildren().get(0); var variable=decl.getChildren().get(1);
-            if(domain.getOpcode()!=EGraphNode.Opcode.ONE || domain.getChildren().size()!=1
-                    || domain.getChildren().get(0).getOpcode()!=EGraphNode.Opcode.GLOBALBINDING
-                    || !domain.getChildren().get(0).getChildren().isEmpty()
-                    || variable.getOpcode()!=EGraphNode.Opcode.VARIABLE) return false;
+            if(variable.getOpcode()!=EGraphNode.Opcode.VARIABLE) return false;
             var plan=sourcePlans.get(n.getSourceOccurrenceLineage());
             var q=checkingSource ? locals.get(variable.getAlphaName()) : plan==null ? null : plan.binding();
             String name=variable.getAlphaName();
             if(q==null || name==null || !q.isFrozenForCertification() || visible.containsKey(name)
                     || q.getBindingPath().isEmpty() || q.getQuantifier()!=kind
                     || q.getCardinality()!=QuantiVar.Cardinality.ONE || q.getDisjointnessClass()!=0
-                    || !typed(variable,q) || !typed(domain,q) || !typed(domain.getChildren().get(0),q)
+                    || !typed(variable,q) || !retainedDomain(domain,q,visible,depth,parent)
                     || !usedOwners.add(q.getName())) return false;
             if(checkingSource) {
                 if(sourcePlans.putIfAbsent(n.getSourceOccurrenceLineage(),new LocalPlan(q,parent,decl.getSourceOccurrenceLineage(),
                         variable.getSourceOccurrenceLineage(),domain))!=null) return false;
             } else if(plan.parent()!=parent || plan.declaration()!=decl.getSourceOccurrenceLineage()
                     || plan.variable()!=variable.getSourceOccurrenceLineage()
-                    || plan.domain().getSourceOccurrenceLineage()!=domain.getSourceOccurrenceLineage()
-                    || plan.domain().getChildren().get(0).getSourceOccurrenceLineage()
-                        !=domain.getChildren().get(0).getSourceOccurrenceLineage()
-                    || !Objects.equals(plan.domain().getChildren().get(0).getSemanticIdentity(),
-                        domain.getChildren().get(0).getSemanticIdentity())
-                    || !Objects.equals(plan.domain().getChildren().get(0).getSourceName(),
-                        domain.getChildren().get(0).getSourceName())) return false;
+                    || !sameDomain(plan.domain(),domain)) return false;
             // Fast's local spelling differs from the original alpha name. The
             // actual owner/declaration/variable lineage licenses that transfer.
             var scoped=new HashMap<>(visible); scoped.put(name,q);
