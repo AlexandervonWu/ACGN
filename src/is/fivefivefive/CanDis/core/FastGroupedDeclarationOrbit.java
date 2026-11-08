@@ -23,6 +23,9 @@ final class FastGroupedDeclarationOrbit {
         var result=new ArrayList<int[]>();result.add(identity(order.size()));
         if(order.size()>MAX_BINDINGS || !source.getLocalQuantiVars().isEmpty()
                 || !comparison.getLocalQuantiVars().isEmpty()
+                // Paid disjoint paths do not extend this permutation slice.
+                || source.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
+                || comparison.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
                 || !FastPaidDeclarationAlignment.supports(List.of(source))
                 || !FastPaidDeclarationAlignment.supports(List.of(comparison))) return List.copyOf(result);
         require(source.getCertificationMatrixEGraph()==comparison.getCertificationMatrixEGraph(),"Foreign grouped source ledger");

@@ -255,7 +255,9 @@ public final class FastPaidDeclarationAlignmentTest {
         check(onePrefix.forms().get(0).getLocalQuantiVars().isEmpty()
                 && onePrefix.forms().get(0).getMatrixQuantiVars().get(0).getQuantifier()==QuantiVar.Quantifier.ONE
                 && FastPaidDeclarationAlignment.supports(onePrefix.forms()),"single ONE is a fixed prefix, not a retained local binder");
-        for(String name:List.of("param","temporal","setVar","disjoint")) {
+        check(FastPaidDeclarationAlignment.supports(prepare(model,"disjoint").forms()),
+                "source-observed disjoint SOME group admits paid links without erasing its payload");
+        for(String name:List.of("param","temporal","setVar")) {
             var unsupported=prepare(model,name);
             check(!FastPaidDeclarationAlignment.supports(unsupported.forms()),"unsupported scope "+name);
         }

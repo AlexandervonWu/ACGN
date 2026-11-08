@@ -75,7 +75,10 @@ final class FastPaidDeclarationAlignment {
                         && q.getQuantifier() != QuantiVar.Quantifier.SOME
                         && q.getQuantifier() != QuantiVar.Quantifier.LONE
                         && q.getQuantifier() != QuantiVar.Quantifier.ONE)
-                    || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() != 0
+                    || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() < 0
+                    || (q.getDisjointnessClass() > 0 && (!f.getLocalQuantiVars().isEmpty()
+                        || (q.getQuantifier() != QuantiVar.Quantifier.ALL
+                            && q.getQuantifier() != QuantiVar.Quantifier.SOME)))
                     || q.getBindingPath().isEmpty()
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
@@ -103,17 +106,25 @@ final class FastPaidDeclarationAlignment {
         return true;
     }
 
-    // A shared declaration path is an owner, not a slot. Only independent,
-    // source-observed ALL/SOME slots extend the old distinct-path slice.
+    // A shared declaration path is an owner, not a slot. Disjoint groups keep
+    // their original payload and slot order; charged links are not exchanges.
     private static boolean groupedSlotsMatchSource(NormalForm form, Map<String,List<QuantiVar>> declarations) {
         Map<String,QuantiVar> grouped = new HashMap<>();
         Set<String> aliases = new HashSet<>();
+        Map<Integer,String> disjointOwners = new HashMap<>();
+        Map<QuantiVar,Integer> positions = new IdentityHashMap<>();
+        for (int i=0;i<form.getMatrixQuantiVars().size();i++) positions.put(form.getMatrixQuantiVars().get(i),i);
         for (var group : declarations.values()) {
-            if (group.size() < 2) continue;
+            if (group.size() < 2) {
+                if (group.get(0).getDisjointnessClass() != 0) return false;
+                continue;
+            }
             if (!form.getLocalQuantiVars().isEmpty()) return false;
             var first = group.get(0);
             if (first.getQuantifier() != QuantiVar.Quantifier.ALL
                     && first.getQuantifier() != QuantiVar.Quantifier.SOME) return false;
+            int disjoint = first.getDisjointnessClass();
+            if (disjoint > 0 && disjointOwners.putIfAbsent(disjoint,first.getBindingPath()) != null) return false;
             for (int slot=0;slot<group.size();slot++) {
                 var q = group.get(slot);
                 String type = q.getTypeName();
@@ -122,6 +133,8 @@ final class FastPaidDeclarationAlignment {
                 String expectedKey = q.getBindingPath()+"#"+slot+":"+q.getCardinality()+":"+type;
                 if (!q.getDeBruijnKey().equals(expectedKey)
                         || q.getQuantifier() != first.getQuantifier()
+                        || q.getDisjointnessClass() != disjoint
+                        || (disjoint > 0 && positions.get(q) != positions.get(first)+slot)
                         || !q.getCarrierTypeName().equals(first.getCarrierTypeName())
                         || !q.getExactAlloyType().sameOccurrenceEvidenceAs(first.getExactAlloyType())) return false;
                 for (String alias : q.getOriginalNames()) if (!aliases.add(alias)) return false;
