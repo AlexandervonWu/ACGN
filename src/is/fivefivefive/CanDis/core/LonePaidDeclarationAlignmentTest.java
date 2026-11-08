@@ -78,7 +78,10 @@ public final class LonePaidDeclarationAlignmentTest {
                 "actual pair admitted in both directions");
         check(left.get(0).getMatrixQuantiVars().stream().map(q->q.getQuantifier().name()).toList()
                 .equals(List.of("LONE","SOME","SOME")),"original nested prefix remains intact");
-        for(String replacement:List.of("one t: Teacher","lone t: set Teacher","lone disj t,u: Teacher")) {
+        var one=prepare(CompUtil.parseEverything_fromString(A4Reporter.NOP,natural.replace("lone t: Teacher","one t: Teacher")),"inv12");
+        check(one.get(0).getMatrixQuantiVars().get(0).getQuantifier()==QuantiVar.Quantifier.ONE
+                && FastPaidDeclarationAlignment.supports(one),"ONE now admits only fixed-prefix paid edits");
+        for(String replacement:List.of("lone t: set Teacher","lone disj t,u: Teacher")) {
             var changed=CompUtil.parseEverything_fromString(A4Reporter.NOP,natural.replace("lone t: Teacher",replacement));
             check(!FastPaidDeclarationAlignment.supports(prepare(changed,"inv12")),"unsupported declaration "+replacement);
         }

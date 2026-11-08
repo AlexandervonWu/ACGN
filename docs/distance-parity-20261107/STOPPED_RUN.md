@@ -998,6 +998,43 @@ the regression log SHA-256 is
 Full public operation linkage, independent wire replay and Java/Lean
 correspondence remain **BLOCKED**; no full-corpus completion is claimed.
 
+### ONE Paid Declaration Repair
+
+Diagnostic run `diagnostic-parity-20261107T234902Z`, from clean commit
+`214b20c1f0e2b7123a253a5849b7117996067fe5`, stopped on
+`classroom_fol/both/TA943B2hFMmbp96Pj_inv8.als`, `inv8` / `inv8c`:
+Fast `[10,0,2,8]`, certified `[8,0,2,6]`. All descendants exited and both
+manifest identity checks passed before the sole repair assignment.
+
+The shorter certified receipt was independently replayed first against fresh
+source-linked projections: six matrix edits, one declaration deletion and
+one paid ONE-to-ALL update. Actual typed binder coordinates, source occurrence
+commitments and construction certificates were checked. The longer Fast path
+excluded ONE prefixes from paid declaration alignment and charged two uses of
+`t` again. Admitting the fixed-prefix paid link removes those two head charges;
+both directions now produce `[8,0,2,6]`, with certified receipts unchanged.
+
+`OnePaidDeclarationAlignment.lean` compiled before the Java change. It proves
+guarded uniqueness over a subtype and under outer ALL, empty-domain controls,
+and exact-endpoint paid-link premises. ONE remains a fixed ordering barrier:
+no free exchange, grouped ONE or ONE/local-binder extension is admitted.
+Source-linked replay, corrupted-evidence controls, bounded Alloy checks and
+finite charged-path enumeration supplement the contract; no scalar is copied.
+
+Frozen repair evidence is
+`ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/one8-PJle7KEl/evidence.json`,
+SHA-256 `4c1b3fce0665c468733b058888ea1f4776fbe7b8050df1a10ae5879506649c9c`.
+It records 18,060 checks across 22 executions, including both directions and
+prior repaired cases. Parent combined integration passed from a fresh build:
+29 Lean files, 26,911 numbered Java checks, 13 diagnostic CLI cases, three
+strict CLI cases, replay CLI checks, 10 Python tests and 14 launcher tests.
+Source/dataset and receipt inventories remained unchanged. Logs and inventories
+are retained under `ACGN/intermediate/one-paid-integration-20261108-3Wvo1l/`;
+the regression log SHA-256 is
+`f831c220d65ac2d88fe476983f7a3d2896edd0e582a3a49fad423e92e3ff539f`.
+Full public operation linkage, independent wire replay and Java/Lean
+correspondence remain **BLOCKED**; this is not full-corpus completion.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.

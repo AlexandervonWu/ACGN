@@ -29,7 +29,7 @@ final class FastPaidDeclarationAlignment {
         Set<String> names = new HashSet<>();
         Map<String,List<QuantiVar>> declarations = new LinkedHashMap<>();
         var firstType = qs.get(0).getExactAlloyType();
-        boolean hasLone = false;
+        boolean hasFixedMultiplicity = false;
         for (QuantiVar q : qs) {
             var type = q.getExactAlloyType();
             // Paid diagonals are edits, not exchanges across quantifier blocks.
@@ -37,18 +37,20 @@ final class FastPaidDeclarationAlignment {
             if (!q.isFrozenForCertification()
                     || (q.getQuantifier() != QuantiVar.Quantifier.ALL
                         && q.getQuantifier() != QuantiVar.Quantifier.SOME
-                        && q.getQuantifier() != QuantiVar.Quantifier.LONE)
+                        && q.getQuantifier() != QuantiVar.Quantifier.LONE
+                        && q.getQuantifier() != QuantiVar.Quantifier.ONE)
                     || q.getCardinality() != QuantiVar.Cardinality.ONE || q.getDisjointnessClass() != 0
                     || q.getBindingPath().isEmpty()
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
-            hasLone |= q.getQuantifier() == QuantiVar.Quantifier.LONE;
+            hasFixedMultiplicity |= q.getQuantifier() == QuantiVar.Quantifier.LONE
+                    || q.getQuantifier() == QuantiVar.Quantifier.ONE;
             declarations.computeIfAbsent(q.getBindingPath(), ignored -> new ArrayList<>()).add(q);
         }
         if (!groupedSlotsMatchSource(f, declarations)) return false;
-        // LONE stays a fixed prefix barrier; its local-binder combinations are
+        // ONE/LONE stay fixed prefix barriers; their local-binder combinations are
         // outside this extension. Only charged paths over the prefix are added.
-        if(!f.getLocalQuantiVars().isEmpty()) return !hasLone && FastLocalPaidScope.supports(f);
+        if(!f.getLocalQuantiVars().isEmpty()) return !hasFixedMultiplicity && FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         pending.add(f.getMatrixEGraph());

@@ -218,6 +218,11 @@ public final class FastPaidDeclarationAlignmentTest {
         check(FastPaidDeclarationAlignment.supportsPair(groupedA.forms(),groupedB.forms()),
                 "distinct slots of one original declaration retain paid links");
         pair(groupedA,groupedB,18);
+        var oneNatural=CompUtil.parseEverything_fromString(A4Reporter.NOP,Files.readString(
+                Path.of("classified-data/classroom_fol/both/TA943B2hFMmbp96Pj_inv8.als")));
+        var oneA=prepare(oneNatural,"inv8"); var oneB=prepare(oneNatural,"inv8c");
+        check(FastPaidDeclarationAlignment.supportsPair(oneA.forms(),oneB.forms()),"ONE prefix admits paid links only");
+        pair(oneA,oneB,8);
         var model=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 sig B {}
@@ -246,7 +251,11 @@ public final class FastPaidDeclarationAlignmentTest {
         var forward=prepare(model,"forward"); var swapped=prepare(model,"swapped");
         int mixedCost=Canonical.distance(forward.prepared(),swapped.prepared());
         check(mixedCost>0 && mixedCost==Canonical.distance(swapped.prepared(),forward.prepared()),"mixed exchange never free");
-        for(String name:List.of("param","temporal","local","setVar","disjoint")) {
+        var onePrefix=prepare(model,"local");
+        check(onePrefix.forms().get(0).getLocalQuantiVars().isEmpty()
+                && onePrefix.forms().get(0).getMatrixQuantiVars().get(0).getQuantifier()==QuantiVar.Quantifier.ONE
+                && FastPaidDeclarationAlignment.supports(onePrefix.forms()),"single ONE is a fixed prefix, not a retained local binder");
+        for(String name:List.of("param","temporal","setVar","disjoint")) {
             var unsupported=prepare(model,name);
             check(!FastPaidDeclarationAlignment.supports(unsupported.forms()),"unsupported scope "+name);
         }
