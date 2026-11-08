@@ -7,6 +7,9 @@ import edu.mit.csail.sdg.parser.CompUtil;
 import is.fivefivefive.ACGN.util.GlobalVariables;
 import is.fivefivefive.ACGN.visitor.MASGVisitor;
 import is.fivefivefive.CanDis.ir.IRAgent;
+import is.fivefivefive.CanDis.theory.CertificateVerifier;
+import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter;
+import is.fivefivefive.CanDis.metric.RepairProjection;
 import parser.ast.nodes.ModelUnit;
 
 /** ONE barriers, exact paid occurrences and unsupported-scope controls. */
@@ -48,6 +51,79 @@ public final class OnePaidDeclarationAlignmentTest {
             if(charge!=0) links.remove(a.get(i).getName());
         }
     }
+
+    private static List<EGraphNode> sourceNodes(EGraphNode root) {
+        var nodes=new ArrayList<EGraphNode>();var pending=new ArrayDeque<EGraphNode>();pending.add(root);
+        while(!pending.isEmpty()) {
+            if(nodes.size()>=4096)throw new AssertionError("fixture graph budget");
+            var n=pending.removeFirst();nodes.add(n);pending.addAll(n.getChildren());
+        }
+        return nodes;
+    }
+
+    /** Teacher is a subset of Person: the apparently unused u occurs in its
+     * source-linked domain guard. Uniqueness remains over the whole (t,u) tuple. */
+    static int checkedGroupedTeacherFixture(String natural) throws Exception {
+        int before=checks;
+        var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,
+                natural.replace("one t:Teacher","one t,u:Teacher"));
+        var forms=prepare(module,"inv8");var form=forms.get(0);var qs=form.getMatrixQuantiVars();
+        check(qs.stream().map(QuantiVar::getQuantifier).toList().equals(List.of(
+                QuantiVar.Quantifier.ALL,QuantiVar.Quantifier.ONE,QuantiVar.Quantifier.ONE)),
+                "outer ALL and two ordered ONE slots retained");
+        check(form.getLocalQuantiVars().isEmpty() && form.getTemporalChildren().isEmpty(),"closed prefix fixture");
+        check(qs.get(1).getBindingPath().equals(qs.get(2).getBindingPath())
+                && !qs.get(0).getBindingPath().equals(qs.get(1).getBindingPath()),"actual grouped owner under outer ALL");
+        check(form.hasOriginalGroupedOne(qs.subList(1,3)) && form.originalGroupedOneOriginsIntact(),
+                "producer-linked ordered tuple evidence");
+        var nodes=sourceNodes(form.getCertificationMatrixEGraph());
+        for(int i=1;i<3;i++) {
+            var q=qs.get(i);
+            check(q.getTypeName().equals("Person") && q.getCardinality()==QuantiVar.Cardinality.ONE
+                    && q.getDisjointnessClass()==0 && q.getDeBruijnKey().equals(
+                        q.getBindingPath()+"#"+(i-1)+":ONE:Person"),"literal carrier/multiplicity/slot "+i);
+            var uses=nodes.stream().filter(n->n.getOpcode()==EGraphNode.Opcode.VARIABLE
+                    && q.getName().equals(n.getAlphaName())).toList();
+            check(uses.size()==(i==1?2:1),"t used in body and guard; u used only in guard");
+            for(var n:uses)check(q.getOriginalNames().contains(n.getSemanticIdentity())
+                    && q.getOriginalNames().contains(n.getSourceName())
+                    && q.getExactAlloyType().sameOccurrenceEvidenceAs(n.getExactAlloyType()),
+                    "domain/body occurrence retains original binder and parser type");
+            check(nodes.stream().filter(n->n.getOpcode()==EGraphNode.Opcode.IN && n.getChildren().size()==2)
+                    .anyMatch(n->q.getName().equals(n.getChildren().get(0).getAlphaName())
+                        && n.getChildren().get(1).getOpcode()==EGraphNode.Opcode.GLOBALBINDING
+                        && "alloy/signature/Teacher".equals(n.getChildren().get(1).getSemanticIdentity())
+                        && q.getExactAlloyType().sameOccurrenceEvidenceAs(n.getChildren().get(1).getExactAlloyType())),
+                    "actual typed Teacher domain guard "+i);
+        }
+        check(FastPaidDeclarationAlignment.supports(forms),"source-observed grouped ONE admission");
+        var comparison=NormalForm.fastComparisonViews(forms).get(0);
+        check(FastPaidDeclarationAlignment.supports(List.of(comparison)),"comparison retains checked group");
+        for(int i=0;i<qs.size();i++)check(qs.get(i)==comparison.getMatrixQuantiVars().get(i),"original binding identity");
+        check(!FastDeclarationPermutation.admission(form,qs).test(1,2),"no free ONE swap");
+        check(FastGroupedDeclarationOrbit.orders(form,comparison,qs).size()==1,"ONE orbit remains identity only");
+        var evidence=TheoryAlloyAdapter.adapt(forms,form.getCertificationMatrixEGraph().getSemanticProfile());
+        evidence.requireRepairProjectionSources(forms);
+        for(var c:evidence.semanticArtifact().binderOccurrenceCertificates())CertificateVerifier.verify(c);
+        for(var c:evidence.semanticArtifact().flatConstructions())CertificateVerifier.verify(c);
+        var view=RepairProjection.project(evidence,forms);
+        check(view.phases().get(0).quantifiers().size()==3,"certified source retains all three coordinates");
+        var copied=new NormalForm();copied.addEClass(form.getCertificationMatrixEGraph());
+        qs.forEach(copied::addMatrixQuantiVar);copied.freezeForCertification();
+        check(!FastPaidDeclarationAlignment.supports(List.of(copied)),"copied source/bindings cannot invent grouped owner evidence");
+        var unobserved=prepare(CompUtil.parseEverything_fromString(A4Reporter.NOP,
+                natural.replace("one t:Teacher","one t,u:Person")),"inv8");
+        var u=unobserved.get(0).getMatrixQuantiVars().get(2);
+        check(sourceNodes(unobserved.get(0).getCertificationMatrixEGraph()).stream().noneMatch(n->
+                n.getOpcode()==EGraphNode.Opcode.VARIABLE && u.getName().equals(n.getAlphaName())),
+                "Person control has no u occurrence or subset guard");
+        check(!FastPaidDeclarationAlignment.supports(unobserved),"genuinely unobserved grouped slot stays unsupported");
+        for(String replacement:List.of("one t:set Teacher","one disj t,u:Teacher"))
+            check(!FastPaidDeclarationAlignment.supports(prepare(CompUtil.parseEverything_fromString(
+                    A4Reporter.NOP,natural.replace("one t:Teacher",replacement)),"inv8")),
+                    "SET/disjoint boundary "+replacement);
+        return checks-before;
+    }
     public static void main(String[] args) throws Exception {
         var original=List.of(variable("0",1),variable("1",0),variable("2",5),variable("3",4),
                 variable("4",0),variable("5",3),variable("6",2));
@@ -78,10 +154,7 @@ public final class OnePaidDeclarationAlignmentTest {
                 "original pair in both directions");
         check(left.get(0).getMatrixQuantiVars().stream().map(q->q.getQuantifier().name()).toList()
                 .equals(List.of("ALL","ONE")),"ONE cannot cross the outer ALL");
-        for(String replacement:List.of("one t:set Teacher","one disj t,u:Teacher","one t,u:Teacher")) {
-            var changed=CompUtil.parseEverything_fromString(A4Reporter.NOP,natural.replace("one t:Teacher",replacement));
-            check(!FastPaidDeclarationAlignment.supports(prepare(changed,"inv8")),"unsupported grouped/multiplicity declaration "+replacement);
-        }
+        checkedGroupedTeacherFixture(natural);
         var local=CompUtil.parseEverything_fromString(A4Reporter.NOP,
                 Files.readString(Path.of("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als"))
                     .replace("some c:Class","one c:Class"));

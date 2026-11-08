@@ -30,6 +30,7 @@ def main():
         ("5vxy", root / "classified-data/coursesNew/both/5vxYh7NCpEPMmC47p_inv14.als", "UNCHECKABLE"),
         ("ljrf", root / "classified-data/coursesNew/both/LJrfWwJdKiTdyytci_inv14.als", "MATCHED"),
         ("wnq", root / "classified-data/coursesNew/correct/wnqMPtpNxnPYzru3g_inv14.als", "MATCHED"),
+        ("pvub", root / "classified-data/coursesNew/over/PvuBZf9iKQbBARbsj_inv14.als", "MATCHED"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
         ("reduced", reduced, None),
     ]

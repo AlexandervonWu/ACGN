@@ -50,6 +50,7 @@ lean docs/distance-parity-20261107/ClosedCallPaidAlignment.lean
 lean docs/distance-parity-20261107/RetainedDifferenceDomain.lean
 lean docs/distance-parity-20261107/GroupedRetainedScope.lean
 lean docs/distance-parity-20261107/BoundCallAdmission.lean
+lean docs/distance-parity-20261107/GroupedOnePaidAdmission.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -141,6 +142,8 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.GroupedRetainedScopeReplayTest "$BUILD_DIR/grouped-retained"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.BoundCallPaidReplayTest "$BUILD_DIR/bound-call"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.GroupedOnePaidReplayTest "$BUILD_DIR/grouped-one"
 python3 -B scripts/test_native_operation_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/native-operation-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \

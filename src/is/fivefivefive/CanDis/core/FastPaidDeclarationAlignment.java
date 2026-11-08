@@ -63,6 +63,9 @@ final class FastPaidDeclarationAlignment {
                 || !f.getPhaseLocalBindingImports().isEmpty()) return false;
         List<QuantiVar> qs = f.getMatrixQuantiVars();
         if (qs.isEmpty()) return false;
+        // A changed owner must not evade grouped validation by splitting one
+        // original ONE tuple into apparently independent singleton owners.
+        if (!f.originalGroupedOneOriginsIntact()) return false;
         Set<String> names = new HashSet<>();
         Map<String,List<QuantiVar>> declarations = new LinkedHashMap<>();
         var firstType = qs.get(0).getExactAlloyType();
@@ -138,8 +141,10 @@ final class FastPaidDeclarationAlignment {
             if (!form.getLocalQuantiVars().isEmpty()
                     && group.get(0).getDisjointnessClass()!=0) return false;
             var first = group.get(0);
+            boolean groupedOne = first.getQuantifier() == QuantiVar.Quantifier.ONE
+                    && form.getLocalQuantiVars().isEmpty() && form.hasOriginalGroupedOne(group);
             if (first.getQuantifier() != QuantiVar.Quantifier.ALL
-                    && first.getQuantifier() != QuantiVar.Quantifier.SOME) return false;
+                    && first.getQuantifier() != QuantiVar.Quantifier.SOME && !groupedOne) return false;
             int disjoint = first.getDisjointnessClass();
             if (disjoint > 0 && disjointOwners.putIfAbsent(disjoint,first.getBindingPath()) != null) return false;
             for (int slot=0;slot<group.size();slot++) {
@@ -151,7 +156,7 @@ final class FastPaidDeclarationAlignment {
                 if (!q.getDeBruijnKey().equals(expectedKey)
                         || q.getQuantifier() != first.getQuantifier()
                         || q.getDisjointnessClass() != disjoint
-                        || (disjoint > 0 && positions.get(q) != positions.get(first)+slot)
+                        || ((disjoint > 0 || groupedOne) && positions.get(q) != positions.get(first)+slot)
                         || !q.getCarrierTypeName().equals(first.getCarrierTypeName())
                         || !q.getExactAlloyType().sameOccurrenceEvidenceAs(first.getExactAlloyType())) return false;
                 for (String alias : q.getOriginalNames()) if (!aliases.add(alias)) return false;

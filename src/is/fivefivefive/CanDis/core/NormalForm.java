@@ -42,6 +42,11 @@ public class NormalForm {
     private List<PhaseLocalBindingImport> phaseLocalBindingImports;
     private final Map<NormalForm, List<PhaseLocalBindingImport>> temporalChildBindingImports;
     private final Map<String, LocalBindingSeed> localBindingSeeds;
+    // Only prenexRelDecl can create these witnesses. Publicly assembled binding
+    // lists cannot manufacture a grouped ONE owner by relabelling SOME slots.
+    private final List<GroupedOneOrigin> groupedOneOrigins = new ArrayList<>();
+    private record GroupedOneOrigin(long declaration, List<QuantiVar> bindings,
+            List<String> keys, String owner) { }
     private String phasePath;
     private List<NormalForm> temporalChildren;
     private List<NormalForm> comparisonTemporalChildren;
@@ -252,6 +257,7 @@ public class NormalForm {
             copy.phaseLocalBindingImports = phaseLocalBindingImports;
             copy.temporalChildBindingImports.putAll(temporalChildBindingImports);
             copy.localBindingSeeds.putAll(localBindingSeeds);
+            copy.groupedOneOrigins.addAll(groupedOneOrigins);
             copy.phasePath = phasePath;
             copy.temporalChildren = temporalChildren;
             copy.temporalReferenceAuthorities.putAll(temporalReferenceAuthorities);
@@ -435,6 +441,42 @@ public class NormalForm {
         synchronized (lifecycleLock) {
             return Collections.unmodifiableList(new ArrayList<>(this.matrixQuantiVars));
         }
+    }
+
+    /** Ordered original slots, not permission to exchange or split uniqueness. */
+    boolean hasOriginalGroupedOne(List<QuantiVar> group) {
+        if (!frozenForCertification || group.size() < 2 || group.size() > 64) return false;
+        for (var origin : groupedOneOrigins) {
+            if (origin.bindings().size() != group.size()) continue;
+            boolean matches = true;
+            for (int i = 0; i < group.size(); i++) {
+                var q = group.get(i);
+                matches &= q == origin.bindings().get(i)
+                        && q.getQuantifier() == Quantifier.ONE
+                        && q.getCardinality() == Cardinality.ONE && q.getDisjointnessClass() == 0
+                        && q.getBindingPath().equals(origin.owner())
+                        && q.getDeBruijnKey().equals(origin.keys().get(i));
+            }
+            if (matches) return true;
+        }
+        return false;
+    }
+
+    boolean originalGroupedOneOriginsIntact() {
+        if (groupedOneOrigins.isEmpty()) return true;
+        if (matrixQuantiVars.size() > 64 || groupedOneOrigins.size() > 32) return false;
+        var positions = new java.util.IdentityHashMap<QuantiVar, Integer>();
+        for (int i = 0; i < matrixQuantiVars.size(); i++)
+            if (positions.put(matrixQuantiVars.get(i), i) != null) return false;
+        for (var origin : groupedOneOrigins) {
+            var group = origin.bindings();
+            if (!hasOriginalGroupedOne(group)) return false;
+            Integer start = positions.get(group.get(0));
+            if (start == null) return false;
+            for (int i = 0; i < group.size(); i++)
+                if (!java.util.Objects.equals(positions.get(group.get(i)), start + i)) return false;
+        }
+        return true;
     }
     public List<QuantiVar> getInheritedQuantiVars() {
         synchronized (lifecycleLock) {
@@ -2527,6 +2569,34 @@ public class NormalForm {
             if (key != null) {
                 env.put(key, representative);
             }
+        }
+        // This is a source-observed ordered tuple. It does not assert that
+        // grouped ONE equals a sequence of nested unique quantifiers.
+        if (!parameterDecl && !negated && quantifierOpcode == Opcode.ONE && !disj
+                && relDecl.getOpcode() == Opcode.GENERICRELDECL
+                && quantiVars.size() >= 2 && quantiVars.size() <= 64
+                && children.size() == quantiVars.size() + 1
+                && domain.cardinality == Cardinality.ONE
+                && typeEGraph != null && typeEGraph.getOpcode() == Opcode.ONE
+                && typeEGraph.getChildren().size() == 1
+                && typeEGraph.getChildren().get(0).getOpcode() == Opcode.GLOBALBINDING) {
+            boolean originalSlots = true;
+            for (int i = 0; i < quantiVars.size(); i++) {
+                var q = quantiVars.get(i); var variable = children.get(i + 1);
+                var type = q.getExactAlloyType();
+                originalSlots &= variable.getOpcode() == Opcode.VARIABLE
+                        && q.getBindingPath().equals(deBruijnBase)
+                        && q.getDeBruijnKey().equals(deBruijnBase + "#" + i + ":ONE:" + normalizeType(q.getTypeName()))
+                        && q.getOriginalNames().contains(variable.getSemanticIdentity())
+                        && q.getOriginalNames().contains(variable.getSourceName())
+                        && type != null && type.hasParserAuthenticatedAncestry()
+                        && type.relationArity() == 1
+                        && type.sameOccurrenceEvidenceAs(variable.getExactAlloyType())
+                        && type.sameOccurrenceEvidenceAs(typeEGraph.getChildren().get(0).getExactAlloyType());
+            }
+            if (originalSlots) groupedOneOrigins.add(new GroupedOneOrigin(
+                    relDecl.getSourceOccurrenceLineage(), List.copyOf(quantiVars),
+                    quantiVars.stream().map(QuantiVar::getDeBruijnKey).toList(), deBruijnBase));
         }
         return new RelDeclResult(quantiVars, null);
     }
