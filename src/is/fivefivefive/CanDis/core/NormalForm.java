@@ -3657,15 +3657,33 @@ public class NormalForm {
                 sourceVariable.getSemanticProfile());
         variable.setSourceName(sourceVariable.getSourceName());
         variable.setSourceType(qv.getTypeName());
+        boolean sourceBound = hasSourceBoundDomainEvidence(qv, sourceVariable);
         variable.setExactAlloyType(
-                authenticatedEmptyBindingType(qv.getExactAlloyType())
+                sourceBound || authenticatedEmptyBindingType(qv.getExactAlloyType())
                         ? qv.getExactAlloyType()
                         : is.fivefivefive.ACGN.alloy.ExactAlloyType.unaryRelation(
                                 qv.getTypeName()));
         variable.setAlphaName(qv.getName());
+        if (sourceBound) {
+            // This is a new occurrence of the same binding, not a clone of its
+            // source occurrence. Keep its fresh lineage and exact parser type.
+            variable.preserveSemanticIdentityFrom(sourceVariable);
+        }
         constraint.addNormalizedChild(variable);
         constraint.addNormalizedChild(cloneEGraph(domain));
         return constraint;
+    }
+
+    private static boolean hasSourceBoundDomainEvidence(QuantiVar binding, EGraphNode source) {
+        var exact = binding.getExactAlloyType();
+        return source.getOpcode() == Opcode.VARIABLE
+                && binding.getName().equals(source.getAlphaName())
+                && source.getSemanticIdentity() != null
+                && binding.getOriginalNames().contains(source.getSemanticIdentity())
+                && binding.getOriginalNames().contains(source.getSourceName())
+                && exact != null && exact.relationArity() == 1
+                && exact.hasParserAuthenticatedAncestry()
+                && exact.sameOccurrenceEvidenceAs(source.getExactAlloyType());
     }
 
     @LeanVerifiedRewrite({"R0-CORE-007", "R0-CORE-008", "R0-CORE-009"})

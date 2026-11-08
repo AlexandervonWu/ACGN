@@ -25,6 +25,7 @@ def main():
         ("d3n2", root / "classified-data/classroom_rl/both/D3n2EfPhBboewRm7z_inv14.als", "MATCHED"),
         ("ae26", root / "classified-data/classroom_rl/over/AE26k3aCggeBrqCrh_inv8.als", "MATCHED"),
         ("5xc5", root / "classified-data/classroom_rl/under/5xC5nGeD2S6zDjCCo_inv14.als", "MATCHED"),
+        ("2cc", root / "classified-data/coursesNew/both/2CCEGTS6iiHpRqvCu_inv14.als", "MATCHED"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
         ("reduced", reduced, None),
     ]
