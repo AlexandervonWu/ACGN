@@ -58,6 +58,9 @@ public final class EGraphNode {
     private String sourceType;
     private ExactAlloyType exactAlloyType;
     private String alphaName;
+    /* Issued only by the existing detached local-binder comparison projection. */
+    private boolean comparisonLocalCoordinate;
+    private boolean comparisonRegisteredBinding;
     private String semanticIdentity;
     private BuiltinConstantKind builtinConstantKind;
     private SigSymbol parserSignatureEvidence;
@@ -7010,23 +7013,34 @@ public final class EGraphNode {
 
     static EGraphNode fastComparisonMatrix(EGraphNode source, Map<Long, String> closedPhaseKeys,
             Map<Long, String> referenceCoordinates) {
+        return fastComparisonMatrix(source, closedPhaseKeys, referenceCoordinates, Collections.emptySet());
+    }
+
+    static EGraphNode fastComparisonMatrix(EGraphNode source, Map<Long, String> closedPhaseKeys,
+            Map<Long, String> referenceCoordinates, Set<String> registeredBindings) {
         if (source == null) {
             return null;
         }
-        EGraphNode result = new FastComparison(closedPhaseKeys, referenceCoordinates).copy(
+        EGraphNode result = new FastComparison(closedPhaseKeys, referenceCoordinates, registeredBindings).copy(
                 source, Collections.emptyMap(), Collections.emptyMap(), 0, true);
         result.freezeForCertification();
         return result;
     }
 
+    boolean hasComparisonLocalCoordinate() { return comparisonLocalCoordinate; }
+    boolean hasComparisonRegisteredBinding() { return comparisonRegisteredBinding; }
+
     private static final class FastComparison {
         private final EGraphArena target = new EGraphArena();
         private final Map<Long, String> closedPhaseKeys;
         private final Map<Long, String> referenceCoordinates;
+        private final Set<String> registeredBindings;
 
-        private FastComparison(Map<Long, String> closedPhaseKeys, Map<Long, String> referenceCoordinates) {
+        private FastComparison(Map<Long, String> closedPhaseKeys, Map<Long, String> referenceCoordinates,
+                Set<String> registeredBindings) {
             this.closedPhaseKeys = Map.copyOf(closedPhaseKeys);
             this.referenceCoordinates = Map.copyOf(referenceCoordinates);
+            this.registeredBindings = Set.copyOf(registeredBindings);
         }
 
         private EGraphNode head(EGraphNode source, List<EGraphNode> children) {
@@ -7085,6 +7099,8 @@ public final class EGraphNode {
                 EGraphNode variable = head(source, Collections.emptyList());
                 String key = name(source, ambient);
                 variable.alphaName = scope.getOrDefault(key, key);
+                variable.comparisonLocalCoordinate = scope.containsKey(key);
+                variable.comparisonRegisteredBinding = registeredBindings.contains(key);
                 return variable;
             }
             List<EGraphNode> children = new ArrayList<>();
@@ -7113,6 +7129,7 @@ public final class EGraphNode {
                         String local = "@fast-local:" + depth + ":" + coordinate++;
                         bodyScope.put(variable.alphaName, local);
                         variable.alphaName = local;
+                        variable.comparisonLocalCoordinate = true;
                         parts.add(variable);
                     }
                     if (source.opcode == Opcode.COMPREHENSION

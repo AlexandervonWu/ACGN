@@ -229,6 +229,13 @@ public class NormalForm {
         this.nextDisjointnessClass = 1;
     }
 
+    private java.util.Set<String> comparisonBindingNames() {
+        java.util.Set<String> names = new java.util.HashSet<>();
+        for (List<QuantiVar> bindings : List.of(params, matrixQuantiVars, inheritedQuantiVars, getLocalQuantiVars()))
+            for (QuantiVar binding : bindings) names.add(binding.getName());
+        return names;
+    }
+
     /** Read-only metric projection; source/certificate ownership stays on this form. */
     NormalForm fastComparisonView() {
         synchronized (lifecycleLock) {
@@ -236,7 +243,8 @@ public class NormalForm {
                 throw new IllegalStateException("Fast comparison requires a frozen normal form");
             }
             NormalForm copy = new NormalForm();
-            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(matrixEGraphRoot);
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(matrixEGraphRoot,
+                    Collections.emptyMap(), Collections.emptyMap(), comparisonBindingNames());
             copy.certificationMatrixEGraphRoot = certificationMatrixEGraphRoot;
             copy.params = params;
             copy.matrixQuantiVars = matrixQuantiVars;
@@ -285,7 +293,8 @@ public class NormalForm {
             }
             if (keys.size() < 2) continue;
             keysByOwner.put(source, keys);
-            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys);
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys,
+                    Collections.emptyMap(), source.comparisonBindingNames());
             java.util.Set<Long> after = comparisonReferenceIds(copy.matrixEGraphRoot);
             if (after == null) throw new IllegalStateException("Fast phase projection increased reference traversal budget");
             for (TemporalReferenceAuthority authority : source.temporalReferenceAuthorities.values()) {
@@ -314,7 +323,8 @@ public class NormalForm {
                         throw new IllegalStateException("Fast phase pruning split a temporal occurrence");
                 coordinates.put(authority.authorityId, temporalReferenceName(start, authority.children.size()));
             }
-            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys, coordinates);
+            copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys, coordinates,
+                    source.comparisonBindingNames());
         }
         return sources.stream().filter(source -> !dropped.contains(source)).map(copies::get).toList();
     }

@@ -12,6 +12,7 @@ final class FastPaidDeclarationAlignment {
     private FastPaidDeclarationAlignment() { }
 
     static boolean supportsPair(List<NormalForm> left,List<NormalForm> right) {
+        if(FastNestedPaidScope.supportsPair(left,right)) return true;
         if(!supports(left) || !supports(right)) return false;
         // No new cross-owner local/local alignment is admitted by this slice.
         return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty();

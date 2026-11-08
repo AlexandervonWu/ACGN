@@ -32,6 +32,7 @@ def main():
         ("equal-grouped-paid-declarations", root / "classified-data/classroom_fol/both/8dTfKqTs26w6fL87K_inv15.als", None),
         ("equal-certified-declaration-orbit", root / "classified-data/classroom_fol/both/SASEHD8jPo2HgsuoJ_inv14.als", None),
         ("equal-one-paid-declarations", root / "classified-data/classroom_fol/both/TA943B2hFMmbp96Pj_inv8.als", None),
+        ("equal-explicit-bound-links", root / "classified-data/classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als", None),
         ("identical", identical, None),
         ("false-zero", false_zero, "INCORRECT_ZERO"),
     ]
@@ -71,7 +72,8 @@ def main():
                                  "equal-lone-paid-declarations": 15,
                                  "equal-grouped-paid-declarations": 18,
                                  "equal-certified-declaration-orbit": 27,
-                                 "equal-one-paid-declarations": 8}.get(label)
+                                 "equal-one-paid-declarations": 8,
+                                 "equal-explicit-bound-links": 20}.get(label)
             assert report["summary"]["successes"] == (1 if expected_distance is not None else 0)
             assert report["summary"]["skippedIdenticalRawAstPairs"] == (1 if label == "identical" else 0)
             if expected_distance is not None:

@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v11-one-paid-prefix";
+    public static final String VERSION = "typed-fast-distance-v13-nested-paid-links";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -1217,9 +1217,7 @@ public final class CanonicalDistance {
         if (left.getOpcode() != right.getOpcode()) {
             edits.add(path + ": replace " + nodeSummary(left) + " -> " + nodeSummary(right));
         } else if (left.getOpcode() == EGraphNode.Opcode.VARIABLE) {
-            String leftName = variableName(left);
-            String rightName = variableName(right);
-            if (variableUpdateCost(leftName, rightName, variableMapping) != 0) {
+            if (variableUpdateCost(left, right, variableMapping) != 0) {
                 edits.add(path + ": replace variable " + nodeVariableDisplay(left) + " -> " + nodeVariableDisplay(right));
             }
         } else if ((left.getOpcode() == EGraphNode.Opcode.GLOBALBINDING
@@ -1388,9 +1386,7 @@ public final class CanonicalDistance {
             return 1;
         }
         if (left.getOpcode() == EGraphNode.Opcode.VARIABLE) {
-            String leftName = variableName(left);
-            String rightName = variableName(right);
-            return variableUpdateCost(leftName, rightName, variableMapping);
+            return variableUpdateCost(left, right, variableMapping);
         }
         GraphType leftType = leftMetadata == null ? resultType(left) : leftMetadata.type(left);
         GraphType rightType = rightMetadata == null ? resultType(right) : rightMetadata.type(right);
@@ -1406,6 +1402,17 @@ public final class CanonicalDistance {
             return safeEquals(callIdentity(left), callIdentity(right)) ? 0 : 1;
         }
         return 0;
+    }
+
+    static int variableUpdateCost(EGraphNode left, EGraphNode right, Map<String, String> variableMapping) {
+        String leftName = variableName(left), rightName = variableName(right);
+        // Alpha names are local binder coordinates, not cross-source identities.
+        // Local structural coordinates keep their existing projection cost;
+        // compatible/paid selected links govern external bound coordinates.
+        if ((left.hasComparisonRegisteredBinding() || right.hasComparisonRegisteredBinding())
+                && !(left.hasComparisonLocalCoordinate() && right.hasComparisonLocalCoordinate())
+                && !variableMapping.containsKey(leftName)) return 1;
+        return variableUpdateCost(leftName, rightName, variableMapping);
     }
 
     static int variableUpdateCost(String leftName, String rightName, Map<String, String> variableMapping) {

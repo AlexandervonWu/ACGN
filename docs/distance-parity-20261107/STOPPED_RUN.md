@@ -1035,6 +1035,70 @@ the regression log SHA-256 is
 Full public operation linkage, independent wire replay and Java/Lean
 correspondence remain **BLOCKED**; this is not full-corpus completion.
 
+### Explicit Bound-Variable Correspondence Repair
+
+The guarded scan at `0d71e11d34e80ff9a3eb5407ff4bcf76d3c0f722` stopped on
+`classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als`: Fast `[19,0,2,17]`
+versus certified `[20,0,2,18]`. Independent replay rejected the shorter
+sequence. It assigned zero cost to `s:Student -> c:Class` solely because
+both occurrences had alpha coordinate `_q0`; neither the selected mapping
+nor the declaration path supplied that correspondence.
+
+`BoundVariableCorrespondence.lean` establishes that an outer bound-variable
+zero edit requires a selected correspondence, with admission inherited from
+the checked mapping premise. The Java refinement requires that link for
+externally bound coordinates registered by the frozen normal form, rather
+than inferring bound status from an alpha spelling. Detached local comparisons
+retain their prior coordinate policy only when both endpoints carry the
+producer-issued marker; a forged spelling or one-sided marker is insufficient.
+An initial overbroad candidate failed the prior local-grouping regression;
+that candidate and failure are retained, and the original assertion is unchanged.
+
+Both directions now give `[20,0,2,18]` on both paths. Exactly one Fast
+variable action changes from zero to one. The certified arm and declaration
+receipts are structurally identical as parsed JSON before and after. Actual source
+construction and binder certificates, original endpoints, independent native
+replay, and corrupted-evidence controls were checked. This corrects the
+shorter path, not a copied scalar minimum.
+
+Astra's focused evidence is `unused19-3egALhyU/evidence.json` under the
+external `opseq-astra-20261107` investigation directory, SHA-256
+`8d2be2916e03b638945ab7f1f3d3ad285f3fda8da6ee0a341861032ada3db007`.
+It records 20,512 checks across 27 executions and frozen source hashes.
+Parent integration stopped in external
+`ACGN/intermediate/bound-variable-integration-20261108-t3Z41A` at
+`LocalDomainSingletonTest`: `AssertionError: original Fast49` (line 120).
+All frozen source and receipt hashes remained unchanged. No commit or corpus
+restart was made from that failed candidate.
+
+The follow-up replay found a missing explicit outer paid link through retained
+ONE/ALL local scopes. `NestedPaidDeclaration.lean` separates outer links from
+unchanged local owners and proves the concrete declaration charge. The narrow
+`FastNestedPaidScope` guard checks original occurrence lineage, parser type,
+domain ownership, binding visibility, multiplicity and disjointness; it admits
+no local/local alignment, temporal reference, dependent declaration or scope
+capture. The selected path now pays for `s2:Person -> y:Project`, with a
+declaration cost of 2 and independently replayed matrix cost of 47. Both
+directions restore `[49,0,2,47]`, without restoring implicit variable identity
+or changing the existing test expectation. The certified arm is unchanged.
+YKy remains `[20,0,2,18]` in both directions on both paths.
+
+Revised evidence is `bound-local-followup-MIFcjiUh/evidence.json` in the same
+external investigation directory, SHA-256
+`2fb9dfee57370e7174e5a13fc7d32ac7d16ca631d0ac9509bc2b6a75276d7c13`.
+Parent verified 140 referenced hashes and the unchanged certified receipts.
+Fresh combined integration passed in external
+`ACGN/intermediate/bound-nested-integration-20261108-7aOPE1`: 31 Lean files,
+28,347 numbered Java checks, 14 diagnostic and 3 strict CLI cases, the replay
+CLI suite, 10 Python tests and 14 launcher tests. Frozen input and receipt
+inventories remained unchanged. Input inventory SHA-256:
+`a0008d502b0066cf43d10535cb382c14289caf9ed8f22e52cb9fc114733c493a`;
+regression log SHA-256:
+`2261fcbd282fae9f61a00abfb8e996139204b0e8cbb43353d053e90ea45a3008`.
+Full public operation-sequence linkage, source-certificate wire replay,
+and mechanical Java/Lean correspondence remain **BLOCKED**. The local
+projection's existing semantics and universal optimality are not newly proved.
+
 ### Frozen Corpus Evidence
 
 The old full inventory is `evidence/summary.json` and its companion CSV/JSON.
