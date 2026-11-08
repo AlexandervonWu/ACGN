@@ -41,7 +41,19 @@ public final class GuardedJoinSourceFiber {
 
     public static Map<EGraphNode, GuardedJoinSourceFiber> bind(
             CertifiedSemanticArtifact artifact, List<NormalForm> forms) {
-        if (artifact.guardedJoinConstructions().isEmpty()) return Map.of();
+        return bindWithEvidence(artifact,forms).live();
+    }
+
+    public record Binding(Map<EGraphNode,GuardedJoinSourceFiber> live,
+            List<GuardedJoinErasureEvidence> erased) {
+        public Binding {
+            live=Collections.unmodifiableMap(new IdentityHashMap<>(live));
+            erased=List.copyOf(erased);
+        }
+    }
+
+    public static Binding bindWithEvidence(CertifiedSemanticArtifact artifact,List<NormalForm> forms) {
+        if (artifact.guardedJoinConstructions().isEmpty()) return new Binding(Map.of(),List.of());
         Map<String, Original> originals = new HashMap<>();
         for (int i = 0; i < forms.size(); i++) {
             var root = forms.get(i).getCertificationMatrixEGraph();
@@ -89,9 +101,14 @@ public final class GuardedJoinSourceFiber {
             }
             for (var child : node.getChildren()) pending.add(new Original(child, occurrence.phase()));
         }
-        if (!used.equals(fibers.keySet()))
-            throw new IllegalArgumentException("Guarded JOIN source is absent from projection");
-        return Collections.unmodifiableMap(result);
+        var erased=new ArrayList<GuardedJoinErasureEvidence>();
+        for(var entry:groups.entrySet())if(!used.contains(entry.getKey())) {
+            for(var proof:entry.getValue()) {
+                if(erased.size()>=128)throw new IllegalArgumentException("JOIN Boolean erasure premise budget exceeded");
+                erased.add(GuardedJoinErasureEvidence.establish(forms,owners.get(entry.getKey()),proof));
+            }
+        }
+        return new Binding(result,erased);
     }
 
     private static void index(EGraphNode node, int phase, String path, int depth, Map<String, Original> output) {

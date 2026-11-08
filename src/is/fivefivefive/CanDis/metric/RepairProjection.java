@@ -58,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v20-join-source-fibers";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v21-checked-join-erasure";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -1849,12 +1849,14 @@ public final class RepairProjection {
     private static final class CertifiedDependentChains {
         private final Map<EGraphNode, DependentChainCertificate> certificates;
         private final Map<EGraphNode, GuardedJoinSourceFiber> rotations;
+        private final List<is.fivefivefive.CanDis.theory.GuardedJoinErasureEvidence> erasedJoinPremises;
 
         private CertifiedDependentChains(
                 Map<EGraphNode, DependentChainCertificate> certificates,
-                Map<EGraphNode, GuardedJoinSourceFiber> rotations) {
+                GuardedJoinSourceFiber.Binding rotations) {
             this.certificates = certificates;
-            this.rotations = rotations;
+            this.rotations = rotations.live();
+            this.erasedJoinPremises = rotations.erased();
         }
 
         private static CertifiedDependentChains from(
@@ -1896,8 +1898,8 @@ public final class RepairProjection {
                 }
                 checked.put(source, certificate);
             }
-            Map<EGraphNode, GuardedJoinSourceFiber> rotations = GuardedJoinSourceFiber.bind(artifact, normalForms);
-            return new CertifiedDependentChains(Collections.unmodifiableMap(checked), Collections.unmodifiableMap(rotations));
+            var rotations = GuardedJoinSourceFiber.bindWithEvidence(artifact, normalForms);
+            return new CertifiedDependentChains(Collections.unmodifiableMap(checked), rotations);
         }
 
         private static boolean matchesCertifiedResultType(

@@ -31,6 +31,7 @@ def main():
         ("ljrf", root / "classified-data/coursesNew/both/LJrfWwJdKiTdyytci_inv14.als", "MATCHED"),
         ("wnq", root / "classified-data/coursesNew/correct/wnqMPtpNxnPYzru3g_inv14.als", "MATCHED"),
         ("pvub", root / "classified-data/coursesNew/over/PvuBZf9iKQbBARbsj_inv14.als", "MATCHED"),
+        ("dcx", root / "classified-data/coursesNew/under/dcxEP6ZgQAktuDbeT_inv10.als", "UNCHECKABLE"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
         ("reduced", reduced, None),
     ]
@@ -65,6 +66,8 @@ def main():
         else:
             observed = report["results"][0]["nativeOperationStatus"]
             assert observed == (expected or "MATCHED"), (label, observed)
+            if label == "dcx":
+                assert report["results"][0]["nativeOperationReason"] == "BINDING_LAYOUT_UNSUPPORTED"
             assert coverage["matched" if observed == "MATCHED" else "unchecked"] == 1
             assert not (output / "parity-incident.json").exists()
         inventory = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in output.iterdir() if p.is_file()}
