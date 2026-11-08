@@ -91,12 +91,17 @@ final class FastPaidDeclarationAlignment {
         if(!f.getLocalQuantiVars().isEmpty()) return FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
+        ClosedCallEvidence calls = null;
         pending.add(f.getMatrixEGraph());
         while (!pending.isEmpty()) {
             EGraphNode node = pending.removeFirst();
             if (!seen.add(node)) continue;
             if (seen.size() > 4096) throw new IllegalStateException("PAID_DECLARATION_GRAPH_BUDGET");
-            if (node.getOpcode() == EGraphNode.Opcode.REF || node.getOpcode() == EGraphNode.Opcode.CALL) return false;
+            if (node.getOpcode() == EGraphNode.Opcode.REF) return false;
+            if (node.getOpcode() == EGraphNode.Opcode.CALL) {
+                if(calls == null) calls = ClosedCallEvidence.from(f);
+                if(!calls.admits(node)) return false;
+            }
             if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
                 String name = node.getAlphaName() == null ? node.getSourceName() : node.getAlphaName();
                 if (!names.contains(name)) return false;

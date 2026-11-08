@@ -230,6 +230,8 @@ public final class NativeOperationComparison {
         final List<DeclarationReplay.Atom> fastAtoms,certAtoms;
         final Map<String,Integer> ordinals=new HashMap<>();
         final Map<Long,EGraphNode> originalVariables=new HashMap<>();
+        final Map<Long,EGraphNode> originalCalls=new HashMap<>();
+        final ClosedCallEvidence closedCalls;
         final String commitment;
         Endpoint(Canonical.Prepared normalized) {
             this.normalized=normalized;
@@ -252,6 +254,7 @@ public final class NativeOperationComparison {
                 start=end;
             }
             census(source.getCertificationMatrixEGraph(),new int[]{MAX_NODES},0,true);
+            closedCalls=ClosedCallEvidence.from(source);
             census(source.getMatrixEGraph(),new int[]{MAX_NODES},0,false);
             for(int i=0;i<qs.size();i++) {
                 var q=qs.get(i);require(q.isFrozenForCertification(),"Mutable original binder");
@@ -262,6 +265,18 @@ public final class NativeOperationComparison {
             evidence.requireRepairProjectionSources(normalized.normalizedForms());
             view=RepairProjection.project(evidence,normalized.normalizedForms()); phase=view.phases().get(0);
             var artifact=evidence.semanticArtifact();
+            for(var call:originalCalls.values()) {
+                var metadata=CallMetadata.require(call);
+                var premises=artifact.callOccurrenceCertificates().stream()
+                        .filter(c->c.occurrenceId()==metadata.occurrenceId()).toList();
+                require(premises.size()==1,"Missing original call premise");
+                var premise=premises.get(0);
+                require(premise.qualifiedCallee().equals(metadata.identity())
+                        && premise.sourceName().equals(metadata.sourceName()) && premise.kind().equals(metadata.kind())
+                        && premise.declaredArity()==metadata.arity() && premise.arityAuthority()==metadata.authority()
+                        && premise.sourceEndpoint().operator().outputType().equals(AlloyTypeBridge.graphType(call.getExactAlloyType())),
+                        "Original call/type/premise correspondence");
+            }
             List<TypedEqualityCertificate> roots=new ArrayList<>();roots.addAll(artifact.flatConstructions());roots.addAll(artifact.containerConstructions());
             roots.addAll(artifact.dependentChainConstructions());roots.addAll(artifact.guardedJoinConstructions());roots.addAll(artifact.binderOccurrenceCertificates());
             supported(roots.size()<=2048,"CERTIFICATE_BUDGET");for(var proof:roots)CertificateVerifier.verify(proof);
@@ -297,7 +312,15 @@ public final class NativeOperationComparison {
         private void census(EGraphNode n,int[] budget,int depth,boolean original) {
             supported(n!=null && depth<=MAX_DEPTH && --budget[0]>=0,"ENDPOINT_BUDGET");
             supported(n.getChildren().size()<=64,"CHILD_BUDGET");
-            supported(n.getOpcode()!=EGraphNode.Opcode.REF && n.getOpcode()!=EGraphNode.Opcode.CALL,"REFERENCE_OR_CALL_UNSUPPORTED");
+            supported(n.getOpcode()!=EGraphNode.Opcode.REF,"REFERENCE_OR_CALL_UNSUPPORTED");
+            if(n.getOpcode()==EGraphNode.Opcode.CALL) {
+                supported(source.getLocalQuantiVars().isEmpty()
+                        && (original?ClosedCallEvidence.closed(n):closedCalls.admits(n)),"CLOSED_CALL_SOURCE_UNSUPPORTED");
+                if(original) {
+                    originalCalls.put(n.getSourceOccurrenceLineage(),n);
+                    supported(originalCalls.size()<=64,"CLOSED_CALL_COUNT_BUDGET");
+                }
+            }
             boolean binder=n.getChildren().stream().anyMatch(c->List.of(EGraphNode.Opcode.GENERICRELDECL,
                     EGraphNode.Opcode.DISJ,EGraphNode.Opcode.VAR,EGraphNode.Opcode.DISJVAR).contains(c.getOpcode()));
             if(binder) {
@@ -368,7 +391,11 @@ public final class NativeOperationComparison {
                 require(n.hasComparisonLocalCoordinate() && ("@fast-local:"+lexical).equals(n.getAlphaName()),"Local owner coordinate capture");
                 return "VARIABLE/local:"+lexical;
             }
-            String identity=switch(n.getOpcode()) {case GLOBALBINDING,CONSTANT -> n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();default -> "";};
+            String identity=switch(n.getOpcode()) {
+                case CALL -> {require(closedCalls.admits(n),"Foreign original call");yield CallMetadata.semanticKey(n);}
+                case GLOBALBINDING,CONSTANT -> n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();
+                default -> "";
+            };
             supported(n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL || n.getMetatype()==EGraphNode.Metatype.BOOLEAN
                     || n.getExactAlloyType()!=null,"LITERAL_TYPE_AUTHORITY_UNSUPPORTED");
             GraphType type=n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL?null:
