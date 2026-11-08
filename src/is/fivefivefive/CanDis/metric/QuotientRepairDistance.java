@@ -28,7 +28,7 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v16-unobserved-keep-completion";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v17-match-first-scope-ties";
     private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
@@ -1374,17 +1374,10 @@ public final class QuotientRepairDistance {
             return;
         }
         int leftClass = leftClasses.get(leftPosition);
-        enumerateGlobalBlockMappings(
-                left,
-                right,
-                leftBlocks,
-                rightBlocks,
-                leftClasses,
-                rightClasses,
-                leftPosition + 1,
-                minimumRightPosition,
-                current,
-                consumer);
+        // Match-before-skip agrees with native alpha traversal on exact ties.
+        // ScopeBlockTieOrder proves branch rotation preserves the admitted
+        // candidate set and maximum-match/minimum-cost objective. No block
+        // exchange is added; compatibility and monotone target order stay intact.
         for (int rightPosition = minimumRightPosition;
                 rightPosition < rightClasses.size(); rightPosition++) {
             int rightClass = rightClasses.get(rightPosition);
@@ -1409,6 +1402,17 @@ public final class QuotientRepairDistance {
                     consumer);
             current.remove(leftClass);
         }
+        enumerateGlobalBlockMappings(
+                left,
+                right,
+                leftBlocks,
+                rightBlocks,
+                leftClasses,
+                rightClasses,
+                leftPosition + 1,
+                minimumRightPosition,
+                current,
+                consumer);
     }
 
     private static boolean globalBlocksCompatible(
