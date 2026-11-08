@@ -106,8 +106,19 @@ public final class DeclarationOrbitShorterReplayTest {
                     Math.min(d[i-1][j]+1,d[i][j-1]+1));
         return d;
     }
-    public static void main(String[] args) throws Exception {
-        if(args.length>2) throw new IllegalArgumentException("[ARCHIVED_RECEIPT [NEW_SUPPLEMENT_JSON]]");
+    private static Object sourceCheck(String name,Class<?>[] types,Object... arguments) throws Exception {
+        var method=is.fivefivefive.CanDis.DeclarationOrbitSourceTest.class.getDeclaredMethod(name,types);
+        method.setAccessible(true);
+        return method.invoke(null,arguments);
+    }
+
+    private static int fixedNativeCost(EGraphNode left,EGraphNode right,Map<String,String> mapping) throws Exception {
+        var method=CanonicalDistance.class.getDeclaredMethod("eGraphDistance",EGraphNode.class,EGraphNode.class,Map.class);
+        method.setAccessible(true);
+        return (Integer)method.invoke(null,left,right,mapping);
+    }
+
+    private static JSONObject verify(String[] args,boolean nativeReverse) throws Exception {
         byte[] bytes=Files.readAllBytes(SOURCE);
         var module=CompUtil.parseEverything_fromString(A4Reporter.NOP,new String(bytes,java.nio.charset.StandardCharsets.UTF_8));
         var forms=new ArrayList<NormalForm>(); var prepared=new ArrayList<Canonical.Prepared>();
@@ -120,10 +131,11 @@ public final class DeclarationOrbitShorterReplayTest {
             var form=agent.normalForms().get(0); form.freezeForCertification(); forms.add(form);
             prepared.add(Canonical.prepare(graph));
         }
-        var report=args.length==0?DistanceReplayDiagnostics.capture(prepared.get(0),prepared.get(1)):
-                new JSONObject(Files.readString(Path.of(args[0])));
-        boolean reverse=args.length!=0 && report.getString("leftPredicate").equals("inv14c");
-        if(reverse) Collections.reverse(forms);
+        var archived=args.length==0?null:new JSONObject(Files.readString(Path.of(args[0])));
+        boolean reverse=archived==null?nativeReverse:archived.getString("leftPredicate").equals("inv14c");
+        if(reverse) { Collections.reverse(forms); Collections.reverse(prepared); }
+        var live=DistanceReplayDiagnostics.capture(prepared.get(0),prepared.get(1));
+        var report=archived==null?live:archived;
         if(args.length!=0) check(report.getString("sourceSha256").equals(HexFormat.of().formatHex(
                 java.security.MessageDigest.getInstance("SHA-256").digest(bytes))),"frozen original source hash");
         var left=forms.get(0); var right=forms.get(1);
@@ -134,6 +146,18 @@ public final class DeclarationOrbitShorterReplayTest {
         for(var q:original.getMatrixQuantiVars()) check(q.getQuantifier()==QuantiVar.Quantifier.ALL
                 && q.getCarrierTypeName().equals("Person") && q.isFrozenForCertification()
                 && q.getExactAlloyType().hasParserAuthenticatedAncestry(),"typed original ALL Person");
+        check(!FastPaidDeclarationAlignment.supportsPair(List.of(left),List.of(right)),"nested EXISTS paid-link admission still unsupported");
+        check(!FastLocalPaidScope.supports(original),"one-local-owner admission does not cover two nested owners");
+        check(!FastNestedPaidScope.supportsPair(List.of(left),List.of(right)),"ONE/ALL admission does not cover EXISTS scopes");
+        var sourceView=(RepairView)sourceCheck("checkedProjection",new Class<?>[]{Canonical.Prepared.class,Canonical.Prepared.class},
+                prepared.get(0),prepared.get(1));
+        var targetView=(RepairView)sourceCheck("checkedProjection",new Class<?>[]{Canonical.Prepared.class,Canonical.Prepared.class},
+                prepared.get(1),prepared.get(0));
+        var certified=live.getJSONObject("certified");
+        check(certified.getInt("distance")==27 && certified.getInt("quantifierDistance")==1,"certified27 and declaration1 unchanged");
+        @SuppressWarnings("unchecked") var certifiedChecker=(MatrixReplay<RepairView.Node>)sourceCheck("checker",new Class<?>[]{int[].class},(Object)new int[]{1,0});
+        check(certifiedChecker.verify(sourceView.phases().get(0).matrix(),targetView.phases().get(0).matrix(),
+                certified.getJSONArray("phases").getJSONObject(0).getJSONObject("receipt"))==26,"certified fixed-choice matrix26 replay");
         var arm=report.getJSONObject("fast"); var phase=arm.getJSONArray("phases").getJSONObject(0);
         var raw=phase.getJSONObject("alphaMapping"); var selected=new HashMap<String,String>();
         for(String key:raw.keySet()) selected.put(key,raw.getString(key));
@@ -145,10 +169,16 @@ public final class DeclarationOrbitShorterReplayTest {
         check(checker(selected,selected).verify(l,r,receipt)==26,"native matrix26 independently replayed");
         check(checker(selected,completed).verify(l,r,receipt)==26,
                 "same matrix operations admit the paid complement after certified outer exchange");
+        check(fixedNativeCost(l,r,selected)==26 && fixedNativeCost(l,r,completed)==26,
+                "actual Fast evaluator fixed-choice costs, no copied certified scalar");
         reject(() -> checker(selected,completed).verify(r,l,receipt),"endpoint substitution");
         reject(() -> checker(selected,completed).verify(l,r,new JSONObject(receipt.toString()).put("cost",25)),"cost corruption");
-        var decl=arm.getJSONObject("declarationSlice").getJSONArray("components").getJSONObject(0).getJSONObject("receipt");
         var a=declarations(left); var b=declarations(right);
+        // This old standalone path is retained as negative evidence, never read
+        // from the live fail-closed slice or promoted to a joint witness.
+        var decl=archived==null?DeclarationReplay.capture(a,b,dp(a,b),(i,j)->true):
+                archived.getJSONObject("fast").getJSONObject("declarationSlice").getJSONArray("components")
+                        .getJSONObject(0).getJSONObject("receipt");
         check(DeclarationReplay.verify(a,b,decl)==1,"old standalone declaration receipt");
         int conflicts=0;
         for(Object item:decl.getJSONArray("operations")) {
@@ -160,6 +190,16 @@ public final class DeclarationOrbitShorterReplayTest {
             }
         }
         check(conflicts==1,"raw archived slices are not one coherent public plan");
+        var joint=new DeclarationMatrixLink(List.of("_q0","_q1"),List.of("_q0","_q1"),selected,
+                Set.of("_q0","_q1"),Set.of("_q0","_q1"));
+        reject(()->joint.verify(a,b,decl),"historical standalone receipt rejected by joint original-coordinate linkage");
+        var liveFast=live.getJSONObject("fast"); var blocked=liveFast.getJSONObject("declarationSlice");
+        check(blocked.getString("status").equals("BLOCKED") && !blocked.getBoolean("sliceReplayChecked")
+                && !blocked.has("components") && blocked.getString("error").contains("No minimum path matches selected correspondence"),
+                "live missing paid-link emission is explicit, not an invalid standalone receipt");
+        check(!liveFast.has("selectedPaidDeclarationCorrespondence") && !liveFast.getBoolean("numericalCostCoverage")
+                && !liveFast.has("orderedDiagnosticActions") && liveFast.getInt("distance")==27,
+                "no paid-path or full native sequence claim, scalar27 retained");
         if(reverse) Collections.swap(b,0,1); else Collections.swap(a,0,1);
         var supplement=DeclarationReplay.capture(a,b,dp(a,b),(i,j)->true);
         check(DeclarationReplay.verify(a,b,supplement)==1,"source-permuted declaration path independently replayed");
@@ -175,13 +215,30 @@ public final class DeclarationOrbitShorterReplayTest {
         reject(()->DeclarationReplay.verify(a,b,forged),"forged source admission");
         check(arm.getInt("distance")==27 && !report.getBoolean("complete")
                 && !report.getBoolean("publicSequenceLinked"),"native27, full alignment blocked");
-        if(args.length==2) Files.writeString(Path.of(args[1]),new JSONObject()
+        var result=new JSONObject()
                 .put("complete",false).put("certificationStatus","BLOCKED")
+                .put("direction",reverse?"reverse":"forward")
                 .put("sourceSha256",HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256").digest(bytes)))
                 .put("rawDeclarationLinkage",false).put("sourcePermutation",reverse?"right:[1,0]":"left:[1,0]")
-                .put("certificateTest","DeclarationOrbitSourceTest")
+                .put("certificateCheck","DeclarationOrbitSourceTest.checkedProjection")
                 .put("completedMapping",new JSONObject(completed)).put("matrixCost",26).put("declarationCost",1)
-                .put("supplementalDeclarationReceipt",supplement).toString(2),StandardOpenOption.CREATE_NEW);
-        System.out.println("DeclarationOrbitShorterReplayTest: "+checks+" checks passed; scoped27 completion, full alignment BLOCKED");
+                .put("historicalInvalidDeclarationReceipt",decl).put("historicalConflicts",conflicts)
+                .put("liveNativeReport",live).put("nativeFastCompletionEmitted",false)
+                .put("supplementalDeclarationReceipt",supplement);
+        if(args.length==2) Files.writeString(Path.of(args[1]),result.toString(2),StandardOpenOption.CREATE_NEW);
+        return result;
+    }
+
+    public static void main(String[] args) throws Exception {
+        if(args.length>2) throw new IllegalArgumentException("[ARCHIVED_RECEIPT [NEW_SUPPLEMENT_JSON]] or --live-output OUTPUT");
+        if(args.length==2 && args[0].equals("--live-output")) {
+            var out=new JSONObject().put("forward",verify(new String[0],false)).put("reverse",verify(new String[0],true));
+            out.put("checks",checks).put("complete",false);
+            Files.writeString(Path.of(args[1]),out.toString(2),StandardOpenOption.CREATE_NEW);
+        } else {
+            verify(args,false);
+            if(args.length==0) verify(args,true);
+        }
+        System.out.println("DeclarationOrbitShorterReplayTest: "+checks+" checks passed; historical conflict rejected, supplemental27 checked; native Fast completion and full alignment BLOCKED");
     }
 }

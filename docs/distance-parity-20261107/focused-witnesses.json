@@ -12,6 +12,23 @@
     "source-linked-independent-replay"
   ],
   "regressionRunner": "scripts/run_distance_parity_tests.sh",
+  "staticWalkthroughWitnesses": [
+    {
+      "family": "equal-cost-binder-ties-and-joint-declaration-matrix-linkage",
+      "baselineCommit": "c3335c7b2dcae1804273c7394eb9d631b3068601",
+      "baselineObserved": {
+        "componentsBothArms": [4, 0, 1, 3],
+        "orderedMatrixActionsEqual": false,
+        "certifiedOriginalCoordinateDeclarationMatrixLinksEqual": false
+      },
+      "walkthroughEvidenceRelativeToWorkstationDrive": "ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/static-ties-bXqNJmcF/walkthrough.json",
+      "walkthroughEvidenceSha256": "8ba8af0be48cfac9d9f5a8cf50dc95bfee6feb520637032c3f134a59f09669e5",
+      "contract": "docs/distance-parity-20261107/JointDeclarationMatrixReplay.lean",
+      "replayTest": "src/is/fivefivefive/CanDis/JointDeclarationTieReplayTest.java",
+      "controls": ["reverse-direction", "equal-arity", "admitted-crossing-permutation", "corrupted-correspondence", "foreign-owner", "unadmitted-domain-exchange"],
+      "scope": "Finite original-coordinate native replay, not full public source sequence or Java/Lean certification"
+    }
+  ],
   "additionalBoundaryControls": [
     "src/is/fivefivefive/CanDis/PartialJoinCompositionTest.java",
     "src/is/fivefivefive/CanDis/CertifiedSingletonCompositionTest.java",

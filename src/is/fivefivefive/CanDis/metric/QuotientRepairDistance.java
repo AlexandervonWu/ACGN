@@ -28,7 +28,7 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v14-canonical-orbit-ties";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v16-unobserved-keep-completion";
     private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
@@ -70,23 +70,7 @@ public final class QuotientRepairDistance {
                 throw new IllegalStateException("MATRIX_REPLAY_MISSING_CHOICE");
             int[] mapping = i < aligned
                     ? phaseMapping(stats.selectedLeft, stats.selectedRight, stats.selectedMapping, i) : new int[0];
-            MatrixDistanceContext context = new MatrixDistanceContext(mapping);
-            MatrixReplay<Node> replay = new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
-                public String label(Node n) {
-                    return new org.json.JSONArray().put(n.operator()).put(n.semanticPayload())
-                            .put(n.bindingIndex()).put(String.valueOf(n.lexicalVariable()))
-                            .put(n.containerKind().toString()).put(n.orderInsensitive())
-                            .put(Arrays.toString(mapping)).toString();
-                }
-                public List<Node> children(Node n) { return n.children(); }
-                public List<Node> alternatives(Node n) { return n.certifiedAlternatives(); }
-                public boolean unordered(Node a, Node b) {
-                    return a.operator().equals(b.operator()) && a.orderInsensitive() && b.orderInsensitive();
-                }
-                public int size(Node n) { return n.size(); }
-                public int update(Node a, Node b) { return context.updateCost(a, b); }
-                public int distance(Node a, Node b) { return context.distance(a, b); }
-            });
+            MatrixReplay<Node> replay=matrixReplayEngine(mapping,mapping,true);
             Node a = i < left.phases().size() ? left.phases().get(i).matrix() : null;
             Node b = i < right.phases().size() ? right.phases().get(i).matrix() : null;
             org.json.JSONObject receipt = replay.capture(a, b);
@@ -107,6 +91,26 @@ public final class QuotientRepairDistance {
                 .put("selectedDeclarationPermutation",new org.json.JSONObject()
                         .put("left",new org.json.JSONArray(stats.selectedDeclarationLeft == null ? new int[0] : stats.selectedDeclarationLeft))
                         .put("right",new org.json.JSONArray(stats.selectedDeclarationRight == null ? new int[0] : stats.selectedDeclarationRight)));
+    }
+
+    private static MatrixReplay<Node> matrixReplayEngine(int[] labels,int[] costs,boolean search) {
+        var context=new MatrixDistanceContext(costs);
+        return new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
+            public String label(Node n) {
+                return new org.json.JSONArray().put(n.operator()).put(n.semanticPayload()).put(n.bindingIndex())
+                        .put(String.valueOf(n.lexicalVariable())).put(n.containerKind().toString())
+                        .put(n.orderInsensitive()).put(Arrays.toString(labels)).toString();
+            }
+            public List<Node> children(Node n) { return n.children(); }
+            public List<Node> alternatives(Node n) { return n.certifiedAlternatives(); }
+            public boolean unordered(Node a,Node b) { return a.operator().equals(b.operator()) && a.orderInsensitive() && b.orderInsensitive(); }
+            public int size(Node n) { return n.size(); }
+            public int update(Node a,Node b) { return context.updateCost(a,b); }
+            public int distance(Node a,Node b) {
+                if(!search) throw new IllegalStateException("Completion replay cannot search");
+                return context.distance(a,b);
+            }
+        });
     }
 
     /** Keeps native matrix choices and backtraces compatible minimum declaration paths. */
@@ -131,10 +135,29 @@ public final class QuotientRepairDistance {
         org.json.JSONObject permutation = matrix.getJSONObject("selectedDeclarationPermutation");
         int[] leftPermutation = declarationPermutation(a,permutation.getJSONArray("left"));
         int[] rightPermutation = declarationPermutation(b,permutation.getJSONArray("right"));
+        int[] effectiveLeft = leftPermutation.clone();
         Map<Integer,Integer> selected = new LinkedHashMap<>(), actual = new LinkedHashMap<>();
         org.json.JSONObject chosen = matrix.getJSONObject("selectedQuantifierCorrespondence");
         for (String key : chosen.keySet()) addInjectiveCorrespondence(selected,Integer.parseInt(key),
                 DeclarationReplay.integer(chosen,key));
+        Map<String,String> full = new LinkedHashMap<>();
+        org.json.JSONArray global = matrix.getJSONArray("selectedGlobalMapping");
+        DeclarationReplay.require(global.length() == a.bindings.size(),"Selected matrix mapping size");
+        int[] mapping = new int[global.length()];
+        for (int i = 0; i < mapping.length; i++) {
+            int j = DeclarationReplay.integer(new org.json.JSONObject().put("index",global.get(i)),"index");
+            DeclarationReplay.require(j >= -1 && j < b.bindings.size(),"Selected matrix coordinate");
+            mapping[i] = j;
+            if (j >= 0) full.put(Integer.toString(i),Integer.toString(j));
+        }
+        for (var e : selected.entrySet()) DeclarationReplay.require(
+                Objects.equals(full.get(e.getKey().toString()),e.getValue().toString()),"Paid/matrix link conflict");
+        for (int phase = 0; phase < aligned; phase++) DeclarationReplay.require(
+                new org.json.JSONArray(phaseMapping(a,b,mapping,phase)).similar(matrix.getJSONArray("phases")
+                        .getJSONObject(phase).getJSONArray("alphaMapping")),"Phase/global matrix mapping conflict");
+        Set<String> observedLeft = a.used.stream().map(Object::toString).collect(java.util.stream.Collectors.toSet());
+        Set<String> observedRight = b.used.stream().map(Object::toString).collect(java.util.stream.Collectors.toSet());
+        boolean completeAbsent=closedPrefix(left) && closedPrefix(right);
         org.json.JSONArray components = new org.json.JSONArray();
         int cost = 0;
         for (int index = 0; index < space.components.size(); index++) {
@@ -142,19 +165,37 @@ public final class QuotientRepairDistance {
             QuantifierEditComponent component = new QuantifierEditComponent(
                     permuteDeclarations(original.left,a,leftPermutation),
                     permuteDeclarations(original.right,b,rightPermutation),original.distance);
-            List<DeclarationReplay.Atom> as = declarationAtoms(component.left);
-            List<DeclarationReplay.Atom> bs = declarationAtoms(component.right);
-            org.json.JSONObject receipt = DeclarationReplay.capture(as,bs,component.distance,(i,j) -> {
-                Integer ai = i < 0 ? null : a.indices.get(component.left.get(i).identity);
-                Integer bj = j < 0 ? null : b.indices.get(component.right.get(j).identity);
-                if (i < 0) return !selected.containsValue(bj);
-                if (j < 0) return !selected.containsKey(ai);
-                boolean carries = QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j)) != 0
-                        || component.left.get(i).identity.parameter;
-                return carries ? bj != null && bj.equals(selected.get(ai))
-                        : !selected.containsKey(ai) && !selected.containsValue(bj);
-            });
-            cost = Math.addExact(cost,DeclarationReplay.verify(as,bs,receipt));
+            org.json.JSONObject receipt, connecting=null;
+            try {
+                receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+            } catch(DeclarationReplay.NoMatchingPath missing) {
+                if(a.phases.size()!=1 || b.phases.size()!=1) throw missing;
+                var source=component.left;
+                var joint=declarationLink(component,a,b,full,observedLeft,observedRight,false);
+                int[] order=joint.connectingPermutation(declarationAtoms(source),(i,j)->
+                        CertifiedDeclarationOrbit.exchangeable(a.binding(a.indices.get(source.get(i).identity)).binding,
+                                a.binding(a.indices.get(source.get(j).identity)).binding));
+                var reordered=DeclarationMatrixLink.permute(source,order);
+                for(int i=0;i<original.left.size();i++) effectiveLeft[a.indices.get(original.left.get(i).identity)]=
+                        a.indices.get(reordered.get(i).identity);
+                CertifiedDeclarationOrbit.requirePermutation(orbitBindings(a),effectiveLeft);
+                component=new QuantifierEditComponent(reordered,component.right,component.distance);
+                receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+                connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(order))
+                        .put("target",new org.json.JSONArray(CertifiedDeclarationOrbit.identity(component.right.size())))
+                        .put("admission","SOURCE_CERTIFIED_FULL_SYMMETRIC_ORBIT").put("cost",0);
+            }
+            if(receipt.has("matrixCorrespondenceCompletion")) {
+                var completion=receipt.getJSONObject("matrixCorrespondenceCompletion");
+                var raw=completion.getJSONObject("completedMapping"); int[] completed=mapping.clone();
+                for(String key:raw.keySet()) completed[Integer.parseInt(key)]=Integer.parseInt(raw.getString(key));
+                var originalReceipt=matrix.getJSONArray("phases").getJSONObject(0).getJSONObject("receipt");
+                int replayed=matrixReplayEngine(phaseMapping(a,b,mapping,0),phaseMapping(a,b,completed,0),false)
+                        .verify(left.phases().get(0).matrix(),right.phases().get(0).matrix(),originalReceipt);
+                DeclarationReplay.require(replayed==originalReceipt.getInt("cost"),"Completion matrix cost changed");
+                completion.put("matrixActionsUnchanged",true).put("replayedMatrixCost",replayed);
+            }
+            cost = Math.addExact(cost,receipt.getInt("replayedCost"));
             org.json.JSONArray ops = receipt.getJSONArray("operations");
             for (int k = 0; k < ops.length(); k++) {
                 org.json.JSONObject op = ops.getJSONObject(k);
@@ -163,8 +204,17 @@ public final class QuotientRepairDistance {
                     addInjectiveCorrespondence(actual,Objects.requireNonNull(a.indices.get(component.left.get(i).identity)),
                             Objects.requireNonNull(b.indices.get(component.right.get(j).identity)));
             }
-            components.put(new org.json.JSONObject().put("phase",index-1)
-                    .put("component",index == 0 ? "parameters" : "quantifiers").put("receipt",receipt));
+            var emitted=new org.json.JSONObject().put("phase",index-1)
+                    .put("component",index == 0 ? "parameters" : "quantifiers").put("receipt",receipt);
+            int[] sourceOrder=declarationOrder(original.left,component.left);
+            int[] targetOrder=declarationOrder(original.right,component.right);
+            if(!Arrays.equals(sourceOrder,CertifiedDeclarationOrbit.identity(sourceOrder.length))
+                    || !Arrays.equals(targetOrder,CertifiedDeclarationOrbit.identity(targetOrder.length)))
+                connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(sourceOrder))
+                        .put("target",new org.json.JSONArray(targetOrder))
+                        .put("admission","SOURCE_CERTIFIED_FULL_SYMMETRIC_ORBIT").put("cost",0);
+            if(connecting!=null) emitted.put("connectingPermutation",connecting);
+            components.put(emitted);
         }
         for (int phase = aligned; phase < Math.max(left.phases().size(),right.phases().size()); phase++) {
             List<IndexedDeclaration> ls = phase < left.phases().size()
@@ -184,7 +234,78 @@ public final class QuotientRepairDistance {
         return new org.json.JSONObject().put("components",components).put("cost",cost).put("replayedCost",cost)
                 .put("sliceReplayChecked",true).put("complete",false).put("selectedPaidCorrespondenceChecked",true)
                 .put("selectedPaidCorrespondence",new org.json.JSONObject(actual))
+                .put("selectedMatrixDeclarationLinksChecked",true)
+                .put("jointLinkScope","Original declaration coordinates under selected map plus explicit absence completion; local binders excluded")
+                .put("selectedDeclarationPermutation",new org.json.JSONObject()
+                        .put("left",new org.json.JSONArray(effectiveLeft)).put("right",new org.json.JSONArray(rightPermutation)))
                 .put("orderingAdmissionChecked",false).put("matrixChoiceAdmissionChecked",false);
+    }
+
+    private static DeclarationMatrixLink declarationLink(QuantifierEditComponent component,GlobalBindingIndex a,
+            GlobalBindingIndex b,Map<String,String> full,Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent) {
+        return new DeclarationMatrixLink(
+                component.left.stream().map(d -> Objects.requireNonNull(a.indices.get(d.identity)).toString()).toList(),
+                component.right.stream().map(d -> Objects.requireNonNull(b.indices.get(d.identity)).toString()).toList(),
+                full,observedLeft,observedRight,completeAbsent);
+    }
+
+    private static int[] declarationOrder(List<IndexedDeclaration> original,List<IndexedDeclaration> ordered) {
+        int[] result=new int[ordered.size()];
+        for(int i=0;i<result.length;i++) {
+            result[i]=-1;
+            for(int j=0;j<original.size();j++) if(original.get(j).identity.equals(ordered.get(i).identity)) {
+                result[i]=j; break;
+            }
+            DeclarationReplay.require(result[i]>=0,"Declaration escaped original component");
+        }
+        return result;
+    }
+
+    private static org.json.JSONObject captureDeclarations(QuantifierEditComponent component,GlobalBindingIndex a,
+            GlobalBindingIndex b,Map<Integer,Integer> selected,Map<String,String> full,
+            Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent) {
+        var as=declarationAtoms(component.left); var bs=declarationAtoms(component.right);
+        var joint=declarationLink(component,a,b,full,observedLeft,observedRight,completeAbsent);
+        var receipt=DeclarationReplay.capture(as,bs,component.distance,(i,j)->{
+            if(!joint.allows(i,j,i>=0 && j>=0?QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j)):-1)) return false;
+            Integer ai=i<0?null:a.indices.get(component.left.get(i).identity);
+            Integer bj=j<0?null:b.indices.get(component.right.get(j).identity);
+            if(i<0) return !selected.containsValue(bj);
+            if(j<0) return !selected.containsKey(ai);
+            if(completeAbsent && !full.containsKey(ai.toString())) {
+                var x=component.left.get(i).declaration; var y=component.right.get(j).declaration;
+                if(!x.sameCertifiedPayload(y) || x.observationType()==null || x.observationDomain()==null
+                        || !x.observationType().equals(y.observationType()) || !x.observationDomain().equals(y.observationDomain())) return false;
+            }
+            boolean carries=QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j))!=0
+                    || component.left.get(i).identity.parameter;
+            return carries ? bj!=null && bj.equals(selected.get(ai))
+                    : !selected.containsKey(ai) && !selected.containsValue(bj);
+        });
+        if(completeAbsent) {
+            var completion=joint.completeAndVerify(as,bs,receipt);
+            if(!completion.getJSONArray("absencePremises").isEmpty()) receipt.put("matrixCorrespondenceCompletion",completion);
+        } else joint.verify(as,bs,receipt);
+        return receipt;
+    }
+
+    private static boolean closedPrefix(RepairView view) {
+        if(view.phases().size()!=1 || !view.temporalRoot().label().equals("NONE")
+                || !view.temporalRoot().children().isEmpty()) return false;
+        var phase=view.phases().get(0);
+        if(phase.bindings().size()!=phase.quantifiers().size() || phase.bindings().stream().anyMatch(
+                b->b.role()!=BindingRole.MATRIX || b.ownerPhase()!=0 || !b.ownerContext().isEmpty()
+                        || b.declaration().observationType()==null || b.declaration().observationDomain()==null
+                        || !b.declaration().dependencies().isEmpty())) return false;
+        Set<Node> seen=java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        var pending=new java.util.ArrayDeque<Node>(); if(phase.matrix()!=null) pending.add(phase.matrix());
+        while(!pending.isEmpty()) {
+            var n=pending.removeFirst(); if(!seen.add(n)) continue;
+            if(seen.size()>4096) throw new IllegalStateException("COMPLETION_OCCURRENCE_BUDGET");
+            if(n.operator().equals("CALL") || n.operator().equals("REF") || n.isVariable() && n.bindingIndex()<0) return false;
+            pending.addAll(n.children()); pending.addAll(n.certifiedAlternatives());
+        }
+        return true;
     }
 
     private static List<Binding> orbitBindings(GlobalBindingIndex index) {

@@ -30,6 +30,11 @@ public final class DeclarationReplay {
         boolean test(int leftIndex, int rightIndex);
     }
 
+    /** Only this failure permits trying another already-admitted declaration order. */
+    public static final class NoMatchingPath extends IllegalArgumentException {
+        private NoMatchingPath() { super("DECLARATION_REPLAY_INVALID: No minimum path matches selected correspondence"); }
+    }
+
     private DeclarationReplay() { }
 
     public static void requireBounded(int leftSize, int rightSize) {
@@ -59,7 +64,7 @@ public final class DeclarationReplay {
             else if (j > 0 && moves[i][j-1] != 0 && allowed.test(-1,j-1)
                     && nativeDp[i][j] == Math.addExact(nativeDp[i][j-1],1)) moves[i][j] = 3;
         }
-        require(moves[n][m] != 0, "No minimum path matches selected correspondence");
+        if (moves[n][m] == 0) throw new NoMatchingPath();
         List<JSONObject> reversed = new ArrayList<>();
         int i = n, j = m;
         while (i > 0 || j > 0) {

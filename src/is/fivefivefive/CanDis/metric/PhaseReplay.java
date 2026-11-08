@@ -109,7 +109,16 @@ public final class PhaseReplay {
         int[] budget = {100_000};
         JSONArray components = declarations.getJSONArray("components");
         for (int i = 0; i < components.length(); i++) {
-            JSONArray ops = components.getJSONObject(i).getJSONObject("receipt").getJSONArray("operations");
+            JSONObject component=components.getJSONObject(i);
+            if(component.has("connectingPermutation")) {
+                if(--budget[0]<0) throw new IllegalStateException("DIAGNOSTIC_ORDER_BUDGET");
+                JSONObject permutation=component.getJSONObject("connectingPermutation");
+                DeclarationReplay.require(DeclarationReplay.integer(permutation,"cost")==0,"Connecting permutation charge");
+                actions.put(new JSONObject().put("phaseKind","declarationPermutation")
+                        .put("receiptPath","/declarationSlice/components/"+i+"/connectingPermutation")
+                        .put("operation",new JSONObject(permutation.toString())).put("cost",0));
+            }
+            JSONArray ops = component.getJSONObject("receipt").getJSONArray("operations");
             for (int j = 0; j < ops.length(); j++) {
                 if (--budget[0] < 0) throw new IllegalStateException("DIAGNOSTIC_ORDER_BUDGET");
                 actions.put(new JSONObject().put("phaseKind","declaration")

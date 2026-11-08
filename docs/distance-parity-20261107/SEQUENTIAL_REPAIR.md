@@ -7,11 +7,21 @@ The previously authorized diagnostic mode remains distinct from strict mode.
 
 The latest authorization replaces isolated witness-by-witness patching with a
 foreground walkthrough-and-repair cycle. The competing heartbeat was cancelled;
-do not recreate it or automatically restart the corpus. Retained mismatches are
+do not recreate it or restart the corpus after individual patches. Retained mismatches are
 focused diagnostic inputs and regression controls, not permission to bypass the
 walkthrough. `focused-witnesses.json` indexes the retained source cases without
 replacing their original external receipts or promoting diagnostic agreement to
 certification.
+
+The subsequent instruction is a bounded static-analysis walkthrough first,
+followed by real-corpus pattern discovery. Cover the five boundaries below,
+using focused witnesses and minimal probes to distinguish demonstrated defects
+from unsupported or unresolved cases. Run the combined regression suite once
+per frozen repair; do not duplicate it with an agent-run existing-test suite.
+New minimal reproducers and Lean compilation precede that regression run. A
+failed regression requires investigation and a revised repair, never an
+unchanged rerun. After the static pass and validated repairs, proceed to one
+guarded real-corpus diagnostic scan, without recreating the cancelled monitor.
 
 ## Cycle
 
@@ -47,7 +57,8 @@ certification.
    when a real defect is repaired; do not retain a bug solely as a test case.
 7. Release recovery ownership and begin the next implementation walkthrough
    using the focused witness set. No per-issue user confirmation is required,
-   but neither a new monitor nor a corpus restart follows automatically.
+   but no competing monitor is recreated. The newly authorized real-corpus
+   pattern phase follows the bounded static pass, not each individual repair.
 
 ## Required Walkthrough
 
