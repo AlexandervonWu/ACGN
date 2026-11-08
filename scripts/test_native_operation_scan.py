@@ -21,6 +21,7 @@ def main():
     cases = [
         ("sase", root / "classified-data/classroom_fol/both/SASEHD8jPo2HgsuoJ_inv14.als", "MATCHED"),
         ("jonx", root / "classified-data/classroom_fol/both/JoNXaXfKNJzGh3BFa_inv12.als", "MATCHED"),
+        ("wdi", root / "classified-data/classroom_fol/both/wdiLn4gC6q3bbYBad_inv3.als", "MATCHED"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
         ("reduced", reduced, None),
     ]

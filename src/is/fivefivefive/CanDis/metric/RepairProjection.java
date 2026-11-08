@@ -58,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v18-source-temporal-occurrences";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v19-set-source-encounter";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -1971,7 +1971,14 @@ public final class RepairProjection {
             CertifiedSetOperandPartition partition = kind == ContainerKind.SET
                     ? setPartitions.get(source) : null;
             if (partition != null) {
-                return partition.inputFibers(source);
+                // The trace orders quotient classes by internal certificate
+                // keys. Metric DP/backtrace instead follows the shared source
+                // encounter order, as Fast's first-occurrence Set reduction
+                // does. Re-enumerate whole checked fibers, never their members
+                // or emitted edits; inputFibers retains exact source lineage.
+                List<List<Integer>> fibers = new ArrayList<>(partition.inputFibers(source));
+                fibers.sort(java.util.Comparator.comparingInt(fiber -> fiber.get(0)));
+                return List.copyOf(fibers);
             }
             List<List<Integer>> all = new ArrayList<>(source.getChildren().size());
             for (int index = 0; index < source.getChildren().size(); index++) {
