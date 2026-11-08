@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v20-grouped-paid-orbit";
+    public static final String VERSION = "typed-fast-distance-v21-certified-prefix-orbit";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -199,7 +199,7 @@ public final class CanonicalDistance {
                 a=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(a,p);
                 b=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(b,q);
                 connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(p)).put("target",new org.json.JSONArray(q))
-                        .put("admission","ORIGINAL_SOURCE_CERTIFIED_GROUPED_TRANSPOSITION").put("cost",0);
+                        .put("admission","ORIGINAL_SOURCE_CERTIFIED_PREFIX_TRANSPOSITION").put("cost",0);
             }
             try {
                 receipt=captureDeclarations(aSource,bSource,a,b,phase,dp,selected,usedA,usedB,paid,linked,completeAbsent);

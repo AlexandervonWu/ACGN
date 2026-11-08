@@ -4,7 +4,7 @@ import java.util.*;
 import is.fivefivefive.CanDis.metric.RepairProjection;
 import is.fivefivefive.CanDis.theory.*;
 
-/** Identity plus one source-certified grouped transposition per endpoint.
+/** Identity plus one source-certified homogeneous-prefix transposition per endpoint.
  * This bounded candidate slice is not enumeration of the full source orbit. */
 final class FastGroupedDeclarationOrbit {
     static final int MAX_BINDINGS=6;
@@ -35,10 +35,9 @@ final class FastGroupedDeclarationOrbit {
         }
         Set<QuantiVar> seen=Collections.newSetFromMap(new IdentityHashMap<>());
         for(var q:order)require(indices.containsKey(q)&&seen.add(q),"Foreign grouped order binding");
-        var allowed=FastDeclarationPermutation.admission(comparison,order);
         var candidates=new ArrayList<int[]>();
         for(int i=0;i<order.size();i++)for(int j=i+1;j<order.size();j++)
-            if(allowed.test(i,j)&&allowed.test(j,i)&&samePayload(order.get(i),order.get(j))) {
+            if(sameBlock(order,i,j)&&samePayload(order.get(i),order.get(j))) {
                 var p=identity(order.size());p[i]=j;p[j]=i;candidates.add(p);
             }
         if(candidates.isEmpty())return List.copyOf(result);
@@ -50,13 +49,27 @@ final class FastGroupedDeclarationOrbit {
         for(var proof:descriptor.automorphisms().generatorCertificates())CertificateVerifier.verify(proof);
         for(var proof:evidence.semanticArtifact().binderOccurrenceCertificates())CertificateVerifier.verify(proof);
         var coordinates=evidence.phaseSourceCoordinates().get(0);var slots=new ArrayList<TypedSlot>();
+        var payloads=new ArrayList<BinderCoordinateDescriptor>();
         for(var q:order) {
             var coordinate=descriptor.coordinates().get(coordinates.get(indices.get(q)));
             require(coordinate.quantifier().equals(q.getQuantifier().name())
-                    &&coordinate.multiplicity().equals(q.getCardinality().name())&&coordinate.dependencies().isEmpty(),"Grouped source payload");
+                    &&coordinate.multiplicity().equals(q.getCardinality().name()),"Grouped source payload");
+            if(!coordinate.dependencies().isEmpty())return List.copyOf(result);
             slots.add(coordinate.canonicalSlot());
+            payloads.add(coordinate);
         }
         for(var p:candidates) {
+            // Separate declaration paths are only a candidate. Actual source
+            // domain/type/exchange-class evidence and the full certificate below
+            // authorize the move; equal carrier text does not.
+            boolean compatible=true;
+            for(int i=0;i<p.length;i++)if(i!=p[i]) {
+                var x=payloads.get(i);var y=payloads.get(p[i]);
+                compatible &= x.type().equals(y.type())&&x.domain().equals(y.domain())
+                        &&x.exchangeClass()==y.exchangeClass()&&x.quantifier().equals(y.quantifier())
+                        &&x.multiplicity().equals(y.multiplicity())&&x.disjointnessClass()==y.disjointnessClass();
+            }
+            if(!compatible)continue;
             var mapping=new LinkedHashMap<TypedSlot,TypedSlot>();
             for(var slot:descriptor.boundContext())mapping.put(slot,slot);
             for(int i=0;i<p.length;i++)mapping.put(slots.get(i),slots.get(p[i]));
@@ -91,6 +104,12 @@ final class FastGroupedDeclarationOrbit {
     private static boolean samePayload(QuantiVar a,QuantiVar b) {
         return a.getQuantifier()==b.getQuantifier()&&Objects.equals(a.getTypeName(),b.getTypeName())
                 &&a.getCardinality()==b.getCardinality()&&a.getDisjointnessClass()==b.getDisjointnessClass();
+    }
+    private static boolean sameBlock(List<QuantiVar> order,int i,int j) {
+        var kind=order.get(i).getQuantifier();
+        if(kind!=QuantiVar.Quantifier.ALL&&kind!=QuantiVar.Quantifier.SOME)return false;
+        for(int k=i+1;k<=j;k++)if(order.get(k).getQuantifier()!=kind)return false;
+        return true;
     }
     private static void require(boolean b,String why){if(!b)throw new IllegalArgumentException(why);}
 }
