@@ -3658,8 +3658,10 @@ public class NormalForm {
         variable.setSourceName(sourceVariable.getSourceName());
         variable.setSourceType(qv.getTypeName());
         variable.setExactAlloyType(
-                is.fivefivefive.ACGN.alloy.ExactAlloyType.unaryRelation(
-                        qv.getTypeName()));
+                authenticatedEmptyBindingType(qv.getExactAlloyType())
+                        ? qv.getExactAlloyType()
+                        : is.fivefivefive.ACGN.alloy.ExactAlloyType.unaryRelation(
+                                qv.getTypeName()));
         variable.setAlphaName(qv.getName());
         constraint.addNormalizedChild(variable);
         constraint.addNormalizedChild(cloneEGraph(domain));
@@ -4524,10 +4526,24 @@ public class NormalForm {
                 == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.INT) {
             return true;
         }
+        // The parser's unary empty type still authenticates the original slot.
+        // Dropping it loses paid declaration links; it does not erase the domain.
+        if (authenticatedEmptyBindingType(evidence)) {
+            return true;
+        }
         return evidence.kind()
                         == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.RELATION
                 && evidence.relationArity() >= 1
                 && !evidence.alternatives().isEmpty();
+    }
+
+    private static boolean authenticatedEmptyBindingType(
+            is.fivefivefive.ACGN.alloy.ExactAlloyType evidence) {
+        return evidence != null
+                && evidence.kind()
+                        == is.fivefivefive.ACGN.alloy.ExactAlloyType.Kind.EMPTY_RELATION
+                && evidence.relationArity() == 1
+                && evidence.hasParserAuthenticatedAncestry();
     }
 
     private static void inheritBindingTypeEvidence(

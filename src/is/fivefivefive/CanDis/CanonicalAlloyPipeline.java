@@ -38,7 +38,7 @@ import is.fivefivefive.CanDis.augmentation.EquivalenceAugmenter;
  * diagnostic baseline.
  */
 public final class CanonicalAlloyPipeline {
-    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v38-phase-local-bindings";
+    public static final String PIPELINE_VERSION = "canonical-alloy-pipeline-v39-empty-binding-evidence";
     public static final String MEASUREMENT_PROJECTION_VERSION = RepairProjection.VERSION;
     public static final String REPRESENTATIVE_TED_VERSION =
             CanonicalRepresentativeTreeDistance.VERSION;
