@@ -232,6 +232,7 @@ public final class NativeOperationComparison {
         final Map<Long,EGraphNode> originalVariables=new HashMap<>();
         final Map<Long,EGraphNode> originalCalls=new HashMap<>();
         final ClosedCallEvidence closedCalls;
+        final BoundCallEvidence boundCalls;
         final String commitment;
         Endpoint(Canonical.Prepared normalized) {
             this.normalized=normalized;
@@ -253,8 +254,9 @@ public final class NativeOperationComparison {
                     }
                 start=end;
             }
-            census(source.getCertificationMatrixEGraph(),new int[]{MAX_NODES},0,true);
             closedCalls=ClosedCallEvidence.from(source);
+            boundCalls=BoundCallEvidence.from(source);
+            census(source.getCertificationMatrixEGraph(),new int[]{MAX_NODES},0,true);
             census(source.getMatrixEGraph(),new int[]{MAX_NODES},0,false);
             for(int i=0;i<qs.size();i++) {
                 var q=qs.get(i);require(q.isFrozenForCertification(),"Mutable original binder");
@@ -315,7 +317,8 @@ public final class NativeOperationComparison {
             supported(n.getOpcode()!=EGraphNode.Opcode.REF,"REFERENCE_OR_CALL_UNSUPPORTED");
             if(n.getOpcode()==EGraphNode.Opcode.CALL) {
                 supported(source.getLocalQuantiVars().isEmpty()
-                        && (original?ClosedCallEvidence.closed(n):closedCalls.admits(n)),"CLOSED_CALL_SOURCE_UNSUPPORTED");
+                        && ((original?ClosedCallEvidence.closed(n):closedCalls.admits(n))
+                            || boundCalls.admits(n)),"CLOSED_CALL_SOURCE_UNSUPPORTED");
                 if(original) {
                     originalCalls.put(n.getSourceOccurrenceLineage(),n);
                     supported(originalCalls.size()<=64,"CLOSED_CALL_COUNT_BUDGET");
@@ -392,7 +395,7 @@ public final class NativeOperationComparison {
                 return "VARIABLE/local:"+lexical;
             }
             String identity=switch(n.getOpcode()) {
-                case CALL -> {require(closedCalls.admits(n),"Foreign original call");yield CallMetadata.semanticKey(n);}
+                case CALL -> {require(closedCalls.admits(n)||boundCalls.admits(n),"Foreign original call");yield CallMetadata.semanticKey(n);}
                 case GLOBALBINDING,CONSTANT -> n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();
                 default -> "";
             };

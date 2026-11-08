@@ -96,6 +96,7 @@ final class FastPaidDeclarationAlignment {
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         ClosedCallEvidence calls = null;
+        BoundCallEvidence boundCalls = null;
         pending.add(f.getMatrixEGraph());
         while (!pending.isEmpty()) {
             EGraphNode node = pending.removeFirst();
@@ -104,7 +105,10 @@ final class FastPaidDeclarationAlignment {
             if (node.getOpcode() == EGraphNode.Opcode.REF) return false;
             if (node.getOpcode() == EGraphNode.Opcode.CALL) {
                 if(calls == null) calls = ClosedCallEvidence.from(f);
-                if(!calls.admits(node)) return false;
+                if(!calls.admits(node)) {
+                    if(boundCalls == null) boundCalls = BoundCallEvidence.from(f);
+                    if(!boundCalls.admits(node)) return false;
+                }
             }
             if (node.getOpcode() == EGraphNode.Opcode.VARIABLE) {
                 String name = node.getAlphaName() == null ? node.getSourceName() : node.getAlphaName();
