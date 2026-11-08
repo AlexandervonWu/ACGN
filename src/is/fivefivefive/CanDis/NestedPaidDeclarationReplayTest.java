@@ -30,7 +30,7 @@ public final class NestedPaidDeclarationReplayTest {
         throw new AssertionError(why);
     }
     private static String variable(EGraphNode n) { return n.getAlphaName()==null?n.getSourceName():n.getAlphaName(); }
-    private static GraphType type(EGraphNode n) {
+    static GraphType type(EGraphNode n) {
         if(n.getOpcode()==EGraphNode.Opcode.VARIABLE || n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL) return null;
         if(n.getMetatype()==EGraphNode.Metatype.BOOLEAN) return GraphType.BOOL;
         return AlloyTypeBridge.graphType(Objects.requireNonNull(n.getExactAlloyType()));
@@ -44,7 +44,7 @@ public final class NestedPaidDeclarationReplayTest {
         }
         return n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();
     }
-    private static MatrixReplay<EGraphNode> checker(Map<String,String> labelMapping,Map<String,String> mapping) {
+    static MatrixReplay<EGraphNode> checker(Map<String,String> labelMapping,Map<String,String> mapping) {
         Map<String,String> reverse=new HashMap<>();
         for(var entry:mapping.entrySet()) if(reverse.put(entry.getValue(),entry.getKey())!=null)
             throw new IllegalArgumentException("Noninjective selected mapping");
@@ -79,12 +79,14 @@ public final class NestedPaidDeclarationReplayTest {
             public int distance(EGraphNode a,EGraphNode b) { throw new AssertionError("Replay cannot search distance"); }
         });
     }
-    private static List<DeclarationReplay.Atom> declarations(NormalForm form) {
+    static List<DeclarationReplay.Atom> declarations(NormalForm form) {
         List<QuantiVar> qs=form.getMatrixQuantiVars();
         List<Integer> order=new ArrayList<>(); for(int i=0;i<qs.size();i++) order.add(i);
         for(int start=0;start<order.size();) {
             int end=start+1;
-            while(end<order.size() && qs.get(end).getQuantifier()==qs.get(start).getQuantifier()) end++;
+            while(end<order.size() && (qs.get(start).getQuantifier()==QuantiVar.Quantifier.ALL
+                    || qs.get(start).getQuantifier()==QuantiVar.Quantifier.SOME)
+                    && qs.get(end).getQuantifier()==qs.get(start).getQuantifier()) end++;
             order.subList(start,end).sort(Comparator.comparing(i -> qs.get(i).getCarrierTypeName())); start=end;
         }
         List<DeclarationReplay.Atom> result=new ArrayList<>();
@@ -101,7 +103,7 @@ public final class NestedPaidDeclarationReplayTest {
         CertificateVerifier.verify(tree.shapeCoherence());
         for (var child : tree.invocationChildren()) unfolding(child);
     }
-    private static RepairView checkedProjection(Canonical.Prepared source, Canonical.Prepared foreign) {
+    static RepairView checkedProjection(Canonical.Prepared source, Canonical.Prepared foreign) {
         var forms = source.normalizedForms();
         var evidence = TheoryAlloyAdapter.adapt(forms,source.semanticProfile());
         evidence.requireRepairProjectionSources(forms);
@@ -166,11 +168,11 @@ public final class NestedPaidDeclarationReplayTest {
     private static void require(boolean value) {
         if (!value) throw new IllegalArgumentException("Outside fixed one-phase replay slice");
     }
-    private static void noChoices(Node n) {
+    static void noChoices(Node n) {
         require(n.certifiedAlternatives().isEmpty());
         for (Node child : n.children()) noChoices(child);
     }
-    private static List<DeclarationReplay.Atom> atoms(Phase phase, JSONArray ordered) {
+    static List<DeclarationReplay.Atom> atoms(Phase phase, JSONArray ordered) {
         require(ordered.length() == phase.quantifiers().size());
         Set<Integer> seen = new HashSet<>();
         List<DeclarationReplay.Atom> result = new ArrayList<>();
@@ -208,7 +210,7 @@ public final class NestedPaidDeclarationReplayTest {
         }
         return result;
     }
-    private static MatrixReplay<Node> certChecker(int[] mapping) {
+    static MatrixReplay<Node> certChecker(int[] mapping) {
         return new MatrixReplay<>(new MatrixReplay.NativeCost<Node>() {
             public String label(Node n) {
                 return new JSONArray().put(n.operator()).put(n.semanticPayload()).put(n.bindingIndex())

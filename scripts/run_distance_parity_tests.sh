@@ -30,6 +30,7 @@ lean docs/distance-parity-20261107/CertifiedDeclarationOrbit.lean
 lean docs/distance-parity-20261107/OnePaidDeclarationAlignment.lean
 lean docs/distance-parity-20261107/BoundVariableCorrespondence.lean
 lean docs/distance-parity-20261107/NestedPaidDeclaration.lean
+lean docs/distance-parity-20261107/ScopedPaidAdmission.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -73,6 +74,10 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.FastNestedPaidScopeTest
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.NestedPaidDeclarationReplayTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.ScopedPaidAdmissionTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.ScopedPaidAdmissionReplayTest
 python3 -B scripts/test_batch_parity_stop.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/parity-stop-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \

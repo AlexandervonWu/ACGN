@@ -89,8 +89,13 @@ public final class LonePaidDeclarationAlignmentTest {
                 Files.readString(Path.of("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als"))
                     .replace("some c:Class","lone c:Class"));
         var localForms=prepare(local,"inv12");
-        check(!localForms.get(0).getLocalQuantiVars().isEmpty(),"negative control actually retains local binder");
-        check(!FastPaidDeclarationAlignment.supports(localForms),"LONE plus local binder not admitted by this extension");
+        check(!localForms.get(0).getLocalQuantiVars().isEmpty(),"scoped control actually retains local binder");
+        check(FastLocalPaidScope.supports(localForms.get(0)) && FastPaidDeclarationAlignment.supports(localForms),
+                "LONE prefix admits paid links only after actual local source scope validation");
+        check(localForms.get(0).getMatrixQuantiVars().get(0).getQuantifier()==QuantiVar.Quantifier.LONE,
+                "scoped admission preserves original LONE barrier");
+        check(FastPaidDeclarationAlignment.supportsPair(localForms,prepare(local,"inv12c"))
+                && FastPaidDeclarationAlignment.supportsPair(prepare(local,"inv12c"),localForms),"scoped LONE both directions");
         System.out.println("LonePaidDeclarationAlignmentTest: "+checks+" checks passed; fixed prefix, no free LONE exchange");
     }
 }

@@ -40,6 +40,16 @@ final class FastLocalPaidScope {
                 && type.sameOccurrenceEvidenceAs(n.getExactAlloyType());
     }
 
+    private static QuantiVar.Quantifier localKind(EGraphNode.Opcode opcode) {
+        return switch(opcode) {
+            case FORALL -> QuantiVar.Quantifier.ALL;
+            case EXISTS -> QuantiVar.Quantifier.SOME;
+            case ONE -> QuantiVar.Quantifier.ONE;
+            case LONE -> QuantiVar.Quantifier.LONE;
+            default -> null;
+        };
+    }
+
     private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,boolean inside) {
         if(++visits>MAX_VISITS || depth>MAX_DEPTH)
             throw new IllegalStateException("PAID_DECLARATION_LOCAL_SCOPE_BUDGET");
@@ -59,7 +69,13 @@ final class FastLocalPaidScope {
             }
             return sourceVariables.get(n.getSourceOccurrenceLineage())==q;
         }
-        if(n.getOpcode()==EGraphNode.Opcode.EXISTS) {
+        boolean declares=n.getChildren().stream().anyMatch(c->switch(c.getOpcode()) {
+            case GENERICRELDECL,DISJ,VAR,DISJVAR -> true;
+            default -> false;
+        });
+        if(declares || n.getOpcode()==EGraphNode.Opcode.EXISTS || n.getOpcode()==EGraphNode.Opcode.FORALL) {
+            var kind=localKind(n.getOpcode());
+            if(kind==null) return false;
             if(inside || n.getChildren().size()!=2) return false;
             var decl=n.getChildren().get(0);
             if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()!=2) return false;
@@ -72,7 +88,7 @@ final class FastLocalPaidScope {
             var q=checkingSource ? locals.get(variable.getAlphaName()) : plan==null ? null : plan.binding();
             String name=variable.getAlphaName();
             if(q==null || name==null || !q.isFrozenForCertification() || visible.containsKey(name)
-                    || q.getBindingPath().isEmpty() || q.getQuantifier()!=QuantiVar.Quantifier.SOME
+                    || q.getBindingPath().isEmpty() || q.getQuantifier()!=kind
                     || q.getCardinality()!=QuantiVar.Cardinality.ONE || q.getDisjointnessClass()!=0
                     || !typed(variable,q) || !typed(domain,q) || !typed(domain.getChildren().get(0),q)
                     || !usedOwners.add(q.getName())) return false;

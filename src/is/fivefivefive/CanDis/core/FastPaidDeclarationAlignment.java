@@ -30,7 +30,6 @@ final class FastPaidDeclarationAlignment {
         Set<String> names = new HashSet<>();
         Map<String,List<QuantiVar>> declarations = new LinkedHashMap<>();
         var firstType = qs.get(0).getExactAlloyType();
-        boolean hasFixedMultiplicity = false;
         for (QuantiVar q : qs) {
             var type = q.getExactAlloyType();
             // Paid diagonals are edits, not exchanges across quantifier blocks.
@@ -44,14 +43,13 @@ final class FastPaidDeclarationAlignment {
                     || q.getBindingPath().isEmpty()
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
-            hasFixedMultiplicity |= q.getQuantifier() == QuantiVar.Quantifier.LONE
-                    || q.getQuantifier() == QuantiVar.Quantifier.ONE;
             declarations.computeIfAbsent(q.getBindingPath(), ignored -> new ArrayList<>()).add(q);
         }
         if (!groupedSlotsMatchSource(f, declarations)) return false;
-        // ONE/LONE stay fixed prefix barriers; their local-binder combinations are
-        // outside this extension. Only charged paths over the prefix are added.
-        if(!f.getLocalQuantiVars().isEmpty()) return !hasFixedMultiplicity && FastLocalPaidScope.supports(f);
+        // ONE/LONE remain ordered prefix barriers. Admission beneath a retained
+        // local binder requires its actual source kind, owner, domain and types;
+        // the paid path changes neither that scope nor prefix ordering.
+        if(!f.getLocalQuantiVars().isEmpty()) return FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         pending.add(f.getMatrixEGraph());

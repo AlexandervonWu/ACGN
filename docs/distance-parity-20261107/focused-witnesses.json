@@ -1,0 +1,207 @@
+{
+  "schema": "acgn-focused-walkthrough-witnesses-v1",
+  "baselineCommit": "08dfd36a93ea29499e7bc3f6f8ca013a2bc1359f",
+  "purpose": "Retained diagnostic cases for walkthrough-first diagnosis and cross-family regressions; not a certification or minimality oracle.",
+  "fullCertification": "BLOCKED",
+  "evidencePolicy": "Preserve original external incidents and replay receipts. Resolve workstation-local evidence through STORAGE.md and the controller repairHistory/latestIntegration. This index does not replace evidence or authorize cleanup.",
+  "walkthroughStages": [
+    "shared-normalization-and-pre-ACI-snapshot",
+    "fast-comparison-versus-certified-projection",
+    "representation-and-declaration-alpha-candidate-admission",
+    "action-cost-and-tie-selection",
+    "source-linked-independent-replay"
+  ],
+  "regressionRunner": "scripts/run_distance_parity_tests.sh",
+  "additionalBoundaryControls": [
+    "src/is/fivefivefive/CanDis/PartialJoinCompositionTest.java",
+    "src/is/fivefivefive/CanDis/CertifiedSingletonCompositionTest.java",
+    "src/is/fivefivefive/CanDis/LocalDomainSingletonTest.java",
+    "src/is/fivefivefive/CanDis/FastResultTypeCostTest.java",
+    "src/is/fivefivefive/CanDis/EGraphSaturationTest.java"
+  ],
+  "witnesses": [
+    {
+      "family": "source-linked-first-incident-slices",
+      "source": "classified-data/classroom_fol/both/2KmASqDBmqEueukiz_inv5.als",
+      "sourceSha256": "ba3fe971d8e1ec2636b4a9bad72742034c43952e64d8bd1325eb0a3a62c569b6",
+      "replayTest": "src/is/fivefivefive/CanDis/FirstIncidentReplayTest.java",
+      "baselineObserved": {"fast": 10, "certified": 10, "status": "BOUNDED_REGRESSION_PASS"}
+    },
+    {
+      "family": "temporal-projection-and-chain-geometry",
+      "source": "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als",
+      "sourceSha256": "96ab4df641dc1dfb06a01be86516a0aaea1fe7111f84eb709d34734b0019eabe",
+      "replayTest": "src/is/fivefivefive/CanDis/P06ShorterReplayTest.java",
+      "baselineObserved": {"fast": 11, "certified": 11, "status": "BOUNDED_REGRESSION_PASS"}
+    },
+    {
+      "family": "product-geometry",
+      "source": "classified-data/classroom_fol/both/2S5sD2BA5mvLdj46b_inv12.als",
+      "sourceSha256": "5a6c73d404ebabb2ee6d5b995469c9c3adeb352015d40e938a485abab15b7ea4",
+      "replayTest": "src/is/fivefivefive/CanDis/ProductShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 14,
+        "certified": 14,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "temporal-occurrence",
+      "source": "classified-data/trash_ltl/both/oivT9pBECZFsYCGWq_inv18.als",
+      "sourceSha256": "8fddea78f769d8429ae0e1e54a8c52000006b636c8bbf221d954a536156f01bf",
+      "replayTest": "src/is/fivefivefive/CanDis/core/ScopedTemporalShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 21,
+        "certified": 21,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "injective-correspondence",
+      "source": "classified-data/classroom_fol/both/2vLMTEbEhvra9ad9z_inv12.als",
+      "sourceSha256": "266e2ec2fab8050d3d69eeade6487a46d7ed4c46dfa6566424965db234f3c3ea",
+      "replayTest": "src/is/fivefivefive/CanDis/core/InjectiveVariableReplayTest.java",
+      "baselineObserved": {
+        "fast": 18,
+        "certified": 18,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "paid-declaration-links",
+      "source": "classified-data/classroom_fol/both/5dmBQdag4unR6mf3t_inv14.als",
+      "sourceSha256": "e837fb2691913fab957864fbf45fc7d483e33c0dbce95a8679f2cbae4cab0c55",
+      "replayTest": "src/is/fivefivefive/CanDis/PaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 29,
+        "certified": 29,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "mixed-quantifier-blocks",
+      "source": "classified-data/classroom_fol/both/7KzgkuDqY7Q4ZfQ4Z_inv14.als",
+      "sourceSha256": "960a0db649d259f781e0796ac94b8ea88360de7d0a690a0d7bbdc17c105a5cfd",
+      "replayTest": "src/is/fivefivefive/CanDis/MixedPaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 19,
+        "certified": 19,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "local-scope-paid-links",
+      "source": "classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als",
+      "sourceSha256": "c2159df4ac67d4361dc25f21ca83d8a1d5d6763678317136fd5e99e12b763a40",
+      "replayTest": "src/is/fivefivefive/CanDis/LocalPaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 27,
+        "certified": 27,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "lone-ordering-barrier",
+      "source": "classified-data/classroom_fol/both/83RWHQkLc3bdocWg4_inv12.als",
+      "sourceSha256": "b71c7480d74f9f24432cc49e06ca44a142181386ddcbb54c87301dc42ba672c0",
+      "replayTest": "src/is/fivefivefive/CanDis/LonePaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 15,
+        "certified": 15,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "grouped-source-slots",
+      "source": "classified-data/classroom_fol/both/8dTfKqTs26w6fL87K_inv15.als",
+      "sourceSha256": "c652b3242e0e37f60d7d130e3b42b464c02bef7abecb8cf2ff3632283477ae83",
+      "replayTest": "src/is/fivefivefive/CanDis/GroupedPaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 18,
+        "certified": 18,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "certified-orbit-and-ties",
+      "source": "classified-data/classroom_fol/both/SASEHD8jPo2HgsuoJ_inv14.als",
+      "sourceSha256": "0ab09e9058636fe784649c922f65b755a3e8e9e165a58279e8361716105a93d3",
+      "replayTest": "src/is/fivefivefive/CanDis/core/DeclarationOrbitShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 27,
+        "certified": 27,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "one-ordering-barrier",
+      "source": "classified-data/classroom_fol/both/TA943B2hFMmbp96Pj_inv8.als",
+      "sourceSha256": "a33fa832c8140de0d86fe64a3e8e815e6494b8b5329cadcd57bdf09c987ea7ed",
+      "replayTest": "src/is/fivefivefive/CanDis/OnePaidDeclarationShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 8,
+        "certified": 8,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "explicit-bound-variable-links",
+      "source": "classified-data/classroom_fol/both/YKy8LYsKdapW3xqbn_inv14.als",
+      "sourceSha256": "27e8460fd2ccca71529ea03834cc93f2f08d608b44b2418f25d45e3916709eb2",
+      "replayTest": "src/is/fivefivefive/CanDis/BoundVariableShorterReplayTest.java",
+      "baselineObserved": {
+        "fast": 20,
+        "certified": 20,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "nested-paid-declaration-links",
+      "source": "classified-data/coursesOld/both/xJnitBpFv9K74WNvf_inv14.als",
+      "sourceSha256": "882a60f3c157bbaf4fb0bad89341295958701bc7c2b6175e1c836cc7700b7b87",
+      "replayTest": "src/is/fivefivefive/CanDis/NestedPaidDeclarationReplayTest.java",
+      "baselineObserved": {
+        "fast": 49,
+        "certified": 49,
+        "status": "BOUNDED_REGRESSION_PASS"
+      }
+    },
+    {
+      "family": "mixed-prefix-candidate-admission",
+      "source": "classified-data/classroom_fol/both/JoNXaXfKNJzGh3BFa_inv12.als",
+      "sourceSha256": "44d2e3404e2de50064d10bb353e0669dcaef5a1377253584298733a4ff893fd9",
+      "replayTest": "src/is/fivefivefive/CanDis/ScopedPaidAdmissionReplayTest.java",
+      "baselineObserved": {
+        "fast": 23,
+        "certified": 22,
+        "status": "UNRESOLVED_DISCREPANCY"
+      },
+      "incidentFingerprint": "2c5ebb8c4916ad015d0d2b76ed927a35b8bd0813067a145d5700d9d62412cfc1",
+      "walkthrough": {
+        "finding": "CHECKED_CANDIDATE_ADMISSION_DIFFERENCE",
+        "scope": "Both directions; three minimum declaration candidates cost 3, with identical fixed matrix costs 20, 20, 19 across arms. Fast admission excludes the paid candidates.",
+        "shorterNativeReplayChecks": 94,
+        "upstreamSemanticCorrespondence": "UNRESOLVED",
+        "evidenceRelativeToWorkstationDrive": "ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/walk-jonx-d0fSBtJN/walkthrough.json",
+        "evidenceSha256": "05c63e28e347f7a3f686ccaf15767a8b623097338b91f3619858fffa668f28e7"
+      },
+      "reviewedRepair": {
+        "status": "BOUNDED_REGRESSIONS_PASS_FULL_CERTIFICATION_BLOCKED",
+        "contract": "docs/distance-parity-20261107/ScopedPaidAdmission.lean",
+        "stageTest": "src/is/fivefivefive/CanDis/core/ScopedPaidAdmissionTest.java",
+        "after": {"fast": 22, "certified": 22, "components": [22, 0, 3, 19]},
+        "bothDirections": true,
+        "certifiedReceiptsUnchanged": true,
+        "orderedDeclarationActionsEqual": true,
+        "orderedDeclarationActionCount": 3,
+        "orderedMatrixActionsEqual": true,
+        "orderedMatrixActionCount": 15,
+        "correspondenceScope": "Checked finite metric endpoints, not full public source edit-sequence certification",
+        "evidenceRelativeToWorkstationDrive": "ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/scoped-admission-WZNQbsGJ/evidence.json",
+        "evidenceSha256": "975bb1f30ff42c7dc43ce8bd7f070bc415de926db4ae0420181190b5357a5e3d",
+        "integrationRelativeToWorkstationDrive": "ACGN/intermediate/walkthrough-scoped-integration-sroa5tgo",
+        "regressionLogSha256": "5329259ffec8c6f63bf83eb1142772975af2bd15fd97c2886bf636ed816ea1c2"
+      }
+    }
+  ]
+}

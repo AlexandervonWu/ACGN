@@ -86,8 +86,13 @@ public final class OnePaidDeclarationAlignmentTest {
                 Files.readString(Path.of("classified-data/classroom_fol/both/7TYSDPnXqtud3bjku_inv12.als"))
                     .replace("some c:Class","one c:Class"));
         var localForms=prepare(local,"inv12");
-        check(!localForms.get(0).getLocalQuantiVars().isEmpty(),"negative control retains a local binder");
-        check(!FastPaidDeclarationAlignment.supports(localForms),"ONE plus local binder remains excluded");
+        check(!localForms.get(0).getLocalQuantiVars().isEmpty(),"scoped control retains a local binder");
+        check(FastLocalPaidScope.supports(localForms.get(0)) && FastPaidDeclarationAlignment.supports(localForms),
+                "ONE prefix admits paid links only after actual local source scope validation");
+        check(localForms.get(0).getMatrixQuantiVars().get(0).getQuantifier()==QuantiVar.Quantifier.ONE,
+                "scoped admission preserves original ONE barrier");
+        check(FastPaidDeclarationAlignment.supportsPair(localForms,prepare(local,"inv12c"))
+                && FastPaidDeclarationAlignment.supportsPair(prepare(local,"inv12c"),localForms),"scoped ONE both directions");
         var controls=CompUtil.parseEverything_fromString(A4Reporter.NOP,"""
                 sig A { r:set A }
                 pred temporal { one x:A | always x in x.r }

@@ -1,17 +1,27 @@
-# Sequential Replay-Guided Repairs
+# Walkthrough-First Replay-Guided Repairs
 
 The author authorized automatic progression from one validated repair to the
 next on 2026-11-07. This does not authorize publication, scalar substitution,
 weaker certification, changes to classified-data, or concurrent recovery.
 The previously authorized diagnostic mode remains distinct from strict mode.
 
+The latest authorization replaces isolated witness-by-witness patching with a
+foreground walkthrough-and-repair cycle. The competing heartbeat was cancelled;
+do not recreate it or automatically restart the corpus. Retained mismatches are
+focused diagnostic inputs and regression controls, not permission to bypass the
+walkthrough. `focused-witnesses.json` indexes the retained source cases without
+replacing their original external receipts or promoting diagnostic agreement to
+certification.
+
 ## Cycle
 
 1. Read the local controller pointer and check actual agent/process liveness.
    Continue an existing owner instead of dispatching duplicate work.
-2. Reproduce the next retained residual against the current frozen build, or
-   run a fresh manifest-bound diagnostic corpus scan that stops on its first
-   discrepancy. Do not edit the checkout during a manifest-bound run.
+2. Begin with the implementation walkthrough below, using the current retained
+   residual and previously repaired families. Reproduce stage boundaries against
+   a frozen build with bounded probes. A new corpus scan is a later validation
+   step, not an automatic replacement for diagnosis. Do not edit the checkout
+   during a manifest-bound run.
    If full-scan startup lacks resource headroom, continue one independently
    reproduced data-discrepancy residual with bounded
    serial tests, provided the host reserve is preserved. Record that owner
@@ -19,7 +29,10 @@ The previously authorized diagnostic mode remains distinct from strict mode.
    even if memory recovers. Resource refusal never permits weaker guards.
 3. Stop all run descendants and retain the source/hash, predicate identities,
    component costs, native operation receipts, build identity and fingerprint.
-4. Assign one actual `gpt-6-astra` repair owner. Replay the shorter sequence
+4. Assign one actual `gpt-6-astra` walkthrough owner. Record the first demonstrated
+   faulty boundary and its premises before authorizing a semantic repair. A
+   downstream receipt difference alone does not establish an earlier faulty
+   rewrite. Replay the shorter sequence
    against its endpoints first. A failed replay targets the shorter path;
    valid replay directs investigation toward extra edits or missing admitted
    representations in the longer path. Incomplete public alignment remains
@@ -32,8 +45,33 @@ The previously authorized diagnostic mode remains distinct from strict mode.
    run the combined regression suite from frozen, hashed inputs. Keep compact
    before/after evidence and a clean local commit. Update CLI expectations
    when a real defect is repaired; do not retain a bug solely as a test case.
-7. Release recovery ownership and advance automatically to the next residual
-   or guarded diagnostic scan. No per-issue user confirmation is required.
+7. Release recovery ownership and begin the next implementation walkthrough
+   using the focused witness set. No per-issue user confirmation is required,
+   but neither a new monitor nor a corpus restart follows automatically.
+
+## Required Walkthrough
+
+Trace both sides of each boundary before changing semantics:
+
+1. Shared source preparation, alpha/beta normalization, NNF, prenex and the
+   pre-ACI certification snapshot.
+2. Fast ACI/saturation and comparison view versus certified construction and
+   repair projection. Compare typed, source-linked occurrences and owners,
+   not raw IR strings.
+3. Admitted representations and declaration/alpha candidate sets, including
+   support/refusal branches, paid links, local scopes and ordering barriers.
+4. Per-action costs, candidate selection and deterministic tie-breaking.
+5. Selected declaration, temporal and matrix receipts, their common binding
+   correspondence, and independent replay against original endpoints.
+
+For each stage retain the code branch, build/input identity, observed boundary
+values, checked premises and unresolved obligations. Separate equivalent but
+differently represented states from unsupported candidates, omitted candidates,
+cost defects and tie differences. Mark unobserved earlier stages unresolved;
+do not label a downstream difference the first faulty rewrite without evidence.
+Generalize the demonstrated invariant into a Lean contract before Java changes.
+Run related earlier witness families and negative controls as well as the new
+case; retain failed candidates instead of changing expectations to hide them.
 
 ## Boundaries
 
@@ -45,8 +83,8 @@ The previously authorized diagnostic mode remains distinct from strict mode.
   The runtime host reserve remains 6 GiB, with 16 workers, 8g heap, 12 GiB
   service cap, 10 GiB high watermark, zero service swap and OOM stops unchanged.
   This is an admission threshold, not a claim that the full cap is reserved.
-  Prioritize the next fresh full-input first-discrepancy scan and sequential
-  pattern repairs. The author redirected work away from independent exporter
+  Prioritize the implementation walkthrough and focused pattern diagnosis.
+  The author redirected work away from independent exporter
   and certification prerequisites: park the unfinished collision-export work
   separately and do not resume it unless it directly explains a measured
   distance or edit-sequence discrepancy. Keep certification blocked honestly;
