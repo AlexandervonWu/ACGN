@@ -33,12 +33,14 @@ final class FastLocalPaidScope {
             if(outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return 0;
         }
         if(!check.walk(form.getCertificationMatrixEGraph(),outer,0,ROOT_OWNER) || check.sourcePlans.isEmpty()) return 0;
-        // The old single-owner slice retains all its supported kinds. The new
-        // slice is one EXISTS chain, with every original parent edge retained.
+        // The old single-owner slice retains all its supported kinds. Multiple
+        // owners form one ordered ALL/SOME chain; walk checks each original
+        // kind and parent edge. No mixed-kind exchange or hoisting is licensed.
         if(check.sourcePlans.size()>1) {
             var parents=new HashSet<Long>();
             for(var plan:check.sourcePlans.values())
-                if(plan.binding().getQuantifier()!=QuantiVar.Quantifier.SOME
+                if((plan.binding().getQuantifier()!=QuantiVar.Quantifier.SOME
+                        && plan.binding().getQuantifier()!=QuantiVar.Quantifier.ALL)
                         || !parents.add(plan.parent())) return 0;
         }
         check.checkingSource=false;
