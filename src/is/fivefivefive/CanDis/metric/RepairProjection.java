@@ -35,7 +35,7 @@ import is.fivefivefive.CanDis.theory.ContainerLawDeclaration;
 import is.fivefivefive.CanDis.theory.DependentChainCertificate;
 import is.fivefivefive.CanDis.theory.DependentChainKind;
 import is.fivefivefive.CanDis.theory.DependentChainTheory;
-import is.fivefivefive.CanDis.theory.GuardedJoinCertificate;
+import is.fivefivefive.CanDis.theory.GuardedJoinSourceFiber;
 import is.fivefivefive.CanDis.theory.GuardedJoinTree;
 import is.fivefivefive.CanDis.theory.CertificateVerifier;
 import is.fivefivefive.CanDis.theory.GraphType;
@@ -58,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v19-set-source-encounter";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v20-join-source-fibers";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -525,7 +525,7 @@ public final class RepairProjection {
             CertifiedContainers containers,
             CertifiedDependentChains chains,
             boolean mergeLocalDeclarations) {
-        GuardedJoinCertificate rotation = chains.rotations.get(source);
+        GuardedJoinSourceFiber rotation = chains.rotations.get(source);
         if (rotation != null) {
             rotation.requireMatches(source);
             List<EGraphNode> leaves = new ArrayList<>();
@@ -1848,11 +1848,11 @@ public final class RepairProjection {
     /** Identity-bound bridge from repaired syntax to checked chain certificates. */
     private static final class CertifiedDependentChains {
         private final Map<EGraphNode, DependentChainCertificate> certificates;
-        private final Map<EGraphNode, GuardedJoinCertificate> rotations;
+        private final Map<EGraphNode, GuardedJoinSourceFiber> rotations;
 
         private CertifiedDependentChains(
                 Map<EGraphNode, DependentChainCertificate> certificates,
-                Map<EGraphNode, GuardedJoinCertificate> rotations) {
+                Map<EGraphNode, GuardedJoinSourceFiber> rotations) {
             this.certificates = certificates;
             this.rotations = rotations;
         }
@@ -1896,27 +1896,7 @@ public final class RepairProjection {
                 }
                 checked.put(source, certificate);
             }
-            Map<Long, GuardedJoinCertificate> byLineage = new java.util.HashMap<>();
-            for (var certificate : artifact.guardedJoinConstructions()) {
-                CertificateVerifier.verify(certificate);
-                if (byLineage.putIfAbsent(certificate.sourceOccurrenceLineage(), certificate) != null)
-                    throw new IllegalArgumentException("Repeated guarded JOIN source lineage");
-            }
-            Map<EGraphNode, GuardedJoinCertificate> rotations = new IdentityHashMap<>();
-            Set<EGraphNode> visited = Collections.newSetFromMap(new IdentityHashMap<>());
-            java.util.ArrayDeque<EGraphNode> pending = new java.util.ArrayDeque<>();
-            for (NormalForm form : normalForms) if (form.getMatrixEGraph() != null) pending.add(form.getMatrixEGraph());
-            while (!pending.isEmpty()) {
-                EGraphNode node = pending.removeFirst();
-                if (!visited.add(node)) continue;
-                var certificate = byLineage.remove(node.getSourceOccurrenceLineage());
-                if (certificate != null) {
-                    certificate.requireMatches(node);
-                    rotations.put(node, certificate);
-                }
-                pending.addAll(node.getChildren());
-            }
-            if (!byLineage.isEmpty()) throw new IllegalArgumentException("Guarded JOIN source is absent from projection");
+            Map<EGraphNode, GuardedJoinSourceFiber> rotations = GuardedJoinSourceFiber.bind(artifact, normalForms);
             return new CertifiedDependentChains(Collections.unmodifiableMap(checked), Collections.unmodifiableMap(rotations));
         }
 

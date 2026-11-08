@@ -8,18 +8,19 @@ import is.fivefivefive.CanDis.core.EGraphNode;
 /** Original occurrence -> realized node, by local rotations and insertion-linked
  * congruence. Derived intermediate terms are never additional source roots. */
 public final class GuardedJoinCertificate extends TypedEqualityCertificate {
-    public static final String VERSION = "source-linked-guarded-join-rotation-v1";
+    public static final String VERSION = "source-linked-guarded-join-rotation-v2-path";
     private final GuardedJoinTree source, target;
     private final List<List<Integer>> steps;
     private final SemanticProfile profile;
     private final StructuralKey commitment;
     private final long lineage;
+    private final String sourcePath;
     private final String transferContent;
     private final GuardedJoinNodeCertificate realization;
 
     private GuardedJoinCertificate(GuardedJoinTree source, GuardedJoinTree target,
             List<List<Integer>> steps, SemanticProfile profile, StructuralKey commitment,
-            long lineage, String transferContent, GuardedJoinNodeCertificate realization) {
+            long lineage, String sourcePath, String transferContent, GuardedJoinNodeCertificate realization) {
         super(CertificateCategory.GUARDED_JOIN_ROTATION,
                 TypedCertificateEndpoint.guardedJoin(source, profile, commitment),
                 TypedCertificateEndpoint.node(realization.node()), List.of(realization),
@@ -28,6 +29,7 @@ public final class GuardedJoinCertificate extends TypedEqualityCertificate {
         this.steps = steps.stream().map(List::copyOf).toList();
         this.profile = Objects.requireNonNull(profile); this.commitment = commitment;
         this.lineage = lineage; this.transferContent = Objects.requireNonNull(transferContent);
+        this.sourcePath = Objects.requireNonNull(sourcePath);
         this.realization = realization;
         CertificateVerifier.verify(this);
     }
@@ -38,8 +40,8 @@ public final class GuardedJoinCertificate extends TypedEqualityCertificate {
         StructuralKey commitment = TheoryAlloyAdapter.DependentChainSourceBinding.sourceOccurrenceCommitment(
                 occurrence, path, source.structuralKey());
         var result = new GuardedJoinCertificate(source, target, steps, profile, commitment,
-                occurrence.getSourceOccurrenceLineage(), occurrence.dependentChainTransferContentCommitment(), realization);
-        result.requireMatches(occurrence);
+                occurrence.getSourceOccurrenceLineage(), path, occurrence.dependentChainTransferContentCommitment(), realization);
+        result.requireOriginalMatches(occurrence, path);
         return result;
     }
     static GuardedJoinTree normalized(GuardedJoinTree source) { return normalize(source, List.of(), new ArrayList<>()); }
@@ -60,7 +62,7 @@ public final class GuardedJoinCertificate extends TypedEqualityCertificate {
         var result = new ArrayList<>(path); result.add(side); return List.copyOf(result);
     }
     @Override void verifyLocal() {
-        if (!profile.isAdmissibleAlloyProfile() || lineage <= 0 || steps.size() > 1024)
+        if (!profile.isAdmissibleAlloyProfile() || lineage <= 0 || sourcePath.isBlank() || steps.size() > 1024)
             throw new IllegalArgumentException("Unadmitted JOIN proof");
         var replay = source;
         for (var path : steps) replay = replay.rotateAt(path);
@@ -76,6 +78,13 @@ public final class GuardedJoinCertificate extends TypedEqualityCertificate {
                 || !transferContent.equals(occurrence.dependentChainTransferContentCommitment()))
             throw new IllegalArgumentException("JOIN proof names another source occurrence/content");
         match(source, occurrence);
+    }
+    public void requireOriginalMatches(EGraphNode occurrence, String path) {
+        requireMatches(occurrence);
+        if (!sourcePath.equals(path) || !commitment.equals(
+                TheoryAlloyAdapter.DependentChainSourceBinding.sourceOccurrenceCommitment(
+                        occurrence, path, source.structuralKey())))
+            throw new IllegalArgumentException("JOIN proof names another original source path/content");
     }
     private static void match(GuardedJoinTree tree, EGraphNode occurrence) {
         if (occurrence.getExactAlloyType() == null
@@ -97,5 +106,6 @@ public final class GuardedJoinCertificate extends TypedEqualityCertificate {
     public SemanticProfile semanticProfile() { return profile; }
     public StructuralKey sourceOccurrenceCommitment() { return commitment; }
     public long sourceOccurrenceLineage() { return lineage; }
+    public String sourceOccurrencePath() { return sourcePath; }
     public GuardedJoinNodeCertificate realization() { return realization; }
 }
