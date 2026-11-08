@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v18-retained-existential-admission";
+    public static final String VERSION = "typed-fast-distance-v19-retained-paid-candidate-union";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -748,11 +748,21 @@ public final class CanonicalDistance {
             throw new IllegalStateException(
                     "No admissible coherent temporal variable alignment was evaluated");
         }
-        return new MatrixAlignment(
+        MatrixAlignment existing = new MatrixAlignment(
                 best.distance,
                 best.mapping,
                 lockedLeftNames,
                 lockedRightNames);
+        if (FastPaidDeclarationAlignment.supportsSupplementalPair(left,right)) {
+            // Both families attain the same minimum declaration cost. Retain
+            // the old family, including cheaper exchange paths, and prefer an
+            // actual canonical paid path on a body-cost tie. Scoring and replay
+            // consume this same selected mapping and its paid correspondence.
+            MatrixAlignment canonical = paidDeclarationMatrixAlignment(
+                    left.get(0),right.get(0),leftMetadata,rightMetadata);
+            if (canonical.distance <= existing.distance) return canonical;
+        }
+        return existing;
     }
 
     private static MatrixAlignment paidDeclarationMatrixAlignment(NormalForm left,NormalForm right,

@@ -26,6 +26,17 @@ final class FastPaidDeclarationAlignment {
         return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty();
     }
 
+    /** Canonical paid paths are additional candidates for symmetric retained
+     * prefixes, never a replacement for their existing alpha/exchange route. */
+    static boolean supportsSupplementalPair(List<NormalForm> left,List<NormalForm> right) {
+        if(!supports(left) || !supports(right)) return false;
+        var a=left.get(0); var b=right.get(0);
+        boolean localA=!a.getLocalQuantiVars().isEmpty(), localB=!b.getLocalQuantiVars().isEmpty();
+        if(localA==localB) return false;
+        return FastLocalPaidScope.checkedOwnerCount(localA?a:b)>1
+                && (!rigidPrefix(a) || !rigidPrefix(b));
+    }
+
     private static boolean rigidPrefix(NormalForm form) {
         var qs=form.getMatrixQuantiVars();
         for(int start=0;start<qs.size();) {
