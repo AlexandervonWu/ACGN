@@ -27,11 +27,11 @@ def main():
         ("5xc5", root / "classified-data/classroom_rl/under/5xC5nGeD2S6zDjCCo_inv14.als", "MATCHED"),
         ("2cc", root / "classified-data/coursesNew/both/2CCEGTS6iiHpRqvCu_inv14.als", "MATCHED"),
         ("5tvx", root / "classified-data/coursesNew/both/5TvX7MDJN22SSvqyR_inv13.als", "MATCHED"),
-        ("5vxy", root / "classified-data/coursesNew/both/5vxYh7NCpEPMmC47p_inv14.als", "UNCHECKABLE"),
+        ("5vxy", root / "classified-data/coursesNew/both/5vxYh7NCpEPMmC47p_inv14.als", "MATCHED"),
         ("ljrf", root / "classified-data/coursesNew/both/LJrfWwJdKiTdyytci_inv14.als", "MATCHED"),
         ("wnq", root / "classified-data/coursesNew/correct/wnqMPtpNxnPYzru3g_inv14.als", "MATCHED"),
         ("pvub", root / "classified-data/coursesNew/over/PvuBZf9iKQbBARbsj_inv14.als", "MATCHED"),
-        ("dcx", root / "classified-data/coursesNew/under/dcxEP6ZgQAktuDbeT_inv10.als", "UNCHECKABLE"),
+        ("dcx", root / "classified-data/coursesNew/under/dcxEP6ZgQAktuDbeT_inv10.als", "MATCHED"),
         ("2ek", root / "classified-data/coursesOld/both/2EKgnipH28DLyp8uK_inv13.als", "MATCHED"),
         ("3mnrs", root / "classified-data/coursesOld/both/3mNrsLxL8mPXSK6gH_inv13.als", "MATCHED"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
@@ -58,18 +58,23 @@ def main():
         assert coverage["attempted"] == sum(coverage[k] for k in ("matched", "unchecked", "mismatches", "invalidReplay")) == 1
         if stopped:
             incident = json.loads((output / "parity-incident.json").read_text())
-            assert expected is None and incident["reason"] == "NATIVE_OPERATION_MISMATCH", (label, incident)
+            assert ((expected is None and incident["reason"] == "NATIVE_OPERATION_MISMATCH")
+                    or (expected == "UNCHECKABLE" and incident["reason"] == "TRACE_CORRESPONDENCE_DEFECT")), (label, incident)
             assert incident["scanMode"] == "DIAGNOSTIC_OPERATIONS"
             assert incident["sourceSha256"] == hashlib.sha256(source.read_bytes()).hexdigest()
             sidecar = json.loads((output / "parity-native-replay.json").read_text())["diagnostic"]
-            assert sidecar["status"] == "MISMATCH" and sidecar["scanCostBindingChecked"]
-            assert isinstance(sidecar["firstDifference"], int) and sidecar["fastFirst"] != sidecar["certifiedFirst"]
-            assert coverage["mismatches"] == 1 and not coverage["matched"]
+            traces = sidecar["selectedNativeTraces"]
+            assert all(traces[arm]["metricRepresentationExecutionChecked"] for arm in ("fast", "certified"))
+            if expected == "UNCHECKABLE":
+                assert sidecar["status"] == "UNCHECKABLE" and coverage["unchecked"] == 1
+            else:
+                assert sidecar["status"] == "MISMATCH" and sidecar["scanCostBindingChecked"]
+                assert isinstance(sidecar["firstDifference"], int) and sidecar["fastFirst"] != sidecar["certifiedFirst"]
+                assert coverage["mismatches"] == 1
+            assert not coverage["matched"]
         else:
             observed = report["results"][0]["nativeOperationStatus"]
-            assert observed == (expected or "MATCHED"), (label, observed)
-            if label == "dcx":
-                assert report["results"][0]["nativeOperationReason"] == "BINDING_LAYOUT_UNSUPPORTED"
+            assert expected != "UNCHECKABLE" and observed == (expected or "MATCHED"), (label, observed)
             assert coverage["matched" if observed == "MATCHED" else "unchecked"] == 1
             assert not (output / "parity-incident.json").exists()
         inventory = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in output.iterdir() if p.is_file()}
@@ -79,7 +84,7 @@ def main():
         assert all(hashlib.sha256(p.read_bytes()).hexdigest() == digest for p, digest in inventory.items())
         checks.append(dict(case=label, stopped=stopped, coverage=coverage))
     (args.output / "checks.json").write_text(json.dumps(checks, indent=2) + "\n")
-    print("PASS: native operation CLI match/unchecked/first-incident and no-overwrite; certification BLOCKED")
+    print("PASS: native operation CLI match/defect-stop/first-incident and no-overwrite; certification BLOCKED")
 
 
 if __name__ == "__main__":

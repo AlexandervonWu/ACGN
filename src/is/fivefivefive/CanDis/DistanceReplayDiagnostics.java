@@ -22,38 +22,49 @@ public final class DistanceReplayDiagnostics {
     private DistanceReplayDiagnostics() { }
 
     public static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right) {
-        return capture(left, right, () -> QuotientRepairDistance.replayWithSlices(
-                CanonicalAlloyPipeline.prepare(left).repairView(),
-                CanonicalAlloyPipeline.prepare(right).repairView()));
+        return capture(left, right, () -> CanonicalRepairTraces.certified(
+                CanonicalAlloyPipeline.prepare(left),CanonicalAlloyPipeline.prepare(right)).json());
     }
 
     static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right,
             CanonicalAlloyPipeline.Prepared leftExact, CanonicalAlloyPipeline.Prepared rightExact) {
-        return capture(left, right, () -> QuotientRepairDistance.replayWithSlices(
-                leftExact.repairView(), rightExact.repairView()));
+        return capture(left, right, () -> CanonicalRepairTraces.certified(leftExact,rightExact).json());
     }
 
     private static JSONObject capture(Canonical.Prepared left, Canonical.Prepared right,
             Supplier<JSONObject> certified) {
         JSONObject report = envelope();
-        report.put("fast", arm(() -> CanonicalDistance.replayWithSlices(
-                CanonicalDistance.prepare(left.normalizedForms()),
-                CanonicalDistance.prepare(right.normalizedForms()))));
+        report.put("fast", arm(() -> Canonical.evaluateWithTrace(left,right).json()));
         report.put("certified", arm(certified));
         return report;
+    }
+
+    /** Diagnostic capture of the exact records that supplied the scan costs; no optimization. */
+    public static JSONObject captureTraces(is.fivefivefive.CanDis.metric.NativeRepairTrace fast,
+            is.fivefivefive.CanDis.metric.NativeRepairTrace certified) {
+        JSONObject a=fast.json(),b=certified.json();fast.replay(a);certified.replay(b);
+        return envelope().put("fast",a.put("diagnosticStatus","MATRIX_REPLAY_CHECKED"))
+                .put("certified",b.put("diagnosticStatus","MATRIX_REPLAY_CHECKED"))
+                .put("sameSelectedRecordsAsNumericEvaluation",true);
     }
 
     private static JSONObject arm(Supplier<JSONObject> supplier) {
         try { return supplier.get().put("diagnosticStatus", "MATRIX_REPLAY_CHECKED"); }
         catch (RuntimeException ex) {
-            return new JSONObject().put("diagnosticStatus", "BLOCKED").put("complete", false)
+            var failure=new JSONObject().put("diagnosticStatus", "BLOCKED").put("complete", false)
                     .put("matrixReplayChecked", false).put("errorType", ex.getClass().getName())
                     .put("error", String.valueOf(ex.getMessage()));
+            if(ex instanceof is.fivefivefive.CanDis.metric.NativeRepairTrace.CaptureFailure capture)
+                failure.put("retainedNumericSelection",capture.selectedReceipt()).put("nativeTraceExtractionFailed",true);
+            if(ex instanceof is.fivefivefive.CanDis.metric.NativeRepairTrace.ReplayFailure replay)
+                failure.put("firstDifferingOperation",replay.operation()).put("payloadPath",replay.payloadPath());
+            return failure;
         }
     }
 
     private static JSONObject envelope() {
         return new JSONObject().put("schema", SCHEMA).put("status", "BLOCKED")
+                .put("nativeTraceSchema","acgn-distance-derived-trace-v1")
                 .put("supplementalSliceVersion","fixed-order-declaration-and-temporal-edits-v2")
                 .put("complete", false).put("parityAuthority", false)
                 .put("temporalReplayChecked", false).put("quantifierReplayChecked", false)
@@ -65,7 +76,7 @@ public final class DistanceReplayDiagnostics {
                         .put("CHOICE_ADMISSION_NOT_INDEPENDENTLY_REPLAYED")
                         .put("SOURCE_CERTIFICATE_WIRE_REPLAY_NOT_PERFORMED")
                         .put("JAVA_LEAN_CORRESPONDENCE_NOT_PROVED"))
-                .put("scope", "Fixed native matrix/declaration receipts and executable temporal tree edits; receipt-addressed diagnostic order, not a complete public operation sequence")
+                .put("scope", "Executable native metric-representation programs from retained numeric decisions; construction derivations and cross-arm diagnostics remain separate; no public certification")
                 .put("trusted", new JSONArray().put("native preparation and choice search")
                         .put("native head-cost and subtree-size rules")
                         .put("Java replay checker, JSON library, SHA-256, JVM and OS"));

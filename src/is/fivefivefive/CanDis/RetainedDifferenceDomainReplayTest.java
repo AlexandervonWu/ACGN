@@ -96,7 +96,9 @@ public final class RetainedDifferenceDomainReplayTest {
         int first=0;while(first<Math.min(af.length(),ac.length())&&af.getJSONObject(first).similar(ac.getJSONObject(first)))first++;
         check(af.similar(ac),"ordered matrix actions differ at "+first+": "+(first<af.length()?af.get(first):"EOF")+" / "+(first<ac.length()?ac.get(first):"EOF"));
         var nativeResult=NativeOperationComparison.compare(p.a,p.b,CanonicalAlloyPipeline.prepare(p.a),CanonicalAlloyPipeline.prepare(p.b));
-        check(nativeResult.status()==NativeOperationComparison.Status.UNCHECKABLE&&nativeResult.reason().equals("BINDING_LAYOUT_UNSUPPORTED"),"public native comparator sorted-coordinate boundary retained");
+        check(nativeResult.status()==NativeOperationComparison.Status.MATCHED
+                &&nativeResult.evidence().getJSONArray("fastActions").similar(nativeResult.evidence().getJSONArray("certifiedActions")),
+                "original ordinals link vector indices to canonical binder slots");
         check(!capture.getBoolean("complete")&&!capture.getBoolean("publicSequenceLinked")&&!capture.getBoolean("javaLeanCorrespondenceChecked"),"full certification remains blocked");
         return new JSONObject().put("capture",capture).put("fastActions",af).put("certifiedActions",ac).put("declarationActions",declarationActions(fd)).put("finiteOrderedActionsEqual",true).put("nativeComparison",nativeResult.evidence()).put("certificationStatus","BLOCKED");
     }

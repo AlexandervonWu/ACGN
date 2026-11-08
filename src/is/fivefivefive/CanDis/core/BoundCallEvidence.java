@@ -92,11 +92,21 @@ public final class BoundCallEvidence {
 
     // Ordered exact source-occurrence correspondence, not projected equality.
     private static boolean same(EGraphNode a,EGraphNode b,int[] budget,int depth) {
+        return same(a,b,budget,depth,false);
+    }
+
+    /** Only for a caller that separately checks every variable's visible owner. */
+    static boolean sameScopedCall(EGraphNode original,EGraphNode comparison) {
+        return same(original,comparison,new int[]{512},0,true);
+    }
+
+    private static boolean same(EGraphNode a,EGraphNode b,int[] budget,int depth,boolean scoped) {
         spend(budget,depth);
         if(a.getSourceOccurrenceLineage()!=b.getSourceOccurrenceLineage() || a.getOpcode()!=b.getOpcode()
                 || a.getMetatype()!=b.getMetatype() || a.isOrderInsensitive()!=b.isOrderInsensitive()
                 || a.isFlexibleArity()!=b.isFlexibleArity() || a.getMaxArity()!=b.getMaxArity()
-                || !Objects.equals(a.getAlphaName(),b.getAlphaName())
+                || (!(scoped && a.getOpcode()==EGraphNode.Opcode.VARIABLE)
+                    && !Objects.equals(a.getAlphaName(),b.getAlphaName()))
                 || !Objects.equals(a.getSourceName(),b.getSourceName())
                 || !Objects.equals(a.getSemanticIdentity(),b.getSemanticIdentity())
                 || !a.getSemanticProfile().equals(b.getSemanticProfile())
@@ -106,7 +116,7 @@ public final class BoundCallEvidence {
             var x=CallMetadata.require(a);var y=CallMetadata.require(b);
             if(x.occurrenceId()!=y.occurrenceId() || !CallMetadata.semanticKey(a).equals(CallMetadata.semanticKey(b)))return false;
         }
-        for(int i=0;i<a.getChildren().size();i++)if(!same(a.getChildren().get(i),b.getChildren().get(i),budget,depth+1))return false;
+        for(int i=0;i<a.getChildren().size();i++)if(!same(a.getChildren().get(i),b.getChildren().get(i),budget,depth+1,scoped))return false;
         return true;
     }
 

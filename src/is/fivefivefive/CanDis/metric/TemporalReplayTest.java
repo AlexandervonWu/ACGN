@@ -75,13 +75,14 @@ public final class TemporalReplayTest {
         reject(() -> TemporalReplay.capture(a, b, 0, Tree::label, Tree::children));
         check(TemporalReplay.verify(a, b, Tree::label, Tree::children, deletion) == 1);
         Tree wide = new Tree("wide", java.util.Collections.nCopies(256, tree("leaf")));
-        reject(() -> TemporalReplay.capture(wide, wide, 0, Tree::label, Tree::children));
+        check(TemporalReplay.capture(wide, wide, 0, Tree::label, Tree::children).getInt("replayedCost")==0);
         Tree deep = tree("leaf");
         for (int i = 0; i < 129; i++) deep = tree("parent", deep);
         Tree excessive = deep;
-        reject(() -> TemporalReplay.capture(excessive, excessive, 0, Tree::label, Tree::children));
-        reject(() -> OrderedTreeEditDistance.alignment(excessive,excessive,ADAPTER));
-        reject(() -> OrderedTreeEditDistance.alignment(wide,wide,ADAPTER));
+        check(TemporalReplay.capture(excessive, excessive, 0, Tree::label, Tree::children).getInt("replayedCost")==0);
+        check(OrderedTreeEditDistance.alignment(excessive,excessive,ADAPTER).cost()==0);
+        check(OrderedTreeEditDistance.alignment(wide,wide,ADAPTER).cost()==0);
+        reject(() -> TraceResources.requireCells(1_000_000,1_000_000));
         Random random = new Random(20261107L);
         for (int i = 0; i < 1000; i++) {
             Tree left = random(random, 1 + random.nextInt(16));

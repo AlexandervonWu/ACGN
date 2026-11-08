@@ -1,7 +1,6 @@
 package is.fivefivefive.CanDis;
 
 import java.nio.file.*;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import org.json.*;
 import edu.mit.csail.sdg.alloy4.A4Reporter;
@@ -142,18 +141,14 @@ public final class JointDeclarationTieReplayTest {
     }
 
     private static JSONObject certifiedDeclarations(RepairView a,RepairView b,JSONObject matrix) {
-        try {
-            var method=QuotientRepairDistance.class.getDeclaredMethod("declarationReplay",RepairView.class,RepairView.class,JSONObject.class);
-            method.setAccessible(true); return (JSONObject)method.invoke(null,a,b,matrix);
-        } catch(InvocationTargetException e) {
-            if(e.getCause() instanceof RuntimeException r) throw r;
-            throw new AssertionError(e.getCause());
-        } catch(ReflectiveOperationException e) { throw new AssertionError(e); }
+        var trace=QuotientRepairDistance.evaluateWithTrace(a,b);
+        trace.replay(matrix);
+        return matrix.getJSONObject("declarationSlice");
     }
     private static JSONObject permutationControl(Canonical.Prepared a,Canonical.Prepared b) throws Exception {
         var av=NestedPaidDeclarationReplayTest.checkedProjection(a,b);
         var bv=NestedPaidDeclarationReplayTest.checkedProjection(b,a);
-        var nativeMatrix=QuotientRepairDistance.matrixReplay(av,bv);
+        var nativeMatrix=QuotientRepairDistance.evaluateWithTrace(av,bv).json();
         var report=DistanceReplayDiagnostics.capture(a,b);
         check(nativeMatrix.getInt("distance")==0,"crossing attaining mapping retained, no ordered-DP scalar restriction");
         check(mapping(nativeMatrix).equals(Map.of("0","1","1","0")),"actual native crossing map");
@@ -161,7 +156,8 @@ public final class JointDeclarationTieReplayTest {
         check(automatic.getJSONObject("selectedDeclarationPermutation").getJSONArray("left").similar(new JSONArray(new int[]{1,0})),
                 "existing certified source orbit automatically materialized");
         var explicit=copy(nativeMatrix);
-        explicit.getJSONObject("selectedDeclarationPermutation").put("left",new JSONArray(new int[]{1,0}));
+        // The joint diagnostic's connecting permutation is not a replacement
+        // for the immutable orbit choice made by the metric evaluator.
         var linked=certifiedDeclarations(av,bv,explicit);
         check(linked.getBoolean("selectedMatrixDeclarationLinksChecked"),"actual certified orbit permutation links full mapping");
         check(linked.getInt("cost")==0 && !linked.getBoolean("complete"),"permutation preserves charge, no public promotion");
@@ -232,7 +228,7 @@ public final class JointDeclarationTieReplayTest {
                 .put("crossingForward",permutationControl(crossLeft,crossRight))
                 .put("crossingReverse",permutationControl(crossRight,crossLeft));
         var typed=NestedPaidDeclarationReplayTest.checkedProjection(prepare(crossModel,"typed"),three);
-        var wrongDomain=QuotientRepairDistance.matrixReplay(typed,typed);
+        var wrongDomain=QuotientRepairDistance.evaluateWithTrace(typed,typed).json();
         wrongDomain.getJSONObject("selectedDeclarationPermutation").put("left",new JSONArray(new int[]{1,0}));
         reject(()->certifiedDeclarations(typed,typed,wrongDomain),"typed/domain exchange lacks source orbit premise");
         reject(()->new DeclarationMatrixLink(List.of("0","1"),List.of("0"),Map.of("0","0","1","0"),Set.of(),Set.of()),"noninjective map");

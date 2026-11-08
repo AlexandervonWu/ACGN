@@ -12,6 +12,7 @@ import java.util.Set;
 import is.fivefivefive.CanDis.core.NormalForm.TemporalOp;
 import is.fivefivefive.CanDis.theory.AlloyTypeBridge;
 import is.fivefivefive.CanDis.theory.GraphType;
+import is.fivefivefive.CanDis.metric.MatrixDecision;
 
 /**
  * Specification and reference implementation of the CanDis repair metric over
@@ -19,8 +20,21 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v32-empty-call-argument-paid";
+    public static final String VERSION = "typed-fast-distance-v34-retained-native-decisions";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
+    private static final ThreadLocal<DecisionCapture> DECISIONS = new ThreadLocal<>();
+    private record PhaseDecision(Map<String,String> mapping,MatrixDecision<EGraphNode> matrix) {
+        PhaseDecision { mapping=Map.copyOf(mapping); }
+    }
+    private static final class DecisionCapture {
+        PhaseDecision lastPhase;
+        List<PhaseDecision> phases;
+        MatrixAlignment alignment;
+        OrderedTreeEditDistance.Alignment temporal;
+        final List<int[][]> declarations = new ArrayList<>();
+        final List<List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move>> declarationMoves = new ArrayList<>();
+        final is.fivefivefive.CanDis.metric.TraceResources resources = new is.fivefivefive.CanDis.metric.TraceResources();
+    }
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
                 @Override
@@ -54,7 +68,10 @@ public final class CanonicalDistance {
 
     /** Exposes the normative metric decomposition without changing its units. */
     public static DistanceBreakdown evaluate(Prepared left, Prepared right) {
-        int temporalDistance = treeDistance(left.temporalTree, right.temporalTree);
+        var capture=DECISIONS.get();
+        int temporalDistance;
+        if(capture==null)temporalDistance=treeDistance(left.temporalTree,right.temporalTree);
+        else {capture.temporal=OrderedTreeEditDistance.alignment(left.temporalTree,right.temporalTree,TEMPORAL_ADAPTER);temporalDistance=capture.temporal.cost();}
         int quantificationDistance = quantificationDistance(left.normalForms, right.normalForms);
         int matrixDistance = matrixDistance(left.normalForms, right.normalForms, left.metadata, right.metadata);
         return new DistanceBreakdown(
@@ -63,22 +80,27 @@ public final class CanonicalDistance {
 
     /** Native matrix-only backtrace. Never a replacement for a complete public edit plan. */
     public static org.json.JSONObject matrixReplay(Prepared left, Prepared right) {
-        DistanceBreakdown nativeResult = evaluate(left, right);
+        return captureDecisions(left,right).matrix;
+    }
+    private record Captured(org.json.JSONObject matrix,DecisionCapture decisions) { }
+    private static Captured captureDecisions(Prepared left,Prepared right) {
+        if(DECISIONS.get()!=null)throw new IllegalStateException("Reentrant native decision capture");
+        var decisions=new DecisionCapture();DECISIONS.set(decisions);
+        DistanceBreakdown nativeResult;
+        try { nativeResult=evaluate(left,right); } finally { DECISIONS.remove(); }
         int phaseCount = Math.max(left.normalForms.size(),right.normalForms.size());
-        if (phaseCount > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
-        MatrixAlignment coherent = bestCoherentMatrixAlignment(
-                left.normalForms, right.normalForms, left.metadata, right.metadata);
+        MatrixAlignment coherent=Objects.requireNonNull(decisions.alignment,"Missing selected matrix decision");
         org.json.JSONArray phases = new org.json.JSONArray();
         int cost = 0;
         for (int i = 0; i < phaseCount; i++) {
             NormalForm a = i < left.normalForms.size() ? left.normalForms.get(i) : null;
             NormalForm b = i < right.normalForms.size() ? right.normalForms.get(i) : null;
-            Map<String, String> mapping = a == null || b == null ? Map.of() : bestVariableMapping(a, b, coherent.mapping,
-                    coherent.lockedLeftNames, coherent.lockedRightNames);
-            var replay=matrixReplayEngine(mapping,mapping,left,right,true);
+            PhaseDecision chosen=coherent.phases.get(i);
+            Map<String, String> mapping=chosen.mapping();
+            var replay=matrixReplayEngine(mapping,mapping,left,right,false);
             EGraphNode source = a == null ? null : a.getMatrixEGraph();
             EGraphNode target = b == null ? null : b.getMatrixEGraph();
-            org.json.JSONObject receipt = replay.capture(source,target);
+            org.json.JSONObject receipt = replay.capture(chosen.matrix());
             int checked = replay.verify(source,target,receipt);
             cost = Math.addExact(cost, checked);
             phases.put(new org.json.JSONObject().put("phase", i)
@@ -98,7 +120,7 @@ public final class CanonicalDistance {
         if (coherent.sourceOrder != null) result.put("selectedGroupedDeclarationPermutation",
                 new org.json.JSONObject().put("source",new org.json.JSONArray(coherent.sourceOrder))
                         .put("target",new org.json.JSONArray(coherent.targetOrder)));
-        return result;
+        return new Captured(result,decisions);
     }
 
     private static is.fivefivefive.CanDis.metric.MatrixReplay<EGraphNode> matrixReplayEngine(
@@ -111,6 +133,14 @@ public final class CanonicalDistance {
                         .put(n.getOpcode()==EGraphNode.Opcode.CALL?callIdentity(n):"")
                         .put(n.getFlexibleArityKind().toString()).put(n.isOrderInsensitive())
                         .put(new java.util.TreeMap<>(labels).toString()).toString();
+            }
+            public String evidence(EGraphNode n) {
+                return new org.json.JSONObject().put("sourceOccurrenceLineage",n.getSourceOccurrenceLineage())
+                        .put("certificationOccurrenceLineage",n.getCertificationOccurrenceLineage())
+                        .put("sourceName",String.valueOf(n.getSourceName())).put("alphaName",String.valueOf(n.getAlphaName()))
+                        .put("exactType",String.valueOf(n.getExactAlloyType())).put("sourceType",String.valueOf(n.getSourceType()))
+                        .put("semanticIdentity",String.valueOf(n.getSemanticIdentity())).put("callOccurrence",n.getCallOccurrenceId())
+                        .put("localCoordinate",n.hasComparisonLocalCoordinate()).toString();
             }
             public List<EGraphNode> children(EGraphNode n) { return FastChainGeometry.children(n); }
             public List<EGraphNode> alternatives(EGraphNode n) { return List.of(); }
@@ -126,12 +156,91 @@ public final class CanonicalDistance {
 
     /** Adds selected-map-linked declaration and native temporal replay; public linkage remains incomplete. */
     public static org.json.JSONObject replayWithSlices(Prepared left, Prepared right) {
-        org.json.JSONObject matrix = matrixReplay(left,right);
-        return is.fivefivefive.CanDis.metric.PhaseReplay.attach(matrix,
-                () -> declarationReplay(left,right,matrix),
-                () -> is.fivefivefive.CanDis.metric.TemporalReplay.capture(
-                        left.temporalTree,right.temporalTree,matrix.getInt("temporalDistance"),
-                        node -> node.label,node -> node.children));
+        return evaluateWithTrace(left,right).json();
+    }
+
+    /** Numeric value and executable native metric representation from one evaluation.
+     * Cross-arm correspondence is deliberately not a precondition of this API. */
+    public static is.fivefivefive.CanDis.metric.NativeRepairTrace evaluateWithTrace(Prepared left,Prepared right) {
+        var captured=captureDecisions(left,right);var out=captured.matrix;
+        try {
+        var selected=captured.decisions.alignment;
+        var as=new ArrayList<List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom>>();
+        var bs=new ArrayList<List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom>>();
+        var declarations=new org.json.JSONArray();
+        int count=Math.max(left.normalForms.size(),right.normalForms.size());
+        for(int phase=0;phase<count;phase++) {
+            var source=phase<left.normalForms.size()?left.normalForms.get(phase).getMatrixQuantiVars():List.<QuantiVar>of();
+            var target=phase<right.normalForms.size()?right.normalForms.get(phase).getMatrixQuantiVars():List.<QuantiVar>of();
+            var a=canonicalQuantifierOrder(source);var b=canonicalQuantifierOrder(target);
+            if(phase==0&&selected.sourceOrder!=null){
+                a=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(a,selected.sourceOrder);
+                b=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(b,selected.targetOrder);
+            }
+            as.add(List.copyOf(declarationAtoms(source,a,phase)));bs.add(List.copyOf(declarationAtoms(target,b,phase)));
+            var moves=phase==0&&selected.declarationPath!=null?selected.declarationPath:captured.decisions.declarationMoves.get(phase);
+            int[][] dp=captured.decisions.declarations.get(phase);
+            declarations.put(is.fivefivefive.CanDis.metric.DeclarationReplay.captureSelected(as.get(phase),bs.get(phase),moves,dp[a.size()][b.size()]));
+            var choice=selected.phases.get(phase);
+            var matrix=out.getJSONArray("phases").getJSONObject(phase);
+            matrix.put("program",matrixReplayEngine(choice.mapping,choice.mapping,left,right,false).executable(
+                    choice.matrix.source(),choice.matrix.target(),matrix.getJSONObject("receipt")));
+        }
+        out.put("nativeDeclarationPrograms",declarations).put("nativeTemporalProgram",
+                is.fivefivefive.CanDis.metric.TemporalReplay.capture(left.temporalTree,right.temporalTree,
+                        out.getInt("temporalDistance"),n->n.label,n->n.children,captured.decisions.temporal))
+                .put("executionRepresentation","Native temporal tree, ordered declaration tuples and selected mapped matrix occurrences")
+                .put("jointBindingCorrespondenceChecked",false)
+                .put("sourceBindingContexts",traceBindingContexts(left))
+                .put("targetBindingContexts",traceBindingContexts(right))
+                .put("constructionLink","Retained Prepared sourceForms and exact comparisonForms; not a source wire certificate");
+        // Preserve the existing joint/cross-arm diagnostic separately from the
+        // executable native choices. Its failure cannot discard native CRUD.
+        is.fivefivefive.CanDis.metric.PhaseReplay.attach(out,()->declarationReplay(left,right,out,captured.decisions),
+                ()->new org.json.JSONObject(out.getJSONObject("nativeTemporalProgram").toString()));
+        return is.fivefivefive.CanDis.metric.NativeRepairTrace.checked(out,program->{
+            int temporal=is.fivefivefive.CanDis.metric.TemporalReplay.verify(left.temporalTree,right.temporalTree,
+                    n->n.label,n->n.children,program.getJSONObject("nativeTemporalProgram"));
+            int quantifiers=0,matrix=0;
+            if(program.getJSONArray("nativeDeclarationPrograms").length()!=count||program.getJSONArray("phases").length()!=count)
+                throw new IllegalArgumentException("Native trace phase coverage");
+            for(int phase=0;phase<count;phase++) {
+                quantifiers=Math.addExact(quantifiers,is.fivefivefive.CanDis.metric.DeclarationReplay.execute(as.get(phase),bs.get(phase),
+                        program.getJSONArray("nativeDeclarationPrograms").getJSONObject(phase)));
+                var choice=selected.phases.get(phase);var payload=program.getJSONArray("phases").getJSONObject(phase);
+                matrix=Math.addExact(matrix,matrixReplayEngine(choice.mapping,choice.mapping,left,right,false).verifyExecutable(
+                        choice.matrix.source(),choice.matrix.target(),payload.getJSONObject("receipt"),payload.getJSONObject("program")));
+            }
+            if(temporal!=program.getInt("temporalDistance")||quantifiers!=program.getInt("quantifierDistance")||matrix!=program.getInt("matrixDistance"))
+                throw new IllegalArgumentException("Native trace component costs");
+            return Math.addExact(temporal,Math.addExact(quantifiers,matrix));
+        });
+        } catch(RuntimeException failure) {
+            throw is.fivefivefive.CanDis.metric.NativeRepairTrace.captureFailure(out,failure);
+        }
+    }
+
+    private static org.json.JSONArray traceBindingContexts(Prepared prepared) {
+        var phases=new org.json.JSONArray();
+        for(int phase=0;phase<prepared.normalForms.size();phase++) {
+            var f=prepared.normalForms.get(phase);var rows=new org.json.JSONArray();
+            var groups=List.of(f.getParams(),f.getMatrixQuantiVars(),f.getInheritedQuantiVars(),f.getLocalQuantiVars());
+            var roles=List.of("parameter","matrix","inherited","local");
+            for(int group=0;group<groups.size();group++)for(int i=0;i<groups.get(group).size();i++) {
+                var q=groups.get(group).get(i);
+                rows.put(new org.json.JSONObject().put("role",roles.get(group)).put("ordinal",i).put("alphaName",q.getName())
+                        .put("sourceNames",new org.json.JSONArray(q.getOriginalNames())).put("owner",q.getBindingPath())
+                        .put("slot",String.valueOf(q.getDeBruijnKey())).put("type",String.valueOf(q.getExactAlloyType()))
+                        .put("quantifier",q.getQuantifier()).put("cardinality",q.getCardinality()).put("disjointnessClass",q.getDisjointnessClass()));
+            }
+            var imports=new org.json.JSONArray();
+            for(var imported:f.getPhaseLocalBindingImports())imports.put(new org.json.JSONObject()
+                    .put("alphaName",imported.variable().getName()).put("sourceBinderLineage",imported.sourceBinderLineage())
+                    .put("ownerPhase",imported.ownerPhasePath()).put("targetPhase",imported.targetPhasePath()).put("context",imported.binderContext()));
+            phases.put(new org.json.JSONObject().put("phase",phase).put("temporalOperator",f.getTemporalOp())
+                    .put("bindings",rows).put("imports",imports));
+        }
+        return phases;
     }
 
     /** Fixed-choice diagnostic verifier; performs no distance search or admission. */
@@ -154,7 +263,8 @@ public final class CanonicalDistance {
         return canonicalQuantifierOrder(source).stream().map(indices::get).toList();
     }
 
-    private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,org.json.JSONObject matrix) {
+    private static org.json.JSONObject declarationReplay(Prepared left, Prepared right,org.json.JSONObject matrix,
+            DecisionCapture decisions) {
         int expected = matrix.getInt("quantifierDistance");
         Map<String,String> paid = new HashMap<>();
         boolean linked = matrix.has("selectedPaidDeclarationCorrespondence");
@@ -185,7 +295,7 @@ public final class CanonicalDistance {
                     ? matrixVariableNames(left.normalForms.get(phase).getMatrixEGraph()) : Set.of();
             Set<String> usedB = phase < right.normalForms.size()
                     ? matrixVariableNames(right.normalForms.get(phase).getMatrixEGraph()) : Set.of();
-            int[][] dp=quantificationDp(a,b);
+            int[][] dp=decisions.declarations.get(phase);
             org.json.JSONObject receipt, connecting=null;
             var grouped=matrix.optJSONObject("selectedGroupedDeclarationPermutation");
             if(grouped!=null) {
@@ -217,7 +327,7 @@ public final class CanonicalDistance {
                         .put("target",new org.json.JSONArray(java.util.stream.IntStream.range(0,b.size()).toArray()))
                         .put("admission","SOURCE_OBSERVED_GROUPED_ALL_SOME").put("cost",0);
                 } catch(is.fivefivefive.CanDis.metric.DeclarationReplay.NoMatchingPath stillMissing) {
-                    var completed=retainedPaidCompletion(left,right,a,b,selected,matrix,phase,linked);
+                    var completed=retainedPaidCompletion(left,right,a,b,selected,matrix,phase,linked,dp);
                     if(completed==null) throw stillMissing;
                     receipt=completed.getJSONObject("receipt"); connecting=completed.getJSONObject("connectingPermutation");
                 }
@@ -248,7 +358,7 @@ public final class CanonicalDistance {
     }
 
     private static org.json.JSONObject retainedPaidCompletion(Prepared left,Prepared right,List<QuantiVar> a,
-            List<QuantiVar> b,Map<String,String> selected,org.json.JSONObject matrix,int phase,boolean alreadyPaid) {
+            List<QuantiVar> b,Map<String,String> selected,org.json.JSONObject matrix,int phase,boolean alreadyPaid,int[][] dp) {
         if(alreadyPaid || phase!=0 || left.normalForms.size()!=1 || right.normalForms.size()!=1
                 || left.sourceForms.size()!=1 || right.sourceForms.size()!=1) return null;
         var af=left.normalForms.get(0); var bf=right.normalForms.get(0);
@@ -263,7 +373,9 @@ public final class CanonicalDistance {
                 if(charge!=0) paid.put(x.getName(),y.getName());
             }
             if(diagonal!=1 || paid.size()!=1 || selected.containsKey(paid.keySet().iterator().next())) continue;
-            int[][] dp=quantificationDp(plan.left(),plan.right());
+            for(int i=0;i<a.size();i++)if(quantifierUpdateCost(a.get(i),plan.left().get(i))!=0
+                    ||quantifierUpdateCost(b.get(i),plan.right().get(i))!=0)
+                throw new IllegalStateException("RETAINED_COMPLETION_CHANGED_NATIVE_TUPLE_ORDER");
             if(dp[a.size()][b.size()]!=matrix.getInt("quantifierDistance")) continue;
             var receipt=captureDeclarations(af.getMatrixQuantiVars(),bf.getMatrixQuantiVars(),plan.left(),plan.right(),0,
                     dp,plan.completed(),matrixVariableNames(af.getMatrixEGraph()),matrixVariableNames(bf.getMatrixEGraph()),
@@ -379,17 +491,9 @@ public final class CanonicalDistance {
     }
 
     public static List<String> edits(Prepared left, Prepared right) {
-        if (distance(left, right) == 0) {
-            return java.util.Collections.singletonList("no-op");
-        }
-        List<String> edits = new ArrayList<>();
-        temporalEdits(left.temporalTree, right.temporalTree, "temporal", edits);
-        quantificationEdits(left.normalForms, right.normalForms, edits);
-        matrixEdits(left.normalForms, right.normalForms, left.metadata, right.metadata, edits);
-        if (edits.isEmpty()) {
-            edits.add("no-op");
-        }
-        return edits;
+        // Human-readable projection only. The executable payload lives in the
+        // same selected trace; this API no longer chooses a second mapping/DP.
+        return evaluateWithTrace(left,right).paidDescriptions();
     }
 
     public static List<String> irTemporalFol(Prepared prepared) {
@@ -521,6 +625,16 @@ public final class CanonicalDistance {
         int size = Math.max(left.size(), right.size());
         int distance = 0;
         for (int i = 0; i < size; i++) {
+            if (DECISIONS.get() != null) {
+                var a = canonicalQuantifierOrder(i < left.size() ? left.get(i).getMatrixQuantiVars() : List.of());
+                var b = canonicalQuantifierOrder(i < right.size() ? right.get(i).getMatrixQuantiVars() : List.of());
+                int[][] dp = quantificationDp(a,b);
+                DECISIONS.get().declarations.add(dp);
+                DECISIONS.get().declarationMoves.add(is.fivefivefive.CanDis.metric.DeclarationReplay.selectedMoves(
+                        dp,(x,y)->quantifierUpdateCost(a.get(x),b.get(y))));
+                distance = Math.addExact(distance, dp[a.size()][b.size()]);
+                continue;
+            }
             if (i >= left.size()) {
                 distance += quantificationSize(right.get(i).getMatrixQuantiVars());
             } else if (i >= right.size()) {
@@ -535,21 +649,7 @@ public final class CanonicalDistance {
     private static int bindingListDistance(List<QuantiVar> left, List<QuantiVar> right) {
         left = canonicalQuantifierOrder(left);
         right = canonicalQuantifierOrder(right);
-        int[][] dp = intMatrix(left.size() + 1, right.size() + 1);
-        for (int i = 1; i <= left.size(); i++) {
-            dp[i][0] = dp[i - 1][0] + 1;
-        }
-        for (int j = 1; j <= right.size(); j++) {
-            dp[0][j] = dp[0][j - 1] + 1;
-        }
-        for (int i = 1; i <= left.size(); i++) {
-            for (int j = 1; j <= right.size(); j++) {
-                int delete = dp[i - 1][j] + 1;
-                int insert = dp[i][j - 1] + 1;
-                int update = dp[i - 1][j - 1] + quantifierUpdateCost(left.get(i - 1), right.get(j - 1));
-                dp[i][j] = Math.min(update, Math.min(delete, insert));
-            }
-        }
+        int[][] dp = quantificationDp(left,right);
         return dp[left.size()][right.size()];
     }
 
@@ -680,8 +780,9 @@ public final class CanonicalDistance {
             List<NormalForm> right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
-        return bestCoherentMatrixAlignment(
-                left, right, leftMetadata, rightMetadata).distance;
+        var selected=bestCoherentMatrixAlignment(left,right,leftMetadata,rightMetadata);
+        var capture=DECISIONS.get();if(capture!=null)capture.alignment=selected;
+        return selected.distance;
     }
 
     private static int matrixDistanceWithFixedMapping(
@@ -694,11 +795,14 @@ public final class CanonicalDistance {
             EGraphMetadata rightMetadata) {
         int size = Math.max(left.size(), right.size());
         int distance = 0;
+        var capture=DECISIONS.get();var phases=capture==null?null:new ArrayList<PhaseDecision>();
         for (int i = 0; i < size; i++) {
             if (i >= left.size()) {
                 distance += eGraphSize(right.get(i).getMatrixEGraph(), rightMetadata);
+                if(capture!=null)capture.lastPhase=new PhaseDecision(Map.of(),MatrixDecision.whole(null,right.get(i).getMatrixEGraph(),eGraphSize(right.get(i).getMatrixEGraph(),rightMetadata)));
             } else if (i >= right.size()) {
                 distance += eGraphSize(left.get(i).getMatrixEGraph(), leftMetadata);
+                if(capture!=null)capture.lastPhase=new PhaseDecision(Map.of(),MatrixDecision.whole(left.get(i).getMatrixEGraph(),null,eGraphSize(left.get(i).getMatrixEGraph(),leftMetadata)));
             } else {
                 distance += matrixDistance(
                         left.get(i),
@@ -709,7 +813,9 @@ public final class CanonicalDistance {
                         leftMetadata,
                         rightMetadata);
             }
+            if(capture!=null)phases.add(capture.lastPhase);
         }
+        if(capture!=null)capture.phases=List.copyOf(phases);
         return distance;
     }
 
@@ -771,6 +877,7 @@ public final class CanonicalDistance {
                 best.mapping,
                 lockedLeftNames,
                 lockedRightNames);
+        existing.phases=best.phases;
         if (FastPaidDeclarationAlignment.supportsSupplementalPair(left,right)) {
             // Both families attain the same minimum declaration cost. Retain
             // the old family, including cheaper exchange paths, and prefer an
@@ -794,7 +901,8 @@ public final class CanonicalDistance {
         var targetOrders=FastGroupedDeclarationOrbit.orders(rightMetadata.original(right),right,b);
         var budget=new FastGroupedDeclarationOrbit.Budget();
         MatrixAlignment[] best = {null};
-        FastPaidDeclarationAlignment.enumerate(a,b,quantificationDp(a,b),CanonicalDistance::quantifierUpdateCost,paid -> {
+        int[][] dp=DECISIONS.get()==null?quantificationDp(a,b):DECISIONS.get().declarations.get(0);
+        FastPaidDeclarationAlignment.enumerateSelected(a,b,dp,CanonicalDistance::quantifierUpdateCost,(paid,path) -> {
             for(var p:sourceOrders)for(var q:targetOrders) {
                 budget.spend();
                 var moved=FastGroupedDeclarationOrbit.transport(a,b,paid,p,q);
@@ -804,11 +912,13 @@ public final class CanonicalDistance {
                 if (best[0] == null || distance < best[0].distance
                         || distance == best[0].distance && canonical && best[0].sourceOrder!=null) {
                     best[0] = new MatrixAlignment(distance,moved,lockedLeft,lockedRight);
+                    var capture=DECISIONS.get();if(capture!=null)best[0].phases=List.of(capture.lastPhase);
                     best[0].paidCorrespondence = Map.copyOf(moved);
+                    if(capture!=null)best[0].declarationPath=path;
                     if(!canonical){best[0].sourceOrder=p.clone();best[0].targetOrder=q.clone();}
                 }
             }
-        });
+        },DECISIONS.get()!=null);
         if (best[0] == null) throw new IllegalStateException("PAID_DECLARATION_NO_MINIMUM_PATH");
         return best[0];
     }
@@ -884,6 +994,7 @@ public final class CanonicalDistance {
             if (distance < best.distance) {
                 best.distance = distance;
                 best.mapping = new HashMap<>(mapping);
+                var capture=DECISIONS.get();if(capture!=null)best.phases=capture.phases;
             }
             return;
         }
@@ -1067,7 +1178,8 @@ public final class CanonicalDistance {
         Map<String, String> mapping = new HashMap<>(fixedMapping);
         int requiredMatches = maximumCompatibleMatches(
                 leftNames, leftBindings, rightBindings);
-        return bestMappedDistance(
+        var capture=DECISIONS.get();var selected=capture==null?null:new BestMapping();
+        int result=bestMappedDistance(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
                 leftNames,
@@ -1080,7 +1192,9 @@ public final class CanonicalDistance {
                 requiredMatches,
                 Integer.MAX_VALUE,
                 leftMetadata,
-                rightMetadata);
+                rightMetadata,selected);
+        if(capture!=null)capture.lastPhase=new PhaseDecision(selected.mapping,selected.decision);
+        return result;
     }
 
     private static void matrixEdits(List<NormalForm> left, List<NormalForm> right,
@@ -1241,12 +1355,15 @@ public final class CanonicalDistance {
             int requiredMatches,
             int best,
             EGraphMetadata leftMetadata,
-            EGraphMetadata rightMetadata) {
+            EGraphMetadata rightMetadata,BestMapping selected) {
         if (index == leftNames.size()) {
             if (matched != requiredMatches) {
                 return best;
             }
-            return Math.min(best, eGraphDistance(left, right, mapping, leftMetadata, rightMetadata));
+            var context=new EGraphDistanceContext(mapping,leftMetadata,rightMetadata,selected!=null);
+            int candidate=context.distance(left,right);
+            if(selected!=null && candidate<best){selected.mapping=Map.copyOf(mapping);selected.decision=context.decision(left,right);}
+            return Math.min(best,candidate);
         }
         String leftName = leftNames.get(index);
         BindingDescriptor leftBinding = leftBindings.get(leftName);
@@ -1272,7 +1389,7 @@ public final class CanonicalDistance {
                     requiredMatches,
                     best,
                     leftMetadata,
-                    rightMetadata);
+                    rightMetadata,selected);
             usedRightNames.remove(rightEntry.getKey());
             mapping.remove(leftName);
             if (best == 0) {
@@ -1293,7 +1410,7 @@ public final class CanonicalDistance {
                     requiredMatches,
                     best,
                     leftMetadata,
-                    rightMetadata);
+                    rightMetadata,selected);
         }
         return best;
     }
@@ -1733,14 +1850,28 @@ public final class CanonicalDistance {
         private final Map<String, String> variableMapping;
         private final EGraphMetadata leftMetadata;
         private final EGraphMetadata rightMetadata;
+        private final IdentityHashMap<EGraphNode,IdentityHashMap<EGraphNode,MatrixDecision<EGraphNode>>> decisions;
+        private List<MatrixDecision.Edge<EGraphNode>> edges;
 
         private EGraphDistanceContext(
                 Map<String, String> variableMapping,
                 EGraphMetadata leftMetadata,
                 EGraphMetadata rightMetadata) {
-            this.variableMapping = variableMapping;
+            this(variableMapping,leftMetadata,rightMetadata,false);
+        }
+        private EGraphDistanceContext(Map<String,String> variableMapping,EGraphMetadata leftMetadata,
+                EGraphMetadata rightMetadata,boolean capture) {
+            this.variableMapping = capture?Map.copyOf(variableMapping):variableMapping;
             this.leftMetadata = leftMetadata;
             this.rightMetadata = rightMetadata;
+            decisions=capture?new IdentityHashMap<>():null;
+        }
+        private MatrixDecision<EGraphNode> decision(EGraphNode a,EGraphNode b) {
+            if(a==null||b==null)return MatrixDecision.whole(a,b,nodeSize(a==null?b:a,a!=null));
+            return Objects.requireNonNull(decisions.get(a).get(b),"Missing evaluated node decision");
+        }
+        private MatrixDecision.Edge<EGraphNode> edge(List<EGraphNode> a,List<EGraphNode> b,int i,int j) {
+            return new MatrixDecision.Edge<>(i,j,decision(i<0?null:a.get(i),j<0?null:b.get(j)));
         }
 
         private int distance(EGraphNode left, EGraphNode right) {
@@ -1760,7 +1891,11 @@ public final class CanonicalDistance {
                     && right.isOrderInsensitive()
                     ? unorderedChildDistance(leftChildren, rightChildren)
                     : childDistance(leftChildren, rightChildren);
-            return nodeUpdateCost(left, right, variableMapping, leftMetadata, rightMetadata) + childCost;
+            int head=nodeUpdateCost(left,right,variableMapping,leftMetadata,rightMetadata),total=head+childCost;
+            if(decisions!=null)decisions.computeIfAbsent(left,k->new IdentityHashMap<>()).put(right,
+                    MatrixDecision.node(left,right,total,head,left.getOpcode()==right.getOpcode()
+                            &&left.isOrderInsensitive()&&right.isOrderInsensitive(),edges));
+            return total;
         }
 
         private int unorderedChildDistance(List<EGraphNode> left, List<EGraphNode> right) {
@@ -1782,10 +1917,18 @@ public final class CanonicalDistance {
                     }
                 }
             }
-            return minimumAssignmentCost(costs);
+            int[] columns=decisions==null?null:new int[dimension];
+            int total=minimumAssignmentCost(costs,columns);
+            if(decisions!=null){var chosen=new ArrayList<MatrixDecision.Edge<EGraphNode>>();
+                for(int i=0;i<dimension;i++){int j=columns[i];if(i<leftSize||j<rightSize)chosen.add(edge(left,right,i<leftSize?i:-1,j<rightSize?j:-1));}
+                edges=List.copyOf(chosen);}
+            return total;
         }
 
         private static int minimumAssignmentCost(int[][] costs) {
+            return minimumAssignmentCost(costs,null);
+        }
+        private static int minimumAssignmentCost(int[][] costs,int[] columns) {
             int size = costs.length;
             for (int row = 0; row < size; row++) {
                 if (costs[row] == null || costs[row].length != size) {
@@ -1851,6 +1994,7 @@ public final class CanonicalDistance {
                     column = previous;
                 } while (column != 0);
             }
+            if(columns!=null)for(int col=1;col<=size;col++)columns[columnMatch[col]-1]=col-1;
             return Math.toIntExact(Math.negateExact(columnPotential[0]));
         }
 
@@ -1861,6 +2005,7 @@ public final class CanonicalDistance {
                     distance = Math.addExact(
                             distance, nodeSize(right.get(i), false));
                 }
+                if(decisions!=null){var chosen=new ArrayList<MatrixDecision.Edge<EGraphNode>>();for(int j=0;j<right.size();j++)chosen.add(edge(left,right,-1,j));edges=List.copyOf(chosen);}
                 return distance;
             }
             if (right.isEmpty()) {
@@ -1869,18 +2014,23 @@ public final class CanonicalDistance {
                     distance = Math.addExact(
                             distance, nodeSize(left.get(i), true));
                 }
+                if(decisions!=null){var chosen=new ArrayList<MatrixDecision.Edge<EGraphNode>>();for(int i=0;i<left.size();i++)chosen.add(edge(left,right,i,-1));edges=List.copyOf(chosen);}
                 return distance;
             }
             if (left.size() == 1 && right.size() == 1) {
-                return distance(left.get(0), right.get(0));
+                int total=distance(left.get(0),right.get(0));
+                if(decisions!=null)edges=List.of(edge(left,right,0,0));return total;
             }
 
             int[] previous = intArray(right.size() + 1);
             int[] current = intArray(right.size() + 1);
+            if(decisions!=null)DECISIONS.get().resources.cells((long)left.size()+1,(long)right.size()+1);
+            int[][] retained=decisions==null?null:intMatrix(left.size()+1,right.size()+1);
             for (int j = 1; j <= right.size(); j++) {
                 previous[j] = Math.addExact(
                         previous[j - 1], nodeSize(right.get(j - 1), false));
             }
+            if(retained!=null)System.arraycopy(previous,0,retained[0],0,previous.length);
             for (int i = 1; i <= left.size(); i++) {
                 current[0] = Math.addExact(
                         previous[0], nodeSize(left.get(i - 1), true));
@@ -1894,9 +2044,18 @@ public final class CanonicalDistance {
                             distance(left.get(i - 1), right.get(j - 1)));
                     current[j] = Math.min(update, Math.min(delete, insert));
                 }
+                if(retained!=null)System.arraycopy(current,0,retained[i],0,current.length);
                 int[] swap = previous;
                 previous = current;
                 current = swap;
+            }
+            if(retained!=null){var chosen=new ArrayList<MatrixDecision.Edge<EGraphNode>>();int i=left.size(),j=right.size();
+                while(i>0||j>0){
+                    if(i>0&&j>0&&retained[i][j]==retained[i-1][j-1]+decision(left.get(i-1),right.get(j-1)).cost())chosen.add(edge(left,right,--i,--j));
+                    else if(i>0&&retained[i][j]==retained[i-1][j]+nodeSize(left.get(i-1),true))chosen.add(edge(left,right,--i,-1));
+                    else chosen.add(edge(left,right,-1,--j));
+                }
+                java.util.Collections.reverse(chosen);edges=List.copyOf(chosen);
             }
             return previous[right.size()];
         }
@@ -2506,13 +2665,16 @@ public final class CanonicalDistance {
     }
 
     private static final class BestCoherentMapping {
+        private List<PhaseDecision> phases;
         private int distance = Integer.MAX_VALUE;
         private Map<String, String> mapping = new HashMap<>();
     }
 
     private static final class MatrixAlignment {
+        private List<PhaseDecision> phases;
         private Map<String,String> paidCorrespondence;
         private int[] sourceOrder,targetOrder;
+        private List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> declarationPath;
         private final int distance;
         private final Map<String, String> mapping;
         private final Set<String> lockedLeftNames;
@@ -2539,6 +2701,7 @@ public final class CanonicalDistance {
     }
 
     private static class BestMapping {
+        private MatrixDecision<EGraphNode> decision;
         private int distance = Integer.MAX_VALUE;
         private Map<String, String> mapping = new HashMap<>();
     }

@@ -4,7 +4,7 @@ import Std
    independent replayers remain separate Java obligations, not axioms discharged
    by this theorem. No diagnostic outcome grants public certification. -/
 namespace NativeOperationGate
-inductive Status | matched | mismatch | uncheckable | invalidReplay
+inductive Status | matched | mismatch | uncheckable | invalidReplay | extractionFailure
   deriving DecidableEq
 
 def compare (supported valid : Bool) (left right : List Nat) : Status :=
@@ -12,13 +12,16 @@ def compare (supported valid : Bool) (left right : List Nat) : Status :=
   else if left = right then .matched else .mismatch
 
 def stop : Status → Bool
-  | .mismatch | .invalidReplay => true
+  | .mismatch | .invalidReplay | .uncheckable | .extractionFailure => true
   | _ => false
 
 theorem unsupported_never_matched (valid : Bool) (a b : List Nat) :
     compare false valid a b = .uncheckable := by simp [compare]
+theorem missing_correspondence_stops (valid : Bool) (a b : List Nat) :
+    stop (compare false valid a b) = true := by simp [compare, stop]
 theorem invalid_stops (a b : List Nat) : stop (compare true false a b) = true := by
   simp [compare, stop]
+theorem extraction_failure_stops : stop .extractionFailure = true := rfl
 theorem checked_equal_continues (a : List Nat) :
     compare true true a a = .matched ∧ stop (compare true true a a) = false := by
   simp [compare, stop]
@@ -38,7 +41,9 @@ def certificateGranted (_ : Status) := false
 theorem no_diagnostic_certification (status : Status) : certificateGranted status = false := rfl
 
 #print axioms unsupported_never_matched
+#print axioms missing_correspondence_stops
 #print axioms invalid_stops
+#print axioms extraction_failure_stops
 #print axioms checked_equal_continues
 #print axioms checked_different_stops
 #print axioms equal_total_not_sequence

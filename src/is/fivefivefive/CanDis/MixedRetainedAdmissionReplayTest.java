@@ -131,7 +131,12 @@ public final class MixedRetainedAdmissionReplayTest {
             var result=new JSONObject().put("diagnostic",raw).put("fastActions",fa).put("certifiedActions",ca).put("orderedActionsEqual",fa.similar(ca)).put("firstDifference",first).put("publicCertification","BLOCKED");
             Files.writeString(out.resolve("after-"+d+".json"),result.toString(2),StandardOpenOption.CREATE_NEW);
             check(fa.similar(ca),"ordered original-coordinate actions differ at "+first);
-            var comparator=NativeOperationComparison.compareCaptured(l,r,raw);check(comparator.status()==NativeOperationComparison.Status.UNCHECKABLE&&comparator.evidence().getString("reason").equals("BINDING_LAYOUT_UNSUPPORTED"),"production comparator remains honestly unchecked");
+            var comparator=NativeOperationComparison.compare(l,r,CanonicalAlloyPipeline.prepare(l),CanonicalAlloyPipeline.prepare(r));
+            check(comparator.status()==NativeOperationComparison.Status.MATCHED
+                    &&comparator.evidence().getJSONArray("fastActions").similar(comparator.evidence().getJSONArray("certifiedActions")),
+                    "production original-coordinate correspondence agrees with fixed-choice replay");
+            check(comparator.evidence().getJSONObject("diagnostic").getJSONObject("certified").similar(raw.getJSONObject("certified")),
+                    "recaptured certified path is the independently checked path");
         }
         check(!pair(original(a),original(a)),"local/local scope unchanged");
         corrupt(a,b,f->field(owners(f).get(1),"opcode",EGraphNode.Opcode.EXISTS),"same supported kind but wrong original quantifier");

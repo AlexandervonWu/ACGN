@@ -52,6 +52,8 @@ lean docs/distance-parity-20261107/GroupedRetainedScope.lean
 lean docs/distance-parity-20261107/BoundCallAdmission.lean
 lean docs/distance-parity-20261107/GroupedOnePaidAdmission.lean
 lean docs/distance-parity-20261107/GuardedJoinBooleanErasure.lean
+lean docs/distance-parity-20261107/RetainedTupleCallTrace.lean
+lean docs/distance-parity-20261107/DistanceDerivedTrace.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -59,6 +61,14 @@ done
 LEAN_PATH="$BUILD_DIR" lean docs/distance-parity-20261107/FastChainGeometry.lean
 mapfile -t sources < <(rg --files src -g '*.java' | sort)
 javac -J-Xmx512m --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
+python3 -B scripts/test_native_operation_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
+    --output "$BUILD_DIR/native-operation-cli"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.RetainedTupleCallReplayTest "$BUILD_DIR/retained-tuple-call"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.metric.MetricDecisionProgramTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.DistanceDerivedTraceTest "$BUILD_DIR/distance-derived-trace"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.RetainedPaidCompletionTest
 for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest theory.GuardedJoinRotationTest PartialJoinCompositionTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.TemporalReplayTest metric.PhaseReplayTest NativePhaseReplayTest LocalDomainSingletonTest FastChainGeometryTest P06ShorterReplayTest ProductShorterReplayTest FastProductGeometryTest core.ScopedTemporalShorterReplayTest core.TemporalOccurrenceAccountingTest core.InjectiveVariableFallbackTest core.InjectiveVariableReplayTest PaidDeclarationShorterReplayTest core.FastPaidDeclarationAlignmentTest core.ClosedTemporalPhaseTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
@@ -151,8 +161,6 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.GroupedOnePaidReplayTest "$BUILD_DIR/grouped-one"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.GuardedJoinErasureReplayTest "$BUILD_DIR/join-erasure"
-python3 -B scripts/test_native_operation_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
-    --output "$BUILD_DIR/native-operation-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/diagnostic-stop-cli"
 python3 -B scripts/test_distance_replay_diagnostics.py --classpath "$BUILD_DIR:$ROOT/lib/*" \

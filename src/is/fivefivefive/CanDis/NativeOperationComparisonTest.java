@@ -87,8 +87,10 @@ public final class NativeOperationComparisonTest {
         check(groupedOwner(grouped.left.normalizedForms().get(0).getCertificationMatrixEGraph()),"negative fixture actually retains grouped local source owner");
         var groupedResult=compare(grouped);
         Files.writeString(root.resolve("grouped-boundary.json"),groupedResult.evidence().toString(2),StandardOpenOption.CREATE_NEW);
-        check(groupedResult.status()==NativeOperationComparison.Status.UNCHECKABLE
-                && groupedResult.reason().equals("LOCAL_DECLARATION_LAYOUT_UNSUPPORTED"),"grouped local automorphism expansion blocked before fresh adaptation: "+groupedResult.evidence());
+        check(groupedResult.status()==NativeOperationComparison.Status.MATCHED
+                && groupedResult.evidence().getBoolean("sourceCertificatesChecked")
+                && groupedResult.evidence().getJSONArray("fastActions").similar(groupedResult.evidence().getJSONArray("certifiedActions")),
+                "retained grouped owner uses its actual selected representative: "+groupedResult.evidence());
         var multiplicity=pair("sig A { r:set A } pred inv { all x:set A, y:A | y in x.r } pred invc { some A }","inv","invc");
         var mixedPrefix=multiplicity.left.normalizedForms().get(0).getMatrixQuantiVars();
         check(mixedPrefix.size()==2 && mixedPrefix.get(0).getQuantifier()==mixedPrefix.get(1).getQuantifier()

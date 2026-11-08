@@ -377,6 +377,8 @@ public class CanonicalBatchTest {
                 t.printStackTrace(System.err);
             }
             result.error = t.getClass().getSimpleName() + ": " + t.getMessage();
+            if(t instanceof is.fivefivefive.CanDis.metric.NativeRepairTrace.CaptureFailure failure)
+                result.failedNativeSelection=failure.selectedReceipt();
             return result;
         }
     }
@@ -394,12 +396,14 @@ public class CanonicalBatchTest {
         result.legacyCanonicalFormSize = Math.max(
                 result.leftLegacyCanonicalFormSize,
                 result.rightLegacyCanonicalFormSize);
-        CanonicalDistance.DistanceBreakdown legacyBreakdown =
-                Canonical.distanceBreakdown(leftCanonical, rightCanonical);
-        result.legacyCanonicalDistance = legacyBreakdown.distance();
-        result.legacyTemporalDistance = legacyBreakdown.temporalDistance();
-        result.legacyQuantifierDistance = legacyBreakdown.quantifierDistance();
-        result.legacyMatrixDistance = legacyBreakdown.matrixDistance();
+        var nativeFast=gate.checksOperations()?gate.captureTrace(source,result.leftPredicate,result.rightPredicate,
+                ()->Canonical.evaluateWithTrace(leftCanonical,rightCanonical),null):null;
+        CanonicalDistance.DistanceBreakdown legacyBreakdown = nativeFast==null
+                ?Canonical.distanceBreakdown(leftCanonical, rightCanonical):null;
+        result.legacyCanonicalDistance = nativeFast==null?legacyBreakdown.distance():nativeFast.distance();
+        result.legacyTemporalDistance = nativeFast==null?legacyBreakdown.temporalDistance():nativeFast.temporalDistance();
+        result.legacyQuantifierDistance = nativeFast==null?legacyBreakdown.quantifierDistance():nativeFast.quantifierDistance();
+        result.legacyMatrixDistance = nativeFast==null?legacyBreakdown.matrixDistance():nativeFast.matrixDistance();
         result.normalizedLegacyCanonicalDistance = normalizedDistance(
                 result.legacyCanonicalDistance,
                 result.legacyCanonicalFormSize);
@@ -420,35 +424,40 @@ public class CanonicalBatchTest {
                 result.rightCanonicalRepresentativeTreeSize);
         result.representationSizesAvailable = true;
         exactStarted = System.nanoTime();
-        QuotientRepairDistance.Result quotient =
-                CanonicalAlloyPipeline.distanceEvaluation(leftExact, rightExact);
-        result.distance = quotient.distance();
-        result.quotientTemporalDistance = quotient.temporalDistance();
-        result.quotientQuantifierDistance = quotient.quantifierDistance();
-        result.quotientMatrixDistance = quotient.matrixDistance();
+        var nativeCertified=gate.checksOperations()?gate.captureTrace(source,result.leftPredicate,result.rightPredicate,
+                ()->CanonicalRepairTraces.certified(leftExact,rightExact),nativeFast::json):null;
+        QuotientRepairDistance.Result quotient = nativeCertified==null
+                ?CanonicalAlloyPipeline.distanceEvaluation(leftExact, rightExact):null;
+        result.distance = nativeCertified==null?quotient.distance():nativeCertified.distance();
+        result.quotientTemporalDistance = nativeCertified==null?quotient.temporalDistance():nativeCertified.temporalDistance();
+        result.quotientQuantifierDistance = nativeCertified==null?quotient.quantifierDistance():nativeCertified.quantifierDistance();
+        result.quotientMatrixDistance = nativeCertified==null?quotient.matrixDistance():nativeCertified.matrixDistance();
+        boolean exactForStoredOrbits=nativeCertified==null?quotient.exactForStoredOrbits():nativeCertified.exactForStoredOrbits();
+        java.util.function.Supplier<org.json.JSONObject> selectedDiagnostic=nativeFast==null
+                ?()->DistanceReplayDiagnostics.capture(leftCanonical,rightCanonical,leftExact,rightExact)
+                :()->DistanceReplayDiagnostics.captureTraces(nativeFast,nativeCertified);
         gate.requireSoundObservation(source, result.leftPredicate, result.rightPredicate,
                 new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
                     result.legacyQuantifierDistance, result.legacyMatrixDistance},
                 new int[]{result.distance, result.quotientTemporalDistance,
                     result.quotientQuantifierDistance, result.quotientMatrixDistance},
-                !"CORRECT".equals(result.statusFolder), quotient.exactForStoredOrbits(),
-                () -> DistanceReplayDiagnostics.capture(leftCanonical, rightCanonical, leftExact, rightExact));
+                !"CORRECT".equals(result.statusFolder), exactForStoredOrbits,selectedDiagnostic);
         gate.requireParity(source, result.leftPredicate, result.rightPredicate,
                 new int[]{result.legacyCanonicalDistance, result.legacyTemporalDistance,
                     result.legacyQuantifierDistance, result.legacyMatrixDistance},
                 new int[]{result.distance, result.quotientTemporalDistance,
                     result.quotientQuantifierDistance, result.quotientMatrixDistance},
-                () -> DistanceReplayDiagnostics.capture(leftCanonical, rightCanonical, leftExact, rightExact));
+                selectedDiagnostic);
         if(gate.checksOperations()) {
             var operations=gate.requireOperations(source,result.leftPredicate,result.rightPredicate,
                     new int[]{result.legacyCanonicalDistance,result.legacyTemporalDistance,result.legacyQuantifierDistance,result.legacyMatrixDistance},
                     new int[]{result.distance,result.quotientTemporalDistance,result.quotientQuantifierDistance,result.quotientMatrixDistance},
-                    () -> NativeOperationComparison.compare(leftCanonical,rightCanonical,leftExact,rightExact));
+                    () -> NativeOperationComparison.compare(leftCanonical,rightCanonical,nativeFast,nativeCertified),selectedDiagnostic);
             result.nativeOperationStatus=operations.status().name();result.nativeOperationReason=operations.reason();
         }
         result.exactDistanceNanos = System.nanoTime() - exactStarted;
-        result.quotientDistanceExactForStoredOrbits = quotient.exactForStoredOrbits();
-        result.quotientBinderAlignments = quotient.binderAlignments();
+        result.quotientDistanceExactForStoredOrbits = exactForStoredOrbits;
+        result.quotientBinderAlignments = nativeCertified==null?quotient.binderAlignments():nativeCertified.binderAlignments();
         result.normalizedCanonicalDistance = normalizedDistance(result.distance, result.canonicalFormSize);
         exactStarted = System.nanoTime();
         result.canonicalRepresentativeTreeDistance =
@@ -473,7 +482,7 @@ public class CanonicalBatchTest {
                 + rightExact.repairProjectionNanos();
         result.leftIRTemporalFOL = Canonical.irTemporalFol(leftCanonical);
         result.rightIRTemporalFOL = Canonical.irTemporalFol(rightCanonical);
-        result.edits = Canonical.edits(leftCanonical, rightCanonical);
+        result.edits = nativeFast==null?Canonical.edits(leftCanonical,rightCanonical):nativeFast.paidDescriptions();
     }
 
     private static MASGVisitor focusedVisitor(
@@ -1011,6 +1020,7 @@ public class CanonicalBatchTest {
             writer.write("      \"skipReason\": \"" + escape(result.skipReason) + "\"\n");
         } else {
             writer.write("      \"skipped\": false,\n");
+            if(result.failedNativeSelection!=null)writer.write("      \"retainedNumericSelection\": "+result.failedNativeSelection+",\n");
             writer.write("      \"error\": \"" + escape(result.error) + "\"\n");
         }
         writer.write("    }");
@@ -1390,6 +1400,7 @@ public class CanonicalBatchTest {
         private boolean skipped;
         private String skipReason;
         private String error;
+        private org.json.JSONObject failedNativeSelection;
 
         private FileResult(Path root, Path file) {
             Path relative = root.relativize(file);

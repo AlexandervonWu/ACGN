@@ -28,10 +28,11 @@ import is.fivefivefive.CanDis.metric.RepairView.TemporalNode;
  * authority.
  */
 public final class QuotientRepairDistance {
-    public static final String VERSION = "certified-fast-rewrite-repair-distance-v17-match-first-scope-ties";
+    public static final String VERSION = "certified-fast-rewrite-repair-distance-v18-retained-native-decisions";
     private static final long DEFAULT_MAX_QUANTIFIER_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_SCOPE_ALIGNMENTS = 1_000_000L;
     private static final long DEFAULT_MAX_ALPHA_ALIGNMENTS = 10_000_000L;
+    private static final ThreadLocal<MutableStats> DECISIONS=new ThreadLocal<>();
 
     private QuotientRepairDistance() {
     }
@@ -55,14 +56,16 @@ public final class QuotientRepairDistance {
 
     /** Diagnostic only: native selected matrix edits, with no complete-plan authority. */
     public static org.json.JSONObject matrixReplay(RepairView left, RepairView right) {
-        Result nativeResult = evaluate(left, right);
+        return captureDecisions(left,right).matrix;
+    }
+    private record Captured(org.json.JSONObject matrix,MutableStats decisions) { }
+    private static Captured captureDecisions(RepairView left,RepairView right) {
+        if(DECISIONS.get()!=null)throw new IllegalStateException("Reentrant native decision capture");
+        MutableStats stats=new MutableStats();stats.capture=true;DECISIONS.set(stats);
+        Result nativeResult;
+        try { nativeResult=evaluate(left,right); } finally { DECISIONS.remove(); }
         int aligned = Math.min(left.phases().size(),right.phases().size());
         int phaseCount = Math.max(left.phases().size(),right.phases().size());
-        if (phaseCount > 128) throw new IllegalStateException("MATRIX_REPLAY_PHASE_BUDGET");
-        MutableStats stats = new MutableStats();
-        stats.capture = true;
-        int searched = matrixDistance(left.phases(), right.phases(),
-                QuantificationAlignmentSpace.create(left.phases(), right.phases()), stats);
         int cost = 0;
         org.json.JSONArray phases = new org.json.JSONArray();
         for (int i = 0; i < phaseCount; i++) {
@@ -70,17 +73,22 @@ public final class QuotientRepairDistance {
                 throw new IllegalStateException("MATRIX_REPLAY_MISSING_CHOICE");
             int[] mapping = i < aligned
                     ? phaseMapping(stats.selectedLeft, stats.selectedRight, stats.selectedMapping, i) : new int[0];
-            MatrixReplay<Node> replay=matrixReplayEngine(mapping,mapping,true);
+            MatrixReplay<Node> replay=matrixReplayEngine(mapping,mapping,false);
             Node a = i < left.phases().size() ? left.phases().get(i).matrix() : null;
             Node b = i < right.phases().size() ? right.phases().get(i).matrix() : null;
-            org.json.JSONObject receipt = replay.capture(a, b);
+            MatrixDecision<Node> chosen;
+            if(i<aligned)chosen=stats.selectedPhases.get(i);
+            else chosen=stats.unaligned.get(i);
+            org.json.JSONObject receipt = replay.capture(chosen);
             cost = Math.addExact(cost, replay.verify(a, b, receipt));
             phases.put(new org.json.JSONObject().put("phase", i)
                     .put("alphaMapping", new org.json.JSONArray(mapping)).put("receipt", receipt));
         }
-        if (cost != searched || cost != nativeResult.matrixDistance())
+        if (cost != nativeResult.matrixDistance())
             throw new IllegalStateException("MATRIX_REPLAY_NATIVE_COST_MISMATCH");
-        return new org.json.JSONObject().put("arm", "certified").put("distance", nativeResult.distance())
+        var result=new org.json.JSONObject().put("arm", "certified").put("distance", nativeResult.distance())
+                .put("metricVersion",VERSION).put("exactForStoredOrbits",nativeResult.exactForStoredOrbits())
+                .put("binderAlignments",nativeResult.binderAlignments()).put("kernelAuthority",nativeResult.kernelAuthority())
                 .put("temporalDistance", nativeResult.temporalDistance())
                 .put("quantifierDistance", nativeResult.quantifierDistance())
                 .put("matrixDistance", nativeResult.matrixDistance()).put("replayedMatrixCost", cost)
@@ -91,6 +99,7 @@ public final class QuotientRepairDistance {
                 .put("selectedDeclarationPermutation",new org.json.JSONObject()
                         .put("left",new org.json.JSONArray(stats.selectedDeclarationLeft == null ? new int[0] : stats.selectedDeclarationLeft))
                         .put("right",new org.json.JSONArray(stats.selectedDeclarationRight == null ? new int[0] : stats.selectedDeclarationRight)));
+        return new Captured(result,stats);
     }
 
     /** Fixed-choice diagnostic verifier; neither chooses a mapping nor grants admission. */
@@ -109,6 +118,13 @@ public final class QuotientRepairDistance {
                         .put(String.valueOf(n.lexicalVariable())).put(n.containerKind().toString())
                         .put(n.orderInsensitive()).put(Arrays.toString(labels)).toString();
             }
+            public String evidence(Node n) {
+                return new org.json.JSONObject().put("observationType",String.valueOf(n.observationType()))
+                        .put("observationPhases",new org.json.JSONArray(n.observationPhases()))
+                        .put("observationTemporalOperator",String.valueOf(n.observationTemporalOperator()))
+                        .put("bindingIndex",n.bindingIndex()).put("lexicalVariable",String.valueOf(n.lexicalVariable()))
+                        .put("payload",String.valueOf(n.payload())).put("semanticPayload",String.valueOf(n.semanticPayload())).toString();
+            }
             public List<Node> children(Node n) { return n.children(); }
             public List<Node> alternatives(Node n) { return n.certifiedAlternatives(); }
             public boolean unordered(Node a,Node b) { return a.operator().equals(b.operator()) && a.orderInsensitive() && b.orderInsensitive(); }
@@ -123,21 +139,105 @@ public final class QuotientRepairDistance {
 
     /** Keeps native matrix choices and backtraces compatible minimum declaration paths. */
     public static org.json.JSONObject replayWithSlices(RepairView left, RepairView right) {
-        org.json.JSONObject matrix = matrixReplay(left,right);
-        return PhaseReplay.attach(matrix,() -> declarationReplay(left,right,matrix),
-                () -> TemporalReplay.capture(left.temporalRoot(),right.temporalRoot(),
-                        matrix.getInt("temporalDistance"),TemporalNode::label,TemporalNode::children));
+        return evaluateWithTrace(left,right).json();
+    }
+
+    /** Executes the selected native metric representation, independently of cross-arm bridges. */
+    public static NativeRepairTrace evaluateWithTrace(RepairView left,RepairView right) {
+        var captured=captureDecisions(left,right);var out=captured.matrix;var stats=captured.decisions;
+        try {
+        var as=new ArrayList<List<DeclarationReplay.Atom>>();var bs=new ArrayList<List<DeclarationReplay.Atom>>();
+        var declarations=new org.json.JSONArray();
+        int aligned=Math.min(left.phases().size(),right.phases().size());
+        int count=Math.max(left.phases().size(),right.phases().size());
+        for(int index=0;index<stats.quantification.components.size();index++) {
+            var component=stats.quantification.components.get(index);
+            var a=component.left;var b=component.right;
+            if(stats.selectedLeft!=null){
+                a=permuteDeclarations(a,stats.selectedLeft,stats.selectedDeclarationLeft);
+                b=permuteDeclarations(b,stats.selectedRight,stats.selectedDeclarationRight);
+            }
+            as.add(List.copyOf(declarationAtoms(a)));bs.add(List.copyOf(declarationAtoms(b)));
+            var moves=stats.selectedDeclarationPaths==null
+                    ?DeclarationReplay.selectedMoves(component.distance,(i,j)->QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j)))
+                    :stats.selectedDeclarationPaths.get(index);
+            declarations.put(DeclarationReplay.captureSelected(as.get(index),bs.get(index),moves,component.cost()));
+        }
+        for(int phase=aligned;phase<count;phase++) {
+            var a=phase<left.phases().size()?QuantificationAlignmentSpace.quantifiedDeclarations(left.phases().get(phase),phase):List.<IndexedDeclaration>of();
+            var b=phase<right.phases().size()?QuantificationAlignmentSpace.quantifiedDeclarations(right.phases().get(phase),phase):List.<IndexedDeclaration>of();
+            as.add(List.copyOf(declarationAtoms(a)));bs.add(List.copyOf(declarationAtoms(b)));
+            var moves=new ArrayList<DeclarationReplay.Move>();
+            for(int i=0;i<a.size();i++)moves.add(new DeclarationReplay.Move(i,-1));
+            for(int j=0;j<b.size();j++)moves.add(new DeclarationReplay.Move(-1,j));
+            declarations.put(DeclarationReplay.captureSelected(as.get(as.size()-1),bs.get(bs.size()-1),moves,Math.addExact(a.size(),b.size())));
+        }
+        for(int phase=0;phase<count;phase++) {
+            int[] mapping=phase<aligned?phaseMapping(stats.selectedLeft,stats.selectedRight,stats.selectedMapping,phase):new int[0];
+            var choice=phase<aligned?stats.selectedPhases.get(phase):stats.unaligned.get(phase);
+            var payload=out.getJSONArray("phases").getJSONObject(phase);
+            payload.put("program",matrixReplayEngine(mapping,mapping,false).executable(choice.source(),choice.target(),payload.getJSONObject("receipt")));
+        }
+        out.put("nativeDeclarationPrograms",declarations).put("nativeTemporalProgram",TemporalReplay.capture(
+                left.temporalRoot(),right.temporalRoot(),out.getInt("temporalDistance"),TemporalNode::label,TemporalNode::children,stats.temporal))
+                .put("sourceProducerObservationDigest",left.producerObservationDigest())
+                .put("targetProducerObservationDigest",right.producerObservationDigest())
+                .put("executionRepresentation","Certified projected temporal tree, ordered declaration tuples and selected matrix representatives")
+                .put("jointBindingCorrespondenceChecked",false)
+                .put("sourceBindingContexts",traceBindingContexts(left)).put("targetBindingContexts",traceBindingContexts(right))
+                .put("constructionLink","Retained sealed RepairViews and producer-observation digests; construction evidence is not an edit");
+        PhaseReplay.attach(out,()->declarationReplay(left,right,out,stats),
+                ()->new org.json.JSONObject(out.getJSONObject("nativeTemporalProgram").toString()));
+        return NativeRepairTrace.checked(out,program->{
+            int temporal=TemporalReplay.verify(left.temporalRoot(),right.temporalRoot(),TemporalNode::label,TemporalNode::children,
+                    program.getJSONObject("nativeTemporalProgram"));
+            if(program.getJSONArray("nativeDeclarationPrograms").length()!=as.size()||program.getJSONArray("phases").length()!=count)
+                throw new IllegalArgumentException("Native trace phase coverage");
+            int quantifiers=0,matrix=0;
+            for(int index=0;index<as.size();index++)quantifiers=Math.addExact(quantifiers,DeclarationReplay.execute(
+                    as.get(index),bs.get(index),program.getJSONArray("nativeDeclarationPrograms").getJSONObject(index)));
+            for(int phase=0;phase<count;phase++) {
+                int[] mapping=phase<aligned?phaseMapping(stats.selectedLeft,stats.selectedRight,stats.selectedMapping,phase):new int[0];
+                var choice=phase<aligned?stats.selectedPhases.get(phase):stats.unaligned.get(phase);
+                var payload=program.getJSONArray("phases").getJSONObject(phase);
+                matrix=Math.addExact(matrix,matrixReplayEngine(mapping,mapping,false).verifyExecutable(choice.source(),choice.target(),
+                        payload.getJSONObject("receipt"),payload.getJSONObject("program")));
+            }
+            if(temporal!=program.getInt("temporalDistance")||quantifiers!=program.getInt("quantifierDistance")||matrix!=program.getInt("matrixDistance"))
+                throw new IllegalArgumentException("Native trace component costs");
+            return Math.addExact(temporal,Math.addExact(quantifiers,matrix));
+        });
+        } catch(RuntimeException failure) {
+            throw NativeRepairTrace.captureFailure(out,failure);
+        }
+    }
+
+    private static org.json.JSONArray traceBindingContexts(RepairView view) {
+        var phases=new org.json.JSONArray();
+        for(int phase=0;phase<view.phases().size();phase++) {
+            var rows=new org.json.JSONArray();int index=0;
+            for(var b:view.phases().get(phase).bindings()) {
+                var d=b.declaration();rows.put(new org.json.JSONObject().put("vectorIndex",index++).put("coordinate",b.coordinate())
+                        .put("role",b.role()).put("ordinal",b.ordinal()).put("ownerPhase",b.ownerPhase()).put("ownerContext",b.ownerContext())
+                        .put("bindingPath",b.bindingPath()).put("certifiedOrbit",new org.json.JSONArray(b.certifiedOrbit()))
+                        .put("quantifier",d.quantifier()).put("type",String.valueOf(d.observationType()))
+                        .put("certifiedDomain",d.certifiedDomain()).put("dependencies",new org.json.JSONArray(d.dependencies()))
+                        .put("cardinality",d.cardinality()).put("disjointnessClass",d.disjointnessClass()));
+            }
+            phases.put(new org.json.JSONObject().put("phase",phase).put("bindings",rows));
+        }
+        return phases;
     }
 
     private static org.json.JSONObject declarationReplay(RepairView left,RepairView right,
-            org.json.JSONObject matrix) {
+            org.json.JSONObject matrix,MutableStats decisions) {
         DeclarationReplay.requireBounded(QuantificationAlignmentSpace.parameterDeclarations(left.phases()).size(),
                 QuantificationAlignmentSpace.parameterDeclarations(right.phases()).size());
         int aligned = Math.min(left.phases().size(),right.phases().size());
         for (int i = 0; i < Math.max(left.phases().size(),right.phases().size()); i++) DeclarationReplay.requireBounded(
                 i < left.phases().size() ? left.phases().get(i).quantifiers().size() : 0,
                 i < right.phases().size() ? right.phases().get(i).quantifiers().size() : 0);
-        QuantificationAlignmentSpace space = QuantificationAlignmentSpace.create(left.phases(),right.phases());
+        QuantificationAlignmentSpace space = decisions.quantification;
         GlobalBindingIndex a = GlobalBindingIndex.create(left.phases(),aligned);
         GlobalBindingIndex b = GlobalBindingIndex.create(right.phases(),aligned);
         org.json.JSONObject permutation = matrix.getJSONObject("selectedDeclarationPermutation");
@@ -422,10 +522,16 @@ public final class QuotientRepairDistance {
             KernelAuthority authority) {
         Objects.requireNonNull(left, "left");
         Objects.requireNonNull(right, "right");
-        MutableStats stats = new MutableStats();
-        int temporal = temporalDistance(left.temporalRoot(), right.temporalRoot());
+        MutableStats stats = DECISIONS.get()==null?new MutableStats():DECISIONS.get();
+        int temporal;
+        if(!stats.capture)temporal=temporalDistance(left.temporalRoot(),right.temporalRoot());
+        else {stats.temporal=OrderedTreeEditDistance.alignment(left.temporalRoot(),right.temporalRoot(),TEMPORAL_ADAPTER);temporal=stats.temporal.cost();}
         QuantificationAlignmentSpace quantification =
                 QuantificationAlignmentSpace.create(left.phases(), right.phases());
+        if (stats.capture) {
+            stats.quantification = quantification;
+            stats.activeDeclarationPaths = new ArrayList<>(java.util.Collections.nCopies(quantification.components.size(),List.of()));
+        }
         int quantifiers = quantification.cost;
         int matrix = matrixDistance(
                 left.phases(), right.phases(), quantification, stats);
@@ -654,7 +760,7 @@ public final class QuotientRepairDistance {
                                 "Quantifier correspondence backtracking lost identity");
                     }
                 }
-            });
+            }, stats.capture ? path -> stats.activeDeclarationPaths.set(componentIndex,path) : null);
         }
 
         private static List<IndexedDeclaration> parameterDeclarations(
@@ -784,22 +890,24 @@ public final class QuotientRepairDistance {
         }
 
         private void forEachMinimumAlignment(
-                Consumer<List<EditCorrespondence>> consumer) {
+                Consumer<List<EditCorrespondence>> consumer, Consumer<List<DeclarationReplay.Move>> pathConsumer) {
             enumerateMinimumAlignments(
                     left.size(),
                     right.size(),
                     new ArrayList<>(),
-                    consumer);
+                    consumer,pathConsumer,pathConsumer==null?null:new ArrayList<>());
         }
 
         private void enumerateMinimumAlignments(
                 int row,
                 int column,
                 List<EditCorrespondence> reversed,
-                Consumer<List<EditCorrespondence>> consumer) {
+                Consumer<List<EditCorrespondence>> consumer,Consumer<List<DeclarationReplay.Move>> pathConsumer,
+                List<DeclarationReplay.Move> path) {
             if (row == 0 && column == 0) {
                 List<EditCorrespondence> result = new ArrayList<>(reversed);
                 java.util.Collections.reverse(result);
+                if(path!=null){var ordered=new ArrayList<>(path);java.util.Collections.reverse(ordered);pathConsumer.accept(List.copyOf(ordered));}
                 consumer.accept(List.copyOf(result));
                 return;
             }
@@ -815,8 +923,10 @@ public final class QuotientRepairDistance {
                         reversed.add(new EditCorrespondence(
                                 leftValue, rightValue));
                     }
+                    if(path!=null)path.add(new DeclarationReplay.Move(row-1,column-1));
                     enumerateMinimumAlignments(
-                            row - 1, column - 1, reversed, consumer);
+                            row - 1, column - 1, reversed, consumer,pathConsumer,path);
+                    if(path!=null)path.remove(path.size()-1);
                     if (carriesBinding) {
                         reversed.remove(reversed.size() - 1);
                     }
@@ -825,14 +935,18 @@ public final class QuotientRepairDistance {
             if (row > 0
                     && distance[row][column]
                             == Math.addExact(distance[row - 1][column], 1)) {
+                if(path!=null)path.add(new DeclarationReplay.Move(row-1,-1));
                 enumerateMinimumAlignments(
-                        row - 1, column, reversed, consumer);
+                        row - 1, column, reversed, consumer,pathConsumer,path);
+                if(path!=null)path.remove(path.size()-1);
             }
             if (column > 0
                     && distance[row][column]
                             == Math.addExact(distance[row][column - 1], 1)) {
+                if(path!=null)path.add(new DeclarationReplay.Move(-1,column-1));
                 enumerateMinimumAlignments(
-                        row, column - 1, reversed, consumer);
+                        row, column - 1, reversed, consumer,pathConsumer,path);
+                if(path!=null)path.remove(path.size()-1);
             }
         }
 
@@ -879,10 +993,12 @@ public final class QuotientRepairDistance {
         int aligned = Math.min(left.size(), right.size());
         int result = 0;
         for (int index = aligned; index < left.size(); index++) {
-            result = Math.addExact(result, nodeSize(left.get(index).matrix()));
+            if(stats.capture){var context=new MatrixDistanceContext(new int[0],true);result=Math.addExact(result,context.distance(left.get(index).matrix(),null));stats.unaligned.put(index,context.decision(left.get(index).matrix(),null));}
+            else result = Math.addExact(result, nodeSize(left.get(index).matrix()));
         }
         for (int index = aligned; index < right.size(); index++) {
-            result = Math.addExact(result, nodeSize(right.get(index).matrix()));
+            if(stats.capture){var context=new MatrixDistanceContext(new int[0],true);result=Math.addExact(result,context.distance(null,right.get(index).matrix()));stats.unaligned.put(index,context.decision(null,right.get(index).matrix()));}
+            else result = Math.addExact(result, nodeSize(right.get(index).matrix()));
         }
         GlobalBindingIndex leftBindings = GlobalBindingIndex.create(left, aligned);
         GlobalBindingIndex rightBindings = GlobalBindingIndex.create(right, aligned);
@@ -904,11 +1020,13 @@ public final class QuotientRepairDistance {
                 if (CertifiedDeclarationOrbit.prefer(candidate,best[0],canonical,bestCanonical[0])) {
                     if (stats.capture) {
                         stats.selectedMapping = stats.candidateMapping.clone();
+                        stats.selectedPhases=stats.candidatePhases;
                         stats.selectedLeft = leftBindings;
                         stats.selectedRight = rightBindings;
                         stats.selectedCorrespondence = new java.util.TreeMap<>(choice.correspondence());
                         stats.selectedDeclarationLeft = choice.left().clone();
                         stats.selectedDeclarationRight = choice.right().clone();
+                        stats.selectedDeclarationPaths=List.copyOf(stats.activeDeclarationPaths);
                     }
                     best[0] = candidate;
                     bestCanonical[0] = canonical;
@@ -1013,8 +1131,8 @@ public final class QuotientRepairDistance {
                 return best;
             }
             stats.consumeAlphaAlignment();
-            int candidate = globallyMappedMatrixDistance(left, right, mapping);
-            if (stats.capture && candidate < best) stats.candidateMapping = mapping.clone();
+            int candidate = globallyMappedMatrixDistance(left, right, mapping,stats);
+            if (stats.capture && candidate < best) {stats.candidateMapping = mapping.clone();stats.candidatePhases=stats.lastPhases;}
             return Math.min(best, candidate);
         }
         int leftIndex = leftOrder.get(index);
@@ -1115,17 +1233,18 @@ public final class QuotientRepairDistance {
     private static int globallyMappedMatrixDistance(
             GlobalBindingIndex left,
             GlobalBindingIndex right,
-            int[] globalMapping) {
+            int[] globalMapping,MutableStats stats) {
         int result = 0;
+        var phases=stats.capture?new ArrayList<MatrixDecision<Node>>():null;
         for (int phaseIndex = 0; phaseIndex < left.phaseCount; phaseIndex++) {
             Phase leftPhase = left.phases.get(phaseIndex);
             Phase rightPhase = right.phases.get(phaseIndex);
             int[] localMapping = phaseMapping(left, right, globalMapping, phaseIndex);
-            result = Math.addExact(
-                    result,
-                    new MatrixDistanceContext(localMapping).distance(
-                            leftPhase.matrix(), rightPhase.matrix()));
+            var context=new MatrixDistanceContext(localMapping,stats.capture);
+            result = Math.addExact(result,context.distance(leftPhase.matrix(),rightPhase.matrix()));
+            if(stats.capture)phases.add(context.decision(leftPhase.matrix(),rightPhase.matrix()));
         }
+        if(stats.capture)stats.lastPhases=List.copyOf(phases);
         return result;
     }
 
@@ -1459,17 +1578,37 @@ public final class QuotientRepairDistance {
     private static final class MatrixDistanceContext {
         private final int[] mapping;
         private final Map<NodePair, Integer> memo = new HashMap<>();
+        private final Map<NodePair,MatrixDecision<Node>> decisions;
+        private List<MatrixDecision.Edge<Node>> edges;
 
         private MatrixDistanceContext(int[] mapping) {
+            this(mapping,false);
+        }
+        private MatrixDistanceContext(int[] mapping,boolean capture) {
             this.mapping = mapping.clone();
+            decisions=capture?new HashMap<>():null;
+        }
+        private MatrixDecision<Node> decision(Node a,Node b) {return Objects.requireNonNull(decisions.get(new NodePair(a,b)),"Missing evaluated node decision");}
+        private MatrixDecision.Edge<Node> edge(List<Node> a,List<Node> b,int i,int j) {
+            Node l=i<0?null:a.get(i),r=j<0?null:b.get(j);
+            return new MatrixDecision.Edge<>(i,j,i<0||j<0?MatrixDecision.whole(l,r,(l==null?r:l).size()):decision(l,r));
         }
 
         private int distance(Node left, Node right) {
-            if (left == null) {
-                return nodeSize(right);
-            }
-            if (right == null) {
-                return nodeSize(left);
+            if (left == null || right == null) {
+                Node present=left==null?right:left;int cost=nodeSize(present);
+                if(decisions!=null){
+                    MatrixDecision<Node> chosen=MatrixDecision.whole(left,right,cost);
+                    if(present!=null&&!present.certifiedAlternatives().isEmpty()){
+                        var alternatives=present.certifiedAlternatives();
+                        for(int i=0;i<alternatives.size();i++)if(nodeSize(alternatives.get(i))==cost){
+                            Node a=left==null?null:alternatives.get(i),b=right==null?null:alternatives.get(i);distance(a,b);
+                            chosen=MatrixDecision.select(left,right,left==null?-1:i,right==null?-1:i,decision(a,b));break;
+                        }
+                    }
+                    decisions.put(new NodePair(left,right),chosen);
+                }
+                return cost;
             }
             NodePair key = new NodePair(left, right);
             Integer remembered = memo.get(key);
@@ -1485,10 +1624,14 @@ public final class QuotientRepairDistance {
                         ? List.of(right)
                         : right.certifiedAlternatives();
                 int best = Integer.MAX_VALUE;
-                for (Node leftAlternative : leftAlternatives) {
-                    for (Node rightAlternative : rightAlternatives) {
-                        best = Math.min(
-                                best, distance(leftAlternative, rightAlternative));
+                for (int i=0;i<leftAlternatives.size();i++) {
+                    Node leftAlternative=leftAlternatives.get(i);
+                    for (int j=0;j<rightAlternatives.size();j++) {
+                        Node rightAlternative=rightAlternatives.get(j);
+                        int candidate=distance(leftAlternative,rightAlternative);
+                        if(candidate<best && decisions!=null)decisions.put(key,MatrixDecision.select(left,right,
+                                left.certifiedAlternatives().isEmpty()?-1:i,right.certifiedAlternatives().isEmpty()?-1:j,decision(leftAlternative,rightAlternative)));
+                        best = Math.min(best,candidate);
                         if (best == 0) {
                             memo.put(key, 0);
                             return 0;
@@ -1503,7 +1646,9 @@ public final class QuotientRepairDistance {
                     && right.orderInsensitive()
                     ? unorderedDistance(left.children(), right.children())
                     : sequenceDistance(left.children(), right.children());
-            int result = Math.addExact(updateCost(left, right), children);
+            int head=updateCost(left,right),result=Math.addExact(head,children);
+            if(decisions!=null)decisions.put(key,MatrixDecision.node(left,right,result,head,
+                    left.operator().equals(right.operator())&&left.orderInsensitive()&&right.orderInsensitive(),edges));
             memo.put(key, result);
             return result;
         }
@@ -1531,14 +1676,17 @@ public final class QuotientRepairDistance {
 
         private int sequenceDistance(List<Node> left, List<Node> right) {
             if (left.size() == 1 && right.size() == 1) {
-                return distance(left.get(0), right.get(0));
+                int cost=distance(left.get(0),right.get(0));if(decisions!=null)edges=List.of(edge(left,right,0,0));return cost;
             }
             int[] previous = new int[Math.addExact(right.size(), 1)];
             int[] current = new int[Math.addExact(right.size(), 1)];
+            if(decisions!=null)DECISIONS.get().resources.cells((long)left.size()+1,(long)right.size()+1);
+            int[][] retained=decisions==null?null:new int[left.size()+1][right.size()+1];
             for (int j = 1; j <= right.size(); j++) {
                 previous[j] = Math.addExact(
                         previous[j - 1], right.get(j - 1).size());
             }
+            if(retained!=null)System.arraycopy(previous,0,retained[0],0,previous.length);
             for (int i = 1; i <= left.size(); i++) {
                 current[0] = Math.addExact(
                         previous[0], left.get(i - 1).size());
@@ -1552,9 +1700,18 @@ public final class QuotientRepairDistance {
                             distance(left.get(i - 1), right.get(j - 1)));
                     current[j] = Math.min(update, Math.min(delete, insert));
                 }
+                if(retained!=null)System.arraycopy(current,0,retained[i],0,current.length);
                 int[] swap = previous;
                 previous = current;
                 current = swap;
+            }
+            if(retained!=null){var chosen=new ArrayList<MatrixDecision.Edge<Node>>();int i=left.size(),j=right.size();
+                while(i>0||j>0){
+                    if(i>0&&j>0&&retained[i][j]==retained[i-1][j-1]+decision(left.get(i-1),right.get(j-1)).cost())chosen.add(edge(left,right,--i,--j));
+                    else if(i>0&&retained[i][j]==retained[i-1][j]+left.get(i-1).size())chosen.add(edge(left,right,--i,-1));
+                    else chosen.add(edge(left,right,-1,--j));
+                }
+                java.util.Collections.reverse(chosen);edges=List.copyOf(chosen);
             }
             return previous[right.size()];
         }
@@ -1576,7 +1733,11 @@ public final class QuotientRepairDistance {
                     }
                 }
             }
-            return minimumAssignmentCost(costs);
+            int[] columns=decisions==null?null:new int[dimension];int cost=solveAssignment(costs,columns);
+            if(decisions!=null){var chosen=new ArrayList<MatrixDecision.Edge<Node>>();
+                for(int i=0;i<dimension;i++){int j=columns[i];if(i<left.size()||j<right.size())chosen.add(edge(left,right,i<left.size()?i:-1,j<right.size()?j:-1));}
+                edges=List.copyOf(chosen);}
+            return cost;
         }
     }
 
@@ -1939,6 +2100,12 @@ public final class QuotientRepairDistance {
     }
 
     private static final class MutableStats {
+        private List<MatrixDecision<Node>> lastPhases,candidatePhases,selectedPhases;
+        private final Map<Integer,MatrixDecision<Node>> unaligned=new HashMap<>();
+        private QuantificationAlignmentSpace quantification;
+        private final TraceResources resources=new TraceResources();
+        private List<List<DeclarationReplay.Move>> activeDeclarationPaths,selectedDeclarationPaths;
+        private OrderedTreeEditDistance.Alignment temporal;
         private boolean capture;
         private int[] candidateMapping;
         private int[] selectedMapping;

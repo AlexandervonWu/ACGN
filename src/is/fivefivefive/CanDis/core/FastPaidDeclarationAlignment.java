@@ -189,17 +189,29 @@ final class FastPaidDeclarationAlignment {
 
     static void enumerate(List<QuantiVar> left, List<QuantiVar> right, int[][] dp,
             ToIntBiFunction<QuantiVar,QuantiVar> update, Consumer<Map<String,String>> accept) {
+        enumerateSelected(left,right,dp,update,(paid,path)->accept.accept(paid),false);
+    }
+
+    static void enumerateSelected(List<QuantiVar> left,List<QuantiVar> right,int[][] dp,
+            ToIntBiFunction<QuantiVar,QuantiVar> update,
+            java.util.function.BiConsumer<Map<String,String>,List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move>> accept,
+            boolean retain) {
         if (left.size() > MAX_DECLARATIONS || right.size() > MAX_DECLARATIONS)
             throw new IllegalStateException("PAID_DECLARATION_SIZE_BUDGET");
-        walk(left,right,dp,update,accept,left.size(),right.size(),new LinkedHashMap<>(),new long[1]);
+        walk(left,right,dp,update,accept,left.size(),right.size(),new LinkedHashMap<>(),new long[1],retain?new ArrayList<>():null);
     }
 
     private static void walk(List<QuantiVar> a,List<QuantiVar> b,int[][] dp,
-            ToIntBiFunction<QuantiVar,QuantiVar> update,Consumer<Map<String,String>> accept,
-            int i,int j,Map<String,String> paid,long[] visits) {
+            ToIntBiFunction<QuantiVar,QuantiVar> update,
+            java.util.function.BiConsumer<Map<String,String>,List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move>> accept,
+            int i,int j,Map<String,String> paid,long[] visits,List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> path) {
         if (visits[0] >= MAX_VISITS) throw new IllegalStateException("PAID_DECLARATION_PATH_BUDGET");
         visits[0]++;
-        if (i == 0 && j == 0) { accept.accept(Map.copyOf(paid)); return; }
+        if (i == 0 && j == 0) {
+            var selected=path==null?List.<is.fivefivefive.CanDis.metric.DeclarationReplay.Move>of():new ArrayList<>(path);
+            if(path!=null)Collections.reverse(selected);
+            accept.accept(Map.copyOf(paid),List.copyOf(selected)); return;
+        }
         if (i > 0 && j > 0) {
             int cost = update.applyAsInt(a.get(i-1),b.get(j-1));
             if (dp[i][j] == dp[i-1][j-1] + cost) {
@@ -209,13 +221,21 @@ final class FastPaidDeclarationAlignment {
                         throw new IllegalStateException("PAID_DECLARATION_NONINJECTIVE");
                     paid.put(x,y);
                 }
-                walk(a,b,dp,update,accept,i-1,j-1,paid,visits);
+                if(path!=null)path.add(new is.fivefivefive.CanDis.metric.DeclarationReplay.Move(i-1,j-1));
+                walk(a,b,dp,update,accept,i-1,j-1,paid,visits,path);
+                if(path!=null)path.remove(path.size()-1);
                 if (cost != 0) paid.remove(x);
             }
         }
-        if (i > 0 && dp[i][j] == dp[i-1][j] + 1)
-            walk(a,b,dp,update,accept,i-1,j,paid,visits);
-        if (j > 0 && dp[i][j] == dp[i][j-1] + 1)
-            walk(a,b,dp,update,accept,i,j-1,paid,visits);
+        if (i > 0 && dp[i][j] == dp[i-1][j] + 1) {
+            if(path!=null)path.add(new is.fivefivefive.CanDis.metric.DeclarationReplay.Move(i-1,-1));
+            walk(a,b,dp,update,accept,i-1,j,paid,visits,path);
+            if(path!=null)path.remove(path.size()-1);
+        }
+        if (j > 0 && dp[i][j] == dp[i][j-1] + 1) {
+            if(path!=null)path.add(new is.fivefivefive.CanDis.metric.DeclarationReplay.Move(-1,j-1));
+            walk(a,b,dp,update,accept,i,j-1,paid,visits,path);
+            if(path!=null)path.remove(path.size()-1);
+        }
     }
 }

@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 /** Fixed-native-order declaration edits. Admission of that order is a separate obligation. */
 public final class DeclarationReplay {
+    public record Move(int left, int right) { }
     public record Atom(String occurrence, List<String> tuple, String admission) {
         public Atom {
             Objects.requireNonNull(occurrence);
@@ -17,7 +18,7 @@ public final class DeclarationReplay {
             if (tuple.size() != 4) throw new IllegalArgumentException("Expected four repair-tuple fields");
             long length = occurrence.length() + (long) admission.length();
             for (String field : tuple) length += field.length();
-            if (length > 16_384) throw new IllegalArgumentException("DECLARATION_REPLAY_ATOM_BUDGET");
+            TraceResources.requireBytes(Math.multiplyExact(length,2));
         }
         public JSONObject json() {
             return new JSONObject().put("occurrence", occurrence).put("tuple", new JSONArray(tuple))
@@ -37,10 +38,40 @@ public final class DeclarationReplay {
 
     private DeclarationReplay() { }
 
+    /** Emits an already selected path, without finding a minimum or changing ties. */
+    public static JSONObject captureSelected(List<Atom> source,List<Atom> target,List<Move> moves,int expected) {
+        JSONArray ops = new JSONArray();
+        for (Move move : moves) {
+            int i=move.left(), j=move.right();
+            Atom a=i<0?null:source.get(i), b=j<0?null:target.get(j);
+            int cost=a==null||b==null?1:update(a,b);
+            ops.put(new JSONObject().put("kind",a==null?"insert":b==null?"delete":cost==0?"keep":"update")
+                    .put("payloadAction",a==null?"insert":b==null?"delete":cost!=0?"update":a.equals(b)?"read":"coordinate-align")
+                    .put("leftIndex",i).put("rightIndex",j).put("cost",cost)
+                    .put("source",a==null?JSONObject.NULL:a.json()).put("target",b==null?JSONObject.NULL:b.json()));
+        }
+        JSONObject receipt=new JSONObject().put("source",snapshot(source)).put("target",snapshot(target))
+                .put("operations",ops).put("cost",expected).put("replayedCost",expected)
+                .put("complete",false).put("orderingAdmissionChecked",false);
+        execute(source,target,receipt);
+        return receipt.put("sliceReplayChecked",true).put("executionChecked",true);
+    }
+
+    /** Deterministic first diagonal/delete/insert backpointer from the numeric DP. */
+    public static List<Move> selectedMoves(int[][] dp, java.util.function.IntBinaryOperator update) {
+        List<Move> reversed=new ArrayList<>();int i=dp.length-1,j=dp[0].length-1;
+        while(i>0||j>0) {
+            if(i>0&&j>0&&dp[i][j]==Math.addExact(dp[i-1][j-1],update.applyAsInt(i-1,j-1))) reversed.add(new Move(--i,--j));
+            else if(i>0&&dp[i][j]==Math.addExact(dp[i-1][j],1)) reversed.add(new Move(--i,-1));
+            else { require(j>0&&dp[i][j]==Math.addExact(dp[i][j-1],1),"Invalid selected DP path");reversed.add(new Move(-1,--j)); }
+        }
+        Collections.reverse(reversed);return List.copyOf(reversed);
+    }
+
     public static void requireBounded(int leftSize, int rightSize) {
-        if (leftSize < 0 || rightSize < 0 || leftSize > 256 || rightSize > 256
-                || ((long)leftSize + 1) * ((long)rightSize + 1) > 65_536)
+        if (leftSize < 0 || rightSize < 0)
             throw new IllegalStateException("DECLARATION_REPLAY_CELL_BUDGET");
+        TraceResources.requireCells((long)leftSize+1,(long)rightSize+1);
     }
 
     /** Backtraces the arm's actual DP, optionally constrained to its selected paid correspondences. */
@@ -84,6 +115,30 @@ public final class DeclarationReplay {
         int checked = verify(source,target,receipt);
         require(checked == nativeDp[n][m], "Native cost mismatch");
         return receipt.put("sliceReplayChecked",true);
+    }
+
+    /** Executes the fixed declaration payloads as a detached list edit, with no DP. */
+    public static int execute(List<Atom> source, List<Atom> target, JSONObject receipt) {
+        int cost = verify(source, target, receipt);
+        List<Atom> store = new ArrayList<>(source);
+        int cursor = 0;
+        for (Object value : receipt.getJSONArray("operations")) {
+            JSONObject op = (JSONObject)value;
+            int left = op.getInt("leftIndex"), right = op.getInt("rightIndex");
+            if (left >= 0) {
+                require(cursor < store.size() && store.get(cursor).json().similar(op.getJSONObject("source")),
+                        "Executable declaration precondition");
+                store.remove(cursor);
+            }
+            if (right >= 0) {
+                JSONObject after = op.getJSONObject("target");
+                List<String> tuple = new ArrayList<>();
+                for (Object field : after.getJSONArray("tuple")) tuple.add((String)field);
+                store.add(cursor++, new Atom(after.getString("occurrence"), tuple, after.getString("admission")));
+            }
+        }
+        require(store.equals(target), "Executable declaration endpoint");
+        return cost;
     }
 
     /** Independent of the DP and AllowedMove callback; verifies the fixed-list edit derivation. */

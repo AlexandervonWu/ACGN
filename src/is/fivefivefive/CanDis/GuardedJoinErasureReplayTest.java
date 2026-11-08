@@ -73,9 +73,10 @@ public final class GuardedJoinErasureReplayTest {
             check(row.getInt("distance")==8 && row.getInt("quantifierDistance")==2 && cost==6,"native components8/0/2/6 "+arm);
         }
         var cmp=NativeOperationComparison.compare(p.a,p.b,a,b);var nativeEvidence=cmp.evidence();
-        check(cmp.status()==NativeOperationComparison.Status.UNCHECKABLE
-                && cmp.reason().equals("BINDING_LAYOUT_UNSUPPORTED"),"exact remaining native correspondence boundary");
-        check(!nativeEvidence.getBoolean("complete"),"unchecked is never a complete operation match");
+        check(cmp.status()==NativeOperationComparison.Status.MATCHED
+                && nativeEvidence.getJSONArray("fastActions").similar(nativeEvidence.getJSONArray("certifiedActions")),
+                "original-coordinate native actions after checked erasure");
+        check(!nativeEvidence.getBoolean("complete"),"native correspondence is not public certification");
         return new JSONObject().put("diagnostic",report).put("comparison",nativeEvidence).put("status",cmp.status()).put("reason",cmp.reason()).put("replayOrder",order).put("certificationStatus","BLOCKED");
     }
     public static void main(String[] args)throws Exception {

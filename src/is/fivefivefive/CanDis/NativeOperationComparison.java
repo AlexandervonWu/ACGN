@@ -50,6 +50,7 @@ public final class NativeOperationComparison {
     }
     private static final int MAX_NODES=512,MAX_DEPTH=48,MAX_BINDINGS=6;
     private static final class Unsupported extends RuntimeException {
+        JSONObject boundary;
         Unsupported(String why) { super(why); }
     }
     private static void supported(boolean condition,String reason) { if(!condition) throw new Unsupported(reason); }
@@ -57,16 +58,27 @@ public final class NativeOperationComparison {
     static Result invalid(String reason) { return new Result(Status.INVALID_REPLAY,reason,new JSONObject()); }
 
     static Result compare(Canonical.Prepared a,Canonical.Prepared b,CanonicalAlloyPipeline.Prepared ca,CanonicalAlloyPipeline.Prepared cb) {
+        return compareSelected(a,b,()->DistanceReplayDiagnostics.capture(a,b,ca,cb));
+    }
+
+    static Result compare(Canonical.Prepared a,Canonical.Prepared b,NativeRepairTrace fast,NativeRepairTrace certified) {
+        return compareSelected(a,b,()->DistanceReplayDiagnostics.captureTraces(fast,certified));
+    }
+
+    private static Result compareSelected(Canonical.Prepared a,Canonical.Prepared b,java.util.function.Supplier<JSONObject> capture) {
         JSONObject report=null;
         try {
+            // Retain the actual selected paths even if the later correspondence
+            // checker cannot yet map this successfully constructed endpoint.
+            report=capture.get();
             Endpoint left=new Endpoint(a),right=new Endpoint(b);
-            // Construct a complete bridge before expensive receipt capture. No
-            // selected-plan mismatch is inferred from an unsupported projection.
+            // A bridge refusal cannot erase the already captured native paths.
+            // It also cannot be promoted to a demonstrated action mismatch.
+            selectRepresentatives(left,right,report);
             var ap=bridge(left); var bp=bridge(right);
-            report=DistanceReplayDiagnostics.capture(a,b,ca,cb);
             report.put("nativeOperationEndpoints",new JSONArray().put(left.commitment).put(right.commitment));
             return verify(left,right,ap,bp,report);
-        } catch(Unsupported e) { return new Result(Status.UNCHECKABLE,e.getMessage(),new JSONObject()); }
+        } catch(Unsupported e) { return refused(e,report); }
         catch(RuntimeException e) { return failure(e,report); }
     }
 
@@ -76,8 +88,9 @@ public final class NativeOperationComparison {
         try {
             boundedJson(report,new long[]{120_000,4_000_000},0);
             Endpoint left=new Endpoint(a),right=new Endpoint(b);
+            selectRepresentatives(left,right,report);
             return verify(left,right,bridge(left),bridge(right),report);
-        } catch(Unsupported e) { return new Result(Status.UNCHECKABLE,e.getMessage(),new JSONObject()); }
+        } catch(Unsupported e) { return refused(e,report); }
         catch(RuntimeException e) { return failure(e,report); }
     }
 
@@ -91,6 +104,17 @@ public final class NativeOperationComparison {
             catch(RuntimeException tooLarge) { evidence.put("receiptOmitted","BUDGET"); }
         }
         return new Result(Status.INVALID_REPLAY,"INVALID_NATIVE_RECEIPT",evidence);
+    }
+
+    private static JSONObject retained(JSONObject report) {
+        var out=new JSONObject();if(report==null)return out;
+        try { boundedJson(report,new long[]{120_000,4_000_000},0);out.put("diagnostic",report); }
+        catch(Unsupported resource) {out.put("receiptRetentionBlocker","REPLAY_BUDGET");}
+        return out;
+    }
+    private static Result refused(Unsupported error,JSONObject report) {
+        var evidence=retained(report);if(error.boundary!=null)evidence.put("correspondenceBoundary",error.boundary);
+        return new Result(Status.UNCHECKABLE,error.getMessage(),evidence);
     }
 
     private static Result verify(Endpoint a,Endpoint b,Map<String,String> ap,Map<String,String> bp,JSONObject report) {
@@ -121,6 +145,11 @@ public final class NativeOperationComparison {
         var evidence=new JSONObject().put("endpointCorrespondenceChecked",true).put("sourceCertificatesChecked",true)
                 .put("fixedChoiceReplaysChecked",true).put("fastActionCount",fa.length()).put("certifiedActionCount",ca.length())
                 .put("diagnostic",report).put("fastActions",fa).put("certifiedActions",ca);
+        // Construction proofs do not become repair edits. These two catalogs
+        // link the action paths to their actual typed endpoints and premises.
+        evidence.put("constructionEndpoints",new JSONArray().put(a.trace(ap)).put(b.trace(bp)));
+        evidence.put("certifiedRepresentationSelections",new JSONObject()
+                .put("source",a.selections).put("target",b.selections));
         if(first==fa.length() && first==ca.length()) return new Result(Status.MATCHED,"CHECKED_NATIVE_ACTIONS_EQUAL",evidence);
         evidence.put("firstDifference",first).put("fastFirst",first<fa.length()?fa.get(first):JSONObject.NULL)
                 .put("certifiedFirst",first<ca.length()?ca.get(first):JSONObject.NULL);
@@ -231,8 +260,13 @@ public final class NativeOperationComparison {
         final Map<String,Integer> ordinals=new HashMap<>();
         final Map<Long,EGraphNode> originalVariables=new HashMap<>();
         final Map<Long,EGraphNode> originalCalls=new HashMap<>();
+        final Map<Long,EGraphNode> originalConstants=new HashMap<>();
         final ClosedCallEvidence closedCalls;
         final BoundCallEvidence boundCalls;
+        final Set<EGraphNode> scopedCalls=Collections.newSetFromMap(new IdentityHashMap<>());
+        final List<TypedEqualityCertificate> constructionRoots=new ArrayList<>();
+        final Map<String,Node> selectedNodes=new HashMap<>();
+        final JSONArray selections=new JSONArray();
         final String commitment;
         Endpoint(Canonical.Prepared normalized) {
             this.normalized=normalized;
@@ -256,6 +290,9 @@ public final class NativeOperationComparison {
             }
             closedCalls=ClosedCallEvidence.from(source);
             boundCalls=BoundCallEvidence.from(source);
+            fast=CanonicalDistance.prepare(normalized.normalizedForms());comparison=fast.comparisonForms().get(0);
+            scopedCalls.addAll(FastLocalPaidScope.checkedCalls(source));
+            scopedCalls.addAll(FastLocalPaidScope.checkedCalls(comparison));
             census(source.getCertificationMatrixEGraph(),new int[]{MAX_NODES},0,true);
             census(source.getMatrixEGraph(),new int[]{MAX_NODES},0,false);
             for(int i=0;i<qs.size();i++) {
@@ -282,28 +319,31 @@ public final class NativeOperationComparison {
             List<TypedEqualityCertificate> roots=new ArrayList<>();roots.addAll(artifact.flatConstructions());roots.addAll(artifact.containerConstructions());
             roots.addAll(artifact.dependentChainConstructions());roots.addAll(artifact.guardedJoinConstructions());roots.addAll(artifact.binderOccurrenceCertificates());
             supported(roots.size()<=2048,"CERTIFICATE_BUDGET");for(var proof:roots)CertificateVerifier.verify(proof);
+            constructionRoots.addAll(roots);
             for(var proof:evidence.phaseBinderDescriptors().get(0).automorphisms().generatorCertificates())CertificateVerifier.verify(proof);
             supported(phase.bindings().size()==qs.size(),"NONPREFIX_BINDING_UNSUPPORTED");
             certAtoms=new ArrayList<>(Collections.nCopies(qs.size(),null));
+            var canonicalSlots=new HashSet<Integer>();
             for(int i=0;i<phase.bindings().size();i++) {
                 var binding=phase.bindings().get(i);var d=binding.declaration();
                 supported(binding.role()==BindingRole.MATRIX && binding.ownerPhase()==0 && binding.ownerContext().isEmpty()
-                        && binding.coordinate()==i && d.dependencies().isEmpty(),"BINDING_LAYOUT_UNSUPPORTED");
+                        && d.dependencies().isEmpty(),"BINDING_LAYOUT_UNSUPPORTED");
                 int ordinal=binding.ordinal();require(ordinal>=0 && ordinal<qs.size() && certAtoms.get(ordinal)==null,"Binder ordinal coverage");
                 var q=qs.get(ordinal);
                 var coordinate=evidence.phaseBinderDescriptors().get(0).coordinates().get(evidence.phaseSourceCoordinates().get(0).get(ordinal));
+                require(binding.coordinate()==evidence.phaseSourceCoordinates().get(0).get(ordinal)
+                        && canonicalSlots.add(binding.coordinate()),"Original ordinal/canonical-slot correspondence");
                 // Unary binder slots use AlloyCarrier(T), while literal matrix
                 // nodes use relation types. Compare each to its own authority.
                 require(d.quantifier().equals(q.getQuantifier().name()) && d.cardinality().equals(q.getCardinality().name())
                         && coordinate.quantifier().equals(q.getQuantifier().name()) && coordinate.multiplicity().equals(q.getCardinality().name())
                         && Objects.equals(d.observationType(),coordinate.type()) && Objects.equals(d.observationDomain(),coordinate.domain()),
                         "Source/binder/type correspondence");
-                String occurrence=new JSONArray().put(false).put(0).put(binding.ownerContext()).put(i).put(ordinal).toString();
+                String occurrence=new JSONArray().put(false).put(0).put(binding.ownerContext()).put(binding.coordinate()).put(ordinal).toString();
                 String admission=new JSONArray().put(d.certifiedDomain()).put(d.exchangeClass()).put(new JSONArray(d.dependencies()))
                         .put(String.valueOf(d.observationType())).put(String.valueOf(d.observationDomain())).toString();
                 certAtoms.set(ordinal,new DeclarationReplay.Atom(occurrence,List.of(d.quantifier(),d.type(),d.cardinality(),Integer.toString(d.disjointnessClass())),admission));
             }
-            fast=CanonicalDistance.prepare(normalized.normalizedForms());comparison=fast.comparisonForms().get(0);
             fastAtoms=CanonicalDistance.diagnosticDeclarationAtoms(source);base=CanonicalDistance.diagnosticDeclarationOrder(source);
             projectedCensus(phase.matrix(),new int[]{MAX_NODES},0);
             census(comparison.getMatrixEGraph(),new int[]{MAX_NODES},0,false);
@@ -316,7 +356,7 @@ public final class NativeOperationComparison {
             supported(n.getChildren().size()<=64,"CHILD_BUDGET");
             supported(n.getOpcode()!=EGraphNode.Opcode.REF,"REFERENCE_OR_CALL_UNSUPPORTED");
             if(n.getOpcode()==EGraphNode.Opcode.CALL) {
-                supported(source.getLocalQuantiVars().isEmpty()
+                supported(scopedCalls.contains(n) || source.getLocalQuantiVars().isEmpty()
                         && ((original?ClosedCallEvidence.closed(n):closedCalls.admits(n))
                             || boundCalls.admits(n)),"CLOSED_CALL_SOURCE_UNSUPPORTED");
                 if(original) {
@@ -329,19 +369,63 @@ public final class NativeOperationComparison {
             if(binder) {
                 var children=n.getChildren();
                 supported(children.size()==2 && children.get(0).getOpcode()==EGraphNode.Opcode.GENERICRELDECL
-                        && children.get(0).getChildren().size()==2
-                        && children.get(0).getChildren().get(1).getOpcode()==EGraphNode.Opcode.VARIABLE,"LOCAL_DECLARATION_LAYOUT_UNSUPPORTED");
+                        && children.get(0).getChildren().size()>=2
+                        && children.get(0).getChildren().subList(1,children.get(0).getChildren().size()).stream()
+                            .allMatch(c->c.getOpcode()==EGraphNode.Opcode.VARIABLE),"LOCAL_DECLARATION_LAYOUT_UNSUPPORTED");
             }
             if(original && n.getOpcode()==EGraphNode.Opcode.VARIABLE) {
                 var prior=originalVariables.putIfAbsent(n.getSourceOccurrenceLineage(),n);
                 supported(prior==null || Objects.equals(prior.getAlphaName(),n.getAlphaName()),"AMBIGUOUS_SOURCE_LINEAGE");
             }
+            if(original && n.getOpcode()==EGraphNode.Opcode.CONSTANT)originalConstants.put(n.getSourceOccurrenceLineage(),n);
             for(var child:n.getChildren())census(child,budget,depth+1,original);
+        }
+
+        JSONObject trace(Map<String,String> paths) {
+            var keys=new TraceKeys();var proofs=new JSONArray();var pending=new ArrayDeque<TypedEqualityCertificate>(constructionRoots);
+            var ids=new IdentityHashMap<TypedEqualityCertificate,Integer>();
+            for(var root:constructionRoots)if(!ids.containsKey(root))ids.put(root,ids.size());
+            var seen=Collections.newSetFromMap(new IdentityHashMap<TypedEqualityCertificate,Boolean>());
+            while(!pending.isEmpty()) {
+                var proof=pending.remove();if(!seen.add(proof))continue;
+                supported(seen.size()<=2048,"CERTIFICATE_BUDGET");var premises=new JSONArray();
+                for(var premise:proof.premises()){if(!ids.containsKey(premise))ids.put(premise,ids.size());premises.put(ids.get(premise));pending.add(premise);}
+                proofs.put(new JSONObject().put("id",ids.get(proof)).put("category",proof.category()).put("premises",premises)
+                        .put("sourceEndpoint",keys.id(proof.leftEndpoint().structuralKey(),0))
+                        .put("constructedEndpoint",keys.id(proof.rightEndpoint().structuralKey(),0))
+                        .put("proof",keys.id(proof.structuralKey(),0)));
+            }
+            var calls=new JSONArray();for(var c:evidence.semanticArtifact().callOccurrenceCertificates())calls.put(new JSONObject()
+                    .put("occurrence",c.occurrenceId()).put("sourcePath",c.sourcePath()).put("callee",c.qualifiedCallee())
+                    .put("authority",c.arityAuthority()).put("typedEndpoint",keys.id(c.sourceEndpoint().structuralKey(),0)));
+            var bindings=new JSONArray();int vectorIndex=0;for(var b:phase.bindings())bindings.put(new JSONObject().put("bindingVectorIndex",vectorIndex++).put("canonicalSlotCoordinate",b.coordinate())
+                    .put("ordinal",b.ordinal()).put("phase",b.ownerPhase()).put("context",b.ownerContext()).put("path",b.bindingPath())
+                    .put("role",b.role()).put("dependencies",b.declaration().dependencies())
+                    .put("type",String.valueOf(b.declaration().observationType())).put("domain",String.valueOf(b.declaration().observationDomain())));
+            var nodes=new JSONArray();traceNodes(comparison.getMatrixEGraph(),"$",paths,nodes,new int[]{MAX_NODES},0);
+            return new JSONObject().put("originalEndpointCommitment",commitment).put("phase",0).put("bindings",bindings)
+                    .put("constructionProofs",proofs).put("callPremises",calls).put("structuralKeys",keys.rows).put("matrixEndpoints",nodes)
+                    .put("proofsCheckedInProcess",true).put("constructionIsNotRepair",true).put("wireReplayChecked",false);
+        }
+        private void traceNodes(EGraphNode n,String path,Map<String,String> paths,JSONArray rows,int[] budget,int depth) {
+            supported(--budget[0]>=0&&depth<=MAX_DEPTH,"ENDPOINT_BUDGET");
+            var row=new JSONObject().put("fastPath",path).put("certifiedPath",Objects.requireNonNull(paths.get(path)))
+                    .put("sourceOccurrenceLineage",n.getSourceOccurrenceLineage()).put("typedCoordinateHead",fastHead(n))
+                    .put("sourceName",String.valueOf(n.getSourceName())).put("alphaName",String.valueOf(n.getAlphaName()));
+            if(n.getOpcode()==EGraphNode.Opcode.VARIABLE){var v=originalVariables.get(n.getSourceOccurrenceLineage());
+                var bindings=new ArrayList<>(qs);bindings.addAll(source.getLocalQuantiVars());
+                var owners=bindings.stream().filter(q->q.getName().equals(v.getAlphaName())).toList();require(owners.size()==1,"Original trace owner");var q=owners.get(0);
+                row.put("originalAlpha",v.getAlphaName()).put("originalType",v.getExactAlloyType().stableString())
+                        .put("originalOwner",q.getBindingPath()).put("originalSlot",q.getDeBruijnKey());}
+            rows.put(row);var cs=FastChainGeometry.children(n);for(int i=0;i<cs.size();i++)traceNodes(cs.get(i),path+"/"+i,paths,rows,budget,depth+1);
         }
         int ordinal(String name) { Integer i=ordinals.get(name); require(i!=null,"Foreign outer variable"); return i; }
         int coordinate(String name) {
             int ordinal=ordinal(name);
-            return phase.bindings().stream().filter(b->b.ordinal()==ordinal).findFirst().orElseThrow().coordinate();
+            // Node.bindingIndex and selected mappings address the binding
+            // vector, not the descriptor's independently canonicalized slot.
+            for(int i=0;i<phase.bindings().size();i++)if(phase.bindings().get(i).ordinal()==ordinal)return i;
+            throw new IllegalArgumentException("Missing original binding vector index");
         }
         String name(int coordinate) { require(coordinate>=0 && coordinate<phase.bindings().size(),"Foreign binding coordinate");return qs.get(phase.bindings().get(coordinate).ordinal()).getName(); }
         String name(DeclarationReplay.Atom atom,boolean certified) {
@@ -395,8 +479,24 @@ public final class NativeOperationComparison {
                 return "VARIABLE/local:"+lexical;
             }
             String identity=switch(n.getOpcode()) {
-                case CALL -> {require(closedCalls.admits(n)||boundCalls.admits(n),"Foreign original call");yield CallMetadata.semanticKey(n);}
-                case GLOBALBINDING,CONSTANT -> n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();
+                case CALL -> {require(scopedCalls.contains(n)||closedCalls.admits(n)||boundCalls.admits(n),"Foreign original call");yield CallMetadata.semanticKey(n);}
+                case GLOBALBINDING -> n.getSemanticIdentity()==null?n.getSourceName():n.getSemanticIdentity();
+                case CONSTANT -> {
+                    // Only a nonidentity label translation needs this original
+                    // atom premise. Constructed Boolean constants already use
+                    // the same label in both paths and keep their proof route.
+                    if(n.getSemanticIdentity()!=null && !n.getSemanticIdentity().equals(n.getSourceName())) {
+                      var original=originalConstants.get(n.getSourceOccurrenceLineage());
+                      require(original!=null && Objects.equals(original.getSourceName(),n.getSourceName())
+                            && Objects.equals(original.getSemanticIdentity(),n.getSemanticIdentity())
+                            && original.getMetatype()==n.getMetatype()
+                            && original.getExactAlloyType()!=null && original.getExactAlloyType().sameOccurrenceEvidenceAs(n.getExactAlloyType()),
+                            "Foreign constant source/type/identity");
+                    }
+                    // RepairProjection's constant payload uses the source atom,
+                    // while Fast's cost label retains its semantic identity.
+                    yield n.getSourceName()==null?"":n.getSourceName();
+                }
                 default -> "";
             };
             supported(n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL || n.getMetatype()==EGraphNode.Metatype.BOOLEAN
@@ -405,6 +505,26 @@ public final class NativeOperationComparison {
                     n.getMetatype()==EGraphNode.Metatype.BOOLEAN?GraphType.BOOL:AlloyTypeBridge.graphType(n.getExactAlloyType());
             String payload="identity="+identity+(n.getOpcode()==EGraphNode.Opcode.GENERICRELDECL?";structure=certified-local-declaration":";type="+type);
             supported(payload.length()<=16384,"HEAD_BUDGET");return n.getOpcode()+"/"+payload;
+        }
+    }
+
+    /** DAG encoding avoids exponentially expanding repeated certificate keys. */
+    private static final class TraceKeys {
+        private record Shape(String tag,List<String> scalars,List<Integer> children) { }
+        final IdentityHashMap<StructuralKey,Integer> ids=new IdentityHashMap<>();
+        final Map<Shape,Integer> intern=new HashMap<>();
+        final JSONArray rows=new JSONArray();long bytes,units,visits;
+        int id(StructuralKey key,int depth) {
+            var old=ids.get(key);if(old!=null)return old;
+            supported(depth<=128&&++visits<=120_000,"RECEIPT_BUDGET");
+            var children=new ArrayList<Integer>();for(var c:key.children())children.add(id(c,depth+1));
+            var shape=new Shape(key.tag(),key.scalars(),List.copyOf(children));
+            old=intern.get(shape);if(old!=null){ids.put(key,old);return old;}
+            units+=1L+key.children().size()+key.scalars().size();supported(units<=120_000,"RECEIPT_BUDGET");
+            bytes+=key.tag().length();for(var s:key.scalars())bytes+=s.length();
+            supported(bytes<=4_000_000,"RECEIPT_BUDGET");
+            int id=intern.size();intern.put(shape,id);ids.put(key,id);
+            rows.put(new JSONObject().put("id",id).put("tag",key.tag()).put("scalars",key.scalars()).put("children",children));return id;
         }
     }
 
@@ -418,35 +538,73 @@ public final class NativeOperationComparison {
     }
     private static void projectedCensus(Node n,int[] budget,int depth) {
         supported(n!=null && --budget[0]>=0 && depth<=MAX_DEPTH && n.children().size()<=64,"PROJECTED_ENDPOINT_BUDGET");
-        supported(n.certifiedAlternatives().isEmpty(),"ALTERNATIVES_UNSUPPORTED");
         // Variable identity lives in bindingIndex/lexicalVariable, not payload.
         supported(n.semanticPayload()==null || n.semanticPayload().length()<=16384,"HEAD_BUDGET");
         for(var c:n.children())projectedCensus(c,budget,depth+1);
+        for(var c:n.certifiedAlternatives())projectedCensus(c,budget,depth+1);
+    }
+    private static void selectRepresentatives(Endpoint a,Endpoint b,JSONObject report) {
+        var cert=report.getJSONObject("certified");
+        if(!cert.has("phases"))return; // verify() reports the missing capture.
+        var phases=cert.getJSONArray("phases");require(phases.length()==1,"Phase coverage");
+        var edit=phases.getJSONObject(0).getJSONObject("receipt").getJSONObject("derivation");
+        select(a,a.phase.matrix(),edit,true,"$",new int[]{MAX_NODES},0);
+        select(b,b.phase.matrix(),edit,false,"$",new int[]{MAX_NODES},0);
+    }
+    private static void select(Endpoint e,Node n,JSONObject d,boolean left,String path,int[] budget,int depth) {
+        supported(--budget[0]>=0&&depth<=MAX_DEPTH,"SELECTION_BUDGET");
+        if(d.getString("kind").equals("select")) {
+            int index=d.getInt(left?"leftAlternative":"rightAlternative");var alternatives=n.certifiedAlternatives();
+            require(alternatives.isEmpty()?index==-1:index>=0&&index<alternatives.size(),"Foreign selected representative");
+            Node chosen=index<0?n:alternatives.get(index);
+            if(index>=0){e.selectedNodes.put(path,chosen);e.selections.put(new JSONObject().put("path",path)
+                    .put("alternative",index).put("constructionCost",0).put("remainingEditCost",d.getInt("cost"))
+                    .put("beforeHead",certHead(n)).put("afterHead",certHead(chosen)));}
+            select(e,chosen,d.getJSONObject("selected"),left,path,budget,depth+1);return;
+        }
+        if(!d.getString("kind").equals("node"))return;
+        var seen=new HashSet<Integer>();
+        for(Object value:d.getJSONArray("children")) {
+            var edge=(JSONObject)value;int i=edge.getInt(left?"leftIndex":"rightIndex");if(i<0)continue;
+            require(i<n.children().size()&&seen.add(i),"Selected representative child coverage");
+            select(e,n.children().get(i),edge.getJSONObject("edit"),left,path+"/"+i,budget,depth+1);
+        }
+        require(seen.size()==n.children().size(),"Selected representative missing child");
     }
     private static Map<String,String> bridge(Endpoint e) {
-        var paths=new LinkedHashMap<String,String>();var fk=new IdentityHashMap<EGraphNode,String>();var ck=new IdentityHashMap<Node,String>();
-        fastKey(e.comparison.getMatrixEGraph(),e,fk);certKey(e.phase.matrix(),ck);
+        var paths=new LinkedHashMap<String,String>();var fk=new IdentityHashMap<EGraphNode,String>();var ck=new HashMap<String,String>();
+        fastKey(e.comparison.getMatrixEGraph(),e,fk);certKey(e.phase.matrix(),"$",e,ck);
         correspond(e.comparison.getMatrixEGraph(),e.phase.matrix(),e,"$","$",paths,fk,ck);return paths;
     }
     private static String fastKey(EGraphNode n,Endpoint e,Map<EGraphNode,String> keys) {
         if(keys.containsKey(n))return keys.get(n);var children=new ArrayList<String>();for(var c:FastChainGeometry.children(n))children.add(fastKey(c,e,keys));
         if(n.isOrderInsensitive())Collections.sort(children);String key=hash(new JSONArray().put(e.fastHead(n)).put(children).toString());keys.put(n,key);return key;
     }
-    private static String certKey(Node n,Map<Node,String> keys) {
-        if(keys.containsKey(n))return keys.get(n);var children=new ArrayList<String>();for(var c:n.children())children.add(certKey(c,keys));
-        if(n.orderInsensitive())Collections.sort(children);String key=hash(new JSONArray().put(certHead(n)).put(children).toString());keys.put(n,key);return key;
+    private static String certKey(Node raw,String path,Endpoint e,Map<String,String> keys) {
+        Node n=e.selectedNodes.getOrDefault(path,raw);var children=new ArrayList<String>();
+        for(int i=0;i<n.children().size();i++)children.add(certKey(n.children().get(i),path+"/"+i,e,keys));
+        if(n.orderInsensitive())Collections.sort(children);String key=hash(new JSONArray().put(certHead(n)).put(children).toString());keys.put(path,key);return key;
     }
-    private static void correspond(EGraphNode a,Node b,Endpoint e,String ap,String bp,Map<String,String> paths,Map<EGraphNode,String> fk,Map<Node,String> ck) {
+    private static void correspond(EGraphNode a,Node raw,Endpoint e,String ap,String bp,Map<String,String> paths,Map<EGraphNode,String> fk,Map<String,String> ck) {
+        Node b=e.selectedNodes.getOrDefault(bp,raw);
+        var ac=FastChainGeometry.children(a);var bc=b.children();
+        var boundary=new JSONObject().put("fastPath",ap).put("certifiedPath",bp).put("fastHead",e.fastHead(a))
+                .put("certifiedHead",certHead(b)).put("fastChildren",ac.size()).put("certifiedChildren",bc.size());
+        try {
         supported(e.fastHead(a).equals(certHead(b)) && a.isOrderInsensitive()==b.orderInsensitive(),"ENDPOINT_REPRESENTATION_UNSUPPORTED");
-        paths.put(ap,bp);var ac=FastChainGeometry.children(a);var bc=b.children();supported(ac.size()==bc.size(),"ENDPOINT_REPRESENTATION_UNSUPPORTED");
+        paths.put(ap,bp);supported(ac.size()==bc.size(),"ENDPOINT_REPRESENTATION_UNSUPPORTED");
         var used=new HashSet<Integer>();
         for(int i=0;i<ac.size();i++) {
             int j=i;
             if(a.isOrderInsensitive()) {
-                j=uniqueOccurrence(bc.stream().map(ck::get).toList(),fk.get(ac.get(i)),used);
+                var candidates=new ArrayList<String>();for(int k=0;k<bc.size();k++)candidates.add(ck.get(bp+"/"+k));
+                boundary.put("unmappedFastChild",i).put("fastChildHead",e.fastHead(ac.get(i)))
+                        .put("certifiedChildHeads",new JSONArray(bc.stream().map(NativeOperationComparison::certHead).toList()));
+                j=uniqueOccurrence(candidates,fk.get(ac.get(i)),used);
             }
             require(used.add(j),"Noninjective endpoint bridge");correspond(ac.get(i),bc.get(j),e,ap+"/"+i,bp+"/"+j,paths,fk,ck);
         }
+        }catch(Unsupported gap){if(gap.boundary==null)gap.boundary=boundary;throw gap;}
     }
     static int uniqueOccurrence(List<String> candidates,String key,Set<Integer> used) {
         supported(candidates.size()<=64,"CHILD_BUDGET");int found=-1,count=0;
@@ -455,6 +613,9 @@ public final class NativeOperationComparison {
     }
     private static void flatten(JSONObject d,String a,String b,Map<String,String> ap,Map<String,String> bp,JSONArray out,int[] budget,int depth) {
         require(--budget[0]>=0 && depth<=MAX_DEPTH,"ACTION_BUDGET");String kind=d.getString("kind");
+        // The independently checked selection is retained separately as a
+        // construction link. It does not delete or reorder a repair action.
+        if(kind.equals("select")){flatten(d.getJSONObject("selected"),a,b,ap,bp,out,budget,depth+1);return;}
         supported(List.of("node","insert","delete").contains(kind),"ACTION_KIND_UNSUPPORTED");
         out.put(new JSONObject().put("stage","matrix").put("kind",kind).put("cost",d.getInt(kind.equals("node")?"headCost":"cost"))
                 .put("source",a==null?JSONObject.NULL:Objects.requireNonNull(ap.get(a))).put("target",b==null?JSONObject.NULL:Objects.requireNonNull(bp.get(b))));

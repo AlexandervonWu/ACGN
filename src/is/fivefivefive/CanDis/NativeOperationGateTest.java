@@ -47,9 +47,26 @@ public final class NativeOperationGateTest {
         var missing=new JSONObject(mr.toString());missing.getJSONObject("fast").remove("declarationSlice");
         var unchecked=NativeOperationComparison.compareCaptured(natural.left(),natural.right(),missing);
         check(unchecked.status()==NativeOperationComparison.Status.UNCHECKABLE,"missing support explicitly unchecked");
-        for(int i=0;i<12;i++)pass.requireOperations(naturalSource,"inv12","inv12c",mc,mc,()->unchecked);
-        var coverage=pass.operationCoverage();check(coverage.getLong("attempted")==13 && coverage.getLong("matched")==1
-                && coverage.getLong("unchecked")==12 && coverage.getJSONArray("examples").length()==8,"bounded unchecked accounting");
+        stopped(()->pass.requireOperations(naturalSource,"inv12","inv12c",mc,mc,()->unchecked,()->mr));
+        var coverage=pass.operationCoverage();check(coverage.getLong("attempted")==2 && coverage.getLong("matched")==1
+                && coverage.getLong("unchecked")==1 && coverage.getJSONArray("examples").length()==1,"missing mapping stops without skipping");
+        check(new JSONObject(Files.readString(root.resolve("continue/parity-incident.json"))).getString("reason")
+                .equals("TRACE_CORRESPONDENCE_DEFECT"),"diagnostic defect not unsupported predicate");
+        check(new JSONObject(Files.readString(root.resolve("continue/parity-native-replay.json")))
+                .getJSONObject("diagnostic").getJSONObject("selectedNativeTraces").similar(mr),"native traces retained before mapping");
+        stopped(pass::checkRunning);
+        var extraction=new BatchParityGate(Files.createDirectory(root.resolve("extraction")),BatchParityGate.Mode.DIAGNOSTIC_OPERATIONS);
+        stopped(()->extraction.captureTrace(source,"inv","invc",()->{
+            throw is.fivefivefive.CanDis.metric.NativeRepairTrace.captureFailure(new JSONObject().put("distance",7),
+                    new IllegalArgumentException("broken extraction"));
+        },()->new JSONObject().put("retainedPrevious",true)));
+        stopped(extraction::checkRunning);
+        var failed=new JSONObject(Files.readString(root.resolve("extraction/parity-incident.json")));
+        check(failed.getString("reason").equals("TRACE_EXTRACTION_FAILED") && failed.isNull("fast")
+                && failed.isNull("certified"),"extraction stops without inventing distances");
+        var failedTrace=new JSONObject(Files.readString(root.resolve("extraction/parity-native-replay.json"))).getJSONObject("diagnostic");
+        check(failedTrace.getJSONObject("retainedNumericSelection").getInt("distance")==7
+                && failedTrace.getJSONObject("previousNativeTrace").getBoolean("retainedPrevious"),"failed selection and prior arm retained");
         check(coverage.getString("certificationStatus").equals("BLOCKED"),"no certification grant");
         Files.writeString(root.resolve("coverage.json"),coverage.toString(2),StandardOpenOption.CREATE_NEW);
         System.out.println("NativeOperationGateTest: "+checks+" checks passed");

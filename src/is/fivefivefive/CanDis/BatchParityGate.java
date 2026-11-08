@@ -73,8 +73,31 @@ final class BatchParityGate {
 
     boolean checksOperations() { return mode==Mode.DIAGNOSTIC_OPERATIONS; }
 
+    is.fivefivefive.CanDis.metric.NativeRepairTrace captureTrace(Path source,String left,String right,
+            Supplier<is.fivefivefive.CanDis.metric.NativeRepairTrace> capture,Supplier<JSONObject> previous) {
+        checkRunning();
+        try { return capture.get(); }
+        catch(Violation failure) { throw failure; }
+        catch(RuntimeException failure) {
+            var evidence=new JSONObject().put("schema","acgn-trace-extraction-failure-v1")
+                    .put("errorType",failure.getClass().getName()).put("error",String.valueOf(failure.getMessage()));
+            if(failure instanceof is.fivefivefive.CanDis.metric.NativeRepairTrace.CaptureFailure retained)
+                evidence.put("retainedNumericSelection",retained.selectedReceipt());
+            stop(source,left,right,null,null,"TRACE_EXTRACTION_FAILED",()->{
+                if(previous!=null)evidence.put("previousNativeTrace",previous.get());
+                return evidence;
+            });
+            throw failure;
+        }
+    }
+
     NativeOperationComparison.Result requireOperations(Path source,String left,String right,int[] fast,int[] certified,
             Supplier<NativeOperationComparison.Result> comparison) {
+        return requireOperations(source,left,right,fast,certified,comparison,null);
+    }
+
+    NativeOperationComparison.Result requireOperations(Path source,String left,String right,int[] fast,int[] certified,
+            Supplier<NativeOperationComparison.Result> comparison,Supplier<JSONObject> selectedTraces) {
         checkRunning();
         if(!checksOperations()) return null;
         NativeOperationComparison.Result result;
@@ -99,10 +122,18 @@ final class BatchParityGate {
                 if(uncheckedExamples.length()<8) uncheckedExamples.put(new JSONObject()
                         .put("source",source.toString()).put("leftPredicate",left).put("rightPredicate",right).put("reason",reason));
             }
-            if(result.status()==NativeOperationComparison.Status.MISMATCH || result.status()==NativeOperationComparison.Status.INVALID_REPLAY) {
+            if(result.status()!=NativeOperationComparison.Status.MATCHED) {
                 final var retained=result;
-                stop(source,left,right,fast,certified,result.status()==NativeOperationComparison.Status.MISMATCH
-                        ?"NATIVE_OPERATION_MISMATCH":"INVALID_NATIVE_REPLAY",retained::evidence,originalSource);
+                String reason=switch(result.status()) {
+                    case MISMATCH -> "NATIVE_OPERATION_MISMATCH";
+                    case INVALID_REPLAY -> "INVALID_NATIVE_REPLAY";
+                    default -> "TRACE_CORRESPONDENCE_DEFECT";
+                };
+                stop(source,left,right,fast,certified,reason,()->{
+                    JSONObject evidence=retained.evidence();
+                    if(selectedTraces!=null)evidence.put("selectedNativeTraces",selectedTraces.get());
+                    return evidence;
+                },originalSource);
             }
         }
         return result;
@@ -141,7 +172,7 @@ final class BatchParityGate {
                 .put("source", source.toAbsolutePath().normalize().toString())
                 .put("leftPredicate", left).put("rightPredicate", right)
                 .put("distanceOrder", new String[]{"total", "temporal", "quantifier", "matrix"})
-                .put("fast", fast).put("certified", certified)
+                .put("fast", fast==null?JSONObject.NULL:fast).put("certified", certified==null?JSONObject.NULL:certified)
                 .put("fastReplayPlan", JSONObject.NULL)
                 .put("certifiedReplayPlan", JSONObject.NULL)
                 .put("replayStatus", "UNAVAILABLE")

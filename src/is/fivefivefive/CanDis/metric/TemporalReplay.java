@@ -23,9 +23,15 @@ public final class TemporalReplay {
 
     public static <N> JSONObject capture(N left, N right, int nativeCost,
             Function<N, String> label, Function<N, List<N>> children) {
-        Tree a = snapshot(left, label, children, new int[]{256, 131_072}, 0);
-        Tree b = snapshot(right, label, children, new int[]{256, 131_072}, 0);
-        var alignment = OrderedTreeEditDistance.alignment(a, b, ADAPTER);
+        return capture(left,right,nativeCost,label,children,null);
+    }
+
+    /** Uses the alignment retained by numeric evaluation, without solving again. */
+    public static <N> JSONObject capture(N left,N right,int nativeCost,Function<N,String> label,
+            Function<N,List<N>> children,OrderedTreeEditDistance.Alignment selected) {
+        Tree a = snapshot(left, label, children, new TraceResources());
+        Tree b = snapshot(right, label, children, new TraceResources());
+        var alignment = selected==null?OrderedTreeEditDistance.alignment(a,b,ADAPTER):selected;
         require(alignment.cost() == nativeCost, "Temporal native cost mismatch");
         List<Tree> bs = new ArrayList<>();
         postorder(b, bs);
@@ -69,6 +75,14 @@ public final class TemporalReplay {
                 .put("source", json(a)).put("target", json(b)).put("operations", actions)
                 .put("cost", nativeCost).put("replayedCost", actions.length())
                 .put("complete", false).put("publicSequenceLinked", false);
+        var correspondence=new JSONArray();var reads=new JSONArray();var as=new ArrayList<Tree>();postorder(a,as);
+        for(var match:alignment.matches()) {
+            correspondence.put(new JSONArray().put(match.leftPostorder()).put(match.rightPostorder()));
+            String before=as.get(match.leftPostorder()-1).label,after=bs.get(match.rightPostorder()-1).label;
+            if(before.equals(after))reads.put(new JSONObject().put("kind","read-keep").put("sourcePostorder",match.leftPostorder())
+                    .put("targetPostorder",match.rightPostorder()).put("before",before).put("after",after).put("cost",0));
+        }
+        result.put("selectedCorrespondence",correspondence).put("zeroCostReads",reads);
         verify(left, right, label, children, result);
         return result.put("sliceReplayChecked", true);
     }
@@ -102,13 +116,13 @@ public final class TemporalReplay {
     /** Replays only the supplied edits. No distance, alignment, or DP is used here. */
     public static <N> int verify(N left, N right, Function<N, String> label,
             Function<N, List<N>> children, JSONObject receipt) {
-        Tree a = snapshot(left, label, children, new int[]{256, 131_072}, 0);
-        Tree b = snapshot(right, label, children, new int[]{256, 131_072}, 0);
+        Tree a = snapshot(left, label, children, new TraceResources());
+        Tree b = snapshot(right, label, children, new TraceResources());
         require("acgn-temporal-replay-v1".equals(receipt.getString("schema")), "Temporal schema");
         require(json(a).similar(receipt.getJSONArray("source"))
                 && json(b).similar(receipt.getJSONArray("target")), "Temporal receipt endpoints");
         JSONArray edits = receipt.getJSONArray("operations");
-        require(edits.length() <= 512, "Temporal operation budget");
+        require(edits.length() <= Math.addExact(size(a),size(b)), "Temporal operation coverage");
         Node forest = forest(a, new ArrayList<>());
         int cost = 0;
         for (int i = 0; i < edits.length(); i++) {
@@ -117,6 +131,21 @@ public final class TemporalReplay {
         }
         require(forest.children.size() == 1 && json(forest.children.get(0)).similar(json(b)),
                 "Temporal replay target mismatch");
+        if(receipt.has("selectedCorrespondence")) {
+            var actual=new ArrayList<Node>();mutablePostorder(forest.children.get(0),actual);
+            var sourceNodes=new ArrayList<Tree>();postorder(a,sourceNodes);
+            var pairs=new ArrayList<int[]>();var reads=new ArrayList<JSONObject>();
+            for(int j=0;j<actual.size();j++) {
+                Node n=actual.get(j);if(n.sourcePostorder==0)continue;
+                pairs.add(new int[]{n.sourcePostorder,j+1});String before=sourceNodes.get(n.sourcePostorder-1).label;
+                if(before.equals(n.label))reads.add(new JSONObject().put("kind","read-keep").put("sourcePostorder",n.sourcePostorder)
+                        .put("targetPostorder",j+1).put("before",before).put("after",n.label).put("cost",0));
+            }
+            pairs.sort(java.util.Comparator.comparingInt(p->p[0]));reads.sort(java.util.Comparator.comparingInt(p->p.getInt("sourcePostorder")));
+            JSONArray expected=new JSONArray();for(var pair:pairs)expected.put(new JSONArray(pair));
+            require(expected.similar(receipt.getJSONArray("selectedCorrespondence"))
+                    && new JSONArray(reads).similar(receipt.getJSONArray("zeroCostReads")),"Temporal retained occurrence correspondence");
+        }
         require(cost == DeclarationReplay.integer(receipt, "cost")
                 && cost == DeclarationReplay.integer(receipt, "replayedCost"), "Temporal replay cost");
         return cost;
@@ -143,7 +172,8 @@ public final class TemporalReplay {
             case "update" -> {
                 String to = edit.getString("to");
                 require(node != forest && node.label.equals(edit.getString("from"))
-                        && !node.label.equals(to) && to.length() <= 131_072, "Temporal update occurrence");
+                        && !node.label.equals(to), "Temporal update occurrence");
+                TraceResources.requireBytes(Math.multiplyExact(2L,to.length()));
                 node.label = to;
             }
             case "insert" -> {
@@ -152,7 +182,7 @@ public final class TemporalReplay {
                 require(index >= 0 && count >= 0 && index <= node.children.size()
                         && count <= node.children.size() - index, "Temporal insert interval");
                 String value = edit.getString("label");
-                require(value.length() <= 131_072, "Temporal label budget");
+                TraceResources.requireBytes(Math.multiplyExact(2L,value.length()));
                 Node inserted = new Node(value, node);
                 inserted.children.addAll(node.children.subList(index, index + count));
                 node.children.subList(index, index + count).clear();
@@ -164,7 +194,7 @@ public final class TemporalReplay {
     }
 
     private static Node resolve(Node forest, JSONArray path) {
-        require(path.length() <= 256, "Temporal path budget");
+        TraceResources.requireBytes(Math.multiplyExact(8L,path.length()));
         Node node = forest;
         for (int i = 0; i < path.length(); i++) {
             int index = DeclarationReplay.integer(new JSONObject().put("index", path.get(i)), "index");
@@ -186,6 +216,7 @@ public final class TemporalReplay {
 
     private static final class Node {
         String label;
+        int sourcePostorder;
         Node parent;
         final List<Node> children = new ArrayList<>();
         Node(String label, Node parent) { this.label = label; this.parent = parent; }
@@ -201,18 +232,27 @@ public final class TemporalReplay {
         Node node = new Node(tree.label, parent);
         for (Tree child : tree.children) node.children.add(mutable(child, node, postorder));
         postorder.add(node);
+        node.sourcePostorder=postorder.size();
         return node;
     }
 
+    private static void mutablePostorder(Node node,List<Node> out) {
+        for(Node child:node.children)mutablePostorder(child,out);out.add(node);
+    }
+
     private static <N> Tree snapshot(N node, Function<N, String> label,
-            Function<N, List<N>> children, int[] budget, int depth) {
-        require(depth <= 128 && --budget[0] >= 0, "Temporal snapshot budget");
+            Function<N, List<N>> children, TraceResources budget) {
         String value = Objects.requireNonNull(label.apply(node));
-        budget[1] -= value.length();
-        require(budget[1] >= 0, "Temporal label budget");
+        budget.spend(Math.addExact(64L,Math.multiplyExact(2L,value.length())));
         List<Tree> result = new ArrayList<>();
-        for (N child : children.apply(node)) result.add(snapshot(child, label, children, budget, depth + 1));
+        for (N child : children.apply(node)) result.add(snapshot(child, label, children, budget));
         return new Tree(value, List.copyOf(result));
+    }
+
+    private static int size(Tree root) {
+        int count=0;var pending=new java.util.ArrayDeque<Tree>();pending.add(root);
+        while(!pending.isEmpty()){var node=pending.removeFirst();count=Math.addExact(count,1);pending.addAll(node.children);}
+        return count;
     }
 
     private static void postorder(Tree tree, List<Tree> result) {

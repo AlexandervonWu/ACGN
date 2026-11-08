@@ -62,7 +62,8 @@ public final class PhaseReplayTest {
         JSONObject keep = DeclarationReplay.capture(a.subList(0,1),equalTuple,dp(a.subList(0,1),equalTuple),(i,j)->true);
         check(keep.getInt("cost") == 0);
         reject(()->DeclarationReplay.verify(a.subList(0,1),List.of(atom("wrongOccurrence","Class")),keep));
-        reject(()->DeclarationReplay.requireBounded(256,256));
+        DeclarationReplay.requireBounded(256,256); // Resource-accounted cells, not a binder-count exclusion.
+        check(true);
         reject(()->DeclarationReplay.requireBounded(Integer.MAX_VALUE,Integer.MAX_VALUE));
         reject(()->DeclarationReplay.capture(java.util.Collections.nCopies(300,a.get(0)),empty,new int[0][],(i,j)->true));
         Tree root = new Tree("NONE",List.of(new Tree("ALWAYS",List.of())));

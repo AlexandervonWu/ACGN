@@ -40,6 +40,10 @@ public final class Canonical {
         return CanonicalDistance.edits(left.delegate, right.delegate);
     }
 
+    public static is.fivefivefive.CanDis.metric.NativeRepairTrace evaluateWithTrace(Prepared left,Prepared right) {
+        return CanonicalDistance.evaluateWithTrace(left.delegate,right.delegate);
+    }
+
     public static List<String> irTemporalFol(Multigraph graph) {
         return irTemporalFol(prepare(graph));
     }

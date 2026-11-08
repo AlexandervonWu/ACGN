@@ -15,6 +15,8 @@ public final class MatrixReplay<N> {
     public interface NativeCost<N> {
         /** Complete immutable head identity, including the selected binding context. */
         String label(N node);
+        /** Source/type/owner evidence ignored by head cost but retained in executable payloads. */
+        default String evidence(N node) { return label(node); }
         List<N> children(N node);
         List<N> alternatives(N node);
         boolean unordered(N left, N right);
@@ -23,8 +25,6 @@ public final class MatrixReplay<N> {
         int distance(N left, N right);
     }
 
-    private static final int MAX_DEPTH = 128;
-    private static final int MAX_ASSIGNMENT_DIMENSION = 128;
     private final NativeCost<N> nativeCost;
     private final IdentityHashMap<N, JSONArray> snapshots = new IdentityHashMap<>();
     private final IdentityHashMap<N, String> hashes = new IdentityHashMap<>();
@@ -46,7 +46,6 @@ public final class MatrixReplay<N> {
 
     private void enter(int depth) {
         spend(1);
-        if (depth > MAX_DEPTH) throw new IllegalStateException("MATRIX_REPLAY_DEPTH");
     }
 
     private JSONArray snapshot(N node, int depth) {
@@ -105,6 +104,30 @@ public final class MatrixReplay<N> {
                 .put("matrixReplayChecked", true).put("derivation", derivation);
     }
 
+    /** Serializes the actual metric decision; cannot call distance or choose ties. */
+    public JSONObject capture(MatrixDecision<N> choice) {
+        N left=choice.source(),right=choice.target();
+        JSONArray source=snapshot(left,0),target=snapshot(right,0);
+        JSONObject derivation=retained(choice,0);
+        int replayed=verifyRoot(left,right,derivation,0);
+        require(replayed==choice.cost(),"Retained decision/native charge mismatch");
+        return new JSONObject().put("source",new JSONArray(source.toString())).put("target",new JSONArray(target.toString()))
+                .put("sourceSha256",hash(left)).put("targetSha256",hash(right)).put("cost",choice.cost())
+                .put("replayedCost",replayed).put("matrixReplayChecked",true).put("derivation",derivation);
+    }
+
+    private JSONObject retained(MatrixDecision<N> choice,int depth) {
+        enter(depth);var out=base(choice.source(),choice.target(),choice.kind(),choice.cost());
+        if(choice.kind().equals("select"))return out.put("leftAlternative",choice.leftAlternative())
+                .put("rightAlternative",choice.rightAlternative()).put("selected",retained(choice.selected(),depth+1));
+        if(choice.kind().equals("node")){
+            var edges=new JSONArray();for(var e:choice.children())edges.put(new JSONObject().put("leftIndex",e.leftIndex())
+                    .put("rightIndex",e.rightIndex()).put("edit",retained(e.decision(),depth+1)));
+            out.put("unordered",choice.unordered()).put("headCost",choice.headCost()).put("children",edges);
+        }
+        return out;
+    }
+
     /** Does not call NativeCost.distance or solve an assignment/sequence DP. */
     public int verify(N left, N right, JSONObject receipt) {
         require(snapshot(left, 0).similar(receipt.getJSONArray("source")), "Wrong source snapshot");
@@ -115,6 +138,36 @@ public final class MatrixReplay<N> {
         require(result == integer(receipt, "cost") && result == integer(receipt, "replayedCost"),
                 "Wrong receipt charge");
         return result;
+    }
+
+    /** Expands the already-selected native derivation into executable occurrence CRUD. */
+    public JSONObject executable(N left, N right, JSONObject receipt) {
+        verify(left, right, receipt);
+        return MatrixProgram.capture(executionReceipt(left,right,receipt));
+    }
+
+    /** Native premises are rechecked, then the detached store is executed without search. */
+    public int verifyExecutable(N left, N right, JSONObject receipt, JSONObject program) {
+        int cost = verify(left, right, receipt);
+        require(MatrixProgram.verify(executionReceipt(left,right,receipt), program) == cost, "Executable matrix cost");
+        return cost;
+    }
+
+    private JSONObject executionReceipt(N left,N right,JSONObject receipt) {
+        JSONObject execution=new JSONObject(receipt.toString());
+        var budget=new TraceResources();
+        execution.put("source",executionSnapshot(left,budget)).put("target",executionSnapshot(right,budget));
+        return execution;
+    }
+
+    private JSONArray executionSnapshot(N node,TraceResources budget) {
+        if(node==null)return new JSONArray();
+        String label=nativeCost.label(node),evidence=nativeCost.evidence(node);
+        budget.spend(Math.addExact(64L,Math.multiplyExact(2L,(long)label.length()+evidence.length())));
+        JSONArray children=new JSONArray(),alternatives=new JSONArray();
+        for(N child:nativeCost.children(node))children.put(executionSnapshot(child,budget));
+        for(N child:nativeCost.alternatives(node))alternatives.put(executionSnapshot(child,budget));
+        return new JSONArray().put(label).put(children).put(alternatives).put(evidence);
     }
 
     private JSONObject traceRoot(N left, N right, int depth) {
@@ -230,7 +283,6 @@ public final class MatrixReplay<N> {
     private List<int[]> assignment(List<N> left, List<N> right) {
         int n = left.size(), m = right.size(), dimension = Math.addExact(n, m);
         if (n == 0 || m == 0) return sequence(left, right);
-        if (dimension > MAX_ASSIGNMENT_DIMENSION) throw new IllegalStateException("MATRIX_REPLAY_ASSIGNMENT_BUDGET");
         spend(Math.multiplyExact(Math.multiplyExact((long)dimension, dimension),dimension));
         int[][] costs = new int[dimension][dimension];
         for (int i = 0; i < dimension; i++) for (int j = 0; j < dimension; j++)
