@@ -1,6 +1,6 @@
 import Std
 
-/- Opaque declared calls with ordered, binder-free argument expressions. The
+/- Opaque declared or parser-resolved imported calls with ordered, binder-free argument expressions. The
    source call and each argument keep their type/module/occurrence authority.
    This is a model of correspondence, not a proof of Java or of paid edits as
    semantic equivalences. No function body is unfolded. -/
@@ -40,9 +40,15 @@ theorem argument_transport {V : Type} (old new : Slot → V) (r : Slot → Slot)
   | join a b ha hb => simp only [rename, eval, ha, hb]
   | difference a b ha hb => simp only [rename, eval, ha, hb]
 
+inductive Authority where
+  | declaration
+  | typecheckedImport
+  deriving DecidableEq
+
 structure Head where
   module : Nat
   callee : Nat
+  authority : Authority
   resultType : Nat
   argumentTypes : List Nat
   deriving DecidableEq
@@ -72,10 +78,43 @@ theorem owner_not_only_slot (owner other index : Nat) (h : owner ≠ other) :
     (Slot.mk owner index) ≠ (Slot.mk other index) := by
   intro eq; exact h (congrArg Slot.owner eq)
 
+structure Occurrence where
+  head : Head
+  lineage : Nat
+  parserOccurrence : Nat
+  deriving DecidableEq
+
+/- Import admission changes candidate coverage, not function semantics. An
+   imported source and its comparison occurrence must retain the same authority
+   and occurrence; the ordered argument theorem still requires every owner link.
+   The parser, library ledger, Java checker and their correspondence are trusted
+   implementation boundaries, not discharged by this model. -/
+theorem imported_source_transport {V : Type} (invoke : Head → List V → V)
+    (original actual : Occurrence) (source : actual = original)
+    (_imported : original.head.authority = .typecheckedImport)
+    (old new : Slot → V) (r : Slot → Slot)
+    (literal : Nat → V) (join difference : V → V → V)
+    (links : ∀ s, new (r s) = old s) (args : List Arg) :
+    invoke actual.head ((args.map (rename r)).map (eval new literal join difference)) =
+      invoke original.head (args.map (eval old literal join difference)) := by
+  cases source
+  exact ordered_opaque_call_transport invoke original.head old new r literal join difference links args
+
+theorem substituted_authority_rejected (actual original : Occurrence)
+    (h : actual.head.authority ≠ original.head.authority) : actual ≠ original := by
+  intro eq; exact h (congrArg (fun o => o.head.authority) eq)
+
+theorem substituted_lineage_rejected (actual original : Occurrence)
+    (h : actual.lineage ≠ original.lineage) : actual ≠ original := by
+  intro eq; exact h (congrArg Occurrence.lineage eq)
+
 #print axioms argument_transport
 #print axioms ordered_opaque_call_transport
 #print axioms same_head_preserves_types
 #print axioms foreign_callee_rejected
 #print axioms ordered_arguments_not_a_set
 #print axioms owner_not_only_slot
+#print axioms imported_source_transport
+#print axioms substituted_authority_rejected
+#print axioms substituted_lineage_rejected
 end BoundCallAdmission

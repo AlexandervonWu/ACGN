@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v30-grouped-one-paid";
+    public static final String VERSION = "typed-fast-distance-v31-imported-bound-call-paid";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {

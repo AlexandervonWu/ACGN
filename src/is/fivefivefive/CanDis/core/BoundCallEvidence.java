@@ -4,8 +4,8 @@ import java.util.*;
 import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 
-/** Original declared expression calls with ordered, noncapturing prefix arguments.
- * Does not unfold functions, admit imported bound calls, or move local owners. */
+/** Original declared or parser-resolved imported expression calls with ordered,
+ * noncapturing prefix arguments. Does not unfold functions or move local owners. */
 public final class BoundCallEvidence {
     private final Map<Long,EGraphNode> originals=new HashMap<>();
     private final Map<String,QuantiVar> bindings=new HashMap<>();
@@ -59,7 +59,8 @@ public final class BoundCallEvidence {
 
     private boolean shape(EGraphNode n) {
         var c=CallMetadata.require(n);
-        if(c.authority()!=CallSymbol.ArityAuthority.DECLARATION || !c.kind().equals("call/expression")
+        if((c.authority()!=CallSymbol.ArityAuthority.DECLARATION
+                && c.authority()!=CallSymbol.ArityAuthority.TYPECHECKED_IMPORT) || !c.kind().equals("call/expression")
                 || c.arity()==0 || c.arity()>64 || n.isOrderInsensitive() || !typed(n))return false;
         int[] budget={511};
         for(var arg:n.getChildren())if(!argument(arg,budget,1))return false;
