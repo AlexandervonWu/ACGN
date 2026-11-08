@@ -143,7 +143,17 @@ public final class GroupedPaidDeclarationAlignmentTest {
         for(String name:List.of("groupedSome","groupedAll","repeated","separate","mixed"))
             check(FastPaidDeclarationAlignment.supports(prepare(model,name)),"supported original "+name);
         checkedDisjointScope(model);
-        for(String name:List.of("parameter","temporal","local","sets","unused"))
+        var retained=prepare(model,"local");var retainedForm=retained.get(0);
+        var retainedSlots=retainedForm.getMatrixQuantiVars();
+        check(retainedSlots.size()==2 && retainedSlots.get(0).getBindingPath().equals(retainedSlots.get(1).getBindingPath())
+                && !retainedSlots.get(0).getDeBruijnKey().equals(retainedSlots.get(1).getDeBruijnKey()),
+                "grouped outer owner retains two distinct original slots");
+        check(FastLocalPaidScope.checkedOwnerCount(retainedForm)==1,
+                "the old blanket local negative has one checked retained owner");
+        check(FastPaidDeclarationAlignment.supports(retained),"grouped slots compose with checked local scope");
+        check(!FastDeclarationPermutation.admission(retainedForm,retainedSlots).test(0,1),
+                "composed paid admission does not enable free local exchange");
+        for(String name:List.of("parameter","temporal","sets","unused"))
             check(!FastPaidDeclarationAlignment.supports(prepare(model,name)),"unsupported scope "+name);
 
         var separate=prepare(model,"separate").get(0);

@@ -80,6 +80,10 @@ final class FastPaidDeclarationAlignment {
                         || (q.getQuantifier() != QuantiVar.Quantifier.ALL
                             && q.getQuantifier() != QuantiVar.Quantifier.SOME)))
                     || q.getBindingPath().isEmpty()
+                    // A substituted owner must not split a retained grouped
+                    // prefix into unchecked singletons while keeping its slot key.
+                    || (!f.getLocalQuantiVars().isEmpty() && (q.getDeBruijnKey()==null
+                        || !q.getDeBruijnKey().startsWith(q.getBindingPath()+"#")))
                     || !names.add(q.getName()) || type == null || !type.hasParserAuthenticatedAncestry()
                     || !type.sharesParserModuleAuthorityWith(firstType)) return false;
             declarations.computeIfAbsent(q.getBindingPath(), ignored -> new ArrayList<>()).add(q);
@@ -124,7 +128,11 @@ final class FastPaidDeclarationAlignment {
                 if (group.get(0).getDisjointnessClass() != 0) return false;
                 continue;
             }
-            if (!form.getLocalQuantiVars().isEmpty()) return false;
+            // Grouped outer slots remain distinct beneath a retained owner.
+            // supports() also requires FastLocalPaidScope's original/current
+            // occurrence checks; this does not admit local or disjoint exchange.
+            if (!form.getLocalQuantiVars().isEmpty()
+                    && group.get(0).getDisjointnessClass()!=0) return false;
             var first = group.get(0);
             if (first.getQuantifier() != QuantiVar.Quantifier.ALL
                     && first.getQuantifier() != QuantiVar.Quantifier.SOME) return false;
