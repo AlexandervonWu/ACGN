@@ -33,6 +33,7 @@ def main():
         ("pvub", root / "classified-data/coursesNew/over/PvuBZf9iKQbBARbsj_inv14.als", "MATCHED"),
         ("dcx", root / "classified-data/coursesNew/under/dcxEP6ZgQAktuDbeT_inv10.als", "UNCHECKABLE"),
         ("2ek", root / "classified-data/coursesOld/both/2EKgnipH28DLyp8uK_inv13.als", "MATCHED"),
+        ("3mnrs", root / "classified-data/coursesOld/both/3mNrsLxL8mPXSK6gH_inv13.als", "MATCHED"),
         ("temporal", root / "classified-data/classroom_fol/both/4J8sS2Kr8KrhgsN6R_inv4.als", "UNCHECKABLE"),
         ("reduced", reduced, None),
     ]

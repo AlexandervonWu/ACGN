@@ -51,9 +51,10 @@ public final class BoundCallEvidence {
         return original!=null && shape(original) && shape(node) && same(original,node,new int[]{512},0);
     }
 
-    private boolean typed(EGraphNode n) {
+    private boolean typed(EGraphNode n,boolean argument) {
         var type=n.getExactAlloyType();
-        return type!=null && type.kind()==ExactAlloyType.Kind.RELATION
+        return type!=null && (type.kind()==ExactAlloyType.Kind.RELATION
+                || (argument && type.kind()==ExactAlloyType.Kind.EMPTY_RELATION))
                 && type.hasParserAuthenticatedAncestry() && type.sharesParserModuleAuthorityWith(module);
     }
 
@@ -61,7 +62,7 @@ public final class BoundCallEvidence {
         var c=CallMetadata.require(n);
         if((c.authority()!=CallSymbol.ArityAuthority.DECLARATION
                 && c.authority()!=CallSymbol.ArityAuthority.TYPECHECKED_IMPORT) || !c.kind().equals("call/expression")
-                || c.arity()==0 || c.arity()>64 || n.isOrderInsensitive() || !typed(n))return false;
+                || c.arity()==0 || c.arity()>64 || n.isOrderInsensitive() || !typed(n,false))return false;
         int[] budget={511};
         for(var arg:n.getChildren())if(!argument(arg,budget,1))return false;
         return true;
@@ -69,7 +70,9 @@ public final class BoundCallEvidence {
 
     private boolean argument(EGraphNode n,int[] budget,int depth) {
         spend(budget,depth);
-        if(!typed(n))return false;
+        // An exact empty argument keeps its source expression and arity. It is
+        // not a type wildcard or permission to erase the argument/binder tree.
+        if(!typed(n,true))return false;
         return switch(n.getOpcode()) {
             case VARIABLE -> {
                 var q=bindings.get(n.getAlphaName());

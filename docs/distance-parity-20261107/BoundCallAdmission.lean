@@ -108,6 +108,42 @@ theorem substituted_lineage_rejected (actual original : Occurrence)
     (h : actual.lineage ≠ original.lineage) : actual ≠ original := by
   intro eq; exact h (congrArg Occurrence.lineage eq)
 
+inductive RelationShape where
+  | relation : List Nat → RelationShape
+  | empty : Nat → RelationShape
+  deriving DecidableEq
+
+structure TypedArgument where
+  module : Nat
+  lineage : Nat
+  shape : RelationShape
+  body : Arg
+
+/- The parser may supply an exact empty relation type for an argument. Keeping
+   that type does not erase the expression, its arity, or its binder occurrences.
+   This law assumes the parser type evidence; it does not infer emptiness or
+   replace the argument with a constant. Call result-type admission is separate. -/
+theorem source_empty_argument_transport {V : Type}
+    (original actual : TypedArgument) (source : actual = original)
+    (arity : Nat) (_positive : 0 < arity) (typed : original.shape = .empty arity)
+    (old new : Slot → V) (r : Slot → Slot)
+    (literal : Nat → V) (join difference : V → V → V)
+    (links : ∀ s, new (r s) = old s) :
+    actual.shape = .empty arity ∧ actual.module = original.module ∧
+      actual.lineage = original.lineage ∧
+      eval new literal join difference (rename r actual.body) =
+        eval old literal join difference original.body := by
+  cases source
+  exact ⟨typed, rfl, rfl, argument_transport old new r literal join difference links original.body⟩
+
+theorem empty_arity_not_erased (a b : Nat) (h : a ≠ b) :
+    RelationShape.empty a ≠ RelationShape.empty b := by
+  intro eq; cases eq; exact h rfl
+
+theorem empty_not_nonempty_shape (arity : Nat) (columns : List Nat) :
+    RelationShape.empty arity ≠ RelationShape.relation columns := by
+  intro eq; cases eq
+
 #print axioms argument_transport
 #print axioms ordered_opaque_call_transport
 #print axioms same_head_preserves_types
@@ -117,4 +153,7 @@ theorem substituted_lineage_rejected (actual original : Occurrence)
 #print axioms imported_source_transport
 #print axioms substituted_authority_rejected
 #print axioms substituted_lineage_rejected
+#print axioms source_empty_argument_transport
+#print axioms empty_arity_not_erased
+#print axioms empty_not_nonempty_shape
 end BoundCallAdmission
