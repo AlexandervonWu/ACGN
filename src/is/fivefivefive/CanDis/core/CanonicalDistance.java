@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v19-retained-paid-candidate-union";
+    public static final String VERSION = "typed-fast-distance-v20-grouped-paid-orbit";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -95,6 +95,9 @@ public final class CanonicalDistance {
                 .put("matrixReplayChecked", true).put("complete", false).put("phases", phases);
         if (coherent.paidCorrespondence != null) result.put("selectedPaidDeclarationCorrespondence",
                 new org.json.JSONObject(new java.util.TreeMap<>(coherent.paidCorrespondence)));
+        if (coherent.sourceOrder != null) result.put("selectedGroupedDeclarationPermutation",
+                new org.json.JSONObject().put("source",new org.json.JSONArray(coherent.sourceOrder))
+                        .put("target",new org.json.JSONArray(coherent.targetOrder)));
         return result;
     }
 
@@ -184,9 +187,24 @@ public final class CanonicalDistance {
                     ? matrixVariableNames(right.normalForms.get(phase).getMatrixEGraph()) : Set.of();
             int[][] dp=quantificationDp(a,b);
             org.json.JSONObject receipt, connecting=null;
+            var grouped=matrix.optJSONObject("selectedGroupedDeclarationPermutation");
+            if(grouped!=null) {
+                if(phase!=0 || left.normalForms.size()!=1 || right.normalForms.size()!=1)
+                    throw new IllegalStateException("GROUPED_ORBIT_PHASE_BOUNDARY");
+                int[] p=new int[grouped.getJSONArray("source").length()],q=new int[grouped.getJSONArray("target").length()];
+                for(int i=0;i<p.length;i++)p[i]=grouped.getJSONArray("source").getInt(i);
+                for(int i=0;i<q.length;i++)q[i]=grouped.getJSONArray("target").getInt(i);
+                FastGroupedDeclarationOrbit.requireOrder(left.sourceForms.get(phase),left.normalForms.get(phase),a,p);
+                FastGroupedDeclarationOrbit.requireOrder(right.sourceForms.get(phase),right.normalForms.get(phase),b,q);
+                a=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(a,p);
+                b=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(b,q);
+                connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(p)).put("target",new org.json.JSONArray(q))
+                        .put("admission","ORIGINAL_SOURCE_CERTIFIED_GROUPED_TRANSPOSITION").put("cost",0);
+            }
             try {
                 receipt=captureDeclarations(aSource,bSource,a,b,phase,dp,selected,usedA,usedB,paid,linked,completeAbsent);
             } catch(is.fivefivefive.CanDis.metric.DeclarationReplay.NoMatchingPath missing) {
+                if(grouped!=null) throw missing;
                 if(phase>=left.normalForms.size()) throw missing;
                 var joint=new is.fivefivefive.CanDis.metric.DeclarationMatrixLink(
                         a.stream().map(QuantiVar::getName).toList(),b.stream().map(QuantiVar::getName).toList(),selected,usedA,usedB);
@@ -367,7 +385,7 @@ public final class CanonicalDistance {
         List<String> edits = new ArrayList<>();
         temporalEdits(left.temporalTree, right.temporalTree, "temporal", edits);
         quantificationEdits(left.normalForms, right.normalForms, edits);
-        matrixEdits(left.normalForms, right.normalForms, edits);
+        matrixEdits(left.normalForms, right.normalForms, left.metadata, right.metadata, edits);
         if (edits.isEmpty()) {
             edits.add("no-op");
         }
@@ -454,7 +472,7 @@ public final class CanonicalDistance {
             this.normalForms = normalForms;
             this.temporalTree = temporalTree;
             this.size = size;
-            this.metadata = new EGraphMetadata(normalForms);
+            this.metadata = new EGraphMetadata(sourceForms,normalForms);
             List<EGraphNode> roots = new ArrayList<>(normalForms.size());
             for (NormalForm normalForm : normalForms) {
                 if (normalForm.getMatrixEGraph() != null) {
@@ -772,13 +790,23 @@ public final class CanonicalDistance {
         if (a.size() > FastPaidDeclarationAlignment.MAX_DECLARATIONS
                 || b.size() > FastPaidDeclarationAlignment.MAX_DECLARATIONS)
             throw new IllegalStateException("PAID_DECLARATION_SIZE_BUDGET");
+        var sourceOrders=FastGroupedDeclarationOrbit.orders(leftMetadata.original(left),left,a);
+        var targetOrders=FastGroupedDeclarationOrbit.orders(rightMetadata.original(right),right,b);
+        var budget=new FastGroupedDeclarationOrbit.Budget();
         MatrixAlignment[] best = {null};
         FastPaidDeclarationAlignment.enumerate(a,b,quantificationDp(a,b),CanonicalDistance::quantifierUpdateCost,paid -> {
-            Set<String> lockedLeft = paid.keySet(), lockedRight = new HashSet<>(paid.values());
-            int distance = matrixDistance(left,right,paid,lockedLeft,lockedRight,leftMetadata,rightMetadata);
-            if (best[0] == null || distance < best[0].distance) {
-                best[0] = new MatrixAlignment(distance,paid,lockedLeft,lockedRight);
-                best[0].paidCorrespondence = Map.copyOf(paid);
+            for(var p:sourceOrders)for(var q:targetOrders) {
+                budget.spend();
+                var moved=FastGroupedDeclarationOrbit.transport(a,b,paid,p,q);
+                Set<String> lockedLeft = moved.keySet(), lockedRight = new HashSet<>(moved.values());
+                int distance = matrixDistance(left,right,moved,lockedLeft,lockedRight,leftMetadata,rightMetadata);
+                boolean canonical=FastGroupedDeclarationOrbit.isIdentity(p)&&FastGroupedDeclarationOrbit.isIdentity(q);
+                if (best[0] == null || distance < best[0].distance
+                        || distance == best[0].distance && canonical && best[0].sourceOrder!=null) {
+                    best[0] = new MatrixAlignment(distance,moved,lockedLeft,lockedRight);
+                    best[0].paidCorrespondence = Map.copyOf(moved);
+                    if(!canonical){best[0].sourceOrder=p.clone();best[0].targetOrder=q.clone();}
+                }
             }
         });
         if (best[0] == null) throw new IllegalStateException("PAID_DECLARATION_NO_MINIMUM_PATH");
@@ -1055,9 +1083,10 @@ public final class CanonicalDistance {
                 rightMetadata);
     }
 
-    private static void matrixEdits(List<NormalForm> left, List<NormalForm> right, List<String> edits) {
+    private static void matrixEdits(List<NormalForm> left, List<NormalForm> right,
+            EGraphMetadata leftMetadata,EGraphMetadata rightMetadata,List<String> edits) {
         MatrixAlignment alignment = bestCoherentMatrixAlignment(
-                left, right, null, null);
+                left, right, leftMetadata, rightMetadata);
         int size = Math.max(left.size(), right.size());
         for (int i = 0; i < size; i++) {
             NormalForm pathSource = i < left.size() ? left.get(i) : right.get(i);
@@ -1638,14 +1667,24 @@ public final class CanonicalDistance {
     }
 
     private static final class EGraphMetadata {
+        private final IdentityHashMap<NormalForm,NormalForm> originals=new IdentityHashMap<>();
         private final IdentityHashMap<EGraphNode, Integer> sizes = new IdentityHashMap<>();
         private final IdentityHashMap<EGraphNode, GraphType> resultTypes = new IdentityHashMap<>();
         private final IdentityHashMap<EGraphNode, List<EGraphNode>> metricChildren = new IdentityHashMap<>();
 
-        private EGraphMetadata(List<NormalForm> normalForms) {
-            for (NormalForm normalForm : normalForms) {
+        private EGraphMetadata(List<NormalForm> sourceForms,List<NormalForm> normalForms) {
+            // Closed temporal dedup can change phase-list length. This authority
+            // is needed only by the existing single, non-temporal paid slice.
+            if(sourceForms.size()==1 && normalForms.size()==1)
+                originals.put(normalForms.get(0),sourceForms.get(0));
+            for (int i=0;i<normalForms.size();i++) {
+                NormalForm normalForm=normalForms.get(i);
                 prepare(normalForm.getMatrixEGraph());
             }
+        }
+
+        private NormalForm original(NormalForm comparison) {
+            return Objects.requireNonNull(originals.get(comparison),"Missing original metric source");
         }
 
         private void prepare(EGraphNode node) {
@@ -2473,6 +2512,7 @@ public final class CanonicalDistance {
 
     private static final class MatrixAlignment {
         private Map<String,String> paidCorrespondence;
+        private int[] sourceOrder,targetOrder;
         private final int distance;
         private final Map<String, String> mapping;
         private final Set<String> lockedLeftNames;

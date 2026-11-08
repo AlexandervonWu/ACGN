@@ -38,6 +38,7 @@ lean docs/distance-parity-20261107/NativeOperationGate.lean
 lean docs/distance-parity-20261107/ScopeBlockTieOrder.lean
 lean docs/distance-parity-20261107/RetainedExistentialAdmission.lean
 lean docs/distance-parity-20261107/RetainedPaidCandidateUnion.lean
+lean docs/distance-parity-20261107/GroupedPaidOrbit.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -105,6 +106,8 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.RetainedExistentialReplayTest "$BUILD_DIR/retained-existential"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.RetainedPaidCandidateReplayTest "$BUILD_DIR/retained-paid-candidate"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.GroupedPaidOrbitReplayTest "$BUILD_DIR/grouped-paid-orbit"
 python3 -B scripts/test_native_operation_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/native-operation-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \

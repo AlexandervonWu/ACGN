@@ -194,6 +194,12 @@ public final class NativeOperationComparison {
             actions.put(new JSONObject().put("stage","declarationPermutation").put("cost",0)
                     .put("source",new JSONArray(pa)).put("target",new JSONArray(pb)));
         }
+        if(!certified && arm.has("selectedGroupedDeclarationPermutation")) {
+            var selectedOrder=arm.getJSONObject("selectedGroupedDeclarationPermutation");
+            require(permutation!=null && selectedOrder.getJSONArray("source").similar(permutation.getJSONArray("source"))
+                    && selectedOrder.getJSONArray("target").similar(permutation.getJSONArray("target")),
+                    "Selected grouped permutation/action linkage");
+        }
         if(certified) {
             a.checkGlobalPermutation(arm.getJSONObject("selectedDeclarationPermutation").getJSONArray("left"));
             b.checkGlobalPermutation(arm.getJSONObject("selectedDeclarationPermutation").getJSONArray("right"));
