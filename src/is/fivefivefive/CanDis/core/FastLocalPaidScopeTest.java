@@ -89,7 +89,10 @@ public final class FastLocalPaidScopeTest {
                 pred temporal { some p:P | always (p in p.r implies (some t:T | p in t.r)) }
                 """);
         check(FastPaidDeclarationAlignment.supports(prepare(reduced,"retained")),"reduced retained local source");
-        for(String name:List.of("nested","disjoint","setLocal","parameter","temporal")) {
+        var nested=prepare(reduced,"nested");
+        check(FastLocalPaidScope.checkedOwnerCount(nested.get(0))==2
+                && FastPaidDeclarationAlignment.supports(nested),"source-linked retained EXISTS chain admitted without hoisting");
+        for(String name:List.of("disjoint","setLocal","parameter","temporal")) {
             var forms=prepare(reduced,name);
             check(!FastPaidDeclarationAlignment.supports(forms),"unsupported scope "+name+" "+CanonicalDistance.sourceIrTemporalFol(forms));
         }

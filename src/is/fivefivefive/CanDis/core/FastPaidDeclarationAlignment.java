@@ -14,8 +14,33 @@ final class FastPaidDeclarationAlignment {
     static boolean supportsPair(List<NormalForm> left,List<NormalForm> right) {
         if(FastNestedPaidScope.supportsPair(left,right)) return true;
         if(!supports(left) || !supports(right)) return false;
+        boolean multipleOwners=(!left.get(0).getLocalQuantiVars().isEmpty()
+                && FastLocalPaidScope.checkedOwnerCount(left.get(0))>1)
+                || (!right.get(0).getLocalQuantiVars().isEmpty()
+                && FastLocalPaidScope.checkedOwnerCount(right.get(0))>1);
+        // This new scalar slice enumerates canonical declaration paths, not
+        // source/target exchanges. Keep symmetric retained-owner prefixes on
+        // their existing route (including replay-only certified completion).
+        if(multipleOwners && (!rigidPrefix(left.get(0)) || !rigidPrefix(right.get(0)))) return false;
         // No new cross-owner local/local alignment is admitted by this slice.
         return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty();
+    }
+
+    private static boolean rigidPrefix(NormalForm form) {
+        var qs=form.getMatrixQuantiVars();
+        for(int start=0;start<qs.size();) {
+            int end=start+1;var kind=qs.get(start).getQuantifier();
+            if(kind==QuantiVar.Quantifier.ALL || kind==QuantiVar.Quantifier.SOME) {
+                var tuples=new HashSet<List<Object>>();
+                while(end<qs.size() && qs.get(end).getQuantifier()==kind) end++;
+                for(int i=start;i<end;i++) {
+                    var q=qs.get(i);
+                    if(q.getTypeName()==null || !tuples.add(List.of(q.getTypeName(),q.getCardinality(),q.getDisjointnessClass()))) return false;
+                }
+            }
+            start=end;
+        }
+        return true;
     }
 
     static boolean supports(List<NormalForm> forms) {

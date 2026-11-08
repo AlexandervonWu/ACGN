@@ -146,8 +146,15 @@ public final class DeclarationOrbitShorterReplayTest {
         for(var q:original.getMatrixQuantiVars()) check(q.getQuantifier()==QuantiVar.Quantifier.ALL
                 && q.getCarrierTypeName().equals("Person") && q.isFrozenForCertification()
                 && q.getExactAlloyType().hasParserAuthenticatedAncestry(),"typed original ALL Person");
-        check(!FastPaidDeclarationAlignment.supportsPair(List.of(left),List.of(right)),"nested EXISTS paid-link admission still unsupported");
-        check(!FastLocalPaidScope.supports(original),"one-local-owner admission does not cover two nested owners");
+        check(!FastPaidDeclarationAlignment.supportsPair(List.of(left),List.of(right)),
+                "symmetric retained-owner prefix excluded from canonical paid candidate search");
+        check(original.getMatrixQuantiVars().size()==2
+                && original.getMatrixQuantiVars().get(0).getTypeName().equals(original.getMatrixQuantiVars().get(1).getTypeName())
+                && original.getMatrixQuantiVars().stream().allMatch(q -> q.getCardinality()==QuantiVar.Cardinality.ONE
+                        && q.getDisjointnessClass()==0),"two equal outer ALL Person repair tuples require exchange route");
+        check(FastLocalPaidScope.checkedOwnerCount(original)==2
+                && FastLocalPaidScope.checkedOwnerCount(NormalForm.fastComparisonViews(List.of(original)).get(0))==2,
+                "original and comparison retain the checked two-EXISTS owner chain");
         check(!FastNestedPaidScope.supportsPair(List.of(left),List.of(right)),"ONE/ALL admission does not cover EXISTS scopes");
         var sourceView=(RepairView)sourceCheck("checkedProjection",new Class<?>[]{Canonical.Prepared.class,Canonical.Prepared.class},
                 prepared.get(0),prepared.get(1));

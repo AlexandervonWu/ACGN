@@ -36,6 +36,7 @@ lean docs/distance-parity-20261107/UnobservedDeclarationCompletion.lean
 lean docs/distance-parity-20261107/RetainedScopePaidCompletion.lean
 lean docs/distance-parity-20261107/NativeOperationGate.lean
 lean docs/distance-parity-20261107/ScopeBlockTieOrder.lean
+lean docs/distance-parity-20261107/RetainedExistentialAdmission.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -97,6 +98,10 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.NativeOperationGateTest "$BUILD_DIR/native-operation-gate"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.ScopeBlockTieReplayTest "$BUILD_DIR/scope-block-tie"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.RetainedExistentialAdmissionTest
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.RetainedExistentialReplayTest "$BUILD_DIR/retained-existential"
 python3 -B scripts/test_native_operation_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \
     --output "$BUILD_DIR/native-operation-cli"
 python3 -B scripts/test_diagnostic_parity_scan.py --classpath "$BUILD_DIR:$ROOT/lib/*" \

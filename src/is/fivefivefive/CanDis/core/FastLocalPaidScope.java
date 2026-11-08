@@ -7,6 +7,7 @@ import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 final class FastLocalPaidScope {
     private static final int MAX_VISITS = 4096;
     private static final int MAX_DEPTH = 128;
+    private static final long ROOT_OWNER = Long.MIN_VALUE;
     private final Map<String,QuantiVar> locals = new HashMap<>();
     private final Set<String> usedOwners = new HashSet<>();
     private final Map<Long,LocalPlan> sourcePlans = new HashMap<>();
@@ -15,22 +16,35 @@ final class FastLocalPaidScope {
     private int visits;
     private boolean checkingSource = true;
 
-    private record LocalPlan(QuantiVar binding,long declaration,long variable,EGraphNode domain) { }
+    private record LocalPlan(QuantiVar binding,long parent,long declaration,long variable,EGraphNode domain) { }
 
     private FastLocalPaidScope(ExactAlloyType module) { this.module=module; }
 
     static boolean supports(NormalForm form) {
+        return checkedOwnerCount(form)>0;
+    }
+
+    static int checkedOwnerCount(NormalForm form) {
         var outer=new HashMap<String,QuantiVar>();
-        for(var q:form.getMatrixQuantiVars()) if(outer.put(q.getName(),q)!=null) return false;
-        if(outer.isEmpty()) return false;
+        for(var q:form.getMatrixQuantiVars()) if(outer.put(q.getName(),q)!=null) return 0;
+        if(outer.isEmpty()) return 0;
         var check=new FastLocalPaidScope(form.getMatrixQuantiVars().get(0).getExactAlloyType());
         for(var q:form.getLocalQuantiVars()) {
-            if(outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return false;
+            if(outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return 0;
         }
-        if(!check.walk(form.getCertificationMatrixEGraph(),outer,0,false) || check.sourcePlans.size()!=1) return false;
+        if(!check.walk(form.getCertificationMatrixEGraph(),outer,0,ROOT_OWNER) || check.sourcePlans.isEmpty()) return 0;
+        // The old single-owner slice retains all its supported kinds. The new
+        // slice is one EXISTS chain, with every original parent edge retained.
+        if(check.sourcePlans.size()>1) {
+            var parents=new HashSet<Long>();
+            for(var plan:check.sourcePlans.values())
+                if(plan.binding().getQuantifier()!=QuantiVar.Quantifier.SOME
+                        || !parents.add(plan.parent())) return 0;
+        }
         check.checkingSource=false;
         check.usedOwners.clear();
-        return check.walk(form.getMatrixEGraph(),outer,0,false) && check.usedOwners.size()==1;
+        return check.walk(form.getMatrixEGraph(),outer,0,ROOT_OWNER)
+                && check.usedOwners.size()==check.sourcePlans.size()?check.sourcePlans.size():0;
     }
 
     private boolean typed(EGraphNode n,QuantiVar q) {
@@ -50,7 +64,7 @@ final class FastLocalPaidScope {
         };
     }
 
-    private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,boolean inside) {
+    private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,long parent) {
         if(++visits>MAX_VISITS || depth>MAX_DEPTH)
             throw new IllegalStateException("PAID_DECLARATION_LOCAL_SCOPE_BUDGET");
         if(n.getOpcode()==EGraphNode.Opcode.CALL || n.getOpcode()==EGraphNode.Opcode.REF) return false;
@@ -76,7 +90,7 @@ final class FastLocalPaidScope {
         if(declares || n.getOpcode()==EGraphNode.Opcode.EXISTS || n.getOpcode()==EGraphNode.Opcode.FORALL) {
             var kind=localKind(n.getOpcode());
             if(kind==null) return false;
-            if(inside || n.getChildren().size()!=2) return false;
+            if(n.getChildren().size()!=2) return false;
             var decl=n.getChildren().get(0);
             if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()!=2) return false;
             var domain=decl.getChildren().get(0); var variable=decl.getChildren().get(1);
@@ -93,10 +107,9 @@ final class FastLocalPaidScope {
                     || !typed(variable,q) || !typed(domain,q) || !typed(domain.getChildren().get(0),q)
                     || !usedOwners.add(q.getName())) return false;
             if(checkingSource) {
-                if(!sourcePlans.isEmpty()) return false;
-                sourcePlans.put(n.getSourceOccurrenceLineage(),new LocalPlan(q,decl.getSourceOccurrenceLineage(),
-                        variable.getSourceOccurrenceLineage(),domain));
-            } else if(plan.declaration()!=decl.getSourceOccurrenceLineage()
+                if(sourcePlans.putIfAbsent(n.getSourceOccurrenceLineage(),new LocalPlan(q,parent,decl.getSourceOccurrenceLineage(),
+                        variable.getSourceOccurrenceLineage(),domain))!=null) return false;
+            } else if(plan.parent()!=parent || plan.declaration()!=decl.getSourceOccurrenceLineage()
                     || plan.variable()!=variable.getSourceOccurrenceLineage()
                     || plan.domain().getSourceOccurrenceLineage()!=domain.getSourceOccurrenceLineage()
                     || plan.domain().getChildren().get(0).getSourceOccurrenceLineage()
@@ -109,14 +122,14 @@ final class FastLocalPaidScope {
             // actual owner/declaration/variable lineage licenses that transfer.
             var scoped=new HashMap<>(visible); scoped.put(name,q);
             // The declaration variable is checked only in its owner's scope.
-            return walk(variable,scoped,depth+1,true)
-                    && walk(n.getChildren().get(1),scoped,depth+1,true);
+            return walk(variable,scoped,depth+1,n.getSourceOccurrenceLineage())
+                    && walk(n.getChildren().get(1),scoped,depth+1,n.getSourceOccurrenceLineage());
         }
         switch(n.getOpcode()) {
             case GENERICRELDECL, DISJ, VAR, DISJVAR -> { return false; }
             default -> { }
         }
-        for(var child:n.getChildren()) if(!walk(child,visible,depth+1,inside)) return false;
+        for(var child:n.getChildren()) if(!walk(child,visible,depth+1,parent)) return false;
         return true;
     }
 }
