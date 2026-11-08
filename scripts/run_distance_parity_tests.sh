@@ -33,6 +33,7 @@ lean docs/distance-parity-20261107/NestedPaidDeclaration.lean
 lean docs/distance-parity-20261107/ScopedPaidAdmission.lean
 lean docs/distance-parity-20261107/JointDeclarationMatrixReplay.lean
 lean docs/distance-parity-20261107/UnobservedDeclarationCompletion.lean
+lean docs/distance-parity-20261107/RetainedScopePaidCompletion.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -40,6 +41,8 @@ done
 LEAN_PATH="$BUILD_DIR" lean docs/distance-parity-20261107/FastChainGeometry.lean
 mapfile -t sources < <(rg --files src -g '*.java' | sort)
 javac -J-Xmx512m --release 17 -encoding UTF-8 -cp "$ROOT/lib/*" -d "$BUILD_DIR" "${sources[@]}"
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.RetainedPaidCompletionTest
 for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest theory.GuardedJoinRotationTest PartialJoinCompositionTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.TemporalReplayTest metric.PhaseReplayTest NativePhaseReplayTest LocalDomainSingletonTest FastChainGeometryTest P06ShorterReplayTest ProductShorterReplayTest FastProductGeometryTest core.ScopedTemporalShorterReplayTest core.TemporalOccurrenceAccountingTest core.InjectiveVariableFallbackTest core.InjectiveVariableReplayTest PaidDeclarationShorterReplayTest core.FastPaidDeclarationAlignmentTest core.ClosedTemporalPhaseTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do
     java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
         -cp "$BUILD_DIR:$ROOT/lib/*" "is.fivefivefive.CanDis.$test"

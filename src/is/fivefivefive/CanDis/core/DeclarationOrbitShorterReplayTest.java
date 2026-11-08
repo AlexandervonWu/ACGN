@@ -193,16 +193,21 @@ public final class DeclarationOrbitShorterReplayTest {
         var joint=new DeclarationMatrixLink(List.of("_q0","_q1"),List.of("_q0","_q1"),selected,
                 Set.of("_q0","_q1"),Set.of("_q0","_q1"));
         reject(()->joint.verify(a,b,decl),"historical standalone receipt rejected by joint original-coordinate linkage");
-        var liveFast=live.getJSONObject("fast"); var blocked=liveFast.getJSONObject("declarationSlice");
-        check(blocked.getString("status").equals("BLOCKED") && !blocked.getBoolean("sliceReplayChecked")
-                && !blocked.has("components") && blocked.getString("error").contains("No minimum path matches selected correspondence"),
-                "live missing paid-link emission is explicit, not an invalid standalone receipt");
-        check(!liveFast.has("selectedPaidDeclarationCorrespondence") && !liveFast.getBoolean("numericalCostCoverage")
-                && !liveFast.has("orderedDiagnosticActions") && liveFast.getInt("distance")==27,
-                "no paid-path or full native sequence claim, scalar27 retained");
+        var liveFast=live.getJSONObject("fast"); var emitted=liveFast.getJSONObject("declarationSlice");
+        check(emitted.getBoolean("sliceReplayChecked") && emitted.getJSONArray("components").length()==1,
+                "native paid completion emitted only after source certificate and unchanged body replay");
+        check(!liveFast.has("selectedPaidDeclarationCorrespondence") && liveFast.getBoolean("numericalCostCoverage")
+                && liveFast.has("orderedDiagnosticActions") && liveFast.getInt("distance")==27,
+                "scalar search unchanged; explicit replay completion, not a new scalar paid candidate");
         if(reverse) Collections.swap(b,0,1); else Collections.swap(a,0,1);
         var supplement=DeclarationReplay.capture(a,b,dp(a,b),(i,j)->true);
         check(DeclarationReplay.verify(a,b,supplement)==1,"source-permuted declaration path independently replayed");
+        var nativeReceipt=emitted.getJSONArray("components").getJSONObject(0).getJSONObject("receipt");
+        check(DeclarationReplay.verify(a,b,nativeReceipt)==1
+                && nativeReceipt.getJSONArray("operations").similar(supplement.getJSONArray("operations")),
+                "actual native declaration sequence equals independently constructed source-permuted path");
+        check(nativeReceipt.getJSONObject("matrixCorrespondenceCompletion").getJSONObject("completedMapping")
+                .similar(new JSONObject(completed)),"actual native completion equals checked fixed body map");
         for(Object item:supplement.getJSONArray("operations")) {
             var op=(JSONObject)item;
             check(op.getInt("leftIndex")>=0 && op.getInt("rightIndex")>=0,"diagonal witness");
@@ -223,7 +228,7 @@ public final class DeclarationOrbitShorterReplayTest {
                 .put("certificateCheck","DeclarationOrbitSourceTest.checkedProjection")
                 .put("completedMapping",new JSONObject(completed)).put("matrixCost",26).put("declarationCost",1)
                 .put("historicalInvalidDeclarationReceipt",decl).put("historicalConflicts",conflicts)
-                .put("liveNativeReport",live).put("nativeFastCompletionEmitted",false)
+                .put("liveNativeReport",live).put("nativeFastCompletionEmitted",true)
                 .put("supplementalDeclarationReceipt",supplement);
         if(args.length==2) Files.writeString(Path.of(args[1]),result.toString(2),StandardOpenOption.CREATE_NEW);
         return result;
@@ -239,6 +244,6 @@ public final class DeclarationOrbitShorterReplayTest {
             verify(args,false);
             if(args.length==0) verify(args,true);
         }
-        System.out.println("DeclarationOrbitShorterReplayTest: "+checks+" checks passed; historical conflict rejected, supplemental27 checked; native Fast completion and full alignment BLOCKED");
+        System.out.println("DeclarationOrbitShorterReplayTest: "+checks+" checks passed; historical conflict rejected, native completion27 checked; full alignment BLOCKED");
     }
 }

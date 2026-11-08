@@ -11,11 +11,15 @@ final class FastNestedPaidScope {
     private final Map<String,QuantiVar> locals=new HashMap<>();
     private final Map<Long,Variable> variables=new HashMap<>();
     private final Map<Long,Local> owners=new HashMap<>();
+    private final Set<Long> comparisonOwners=new HashSet<>();
     private final ExactAlloyType module;
-    private int visits,ones,alls;
+    private int visits,ones,alls,exists;
+    private final boolean existsOnly;
     private boolean original=true;
 
-    private FastNestedPaidScope(ExactAlloyType module) { this.module=module; }
+    private FastNestedPaidScope(ExactAlloyType module,boolean existsOnly) {
+        this.module=module; this.existsOnly=existsOnly;
+    }
 
     static boolean supportsPair(List<NormalForm> left,List<NormalForm> right) {
         if(left.size()!=1 || right.size()!=1) return false;
@@ -24,28 +28,53 @@ final class FastNestedPaidScope {
     }
 
     private static boolean supports(NormalForm form,boolean nested) {
+        return supports(form,nested,false);
+    }
+
+    /** Replay-only owner census, not admission to the scalar candidate search. */
+    static boolean retainedExistentials(NormalForm form) {
+        return supports(form,!form.getLocalQuantiVars().isEmpty(),true);
+    }
+
+    static Set<Long> retainedExistentialOwners(NormalForm form) {
+        if(!retainedExistentials(form)) throw new IllegalArgumentException("Retained existential scope not checked");
+        var result=new HashSet<Long>(); var pending=new ArrayDeque<EGraphNode>();
+        pending.add(form.getCertificationMatrixEGraph());
+        // The expanded visit/depth budget was checked by retainedExistentials.
+        while(!pending.isEmpty()) {
+            var n=pending.removeFirst();
+            if(n.getOpcode()==EGraphNode.Opcode.EXISTS) result.add(n.getSourceOccurrenceLineage());
+            pending.addAll(n.getChildren());
+        }
+        return Set.copyOf(result);
+    }
+
+    private static boolean supports(NormalForm form,boolean nested,boolean existsOnly) {
         if(!form.isFrozenForCertification() || form.getTemporalOp()!=NormalForm.TemporalOp.NONE
                 || !form.getTemporalChildren().isEmpty() || !form.getParams().isEmpty()
                 || !form.getInheritedQuantiVars().isEmpty() || !form.getPhaseLocalBindingImports().isEmpty()
                 || form.getCertificationMatrixEGraph()==null || form.getMatrixEGraph()==null
                 || form.getMatrixQuantiVars().isEmpty()) return false;
-        var check=new FastNestedPaidScope(form.getMatrixQuantiVars().get(0).getExactAlloyType());
+        var check=new FastNestedPaidScope(form.getMatrixQuantiVars().get(0).getExactAlloyType(),existsOnly);
         if(check.module==null) return false;
         var outer=new HashMap<String,QuantiVar>(); var slots=new HashMap<String,Integer>();
         for(var q:form.getMatrixQuantiVars()) {
             int slot=slots.merge(q.getBindingPath(),1,Integer::sum)-1;
             String type=q.getTypeName(); if(type==null) return false;
             if(type.startsWith("VAR_")) type=type.substring(4);
-            if(!check.binding(q) || q.getQuantifier()!=QuantiVar.Quantifier.ALL
+            if(!check.binding(q) || existsOnly && q.getDisjointnessClass()!=0 || q.getQuantifier()!=QuantiVar.Quantifier.ALL
                     || outer.put(q.getName(),q)!=null || !q.getDeBruijnKey().equals(
                             q.getBindingPath()+"#"+slot+":"+q.getCardinality()+":"+type)) return false;
         }
         for(var q:form.getLocalQuantiVars())
             if(!check.binding(q) || outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return false;
         if(!check.walk(form.getCertificationMatrixEGraph(),outer,Map.of(),0,0)) return false;
-        if(nested ? check.ones==0 || check.alls==0 : !check.owners.isEmpty()) return false;
+        if(existsOnly) {
+            if(nested && check.exists==0) return false;
+        } else if(nested ? check.ones==0 || check.alls==0 : !check.owners.isEmpty()) return false;
         check.original=false;
-        return check.walk(form.getMatrixEGraph(),outer,Map.of(),0,0);
+        return check.walk(form.getMatrixEGraph(),outer,Map.of(),0,0)
+                && (!existsOnly || check.comparisonOwners.equals(check.owners.keySet()));
     }
 
     private boolean binding(QuantiVar q) {
@@ -81,7 +110,8 @@ final class FastNestedPaidScope {
                 || c.getOpcode()==EGraphNode.Opcode.DISJ || c.getOpcode()==EGraphNode.Opcode.VAR || c.getOpcode()==EGraphNode.Opcode.DISJVAR);
         if(hasDeclaration) {
             var kind=n.getOpcode();
-            if((kind!=EGraphNode.Opcode.ONE && kind!=EGraphNode.Opcode.FORALL) || n.getChildren().size()!=2) return false;
+            if((existsOnly ? kind!=EGraphNode.Opcode.EXISTS
+                    : kind!=EGraphNode.Opcode.ONE && kind!=EGraphNode.Opcode.FORALL) || n.getChildren().size()!=2) return false;
             var decl=n.getChildren().get(0);
             if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()!=2) return false;
             var domain=decl.getChildren().get(0); var v=decl.getChildren().get(1);
@@ -90,7 +120,8 @@ final class FastNestedPaidScope {
             Local plan=owners.get(n.getSourceOccurrenceLineage());
             var q=original?locals.get(v.getAlphaName()):plan==null?null:plan.binding();
             if(q==null || visible.containsKey(q.getName()) || q.getDisjointnessClass()!=0
-                    || q.getQuantifier()!=(kind==EGraphNode.Opcode.ONE?QuantiVar.Quantifier.ONE:QuantiVar.Quantifier.ALL)
+                    || q.getQuantifier()!=(kind==EGraphNode.Opcode.EXISTS?QuantiVar.Quantifier.SOME
+                            :kind==EGraphNode.Opcode.ONE?QuantiVar.Quantifier.ONE:QuantiVar.Quantifier.ALL)
                     || !q.getExactAlloyType().sameOccurrenceEvidenceAs(v.getExactAlloyType())) return false;
             // Domain sees only the enclosing scope, never the variable it declares.
             if(!walk(domain,visible,names,depth+1,height+1)) return false;
@@ -98,8 +129,13 @@ final class FastNestedPaidScope {
             if(original) {
                 var previous=owners.putIfAbsent(n.getSourceOccurrenceLineage(),current);
                 if(previous!=null && !previous.equals(current)) return false;
-                if(kind==EGraphNode.Opcode.ONE) ones++; else alls++;
-            } else if(!current.equals(plan)) return false;
+                if(kind==EGraphNode.Opcode.ONE) ones++;
+                else if(kind==EGraphNode.Opcode.FORALL) alls++;
+                else exists++;
+            } else {
+                if(!current.equals(plan)) return false;
+                comparisonOwners.add(n.getSourceOccurrenceLineage());
+            }
             var scoped=new HashMap<>(visible); scoped.put(q.getName(),q);
             var localNames=new HashMap<>(names); localNames.put(q.getName(),"@fast-local:"+depth+":0");
             return variable(v,scoped,localNames) && walk(n.getChildren().get(1),scoped,localNames,depth+1,height+1);

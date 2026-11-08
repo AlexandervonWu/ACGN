@@ -31,8 +31,8 @@ public final class ScopedPaidAdmissionReplayTest {
         if(n.getOpcode()==EGraphNode.Opcode.VARIABLE){
             String name=n.getAlphaName();
             if(localCoordinate(n)){
-                check(name.equals("@fast-local:0:0"),"single actual local coordinate");
-                return "VARIABLE/local:0:0";
+                check(name.matches("@fast-local:[0-9]+:[0-9]+"),"actual local coordinate syntax");
+                return "VARIABLE/local:"+name.substring("@fast-local:".length());
             }
             for(int i=0;i<form.getMatrixQuantiVars().size();i++)if(form.getMatrixQuantiVars().get(i).getName().equals(name)){
                 final int ordinal=i;
@@ -54,8 +54,9 @@ public final class ScopedPaidAdmissionReplayTest {
     private static String certHead(Node n){
         if(n.isVariable()){
             if(n.bindingIndex()>=0)return "VARIABLE/outer:"+n.bindingIndex();
-            check("@local[0:0]".equals(n.lexicalVariable()),"actual projected local coordinate");
-            return "VARIABLE/local:0:0";
+            String local=n.lexicalVariable();
+            check(local!=null && local.matches("@local\\[[0-9]+:[0-9]+\\]"),"actual projected local coordinate syntax");
+            return "VARIABLE/local:"+local.substring("@local[".length(),local.length()-1);
         }
         return n.operator()+"/"+n.semanticPayload();
     }

@@ -19,7 +19,7 @@ import is.fivefivefive.CanDis.theory.GraphType;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v16-unobserved-keep-completion";
+    public static final String VERSION = "typed-fast-distance-v17-retained-paid-replay";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final OrderedTreeEditDistance.Adapter<TemporalTree> TEMPORAL_ADAPTER =
             new OrderedTreeEditDistance.Adapter<>() {
@@ -173,10 +173,16 @@ public final class CanonicalDistance {
                 var admission=FastDeclarationPermutation.admission(left.normalForms.get(phase),a);
                 int[] order=joint.connectingPermutation(declarationAtoms(aSource,a,phase),admission);
                 var reordered=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(a,order);
-                receipt=captureDeclarations(aSource,bSource,reordered,b,phase,dp,selected,usedA,usedB,paid,linked,completeAbsent);
-                connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(order))
+                try {
+                    receipt=captureDeclarations(aSource,bSource,reordered,b,phase,dp,selected,usedA,usedB,paid,linked,completeAbsent);
+                    connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(order))
                         .put("target",new org.json.JSONArray(java.util.stream.IntStream.range(0,b.size()).toArray()))
                         .put("admission","SOURCE_OBSERVED_GROUPED_ALL_SOME").put("cost",0);
+                } catch(is.fivefivefive.CanDis.metric.DeclarationReplay.NoMatchingPath stillMissing) {
+                    var completed=retainedPaidCompletion(left,right,a,b,selected,matrix,phase,linked);
+                    if(completed==null) throw stillMissing;
+                    receipt=completed.getJSONObject("receipt"); connecting=completed.getJSONObject("connectingPermutation");
+                }
             }
             if(receipt.has("matrixCorrespondenceCompletion")) {
                 var completion=receipt.getJSONObject("matrixCorrespondenceCompletion");
@@ -199,8 +205,43 @@ public final class CanonicalDistance {
                 .put("matrixChoiceAdmissionChecked",false).put("orderingAdmissionChecked",false)
                 .put("selectedPaidCorrespondenceChecked",linked)
                 .put("selectedMatrixDeclarationLinksChecked",true)
-                .put("jointLinkScope","Original declaration coordinates under selected map plus explicit absence completion; local binders excluded")
+                .put("jointLinkScope","Original outer coordinates under selected map plus checked completion; local declarations never edited")
                 .put("bindingRelationship","Every emitted keep/delete/insert checked against the selected or explicitly completed matrix map; scalar searches unchanged");
+    }
+
+    private static org.json.JSONObject retainedPaidCompletion(Prepared left,Prepared right,List<QuantiVar> a,
+            List<QuantiVar> b,Map<String,String> selected,org.json.JSONObject matrix,int phase,boolean alreadyPaid) {
+        if(alreadyPaid || phase!=0 || left.normalForms.size()!=1 || right.normalForms.size()!=1
+                || left.sourceForms.size()!=1 || right.sourceForms.size()!=1) return null;
+        var af=left.normalForms.get(0); var bf=right.normalForms.get(0);
+        for(var plan:FastRetainedDeclarationCompletion.plans(left.sourceForms.get(0),right.sourceForms.get(0),
+                af,bf,a,b,selected,matrix.getInt("quantifierDistance"))) {
+            var paid=new HashMap<String,String>(); int diagonal=0;
+            for(int i=0;i<a.size();i++) {
+                var x=plan.left().get(i); var y=plan.right().get(i);
+                if(!y.getName().equals(plan.completed().get(x.getName())))
+                    throw new IllegalStateException("RETAINED_COMPLETION_ORDER_LINK");
+                int charge=quantifierUpdateCost(x,y); diagonal=Math.addExact(diagonal,charge);
+                if(charge!=0) paid.put(x.getName(),y.getName());
+            }
+            if(diagonal!=1 || paid.size()!=1 || selected.containsKey(paid.keySet().iterator().next())) continue;
+            int[][] dp=quantificationDp(plan.left(),plan.right());
+            if(dp[a.size()][b.size()]!=matrix.getInt("quantifierDistance")) continue;
+            var receipt=captureDeclarations(af.getMatrixQuantiVars(),bf.getMatrixQuantiVars(),plan.left(),plan.right(),0,
+                    dp,plan.completed(),matrixVariableNames(af.getMatrixEGraph()),matrixVariableNames(bf.getMatrixEGraph()),
+                    paid,true,false);
+            var original=matrix.getJSONArray("phases").getJSONObject(0).getJSONObject("receipt");
+            int replayed=matrixReplayEngine(selected,plan.completed(),left,right,false)
+                    .verify(af.getMatrixEGraph(),bf.getMatrixEGraph(),original);
+            if(replayed!=matrix.getInt("matrixDistance")) throw new IllegalStateException("RETAINED_COMPLETION_COST_CHANGED");
+            receipt.put("matrixCorrespondenceCompletion",FastRetainedDeclarationCompletion.evidence(plan,selected)
+                    .put("paidCorrespondence",new org.json.JSONObject(new java.util.TreeMap<>(paid)))
+                    .put("matrixActionsUnchanged",true).put("replayedMatrixCost",replayed));
+            return new org.json.JSONObject().put("receipt",receipt).put("connectingPermutation",new org.json.JSONObject()
+                    .put("source",new org.json.JSONArray(plan.sourceOrder())).put("target",new org.json.JSONArray(plan.targetOrder()))
+                    .put("admission","ORIGINAL_TYPED_BINDER_AUTOMORPHISM_RETAINED_EXISTS").put("cost",0));
+        }
+        return null;
     }
 
     private static org.json.JSONObject captureDeclarations(List<QuantiVar> originalA,List<QuantiVar> originalB,
@@ -343,8 +384,9 @@ public final class CanonicalDistance {
                 normalForm.freezeForCertification();
             }
         }
+        List<NormalForm> originals=List.copyOf(snapshot);
         snapshot = NormalForm.fastComparisonViews(snapshot);
-        return new Prepared(snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
+        return new Prepared(originals,snapshot, temporalTree(snapshot), canonicalFormSize(snapshot));
     }
 
     private static void validateCalls(List<NormalForm> normalForms) {
@@ -377,13 +419,15 @@ public final class CanonicalDistance {
     }
 
     public static final class Prepared {
+        private final List<NormalForm> sourceForms;
         private final List<NormalForm> normalForms;
         private final TemporalTree temporalTree;
         private final int size;
         private final EGraphMetadata metadata;
         private final EGraphNode.ReachabilityStats eGraphStats;
 
-        private Prepared(List<NormalForm> normalForms, TemporalTree temporalTree, int size) {
+        private Prepared(List<NormalForm> sourceForms,List<NormalForm> normalForms, TemporalTree temporalTree, int size) {
+            this.sourceForms=sourceForms;
             this.normalForms = normalForms;
             this.temporalTree = temporalTree;
             this.size = size;

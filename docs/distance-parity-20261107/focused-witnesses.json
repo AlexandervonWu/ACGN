@@ -14,6 +14,17 @@
   "regressionRunner": "scripts/run_distance_parity_tests.sh",
   "staticWalkthroughWitnesses": [
     {
+      "family": "retained-existential-native-paid-completion",
+      "baselineCommit": "58ea86250766f57375e2ddf97328aa4a6dd20d59",
+      "source": "classified-data/classroom_fol/both/SASEHD8jPo2HgsuoJ_inv14.als",
+      "baselineObserved": {"componentsBothArms": [27, 0, 1, 26], "fastNativeDeclarationReplay": "BLOCKED"},
+      "contract": "docs/distance-parity-20261107/RetainedScopePaidCompletion.lean",
+      "replayTest": "src/is/fivefivefive/CanDis/core/RetainedPaidCompletionTest.java",
+      "walkthroughEvidenceRelativeToWorkstationDrive": "ACGN/supervision/v3-20261107/stopped-investigation/opseq-astra-20261107/sase-completion-z1JjSPpW/evidence.json",
+      "walkthroughEvidenceSha256": "fa537ab0f678f9409e40394638e7095860cb218128c52e1a3ac5c215959f8586",
+      "scope": "Replay-only completion of one paid outer link; live owner census, source-certified permutation, unchanged body actions; not public wire or Java/Lean certification"
+    },
+    {
       "family": "equal-cost-binder-ties-and-joint-declaration-matrix-linkage",
       "baselineCommit": "c3335c7b2dcae1804273c7394eb9d631b3068601",
       "baselineObserved": {
