@@ -8,6 +8,13 @@ are idle and relinquished ownership; no regression or proof process remains.
 Resume only after an explicit user request. Older autonomous-resume instructions
 do not override this pause.
 
+Subsequent user correction: `RESOURCE_POLICY.md` supersedes the older memory
+wording in the immutable restart handoff and index. Do not repeatedly require
+17 GiB during execution or before each bounded attempt. The old focused wrapper
+needs a separately versioned, validated and reviewed replacement before resume;
+do not alter its frozen evidence-bound copy. The policy update does not resume
+work or retroactively convert the old interruption into a pass.
+
 ## Work Preserved
 
 The checkpoint contains 65 Java source/test and Lean proof files beyond commit

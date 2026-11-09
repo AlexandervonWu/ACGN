@@ -1,5 +1,16 @@
 # Walkthrough-First Replay-Guided Repairs
 
+## Latest Pause And Resource Override
+
+The user paused work on 2026-11-09 after the current review and authorized a
+checkpoint push. Wait for explicit resume; older overnight auto-resume and
+no-push wording below are historical. See `PAUSED_CHECKPOINT_20261109.md`.
+`RESOURCE_POLICY.md` governs memory checks: 17 GiB MemAvailable is only a
+full-corpus startup admission threshold, not a runtime requirement or a
+per-attempt threshold for bounded serial work. The 6 GiB runtime host reserve
+and service/swap/OOM/disk safeguards remain unchanged. A reviewed replacement
+for the overstrict frozen focused wrapper is required before resuming.
+
 ## Current Overnight Authorization
 
 The latest user instruction supersedes the foreground-only scheduling below:

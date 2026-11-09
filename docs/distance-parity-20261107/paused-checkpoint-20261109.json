@@ -1,5 +1,14 @@
 {
   "schema": "paused-autonomous-repair-handoff-v1",
+  "latestPolicyOverride": {
+    "file": "docs/distance-parity-20261107/RESOURCE_POLICY.md",
+    "status": "PAUSED_BY_USER",
+    "precedence": "Supersedes memory admission wording in historical restartProtocol and external handoff; does not alter original results or hashes.",
+    "fullCorpusStartupGiB": 17,
+    "runtimeHostReserveGiB": 6,
+    "require17GiBPerBoundedAttempt": false,
+    "runnerCorrection": "PENDING: separately version, validate and review admission/runtime policy implementation before any resume; frozen guard remains unchanged."
+  },
   "status": "PAUSED_BY_USER",
   "time": "2026-11-09T17:26:26.169Z",
   "owner": "01a1b6f9-4f81-7571-9191-e45c72efe56f",
