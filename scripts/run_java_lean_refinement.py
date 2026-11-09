@@ -300,6 +300,8 @@ def run(root: Path, output: Path) -> int:
                 ("unknown-effect", "TypedENode node = flattenVisible(expanded, sealer);", "System.nanoTime();\n        TypedENode node = flattenVisible(expanded, sealer);"),
                 ("wrong-delegate", "flatConstructCertified(source, sealer, semanticProfile, java.util.Map.of())",
                  "flatConstructCertified(source, sealer, null, java.util.Map.of())"),
+                ("effectful-receiver", "return flatConstructCertified(source, sealer, semanticProfile, java.util.Map.of());",
+                 "return ((TypedENode) java.util.Objects.requireNonNull(null)).flatConstructCertified(source, sealer, semanticProfile, java.util.Map.of());"),
                 ("wrong-expansion", "FlatOperandExposure.expand(source, exposures, semanticProfile, used)",
                  "FlatOperandExposure.expand(source, exposures, null, used)"),
                 ("wrong-certificate-source", "source, node, null, semanticProfile, exposures",
@@ -320,6 +322,7 @@ def run(root: Path, output: Path) -> int:
                     expected = {
                         "unknown-effect": "Unhandled statement: EXPRESSION_STATEMENT",
                         "wrong-delegate": "Entry changes argument 2",
+                        "effectful-receiver": "Unexpected entry receiver",
                         "wrong-expansion": "Method AST differs from supported production grammar:",
                         "wrong-certificate-source": "Unsupported return/certificate pair",
                     }[mutation]

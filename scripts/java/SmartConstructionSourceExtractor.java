@@ -257,6 +257,7 @@ public final class SmartConstructionSourceExtractor {
         ExpressionTree value = ((ReturnTree) entry.getBody().getStatements().get(0)).getExpression();
         require(value instanceof MethodInvocationTree, "Entry does not delegate");
         MethodInvocationTree call = (MethodInvocationTree) value;
+        require(call.getMethodSelect() instanceof IdentifierTree, "Unexpected entry receiver");
         require(element(call).equals(element(implementation)) && call.getTypeArguments().isEmpty()
                 && call.getArguments().size() == 4, "Wrong entry delegate");
         for (int i = 0; i < 3; i++) require(call.getArguments().get(i) instanceof IdentifierTree

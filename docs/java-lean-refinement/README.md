@@ -51,7 +51,7 @@ downloads anything nor runs the corpus, rewarder, or publication experiments.
 The mandatory negative controls change the production Java singleton threshold
 from one to two (extraction succeeds, Lean correspondence rejects) and insert
 an unmodeled effect (extraction rejects). Additional controls corrupt the entry
-delegation, expansion profile, and certificate source; each must reject for its
+delegation, static-call receiver evaluation, expansion profile, and certificate source; each must reject for its
 registered reason, not merely return an unsuccessful process status.
 Boundary tests also reject incomplete
 censuses, broken certificate bindings, invalid fibers, and unsupported encodings.
