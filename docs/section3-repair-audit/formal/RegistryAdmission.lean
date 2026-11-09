@@ -41,8 +41,8 @@ def profileAdmitted (p : Profile) : Bool :=
   match p.authority with
   | .custom => false
   | .compatibility => true
-  | .source => p.key.rewrite == "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13" &&
-      p.key.signature == "canonical-alloy-signature-v8"
+  | .source => p.key.rewrite == "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v16-scoped-domains" &&
+      p.key.signature == "canonical-alloy-signature-v10"
 
 inductive Arity where
   | atLeast (minimum : Nat)

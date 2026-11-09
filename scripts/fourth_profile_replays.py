@@ -18,16 +18,16 @@ SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 P = "is.fivefivefive.CanDis.theory."
 SOURCES = {
     "AlloySemanticProfileFactory": (P + "AlloySemanticProfileFactory", "d9821e2209abefbbc39e5ca2ef3b44fb82a0720b0f89c824b5bde13b28bdafc2", "e980db5ae20141c0f80954196610a284d59da5ef586ba0d4bd13108c4338cebd"),
-    "CertificateBundleWriter": (P + "CertificateBundleWriter", "94c4ab8b81db73094f3dbf1987660fa2e662af108973b5c78dca58b82d213aa6", "880ff160e6040325eccf17d41bba699294ab06e13ee57a3d29ee188dae88566a"),
+    "CertificateBundleWriter": (P + "CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46", "0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21"),
     "Codec": ("org.acgn.cert.Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec", "099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b"),
-    "SemanticEvidenceVerifier": ("org.acgn.cert.SemanticEvidenceVerifier", "c91040e65f45bfc520051f2ccdba9aa6a609e01c0d597eba731fd613f65743da", "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
-    "SemanticProfile": (P + "SemanticProfile", "1b9144c54170bcd98528f79b4432cb1203057dc2ee1b7fedc0d55c2223120492", "3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b"),
+    "SemanticEvidenceVerifier": ("org.acgn.cert.SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc", "cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
+    "SemanticProfile": (P + "SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c", "3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b"),
     "StructuralKey": (P + "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96", "63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f"),
     "Wire": ("org.acgn.cert.Wire", "5f62baead2c72f173aad5319a4c84a46d5e757f91c1b973e021e37b707a37e84", "46015d7ca07b6ba13eb1b1fdebccb382f7492ee90d2827d9539bdde8853ad86e"),
 }
 TEXTS = ["plain", "[]{}:012", 'quote"slash\\', "line\nnext\tcell", "\u03b1\u4e2d", "\U0001f600", "e\u0301", "x\0y"]
-REWRITE = "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13"
-SIGNATURE = "canonical-alloy-signature-v8"
+REWRITE = "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v16-scoped-domains"
+SIGNATURE = "canonical-alloy-signature-v10"
 REGISTRY = "alloy-container-law-theory-v3"
 REGISTRY_DIGEST = "b6479712e518b5dfc13f19866769f30ab81b49bd4bad508a175691fbb1d0633f"
 CONTEXT_VERSION = "alloy-command-options-v4-independent-search-domain"

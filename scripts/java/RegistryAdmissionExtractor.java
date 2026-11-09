@@ -18,7 +18,7 @@ public final class RegistryAdmissionExtractor {
     private static final Map<String, String> EXPECTED = Map.of(
             "AlloyLawRegistry", "272257f8d03588e9cd009512c35a32a18c5194b5f74044c87a2716081690fb7b 9cad15d627e624d2998e965e86e8f5b52868552ca5c2d0015e12fb2fecebd041",
             "ContainerLawCertificate", "b058b18d175022e193564a5e93c254fbd48924e82de99820daf6ad7142cdc0f2 d952931af1f841172ecdef2d6d04e8f94279d45869f97b0e5e0de49d4cea049e",
-            "SemanticProfile", "1b9144c54170bcd98528f79b4432cb1203057dc2ee1b7fedc0d55c2223120492 3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b",
+            "SemanticProfile", "2e7f3ce494388bbd2d7d983b2bee30f1a25a38c9fcd7c7dfa148b038ebe3c65c 3bb8166269c04aa1cb967873088cfdeaefc3bafdbc3399c01122f12e1b99334b",
             "CertificateOrigin", "c88d33167e5b9a53f361ab0522a0b9d8559f5e934fa13039be7a98daad5ce9cb 621cef08d188571283089f056b2cf8bb44e22881b9d6a124952774694a3807e9");
 
     private static void require(boolean condition, String message) {

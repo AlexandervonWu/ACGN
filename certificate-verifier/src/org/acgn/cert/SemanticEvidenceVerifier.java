@@ -38,9 +38,9 @@ final class SemanticEvidenceVerifier {
     private static final String CALL_OCCURRENCE_ANCHOR_PREFIX =
             "ACGN/CALL-OCCURRENCE/";
     private static final String PRODUCTION_ALLOY_REWRITE_MODE =
-            "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13";
+            "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v16-scoped-domains";
     private static final String PRODUCTION_ALLOY_SIGNATURE_VERSION =
-            "canonical-alloy-signature-v8";
+            "canonical-alloy-signature-v10";
     private static final String REGISTRY_VERSION = "alloy-container-law-theory-v3";
     private static final String REGISTRY_TEXT = String.join("\n",
             "AND:Set+:A,C,I",
@@ -1274,7 +1274,7 @@ final class SemanticEvidenceVerifier {
     /** Rebuilds every concrete semantic-evidence claim from the decoded model. */
     private final class SemanticReplay {
         private static final String BINDER_SIGNATURE =
-                "canonical-alloy-signature-v8";
+                "canonical-alloy-signature-v10";
         private static final String BINDER_DECLARATION = "alloy-binder-block";
 
         private final ProfileEvidence profile;

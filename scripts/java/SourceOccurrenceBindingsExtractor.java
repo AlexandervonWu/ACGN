@@ -19,7 +19,7 @@ public final class SourceOccurrenceBindingsExtractor {
             "StructuralKey", P + "StructuralKey",
             "DependentChainCertificate", P + "DependentChainCertificate");
     private static final Map<String, String> EXPECTED = Map.of(
-            "TheoryAlloyAdapter", "e4c13603b97a2b342cd80a2aa25e131abdda5ff91aea63248f15bca102080495 2781b813137ddf634e7d56b3f3649302d7a94e1d1503449cb2e0cf21c0c4d2a5",
+            "TheoryAlloyAdapter", "ed25098cfc0ddb9fc0a2199d164a491b4134bd5a237a38134a1dac138606599e 9b5dc746645bd0410691e802548793866250a7b94bc72be99f722530f881eb7c",
             "EGraphNode", "2f0f8bbdf5f7651d87f1d217426f01760b279d69d4e526f52c5f7eab87bf6153 12843c82704c68ca2a0c9344803261826b23e0ba016121a8288f065152f271d4",
             "NormalForm", "0503e95cbaeb1f925c33dcc814e2274fb5be3e158138f2667f18c4835e98cf23 2a09deac7cce49358f82930e5211b8394379d0e8bc8abe448046c67d9424f78b",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",

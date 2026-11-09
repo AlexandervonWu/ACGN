@@ -297,7 +297,13 @@ def run(root: Path, output: Path) -> int:
             audit_assumptions(replay_log, theorem_count)
             for mutation, old, new in (
                 ("wrong-threshold", "&& ((SetPort) container).elements().size() == 1", "&& ((SetPort) container).elements().size() == 2"),
-                ("unknown-effect", "TypedENode node = flattenVisible(source, sealer);", "System.nanoTime();\n        TypedENode node = flattenVisible(source, sealer);"),
+                ("unknown-effect", "TypedENode node = flattenVisible(expanded, sealer);", "System.nanoTime();\n        TypedENode node = flattenVisible(expanded, sealer);"),
+                ("wrong-delegate", "flatConstructCertified(source, sealer, semanticProfile, java.util.Map.of())",
+                 "flatConstructCertified(source, sealer, null, java.util.Map.of())"),
+                ("wrong-expansion", "FlatOperandExposure.expand(source, exposures, semanticProfile, used)",
+                 "FlatOperandExposure.expand(source, exposures, null, used)"),
+                ("wrong-certificate-source", "source, node, null, semanticProfile, exposures",
+                 "expanded, node, null, semanticProfile, exposures"),
             ):
                 mutant = output / (label + "-" + mutation)
                 shutil.copytree(build / "src", mutant / "src")
@@ -308,8 +314,18 @@ def run(root: Path, output: Path) -> int:
                     raise Blocked("source mutation witness is ambiguous")
                 target.write_text(text.replace(old, new))
                 extracted = mutant / "extracted-program.json"
-                command(label + "-" + mutation + "-extract", ["java", "-Xmx1g", "-cp", str(build / "classes"),
-                        "SmartConstructionSourceExtractor", str(mutant), str(extracted)], mutant, reject=mutation == "unknown-effect")
+                rejection_log = command(label + "-" + mutation + "-extract", ["java", "-Xmx1g", "-cp", str(build / "classes"),
+                        "SmartConstructionSourceExtractor", str(mutant), str(extracted)], mutant, reject=mutation != "wrong-threshold")
+                if mutation != "wrong-threshold":
+                    expected = {
+                        "unknown-effect": "Unhandled statement: EXPRESSION_STATEMENT",
+                        "wrong-delegate": "Entry changes argument 2",
+                        "wrong-expansion": "Method AST differs from supported production grammar:",
+                        "wrong-certificate-source": "Unsupported return/certificate pair",
+                    }[mutation]
+                    if not rejection_log.read_text().startswith(
+                            'Exception in thread "main" java.lang.IllegalArgumentException: ' + expected):
+                        raise Blocked("negative source control failed for an unrelated reason: " + mutation)
                 if mutation == "wrong-threshold":
                     mutated_program = json.loads(extracted.read_text(), object_pairs_hook=unique_object)
                     (proofs / "WrongThreshold.lean").write_text(render_program(mutated_program))

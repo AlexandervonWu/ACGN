@@ -19,7 +19,7 @@ FIELDS = "case surface fixture mutation input output preimage id outcome exact o
 SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 SOURCES = {
     "Bundle": ("org.acgn.cert.Bundle", "ff78efef7d57a6ddc37bc35609a758d3ae1d5c7b453f75ae1851540d8dc11131", "6d2831b66e4cb1a1741ae5a8131914dad3c9ac1f3da953d36fb6bc67f0851e88"),
-    "CertificateBundleWriter": ("is.fivefivefive.CanDis.theory.CertificateBundleWriter", "94c4ab8b81db73094f3dbf1987660fa2e662af108973b5c78dca58b82d213aa6", "880ff160e6040325eccf17d41bba699294ab06e13ee57a3d29ee188dae88566a"),
+    "CertificateBundleWriter": ("is.fivefivefive.CanDis.theory.CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46", "0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21"),
     "Codec": ("org.acgn.cert.Codec", "c0869254cca18a781b4952ae50e4c752d015f3734347dc877c2d60f62bafb1ec", "099694a8e4863290df0dbe1ef62e69237d728b92d2cfef1c5826cc5c28b1d77b"),
     "Wire": ("org.acgn.cert.Wire", "5f62baead2c72f173aad5319a4c84a46d5e757f91c1b973e021e37b707a37e84", "46015d7ca07b6ba13eb1b1fdebccb382f7492ee90d2827d9539bdde8853ad86e"),
 }

@@ -9,7 +9,9 @@ traces. The machine-readable claim boundary is [closure-config.json](closure-con
 ## Correspondence Chain
 
 1. A full JDK parses and resolves the actual `TypedENode.flatConstructCertified`
-   method against the frozen source tree. The extractor accepts exactly its
+   overloads against the frozen source tree. It checks the public entry's exact
+   delegation with an empty exposure map and the four-argument implementation's
+   expansion, flattening, and certificate-factory arguments. The extractor accepts exactly its
    registered statement/effect grammar, resolves receiver and factory symbols,
    and exports the actual condition, singleton type guard, and return actions.
    Unsupported syntax or effects reject. A Java condition is not substituted
@@ -48,7 +50,10 @@ downloads anything nor runs the corpus, rewarder, or publication experiments.
 
 The mandatory negative controls change the production Java singleton threshold
 from one to two (extraction succeeds, Lean correspondence rejects) and insert
-an unmodeled effect (extraction rejects). Boundary tests also reject incomplete
+an unmodeled effect (extraction rejects). Additional controls corrupt the entry
+delegation, expansion profile, and certificate source; each must reject for its
+registered reason, not merely return an unsuccessful process status.
+Boundary tests also reject incomplete
 censuses, broken certificate bindings, invalid fibers, and unsupported encodings.
 
 ## Claims And Trust
@@ -70,7 +75,7 @@ Generated proof dependencies are audited; `sorry`, custom axioms,
 `native_decide`, and `unsafe` do not discharge these proofs.
 
 This does **not** close universal heap/loop refinement, the complete
-`flattenVisible` or certificate factory algorithms, mixed-head sealing, the
+exposure-expansion, `flattenVisible` or certificate factory algorithms, mixed-head sealing, the
 Alloy parser, or source-level empty-expression normalization. P2-16's broader
 status therefore remains separate from this closed fragment. Production
 certificate authority, rewrite rules, runtime semantics and empirical results

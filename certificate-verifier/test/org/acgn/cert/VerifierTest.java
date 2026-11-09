@@ -97,6 +97,18 @@ public final class VerifierTest {
                 verify(verifier, withSemanticProfileScalar(
                         publication, 2, "mutated-temporal"), Profile.KERNEL),
                 "malformed source-command context mutation");
+        for (String version : List.of(
+                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13",
+                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v17")) {
+            assertCode(FailureCode.THEORY_MISMATCH,
+                    verify(verifier, withSemanticProfileScalar(publication, 3, version), Profile.KERNEL),
+                    "unsupported adapter version " + version);
+        }
+        for (String version : List.of("canonical-alloy-signature-v8", "canonical-alloy-signature-v11")) {
+            assertCode(FailureCode.THEORY_MISMATCH,
+                    verify(verifier, withSemanticProfileScalar(publication, 4, version), Profile.KERNEL),
+                    "unsupported signature version " + version);
+        }
         assertCode(
                 FailureCode.THEORY_MISMATCH,
                 verify(verifier, withSemanticProfileScalar(
@@ -4714,8 +4726,8 @@ public final class VerifierTest {
                 "4",
                 overflow,
                 context,
-                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v13",
-                "canonical-alloy-signature-v8");
+                "repaired-normal-form-v3;typed-alloy-normal-form-adapter-v16-scoped-domains",
+                "canonical-alloy-signature-v10");
         return List.of(
                 profile.get(0),
                 profile.get(1),

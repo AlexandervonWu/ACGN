@@ -69,6 +69,7 @@ public final class SmartConstructionSourceExtractor {
         return result;
     }
     private String type(Tree tree) {
+        if (tree instanceof ParameterizedTypeTree parameterized) return type(parameterized.getType());
         require(tree.getKind() == Tree.Kind.IDENTIFIER || tree.getKind() == Tree.Kind.MEMBER_SELECT,
                 "Unhandled type: " + tree.getKind());
         return symbol(element(tree));
@@ -89,6 +90,7 @@ public final class SmartConstructionSourceExtractor {
     private N expression(ExpressionTree tree) {
         require(tree != null, "Missing expression");
         return switch (tree.getKind()) {
+            case NULL_LITERAL -> n("nullValue");
             case PARENTHESIZED -> expression(((ParenthesizedTree) tree).getExpression());
             case IDENTIFIER -> {
                 String name = locals.get(element(tree));
@@ -189,8 +191,12 @@ public final class SmartConstructionSourceExtractor {
                 access("InstantiatedOperator", "flatLicense", P + "FlatLicense",
                         access("FlatApplication", "operator", P + "InstantiatedOperator", source))));
         return List.of(
+                n("bind", "used", "java.util.List", n("newObject", "java.util.ArrayList#<init>():void", List.of())),
+                n("bind", "expanded", P + "FlatApplication", call(sig("FlatOperandExposure", "expand",
+                        P + "FlatApplication", P + "FlatApplication", "java.util.Map", P + "SemanticProfile",
+                        "java.util.List"), null, source, ref("exposures"), ref("semanticProfile"), ref("used"))),
                 n("bind", "node", OWNER, call(sig("TypedENode", "flattenVisible", OWNER,
-                        P + "FlatApplication", P + "NodeSealer"), null, source, ref("sealer"))),
+                        P + "FlatApplication", P + "NodeSealer"), null, ref("expanded"), ref("sealer"))),
                 n("bind", "container", P + "PortValue", call("java.util.List#get(int):java.lang.Object",
                         access("TypedENode", "ports", "java.util.List", node), index)),
                 n("branch", condition, List.of(
@@ -201,40 +207,67 @@ public final class SmartConstructionSourceExtractor {
                         n("bind", "singleton", P + "OnePort", n("cast", P + "OnePort", sole)),
                         whenTrue), List.of()), whenFalse);
     }
-    private static N expectedReturn(String targetType, String factory, N target, N source, N profile) {
+    private static N expectedReturn(String targetType, N target, N source, N profile) {
         return n("ret", n("newObject", sig("CertifiedFlatConstruction", "<init>", "void",
                 P + targetType, P + "FlatConstructionCertificate"), List.of(target,
-                call(sig("FlatConstructionCertificate", factory, P + "FlatConstructionCertificate",
-                        P + "FlatApplication", P + targetType, P + "SemanticProfile"), null, source, target, profile))));
+                call(sig("FlatConstructionCertificate", "createWithExposures", P + "FlatConstructionCertificate",
+                        P + "FlatApplication", P + "TypedENode", P + "OnePort", P + "SemanticProfile",
+                        "java.util.Map"), null, source,
+                        targetType.equals("TypedENode") ? target : n("nullValue"),
+                        targetType.equals("OnePort") ? target : n("nullValue"), profile, ref("exposures")))));
     }
     private List<N> extract(MethodTree m) {
-        modifiers(m.getModifiers(), Set.of(Modifier.PUBLIC, Modifier.STATIC));
+        modifiers(m.getModifiers(), Set.of(Modifier.STATIC));
         require(m.getTypeParameters().isEmpty() && m.getThrows().isEmpty() && m.getDefaultValue() == null
                 && m.getReceiverParameter() == null && m.getBody() != null, "Unexpected method declaration");
         require(type(m.getReturnType()).equals(P + "CertifiedFlatConstruction"), "Wrong return type");
         require(symbol(element(m)).equals(sig("TypedENode", METHOD, P + "CertifiedFlatConstruction",
-                P + "FlatApplication", P + "NodeSealer", P + "SemanticProfile")), "Wrong method signature");
-        require(m.getParameters().size() == 3, "Wrong parameter count");
-        String[] names = {"source", "sealer", "semanticProfile"};
-        String[] ts = {"FlatApplication", "NodeSealer", "SemanticProfile"};
-        for (int i = 0; i < 3; i++) require(variable(m.getParameters().get(i), true)
-                .equals(n("bind", names[i], P + ts[i], null)), "Wrong parameter at " + i);
+                P + "FlatApplication", P + "NodeSealer", P + "SemanticProfile", "java.util.Map")), "Wrong method signature");
+        require(m.getParameters().size() == 4, "Wrong parameter count");
+        String[] names = {"source", "sealer", "semanticProfile", "exposures"};
+        String[] ts = {P + "FlatApplication", P + "NodeSealer", P + "SemanticProfile", "java.util.Map"};
+        for (int i = 0; i < 4; i++) require(variable(m.getParameters().get(i), true)
+                .equals(n("bind", names[i], ts[i], null)), "Wrong parameter at " + i);
+        require(element(m.getParameters().get(3)).asType().toString().equals(
+                "java.util.Map<" + P + "OnePort," + P + "FlatOperandExposure>"), "Wrong exposure map type");
         List<N> plan = block(m.getBody());
-        require(plan.size() == 4 && plan.get(2).kind.equals("branch"), "Unexpected top-level statements");
-        List<?> branch = (List<?>) plan.get(2).args.get(1);
+        require(plan.size() == 6 && plan.get(4).kind.equals("branch"), "Unexpected top-level statements");
+        List<?> branch = (List<?>) plan.get(4).args.get(1);
         require(branch.size() == 4 && ((N) branch.get(1)).kind.equals("branch"), "Unexpected singleton statements");
-        N condition = (N) plan.get(2).args.get(0), guard = (N) ((N) branch.get(1)).args.get(0);
+        N condition = (N) plan.get(4).args.get(0), guard = (N) ((N) branch.get(1)).args.get(0);
         predicate(condition, false); predicate(guard, true);
-        N whenTrue = (N) branch.get(3), whenFalse = plan.get(3);
+        N whenTrue = (N) branch.get(3), whenFalse = plan.get(5);
         action(whenTrue); action(whenFalse);
         require(plan.equals(expectedPlan(condition, guard, whenTrue, whenFalse)),
                 "Method AST differs from supported production grammar: " + json(plan));
         return plan;
     }
     private static String action(N ret) {
-        if (ret.equals(expectedReturn("OnePort", "createSingletonProduction", ref("singleton"), ref("source"), ref("semanticProfile")))) return "SINGLETON";
-        require(ret.equals(expectedReturn("TypedENode", "createProduction", ref("node"), ref("source"), ref("semanticProfile"))), "Unsupported return/certificate pair");
+        if (ret.equals(expectedReturn("OnePort", ref("singleton"), ref("source"), ref("semanticProfile")))) return "SINGLETON";
+        require(ret.equals(expectedReturn("TypedENode", ref("node"), ref("source"), ref("semanticProfile"))), "Unsupported return/certificate pair");
         return "NODE";
+    }
+
+    private void checkEntry(MethodTree entry, MethodTree implementation) {
+        modifiers(entry.getModifiers(), Set.of(Modifier.PUBLIC, Modifier.STATIC));
+        require(symbol(element(entry)).equals(sig("TypedENode", METHOD, P + "CertifiedFlatConstruction",
+                P + "FlatApplication", P + "NodeSealer", P + "SemanticProfile")), "Wrong entry signature");
+        require(entry.getBody() != null && entry.getBody().getStatements().size() == 1
+                && entry.getBody().getStatements().get(0) instanceof ReturnTree, "Unexpected entry effects");
+        ExpressionTree value = ((ReturnTree) entry.getBody().getStatements().get(0)).getExpression();
+        require(value instanceof MethodInvocationTree, "Entry does not delegate");
+        MethodInvocationTree call = (MethodInvocationTree) value;
+        require(element(call).equals(element(implementation)) && call.getTypeArguments().isEmpty()
+                && call.getArguments().size() == 4, "Wrong entry delegate");
+        for (int i = 0; i < 3; i++) require(call.getArguments().get(i) instanceof IdentifierTree
+                && element(call.getArguments().get(i)).equals(element(entry.getParameters().get(i))),
+                "Entry changes argument " + i);
+        require(call.getArguments().get(3) instanceof MethodInvocationTree, "Missing empty exposure map");
+        MethodInvocationTree empty = (MethodInvocationTree) call.getArguments().get(3);
+        Element factory = element(empty);
+        require(factory instanceof ExecutableElement && factory.getEnclosingElement().toString().equals("java.util.Map")
+                && factory.getSimpleName().contentEquals("of") && factory.getModifiers().contains(Modifier.STATIC)
+                && empty.getArguments().isEmpty() && empty.getTypeArguments().isEmpty(), "Nonempty/foreign exposure factory");
     }
     // Erase receivers only after checking the exact environment slot and collection access.
     private static Map<String, Object> predicate(N expr, boolean guard) {
@@ -274,6 +307,7 @@ public final class SmartConstructionSourceExtractor {
         if (value == null) return "null";
         if (value instanceof N node) {
             String[] keys = switch (node.kind) {
+                case "nullValue" -> new String[]{};
                 case "ref" -> new String[]{"name"}; case "nat", "text" -> new String[]{"value"};
                 case "and", "or", "eq" -> new String[]{"left", "right"};
                 case "not", "isSet", "isOne", "size", "ret", "throwValue" -> new String[]{"value"};
@@ -311,6 +345,7 @@ public final class SmartConstructionSourceExtractor {
             -- Generated from javac's resolved production AST. Data only; no correctness claim.
             namespace SmartConstructionSource
             inductive Expr where
+              | nullValue : Expr
               | ref : String -> Expr
               | nat : Nat -> Expr
               | text : String -> Expr
@@ -368,13 +403,17 @@ public final class SmartConstructionSourceExtractor {
                     && extractor.symbol(extractor.element(c)).equals(OWNER)) {
                 for (Tree member : c.getMembers()) if (member instanceof MethodTree m && m.getName().contentEquals(METHOD)) methods.add(m);
             }
-            require(methods.size() == 1, "Ambiguous/missing production method");
-            MethodTree method = methods.get(0);
+            require(methods.size() == 2, "Ambiguous/missing production overloads");
+            List<MethodTree> entries = methods.stream().filter(m -> m.getParameters().size() == 3).toList();
+            List<MethodTree> implementations = methods.stream().filter(m -> m.getParameters().size() == 4).toList();
+            require(entries.size() == 1 && implementations.size() == 1, "Ambiguous/missing production signatures");
+            MethodTree method = implementations.get(0);
+            extractor.checkEntry(entries.get(0), method);
             List<N> plan = extractor.extract(method);
-            N condition = (N) plan.get(2).args.get(0);
-            List<?> then = (List<?>) plan.get(2).args.get(1);
+            N condition = (N) plan.get(4).args.get(0);
+            List<?> then = (List<?>) plan.get(4).args.get(1);
             N guard = (N) ((N) then.get(1)).args.get(0);
-            String whenTrue = action((N) then.get(3)), whenFalse = action(plan.get(3));
+            String whenTrue = action((N) then.get(3)), whenFalse = action(plan.get(5));
             List<String> tags = List.of(whenTrue.toLowerCase(Locale.ROOT), whenFalse.toLowerCase(Locale.ROOT));
             long start = extractor.trees.getSourcePositions().getStartPosition(unit, method);
             long end = extractor.trees.getSourcePositions().getEndPosition(unit, method);
@@ -387,7 +426,7 @@ public final class SmartConstructionSourceExtractor {
                             "endLine", unit.getLineMap().getLineNumber(end - 1)), "condition", predicate(condition, false),
                     "rejectionGuard", predicate(guard, true), "whenTrue", whenTrue, "whenFalse", whenFalse,
                     "branchTags", tags, "plan", plan, "resolvedSymbols", new ArrayList<>(extractor.symbols),
-                    "trustBoundary", "Trusted javac symbol resolution and bounded AST projection; callee bodies are named effects, not interpreted.");
+                    "trustBoundary", "Trusted javac symbol resolution and bounded AST projection; expansion, flattening and certificate factories are named effects, not interpreted. Entry delegation with an empty exposure map is checked; the selector theorem applies after expansion/flattening, not to their unbounded semantics.");
             String lean = LEAN_TYPES + "def sourceSha256 : String := " + quote(sha) + "\n"
                     + "def condition : Expr := " + lean(condition) + "\n"
                     + "def rejectionGuard : Expr := " + lean(guard) + "\n"
