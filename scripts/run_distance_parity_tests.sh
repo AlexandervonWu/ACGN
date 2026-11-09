@@ -54,6 +54,7 @@ lean docs/distance-parity-20261107/GroupedOnePaidAdmission.lean
 lean docs/distance-parity-20261107/GuardedJoinBooleanErasure.lean
 lean docs/distance-parity-20261107/RetainedTupleCallTrace.lean
 lean docs/distance-parity-20261107/DistanceDerivedTrace.lean
+lean docs/distance-parity-20261107/LocalOwnerTrace.lean
 for contract in DependentChainSequence DependentJoinGuard PhaseA2DependentChains GuardedJoinChain; do
     LEAN_PATH="$BUILD_DIR" lean -o "$BUILD_DIR/$contract.olean" \
         "docs/section3-repair-audit/formal/$contract.lean"
@@ -69,6 +70,14 @@ java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.metric.MetricDecisionProgramTest
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.DistanceDerivedTraceTest "$BUILD_DIR/distance-derived-trace"
+local_owner_args=("${ACGN_LOCAL_OWNER_RECEIPTS:-$BUILD_DIR/local-owner-trace}")
+if [[ -n "${ACGN_LOCAL_OWNER_FAMILY:-}" || -n "${ACGN_LOCAL_OWNER_BASELINE:-}" ]]; then
+    : "${ACGN_LOCAL_OWNER_FAMILY:?Both local-owner family and baseline are required}"
+    : "${ACGN_LOCAL_OWNER_BASELINE:?Both local-owner family and baseline are required}"
+    local_owner_args+=(candidate "$ACGN_LOCAL_OWNER_FAMILY" "$ACGN_LOCAL_OWNER_BASELINE")
+fi
+java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
+    -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.LocalOwnerTraceTest "${local_owner_args[@]}"
 java -Xmx1g -XX:+ExitOnOutOfMemoryError -Djava.io.tmpdir="$BUILD_DIR" \
     -cp "$BUILD_DIR:$ROOT/lib/*" is.fivefivefive.CanDis.core.RetainedPaidCompletionTest
 for test in BatchParityGateTest AugmentedPreludeTest theory.FlatOperandExposureTest theory.GuardedJoinRotationTest PartialJoinCompositionTest metric.RepairProjectionPermutationTest metric.MatrixReplayTest metric.TemporalReplayTest metric.PhaseReplayTest NativePhaseReplayTest LocalDomainSingletonTest FastChainGeometryTest P06ShorterReplayTest ProductShorterReplayTest FastProductGeometryTest core.ScopedTemporalShorterReplayTest core.TemporalOccurrenceAccountingTest core.InjectiveVariableFallbackTest core.InjectiveVariableReplayTest PaidDeclarationShorterReplayTest core.FastPaidDeclarationAlignmentTest core.ClosedTemporalPhaseTest DistanceReplayDiagnosticsTest FirstIncidentReplayTest CertifiedSingletonCompositionTest FastResultTypeCostTest FastRewriteParityTest EGraphSaturationTest metric.QuotientRepairDistanceTest CanonicalAlloyPipelineTest; do

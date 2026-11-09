@@ -263,6 +263,7 @@ public final class NativeOperationComparison {
         final Map<Long,EGraphNode> originalConstants=new HashMap<>();
         final ClosedCallEvidence closedCalls;
         final BoundCallEvidence boundCalls;
+        final LocalOwnerCorrespondence localOwners;
         final Set<EGraphNode> scopedCalls=Collections.newSetFromMap(new IdentityHashMap<>());
         final List<TypedEqualityCertificate> constructionRoots=new ArrayList<>();
         final Map<String,Node> selectedNodes=new HashMap<>();
@@ -347,6 +348,7 @@ public final class NativeOperationComparison {
             fastAtoms=CanonicalDistance.diagnosticDeclarationAtoms(source);base=CanonicalDistance.diagnosticDeclarationOrder(source);
             projectedCensus(phase.matrix(),new int[]{MAX_NODES},0);
             census(comparison.getMatrixEGraph(),new int[]{MAX_NODES},0,false);
+            localOwners=LocalOwnerCorrespondence.check(source,comparison.getMatrixEGraph());
             var ids=new JSONArray();for(var q:qs)ids.put(new JSONArray().put(q.getId()).put(q.getName()).put(q.getBindingPath()).put(q.getExactAlloyType().stableString()));
             commitment=hash(new JSONArray().put(source.getCertificationMatrixEGraph().getSourceOccurrenceLineage()).put(ids)
                     .put(new TreeSet<>(originalVariables.keySet())).toString());
@@ -363,15 +365,6 @@ public final class NativeOperationComparison {
                     originalCalls.put(n.getSourceOccurrenceLineage(),n);
                     supported(originalCalls.size()<=64,"CLOSED_CALL_COUNT_BUDGET");
                 }
-            }
-            boolean binder=n.getChildren().stream().anyMatch(c->List.of(EGraphNode.Opcode.GENERICRELDECL,
-                    EGraphNode.Opcode.DISJ,EGraphNode.Opcode.VAR,EGraphNode.Opcode.DISJVAR).contains(c.getOpcode()));
-            if(binder) {
-                var children=n.getChildren();
-                supported(children.size()==2 && children.get(0).getOpcode()==EGraphNode.Opcode.GENERICRELDECL
-                        && children.get(0).getChildren().size()>=2
-                        && children.get(0).getChildren().subList(1,children.get(0).getChildren().size()).stream()
-                            .allMatch(c->c.getOpcode()==EGraphNode.Opcode.VARIABLE),"LOCAL_DECLARATION_LAYOUT_UNSUPPORTED");
             }
             if(original && n.getOpcode()==EGraphNode.Opcode.VARIABLE) {
                 var prior=originalVariables.putIfAbsent(n.getSourceOccurrenceLineage(),n);
@@ -404,6 +397,7 @@ public final class NativeOperationComparison {
                     .put("type",String.valueOf(b.declaration().observationType())).put("domain",String.valueOf(b.declaration().observationDomain())));
             var nodes=new JSONArray();traceNodes(comparison.getMatrixEGraph(),"$",paths,nodes,new int[]{MAX_NODES},0);
             return new JSONObject().put("originalEndpointCommitment",commitment).put("phase",0).put("bindings",bindings)
+                    .put("localOwnerCorrespondence",localOwners.json())
                     .put("constructionProofs",proofs).put("callPremises",calls).put("structuralKeys",keys.rows).put("matrixEndpoints",nodes)
                     .put("proofsCheckedInProcess",true).put("constructionIsNotRepair",true).put("wireReplayChecked",false);
         }
