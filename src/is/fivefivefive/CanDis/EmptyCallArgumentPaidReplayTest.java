@@ -106,7 +106,15 @@ public final class EmptyCallArgumentPaidReplayTest {
         var local=prepare(base+"pred a {all x:A | x in x.r implies (one y:A | x in max[y])}","a","b");
         check(supports(local.a)&&!FastLocalPaidScope.checkedCalls(local.a.normalizedForms().get(0)).isEmpty(),"retained imported local argument with actual owner");sourcePremises(local.a);
         for(var direction:List.of(local,local.reverse()))check(NativeOperationComparison.compare(direction.a,direction.b,CanonicalAlloyPipeline.prepare(direction.a),CanonicalAlloyPipeline.prepare(direction.b)).status()==NativeOperationComparison.Status.MATCHED,"local imported call replay both directions");
-        for(String text:List.of("pred a[z:A] {all x:A | max[x] in z}","pred a {all x:A | always x in max[x]}","pred a {all x:A | x in max[min[x]]}","pred a {all x:A | x in max[x+x.r]}")){var q=prepare(base+text,"a","b");check(!supports(q.a),"unsupported expression/owner boundary "+text);check(NativeOperationComparison.compare(q.a,q.b,CanonicalAlloyPipeline.prepare(q.a),CanonicalAlloyPipeline.prepare(q.b)).status()==NativeOperationComparison.Status.UNCHECKABLE,"unsupported remains unchecked");}
+        for(var control:List.of(Map.entry("pred a[z:A] {all x:A | max[x] in z}",NativeOperationComparison.Status.UNCHECKABLE),
+                Map.entry("pred a {all x:A | always x in max[x]}",NativeOperationComparison.Status.MATCHED),
+                Map.entry("pred a {all x:A | x in max[min[x]]}",NativeOperationComparison.Status.UNCHECKABLE),
+                Map.entry("pred a {all x:A | x in max[x+x.r]}",NativeOperationComparison.Status.UNCHECKABLE))) {
+            var q=prepare(base+control.getKey(),"a","b");check(!supports(q.a),"legacy paid-prefix helper scope unchanged");
+            var result=NativeOperationComparison.compare(q.a,q.b,CanonicalAlloyPipeline.prepare(q.a),CanonicalAlloyPipeline.prepare(q.b));
+            check(result.status()==control.getValue(),"retained expression gaps versus checked temporal imported-call owner");
+            if(control.getValue()==NativeOperationComparison.Status.MATCHED)check(result.evidence().getBoolean("allNativeEntriesRetained"),"temporal bound-call paid/zero operations retained");
+        }
         var controls=new JSONArray();for(var row:List.of(new String[]{"coursesOld/both/2EKgnipH28DLyp8uK_inv13","inv13","15"},new String[]{"coursesNew/correct/wnqMPtpNxnPYzru3g_inv14","inv14","16"},new String[]{"coursesNew/both/5TvX7MDJN22SSvqyR_inv13","inv13","10"},new String[]{"coursesNew/both/LJrfWwJdKiTdyytci_inv14","inv14","26"},new String[]{"coursesNew/both/5vxYh7NCpEPMmC47p_inv14","inv14","47"},new String[]{"classroom_fol/both/JoNXaXfKNJzGh3BFa_inv12","inv12","22"})){
             var q=prepare(Files.readString(Path.of("classified-data",row[0]+".als")),row[1],row[1]+"c");for(var dir:List.of(q,q.reverse()))check(Canonical.distance(dir.a,dir.b)==Integer.parseInt(row[2])&&CanonicalAlloyPipeline.distance(CanonicalAlloyPipeline.prepare(dir.a),CanonicalAlloyPipeline.prepare(dir.b))==Integer.parseInt(row[2]),"prior family cost "+row[0]);controls.put(row[0]);}
         Files.writeString(out.resolve("checks.json"),new JSONObject().put("checks",checks).put("controls",controls).put("certificationStatus","BLOCKED").toString(2),StandardOpenOption.CREATE_NEW);System.out.println("EmptyCallArgumentPaidReplayTest: "+checks+" checks passed");

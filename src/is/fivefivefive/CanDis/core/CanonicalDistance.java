@@ -20,7 +20,7 @@ import is.fivefivefive.CanDis.metric.MatrixDecision;
  * and unordered matching are metric semantics, not approximation heuristics.
  */
 public final class CanonicalDistance {
-    public static final String VERSION = "typed-fast-distance-v34-retained-native-decisions";
+    public static final String VERSION = "typed-fast-distance-v35-original-owner-phase-order";
     private static final ThreadLocal<MutableAllocationStats> ALLOCATION_TRACKER = new ThreadLocal<>();
     private static final ThreadLocal<DecisionCapture> DECISIONS = new ThreadLocal<>();
     private record PhaseDecision(Map<String,String> mapping,MatrixDecision<EGraphNode> matrix) {
@@ -142,6 +142,11 @@ public final class CanonicalDistance {
                         .put("semanticIdentity",String.valueOf(n.getSemanticIdentity())).put("callOccurrence",n.getCallOccurrenceId())
                         .put("localCoordinate",n.hasComparisonLocalCoordinate()).toString();
             }
+            public Object sourceObjectEvidence(EGraphNode n) {
+                return n.temporalReferenceAuthorityId()>0?new org.json.JSONObject()
+                        .put("temporalReferenceAuthority",n.temporalReferenceAuthorityId())
+                        .put("sourceOccurrenceLineage",n.getSourceOccurrenceLineage()):org.json.JSONObject.NULL;
+            }
             public List<EGraphNode> children(EGraphNode n) { return FastChainGeometry.children(n); }
             public List<EGraphNode> alternatives(EGraphNode n) { return List.of(); }
             public boolean unordered(EGraphNode a,EGraphNode b) { return a.getOpcode()==b.getOpcode() && a.isOrderInsensitive() && b.isOrderInsensitive(); }
@@ -164,6 +169,9 @@ public final class CanonicalDistance {
     public static is.fivefivefive.CanDis.metric.NativeRepairTrace evaluateWithTrace(Prepared left,Prepared right) {
         var captured=captureDecisions(left,right);var out=captured.matrix;
         try {
+        var phaseOrder=new org.json.JSONArray();
+        appendPhaseOrder(left,"source",phaseOrder);appendPhaseOrder(right,"target",phaseOrder);
+        if(!phaseOrder.isEmpty())out.put("nativePhaseRepresentationSteps",phaseOrder);
         var selected=captured.decisions.alignment;
         var as=new ArrayList<List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom>>();
         var bs=new ArrayList<List<is.fivefivefive.CanDis.metric.DeclarationReplay.Atom>>();
@@ -199,6 +207,8 @@ public final class CanonicalDistance {
         is.fivefivefive.CanDis.metric.PhaseReplay.attach(out,()->declarationReplay(left,right,out,captured.decisions),
                 ()->new org.json.JSONObject(out.getJSONObject("nativeTemporalProgram").toString()));
         return is.fivefivefive.CanDis.metric.NativeRepairTrace.checked(out,program->{
+            if(!phaseOrder.isEmpty()&&!phaseOrder.similar(program.getJSONArray("nativePhaseRepresentationSteps")))
+                throw new IllegalArgumentException("Original temporal phase permutation changed");
             int temporal=is.fivefivefive.CanDis.metric.TemporalReplay.verify(left.temporalTree,right.temporalTree,
                     n->n.label,n->n.children,program.getJSONObject("nativeTemporalProgram"));
             int quantifiers=0,matrix=0;
@@ -218,6 +228,20 @@ public final class CanonicalDistance {
         } catch(RuntimeException failure) {
             throw is.fivefivefive.CanDis.metric.NativeRepairTrace.captureFailure(out,failure);
         }
+    }
+
+    private static void appendPhaseOrder(Prepared prepared,String side,org.json.JSONArray out) {
+        var rows=new org.json.JSONArray();boolean changed=false;
+        for(int i=0;i<prepared.normalForms.size();i++) {
+            NormalForm view=prepared.normalForms.get(i),original=view.comparisonSource();
+            int old=-1;for(int j=0;j<prepared.sourceForms.size();j++)if(prepared.sourceForms.get(j)==original)old=j;
+            if(old<0)throw new IllegalArgumentException("Comparison phase lost original occurrence");
+            changed|=old!=i;
+            rows.put(new org.json.JSONObject().put("comparisonPhase",i).put("originalPhase",old)
+                    .put("sourcePath",original.getPhasePath()).put("typedRole",original.getTemporalOp().name()));
+        }
+        if(changed)out.put(new org.json.JSONObject().put("kind","source-linked-phase-reindex").put("cost",0)
+                .put("side",side).put("phases",rows));
     }
 
     private static org.json.JSONArray traceBindingContexts(Prepared prepared) {
@@ -328,6 +352,8 @@ public final class CanonicalDistance {
                         .put("admission","SOURCE_OBSERVED_GROUPED_ALL_SOME").put("cost",0);
                 } catch(is.fivefivefive.CanDis.metric.DeclarationReplay.NoMatchingPath stillMissing) {
                     var completed=retainedPaidCompletion(left,right,a,b,selected,matrix,phase,linked,dp);
+                    if(completed==null) completed=prefixPresentation(left,right,a,b,selected,usedA,usedB,
+                            paid,linked,completeAbsent,phase,dp[a.size()][b.size()]);
                     if(completed==null) throw stillMissing;
                     receipt=completed.getJSONObject("receipt"); connecting=completed.getJSONObject("connectingPermutation");
                 }
@@ -390,6 +416,58 @@ public final class CanonicalDistance {
             return new org.json.JSONObject().put("receipt",receipt).put("connectingPermutation",new org.json.JSONObject()
                     .put("source",new org.json.JSONArray(plan.sourceOrder())).put("target",new org.json.JSONArray(plan.targetOrder()))
                     .put("admission","ORIGINAL_TYPED_BINDER_AUTOMORPHISM_RETAINED_EXISTS").put("cost",0));
+        }
+        return null;
+    }
+
+    private static List<is.fivefivefive.CanDis.metric.RepairView.Binding> presentationBindings(
+            Prepared prepared,int phase,List<QuantiVar> ordered) {
+        var source=prepared.sourceForms.get(phase); var comparison=prepared.normalForms.get(phase);
+        if(source.getCertificationMatrixEGraph()!=comparison.getCertificationMatrixEGraph()
+                || source.getMatrixQuantiVars().size()!=comparison.getMatrixQuantiVars().size())
+            throw new IllegalStateException("PREFIX_PRESENTATION_SOURCE_OWNER");
+        for(int i=0;i<source.getMatrixQuantiVars().size();i++)
+            if(source.getMatrixQuantiVars().get(i)!=comparison.getMatrixQuantiVars().get(i))
+                throw new IllegalStateException("PREFIX_PRESENTATION_SOURCE_OCCURRENCE");
+        var evidence=is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.adapt(prepared.sourceForms,
+                source.getCertificationMatrixEGraph().getSemanticProfile());
+        evidence.requireRepairProjectionSources(prepared.sourceForms);
+        var projected=is.fivefivefive.CanDis.metric.RepairProjection.project(evidence,prepared.sourceForms);
+        var bindings=projected.phases().get(phase).bindings().stream()
+                .filter(x->x.role()==is.fivefivefive.CanDis.metric.RepairView.BindingRole.MATRIX).toList();
+        var owned=new java.util.IdentityHashMap<QuantiVar,is.fivefivefive.CanDis.metric.RepairView.Binding>();
+        for(int i=0;i<source.getMatrixQuantiVars().size();i++) owned.put(source.getMatrixQuantiVars().get(i),bindings.get(i));
+        return ordered.stream().map(q->java.util.Objects.requireNonNull(owned.get(q),"Foreign prefix occurrence")).toList();
+    }
+
+    private static org.json.JSONObject prefixPresentation(Prepared left,Prepared right,List<QuantiVar> a,
+            List<QuantiVar> b,Map<String,String> selected,Set<String> usedA,Set<String> usedB,
+            Map<String,String> paid,boolean linked,boolean completeAbsent,int phase,int expected) {
+        if(phase>=left.normalForms.size() || phase>=right.normalForms.size()) return null;
+        var ab=presentationBindings(left,phase,a); var bb=presentationBindings(right,phase,b);
+        var ai=a.stream().map(QuantiVar::getName).toList(); var bi=b.stream().map(QuantiVar::getName).toList();
+        int[] ap=is.fivefivefive.CanDis.metric.DeclarationPresentation.order(ab,ai,bi,selected);
+        int[] bp=is.fivefivefive.CanDis.metric.DeclarationPresentation.order(bb,bi,ai,
+                is.fivefivefive.CanDis.metric.DeclarationPresentation.inverse(selected));
+        for(boolean sourceSide:new boolean[]{true,false}) {
+            int[] p=sourceSide?ap:java.util.stream.IntStream.range(0,a.size()).toArray();
+            int[] q=sourceSide?java.util.stream.IntStream.range(0,b.size()).toArray():bp;
+            var x=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(a,p);
+            var y=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(b,q);
+            var as=left.normalForms.get(phase).getMatrixQuantiVars(); var bs=right.normalForms.get(phase).getMatrixQuantiVars();
+            int[][] dp=is.fivefivefive.CanDis.metric.DeclarationPresentation.distances(
+                    declarationAtoms(as,x,phase),declarationAtoms(bs,y,phase));
+            if(dp[x.size()][y.size()]!=expected) continue;
+            try {
+                var receipt=captureDeclarations(as,bs,x,y,phase,dp,selected,usedA,usedB,paid,linked,completeAbsent);
+                return new org.json.JSONObject().put("receipt",receipt).put("connectingPermutation",new org.json.JSONObject()
+                        .put("source",new org.json.JSONArray(p)).put("target",new org.json.JSONArray(q))
+                        .put("sourcePresentation",is.fivefivefive.CanDis.metric.DeclarationPresentation.evidence(ab,ai,p))
+                        .put("targetPresentation",is.fivefivefive.CanDis.metric.DeclarationPresentation.evidence(bb,bi,q))
+                        .put("admission","INDEPENDENT_TYPED_PREFIX_PRESENTATION").put("cost",0));
+            } catch(is.fivefivefive.CanDis.metric.DeclarationReplay.NoMatchingPath missing) {
+                // Try the opposite endpoint's admitted presentation, not a weaker link.
+            }
         }
         return null;
     }
@@ -1132,6 +1210,15 @@ public final class CanonicalDistance {
                 CoherentVariable variable = all.computeIfAbsent(
                         name, ignored -> new CoherentVariable(descriptor));
                 variable.observe(descriptor, phase);
+            }
+        }
+        all.entrySet().removeIf(entry -> entry.getValue().ambiguous);
+        // A declaration can be absent from its owner's matrix and used only
+        // by descendants. Resolve ownership independently of first use.
+        for (int phase = 0; phase < normalForms.size(); phase++) {
+            for (var entry : variableBindings(normalForms.get(phase)).entrySet()) {
+                var variable = all.get(entry.getKey());
+                if (variable != null) variable.observeOwner(entry.getValue(), phase);
             }
         }
         all.entrySet().removeIf(entry -> entry.getValue().ambiguous);
@@ -2619,6 +2706,11 @@ public final class CanonicalDistance {
         }
 
         private void observe(BindingDescriptor observed, int phase) {
+            observeOwner(observed, phase);
+            phases.add(phase);
+        }
+
+        private void observeOwner(BindingDescriptor observed, int phase) {
             if (descriptor.variable != observed.variable) {
                 ambiguous = true;
                 return;
@@ -2630,7 +2722,6 @@ public final class CanonicalDistance {
                     == descriptor.ownershipPriority()) {
                 ownerPhase = Math.min(ownerPhase, phase);
             }
-            phases.add(phase);
         }
 
         private boolean compatibleWith(CoherentVariable other) {

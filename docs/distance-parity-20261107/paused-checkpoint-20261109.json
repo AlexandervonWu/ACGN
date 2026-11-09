@@ -1,0 +1,420 @@
+{
+  "schema": "paused-autonomous-repair-handoff-v1",
+  "status": "PAUSED_BY_USER",
+  "time": "2026-11-09T17:26:26.169Z",
+  "owner": "01a1b6f9-4f81-7571-9191-e45c72efe56f",
+  "reviewer": "01a1b7ca-e043-7ad0-8162-0de59a5feda6",
+  "candidate": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/candidate-sources.json",
+    "sha256": "14f1d3c91f21bc0b3b39a063a4ee14a92c706a342024de188d2fe7523d1c531a"
+  },
+  "manifest": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/written-4072-manifest.json",
+    "sha256": "67518b225e8490a928c5bf9b67fa66df67d91be796dfc53fa7ff126b9d1a0db2"
+  },
+  "proofInputs": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/clean-lean-manifest.json",
+    "sha256": "962f6ecd27d625bec37ed108de93dadffe24eee07004fe42fd7e17890f3d0a46"
+  },
+  "proofValidation": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/clean-build-result.json",
+    "sha256": "1bdeb70046191d9ad53dfe9907fef287f03002384e500b9c23ad0d95bc2e61d6"
+  },
+  "axiomAudit": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/axiom-audit.json",
+    "sha256": "e31d8cf1f046d55fa69690686fbf8a182c2265355c009c5b148cb85ea0a0c6e5"
+  },
+  "pathCorrespondence": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/current-path-correspondence.json",
+    "sha256": "eabe2d5a74dac4fbd4f7d18d72a7b317b9fc9550a5cba2f349842f781df525ae"
+  },
+  "reviewHandoff": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/handoff.json",
+    "sha256": "2d56bf17b18ccccd326b549ef39decc20b70acc0d0c1ddf56c8564c254c1d7b5"
+  },
+  "reviewRequest": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/review-request.json",
+    "sha256": "58fdf7d89bc593334c367a2de6cde5ec88d764c00e3e9aa5e5c03b9c1c30e7e6"
+  },
+  "reviewReceipt": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/terra-review.json",
+    "sha256": "c8ac4acd9ee01ececc44c9114b8098cbc9f927798e2880a88a2b1d76ff9baa3c"
+  },
+  "reviewFindings": "No actionable finding at finite reviewed scope. Same-candidate continuation consistent with transient-anomaly policy subject to fresh safe environment and exact bindings; not executed.",
+  "counts": {
+    "targetAttempts": 4072,
+    "processed": 1182,
+    "checked": 1181,
+    "failed": 0,
+    "unchecked": 0,
+    "errors": 1,
+    "unattempted": 2890,
+    "processedDirections": 2362,
+    "checkedDirections": 2362,
+    "unwrittenUnknown": 26,
+    "complete": false,
+    "queueCleared": false,
+    "publicCertification": "BLOCKED"
+  },
+  "ledger": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/success-turns.jsonl",
+    "sha256": "b2912a2fa2f095cc21e565e06fd9aa4f189dc1b757af0f7e508312c99e15d2a3"
+  },
+  "transitions": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/candidate-transitions.json",
+    "sha256": "f19340d2dd99b3b3225c7d4eb14ce4815b70575f0c963adddb2e777a1ba8bc52"
+  },
+  "operationalIncident": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/regression-terminal.json",
+    "sha256": "4566e61ae83b3c0bb3c435f6c927b5e37239afc22f6e4a3d910788ca4e6ca9d1"
+  },
+  "next": {
+    "queueIndex": 1181,
+    "identity": {
+      "id": "DRFsS73sQ7EpetR9R_inv11",
+      "source": "/home/augustus/ACGN/classified-data/classroom_fol/over/DRFsS73sQ7EpetR9R_inv11.als",
+      "sha256": "4c06c6fe1a294988fac66d1f954d01ea6b8031935d5c8d08727cc304ab158816",
+      "left": "inv11",
+      "right": "inv11c"
+    },
+    "status": "OPERATIONAL_NOT_RUN",
+    "exactFailedGuardSample": "UNKNOWN",
+    "precedingMemAvailableKiB": 17816680,
+    "startupThresholdKiB": 17825792,
+    "originalErrorRetained": true,
+    "noKnownNewSemanticFailure": true
+  },
+  "restartProtocol": {
+    "authorization": "WAIT_FOR_EXPLICIT_USER_RESUME; no heartbeat auto-resume",
+    "preconditions": [
+      "Re-read current method and pause override; confirm sole Astra owner and exact Terra idle",
+      "Hash-check this candidate, every input/build/verifier/guard and fixed4072manifest; do not use changed checkout under old bindings",
+      "Confirm no descendants, UUID8618-0ED0rw,17GiBstartup/6GiBreserve,32GiBexternal/10GiBinternal,OOM baseline1; use reviewed12Gmax10Ghigh0swap run-bound guard",
+      "Fresh output/stage paths must not exist; append a recovery binding containing these exact hashes before invoking the recovery command",
+      "Preserve original stopped summary and failed attempt; reuse1181checked attempts only by exactcandidate/input/verifier/claim; append subsequent candidate-specific results without rewriting old error"
+    ],
+    "safeGuardedRecoveryCommand": [
+      "node",
+      "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/run-command.mjs",
+      "resume-1181",
+      "java",
+      "-Xmx1g",
+      "-cp",
+      "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/local-formula-call-l0Rpjf/r2/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/formula-call-link-Hl72TN/final/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/heterogeneous-prefix-link-T4EQHH/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/selected-object-provenance-Ou2loB/r4/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/triage-stop-6kChHO5o/classes:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/selected-local-permutation-4qOfad/candidate-r2:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/distinct-local-owners-lgHjtnE1/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/retained-cursor34-HUFEP2GC/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/retained-cursor15-fIGJEwG0/candidate-r2:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/queue-reconciliation-xxfp8rnW/candidate:/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/captured-selection-WvZ7lD1q/candidate:/home/augustus/ACGN/lib/*",
+      "is.fivefivefive.CanDis.QueueProbe",
+      "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/regression-65/attempt-1181/identities.json",
+      "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/resume-after-pause-1181/native"
+    ],
+    "commandStatus": "RECORDED_NOT_EXECUTED; requires explicit resume and fresh manifest binding",
+    "remainingFullTarget": "After attempt1181 checked, continue1182..4071 under same firstincident/resource rules and reconcile all4072 identities. A continuation orchestrator/reconciliation manifest has NOT been prepared or executed. Do not rerun the existing regress-4072.mjs in its nonempty directory or treat recovery probe as target completion."
+  },
+  "remainingGates": [
+    "4072 samecandidate invariant/path/premise coverage incomplete",
+    "26unwritten identities unresolved accounting, not exclusions or speculative patches",
+    "Any fresh concrete discrepancy stops and requires minimal general-pattern repair with focused bothdirection/tampered/priorcontrols and newcandidate full4072",
+    "Final integration review and combined/family once per candidate, source/dataset/guard hashes, clean integration commit and startup before original66080 --diagnostic-operations",
+    "Paid0316 beyond finite evidence/general temporal correspondence/sourcewire/JavaLean/public certification independently OPEN/BLOCKED"
+  ],
+  "publicCertification": "BLOCKED",
+  "scope": "Finite reviewed repair and compiled proof surfaces only; baseline61598construction/full66080/4482paired accounting preserved. No original file is unsupported/excluded.",
+  "fullRestartHandoff": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/paused-checkpoint/restart-handoff.json",
+    "sha256": "516b13242fc7e71ad3bbac5ce47bb3ee8d00aacccc7c00b5ee8aaa05215e71dd"
+  },
+  "sourceFiles": [
+    {
+      "path": "docs/distance-parity-20261107/AbsentLocalPaidAdmission.lean",
+      "sha256": "ce49b9a3613c1b245e74bf1045cf6feef3e942f4569f5094d41c5d53d38d2241"
+    },
+    {
+      "path": "docs/distance-parity-20261107/CapturedSelectionAuthority.lean",
+      "sha256": "736e4bfcd5e86efd68a55bc328c87fddf066599d8cb4053576a5038505fcf8d0"
+    },
+    {
+      "path": "docs/distance-parity-20261107/HeterogeneousPrefixGateWitness.lean",
+      "sha256": "6682e12645292a6db5aca2103bb7a70fe7ed2b3c8ead2d587e527d219c45b8ba"
+    },
+    {
+      "path": "docs/distance-parity-20261107/HeterogeneousPrefixPresentation.lean",
+      "sha256": "7875c586a2aee566b45f830fc749f7d4bf829b16630eec342df0071131a8aa4b"
+    },
+    {
+      "path": "docs/distance-parity-20261107/OrderedRepresentationCorrespondence.lean",
+      "sha256": "1b60d54f95f7c257e59dcc62f4a1f46029e9b198686f7c11220284dcb6545030"
+    },
+    {
+      "path": "docs/distance-parity-20261107/OwnerAndPhaseCoordinates.lean",
+      "sha256": "cedca30fbc5d2d4f5593ccf41f32866cf3eda00ece80e98d3ab887c19f6ed585"
+    },
+    {
+      "path": "docs/distance-parity-20261107/PaidTemporalRouting.lean",
+      "sha256": "d205e01ae7911fa0ceb2b82a3ef6fcc99dda6bd9fa16fd94320e0247112791a6"
+    },
+    {
+      "path": "docs/distance-parity-20261107/ScopedDomainConstruction.lean",
+      "sha256": "3a26037f044897745be101a2cfbb1dc52a9e99366483a5d03957a3cb31a80b87"
+    },
+    {
+      "path": "docs/distance-parity-20261107/ScopedPaidAdmission.lean",
+      "sha256": "783db8f90c1a13ddaa7080b8bafab8f2650641d498a3288cf85ba097170eacea"
+    },
+    {
+      "path": "docs/distance-parity-20261107/SelectedReferenceProvenance.lean",
+      "sha256": "2bccd43c87fde3c4d2b38af47a8d703fa8d0c8e9cfc71da62988c7066aff9641"
+    },
+    {
+      "path": "docs/distance-parity-20261107/SelectedTemporalPayment.lean",
+      "sha256": "e6ef09246a6362393d6dd626cc0b157a13c05d9954445a1c141991053fea312f"
+    },
+    {
+      "path": "docs/distance-parity-20261107/TemporalOperationCorrespondence.lean",
+      "sha256": "18bbb999cc6749b3276847466f703e3eb5c0a5dd9ce98eecc9c24086bae69014"
+    },
+    {
+      "path": "docs/distance-parity-20261107/TemporalPhaseEnumeration.lean",
+      "sha256": "ecea9ae23f25b49f09134ad018fe8a70a2d77c5058c17791c7d43340c13170b3"
+    },
+    {
+      "path": "docs/distance-parity-20261107/TemporalReferenceCharge.lean",
+      "sha256": "3fff78e04028d5806a9108871e0cee03499288307169698c2ae9da8f3fde8528"
+    },
+    {
+      "path": "docs/distance-parity-20261107/TemporalReferenceReconstruction.lean",
+      "sha256": "85cfa72c53fd1bb860ca44e019e23889447410d81297fb60090d5139fd57c808"
+    },
+    {
+      "path": "docs/distance-parity-20261107/TypedTemporalSplice.lean",
+      "sha256": "b4596eac7519a4257ecbfcba7fda90a1b356291683165961c508f03dff1df5f3"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/AbsentLocalPaidAdmissionTest.java",
+      "sha256": "1a9d65f1bd4c5e57c4da33d459c5ccc9af1ba019b633e42e191550a16e0398d2"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/BinaryPhaseEnumerationTest.java",
+      "sha256": "e6566925c6975425c2dfdc5add8ca594ba176fabb33293f0d78500094249e1ff"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/CanonicalRepairTraces.java",
+      "sha256": "baedd49f6dd2d191b34f6b15344e9a53019759a1b272c17fb74cb7dcbcd1f16a"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/CapturedSelectionAuthorityTest.java",
+      "sha256": "1d231db32e0c060d2aa9e4e9c13453cd1632b9cc64de2dc727d1475975cfb017"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ClosedCallPaidReplayTest.java",
+      "sha256": "c73d27f04aaafeac0b0a25c741712457b2e8c6f87cdf3903945acb3ceb556b83"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/DistinctLocalOwnersTest.java",
+      "sha256": "0f802903770f3d3e142b3c8ab42a75e6c90fdab90aa7ce9e4949af22c2fbad89"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/EmptyCallArgumentPaidReplayTest.java",
+      "sha256": "c79614b716b53b6b884c7b6357169f71562c069d5393cda93d7f383ff07da4fb"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/HeterogeneousPrefixReplayTest.java",
+      "sha256": "195cd3975a3a14bdd40578bcc46749bc03238de808b120b3b80f7a46f1feff14"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ImportedAciPatternTest.java",
+      "sha256": "ce1c3a6fcde314631620a100de3bc9217d3fae95f8190ef2effed5b05c239c60"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/LocalOwnerCorrespondence.java",
+      "sha256": "262e09e0bca76f469701cb685cd9d935caa1d118dd0cdb6913a88f5bbe5bc620"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/LocalOwnerTraceTest.java",
+      "sha256": "e32142db776dcb15142a338541c3f520ed21e1e073feaccc044d938c5e8aad51"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/NativeOperationComparison.java",
+      "sha256": "50ab63461851cab9233ac7cfa77852f5e2d40d5aeedfab3d2fce6a02cdd17052"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/NativeOperationComparisonTest.java",
+      "sha256": "87aea7978d4cd8d2cf32db71fdbd771e17369b6b98cd1ee6df63af8c45b9e6e7"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/OrderedLocalPaidAdmissionTest.java",
+      "sha256": "b0295f384d6e74b84ec5457c6cffc9752cb2b604f15adbc7420194b722187223"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/OrderedPhaseCorrespondenceTest.java",
+      "sha256": "6bb3c6d8cebb4ea095f161afbfcc9014fa19f09e1a97df552dda1457000ae007"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/QueuedPatternReplayTest.java",
+      "sha256": "c0d8eb942cce037050b5b9f9dafb0c4d3320bf5e303a5b4000897a4e7ee75934"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/RetainedLocalPermutationTest.java",
+      "sha256": "47ebe61791473ad7c2fbac6579c4577dfb524d36ba6fd6e06d4cd700b855d8f3"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/TemporalCorrespondenceTest.java",
+      "sha256": "4ebc4738a43e01a6c67703871cb9d7b90a9049350cee85d0a3f516912f7298df"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/TemporalLocalOwnerTest.java",
+      "sha256": "6ba653409b9afe8bb9670da63b51444ef1fd9d1e0513218230317cc9e5b2c96c"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/TemporalOperationCorrespondence.java",
+      "sha256": "8693cd590ce9ace56ca4861c41ef3a9c04acf2f6378d4d5e5f2b9f99c7dce46e"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/TemporalReferenceReconstructionTest.java",
+      "sha256": "0d54096969aef9c85e56e09dc354769a66b9a5d63f70388a5b879ec58e637182"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/CanonicalDistance.java",
+      "sha256": "3999fa9b351f9660204c52a476338f05716e92241b4360c2270ce32f12d639e0"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/FastGroupedDeclarationOrbit.java",
+      "sha256": "cb113cb43ba9ff637589f0b5ebd9c849da1418a88ff510d89706398f3d51133f"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/FastLocalPaidScope.java",
+      "sha256": "0b35e313f08f711997e30c8ff1c14af07d4af919b5a08cdc011b0b0719e8771d"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/FastPaidDeclarationAlignment.java",
+      "sha256": "c800ee937b262bd14cc04ebc88b040019e80eec1ba403c0f7d5c33c035f27588"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/NormalForm.java",
+      "sha256": "7fca9c9ff31fe0014b099d86f5413abec882f23fc60f76dc71cf6a6524bf56d3"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/DeclarationPresentation.java",
+      "sha256": "e4c25b35ea7ee1cdbb9acc231f1bb5cbc21a0fb85c68976c1fe65674c50c54bd"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/MatrixReplay.java",
+      "sha256": "dfd245afffdc14968b7b134404ab104e01446b7d5103306fc79163935f3ee53b"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/NativeRepairTrace.java",
+      "sha256": "563de419b6a65066a26a42d4a9d63e7c799d0af6ff9751bb6a9fc18064ac58d2"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/PaidTemporalRoutingTest.java",
+      "sha256": "ccc8c1eefb866cc1bc6cc324bfb6608e1c61136ca38d169796bbb11ee83e32a2"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java",
+      "sha256": "bf8c75a2fd6dd6322d41344b3045fce8c7e49704879e47c9683ebb125c4741e9"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/RepairProjection.java",
+      "sha256": "5a1076c4c90477891e379faf05d6111c938f026949183e9cbd0d387be2a9a4ef"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/RepairView.java",
+      "sha256": "2b1d0998389e6f698e2aed5e4d45e879bd90da021889fd18b136699b629c4149"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/SelectedTemporalPaymentTest.java",
+      "sha256": "886ff2fd2a3d6656ae6140821e1b207d4787e15d8a808706ad6592c50c1ce8b6"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/SelectedTemporalPayments.java",
+      "sha256": "2d36b4d33c64ba5fe3cf3e1893ca32ac5233c26f1ae169c42dafc5e2c2f683f1"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/TemporalReferenceChargeTest.java",
+      "sha256": "284851e2059819b7d560b4d09f956645fb6e9bd5121a1f8643dee3a7c8008bef"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/TypedTemporalDerivation.java",
+      "sha256": "8b37d70123f7cd6ecd45437ff9f536b67bc2821b7b9af77bf1f96ece21196c87"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/metric/TypedTemporalDerivationTest.java",
+      "sha256": "be1004247f57a5bc2f7f612bd3317efdf6b4e29fcd223e9c4ba66fbf635a03f0"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/theory/SemanticProfile.java",
+      "sha256": "0ace58a2dcce2eb9a988b07b53cd8a5d85e746be787dc10c84d9f54ce70e4ff2"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java",
+      "sha256": "f358983fa695651438e044a9674bee348f37a602e8c2c7b28614f1b6dd528a30"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/core/BoundCallEvidence.java",
+      "sha256": "d660ed3123a12c8408bb410ba0e63c11e1a77acf43a595ecae4ca0d79961d00f"
+    },
+    {
+      "path": "docs/distance-parity-20261107/FormulaCallAdmission.lean",
+      "sha256": "9b23500ce9f7299d9a69afc18bcf2597030d8a55f53cbfba6e76a9d104c3bd47"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/FormulaCallReplayTest.java",
+      "sha256": "0747962b5270f3b77e6fb1c4c7eea1d814b9ae08c8ca88d69cc1657c7e46fcc2"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/BoundCallPaidReplayTest.java",
+      "sha256": "b84a6910512b354bb9a13bf94dad24ca91e61c8a6fcbeeb8300ff1d7ca299b00"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/ImportedBoundCallPaidReplayTest.java",
+      "sha256": "372da576219c8e1a32b54e1d79112b8be7d796a1ede6a8615318b576930ec5cd"
+    },
+    {
+      "path": "docs/distance-parity-20261107/LocalFormulaCallAdmission.lean",
+      "sha256": "cd406cc0ef13deff1dc484465dfe62094571fa3fe5756e9295ac655ccbc8f763"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/LocalFormulaCallReplayTest.java",
+      "sha256": "739e424234eea7a8d724af84778569b3c654ebe3b6c052dcc97ee8caca5b2095"
+    },
+    {
+      "path": "docs/distance-parity-20261107/UsedTargetPhaseMapping.lean",
+      "sha256": "adb2c45b446b81c8885e22dbdc46c58fd2a11c0cbd02c3bcc0a606bf6a196ba8"
+    },
+    {
+      "path": "src/is/fivefivefive/CanDis/UsedTargetPhaseMappingTest.java",
+      "sha256": "aa7e274d89b6181d048ec25210f5e9ceb928fbd8502e00b93ce45dba3c1baf09"
+    }
+  ],
+  "externalPrerequisites": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/ActualPhasePaths.lean",
+      "sha256": "6201a8bfa428c2785f87e3d894ff0dd141dd2e960c3c2ad5cd91eccd4ff57f7b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/EnvironmentAudit.lean",
+      "sha256": "f35109a7742238aac427f7a452835a76a0d5f55ba075fa2c2df1c2168b1dc3dc"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/actual-path-binding.json",
+      "sha256": "39102357b6bc017daa7019655c09dfbd5ac460d963834acad0cd3294807c97ba"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/current-path-correspondence.json",
+      "sha256": "eabe2d5a74dac4fbd4f7d18d72a7b317b9fc9550a5cba2f349842f781df525ae"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/clean-build-result.json",
+      "sha256": "1bdeb70046191d9ad53dfe9907fef287f03002384e500b9c23ad0d95bc2e61d6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/axiom-audit.json",
+      "sha256": "e31d8cf1f046d55fa69690686fbf8a182c2265355c009c5b148cb85ea0a0c6e5"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/handoff.json",
+      "sha256": "2d56bf17b18ccccd326b549ef39decc20b70acc0d0c1ddf56c8564c254c1d7b5"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/v3-20261107/stopped-investigation/phase-mapping-link-6GanxC/final-r3/terra-review.json",
+      "sha256": "c8ac4acd9ee01ececc44c9114b8098cbc9f927798e2880a88a2b1d76ff9baa3c"
+    }
+  ]
+}

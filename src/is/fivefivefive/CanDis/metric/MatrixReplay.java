@@ -17,6 +17,8 @@ public final class MatrixReplay<N> {
         String label(N node);
         /** Source/type/owner evidence ignored by head cost but retained in executable payloads. */
         default String evidence(N node) { return label(node); }
+        /** Actual-object provenance, separate from payload equality and edit classification. */
+        default Object sourceObjectEvidence(N node) { return JSONObject.NULL; }
         List<N> children(N node);
         List<N> alternatives(N node);
         boolean unordered(N left, N right);
@@ -143,14 +145,46 @@ public final class MatrixReplay<N> {
     /** Expands the already-selected native derivation into executable occurrence CRUD. */
     public JSONObject executable(N left, N right, JSONObject receipt) {
         verify(left, right, receipt);
-        return MatrixProgram.capture(executionReceipt(left,right,receipt));
+        JSONObject program = MatrixProgram.capture(executionReceipt(left,right,receipt));
+        return program.put("sourceObjects", sourceObjects(left,right,program));
     }
 
     /** Native premises are rechecked, then the detached store is executed without search. */
     public int verifyExecutable(N left, N right, JSONObject receipt, JSONObject program) {
         int cost = verify(left, right, receipt);
         require(MatrixProgram.verify(executionReceipt(left,right,receipt), program) == cost, "Executable matrix cost");
+        require(sourceObjects(left,right,program).similar(program.getJSONArray("sourceObjects")),
+                "Selected source object provenance");
         return cost;
+    }
+
+    private JSONArray sourceObjects(N left,N right,JSONObject program) {
+        JSONArray result=new JSONArray(),operations=program.getJSONArray("operations");
+        for(int i=0;i<operations.length();i++) {
+            JSONObject operation=operations.getJSONObject(i);
+            result.put(new JSONObject().put("operation",i)
+                    .put("before",sourceObject(left,operation,"source"))
+                    .put("after",sourceObject(right,operation,"target")));
+        }
+        return result;
+    }
+
+    private Object sourceObject(N root,JSONObject operation,String side) {
+        if(operation.isNull(side))return JSONObject.NULL;
+        String[] path=operation.getString(side).split("/");
+        require(path.length%2==1&&path[0].equals("root"),"Source object address");
+        N node=root;
+        for(int i=1;i<path.length;i+=2) {
+            spend(1);
+            require(node!=null,"Absent source object");
+            require(path[i].equals("child")||path[i].equals("alternative"),"Source object edge");
+            List<N> edges=path[i].equals("child")?nativeCost.children(node):nativeCost.alternatives(node);
+            node=edges.get(Integer.parseInt(path[i+1]));
+        }
+        require(node!=null,"Absent selected source object");
+        Object evidence=nativeCost.sourceObjectEvidence(node);
+        spend(evidence.toString().length());
+        return evidence;
     }
 
     private JSONObject executionReceipt(N left,N right,JSONObject receipt) {

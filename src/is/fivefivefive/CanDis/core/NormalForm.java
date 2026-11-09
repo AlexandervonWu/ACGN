@@ -11,6 +11,7 @@ import is.fivefivefive.CanDis.core.EGraphNode.Metatype;
 import is.fivefivefive.CanDis.core.EGraphNode.Opcode;
 import is.fivefivefive.CanDis.theory.LeanVerifiedRewrite;
 import is.fivefivefive.CanDis.theory.SemanticProfile;
+import is.fivefivefive.CanDis.theory.StructuralKey;
 import is.fivefivefive.CanDis.ir.IRAgent;
 import is.fivefivefive.CanDis.core.QuantiVar.Cardinality;
 import is.fivefivefive.CanDis.core.QuantiVar.Quantifier;
@@ -50,6 +51,7 @@ public class NormalForm {
     private String phasePath;
     private List<NormalForm> temporalChildren;
     private List<NormalForm> comparisonTemporalChildren;
+    private NormalForm comparisonSource;
     private final Map<Long, TemporalReferenceAuthority> temporalReferenceAuthorities;
     private final Object lifecycleLock;
     private TemporalOp temporalOp; // the temporal operator of the formula, if any, e.g., "before", "historically", "once", "always", "eventually", "until", "releases", "since", "triggered". If none, then it is a non-temporal formula.
@@ -248,6 +250,7 @@ public class NormalForm {
                 throw new IllegalStateException("Fast comparison requires a frozen normal form");
             }
             NormalForm copy = new NormalForm();
+            copy.comparisonSource = this;
             copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(matrixEGraphRoot,
                     Collections.emptyMap(), Collections.emptyMap(), comparisonBindingNames());
             copy.certificationMatrixEGraphRoot = certificationMatrixEGraphRoot;
@@ -332,7 +335,96 @@ public class NormalForm {
             copy.matrixEGraphRoot = EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot, keys, coordinates,
                     source.comparisonBindingNames());
         }
-        return sources.stream().filter(source -> !dropped.contains(source)).map(copies::get).toList();
+        return new ComparisonPhaseOrder(sources,copies,dropped,keysByOwner).ordered();
+    }
+
+    /** Original occurrence authority for a detached metric comparison view. */
+    public NormalForm comparisonSource() { return comparisonSource==null?this:comparisonSource; }
+
+    /** Reindex whole owner-issued reference groups, never their ordered roles. */
+    private static final class ComparisonPhaseOrder {
+        final List<NormalForm> sources;
+        final Map<NormalForm,NormalForm> copies;
+        final java.util.Set<NormalForm> dropped;
+        final Map<NormalForm,Map<Long,String>> closedKeys;
+        final Map<NormalForm,StructuralKey> phaseKeys=new java.util.IdentityHashMap<>();
+        final Map<NormalForm,Map<EGraphNode,StructuralKey>> nodeKeys=new java.util.IdentityHashMap<>();
+        final java.util.Set<NormalForm> active=Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        final java.util.Set<NormalForm> visited=Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+        final List<NormalForm> result=new ArrayList<>();
+        final is.fivefivefive.CanDis.metric.TraceResources budget=new is.fivefivefive.CanDis.metric.TraceResources();
+        ComparisonPhaseOrder(List<NormalForm> sources,Map<NormalForm,NormalForm> copies,
+                java.util.Set<NormalForm> dropped,Map<NormalForm,Map<Long,String>> closedKeys) {
+            this.sources=sources;this.copies=copies;this.dropped=dropped;this.closedKeys=closedKeys;
+        }
+        List<NormalForm> ordered() {
+            for(var source:sources)if(!dropped.contains(source)&&!visited.contains(source)) {
+                reserve(source);visit(source);
+            }
+            return List.copyOf(result);
+        }
+        void reserve(NormalForm source) {if(visited.add(source))result.add(copies.get(source));}
+        void visit(NormalForm source) {
+            var references=new java.util.LinkedHashMap<Long,TemporalReferenceAuthority>();
+            collect(source,copies.get(source).matrixEGraphRoot,references);
+            var children=new ArrayList<NormalForm>();var coordinates=new HashMap<Long,String>();
+            for(var reference:references.values()) {
+                if(reference.children.stream().anyMatch(dropped::contains))throw new IllegalStateException("Reindex of removed temporal reference");
+                coordinates.put(reference.authorityId,temporalReferenceName(children.size(),reference.children.size()));
+                for(var child:reference.children){children.add(copies.get(child));reserve(child);}
+                for(var child:reference.children)visit(child);
+            }
+            var copy=copies.get(source);
+            copy.comparisonTemporalChildren=List.copyOf(children);
+            copy.matrixEGraphRoot=EGraphNode.fastComparisonMatrix(source.matrixEGraphRoot,
+                    closedKeys.getOrDefault(source,Collections.emptyMap()),coordinates,source.comparisonBindingNames());
+        }
+        TemporalReferenceAuthority reference(NormalForm owner,EGraphNode node) {
+            if(node.getOpcode()!=Opcode.REF||node.temporalReferenceAuthorityId()<=0)return null;
+            var authority=owner.temporalReferenceAuthorities.get(node.temporalReferenceAuthorityId());
+            if(authority==null||!authority.matches(node,authority.childIndex,authority.children.size()))
+                throw new IllegalStateException("Phase reindex lacks original temporal authority");
+            return authority;
+        }
+        void collect(NormalForm owner,EGraphNode node,Map<Long,TemporalReferenceAuthority> out) {
+            if(node==null)return;var reference=reference(owner,node);
+            if(reference!=null){out.putIfAbsent(reference.authorityId,reference);return;}
+            var children=new ArrayList<>(node.getChildren());
+            if(node.isOrderInsensitive())children.sort(Comparator.comparing(n->key(owner,n)));
+            for(var child:children)collect(owner,child,out);
+        }
+        StructuralKey phaseKey(NormalForm phase) {
+            var cached=phaseKeys.get(phase);if(cached!=null)return cached;
+            if(!active.add(phase))throw new IllegalStateException("Cyclic temporal source graph");
+            var children=new ArrayList<StructuralKey>();
+            for(var q:phase.matrixQuantiVars)children.add(StructuralKey.of("declaration",
+                    List.of(q.getQuantifier().name(),q.getCardinality().name(),String.valueOf(q.getExactAlloyType()),Integer.toString(q.getDisjointnessClass())),List.of()));
+            children.add(key(phase,copies.get(phase).matrixEGraphRoot));
+            var result=StructuralKey.branch("phase",children);active.remove(phase);phaseKeys.put(phase,result);return result;
+        }
+        StructuralKey key(NormalForm owner,EGraphNode node) {
+            if(node==null)return StructuralKey.leaf("null");
+            var cache=nodeKeys.computeIfAbsent(owner,k->new java.util.IdentityHashMap<>());
+            var remembered=cache.get(node);if(remembered!=null)return remembered;
+            budget.spend(128);var reference=reference(owner,node);StructuralKey result;
+            if(reference!=null) {
+                String operator=reference.children.get(0).temporalOp.name();
+                if(reference.children.size()==2)operator=operator.substring(0,operator.length()-1);
+                result=StructuralKey.of("temporal",List.of(operator),reference.children.stream().map(this::phaseKey).toList());
+            } else {
+                var children=new ArrayList<StructuralKey>();for(var child:node.getChildren())children.add(key(owner,child));
+                if(node.isOrderInsensitive())children.sort(StructuralKey::compareTo);
+                String identity=String.valueOf(node.getSemanticIdentity());
+                if(node.getOpcode()==Opcode.VARIABLE) {
+                    String name=node.getAlphaName()==null?node.getSourceName():node.getAlphaName();
+                    var names=new ArrayList<String>();for(var list:List.of(owner.params,owner.inheritedQuantiVars,owner.matrixQuantiVars,owner.getLocalQuantiVars()))
+                        for(var q:list)if(!names.contains(q.getName()))names.add(q.getName());
+                    int index=names.indexOf(name);identity=index<0?String.valueOf(name):Integer.toString(index);
+                } else if(node.getSemanticIdentity()==null)identity=String.valueOf(node.getSourceName());
+                result=StructuralKey.of("matrix",List.of(node.getOpcode().name(),String.valueOf(node.getExactAlloyType()),identity),children);
+            }
+            cache.put(node,result);return result;
+        }
     }
 
     List<NormalForm> comparisonTemporalChildren() {
@@ -672,6 +764,36 @@ public class NormalForm {
             throw new IllegalStateException("Duplicate temporal reference authority id");
         }
         return reference;
+        }
+    }
+
+    /** Read-only provenance from the existing sealed parser authority. */
+    public static final class TemporalReferenceOrigin {
+        private final EGraphNode reference;
+        private final TemporalReferenceAuthority authority;
+        private TemporalReferenceOrigin(EGraphNode reference, TemporalReferenceAuthority authority) {
+            this.reference = reference;
+            this.authority = authority;
+        }
+        public EGraphNode reference() { return reference; }
+        public NormalForm owner() { return authority.owner; }
+        public List<NormalForm> branches() { return authority.children; }
+        public long authorityId() { return authority.authorityId; }
+        public long parserOccurrenceId() { return authority.parserOccurrenceId; }
+        public long sourceOccurrenceLineage() { return authority.sourceOccurrenceLineage; }
+        public int sourceSlot() { return authority.childIndex; }
+    }
+
+    public TemporalReferenceOrigin temporalReferenceOrigin(EGraphNode reference) {
+        synchronized (lifecycleLock) {
+            if (!frozenForCertification || reference == null)
+                throw new IllegalArgumentException("Temporal provenance requires a frozen source");
+            var authority = temporalReferenceAuthorities.get(reference.temporalReferenceAuthorityId());
+            int[] target = temporalReferenceTarget(reference);
+            if (authority == null || target == null
+                    || !authority.matches(reference, target[0], target[1]))
+                throw new IllegalArgumentException("Temporal provenance lost sealed source authority");
+            return new TemporalReferenceOrigin(reference, authority);
         }
     }
 

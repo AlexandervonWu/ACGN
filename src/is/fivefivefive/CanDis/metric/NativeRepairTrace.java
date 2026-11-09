@@ -130,6 +130,8 @@ public final class NativeRepairTrace {
 
     private static org.json.JSONArray ordered(JSONObject program) {
         var actions=new org.json.JSONArray();var temporal=program.getJSONObject("nativeTemporalProgram");
+        if(program.has("nativePhaseRepresentationSteps"))
+            append(actions,program.getJSONArray("nativePhaseRepresentationSteps"),"phase-representation","/nativePhaseRepresentationSteps/");
         append(actions,temporal.getJSONArray("zeroCostReads"),"temporal-read","/nativeTemporalProgram/zeroCostReads/");
         append(actions,temporal.getJSONArray("operations"),"temporal","/nativeTemporalProgram/operations/");
         append(actions,program.getJSONArray("nativeDeclarationRepresentationSteps"),"declaration-representation","/nativeDeclarationRepresentationSteps/");

@@ -23,7 +23,8 @@ final class FastPaidDeclarationAlignment {
         // their existing route (including replay-only certified completion).
         if(multipleOwners && (!rigidPrefix(left.get(0)) || !rigidPrefix(right.get(0)))) return false;
         // No new cross-owner local/local alignment is admitted by this slice.
-        return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty();
+        return left.get(0).getLocalQuantiVars().isEmpty() || right.get(0).getLocalQuantiVars().isEmpty()
+                || localsAbsentFromSnapshots(left.get(0)) || localsAbsentFromSnapshots(right.get(0));
     }
 
     /** Canonical paid paths are additional candidates for symmetric retained
@@ -95,7 +96,7 @@ final class FastPaidDeclarationAlignment {
         // ONE/LONE remain ordered prefix barriers. Admission beneath a retained
         // local binder requires its actual source kind, owner, domain and types;
         // the paid path changes neither that scope nor prefix ordering.
-        if(!f.getLocalQuantiVars().isEmpty()) return FastLocalPaidScope.supports(f);
+        if(!f.getLocalQuantiVars().isEmpty() && !localsAbsentFromSnapshots(f)) return FastLocalPaidScope.supports(f);
         Set<EGraphNode> seen = Collections.newSetFromMap(new IdentityHashMap<>());
         ArrayDeque<EGraphNode> pending = new ArrayDeque<>();
         ClosedCallEvidence calls = null;
@@ -118,6 +119,44 @@ final class FastPaidDeclarationAlignment {
                 if (!names.contains(name)) return false;
             }
             pending.addAll(node.getChildren());
+        }
+        return true;
+    }
+
+    /** Retained metadata is not a live scope. Check both authoritative graph
+     * snapshots; this admits no local rewrite and does not erase the metadata. */
+    static boolean localsAbsentFromSnapshots(NormalForm form) {
+        if(!form.isFrozenForCertification() || form.getCertificationMatrixEGraph()==null
+                || form.getMatrixEGraph()==null) return false;
+        var outer=new HashMap<String,QuantiVar>();
+        for(var q:form.getMatrixQuantiVars()) if(outer.put(q.getName(),q)!=null) return false;
+        for(var q:form.getLocalQuantiVars()) if(outer.containsKey(q.getName())) return false;
+        var sourceOccurrences=new HashMap<Long,QuantiVar>();
+        for(int side=0;side<2;side++) {
+            var seen=Collections.newSetFromMap(new IdentityHashMap<EGraphNode,Boolean>());
+            var pending=new ArrayDeque<EGraphNode>();
+            pending.add(side==0?form.getCertificationMatrixEGraph():form.getMatrixEGraph());
+            while(!pending.isEmpty()) {
+                var node=pending.remove();if(!seen.add(node))continue;
+                if(seen.size()>4096)throw new IllegalStateException("PAID_DECLARATION_GRAPH_BUDGET");
+                switch(node.getOpcode()) {
+                    case GENERICRELDECL,DISJ,VAR,DISJVAR,EXISTS,FORALL -> { return false; }
+                    case VARIABLE -> {
+                        var q=outer.get(node.getAlphaName());
+                        if(q==null || !node.getChildren().isEmpty() || q.getExactAlloyType()==null
+                                || !q.getExactAlloyType().hasParserAuthenticatedAncestry()
+                                || !q.getExactAlloyType().sameOccurrenceEvidenceAs(node.getExactAlloyType())
+                                || !q.getOriginalNames().contains(node.getSourceName())
+                                || !q.getOriginalNames().contains(node.getSemanticIdentity())) return false;
+                        if(side==0) {
+                            var previous=sourceOccurrences.putIfAbsent(node.getSourceOccurrenceLineage(),q);
+                            if(previous!=null && previous!=q) return false;
+                        } else if(sourceOccurrences.get(node.getSourceOccurrenceLineage())!=q) return false;
+                    }
+                    default -> { }
+                }
+                pending.addAll(node.getChildren());
+            }
         }
         return true;
     }

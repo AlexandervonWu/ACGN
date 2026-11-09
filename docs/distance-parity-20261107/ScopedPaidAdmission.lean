@@ -60,6 +60,16 @@ theorem local_domain_type_order_unchanged (paid : Nat → Option Nat)
     (owners : List Frame) (slot : Nat) :
     link paid (.local owners slot) = some (.local owners slot) := rfl
 
+-- Sibling scopes may share the enclosing stack, but not their owner identity.
+theorem distinct_retained_owner_branches (paid : Nat → Option Nat)
+    (enclosing : List Frame) (a b : Frame) (different : a.owner ≠ b.owner)
+    (slot : Nat) :
+    link paid (.local (enclosing ++ [a]) slot) ≠
+      link paid (.local (enclosing ++ [b]) slot) := by
+  intro h
+  have frames : a = b := by simpa [link] using h
+  exact different (congrArg Frame.owner frames)
+
 def admit (source current : List Frame) (paid : Nat → Option Nat) (x : Coordinate) :=
   if source = current then link paid x else none
 
@@ -91,6 +101,7 @@ theorem empty_domain_distinguishes_kind :
 
 #print axioms retained_quantifier_congruence
 #print axioms local_domain_type_order_unchanged
+#print axioms distinct_retained_owner_branches
 #print axioms substituted_scope_rejected
 #print axioms outer_link_requires_paid_path
 #print axioms no_local_capture

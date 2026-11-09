@@ -58,11 +58,38 @@ public final class NativeOperationComparison {
     static Result invalid(String reason) { return new Result(Status.INVALID_REPLAY,reason,new JSONObject()); }
 
     static Result compare(Canonical.Prepared a,Canonical.Prepared b,CanonicalAlloyPipeline.Prepared ca,CanonicalAlloyPipeline.Prepared cb) {
+        if(TemporalOperationCorrespondence.temporal(a)||TemporalOperationCorrespondence.temporal(b)) {
+            try {return compare(a,b,CanonicalRepairTraces.fast(a,b),CanonicalRepairTraces.certified(ca,cb));}
+            catch(RuntimeException e){return failure(e,null);}
+        }
         return compareSelected(a,b,()->DistanceReplayDiagnostics.capture(a,b,ca,cb));
     }
 
     static Result compare(Canonical.Prepared a,Canonical.Prepared b,NativeRepairTrace fast,NativeRepairTrace certified) {
+        if(TemporalOperationCorrespondence.temporal(a)||TemporalOperationCorrespondence.temporal(b)) {
+            JSONObject report=null;
+            try {
+                report=DistanceReplayDiagnostics.captureTraces(fast,certified);
+                return compareCaptured(a,b,fast,certified,report);
+            } catch(RuntimeException e){return failure(e,report);}
+        }
         return compareSelected(a,b,()->DistanceReplayDiagnostics.captureTraces(fast,certified));
+    }
+
+    /** Recheck a diagnostic using its actual immutable numeric selections. */
+    static Result compareCaptured(Canonical.Prepared a,Canonical.Prepared b,NativeRepairTrace fast,NativeRepairTrace certified,JSONObject report) {
+        try {
+            if(!TemporalOperationCorrespondence.temporal(a)&&!TemporalOperationCorrespondence.temporal(b)) {
+                TemporalOperationCorrespondence.replay(fast,report.getJSONObject("fast"));
+                TemporalOperationCorrespondence.replay(certified,report.getJSONObject("certified"));
+                return compareCaptured(a,b,report);
+            }
+            var evidence=TemporalOperationCorrespondence.compare(a,b,fast,certified,report);
+            boolean same=evidence.getBoolean("orderedBlockEffectsEqual");
+            return new Result(same?Status.MATCHED:Status.MISMATCH,same?"CHECKED_NATIVE_ACTIONS_EQUAL":"CHECKED_NATIVE_ACTIONS_DIFFER",evidence);
+        } catch(TemporalOperationCorrespondence.Missing missing) {
+            return new Result(Status.UNCHECKABLE,missing.getMessage(),retained(report).put("correspondenceBoundary",missing.boundary));
+        } catch(RuntimeException e){return failure(e,report);}
     }
 
     private static Result compareSelected(Canonical.Prepared a,Canonical.Prepared b,java.util.function.Supplier<JSONObject> capture) {
@@ -166,9 +193,12 @@ public final class NativeOperationComparison {
         var receipt=component.getJSONObject("receipt");
         var as=a.atoms(receipt.getJSONArray("source"),certified); var bs=b.atoms(receipt.getJSONArray("target"),certified);
         int declarations=DeclarationReplay.verify(as,bs,receipt);
-        Map<String,String> selected=certified?certMapping(a,b,phase.getJSONArray("alphaMapping")):stringMapping(phase.getJSONObject("alphaMapping"));
+        Map<String,String> selected=certified?certMapping(a,b,arm.getJSONArray("selectedGlobalMapping")):stringMapping(phase.getJSONObject("alphaMapping"));
         validateMapping(a,b,selected);
-        if(certified) require(phase.getJSONArray("alphaMapping").similar(arm.getJSONArray("selectedGlobalMapping")),"Global/phase map conflict");
+        // A paid declaration link can target a binder absent from the matrix.
+        // Keep that global link, but check the producer's exact phase projection.
+        if(certified) require(phase.getJSONArray("alphaMapping").similar(new JSONArray(
+                QuotientRepairDistance.projectFixedMatrixMapping(a.view,b.view,indices(a,b,selected)))),"Global/phase map conflict");
         var completed=new TreeMap<>(selected);
         JSONObject completion=receipt.optJSONObject("matrixCorrespondenceCompletion");
         if(completion!=null) {
@@ -206,7 +236,8 @@ public final class NativeOperationComparison {
         }
         var matrix=phase.getJSONObject("receipt");
         int matrixCost=certified?QuotientRepairDistance.verifyFixedMatrixReplay(a.view,b.view,
-                indices(a,b,selected),indices(a,b,completed),matrix):CanonicalDistance.verifyFixedMatrixReplay(a.fast,b.fast,selected,completed,matrix);
+                QuotientRepairDistance.projectFixedMatrixMapping(a.view,b.view,indices(a,b,selected)),
+                QuotientRepairDistance.projectFixedMatrixMapping(a.view,b.view,indices(a,b,completed)),matrix):CanonicalDistance.verifyFixedMatrixReplay(a.fast,b.fast,selected,completed,matrix);
         require(matrixCost==arm.getInt("matrixDistance") && declarations==arm.getInt("quantifierDistance"),"Native numeric endpoint costs");
         JSONObject temporal=arm.getJSONObject("temporalSlice");
         TemporalReplay.verify(a.view.temporalRoot(),b.view.temporalRoot(),RepairView.TemporalNode::label,RepairView.TemporalNode::children,temporal);
@@ -222,6 +253,14 @@ public final class NativeOperationComparison {
                     && new JSONArray(pb).similar(permutation.getJSONArray("target")),"Permutation/action coordinate conflict");
             actions.put(new JSONObject().put("stage","declarationPermutation").put("cost",0)
                     .put("source",new JSONArray(pa)).put("target",new JSONArray(pb)));
+        }
+        if(permutation!=null && permutation.has("sourcePresentation")) {
+            require(permutation.getString("admission").equals("INDEPENDENT_TYPED_PREFIX_PRESENTATION"),"Presentation law");
+            a.checkPresentation(pa,certified,permutation.getJSONObject("sourcePresentation"));
+            b.checkPresentation(pb,certified,permutation.getJSONObject("targetPresentation"));
+        } else {
+            a.checkGlobalPermutation(new JSONArray(a.globalPermutation(pa)));
+            b.checkGlobalPermutation(new JSONArray(b.globalPermutation(pb)));
         }
         if(!certified && arm.has("selectedGroupedDeclarationPermutation")) {
             var selectedOrder=arm.getJSONObject("selectedGroupedDeclarationPermutation");
@@ -437,7 +476,17 @@ public final class NativeOperationComparison {
         }
         int[] permutation(List<DeclarationReplay.Atom> rows,boolean certified) {
             int[] result=new int[rows.size()];for(int i=0;i<result.length;i++)result[i]=base.indexOf(ordinal(name(rows.get(i),certified)));
-            checkGlobalPermutation(new JSONArray(globalPermutation(result)));return result;
+            return result;
+        }
+        void checkPresentation(int[] order,boolean certified,JSONObject wire) {
+            var bindings=new ArrayList<Binding>();var identities=new ArrayList<String>();
+            for(int original:base) {
+                String name=qs.get(original).getName();int index=coordinate(name);
+                bindings.add(phase.bindings().get(index));
+                identities.add(certified?Integer.toString(index):name);
+            }
+            var expected=DeclarationPresentation.evidence(bindings,identities,order);
+            require(expected.similar(wire),"Substituted typed presentation/source evidence");
         }
         int[] globalPermutation(int[] order) {
             int[] result=new int[qs.size()];for(int i=0;i<result.length;i++)result[coordinate(qs.get(base.get(i)).getName())]=coordinate(qs.get(base.get(order[i])).getName());return result;

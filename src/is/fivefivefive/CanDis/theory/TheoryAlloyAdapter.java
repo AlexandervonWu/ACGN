@@ -2504,6 +2504,35 @@ public final class TheoryAlloyAdapter {
             activeLocalBinders.addLast(frame);
             TypedInvocation body;
             try {
+                // Construct original domain occurrences too. Descriptor syntax
+                // retains local dependencies, but is not a JOIN certificate.
+                // Each domain sees only ambient and earlier declaration slots;
+                // a grouped declaration's variables enter together afterwards.
+                // Existing source commitments, result proofs and occurrence
+                // bindings authorize projection of these exact subtrees.
+                TypedSlotContext domainContext = context;
+                Map<String, TypedSlot> domainBindings = new LinkedHashMap<>(bindings);
+                int declared = 0;
+                for (EClassRef childRef : source.getChildClasses()) {
+                    EClassRef canonical = childRef.canonical();
+                    EGraphNode declaration = canonical.getEClass().getRepresentative();
+                    if (!isRelDecl(declaration.getOpcode())) continue;
+                    Map<String, String> declarationNames = composeSlotNames(
+                            canonical.getSlotMap(), outerNames);
+                    buildChildOperand(declaration.getChildClasses().get(0), declarationNames,
+                            domainContext, domainBindings, temporalReferences);
+                    for (int index = 1; index < declaration.getChildren().size(); index++) {
+                        EGraphNode variable = declaration.getChildren().get(index);
+                        if (variable.getOpcode() != Opcode.VARIABLE) continue;
+                        LocalCoordinate local = locals.get(declared++);
+                        TypedSlot slot = bodyBindings.get(local.name);
+                        if (slot == null || !slot.type().equals(local.type)) {
+                            throw new IllegalStateException("Local domain prefix lost its typed owner slot");
+                        }
+                        domainBindings.put(local.name, slot);
+                        domainContext = domainContext.plus(slot);
+                    }
+                }
                 List<OnePort> bodies = new ArrayList<>();
                 for (EClassRef childRef : source.getChildClasses()) {
                     EClassRef canonical = childRef.canonical();

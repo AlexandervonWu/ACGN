@@ -58,7 +58,7 @@ import is.fivefivefive.CanDis.theory.TheoryAlloyAdapter.DependentChainSourceBind
  * scope/container legality obtained from the faithful certified artifact.
  */
 public final class RepairProjection {
-    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v21-checked-join-erasure";
+    public static final String VERSION = "faithful-fast-rewrite-repair-projection-v25-typed-branch-reservation";
     private static final int MAX_BOOLEAN_FLATTEN_ALTERNATIVES = 4096;
     private static final long MAX_BOOLEAN_FLATTEN_CHILD_REFERENCES = 1_000_000L;
     private static final int MAX_PROJECTED_COMPARISON_STEPS = 1_000_000;
@@ -152,7 +152,9 @@ public final class RepairProjection {
                 canonical.temporalRoot,
                 canonical.phases,
                 artifact.semanticProfile(),
-                evidence.canonicalKey());
+                evidence.canonicalKey(),
+                canonical.sourceOrder.stream().map(index ->
+                        new RepairView.PhaseCoordinate(index, normalForms.get(index))).toList());
     }
 
     static final class Projection {
@@ -160,18 +162,21 @@ public final class RepairProjection {
         final List<Phase> phases;
         final SemanticProfile semanticProfile;
         final StructuralKey producerObservationKey;
+        final List<RepairView.PhaseCoordinate> phaseCoordinates;
 
         private Projection(
                 TemporalNode temporalRoot,
                 List<Phase> phases,
                 SemanticProfile semanticProfile,
-                StructuralKey producerObservationKey) {
+                StructuralKey producerObservationKey,
+                List<RepairView.PhaseCoordinate> phaseCoordinates) {
             this.temporalRoot = Objects.requireNonNull(temporalRoot, "temporalRoot");
             this.phases = List.copyOf(phases);
             this.semanticProfile = Objects.requireNonNull(
                     semanticProfile, "semanticProfile");
             this.producerObservationKey = Objects.requireNonNull(
                     producerObservationKey, "producerObservationKey");
+            this.phaseCoordinates = List.copyOf(phaseCoordinates);
         }
     }
 
@@ -619,6 +624,7 @@ public final class RepairProjection {
                     operator, payload, repairSemanticPayload(source), null, -1, containerKind,
                     source.isOrderInsensitive(), children).withObservation(
                             isRelDecl(source.getOpcode()) ? null : requireExactResultType(source), List.of(), null);
+            if (source.getOpcode() == Opcode.REF) projected = projected.withSourceOccurrence(source);
             return (source.getOpcode() == Opcode.AND || source.getOpcode() == Opcode.OR)
                     && source.hasFlatLicense() && containerKind == ContainerKind.SET
                     ? flattenProjectedBoolean(projected) : projected;
@@ -1305,6 +1311,7 @@ public final class RepairProjection {
         private final Set<Integer> activeKeys = new LinkedHashSet<>();
         private final List<Integer> sourceOrder = new ArrayList<>();
         private final Set<Integer> visited = new LinkedHashSet<>();
+        private final Set<Integer> reserved = new LinkedHashSet<>();
         private final Map<Integer, Integer> canonicalIndices = new HashMap<>();
         private final List<Phase> phases;
         private final TemporalNode temporalRoot;
@@ -1332,6 +1339,7 @@ public final class RepairProjection {
                 return;
             }
 
+            reservePhase(0);
             visitPhase(0);
             // The exact adapter has already proved every source phase reachable.
             // A phase can disappear here only when a certified alternative (most
@@ -1347,7 +1355,8 @@ public final class RepairProjection {
             }
             phases = Collections.unmodifiableList(reordered);
             temporalRoot = new TemporalNode(
-                    naturalTemporalLabel(TemporalOp.NONE), temporalChildren(0));
+                    naturalTemporalLabel(TemporalOp.NONE), temporalChildren(0), -1, List.of(0),
+                    null, List.of(forms.get(0)));
         }
 
         private static CanonicalPhaseProjection create(
@@ -1360,12 +1369,18 @@ public final class RepairProjection {
             if (!visited.add(sourceIndex)) {
                 return;
             }
-            sourceOrder.add(sourceIndex);
             for (TemporalReference reference : orderedReferences(sourceIndex)) {
+                // Keep certified ACI reference order, but reserve both typed
+                // binary roles before either body, just as IRAgent does.
+                for (int branch : reference.branches) reservePhase(branch);
                 for (int branch : reference.branches) {
                     visitPhase(branch);
                 }
             }
+        }
+
+        private void reservePhase(int sourceIndex) {
+            if (reserved.add(sourceIndex)) sourceOrder.add(sourceIndex);
         }
 
         private Phase reindexPhase(Phase phase, int sourceIndex) {
@@ -1414,7 +1429,8 @@ public final class RepairProjection {
                         Collections.emptyList(),
                         Collections.emptyList()).withObservation(node.observationType(),
                                 java.util.Arrays.stream(reference.branches).map(canonicalIndices::get).boxed().toList(),
-                                reference.label);
+                                reference.label).withReferenceOrigin(
+                                        forms.get(parentPhase).temporalReferenceOrigin(node.sourceOccurrence()));
             }
             List<Node> children = new ArrayList<>(node.children().size());
             for (Node child : node.children()) {
@@ -1450,7 +1466,11 @@ public final class RepairProjection {
                 for (int branch : reference.branches) {
                     descendants.addAll(temporalChildren(branch));
                 }
-                result.add(new TemporalNode(reference.label, descendants));
+                result.add(new TemporalNode(reference.label, descendants,
+                        canonicalIndices.get(phaseIndex),
+                        java.util.Arrays.stream(reference.branches).map(canonicalIndices::get).boxed().toList(),
+                        forms.get(phaseIndex),
+                        java.util.Arrays.stream(reference.branches).mapToObj(forms::get).toList()));
             }
             return result;
         }
@@ -1701,14 +1721,14 @@ public final class RepairProjection {
         }
     }
 
-    private static boolean isBinaryLeft(TemporalOp operation) {
+    static boolean isBinaryLeft(TemporalOp operation) {
         return operation == TemporalOp.UNTILL
                 || operation == TemporalOp.RELEASESL
                 || operation == TemporalOp.SINCEL
                 || operation == TemporalOp.TRIGGEREDL;
     }
 
-    private static TemporalOp matchingRight(TemporalOp operation) {
+    static TemporalOp matchingRight(TemporalOp operation) {
         switch (operation) {
             case UNTILL:
                 return TemporalOp.UNTILR;
@@ -1723,7 +1743,7 @@ public final class RepairProjection {
         }
     }
 
-    private static String naturalTemporalLabel(TemporalOp operation) {
+    static String naturalTemporalLabel(TemporalOp operation) {
         switch (operation) {
             case UNTILL:
             case UNTILR:

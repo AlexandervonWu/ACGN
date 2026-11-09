@@ -54,7 +54,12 @@ final class LocalOwnerCorrespondence {
         }
         return q;
     }
-    private static String coordinate(QuantiVar q) {
+    QuantiVar originalBinding(EGraphNode n) {
+        var q=occurrences.get(n.getSourceOccurrenceLineage());
+        require(q!=null,"Missing original local occurrence");
+        return q;
+    }
+    static String coordinate(QuantiVar q) {
         var m=java.util.regex.Pattern.compile("local#([0-9]+)#([0-9]+):.*").matcher(q.getDeBruijnKey());
         require(m.matches(),"Missing original lexical coordinate");return m.group(1)+":"+m.group(2);
     }

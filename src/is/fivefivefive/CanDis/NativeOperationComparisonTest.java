@@ -82,7 +82,10 @@ public final class NativeOperationComparisonTest {
             }
         }
         var temporal=pair("sig A {} pred inv { always some A } pred invc { eventually no A }","inv","invc");
-        check(compare(temporal).status()==NativeOperationComparison.Status.UNCHECKABLE,"unsupported temporal correspondence not a demonstrated mismatch");
+        var temporalResult=compare(temporal);
+        check(temporalResult.status()==NativeOperationComparison.Status.MATCHED
+                &&temporalResult.evidence().getBoolean("orderedBlockEffectsEqual")
+                &&temporalResult.evidence().getBoolean("allNativeEntriesRetained"),"source-linked temporal native blocks including zero operations");
         var grouped=pair("sig A { r:set A } pred inv { all x:A | some x.r implies (one y,z:A | y in x.r and z in y.r) } pred invc { some A }","inv","invc");
         check(groupedOwner(grouped.left.normalizedForms().get(0).getCertificationMatrixEGraph()),"negative fixture actually retains grouped local source owner");
         var groupedResult=compare(grouped);

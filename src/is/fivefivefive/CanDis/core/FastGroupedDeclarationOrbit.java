@@ -21,8 +21,7 @@ final class FastGroupedDeclarationOrbit {
 
     static List<int[]> orders(NormalForm source,NormalForm comparison,List<QuantiVar> order) {
         var result=new ArrayList<int[]>();result.add(identity(order.size()));
-        if(order.size()>MAX_BINDINGS || !source.getLocalQuantiVars().isEmpty()
-                || !comparison.getLocalQuantiVars().isEmpty()
+        if(order.size()>MAX_BINDINGS
                 // Paid disjoint paths do not extend this permutation slice.
                 || source.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
                 || comparison.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
@@ -47,7 +46,8 @@ final class FastGroupedDeclarationOrbit {
         var evidence=TheoryAlloyAdapter.adapt(List.of(source),source.getCertificationMatrixEGraph().getSemanticProfile());
         evidence.requireRepairProjectionSources(List.of(source));
         RepairProjection.project(evidence,List.of(source));
-        require(evidence.localBinderDescriptors().isEmpty(),"Grouped orbit cannot move retained owners");
+        // supports() checks retained local owners against the original source.
+        // This certified outer permutation transports references, not local slots.
         var descriptor=evidence.phaseBinderDescriptors().get(0);
         for(var proof:descriptor.automorphisms().generatorCertificates())CertificateVerifier.verify(proof);
         for(var proof:evidence.semanticArtifact().binderOccurrenceCertificates())CertificateVerifier.verify(proof);

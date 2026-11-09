@@ -19,7 +19,8 @@ public final class FastLocalPaidScope {
     private boolean checkingSource = true;
 
     private record LocalSlot(QuantiVar binding,long variable) { }
-    private record LocalPlan(List<LocalSlot> slots,long parent,long declaration,EGraphNode domain) { }
+    private record LocalGroup(List<LocalSlot> slots,long declaration,EGraphNode domain) { }
+    private record LocalPlan(List<LocalGroup> groups,long parent) { }
 
     private FastLocalPaidScope(ExactAlloyType module) { this.module=module; }
 
@@ -37,20 +38,18 @@ public final class FastLocalPaidScope {
             if(outer.containsKey(q.getName()) || check.locals.put(q.getName(),q)!=null) return 0;
         }
         if(!check.walk(form.getCertificationMatrixEGraph(),outer,0,ROOT_OWNER) || check.sourcePlans.isEmpty()) return 0;
-        // The old single-owner slice retains all its supported kinds. Multiple
-        // owners form one ordered ALL/SOME chain; walk checks each original
-        // kind and parent edge. No mixed-kind exchange or hoisting is licensed.
+        // Distinct retained owners may share a parent. walk checks each actual
+        // owner identity, parent edge and ordered slots; no scope is exchanged.
         if(check.sourcePlans.size()>1) {
-            var parents=new HashSet<Long>();
             for(var plan:check.sourcePlans.values())
-                if((plan.slots().get(0).binding().getQuantifier()!=QuantiVar.Quantifier.SOME
-                        && plan.slots().get(0).binding().getQuantifier()!=QuantiVar.Quantifier.ALL)
-                        || !parents.add(plan.parent())) return 0;
+                if((plan.groups().get(0).slots().get(0).binding().getQuantifier()!=QuantiVar.Quantifier.SOME
+                        && plan.groups().get(0).slots().get(0).binding().getQuantifier()!=QuantiVar.Quantifier.ALL)) return 0;
         }
         check.checkingSource=false;
         check.usedOwners.clear();
         return check.walk(form.getMatrixEGraph(),outer,0,ROOT_OWNER)
-                && check.usedOwners.size()==check.sourcePlans.values().stream().mapToInt(p->p.slots().size()).sum()?check.sourcePlans.size():0;
+                && check.usedOwners.size()==check.sourcePlans.values().stream()
+                        .flatMap(p->p.groups().stream()).mapToInt(g->g.slots().size()).sum()?check.sourcePlans.size():0;
     }
 
     /** Actual nodes from a checked retained scope, not a permission by opcode.
@@ -129,9 +128,11 @@ public final class FastLocalPaidScope {
         if(n.getOpcode()==EGraphNode.Opcode.REF) return false;
         if(n.getOpcode()==EGraphNode.Opcode.CALL) {
             var c=CallMetadata.require(n);var type=n.getExactAlloyType();
-            if(!c.kind().equals("call/expression") || n.isOrderInsensitive()
-                    || type==null || type.kind()!=ExactAlloyType.Kind.RELATION
-                    || !type.hasParserAuthenticatedAncestry() || !type.sharesParserModuleAuthorityWith(module))return false;
+            boolean resultType=type!=null &&
+                    (c.kind().equals("call/expression") && type.kind()==ExactAlloyType.Kind.RELATION
+                        && type.hasParserAuthenticatedAncestry() && type.sharesParserModuleAuthorityWith(module)
+                    || c.kind().equals("call/formula") && type.kind()==ExactAlloyType.Kind.BOOL);
+            if(n.isOrderInsensitive() || !resultType)return false;
             var original=sourceCalls.get(n.getSourceOccurrenceLineage());
             if(checkingSource) {
                 if(original==null)sourceCalls.put(n.getSourceOccurrenceLineage(),n);
@@ -161,39 +162,56 @@ public final class FastLocalPaidScope {
         if(declares || n.getOpcode()==EGraphNode.Opcode.EXISTS || n.getOpcode()==EGraphNode.Opcode.FORALL) {
             var kind=localKind(n.getOpcode());
             if(kind==null) return false;
-            if(n.getChildren().size()!=2) return false;
-            var decl=n.getChildren().get(0);
+            if(n.getChildren().size()<2) return false;
+            var plan=sourcePlans.get(n.getSourceOccurrenceLineage());
+            int groupCount=n.getChildren().size()-1;
+            if(!checkingSource && (plan==null || plan.parent()!=parent || plan.groups().size()!=groupCount))return false;
+            var scoped=new HashMap<>(visible);var groups=new ArrayList<LocalGroup>();
+            int ordinal=0;String ownerPath=null;
+            for(int groupIndex=0;groupIndex<groupCount;groupIndex++) {
+            var decl=n.getChildren().get(groupIndex);
             if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()<2) return false;
             var domain=decl.getChildren().get(0);
-            var plan=sourcePlans.get(n.getSourceOccurrenceLineage());
-            if(!checkingSource && (plan==null || plan.slots().size()!=decl.getChildren().size()-1))return false;
-            var scoped=new HashMap<>(visible);var slots=new ArrayList<LocalSlot>();String bindingPath=null;
+            var previous=checkingSource?null:plan.groups().get(groupIndex);
+            if(!checkingSource && previous.slots().size()!=decl.getChildren().size()-1)return false;
+            // Each domain is checked before this declaration's tuple enters scope.
+            var domainScope=new HashMap<>(scoped);var slots=new ArrayList<LocalSlot>();String bindingPath=null;
             for(int i=1;i<decl.getChildren().size();i++) {
               var variable=decl.getChildren().get(i);
               if(variable.getOpcode()!=EGraphNode.Opcode.VARIABLE)return false;
-              var q=checkingSource ? locals.get(variable.getAlphaName()) : plan.slots().get(i-1).binding();
+              var q=checkingSource ? locals.get(variable.getAlphaName()) : previous.slots().get(i-1).binding();
               String name=variable.getAlphaName();
               if(q==null || name==null || !q.isFrozenForCertification() || scoped.containsKey(name)
                     || q.getBindingPath().isEmpty() || q.getQuantifier()!=kind
                     || q.getCardinality()!=QuantiVar.Cardinality.ONE || q.getDisjointnessClass()!=0
-                    || !typed(variable,q) || !retainedDomain(domain,q,visible,depth,parent)
+                    || !typed(variable,q) || !retainedDomain(domain,q,domainScope,depth,parent)
                     || !usedOwners.add(q.getName())) return false;
               if(bindingPath==null)bindingPath=q.getBindingPath();
               if(!bindingPath.equals(q.getBindingPath()))return false;
-              if(decl.getChildren().size()>2 && !q.getDeBruijnKey().matches("local#[0-9]+#"+(i-1)+":ONE:.*@"+java.util.regex.Pattern.quote(bindingPath)))return false;
+              if((groupCount>1 || decl.getChildren().size()>2) && !q.getDeBruijnKey().matches("local#[0-9]+#"+ordinal+":ONE:.*@"+java.util.regex.Pattern.quote(bindingPath)))return false;
+              if(groupCount>1) {
+                  String suffix="/local-decl["+groupIndex+"]";
+                  if(!bindingPath.endsWith(suffix))return false;
+                  String context=bindingPath.substring(0,bindingPath.length()-suffix.length());
+                  if(ownerPath==null)ownerPath=context;
+                  if(!ownerPath.equals(context))return false;
+              }
+              ordinal++;
               slots.add(new LocalSlot(q,variable.getSourceOccurrenceLineage()));scoped.put(name,q);
             }
-            if(checkingSource) {
-                if(sourcePlans.putIfAbsent(n.getSourceOccurrenceLineage(),new LocalPlan(List.copyOf(slots),parent,decl.getSourceOccurrenceLineage(),domain))!=null) return false;
-            } else if(plan.parent()!=parent || plan.declaration()!=decl.getSourceOccurrenceLineage()
-                    || !sameSlots(plan.slots(),slots)
-                    || !sameDomain(plan.domain(),domain)) return false;
+            if(!checkingSource && (previous.declaration()!=decl.getSourceOccurrenceLineage()
+                    || !sameSlots(previous.slots(),slots)
+                    || !sameDomain(previous.domain(),domain))) return false;
+            groups.add(new LocalGroup(List.copyOf(slots),decl.getSourceOccurrenceLineage(),domain));
             // Fast's local spelling differs from the original alpha name. The
             // actual owner/declaration/variable lineage licenses that transfer.
             // All ordered tuple slots share this owner, never an outer scope.
             for(int i=1;i<decl.getChildren().size();i++)
                 if(!walk(decl.getChildren().get(i),scoped,depth+1,n.getSourceOccurrenceLineage()))return false;
-            return walk(n.getChildren().get(1),scoped,depth+1,n.getSourceOccurrenceLineage());
+            }
+            if(checkingSource && sourcePlans.putIfAbsent(n.getSourceOccurrenceLineage(),
+                    new LocalPlan(List.copyOf(groups),parent))!=null)return false;
+            return walk(n.getChildren().get(groupCount),scoped,depth+1,n.getSourceOccurrenceLineage());
         }
         switch(n.getOpcode()) {
             case GENERICRELDECL, DISJ, VAR, DISJVAR -> { return false; }

@@ -4,7 +4,7 @@ import java.util.*;
 import is.fivefivefive.ACGN.alloy.CallSymbol;
 import is.fivefivefive.ACGN.alloy.ExactAlloyType;
 
-/** Original declared or parser-resolved imported expression calls with ordered,
+/** Original declared or parser-resolved imported calls with ordered,
  * noncapturing prefix arguments. Does not unfold functions or move local owners. */
 public final class BoundCallEvidence {
     private final Map<Long,EGraphNode> originals=new HashMap<>();
@@ -60,9 +60,14 @@ public final class BoundCallEvidence {
 
     private boolean shape(EGraphNode n) {
         var c=CallMetadata.require(n);
+        // Bool has no relation ancestry. Its authority comes from the retained
+        // call occurrence and checked ordered arguments, not a fabricated carrier.
+        boolean resultType=c.kind().equals("call/expression") && typed(n,false)
+                || c.kind().equals("call/formula") && n.getExactAlloyType()!=null
+                    && n.getExactAlloyType().kind()==ExactAlloyType.Kind.BOOL;
         if((c.authority()!=CallSymbol.ArityAuthority.DECLARATION
-                && c.authority()!=CallSymbol.ArityAuthority.TYPECHECKED_IMPORT) || !c.kind().equals("call/expression")
-                || c.arity()==0 || c.arity()>64 || n.isOrderInsensitive() || !typed(n,false))return false;
+                && c.authority()!=CallSymbol.ArityAuthority.TYPECHECKED_IMPORT)
+                || c.arity()==0 || c.arity()>64 || n.isOrderInsensitive() || !resultType)return false;
         int[] budget={511};
         for(var arg:n.getChildren())if(!argument(arg,budget,1))return false;
         return true;

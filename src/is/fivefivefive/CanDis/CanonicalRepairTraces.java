@@ -32,8 +32,8 @@ public final class CanonicalRepairTraces {
                 new JSONObject().put("retained",false).put("extractionObligation","Construction artifacts were compacted before trace capture"),()->{});
         var a=left.semanticArtifact();var b=right.semanticArtifact();
         JSONObject links=new JSONObject().put("retained",true)
-                .put("source",construction(a,left.repairView().producerObservationDigest()))
-                .put("target",construction(b,right.repairView().producerObservationDigest()))
+                .put("source",construction(a,left.repairView().producerObservationDigest(),left.repairView().phaseRepresentation("source")))
+                .put("target",construction(b,right.repairView().producerObservationDigest(),right.repairView().phaseRepresentation("target")))
                 .put("constructionIsNotRepair",true).put("wireReplayChecked",false);
         return trace.linkConstruction(links,()->{check(a);check(b);});
         } catch(RuntimeException failure) {throw NativeRepairTrace.captureFailure(trace.json(),failure);}
@@ -49,7 +49,7 @@ public final class CanonicalRepairTraces {
         for(var proof:roots(artifact))CertificateVerifier.verify(proof);
     }
 
-    private static JSONObject construction(CertifiedSemanticArtifact artifact,String projectionDigest) {
+    private static JSONObject construction(CertifiedSemanticArtifact artifact,String projectionDigest,JSONObject phaseRepresentation) {
         check(artifact);
         var resources=new TraceResources();
         var keys=new KeyTable(resources);
@@ -77,10 +77,12 @@ public final class CanonicalRepairTraces {
                 .put("sourceOccurrence",call.occurrenceId()).put("sourcePath",call.sourcePath())
                 .put("callee",call.qualifiedCallee()).put("authority",call.arityAuthority())
                 .put("typedEndpoint",keys.id(call.sourceEndpoint().structuralKey())));
-        return new JSONObject().put("artifactRoot",artifactRoot).put("projectionObservationDigest",projectionDigest)
+        var result=new JSONObject().put("artifactRoot",artifactRoot).put("projectionObservationDigest",projectionDigest)
                 .put("proofRoots",rootIds).put("proofs",proofs).put("structuralKeys",keys.rows)
                 .put("callPremises",calls).put("premisesCheckedInProcess",true)
                 .put("linkAuthority","Same retained Prepared producer owns this artifact and sealed projection; not independent wire correspondence");
+        if(phaseRepresentation!=null)result.put("projectionPhaseRepresentation",phaseRepresentation);
+        return result;
     }
 
     /** Exact structural sharing, without recursively expanding equal proof subterms. */
