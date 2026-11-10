@@ -14,11 +14,15 @@ import java.util.function.Supplier;
 
 import org.json.JSONObject;
 
-/** First-incident latch: mismatches are fatal, never ordinary retryable file errors. */
+/** Stop-first by default; explicit diagnostic collection never grants parity authority. */
 final class BatchParityGate {
     enum Mode { STRICT_CERTIFIED, DIAGNOSTIC_COMPONENTS, DIAGNOSTIC_OPERATIONS }
     private final Path incidentPath;
     private final Mode mode;
+    private final boolean collectDiscrepancies;
+    private final Path discrepancies;
+    private long discrepancyCount;
+    private final java.util.Map<String,Long> discrepancyReasons=new java.util.TreeMap<>();
     private volatile Violation first;
     private final long[] operationCounts=new long[NativeOperationComparison.Status.values().length];
     private final java.util.Map<String,Long> uncheckedReasons=new java.util.TreeMap<>();
@@ -29,9 +33,17 @@ final class BatchParityGate {
     }
 
     BatchParityGate(Path output, Mode mode) {
+        this(output, mode, false);
+    }
+
+    BatchParityGate(Path output, Mode mode, boolean collectDiscrepancies) {
         this.mode = java.util.Objects.requireNonNull(mode);
+        if (collectDiscrepancies && mode != Mode.DIAGNOSTIC_OPERATIONS)
+            throw new IllegalArgumentException("Collect-all requires native operation diagnostics");
+        this.collectDiscrepancies = collectDiscrepancies;
+        discrepancies = output.resolve("replay-discrepancies");
         incidentPath = output.resolve("parity-incident.json");
-        if (Files.exists(incidentPath) || mode==Mode.DIAGNOSTIC_OPERATIONS
+        if (Files.exists(discrepancies) || Files.exists(incidentPath) || mode==Mode.DIAGNOSTIC_OPERATIONS
                 && Files.exists(incidentPath.resolveSibling("parity-native-replay.json"))) {
             throw new IllegalStateException("Refusing to overwrite an unresolved parity incident: " + incidentPath);
         }
@@ -72,6 +84,19 @@ final class BatchParityGate {
     }
 
     boolean checksOperations() { return mode==Mode.DIAGNOSTIC_OPERATIONS; }
+
+    void recordFileFailure(Path source, String left, String right, String error) {
+        if (collectDiscrepancies)
+            stop(source,left,right,null,null,"FILE_EXECUTION_FAILURE",()->new JSONObject().put("error",error));
+    }
+
+    synchronized JSONObject discrepancyCoverage() {
+        return new JSONObject().put("policy",collectDiscrepancies?"COLLECT_ALL":"STOP_FIRST")
+                .put("events",discrepancyCount).put("reasons",new JSONObject(discrepancyReasons))
+                .put("unit","finding events, not unique pairs; one pair can have multiple findings")
+                .put("directory",collectDiscrepancies?"replay-discrepancies":JSONObject.NULL)
+                .put("certificationStatus","BLOCKED");
+    }
 
     is.fivefivefive.CanDis.metric.NativeRepairTrace captureTrace(Path source,String left,String right,
             Supplier<is.fivefivefive.CanDis.metric.NativeRepairTrace> capture,Supplier<JSONObject> previous) {
@@ -159,6 +184,10 @@ final class BatchParityGate {
     private synchronized void stop(Path source,String left,String right,int[] fast,int[] certified,String reason,
             Supplier<JSONObject> nativeReplay,byte[] originalSource) {
         if (first != null) throw first;
+        if (collectDiscrepancies) {
+            collect(source,left,right,fast,certified,reason,nativeReplay,originalSource);
+            return;
+        }
         Violation failure = new Violation(reason + ": " + source + " (" + left + ", " + right + ")");
         // Publish the latch before IO or replay work so other workers stop immediately.
         first = failure;
@@ -197,12 +226,17 @@ final class BatchParityGate {
 
     private void retainNativeReplay(Path source, byte[] original, JSONObject incident,
             Supplier<JSONObject> capture) throws IOException {
+        retainNativeReplay(source,original,incident,capture,incidentPath.resolveSibling("parity-native-replay.json"));
+    }
+
+    private void retainNativeReplay(Path source, byte[] original, JSONObject incident,
+            Supplier<JSONObject> capture, Path target) throws IOException {
         JSONObject evidence = new JSONObject().put("schema", "acgn-incident-native-replay-v1")
                 .put("status", "BLOCKED").put("complete", false).put("parityAuthority", false)
                 .put("source", incident.getString("source"))
                 .put("sourceSha256", incident.getString("sourceSha256"))
-                .put("leftPredicate", incident.getString("leftPredicate"))
-                .put("rightPredicate", incident.getString("rightPredicate"))
+                .put("leftPredicate", incident.get("leftPredicate"))
+                .put("rightPredicate", incident.get("rightPredicate"))
                 .put("incidentReason", incident.getString("reason"));
         try {
             JSONObject report = capture.get();
@@ -214,8 +248,43 @@ final class BatchParityGate {
             evidence.put("captureStatus", "FAILED").put("errorType", error.getClass().getName())
                     .put("error", String.valueOf(error.getMessage()));
         }
-        Files.writeString(incidentPath.resolveSibling("parity-native-replay.json"), evidence.toString(2) + "\n",
+        Files.writeString(target, evidence.toString(2) + "\n",
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE);
+    }
+
+    private void collect(Path source,String left,String right,int[] fast,int[] certified,String reason,
+            Supplier<JSONObject> nativeReplay,byte[] originalSource) {
+        try {
+            Files.createDirectories(discrepancies);
+            Path directory=Files.createDirectory(discrepancies.resolve(String.format(java.util.Locale.ROOT,"%08d",discrepancyCount+1)));
+            byte[] contents=originalSource==null?Files.readAllBytes(source):originalSource;
+            JSONObject incident=new JSONObject().put("schema","acgn-replay-discrepancy-v1")
+                    .put("status","RECORDED_CONTINUING").put("scanMode",mode.name())
+                    .put("publicationAllowed",false).put("certificationStatus","BLOCKED")
+                    .put("observedAt",Instant.now().toString()).put("reason",reason)
+                    .put("source",source.toAbsolutePath().normalize().toString())
+                    .put("sourceSha256",HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(contents)))
+                    .put("sourceText",new String(contents,StandardCharsets.UTF_8))
+                    .put("leftPredicate",left==null?JSONObject.NULL:left).put("rightPredicate",right==null?JSONObject.NULL:right)
+                    .put("distanceOrder",new String[]{"total","temporal","quantifier","matrix"})
+                    .put("fast",fast==null?JSONObject.NULL:fast).put("certified",certified==null?JSONObject.NULL:certified)
+                    .put("nativeReplayFile",nativeReplay==null?JSONObject.NULL:"native-replay.json");
+            Files.writeString(directory.resolve("incident.json"),incident.toString(2)+"\n",
+                    StandardCharsets.UTF_8,StandardOpenOption.CREATE_NEW,StandardOpenOption.WRITE);
+            if(nativeReplay!=null)retainNativeReplay(source,contents,incident,nativeReplay,directory.resolve("native-replay.json"));
+            var entry=new JSONObject().put("event",discrepancyCount+1).put("reason",reason)
+                    .put("source",incident.getString("source")).put("sourceSha256",incident.getString("sourceSha256"))
+                    .put("leftPredicate",incident.get("leftPredicate")).put("rightPredicate",incident.get("rightPredicate"))
+                    .put("incident",directory.getFileName()+"/incident.json");
+            Files.writeString(discrepancies.resolve("index.jsonl"),entry.toString()+"\n",
+                    StandardCharsets.UTF_8,StandardOpenOption.CREATE,StandardOpenOption.APPEND);
+            discrepancyCount++;
+            discrepancyReasons.merge(reason,1L,Long::sum);
+        } catch(IOException | NoSuchAlgorithmException | RuntimeException error) {
+            first=new Violation("Cannot retain diagnostic discrepancy: "+source);
+            first.addSuppressed(error);
+            throw first;
+        }
     }
 
     static final class Violation extends RuntimeException {
