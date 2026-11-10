@@ -220,3 +220,14 @@ These local results are a handoff, not a closure report or a reusable frozen
 input-root claim. The main runner must rerun the slice against its frozen
 manifest and registered verifiers, compare both isolated builds, and bind
 the outputs to the fourth-five claims and declared TCB before publication.
+
+## Prefix Metadata Compatibility (2026-11-10)
+
+The exact TheoryAlloyAdapter class and resolved-binding pins now include the
+prefixBinderPlan/PrefixBinderPlan metadata API, requireOccurrenceOutputType,
+and the two binderPlan overloads made static in ef46feae. Their existing bodies,
+container constructors, source checks and certificate rules are unchanged.
+This is a reviewed source-model compatibility update, not pin learning or a
+new semantic claim. The fourth and fifth Java/Python pin pairs must agree;
+fresh extraction, all existing source mutations and Lean negative controls,
+and both clean builds are required before reporting the bounded slice passed.

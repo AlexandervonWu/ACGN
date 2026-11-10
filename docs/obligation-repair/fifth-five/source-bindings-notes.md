@@ -303,3 +303,28 @@ Final code hashes, with this note's hash left to the enclosing manifest:
 | `SourceOccurrenceBindingsExtractor.java` | `7bfeefbe51fa914beb64dc9cf08d914e1f20fc1c6acf75e72b497af8d82339b4` |
 | `fifth_source_bindings_replays.py` | `b721116ef80b88b86d23c4f86214b52dbaae13a26e4ddc1ba755fc7b6867efd9` |
 | `test_fifth_source_bindings_replays.py` | `ef6115af4da1d5e72ee13110e9ab2ca492b756c50de31d449d75d7ca0288d2a1` |
+
+## Bottom-Up Normalization Compatibility (2026-11-10)
+
+The historical hashes above are not the current candidate's evidence.
+Fresh javac extraction pins the reviewed prefix metadata API in
+TheoryAlloyAdapter, the shared pre-prenex unused-binding pass in NormalForm,
+and EGraphNode's Boolean simplifier/reduction metadata and corrected reflexive
+comparison opcode dispatch. The reduction reference is retained through
+copies; existing freeze, lineage, source-content, phase and transfer checks
+are unchanged. No malformed invocation map is accepted by the dispatch fix.
+Snapshot preservation now materializes the current single-node slot interface
+before the first snapshot makes the cached intersection authoritative. This
+repairs uninitialized empty caches on freshly synthesized Boolean nodes; it
+does not change slot composition or admit missing coordinates. The nested
+unused-existential/implication regression checks both canonical paths and
+tampered traces; the original 277/338-reference social-media pools are replayed
+without dropping a reference.
+
+The source-occurrence slice retains its finite census and all existing source
+mutations. It does not acquire a proof of every new normalization path from
+these class pins. UnusedGroupedBindings.lean and the separate source-linked
+descope/typed-projection, negative evidence, D8 and native replay regressions
+cover the new bounded behavior. Both clean fifth-five builds and their full
+positive/negative controls must pass on the new frozen root; no old closure
+status or prior corpus result is promoted to this candidate.

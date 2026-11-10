@@ -163,3 +163,10 @@ source occurrence authority, every arbitrary context/type/operator, the complete
 contract registry, and future revisions remain outside this finite slice.
 Law-record authority, canonical table grammar/content-ID preimages and retained
 source occurrence commitments belong to the separately owned fifth-five areas.
+
+## Prefix Metadata Compatibility (2026-11-10)
+
+The TheoryAlloyAdapter source pins include the reviewed prefix-only helpers
+and static binderPlan overloads from ef46feae. Container construction and
+record models are unchanged. Fresh extraction and the complete two-build
+positive/negative suite, rather than the pin edit itself, determine the result.

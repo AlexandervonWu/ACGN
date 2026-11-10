@@ -25,7 +25,7 @@ public final class FlatContainerRecordsExtractor {
             Map.entry("FlatConstructionCertificate", "fddb9145978709c2881df347a902401fb1cc51ced2ac375aeb8e5d1413a97c9a 1de9f3d0ef542c59dc12a3bc379a5dd527330e103312940db1eca53e5a883aa2"),
             Map.entry("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
             Map.entry("StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f"),
-            Map.entry("TheoryAlloyAdapter", "5228d04a6d7fc02a17302c9a1677ce09e1a5f18afa36bebcf2b4c44ec9cebc85 55db5384d763d6b278ac257f4c754e7c298bc277d3a62482dbfdaab615a8c752"),
+            Map.entry("TheoryAlloyAdapter", "34fab8469ffe44905c7aedb253c0bb27b40257987281bfc61536c2550c23d86f 65675f4936fbd2b8f5a2e056c752d728be467f4d574096863252da0939580b25"),
             Map.entry("TypedENode", "b70e73eaabd850acf69575e9e134f165dbc8a60dc1790e816b7aaa6d65e18cc1 ef393be4a64e937af202fa7ca18d9858f6aa0afe0faa6c113b8155223a767a2b"));
 
     private static void require(boolean value, String message) {
