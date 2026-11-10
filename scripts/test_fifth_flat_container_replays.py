@@ -114,8 +114,8 @@ class RecordsPluginTests(unittest.TestCase):
 
     def test_source_controls_have_unique_exact_supported_sites(self):
         controls = r.source_mutations()
-        self.assertEqual(len(controls), 8)
-        self.assertEqual(len({c[0] for c in controls}), 8)
+        self.assertEqual(len(controls), 11)
+        self.assertEqual(len({c[0] for c in controls}), 11)
         for record in controls:
             _, path, old, new, _ = mutation_spec(record, {"FlatContainerRecordsExtractor"})
             self.assertEqual((ROOT/path).read_text().count(old), 1, path)

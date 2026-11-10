@@ -13,13 +13,17 @@ import javax.tools.*;
 public final class SourceOccurrenceBindingsExtractor {
     private static final String P = "is.fivefivefive.CanDis.theory.";
     private static final Map<String, String> OWNERS = Map.of(
+            "CertificateVerificationScope", P + "CertificateVerificationScope",
+            "CertificateVerifier", P + "CertificateVerifier",
             "TheoryAlloyAdapter", P + "TheoryAlloyAdapter",
             "EGraphNode", "is.fivefivefive.CanDis.core.EGraphNode",
             "NormalForm", "is.fivefivefive.CanDis.core.NormalForm",
             "StructuralKey", P + "StructuralKey",
             "DependentChainCertificate", P + "DependentChainCertificate");
     private static final Map<String, String> EXPECTED = Map.of(
-            "TheoryAlloyAdapter", "ed25098cfc0ddb9fc0a2199d164a491b4134bd5a237a38134a1dac138606599e 9b5dc746645bd0410691e802548793866250a7b94bc72be99f722530f881eb7c",
+            "CertificateVerificationScope", "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805",
+            "CertificateVerifier", "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654",
+            "TheoryAlloyAdapter", "5228d04a6d7fc02a17302c9a1677ce09e1a5f18afa36bebcf2b4c44ec9cebc85 55db5384d763d6b278ac257f4c754e7c298bc277d3a62482dbfdaab615a8c752",
             "EGraphNode", "c1a9c53411ca6f992194885033aed65ced8a984bfdc27854cbd71f70c9a84144 58d44197f5e4e56033d038eac4a0ba2b8ce556f2089a779102c1a11e33f2959e",
             "NormalForm", "eb30672a56cddbd90be32fa1dde6bf16d52aa091d5c3bd8dc9d6e72e8c816b4c 4c2ffa558901c90041a676d44ac94b799c07437b637eb083401dd9adf633d3e6",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
@@ -60,6 +64,8 @@ public final class SourceOccurrenceBindingsExtractor {
     }
 
     public static void main(String[] args) throws Exception {
+        // javac anonymous-class names use the process locale, not the task locale.
+        Locale.setDefault(Locale.ROOT);
         require(args.length == 2, "Usage: SourceOccurrenceBindingsExtractor ROOT OUTPUT.tsv");
         require(Runtime.version().feature() == 17, "JDK17 required");
         Path root = Path.of(args[0]).toAbsolutePath().normalize(), output = Path.of(args[1]);
@@ -82,6 +88,7 @@ public final class SourceOccurrenceBindingsExtractor {
                     List.of("--release", "17", "-proc:none", "-implicit:none", "-encoding", "UTF-8",
                             "-classpath", jars.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator))),
                     null, fm.getJavaFileObjectsFromPaths(sources));
+            task.setLocale(Locale.ROOT);
             List<CompilationUnitTree> units = new ArrayList<>();
             task.parse().forEach(units::add);
             task.analyze();
@@ -110,8 +117,8 @@ public final class SourceOccurrenceBindingsExtractor {
             }
         }
         require(errors.isEmpty(), "source-occurrence shape/binding mismatch\n" + String.join("\n", errors));
-        require(rows.size() == 6, "incomplete source census");
+        require(rows.size() == 8, "incomplete source census");
         Files.write(output, rows, StandardCharsets.UTF_8);
-        System.out.println("SourceOccurrenceBindingsExtractor passed: objects=5");
+        System.out.println("SourceOccurrenceBindingsExtractor passed: objects=7");
     }
 }

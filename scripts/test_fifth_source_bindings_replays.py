@@ -122,7 +122,7 @@ class SourceBindingsReplayTest(unittest.TestCase):
     def test_all_generated_theorems_audited_and_compact(self):
         code, count = r.program(observations(), sources())
         names = re.findall(r"^theorem (\w+)", code, re.M)
-        self.assertEqual(count, 187)
+        self.assertEqual(count, 189)
         self.assertEqual(len(names), count)
         self.assertEqual(names, re.findall(r"^#print axioms (\w+)", code, re.M))
         self.assertLess(len(code), 110000)
@@ -155,8 +155,8 @@ class SourceBindingsReplayTest(unittest.TestCase):
     def test_registered_source_mutations(self):
         root = Path(__file__).resolve().parents[1]
         mutations = r.source_mutations()
-        self.assertEqual(len(mutations), 16)
-        self.assertEqual(len({m[0] for m in mutations}), 16)
+        self.assertEqual(len(mutations), 19)
+        self.assertEqual(len({m[0] for m in mutations}), 19)
         for name, path, old, new, extractor in mutations:
             self.assertEqual((root / path).read_text().count(old), 1, name)
             self.assertNotEqual(old, new)
@@ -179,7 +179,7 @@ class SourceBindingsReplayTest(unittest.TestCase):
                 (build / name).write_text("\t".join(fields) + "\n" + "".join("\t".join(row[f] for f in fields) + "\n" for row in data))
             replay, code, count = r.generate(build, build)[0]
             self.assertEqual(replay, "SourceOccurrenceBindingsReplay.lean")
-            self.assertEqual(count, 187)
+            self.assertEqual(count, 189)
             negatives = r.negatives(build, build)
             self.assertEqual(len(negatives), 16)
             self.assertEqual(len({n[0] for n in negatives}), 16)

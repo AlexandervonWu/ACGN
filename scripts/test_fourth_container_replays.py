@@ -157,8 +157,8 @@ class ContainerReplayTest(unittest.TestCase):
     def test_source_controls_have_unique_actual_targets(self):
         root = Path(__file__).resolve().parents[1]
         mutations = r.source_mutations()
-        self.assertEqual(len(mutations), 7)
-        self.assertEqual(len({m[0] for m in mutations}), 7)
+        self.assertEqual(len(mutations), 10)
+        self.assertEqual(len({m[0] for m in mutations}), 10)
         for label, relative, old, new, extractor in mutations:
             self.assertEqual((root / relative).read_text().count(old), 1, label)
             self.assertNotEqual(old, new)

@@ -24,6 +24,17 @@ The repair loop and heartbeat remain PAUSED_BY_USER until explicitly resumed.
 
 ## Retained Safeguards
 
+The later performance-validation instruction permits more generous bounded
+heaps to avoid GC pressure and unnecessarily small Lean limits. Size the whole
+concurrent workload, including JVM/native overhead, against the host reserve;
+do not multiply a larger per-worker heap by 16 without renewed admission.
+The validated focused profiles use a fixed 2 GiB JVM heap within a 4 GiB service
+and Lean `-M4096` within a 6 GiB service (5 GiB high). Measure GC pauses and full
+collections rather than disabling collection or claiming that no GC is possible.
+The test-only Lean `-M1024` setting exhausted memory on the retained container
+replay; this is a failed validation attempt, not an admitted proof. Its fresh
+larger-memory replacement retains the identical proof and source inputs.
+
 Keep the 12 GiB service cap, 10 GiB high watermark, zero service swap, enforced
 OOM stops, 6 GiB runtime host reserve, mounted volume identity, 32 GiB external
 and 10 GiB internal disk guards. Full-corpus settings remain 16 workers, 8g heap,

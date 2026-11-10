@@ -10,9 +10,10 @@ from run_submission_container_closure import Blocked
 FIELDS = "case surface family fixture tree inputs outputs fibers splices accepted indexMatches controls stage".split()
 SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 SOURCE_PINS = {
+    "CertificateVerificationScope": "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805",
     "AlloyLawRegistry": "272257f8d03588e9cd009512c35a32a18c5194b5f74044c87a2716081690fb7b 9cad15d627e624d2998e965e86e8f5b52868552ca5c2d0015e12fb2fecebd041",
     "CertificateBundleWriter": "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46 0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21",
-    "CertificateVerifier": "1282022113db259138a3ca4293b580b72c674d34ec4c4d30e6cc5984afa053a5 68c116205f4cbdcbaa4b0ab023d279d86f7ab4aa00c3bc9db6a72e28a2760ee7",
+    "CertificateVerifier": "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654",
     "ContainerApplicationTrace": "38cca38c37ca76f05b9c5d08f85adb69c65b2f0fed8719c891b05e3d2d52db8b fe99c389770466e820400d38e0ff8d81b86bf258d5cb994f8e66314966a45f1d",
     "ContainerConstructionCertificate": "55e8e7749ca80eb280bf17b7e93bdfe065e5f0701fbe957a91587dc1ea44922b de3134e92cead0a801f768498d3fe76d5ac8df926af55b61ad01023f3cb3de0d",
     "ContainerLawCertificate": "b058b18d175022e193564a5e93c254fbd48924e82de99820daf6ad7142cdc0f2 d952931af1f841172ecdef2d6d04e8f94279d45869f97b0e5e0de49d4cea049e",
@@ -21,7 +22,7 @@ SOURCE_PINS = {
     "FlatConstructionCertificate": "fddb9145978709c2881df347a902401fb1cc51ced2ac375aeb8e5d1413a97c9a 1de9f3d0ef542c59dc12a3bc379a5dd527330e103312940db1eca53e5a883aa2",
     "SemanticEvidenceVerifier": "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd",
     "StructuralKey": "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
-    "TheoryAlloyAdapter": "ed25098cfc0ddb9fc0a2199d164a491b4134bd5a237a38134a1dac138606599e 9b5dc746645bd0410691e802548793866250a7b94bc72be99f722530f881eb7c",
+    "TheoryAlloyAdapter": "5228d04a6d7fc02a17302c9a1677ce09e1a5f18afa36bebcf2b4c44ec9cebc85 55db5384d763d6b278ac257f4c754e7c298bc277d3a62482dbfdaab615a8c752",
     "TypedENode": "b70e73eaabd850acf69575e9e134f165dbc8a60dc1790e816b7aaa6d65e18cc1 ef393be4a64e937af202fa7ca18d9858f6aa0afe0faa6c113b8155223a767a2b",
 }
 BOUNDARIES = ("missingA", "wrongAHead", "wrongAType", "wrongAPath", "wrongASchema", "wrongAProfile",
@@ -259,6 +260,9 @@ def negatives(build, formal):
 def source_mutations():
     base = "src/is/fivefivefive/CanDis/theory/"
     return [
+        ("memo-identity", base + "CertificateVerificationScope.java", "new IdentityHashMap<>()", "new java.util.HashMap<>()", "ContainerWitnessTransitionsExtractor"),
+        ("memo-policy", base + "CertificateVerificationScope.java", "!policy.equals(currentPolicy)", "false", "ContainerWitnessTransitionsExtractor"),
+        ("memo-local-proof", base + "CertificateVerifier.java", "certificate.verifyLocal();", ";", "ContainerWitnessTransitionsExtractor"),
         ("law-parameter", base + "ContainerLawCertificate.java", 'Objects.requireNonNull(lawParameter, "lawParameter")))',
          'StructuralKey.leaf("changed-law-parameter", "omitted")))', "ContainerWitnessTransitionsExtractor"),
         ("trace-fiber", base + "ContainerApplicationTrace.java", "origins.add(Integer.toString(input));",

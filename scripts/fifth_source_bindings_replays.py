@@ -18,11 +18,13 @@ FIELDS = "fixture field value".split()
 SOURCE_FIELDS = "object owner shapeSha256 bindingsSha256".split()
 NAMESPACE = "ACGN.FifthFive.SourceReplay"
 PINS = {
+    "CertificateVerificationScope": "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805",
+    "CertificateVerifier": "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654",
     "DependentChainCertificate": "800b128e0f225b68f242d201009689bb5eeded3391250ef4259378dce034c35f 123b6c433070bf4455f1a888010e09bd51b45b584833ff884c6d71d48f0978e4",
     "EGraphNode": "c1a9c53411ca6f992194885033aed65ced8a984bfdc27854cbd71f70c9a84144 58d44197f5e4e56033d038eac4a0ba2b8ce556f2089a779102c1a11e33f2959e",
     "NormalForm": "eb30672a56cddbd90be32fa1dde6bf16d52aa091d5c3bd8dc9d6e72e8c816b4c 4c2ffa558901c90041a676d44ac94b799c07437b637eb083401dd9adf633d3e6",
     "StructuralKey": "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
-    "TheoryAlloyAdapter": "ed25098cfc0ddb9fc0a2199d164a491b4134bd5a237a38134a1dac138606599e 9b5dc746645bd0410691e802548793866250a7b94bc72be99f722530f881eb7c",
+    "TheoryAlloyAdapter": "5228d04a6d7fc02a17302c9a1677ce09e1a5f18afa36bebcf2b4c44ec9cebc85 55db5384d763d6b278ac257f4c754e7c298bc277d3a62482dbfdaab615a8c752",
 }
 FROZEN = "IllegalStateException:A certified Fast Rewrite source e-graph is immutable"
 LINEAGE = "IllegalStateException:A dependent certificate was attached to another source lineage"
@@ -469,6 +471,9 @@ def source_mutations():
     core = "src/is/fivefivefive/CanDis/core/EGraphNode.java"
     normal = "src/is/fivefivefive/CanDis/core/NormalForm.java"
     specs = [
+        ("memo-identity", "src/is/fivefivefive/CanDis/theory/CertificateVerificationScope.java", "new IdentityHashMap<>()", "new java.util.HashMap<>()"),
+        ("memo-policy", "src/is/fivefivefive/CanDis/theory/CertificateVerificationScope.java", "!policy.equals(currentPolicy)", "false"),
+        ("memo-local-proof", "src/is/fivefivefive/CanDis/theory/CertificateVerifier.java", "certificate.verifyLocal();", ";"),
         ("phase-path", adapter, '"phase/" + phase + "/matrix"', '"phase/" + 0 + "/matrix"'),
         ("child-path", adapter, 'path + "/child/" + index', 'path + "/child/" + 0'),
         ("ownership", adapter, 'if (!prior.equals(path))', 'if (false)'),

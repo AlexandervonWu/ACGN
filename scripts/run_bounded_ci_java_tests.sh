@@ -24,6 +24,8 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
 
 tests=(
   is.fivefivefive.CanDis.PerformanceRegressionTest
+  is.fivefivefive.CanDis.core.PreparedOrbitCacheTest
+  is.fivefivefive.CanDis.theory.CertificateVerificationScopeTest
   is.fivefivefive.CanDis.AstWrapperErasureTest
   is.fivefivefive.CanDis.DependencyCompatibilityTest
   is.fivefivefive.ACGN.learn.RewarderConcurrencyTest
@@ -84,6 +86,7 @@ tests=(
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/PartitionedPermutation.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/IndependentBindingBlocks.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/AstWrapperErasure.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/section3-repair-audit/formal/PositiveVerificationMemo.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"
