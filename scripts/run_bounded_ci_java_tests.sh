@@ -23,8 +23,13 @@ java -Xmx1g -cp "$classes:$ROOT/lib/*" \
   is.fivefivefive.CanDis.RewriteRuleTraceabilityTest "$ROOT"
 
 tests=(
+  is.fivefivefive.CanDis.UnusedBindingDescopeTest
+  is.fivefivefive.CanDis.UnusedBindingD8Test
+  is.fivefivefive.CanDis.core.UnusedBindingEvidenceTest
   is.fivefivefive.CanDis.PerformanceRegressionTest
   is.fivefivefive.CanDis.core.PreparedOrbitCacheTest
+  is.fivefivefive.CanDis.PrefixBinderPlanTest
+  is.fivefivefive.CanDis.core.FastPrefixSourceTest
   is.fivefivefive.CanDis.theory.CertificateVerificationScopeTest
   is.fivefivefive.CanDis.AstWrapperErasureTest
   is.fivefivefive.CanDis.DependencyCompatibilityTest
@@ -87,6 +92,8 @@ tests=(
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/IndependentBindingBlocks.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/slot-typing-ablation/AstWrapperErasure.lean"
 "${LEAN_BIN:-lean}" "$ROOT/docs/section3-repair-audit/formal/PositiveVerificationMemo.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/distance-parity-20261107/FastPrefixExchange.lean"
+"${LEAN_BIN:-lean}" "$ROOT/docs/section3-repair-audit/formal/UnusedGroupedBindings.lean"
 
 for test_class in "${tests[@]}"; do
   printf 'Running %s\n' "$test_class"

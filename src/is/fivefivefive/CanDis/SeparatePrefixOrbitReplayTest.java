@@ -100,6 +100,7 @@ public final class SeparatePrefixOrbitReplayTest {
             var control=source(row[0],row[1]);
             for(int d=0;d<2;d++){
                 var q=d==0?control:control.reverse();var report=DistanceReplayDiagnostics.capture(q.a,q.b,q.ca,q.cb);
+                Files.writeString(out.resolve(row[0]+"-"+d+".json"),report.toString(2),StandardOpenOption.CREATE_NEW);
                 for(String arm:List.of("fast","certified"))check(report.getJSONObject(arm).getInt("distance")==Integer.parseInt(row[2])&&report.getJSONObject(arm).getBoolean("matrixReplayChecked")&&report.getJSONObject(arm).getJSONObject("declarationSlice").getBoolean("selectedMatrixDeclarationLinksChecked"),"prior cost and joint native linkage "+row[0]);
                 if(row[0].startsWith("ft2")||row[0].startsWith("Wq")||row[0].startsWith("SASE")||row[0].startsWith("85t")||row[0].startsWith("JoNX"))check(NativeOperationComparison.compare(q.a,q.b,q.ca,q.cb).status()==NativeOperationComparison.Status.MATCHED,"prior complete native action slice "+row[0]);
                 if(row[0].startsWith("ft2"))Files.writeString(out.resolve("grouped-control-"+d+".json"),report.toString(2),StandardOpenOption.CREATE_NEW);

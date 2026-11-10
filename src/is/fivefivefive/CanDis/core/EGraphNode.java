@@ -66,6 +66,7 @@ public final class EGraphNode {
     private SigSymbol parserSignatureEvidence;
     /* Transfer-only identity: never participates in semantic keys or serialization. */
     private long sourceOccurrenceLineage;
+    private NormalForm.UnusedBindingReduction unusedBindingReduction;
     /*
      * Immutable checkpoint occurrence used to transfer pre-saturation evidence.
      * Unlike sourceOccurrenceLineage, adoption of an equivalent representative
@@ -1243,6 +1244,19 @@ public final class EGraphNode {
         return sourceOccurrenceLineage;
     }
 
+    NormalForm.UnusedBindingReduction unusedBindingReduction() {
+        requireLiveNode();
+        return unusedBindingReduction;
+    }
+
+    void attachUnusedBindingReduction(NormalForm.UnusedBindingReduction reduction) {
+        arena.mutate(this, () -> {
+            if (unusedBindingReduction != null && unusedBindingReduction != reduction)
+                throw new IllegalStateException("Unused binding projection authority replaced");
+            unusedBindingReduction = reduction;
+        });
+    }
+
     /** Exact pre-saturation occurrence carrier for certificate transfer only. */
     public long getCertificationOccurrenceLineage() {
         requireLiveNode();
@@ -1496,6 +1510,19 @@ public final class EGraphNode {
             iterations++;
         } while (changed && iterations < 32);
         active.remove(eClass.getId());
+    }
+
+    /** Reuse existing Boolean laws once children have been simplified by the
+     * lexical-scope walk; do not resaturate the entire subtree at each owner. */
+    void simplifyBooleanAfterChildren() {
+        if (!isBooleanRewriteOperator(opcode)) return;
+        arena.mutate(this, () -> {
+            arena.requireMutable(this);
+            requireAdmittedOccurrence(this);
+            for (int i = 0; i < 32 && isBooleanRewriteOperator(opcode); i++) {
+                if (!saturateOnce()) break;
+            }
+        });
     }
 
     @LeanVerifiedRewrite({
@@ -3427,7 +3454,7 @@ public final class EGraphNode {
                 "A membership bridge requires intersection or difference");
     }
 
-    private static EGraphNode buildDerivedRelationCardinality(
+    static EGraphNode buildDerivedRelationCardinality(
             EGraphNode owner,
             Opcode cardinality,
             EClassRef relation) {
@@ -7305,6 +7332,7 @@ public final class EGraphNode {
         copy.builtinConstantKind = builtinConstantKind;
         copy.parserSignatureEvidence = parserSignatureEvidence;
         copy.sourceOccurrenceLineage = sourceOccurrenceLineage;
+        copy.unusedBindingReduction = unusedBindingReduction;
         copy.certificationOccurrenceLineage = certificationOccurrenceLineage;
         copy.callOccurrenceId = callOccurrenceId;
         copy.declaredArity = declaredArity;

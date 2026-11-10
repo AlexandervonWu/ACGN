@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 
@@ -534,6 +535,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
     // Assume that a RelDecl declares a set of relations all subject to the same type scope. 
     // RelDecls here except Fields.
     // TODO: How to capture the types of the RelDecls???
+    @is.fivefivefive.CanDis.theory.LeanVerifiedRewrite("R0-STRUCT-003")
     private AugmentedNode visitRelDecl(RelDecl n, ScopeTreeNode arg) {
         // All real decls goes to this. Concrete symbol to consider. 
         // Set<Symbol> localSyms = arg.getSymbols();
@@ -578,6 +580,7 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
         }
         Integer graphId = forest.rget(graph);
         int variableScope = graphId == null ? -Math.max(1, arg.getId()) : graphId;
+        List<AugmentedNode> declaredVariables = new ArrayList<>();
         for (String name : n.getNames()) {
             String lexicalIdentity = "var/scope:" + arg.getId()
                     + "/slot:" + arg.allocateBindingSlot();
@@ -591,10 +594,16 @@ public class MASGVisitor implements GenericVisitor<AugmentedNode, ScopeTreeNode>
             AugmentedNode varNode = new AugmentedNode(127, uniqueNode.size(), varSym);
             uniqueNode.put(varSym, varNode);
             varNode.setMaxDownlinks(0);
+            declaredVariables.add(varNode);
         }
+        if (declaredVariables.size() != n.getVariables().size())
+            throw new IllegalStateException("Declaration names and source positions disagree");
         int iter = 2;
         for (ExprOrFormula v : n.getVariables()) {
-            AugmentedNode varNode = v.accept(this, arg);
+            // The scope map intentionally resolves body reads to the last
+            // binding. Declaration positions must retain every allocated slot.
+            AugmentedNode varNode = declaredVariables.get(iter - 2);
+            recordLeafExactType(varNode, v, arg);
             if (Playground.DEBUG) {
                 PrettyStringVisitor psv = new PrettyStringVisitor();
                 String varStr = psv.visit(v, null);
