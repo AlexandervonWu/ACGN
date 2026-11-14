@@ -18,6 +18,15 @@ final class FastGroupedDeclarationOrbit {
     static int[] identity(int n){return java.util.stream.IntStream.range(0,n).toArray();}
     static boolean isIdentity(int[] p){for(int i=0;i<p.length;i++)if(p[i]!=i)return false;return true;}
 
+    // orders() admits identity or one transposition. Prefer the completion
+    // induced by paid endpoints over an unrelated unpaid-only exchange.
+    static boolean paidSupported(List<QuantiVar> order,Collection<String> paid,int[] p) {
+        for(int i=0;i<p.length;i++)if(p[i]!=i
+                && !paid.contains(order.get(i).getName())
+                && !paid.contains(order.get(p[i]).getName()))return false;
+        return true;
+    }
+
     static List<int[]> orders(NormalForm source,NormalForm comparison,List<QuantiVar> order) {
         var result=new ArrayList<int[]>();result.add(identity(order.size()));
         if(order.size()>MAX_BINDINGS

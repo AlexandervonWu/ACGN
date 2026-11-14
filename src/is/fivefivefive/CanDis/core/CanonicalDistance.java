@@ -1325,6 +1325,7 @@ public final class CanonicalDistance {
         MatrixAlignment[] best = {null};
         boolean[] bestLinked = {false};
         boolean[] bestExisting = {false};
+        boolean[] bestPaidSupported = {true};
         int[][] dp=DECISIONS.get()==null?quantificationDp(a,b):DECISIONS.get().declarations.get(0);
         // Zero-charge paths retain their existing source-issued alpha orbit.
         // Mixed paid paths constrain every keep as well as each charged update.
@@ -1343,6 +1344,7 @@ public final class CanonicalDistance {
                     best[0]=retained;
                     bestLinked[0]=true;
                     bestExisting[0]=true;
+                    bestPaidSupported[0]=true;
                 }
             }
             for(var p:sourceOrders)for(var q:targetOrders) {
@@ -1355,6 +1357,8 @@ public final class CanonicalDistance {
                 var capture=DECISIONS.get();
                 boolean linked=capture!=null && declarationPathMatches(a,b,p,q,path,capture.lastPhase.mapping);
                 var paidMoved=FastGroupedDeclarationOrbit.transport(a,b,paid,p,q);
+                boolean paidSupported=FastGroupedDeclarationOrbit.paidSupported(a,paid.keySet(),p)
+                        && FastGroupedDeclarationOrbit.paidSupported(b,paid.values(),q);
                 boolean existing=false;
                 if(constrainPath && capture!=null && (best[0]==null || distance<=best[0].distance)) {
                     // On ties retain an already-attaining candidate, as in the
@@ -1368,11 +1372,15 @@ public final class CanonicalDistance {
                 if (best[0] == null || distance < best[0].distance
                         || distance == best[0].distance && (canonical && best[0].sourceOrder!=null
                             || canonical==(best[0].sourceOrder==null) && linked
-                                && (!bestLinked[0] || existing && !bestExisting[0]))) {
+                                && (!bestLinked[0] || existing && !bestExisting[0]
+                                    || existing==bestExisting[0] && paidSupported && !bestPaidSupported[0]
+                                        && moved.equals(best[0].mapping)
+                                        && paidMoved.equals(best[0].paidCorrespondence)))) {
                     best[0] = new MatrixAlignment(distance,moved,lockedLeft,lockedRight);
                     if(capture!=null)best[0].phases=List.of(capture.lastPhase);
                     bestLinked[0]=linked;
                     bestExisting[0]=existing;
+                    bestPaidSupported[0]=paidSupported;
                     best[0].paidCorrespondence = paidMoved;
                     best[0].declarationPath=path;
                     if(!canonical){best[0].sourceOrder=p.clone();best[0].targetOrder=q.clone();}
