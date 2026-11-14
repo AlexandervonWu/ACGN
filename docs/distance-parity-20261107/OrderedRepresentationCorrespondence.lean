@@ -21,7 +21,7 @@ theorem retained_identity_step {S : Type} (a b : List (Step S)) (s : S)
     execute (a ++ step :: b) s = execute (a ++ b) s ∧
     charge (a ++ step :: b) = charge (a ++ b) := by
   constructor
-  · simp [block_execution, execute, effect]
+  · simp [execute, effect]
   · simp [charge, cost]
 
 /- Original occurrences are the authority, not equal phase ordinals. -/

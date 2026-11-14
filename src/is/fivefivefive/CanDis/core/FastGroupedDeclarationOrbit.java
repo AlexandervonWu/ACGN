@@ -12,7 +12,7 @@ final class FastGroupedDeclarationOrbit {
         private long used;
         Budget(){this(100_000);}
         Budget(long limit){if(limit<=0)throw new IllegalArgumentException("Positive orbit budget required");this.limit=limit;}
-        void spend(){if(used>=limit)throw new IllegalStateException("FAST_GROUPED_ORBIT_BUDGET");used++;}
+        void spend(){if(used>=limit)throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("FAST_GROUPED_ORBIT_BUDGET");used++;}
     }
     private FastGroupedDeclarationOrbit() { }
     static int[] identity(int n){return java.util.stream.IntStream.range(0,n).toArray();}
@@ -21,9 +21,6 @@ final class FastGroupedDeclarationOrbit {
     static List<int[]> orders(NormalForm source,NormalForm comparison,List<QuantiVar> order) {
         var result=new ArrayList<int[]>();result.add(identity(order.size()));
         if(order.size()>MAX_BINDINGS
-                // Paid disjoint paths do not extend this permutation slice.
-                || source.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
-                || comparison.getMatrixQuantiVars().stream().anyMatch(q->q.getDisjointnessClass()!=0)
                 || !FastPaidDeclarationAlignment.supports(List.of(source))
                 || !FastPaidDeclarationAlignment.supports(List.of(comparison))) return List.copyOf(result);
         require(source.getCertificationMatrixEGraph()==comparison.getCertificationMatrixEGraph(),"Foreign grouped source ledger");
@@ -102,7 +99,8 @@ final class FastGroupedDeclarationOrbit {
     }
     private static boolean samePayload(QuantiVar a,QuantiVar b) {
         return a.getQuantifier()==b.getQuantifier()&&Objects.equals(a.getTypeName(),b.getTypeName())
-                &&a.getCardinality()==b.getCardinality()&&a.getDisjointnessClass()==b.getDisjointnessClass();
+                &&a.getCardinality()==b.getCardinality()&&a.getDisjointnessClass()==b.getDisjointnessClass()
+                &&(a.getDisjointnessClass()==0||a.getBindingPath().equals(b.getBindingPath()));
     }
     private static boolean sameBlock(List<QuantiVar> order,int i,int j) {
         var kind=order.get(i).getQuantifier();

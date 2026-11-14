@@ -185,6 +185,7 @@ public final class QuotientRepairDistance {
         for(int phase=aligned;phase<count;phase++) {
             var a=phase<left.phases().size()?QuantificationAlignmentSpace.quantifiedDeclarations(left.phases().get(phase),phase):List.<IndexedDeclaration>of();
             var b=phase<right.phases().size()?QuantificationAlignmentSpace.quantifiedDeclarations(right.phases().get(phase),phase):List.<IndexedDeclaration>of();
+            a=canonicalQuantifierOrder(a);b=canonicalQuantifierOrder(b);
             as.add(List.copyOf(declarationAtoms(a)));bs.add(List.copyOf(declarationAtoms(b)));
             var moves=new ArrayList<DeclarationReplay.Move>();
             for(int i=0;i<a.size();i++)moves.add(new DeclarationReplay.Move(i,-1));
@@ -211,7 +212,7 @@ public final class QuotientRepairDistance {
         var sourceOrder=left.phaseRepresentation("source");var targetOrder=right.phaseRepresentation("target");
         if(sourceOrder!=null)phaseSteps.put(sourceOrder);if(targetOrder!=null)phaseSteps.put(targetOrder);
         if(!phaseSteps.isEmpty())out.put("nativePhaseRepresentationSteps",phaseSteps);
-        return NativeRepairTrace.checked(out,program->{
+        return NativeRepairTrace.checkedProjected(out,program->{
             if(!phaseSteps.isEmpty()&&!phaseSteps.similar(program.getJSONArray("nativePhaseRepresentationSteps")))
                 throw new IllegalArgumentException("Changed certified original/projection phase correspondence");
             int temporal=TemporalReplay.verify(left.temporalRoot(),right.temporalRoot(),TemporalNode::label,TemporalNode::children,
@@ -233,7 +234,7 @@ public final class QuotientRepairDistance {
             if(temporal!=program.getInt("temporalDistance")||quantifiers!=program.getInt("quantifierDistance")||matrix!=program.getInt("matrixDistance"))
                 throw new IllegalArgumentException("Native trace component costs");
             return Math.addExact(temporal,Math.addExact(quantifiers,matrix));
-        });
+        },left,right);
         } catch(RuntimeException failure) {
             throw NativeRepairTrace.captureFailure(out,failure);
         }
@@ -294,6 +295,15 @@ public final class QuotientRepairDistance {
         Set<String> observedLeft = a.used.stream().map(Object::toString).collect(java.util.stream.Collectors.toSet());
         Set<String> observedRight = b.used.stream().map(Object::toString).collect(java.util.stream.Collectors.toSet());
         boolean completeAbsent=closedPrefix(left) && closedPrefix(right);
+        java.util.function.Supplier<SelectedDeclarationCompletion> fixed=completeAbsent
+                ?new java.util.function.Supplier<>() {
+                    private SelectedDeclarationCompletion retained;
+                    public SelectedDeclarationCompletion get() {
+                        if(retained==null)retained=new SelectedDeclarationCompletion(left,right,
+                                decisions.selectedPhases.get(0),phaseMapping(a,b,mapping,0));
+                        return retained;
+                    }
+                }:null;
         org.json.JSONArray components = new org.json.JSONArray();
         int cost = 0;
         for (int index = 0; index < space.components.size(); index++) {
@@ -303,11 +313,11 @@ public final class QuotientRepairDistance {
                     permuteDeclarations(original.right,b,rightPermutation),original.distance);
             org.json.JSONObject receipt, connecting=null;
             try {
-                receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+                receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent,fixed);
             } catch(DeclarationReplay.NoMatchingPath missing) {
                 if(a.phases.size()!=1 || b.phases.size()!=1) throw missing;
                 var source=component.left;
-                var joint=declarationLink(component,a,b,full,observedLeft,observedRight,false);
+                var joint=declarationLink(component,a,b,full,observedLeft,observedRight,false,fixed);
                 int[] order=joint.connectingPermutation(declarationAtoms(source),(i,j)->
                         CertifiedDeclarationOrbit.exchangeable(a.binding(a.indices.get(source.get(i).identity)).binding,
                                 a.binding(a.indices.get(source.get(j).identity)).binding));
@@ -317,12 +327,12 @@ public final class QuotientRepairDistance {
                 CertifiedDeclarationOrbit.requirePermutation(orbitBindings(a),effectiveLeft);
                 component=new QuantifierEditComponent(reordered,component.right,component.distance);
                 try {
-                    receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+                    receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent,fixed);
                     connecting=new org.json.JSONObject().put("source",new org.json.JSONArray(order))
                             .put("target",new org.json.JSONArray(CertifiedDeclarationOrbit.identity(component.right.size())))
                             .put("admission","SOURCE_CERTIFIED_FULL_SYMMETRIC_ORBIT").put("cost",0);
                 } catch(DeclarationReplay.NoMatchingPath stillMissing) {
-                    var presentation=prefixPresentation(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+                    var presentation=prefixPresentation(component,a,b,selected,full,observedLeft,observedRight,completeAbsent,fixed);
                     if(presentation==null) throw stillMissing;
                     component=presentation.component(); receipt=presentation.receipt(); connecting=presentation.evidence();
                     for(int i=0;i<original.left.size();i++) effectiveLeft[a.indices.get(original.left.get(i).identity)]=
@@ -389,11 +399,15 @@ public final class QuotientRepairDistance {
     }
 
     private static DeclarationMatrixLink declarationLink(QuantifierEditComponent component,GlobalBindingIndex a,
-            GlobalBindingIndex b,Map<String,String> full,Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent) {
+            GlobalBindingIndex b,Map<String,String> full,Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent,
+            java.util.function.Supplier<SelectedDeclarationCompletion> fixed) {
         return new DeclarationMatrixLink(
                 component.left.stream().map(d -> Objects.requireNonNull(a.indices.get(d.identity)).toString()).toList(),
                 component.right.stream().map(d -> Objects.requireNonNull(b.indices.get(d.identity)).toString()).toList(),
-                full,observedLeft,observedRight,completeAbsent);
+                full,observedLeft,observedRight,completeAbsent,fixed==null?null:(i,j)->{
+                    int ai=a.indices.get(component.left.get(i).identity),bj=b.indices.get(component.right.get(j).identity);
+                    return fixed.get().allows(ai,a.binding(ai).binding,bj,b.binding(bj).binding);
+                });
     }
 
     private record PresentationReplay(QuantifierEditComponent component,org.json.JSONObject receipt,
@@ -401,7 +415,7 @@ public final class QuotientRepairDistance {
 
     private static PresentationReplay prefixPresentation(QuantifierEditComponent original,GlobalBindingIndex a,
             GlobalBindingIndex b,Map<Integer,Integer> selected,Map<String,String> full,
-            Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent) {
+            Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent,java.util.function.Supplier<SelectedDeclarationCompletion> fixed) {
         var ab=original.left.stream().map(d->a.binding(a.indices.get(d.identity)).binding).toList();
         var bb=original.right.stream().map(d->b.binding(b.indices.get(d.identity)).binding).toList();
         var ai=original.left.stream().map(d->a.indices.get(d.identity).toString()).toList();
@@ -415,7 +429,7 @@ public final class QuotientRepairDistance {
             var component=QuantifierEditComponent.create(x,y,false);
             if(component.cost()!=original.cost()) continue;
             try {
-                var receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent);
+                var receipt=captureDeclarations(component,a,b,selected,full,observedLeft,observedRight,completeAbsent,fixed);
                 var evidence=new org.json.JSONObject().put("source",new org.json.JSONArray(p)).put("target",new org.json.JSONArray(q))
                         .put("sourcePresentation",DeclarationPresentation.evidence(ab,ai,p))
                         .put("targetPresentation",DeclarationPresentation.evidence(bb,bi,q))
@@ -442,9 +456,9 @@ public final class QuotientRepairDistance {
 
     private static org.json.JSONObject captureDeclarations(QuantifierEditComponent component,GlobalBindingIndex a,
             GlobalBindingIndex b,Map<Integer,Integer> selected,Map<String,String> full,
-            Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent) {
+            Set<String> observedLeft,Set<String> observedRight,boolean completeAbsent,java.util.function.Supplier<SelectedDeclarationCompletion> fixed) {
         var as=declarationAtoms(component.left); var bs=declarationAtoms(component.right);
-        var joint=declarationLink(component,a,b,full,observedLeft,observedRight,completeAbsent);
+        var joint=declarationLink(component,a,b,full,observedLeft,observedRight,completeAbsent,fixed);
         var receipt=DeclarationReplay.capture(as,bs,component.distance,(i,j)->{
             if(!joint.allows(i,j,i>=0 && j>=0?QuantifierEditComponent.tupleUpdateCost(component.left.get(i),component.right.get(j)):-1)) return false;
             Integer ai=i<0?null:a.indices.get(component.left.get(i).identity);
@@ -480,7 +494,7 @@ public final class QuotientRepairDistance {
         var pending=new java.util.ArrayDeque<Node>(); if(phase.matrix()!=null) pending.add(phase.matrix());
         while(!pending.isEmpty()) {
             var n=pending.removeFirst(); if(!seen.add(n)) continue;
-            if(seen.size()>4096) throw new IllegalStateException("COMPLETION_OCCURRENCE_BUDGET");
+            if(seen.size()>4096) throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("COMPLETION_OCCURRENCE_BUDGET");
             if(n.operator().equals("CALL") || n.operator().equals("REF") || n.isVariable() && n.bindingIndex()<0) return false;
             pending.addAll(n.children()); pending.addAll(n.certifiedAlternatives());
         }
@@ -603,6 +617,8 @@ public final class QuotientRepairDistance {
                 QuantificationAlignmentSpace.create(left.phases(), right.phases());
         if (stats.capture) {
             stats.quantification = quantification;
+        }
+        if (stats.capture || left.phases().size()==1 && right.phases().size()==1) {
             stats.activeDeclarationPaths = new ArrayList<>(java.util.Collections.nCopies(quantification.components.size(),List.of()));
         }
         int quantifiers = quantification.cost;
@@ -833,7 +849,7 @@ public final class QuotientRepairDistance {
                                 "Quantifier correspondence backtracking lost identity");
                     }
                 }
-            }, stats.capture ? path -> stats.activeDeclarationPaths.set(componentIndex,path) : null);
+            }, stats.activeDeclarationPaths!=null ? path -> stats.activeDeclarationPaths.set(componentIndex,path) : null);
         }
 
         private static List<IndexedDeclaration> parameterDeclarations(
@@ -1082,15 +1098,33 @@ public final class QuotientRepairDistance {
         int fixedUnalignedCost = result;
         int[] best = {Integer.MAX_VALUE};
         boolean[] bestCanonical = {false};
+        boolean[] bestLinked = {false};
+        boolean[] bestExisting = {false};
         quantification.forEachEditAlignment(
                 leftBindings, rightBindings, correspondence -> {
             Consumer<CertifiedDeclarationOrbit.Choice> evaluate = choice -> {
                 int candidate = matrixDistanceForAlignment(
                         leftBindings, rightBindings, choice.correspondence(), stats);
                 boolean canonical = CertifiedDeclarationOrbit.isIdentity(choice);
+                int[] complete=selectedDeclarationMapping(quantification,leftBindings,rightBindings,choice,stats);
+                boolean linked=complete!=null && Arrays.equals(complete,stats.candidateMapping);
+                boolean existing=true;
+                // An edit can merge surviving slots from distinct old blocks.
+                // Retain the old search, and evaluate the full selected path as
+                // a separate candidate. Never retag an old matrix receipt.
+                if(complete!=null && !linked) {
+                    stats.consumeAlphaAlignment();
+                    int fixed=globallyMappedMatrixDistance(leftBindings,rightBindings,complete,stats);
+                    if(fixed<=candidate) {
+                        candidate=fixed;linked=true;existing=false;
+                        if(stats.capture){stats.candidateMapping=complete;stats.candidatePhases=stats.lastPhases;}
+                    }
+                }
                 // An orbit from an early DP path can tie a later canonical path.
                 // Apply witness priority globally, without changing the minimum.
-                if (CertifiedDeclarationOrbit.prefer(candidate,best[0],canonical,bestCanonical[0])) {
+                if (CertifiedDeclarationOrbit.prefer(candidate,best[0],canonical,bestCanonical[0])
+                        || candidate==best[0] && canonical==bestCanonical[0] && linked
+                            && (!bestLinked[0] || existing && !bestExisting[0])) {
                     if (stats.capture) {
                         stats.selectedMapping = stats.candidateMapping.clone();
                         stats.selectedPhases=stats.candidatePhases;
@@ -1103,6 +1137,8 @@ public final class QuotientRepairDistance {
                     }
                     best[0] = candidate;
                     bestCanonical[0] = canonical;
+                    bestLinked[0] = linked;
+                    bestExisting[0] = existing;
                 }
             };
             if(left.size()==1 && right.size()==1)
@@ -1117,6 +1153,55 @@ public final class QuotientRepairDistance {
                     "No minimum-cost quantifier alignment was evaluated");
         }
         return Math.addExact(fixedUnalignedCost, best[0]);
+    }
+
+    private static int[] selectedDeclarationMapping(QuantificationAlignmentSpace space,
+            GlobalBindingIndex left,GlobalBindingIndex right,CertifiedDeclarationOrbit.Choice choice,
+            MutableStats stats) {
+        if(left.phases.size()!=1 || right.phases.size()!=1 || stats.activeDeclarationPaths==null)return null;
+        for(var index:List.of(left,right))for(var b:index.bindings)
+            if(b.binding.role()!=BindingRole.MATRIX && b.binding.role()!=BindingRole.PARAMETER)return null;
+        CertifiedDeclarationOrbit.requirePermutation(orbitBindings(left),choice.left());
+        CertifiedDeclarationOrbit.requirePermutation(orbitBindings(right),choice.right());
+        DeclarationReplay.require(stats.activeDeclarationPaths.size()==space.components.size(),"Selected declaration component count");
+        var links=new LinkedHashMap<Integer,Integer>();
+        var carried=new LinkedHashMap<Integer,Integer>();
+        for(int c=0;c<space.components.size();c++) {
+            var component=space.components.get(c);
+            var source=permuteDeclarations(component.left,left,choice.left());
+            var target=permuteDeclarations(component.right,right,choice.right());
+            int nextSource=0,nextTarget=0,cost=0;
+            for(var move:stats.activeDeclarationPaths.get(c)) {
+                DeclarationReplay.require(move.left()>=-1 && move.right()>=-1
+                        && (move.left()>=0 || move.right()>=0),"Empty selected declaration move");
+                if(move.left()>=0)DeclarationReplay.require(move.left()==nextSource++ && move.left()<source.size(),"Selected source order");
+                if(move.right()>=0)DeclarationReplay.require(move.right()==nextTarget++ && move.right()<target.size(),"Selected target order");
+                if(move.left()<0 || move.right()<0) { cost=Math.addExact(cost,1);continue; }
+                int update=QuantifierEditComponent.tupleUpdateCost(source.get(move.left()),target.get(move.right()));
+                cost=Math.addExact(cost,update);
+                int i=left.indices.get(source.get(move.left()).identity);
+                int j=right.indices.get(target.get(move.right()).identity);
+                var a=left.binding(i);var b=right.binding(j);
+                // A zero tuple keep is not a paid update or a free source
+                // exchange. Its original typed/domain/owner checks still apply.
+                if(update==0
+                        && (!globalBaseCompatible(a,b)
+                            || a.binding.declaration().observationType()==null
+                            || !a.binding.declaration().observationType().equals(b.binding.declaration().observationType())
+                            || a.binding.declaration().observationDomain()==null
+                            || !a.binding.declaration().observationDomain().equals(b.binding.declaration().observationDomain())))return null;
+                try { a.binding.originalBinding();b.binding.originalBinding(); }
+                catch(IllegalArgumentException unissued) { return null; }
+                addInjectiveCorrespondence(links,i,j);
+                if(update!=0 || source.get(move.left()).identity.parameter)addInjectiveCorrespondence(carried,i,j);
+            }
+            DeclarationReplay.require(nextSource==source.size() && nextTarget==target.size(),"Incomplete selected declaration path");
+            DeclarationReplay.require(cost==component.cost(),"Selected declaration path changed component cost");
+        }
+        DeclarationReplay.require(carried.equals(choice.correspondence()),"Selected declaration paid links differ");
+        int[] mapping=new int[left.bindings.size()];Arrays.fill(mapping,-1);
+        links.forEach((i,j)->mapping[i]=j);
+        return mapping;
     }
 
     private static int matrixDistanceForAlignment(
@@ -1143,7 +1228,7 @@ public final class QuotientRepairDistance {
 
         int[] maximum = {-1};
         int[] minimum = {Integer.MAX_VALUE};
-        if (stats.capture) stats.candidateMapping = null;
+        stats.candidateMapping = null;
         forEachGlobalScopeAlignment(leftBindings, rightBindings, scope -> {
             stats.consumeScopeAlignment();
             List<Integer> leftOrder = new ArrayList<>(leftBindings.used);
@@ -1161,7 +1246,7 @@ public final class QuotientRepairDistance {
             if (requiredMatches > maximum[0]) {
                 maximum[0] = requiredMatches;
                 minimum[0] = Integer.MAX_VALUE;
-                if (stats.capture) stats.candidateMapping = null;
+                stats.candidateMapping = null;
             }
             minimum[0] = searchGlobalMappings(
                     leftBindings,
@@ -1205,7 +1290,10 @@ public final class QuotientRepairDistance {
             }
             stats.consumeAlphaAlignment();
             int candidate = globallyMappedMatrixDistance(left, right, mapping,stats);
-            if (stats.capture && candidate < best) {stats.candidateMapping = mapping.clone();stats.candidatePhases=stats.lastPhases;}
+            if (candidate < best) {
+                stats.candidateMapping = mapping.clone();
+                if(stats.capture)stats.candidatePhases=stats.lastPhases;
+            }
             return Math.min(best, candidate);
         }
         int leftIndex = leftOrder.get(index);

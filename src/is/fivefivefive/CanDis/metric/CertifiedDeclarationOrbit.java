@@ -20,7 +20,7 @@ final class CertifiedDeclarationOrbit {
             this.maximum=maximum;
         }
         void spend() {
-            if(visits>=maximum) throw new IllegalStateException("DECLARATION_ORBIT_VISIT_BUDGET");
+            if(visits>=maximum) throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("DECLARATION_ORBIT_VISIT_BUDGET");
             visits++;
         }
     }
@@ -34,7 +34,8 @@ final class CertifiedDeclarationOrbit {
                 && a.prenexPathErasureCertified() && b.prenexPathErasureCertified()
                 && a.certifiedOrbit().contains(b.coordinate()) && b.certifiedOrbit().contains(a.coordinate())
                 && (x.quantifier().equals("ALL") || x.quantifier().equals("SOME"))
-                && x.cardinality().equals("ONE") && x.disjointnessClass()==0
+                && x.cardinality().equals("ONE")
+                && (x.disjointnessClass()==0 || a.bindingPath().equals(b.bindingPath()))
                 && x.dependencies().isEmpty() && y.dependencies().isEmpty()
                 && x.exchangeClass()==y.exchangeClass() && x.sameCertifiedPayload(y)
                 && x.observationType()!=null && x.observationType().equals(y.observationType())
@@ -76,7 +77,7 @@ final class CertifiedDeclarationOrbit {
         }
         if(!movable) { accept.accept(new Choice(original,identity(left.size()),identity(right.size()))); return; }
         if(left.size()>MAX_BINDINGS || right.size()>MAX_BINDINGS)
-            throw new IllegalStateException("DECLARATION_ORBIT_SIZE_BUDGET");
+            throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("DECLARATION_ORBIT_SIZE_BUDGET");
         var entries=new ArrayList<>(original.entrySet()); entries.sort(Map.Entry.comparingByKey());
         int[] a=new int[left.size()],b=new int[right.size()]; Arrays.fill(a,-1); Arrays.fill(b,-1);
         walk(left,right,entries,0,a,b,new boolean[a.length],new boolean[b.length],accept,budget);

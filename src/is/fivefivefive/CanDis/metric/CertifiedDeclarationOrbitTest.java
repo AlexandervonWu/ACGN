@@ -44,6 +44,18 @@ public final class CertifiedDeclarationOrbitTest {
         check(!CertifiedDeclarationOrbit.exchangeable(a,binding(1,b.declaration(),0,List.of(0,1),false)),"path-erasure absent");
         var local=new Binding(BindingRole.LOCAL_INHERITED,1,0,1,b.declaration(),"path","local-owner",List.of(0,1),false);
         check(!CertifiedDeclarationOrbit.exchangeable(a,local),"local/outer capture");
+        for(String kind:List.of("ALL","SOME"))for(int n=2;n<=5;n++) {
+            var orbit=new ArrayList<Integer>();for(int i=0;i<n;i++)orbit.add(i);
+            var disjoint=new ArrayList<Binding>();var d=declaration(kind,"P",0,1,"ONE",List.of());
+            for(int i=0;i<n;i++)disjoint.add(new Binding(BindingRole.MATRIX,i,0,i,d,"shared-declaration",orbit,true));
+            int[] reverse=new int[n];for(int i=0;i<n;i++)reverse[i]=n-1-i;
+            CertifiedDeclarationOrbit.requirePermutation(disjoint,reverse);
+            check(CertifiedDeclarationOrbit.exchangeable(disjoint.get(0),disjoint.get(1)),"same disjoint "+kind+" group of "+n);
+            var foreignPath=new Binding(BindingRole.MATRIX,1,0,1,d,"another-declaration",orbit,true);
+            check(!CertifiedDeclarationOrbit.exchangeable(disjoint.get(0),foreignPath),"same group integer is not lexical owner authority");
+            int[] duplicate=reverse.clone();duplicate[0]=duplicate[1];
+            reject(()->CertifiedDeclarationOrbit.requirePermutation(disjoint,duplicate),"disjoint group does not merge slots");
+        }
         for(String kind:List.of("ONE","LONE","NO")) {
             var d=declaration(kind,"P",0,0,"ONE",List.of());
             check(!CertifiedDeclarationOrbit.exchangeable(binding(0,d,0,List.of(0,1),true),binding(1,d,0,List.of(0,1),true)),
