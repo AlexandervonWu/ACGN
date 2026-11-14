@@ -1243,8 +1243,10 @@ public final class CanonicalDistance {
             return paidDeclarationMatrixAlignment(left.get(0),right.get(0),leftMetadata,rightMetadata);
         // One source binder imported into several temporal phases must consume
         // one alpha mapping; phase-local binders remain independently aligned.
-        CoherentVariableSpace leftSpace = coherentVariableSpace(left);
-        CoherentVariableSpace rightSpace = coherentVariableSpace(right);
+        // Whole-phase inserts/deletes never query a cross-endpoint binder map.
+        int aligned = Math.min(left.size(), right.size());
+        CoherentVariableSpace leftSpace = coherentVariableSpace(left.subList(0, aligned));
+        CoherentVariableSpace rightSpace = coherentVariableSpace(right.subList(0, aligned));
         Set<String> lockedLeftNames = leftSpace.coherentNames();
         Set<String> lockedRightNames = rightSpace.coherentNames();
         closeCoherentCandidateRegion(
