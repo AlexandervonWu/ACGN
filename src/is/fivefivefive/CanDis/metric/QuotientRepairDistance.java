@@ -1112,7 +1112,7 @@ public final class QuotientRepairDistance {
                 // An edit can merge surviving slots from distinct old blocks.
                 // Retain the old search, and evaluate the full selected path as
                 // a separate candidate. Never retag an old matrix receipt.
-                if(complete!=null && !linked) {
+                if(complete!=null && !linked && left.size()==1 && right.size()==1) {
                     stats.consumeAlphaAlignment();
                     int fixed=globallyMappedMatrixDistance(leftBindings,rightBindings,complete,stats);
                     if(fixed<=candidate) {
@@ -1158,7 +1158,7 @@ public final class QuotientRepairDistance {
     private static int[] selectedDeclarationMapping(QuantificationAlignmentSpace space,
             GlobalBindingIndex left,GlobalBindingIndex right,CertifiedDeclarationOrbit.Choice choice,
             MutableStats stats) {
-        if(left.phases.size()!=1 || right.phases.size()!=1 || stats.activeDeclarationPaths==null)return null;
+        if(stats.activeDeclarationPaths==null)return null;
         for(var index:List.of(left,right))for(var b:index.bindings)
             if(b.binding.role()!=BindingRole.MATRIX && b.binding.role()!=BindingRole.PARAMETER)return null;
         CertifiedDeclarationOrbit.requirePermutation(orbitBindings(left),choice.left());
