@@ -101,6 +101,8 @@ public final class CanonicalDistance {
         MatrixAlignment matrix = bestCoherentMatrixAlignment(left.normalForms, right.normalForms,
                 left.metadata, right.metadata);
         matrix = selectedPaidImportAlignment(left, right, matrix);
+        if (temporalDistance == 0 && quantificationDistance == 0 && matrix.distance > 0)
+            matrix = samePhasePrefixAlignment(left, right, matrix);
         if (capture != null) capture.alignment = matrix;
         int matrixDistance = matrix.distance;
         return new DistanceBreakdown(
@@ -1593,6 +1595,49 @@ public final class CanonicalDistance {
         result.paidGuardEdits=List.copyOf(guardEdits);
         result.paidBranchRoutes=List.copyOf(branchRoutes);
         result.paidSlotRoutes=List.copyOf(slotRoutes);
+        return result;
+    }
+
+    /** A regrouped prefix retains its typed slots even when raw source paths differ.
+     * Keep the old candidate and recapture all decisions under the new mapping. */
+    private static MatrixAlignment samePhasePrefixAlignment(Prepared left, Prepared right,
+            MatrixAlignment existing) {
+        if (left.normalForms.size() != right.normalForms.size()) return existing;
+        var selected = new IdentityHashMap<TemporalTree, TemporalTree>();
+        var as = new ArrayList<TemporalTree>();
+        var bs = new ArrayList<TemporalTree>();
+        temporalPostorder(left.temporalTree, as);
+        temporalPostorder(right.temporalTree, bs);
+        for (var match : TEMPORAL_CONTEXT.get().alignment().matches())
+            selected.put(as.get(match.leftPostorder() - 1), bs.get(match.rightPostorder() - 1));
+        var mapping = new HashMap<>(existing.mapping);
+        boolean changed = false;
+        for (int phase = 0; phase < left.normalForms.size(); phase++) {
+            var a = left.normalForms.get(phase);
+            var b = right.normalForms.get(phase);
+            if (!sameSelectedTemporalRoute(left, right, phase, selected)
+                    || !sameExactTemporalRoute(left, right, phase)) return existing;
+            var aq = canonicalQuantifierOrder(a.getMatrixQuantiVars());
+            var bq = canonicalQuantifierOrder(b.getMatrixQuantiVars());
+            if (!FastSamePhasePrefix.matches(a, b, aq, bq)) return existing;
+            for (int i = 0; i < aq.size(); i++) {
+                String source = aq.get(i).getName(), target = bq.get(i).getName();
+                String prior = mapping.putIfAbsent(source, target);
+                if (prior != null && !prior.equals(target)) return existing;
+                changed |= prior == null;
+            }
+        }
+        if (!changed || new HashSet<>(mapping.values()).size() != mapping.size()) return existing;
+        var lockedA = new HashSet<>(existing.lockedLeftNames);
+        var lockedB = new HashSet<>(existing.lockedRightNames);
+        lockedA.addAll(mapping.keySet());
+        lockedB.addAll(mapping.values());
+        int distance = matrixDistanceWithFixedMapping(left.normalForms, right.normalForms,
+                mapping, lockedA, lockedB, left.metadata, right.metadata);
+        if (distance >= existing.distance) return existing;
+        var result = new MatrixAlignment(distance, mapping, lockedA, lockedB);
+        var capture = DECISIONS.get();
+        if (capture != null) result.phases = capture.phases;
         return result;
     }
 
