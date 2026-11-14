@@ -28,6 +28,7 @@ tests=(
   is.fivefivefive.CanDis.core.UnusedBindingEvidenceTest
   is.fivefivefive.CanDis.PerformanceRegressionTest
   is.fivefivefive.CanDis.core.PreparedOrbitCacheTest
+  is.fivefivefive.CanDis.PreparedMetadataConcurrencyTest
   is.fivefivefive.CanDis.PrefixBinderPlanTest
   is.fivefivefive.CanDis.core.FastPrefixSourceTest
   is.fivefivefive.CanDis.theory.CertificateVerificationScopeTest

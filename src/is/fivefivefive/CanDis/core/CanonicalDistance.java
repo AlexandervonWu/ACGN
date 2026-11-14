@@ -1032,7 +1032,7 @@ public final class CanonicalDistance {
         }
 
         public int metadataEntryCount() {
-            return metadata.sizes.size();
+            return metadata.entryCount();
         }
     }
 
@@ -3158,7 +3158,9 @@ public final class CanonicalDistance {
             return cached.orders.stream().map(int[]::clone).toList();
         }
 
-        private void prepare(EGraphNode node) {
+        // Prepared endpoints are shared by pool workers. Publish all three lazy
+        // indexes under the same endpoint-local monitor, including cache hits.
+        private synchronized void prepare(EGraphNode node) {
             if (node == null || sizes.containsKey(node)) {
                 return;
             }
@@ -3174,7 +3176,7 @@ public final class CanonicalDistance {
             resultTypes.put(node, resultType(node));
         }
 
-        private int size(EGraphNode node) {
+        private synchronized int size(EGraphNode node) {
             if (node == null) {
                 return 0;
             }
@@ -3186,16 +3188,20 @@ public final class CanonicalDistance {
             return size;
         }
 
-        private GraphType type(EGraphNode node) {
+        private synchronized GraphType type(EGraphNode node) {
             if (!resultTypes.containsKey(node)) {
                 prepare(node);
             }
             return resultTypes.get(node);
         }
 
-        private List<EGraphNode> children(EGraphNode node) {
+        private synchronized List<EGraphNode> children(EGraphNode node) {
             if (!metricChildren.containsKey(node)) prepare(node);
             return metricChildren.get(node);
+        }
+
+        private synchronized int entryCount() {
+            return sizes.size();
         }
 
         private List<EGraphNode> alternatives(EGraphNode node) {
