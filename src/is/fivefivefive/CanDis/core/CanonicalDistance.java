@@ -2287,7 +2287,7 @@ public final class CanonicalDistance {
         CoherentVariable leftVariable = leftSpace.variables.get(leftName);
         boolean mapped = false;
         for (String rightName : rightNames) {
-            if (usedRightNames.contains(rightName)
+            if (leftVariable == null || usedRightNames.contains(rightName)
                     || !leftVariable.compatibleWith(
                             rightSpace.variables.get(rightName))) {
                 continue;
@@ -2381,6 +2381,8 @@ public final class CanonicalDistance {
             Map<String, String> matchedLeftByRight,
             Set<String> visitedRight) {
         CoherentVariable left = leftSpace.variables.get(leftName);
+        // Declaration locks may include slots absent from the matrix-read census.
+        if (left == null) return false;
         for (String rightName : rightNames) {
             if (!visitedRight.add(rightName)
                     || !left.compatibleWith(
