@@ -3,8 +3,7 @@ package is.fivefivefive.CanDis.core;
 import java.util.*;
 import is.fivefivefive.CanDis.theory.*;
 
-/** Identity plus one source-certified homogeneous-prefix transposition per endpoint.
- * This bounded candidate slice is not enumeration of the full source orbit. */
+/** Closure of source-authenticated homogeneous-prefix transpositions. */
 final class FastGroupedDeclarationOrbit {
     static final int MAX_BINDINGS=6;
     static final class Budget {
@@ -18,8 +17,7 @@ final class FastGroupedDeclarationOrbit {
     static int[] identity(int n){return java.util.stream.IntStream.range(0,n).toArray();}
     static boolean isIdentity(int[] p){for(int i=0;i<p.length;i++)if(p[i]!=i)return false;return true;}
 
-    // orders() admits identity or one transposition. Prefer the completion
-    // induced by paid endpoints over an unrelated unpaid-only exchange.
+    // Prefer transport supported by paid endpoints over an unrelated exchange.
     static boolean paidSupported(List<QuantiVar> order,Collection<String> paid,int[] p) {
         for(int i=0;i<p.length;i++)if(p[i]!=i
                 && !paid.contains(order.get(i).getName())
@@ -83,11 +81,46 @@ final class FastGroupedDeclarationOrbit {
             CertificateVerifier.verify(descriptor.automorphisms().derivationFor(descriptor,permutation));
             result.add(p);
         }
+        return closure(result);
+    }
+
+    // Composition preserves the checked owner, type, domain and exchange class.
+    // Keep generators first so existing equal-cost witness order stays stable.
+    private static List<int[]> closure(List<int[]> generators) {
+        var result = new ArrayList<>(generators);
+        var seen = new HashSet<List<Integer>>();
+        for (var order : generators) seen.add(Arrays.stream(order).boxed().toList());
+        for (int index = 0; index < result.size(); index++) for (var generator : generators) {
+            var order = result.get(index);
+            var composed = new int[order.length];
+            for (int i = 0; i < order.length; i++) composed[i] = generator[order[i]];
+            if (seen.add(Arrays.stream(composed).boxed().toList())) result.add(composed);
+        }
         return List.copyOf(result);
     }
 
     static void requireOrder(NormalForm source,NormalForm comparison,List<QuantiVar> order,int[] p) {
         require(orders(source,comparison,order).stream().anyMatch(q->Arrays.equals(p,q)),"Unadmitted grouped permutation");
+    }
+    static List<int[]> quotientSources(List<QuantiVar> a,List<QuantiVar> b,
+            Map<String,String> links,Map<String,String> paid,List<int[]> left,List<int[]> right) {
+        var ai=new HashMap<String,Integer>();var bi=new HashMap<String,Integer>();
+        for(int i=0;i<a.size();i++)ai.put(a.get(i).getName(),i);
+        for(int i=0;i<b.size();i++)bi.put(b.get(i).getName(),i);
+        var pairs=new HashMap<Integer,Integer>();var charged=new HashSet<Integer>();
+        for(var e:links.entrySet())pairs.put(ai.get(e.getKey()),bi.get(e.getValue()));
+        for(var name:paid.keySet())charged.add(ai.get(name));
+        boolean[] fixed=is.fivefivefive.CanDis.metric.DeclarationOrbitQuotient.fixedSources(
+                a.size(),b.size(),pairs,charged,(i,j)->hasSwap(left,i,j),(i,j)->hasSwap(right,i,j));
+        return left.stream().filter(p->{for(int i=0;i<p.length;i++)if(fixed[i]&&p[i]!=i)return false;return true;}).toList();
+    }
+    private static boolean hasSwap(List<int[]> orders,int a,int b) {
+        for(var p:orders) {
+            boolean same=true;
+            for(int i=0;i<p.length;i++)same &= p[i]==(i==a?b:i==b?a:i);
+            if(same)return true;
+        }
+        return false;
     }
     static Map<String,String> transport(List<QuantiVar> a,List<QuantiVar> b,Map<String,String> paid,int[] p,int[] q) {
         var left=names(a,p);var right=names(b,q);var result=new LinkedHashMap<String,String>();

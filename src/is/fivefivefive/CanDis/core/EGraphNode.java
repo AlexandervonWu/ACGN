@@ -7136,7 +7136,12 @@ public final class EGraphNode {
         for (EGraphNode child : source.getChildren()) {
             children.add(comparisonRenameSubtree(child, renames, budget));
         }
-        return comparisonCopy(source, children, source.arena, true);
+        EGraphNode copy = comparisonCopy(source, children, source.arena, true);
+        if (StructuralDeclarationOrigin.structural(copy)
+                && source.hasUnchangedComparisonDeclarationInvocations()) {
+            copy.sealComparisonDeclarationInvocations();
+        }
+        return copy;
     }
 
     /**
@@ -7206,6 +7211,18 @@ public final class EGraphNode {
     public boolean hasComparisonLocalCoordinate() { return comparisonLocalCoordinate; }
     public EGraphNode comparisonDeclarationSource() { return comparisonDeclarationSource; }
     public EGraphNode comparisonVariableSource() { return comparisonVariableSource; }
+    private void sealComparisonDeclarationInvocations() {
+        var bindings = new IdentityHashMap<EGraphNode,List<ComparisonDeclarationGrouping.InvocationBinding>>();
+        var pending = new ArrayDeque<EGraphNode>();
+        pending.add(this);
+        while (!pending.isEmpty()) {
+            var node = pending.remove();
+            if (bindings.containsKey(node)) continue;
+            bindings.put(node, ComparisonDeclarationGrouping.captureInvocations(node.childClasses));
+            pending.addAll(node.getChildren());
+        }
+        comparisonDeclarationInvocations = Collections.unmodifiableMap(bindings);
+    }
     public boolean hasUnchangedComparisonDeclarationInvocations() {
         if(comparisonDeclarationInvocations==null||!comparisonDeclarationInvocations.containsKey(this))return false;
         for(var entry:comparisonDeclarationInvocations.entrySet()){
@@ -7323,13 +7340,7 @@ public final class EGraphNode {
             source.copyPayloadTo(copy);
             if(source.opcode==Opcode.VARIABLE)copy.comparisonVariableSource=source.comparisonVariableSource==null?source:source.comparisonVariableSource;
             if(declaration(source))copy.comparisonDeclarationSource=source.comparisonDeclarationSource==null?source:source.comparisonDeclarationSource;
-            if(StructuralDeclarationOrigin.structural(copy)){
-                var bindings=new IdentityHashMap<EGraphNode,List<ComparisonDeclarationGrouping.InvocationBinding>>();
-                var pending=new ArrayDeque<EGraphNode>();pending.add(copy);
-                while(!pending.isEmpty()){var node=pending.remove();if(bindings.containsKey(node))continue;
-                    bindings.put(node,ComparisonDeclarationGrouping.captureInvocations(node.childClasses));pending.addAll(node.getChildren());}
-                copy.comparisonDeclarationInvocations=Collections.unmodifiableMap(bindings);
-            }
+            if (StructuralDeclarationOrigin.structural(copy)) copy.sealComparisonDeclarationInvocations();
             if (copy.opcode == Opcode.REF && referenceCoordinates.containsKey(copy.temporalReferenceAuthorityId))
                 copy.comparisonTemporalReferenceName = referenceCoordinates.get(copy.temporalReferenceAuthorityId);
             return copy;

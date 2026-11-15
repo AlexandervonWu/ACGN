@@ -182,6 +182,16 @@ final class FastPaidDeclarationAlignment {
 
     private static boolean groupedSlotsMatchSource(NormalForm form, Map<String,List<QuantiVar>> declarations,
             boolean rigidGroups) {
+        // Presentation paths may coalesce separate declarations during prefix
+        // normalization. Only issued occurrences identify an original tuple.
+        if(form.matrixDeclarationsMatchSource()) {
+            declarations=new LinkedHashMap<>();
+            for(var q:form.getMatrixQuantiVars())for(var frame:q.getDeclarationFrames()) {
+                var group=declarations.computeIfAbsent(Long.toString(frame.declarationOccurrence()),
+                        ignored -> new ArrayList<>());
+                if(!group.contains(q))group.add(q);
+            }
+        }
         Map<String,QuantiVar> grouped = new HashMap<>();
         Set<String> aliases = new HashSet<>();
         Map<Integer,String> disjointOwners = new HashMap<>();
@@ -219,7 +229,10 @@ final class FastPaidDeclarationAlignment {
                         || ((disjoint > 0 || rigid) && positions.get(q) != positions.get(first)+slot)
                         || !q.getCarrierTypeName().equals(first.getCarrierTypeName())
                         || !q.getExactAlloyType().sameOccurrenceEvidenceAs(first.getExactAlloyType())) return false;
-                for (String alias : q.getOriginalNames()) if (!aliases.add(alias)) return false;
+                // Shadowed spellings in separate declarations are not identities.
+                // Only the complete issued-frame check may discharge a collision.
+                for (String alias : q.getOriginalNames())
+                    if (!aliases.add(alias) && !form.matrixDeclarationsMatchSource()) return false;
                 grouped.put(q.getName(),q);
             }
         }

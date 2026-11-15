@@ -250,7 +250,9 @@ public final class CanonicalDistance {
                 b=is.fivefivefive.CanDis.metric.DeclarationMatrixLink.permute(b,selected.targetOrder);
             }
             as.add(List.copyOf(declarationAtoms(source,a,phase)));bs.add(List.copyOf(declarationAtoms(target,b,phase)));
-            var moves=phase==0&&selected.declarationPath!=null?selected.declarationPath:captured.decisions.declarationMoves.get(phase);
+            var moves=selected.importDeclarations!=null && phase<selected.importDeclarations.size()
+                    ? selected.importDeclarations.get(phase).moves()
+                    : phase==0&&selected.declarationPath!=null?selected.declarationPath:captured.decisions.declarationMoves.get(phase);
             int[][] dp=captured.decisions.declarations.get(phase);
             var choice=selected.phases.get(phase);
             // Finalize a linked equal-cost fallback before freezing its native
@@ -1210,17 +1212,27 @@ public final class CanonicalDistance {
             Set<String> lockedRightNames,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
+        return matrixDistanceWithFixedMapping(left,right,fixedMapping,lockedLeftNames,lockedRightNames,
+                leftMetadata,rightMetadata,null);
+    }
+
+    private static int matrixDistanceWithFixedMapping(List<NormalForm> left,List<NormalForm> right,
+            Map<String,String> fixedMapping,Set<String> lockedLeftNames,Set<String> lockedRightNames,
+            EGraphMetadata leftMetadata,EGraphMetadata rightMetadata,List<Map<String,String>> mappings) {
         int size = Math.max(left.size(), right.size());
         int distance = 0;
         var capture=DECISIONS.get();var phases=capture==null?null:new ArrayList<PhaseDecision>();
         for (int i = 0; i < size; i++) {
             if (i >= left.size()) {
+                if(mappings!=null)mappings.add(Map.of());
                 distance += eGraphSize(right.get(i).getMatrixEGraph(), rightMetadata);
                 if(capture!=null)capture.lastPhase=new PhaseDecision(Map.of(),MatrixDecision.whole(null,right.get(i).getMatrixEGraph(),eGraphSize(right.get(i).getMatrixEGraph(),rightMetadata)));
             } else if (i >= right.size()) {
+                if(mappings!=null)mappings.add(Map.of());
                 distance += eGraphSize(left.get(i).getMatrixEGraph(), leftMetadata);
                 if(capture!=null)capture.lastPhase=new PhaseDecision(Map.of(),MatrixDecision.whole(left.get(i).getMatrixEGraph(),null,eGraphSize(left.get(i).getMatrixEGraph(),leftMetadata)));
             } else {
+                var selected=mappings==null?null:new BestMapping();
                 distance += matrixDistance(
                         left.get(i),
                         right.get(i),
@@ -1228,7 +1240,8 @@ public final class CanonicalDistance {
                         lockedLeftNames,
                         lockedRightNames,
                         leftMetadata,
-                        rightMetadata);
+                        rightMetadata,selected);
+                if(mappings!=null)mappings.add(Map.copyOf(selected.mapping));
             }
             if(capture!=null)phases.add(capture.lastPhase);
         }
@@ -1241,7 +1254,8 @@ public final class CanonicalDistance {
             List<NormalForm> right,
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
-        if (FastPaidDeclarationAlignment.supportsPair(left,right))
+        if (FastPaidDeclarationAlignment.supportsPair(left,right)
+                || FastPaidDeclarationAlignment.supportsSupplementalPair(left,right))
             return paidDeclarationMatrixAlignment(left.get(0),right.get(0),leftMetadata,rightMetadata);
         // One source binder imported into several temporal phases must consume
         // one alpha mapping; phase-local binders remain independently aligned.
@@ -1297,19 +1311,7 @@ public final class CanonicalDistance {
                 lockedLeftNames,
                 lockedRightNames);
         existing.phases=best.phases;
-        if (FastPaidDeclarationAlignment.supportsSupplementalPair(left,right)) {
-            // Both families attain the same minimum declaration cost. Retain
-            // the old family, including cheaper exchange paths, and prefer an
-            // actual canonical paid path on a body-cost tie for those existing
-            // families. Newly admitted rigid groups retain the old path on ties.
-            // Scoring and replay consume the selected mapping and correspondence.
-            MatrixAlignment canonical = paidDeclarationMatrixAlignment(
-                    left.get(0),right.get(0),leftMetadata,rightMetadata);
-            if (canonical.distance < existing.distance
-                    || canonical.distance == existing.distance
-                        && FastPaidDeclarationAlignment.supportsDirectEndpoint(left)
-                        && FastPaidDeclarationAlignment.supportsDirectEndpoint(right)) return canonical;
-        }
+        existing.mappings=best.mappings;
         return existing;
     }
 
@@ -1351,27 +1353,31 @@ public final class CanonicalDistance {
                     bestPaidSupported[0]=true;
                 }
             }
-            for(var p:sourceOrders)for(var q:targetOrders) {
+            var distinctSources=FastGroupedDeclarationOrbit.quotientSources(a,b,
+                    constrainPath?links:paid,paid,sourceOrders,targetOrders);
+            for(var p:distinctSources)for(var q:targetOrders) {
                 budget.spend();
                 var moved=FastGroupedDeclarationOrbit.transport(a,b,constrainPath?links:paid,p,q);
                 Set<String> lockedLeft=constrainPath?sourceCensus:moved.keySet();
                 Set<String> lockedRight=constrainPath?targetCensus:new HashSet<>(moved.values());
-                int distance = matrixDistance(left,right,moved,lockedLeft,lockedRight,leftMetadata,rightMetadata);
+                var selectedMapping = new BestMapping();
+                int distance = matrixDistance(left,right,moved,lockedLeft,lockedRight,leftMetadata,rightMetadata,selectedMapping);
                 boolean canonical=FastGroupedDeclarationOrbit.isIdentity(p)&&FastGroupedDeclarationOrbit.isIdentity(q);
                 var capture=DECISIONS.get();
-                boolean linked=capture!=null && declarationPathMatches(a,b,p,q,path,capture.lastPhase.mapping);
+                boolean linked=declarationPathMatches(a,b,p,q,path,selectedMapping.mapping);
                 var paidMoved=FastGroupedDeclarationOrbit.transport(a,b,paid,p,q);
                 boolean paidSupported=FastGroupedDeclarationOrbit.paidSupported(a,paid.keySet(),p)
                         && FastGroupedDeclarationOrbit.paidSupported(b,paid.values(),q);
                 boolean existing=false;
-                if(constrainPath && capture!=null && (best[0]==null || distance<=best[0].distance)) {
+                if(constrainPath && (best[0]==null || distance<=best[0].distance)) {
                     // On ties retain an already-attaining candidate, as in the
                     // certified path. Never reuse the old unconstrained score.
-                    var fullPhase=capture.lastPhase;
+                    var fullPhase=capture==null?null:capture.lastPhase;
+                    var priorMapping=new BestMapping();
                     int prior=matrixDistance(left,right,paidMoved,paidMoved.keySet(),
-                            new HashSet<>(paidMoved.values()),leftMetadata,rightMetadata);
-                    existing=prior==distance && declarationPathMatches(a,b,p,q,path,capture.lastPhase.mapping);
-                    capture.lastPhase=fullPhase;
+                            new HashSet<>(paidMoved.values()),leftMetadata,rightMetadata,priorMapping);
+                    existing=prior==distance && declarationPathMatches(a,b,p,q,path,priorMapping.mapping);
+                    if(capture!=null)capture.lastPhase=fullPhase;
                 }
                 if (best[0] == null || distance < best[0].distance
                         || distance == best[0].distance && (canonical && best[0].sourceOrder!=null
@@ -1429,13 +1435,16 @@ public final class CanonicalDistance {
             if(capture!=null)result.phases=List.of(capture.lastPhase);
             result.paidCorrespondence=paid;
             result.declarationPath=path;
+            if(!FastGroupedDeclarationOrbit.isIdentity(order)) {
+                result.sourceOrder=order.clone();
+                result.targetOrder=FastGroupedDeclarationOrbit.identity(b.size());
+            }
             return result;
         }
         return null;
     }
 
-    // Capture keeps an attaining native path tied to its matrix map. This
-    // changes only equal-cost witness priority, never the scalar candidate set.
+    // Scalar and receipt modes use the same attaining path and tie rule.
     private static boolean declarationPathMatches(List<QuantiVar> source,List<QuantiVar> target,
             int[] sourceOrder,int[] targetOrder,
             List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> path,Map<String,String> mapping) {
@@ -1450,6 +1459,47 @@ public final class CanonicalDistance {
      * descendant matrices. It is not a free ALL/SOME alpha equivalence. */
     private static MatrixAlignment selectedPaidImportAlignment(
             Prepared left, Prepared right, MatrixAlignment existing) {
+        var declarations=selectedImportDeclarations(left,right,existing,DECISIONS.get());
+        var reads=new ArrayList<PhaseReadSupport>();
+        for(int phase=0;phase<Math.min(left.normalForms.size(),right.normalForms.size());phase++)
+            reads.add(new PhaseReadSupport(matrixVariableNames(left.normalForms.get(phase).getMatrixEGraph()),
+                    matrixVariableNames(right.normalForms.get(phase).getMatrixEGraph())));
+        var best=new MatrixAlignment[]{null};
+        boolean[] attained={existing.declarationPath!=null};
+        java.util.function.Consumer<List<ImportDeclarations>> consider=choices -> {
+            attained[0] |= declarationMapsMatch(choices,existing.mappings,reads);
+            var candidate=selectedPaidImportAlignment(left,right,existing,choices,reads);
+            if(candidate!=null && (best[0]==null || candidate.distance<best[0].distance))best[0]=candidate;
+        };
+        consider.accept(declarations);
+        if(existing.declarationPath==null)importDeclarationChoices(declarations,0,new long[1],consider);
+        if(best[0]==null || attained[0] && existing.distance<=best[0].distance)return existing;
+        return best[0];
+    }
+
+    /** Enumerate minimum programs before selecting their downstream import
+     * transport. Equal declaration costs need not induce equal matrix costs. */
+    private static void importDeclarationChoices(List<ImportDeclarations> declarations,int phase,
+            long[] visits,java.util.function.Consumer<List<ImportDeclarations>> accept) {
+        if(++visits[0]>FastPaidDeclarationAlignment.MAX_VISITS)
+            throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("PAID_IMPORT_PATH_BUDGET");
+        if(phase==declarations.size()){accept.accept(List.copyOf(declarations));return;}
+        var d=declarations.get(phase);
+        var dp=quantificationDp(d.source(),d.target());
+        if(dp[d.source().size()][d.target().size()]==0) {
+            importDeclarationChoices(declarations,phase+1,visits,accept);return;
+        }
+        FastPaidDeclarationAlignment.enumerateSelected(d.source(),d.target(),dp,
+                CanonicalDistance::quantifierUpdateCost,(paid,path) -> {
+                    declarations.set(phase,new ImportDeclarations(d.source(),d.target(),path));
+                    importDeclarationChoices(declarations,phase+1,visits,accept);
+                },true);
+        declarations.set(phase,d);
+    }
+
+    private static MatrixAlignment selectedPaidImportAlignment(
+            Prepared left,Prepared right,MatrixAlignment existing,List<ImportDeclarations> declarations,
+            List<PhaseReadSupport> reads) {
         var aSpace = coherentVariableSpace(left.normalForms);
         var bSpace = coherentVariableSpace(right.normalForms);
         var paid = new HashMap<String,String>();
@@ -1461,7 +1511,6 @@ public final class CanonicalDistance {
         Map<TemporalTree,TemporalTree> temporal = null;
         var capture = DECISIONS.get();
         var selectedDeclarations = new IdentityHashMap<QuantiVar,QuantiVar>();
-        var declarations = selectedImportDeclarations(left,right,existing,capture);
         for (int phase = 0; phase < Math.min(left.normalForms.size(),right.normalForms.size()); phase++) {
             var af = left.normalForms.get(phase); var bf = right.normalForms.get(phase);
             var a = declarations.get(phase).source();
@@ -1536,26 +1585,31 @@ public final class CanonicalDistance {
                 if(slotRoute!=null)slotRoutes.add(slotRoute);
             }
         }
-        if (paid.isEmpty()) return existing;
+        if (paid.isEmpty()) return null;
         var combinedPaid = mergePaidCorrespondence(existing.paidCorrespondence,paid);
-        if (combinedPaid == null) return existing;
+        if (combinedPaid == null) return null;
         // Declaration locks include unread slots; retain their selected payments
         // rather than searching for them in the matrix-read descriptor census.
-        var fixed = new HashMap<>(combinedPaid);
+        var fixed = mergePaidCorrespondence(existing.declarationPath==null?Map.of():existing.mapping,combinedPaid);
+        if (fixed==null) return null;
         var deleted = Collections.newSetFromMap(new IdentityHashMap<QuantiVar,Boolean>());
         var inserted = Collections.newSetFromMap(new IdentityHashMap<QuantiVar,Boolean>());
+        for (var declaration:declarations) for (var move:declaration.moves()) {
+            if (move.left()>=0 && move.right()<0) deleted.add(declaration.source().get(move.left()));
+            if (move.right()>=0 && move.left()<0) inserted.add(declaration.target().get(move.right()));
+        }
         for (var route:slotRoutes) for (var payment:route.dependencyPayments())
             (payment.sourceSide()?deleted:inserted).add(payment.binding());
         for (var entry : paid.entrySet()) {
             var source = aSpace.variables.get(entry.getKey()).descriptor.variable;
             if (!retainPaidImportDependencies(source,selectedDeclarations,combinedPaid,fixed,
-                    java.util.Collections.newSetFromMap(new IdentityHashMap<>()),deleted)) return existing;
+                    java.util.Collections.newSetFromMap(new IdentityHashMap<>()),deleted)) return null;
         }
-        if (new HashSet<>(fixed.values()).size() != fixed.size()) return existing;
+        if (new HashSet<>(fixed.values()).size() != fixed.size()) return null;
         var deletedNames=new HashSet<String>(); var insertedNames=new HashSet<String>();
         for(var q:deleted)deletedNames.add(q.getName());
         for(var q:inserted)insertedNames.add(q.getName());
-        if (!excludesOneSidedBindings(fixed,deletedNames,insertedNames)) return existing;
+        if (!excludesOneSidedBindings(fixed,deletedNames,insertedNames)) return null;
         var lockedA = new HashSet<>(existing.lockedLeftNames);
         var lockedB = new HashSet<>(existing.lockedRightNames);
         lockedA.addAll(fixed.keySet()); lockedB.addAll(fixed.values());
@@ -1573,24 +1627,23 @@ public final class CanonicalDistance {
         } finally {if(localCapture)DECISIONS.remove();}
         if (!excludesOneSidedBindings(best.mapping,deletedNames,insertedNames)
                 || best.phases!=null && best.phases.stream().anyMatch(p ->
-                    !excludesOneSidedBindings(p.mapping(),deletedNames,insertedNames))) return existing;
-        if (best.distance > existing.distance) return existing;
-        if (best.distance == existing.distance && (capture==null
-                || declarationPathsMatch(declarations,existing.phases)
-                || !declarationPathsMatch(declarations,best.phases))) return existing;
+                    !excludesOneSidedBindings(p.mapping(),deletedNames,insertedNames))) return null;
+        if(!declarationMapsMatch(declarations,best.mappings,reads))return null;
         for(var edit:guardEdits){
             int owner=left.normalForms.indexOf(edit.sourceOwner()),future=left.normalForms.indexOf(edit.sourceFuture());
             if(owner<0||future<0||right.normalForms.indexOf(edit.targetOwner())!=owner||right.normalForms.indexOf(edit.targetFuture())!=future
-                    ||!edit.bindSelected(best.phases.get(owner).matrix(),best.phases.get(future).matrix()))return existing;
+                    ||!edit.bindSelected(best.phases.get(owner).matrix(),best.phases.get(future).matrix()))return null;
         }
-        for(var route:branchRoutes)if(!route.bind(best.phases))return existing;
-        for(var route:slotRoutes)if(!route.bind(best.phases))return existing;
+        for(var route:branchRoutes)if(!route.bind(best.phases))return null;
+        for(var route:slotRoutes)if(!route.bind(best.phases))return null;
         var result = new MatrixAlignment(best.distance,best.mapping,lockedA,lockedB);
         result.phases = best.phases;
+        result.mappings = best.mappings;
         result.paidCorrespondence = Map.copyOf(combinedPaid);
         result.declarationPath = existing.declarationPath;
         result.sourceOrder = existing.sourceOrder;
         result.targetOrder = existing.targetOrder;
+        result.importDeclarations = List.copyOf(declarations);
         result.guardedProjections=List.copyOf(guarded);
         result.paidGuardEdits=List.copyOf(guardEdits);
         result.paidBranchRoutes=List.copyOf(branchRoutes);
@@ -1644,6 +1697,8 @@ public final class CanonicalDistance {
     private record ImportDeclarations(List<QuantiVar> source,List<QuantiVar> target,
             List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> moves) { }
 
+    private record PhaseReadSupport(Set<String> source,Set<String> target) { }
+
     private static boolean excludesOneSidedBindings(Map<String,String> mapping,
             Set<String> deleted,Set<String> inserted) {
         return mapping!=null && Collections.disjoint(mapping.keySet(),deleted)
@@ -1660,6 +1715,28 @@ public final class CanonicalDistance {
                     java.util.stream.IntStream.range(0,d.target().size()).toArray(),
                     d.moves(),phases.get(i).mapping())) return false;
         }
+        return true;
+    }
+
+    /** Actual read support must extend the selected path. Unread keeps can be
+     * completed, but a read cannot resurrect a deleted or inserted slot. */
+    private static boolean declarationMapsMatch(List<ImportDeclarations> declarations,
+            List<Map<String,String>> mappings,List<PhaseReadSupport> reads) {
+        if(mappings==null || mappings.size()<declarations.size() || mappings.size()<reads.size())return false;
+        var links=new HashMap<String,String>();var source=new HashSet<String>();var target=new HashSet<String>();
+        for(var d:declarations) {
+            for(var q:d.source())source.add(q.getName());
+            for(var q:d.target())target.add(q.getName());
+            for(var m:d.moves())if(m.left()>=0&&m.right()>=0)
+                links.put(d.source().get(m.left()).getName(),d.target().get(m.right()).getName());
+        }
+        for(var map:mappings)for(var e:map.entrySet())
+            if((source.contains(e.getKey()) || target.contains(e.getValue()))
+                    && !Objects.equals(links.get(e.getKey()),e.getValue()))return false;
+        for(int phase=0;phase<reads.size();phase++)for(var link:links.entrySet())
+            if((reads.get(phase).source().contains(link.getKey())
+                    || reads.get(phase).target().contains(link.getValue()))
+                    && !Objects.equals(mappings.get(phase).get(link.getKey()),link.getValue()))return false;
         return true;
     }
 
@@ -1934,6 +2011,7 @@ public final class CanonicalDistance {
 
     private static List<ImportDeclarations> selectedImportDeclarations(
             Prepared left,Prepared right,MatrixAlignment selected,DecisionCapture capture) {
+        if(selected.importDeclarations!=null)return new ArrayList<>(selected.importDeclarations);
         var result = new ArrayList<ImportDeclarations>();
         for (int phase=0;phase<Math.min(left.normalForms.size(),right.normalForms.size());phase++) {
             var a = canonicalQuantifierOrder(left.normalForms.get(phase).getMatrixQuantiVars());
@@ -2323,6 +2401,7 @@ public final class CanonicalDistance {
             if (matched != requiredMatches) {
                 return;
             }
+            var mappings=new ArrayList<Map<String,String>>();
             int distance = matrixDistanceWithFixedMapping(
                     left,
                     right,
@@ -2330,10 +2409,11 @@ public final class CanonicalDistance {
                     lockedLeftNames,
                     lockedRightNames,
                     leftMetadata,
-                    rightMetadata);
+                    rightMetadata,mappings);
             if (distance < best.distance) {
                 best.distance = distance;
                 best.mapping = new HashMap<>(mapping);
+                best.mappings=List.copyOf(mappings);
                 var capture=DECISIONS.get();if(capture!=null)best.phases=capture.phases;
             }
             return;
@@ -2517,7 +2597,7 @@ public final class CanonicalDistance {
             EGraphMetadata leftMetadata,
             EGraphMetadata rightMetadata) {
         return matrixDistance(left,right,fixedMapping,lockedLeftNames,lockedRightNames,
-                leftMetadata,rightMetadata,DECISIONS.get()==null?null:new BestMapping());
+                leftMetadata,rightMetadata,null);
     }
 
     private static int matrixDistance(NormalForm left,NormalForm right,Map<String,String> fixedMapping,
@@ -2537,6 +2617,7 @@ public final class CanonicalDistance {
         int requiredMatches = maximumCompatibleMatches(
                 leftNames, leftBindings, rightBindings);
         var capture=DECISIONS.get();
+        if(capture!=null && selected==null)selected=new BestMapping();
         int result=bestMappedDistance(
                 left.getMatrixEGraph(),
                 right.getMatrixEGraph(),
@@ -4147,11 +4228,13 @@ public final class CanonicalDistance {
 
     private static final class BestCoherentMapping {
         private List<PhaseDecision> phases;
+        private List<Map<String,String>> mappings;
         private int distance = Integer.MAX_VALUE;
         private Map<String, String> mapping = new HashMap<>();
     }
 
     private static final class MatrixAlignment {
+        private List<Map<String,String>> mappings;
         private List<NormalForm.GuardedProjectionMatch> guardedProjections=List.of();
         private List<NormalForm.PaidGuardEditMatch> paidGuardEdits=List.of();
         private List<PaidBranchRoute> paidBranchRoutes=List.of();
@@ -4160,6 +4243,7 @@ public final class CanonicalDistance {
         private Map<String,String> paidCorrespondence;
         private int[] sourceOrder,targetOrder;
         private List<is.fivefivefive.CanDis.metric.DeclarationReplay.Move> declarationPath;
+        private List<ImportDeclarations> importDeclarations;
         private final int distance;
         private final Map<String, String> mapping;
         private final Set<String> lockedLeftNames;

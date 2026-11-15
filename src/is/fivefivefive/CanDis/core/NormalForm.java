@@ -1038,19 +1038,38 @@ public class NormalForm {
 
     /** Issue from source parser authority, before the real guard is normalized. */
     private static DomainNormalization declarationDomainNormalization(EGraphNode source, Map<String, QuantiVar> env) {
+        var dependencies=new ArrayList<QuantiVar>();
+        var key=normalizedDeclarationDomainKey(source,env,dependencies);
+        return key.equals(declarationDomainKey(source,env,new ArrayList<>()))?null:
+                new DomainNormalization(key,dependencies);
+    }
+
+    private static StructuralKey normalizedDeclarationDomainKey(EGraphNode source,Map<String,QuantiVar> env,
+            List<QuantiVar> dependencies) {
+        if(source.getOpcode()==Opcode.MINUS && source.getChildren().size()==2
+                && source.getExactAlloyType()!=null && source.getExactAlloyType().hasParserAuthenticatedAncestry()
+                && source.getChildren().stream().allMatch(c->c.getExactAlloyType()!=null
+                    && source.getExactAlloyType().sameOccurrenceEvidenceAs(c.getExactAlloyType())
+                    && source.getSemanticProfile().equals(c.getSemanticProfile()))) {
+            var head=declarationDomainKey(source,env,new ArrayList<>());
+            var children=new ArrayList<StructuralKey>();
+            for(var child:source.getChildren())children.add(normalizedDeclarationDomainKey(child,env,dependencies));
+            return StructuralKey.of(head.tag(),head.scalars(),children);
+        }
         if (source.getOpcode() != Opcode.INTERSECT || source.getExactAlloyType() == null
-                || !source.getExactAlloyType().hasParserAuthenticatedAncestry()) return null;
+                || !source.getExactAlloyType().hasParserAuthenticatedAncestry())
+            return declarationDomainKey(source,env,dependencies);
         var operands = new ArrayList<EGraphNode>();
         collectDomainIntersection(source, source, operands);
-        if (operands.size() < 2) return null;
+        if (operands.size() < 2) return declarationDomainKey(source,env,dependencies);
         var retained = removeFullCarriersContainingSubrelations(operands);
-        if (retained.size() != 1) return null;
+        if (retained.size() != 1) return declarationDomainKey(source,env,dependencies);
         var result = retained.get(0);
         if (result.getExactAlloyType() == null
                 || !source.getExactAlloyType().sameOccurrenceEvidenceAs(result.getExactAlloyType())
-                || !source.getSemanticProfile().equals(result.getSemanticProfile())) return null;
-        var dependencies = new ArrayList<QuantiVar>();
-        return new DomainNormalization(declarationDomainKey(result, env, dependencies), dependencies);
+                || !source.getSemanticProfile().equals(result.getSemanticProfile()))
+            return declarationDomainKey(source,env,dependencies);
+        return normalizedDeclarationDomainKey(result,env,dependencies);
     }
 
     private record SourceDeclarationDomain(StructuralKey key, List<QuantiVar> dependencies,

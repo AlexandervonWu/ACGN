@@ -108,6 +108,7 @@ final class FastBinderOrbit {
             return List.of();
         }
         List<Payload> payloads = new ArrayList<>(slots.size());
+        List<QuantiVar> bindings = new ArrayList<>(slots.size());
         for (int index = 0; index < slots.size(); index++) {
             EGraphNode variable = slots.get(index);
             EGraphNode sourceVariable = variable.comparisonVariableSource() == null
@@ -118,6 +119,7 @@ final class FastBinderOrbit {
                 return List.of();
             }
             NormalForm.DeclarationFrame frame = qv.getDeclarationFrames().get(0);
+            bindings.add(qv);
             GraphType type;
             try {
                 type = AlloyTypeBridge.graphType(qv.getExactAlloyType());
@@ -152,6 +154,7 @@ final class FastBinderOrbit {
         List<EGraphNode> result = new ArrayList<>(permutations.size() + 1);
         result.add(EGraphNode.comparisonPrimaryMember(owner));
         for (int[] permutation : permutations) {
+            if (!preservesDependencies(bindings, permutation)) continue;
             Map<String, String> renames = new LinkedHashMap<>();
             boolean valid = true;
             for (int index = 0; index < slots.size(); index++) {
@@ -172,6 +175,23 @@ final class FastBinderOrbit {
             result.add(EGraphNode.comparisonRenameSubtree(owner, renames, budget));
         }
         return List.copyOf(result);
+    }
+
+    // Relative domain keys omit dependency identities. Transport those identities
+    // through the whole permutation, including reads by unchanged declarations.
+    private static boolean preservesDependencies(List<QuantiVar> bindings, int[] permutation) {
+        var transport = new IdentityHashMap<QuantiVar, QuantiVar>();
+        for (int i = 0; i < bindings.size(); i++) transport.put(bindings.get(i), bindings.get(permutation[i]));
+        for (int i = 0; i < bindings.size(); i++) {
+            var source = bindings.get(i).getDeclarationFrames().get(0);
+            var target = bindings.get(permutation[i]).getDeclarationFrames().get(0);
+            if (source.owner() != target.owner() || source.dependencies().size() != target.dependencies().size()) return false;
+            for (int j = 0; j < source.dependencies().size(); j++) {
+                var dependency = source.dependencies().get(j);
+                if (transport.getOrDefault(dependency, dependency) != target.dependencies().get(j)) return false;
+            }
+        }
+        return true;
     }
 
     private static List<int[]> enumerate(List<List<Integer>> groups, int[] identity) {

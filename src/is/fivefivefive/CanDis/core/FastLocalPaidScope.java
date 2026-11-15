@@ -21,7 +21,7 @@ public final class FastLocalPaidScope {
     private boolean checkingSource = true;
 
     private record LocalSlot(QuantiVar binding,long variable) { }
-    private record LocalGroup(List<LocalSlot> slots,long declaration,EGraphNode domain) { }
+    private record LocalGroup(List<LocalSlot> slots,long declaration,EGraphNode domain,EGraphNode.Opcode opcode) { }
     private record LocalPlan(List<LocalGroup> groups,long parent) { }
     private record SlotOrigin(long owner,long parent,long declaration,long variable,int ordinal) { }
 
@@ -143,6 +143,10 @@ public final class FastLocalPaidScope {
     }
 
     private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,long parent) {
+        return walk(n,visible,depth,parent,false);
+    }
+
+    private boolean walk(EGraphNode n,Map<String,QuantiVar> visible,int depth,long parent,boolean negated) {
         if(++visits>MAX_VISITS || depth>MAX_DEPTH)
             throw new is.fivefivefive.CanDis.metric.TraceResources.Exhausted("PAID_DECLARATION_LOCAL_SCOPE_BUDGET");
         if(n.getOpcode()==EGraphNode.Opcode.REF) return false;
@@ -191,6 +195,8 @@ public final class FastLocalPaidScope {
         });
         if(declares || n.getOpcode()==EGraphNode.Opcode.EXISTS || n.getOpcode()==EGraphNode.Opcode.FORALL) {
             var kind=localKind(n.getOpcode());
+            if(negated)kind=kind==QuantiVar.Quantifier.ONE?QuantiVar.Quantifier.NOTONE
+                    :kind==QuantiVar.Quantifier.LONE?QuantiVar.Quantifier.NOTLONE:null;
             if(kind==null) return false;
             if(children.size()<2) return false;
             var plan=sourcePlans.get(n.getSourceOccurrenceLineage());
@@ -201,15 +207,18 @@ public final class FastLocalPaidScope {
             int ordinal=0;String ownerPath=null;
             for(int groupIndex=0;groupIndex<groupCount;groupIndex++) {
             var decl=children.get(groupIndex);
-            if(decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL || decl.getChildren().size()<2) return false;
+            boolean disjoint=decl.getOpcode()==EGraphNode.Opcode.DISJ;
+            if((!disjoint && decl.getOpcode()!=EGraphNode.Opcode.GENERICRELDECL)
+                    || decl.getChildren().size()<2) return false;
             var domain=decl.getChildren().get(0);
             if(domain.getOpcode()!=EGraphNode.Opcode.ONE || domain.getChildren().size()!=1)return false;
             var previous=plan==null?null:plan.groups().get(groupIndex);
-            if(previous!=null && previous.slots().size()!=decl.getChildren().size()-1)return false;
+            if(previous!=null && (previous.slots().size()!=decl.getChildren().size()-1
+                    || previous.opcode()!=decl.getOpcode()))return false;
             // RetainedDomainAdmission: check the domain once in the enclosing
             // scope, before any slot from this declaration group is introduced.
             if(!walk(domain.getChildren().get(0),scoped,depth+1,parent))return false;
-            var slots=new ArrayList<LocalSlot>();String bindingPath=null;
+            var slots=new ArrayList<LocalSlot>();String bindingPath=null;Integer disjointGroup=null;
             for(int i=1;i<decl.getChildren().size();i++) {
               var variable=decl.getChildren().get(i);
               if(variable.getOpcode()!=EGraphNode.Opcode.VARIABLE)return false;
@@ -217,8 +226,11 @@ public final class FastLocalPaidScope {
               String name=variable.getAlphaName();
               if(q==null || name==null || !q.isFrozenForCertification() || scoped.containsKey(name)
                     || q.getBindingPath().isEmpty() || q.getQuantifier()!=kind
-                    || q.getCardinality()!=QuantiVar.Cardinality.ONE || q.getDisjointnessClass()!=0
+                    || q.getCardinality()!=QuantiVar.Cardinality.ONE
+                    || (disjoint?q.getDisjointnessClass()<=0:q.getDisjointnessClass()!=0)
                     || !typed(variable,q) || !typed(domain,q) || !typed(domain.getChildren().get(0),q)) return false;
+              if(disjointGroup==null)disjointGroup=q.getDisjointnessClass();
+              if(disjointGroup!=q.getDisjointnessClass())return false;
               // Cloned uses of one source binder are visits, not fresh owners.
               // Register the exact slot origin; still check every body and edge.
               var origin=new SlotOrigin(n.getSourceOccurrenceLineage(),parent,
@@ -242,7 +254,7 @@ public final class FastLocalPaidScope {
             if(previous!=null && (previous.declaration()!=decl.getSourceOccurrenceLineage()
                     || !sameSlots(previous.slots(),slots)
                     || !sameDomain(previous.domain(),domain))) return false;
-            groups.add(new LocalGroup(List.copyOf(slots),decl.getSourceOccurrenceLineage(),domain));
+            groups.add(new LocalGroup(List.copyOf(slots),decl.getSourceOccurrenceLineage(),domain,decl.getOpcode()));
             // Fast's local spelling differs from the original alpha name. The
             // actual owner/declaration/variable lineage licenses that transfer.
             // All ordered tuple slots share this owner, never an outer scope.
@@ -257,6 +269,12 @@ public final class FastLocalPaidScope {
         switch(n.getOpcode()) {
             case GENERICRELDECL, DISJ, VAR, DISJVAR -> { return false; }
             default -> { }
+        }
+        if(n.getOpcode()==EGraphNode.Opcode.NOT && children.size()==1) {
+            var child=children.get(0);
+            if(child.getChildren().size()>1 && (child.getOpcode()==EGraphNode.Opcode.ONE
+                    || child.getOpcode()==EGraphNode.Opcode.LONE))
+                return walk(child,visible,depth+1,parent,true);
         }
         for(var child:n.getChildren()) if(!walk(child,visible,depth+1,parent)) return false;
         return true;

@@ -27,6 +27,7 @@ public final class CertifiedDeclarationOrbitTest {
     }
     public static void main(String[] args) {
         var group=group(2,"P"); var a=group.get(0); var b=group.get(1);
+        retainedSourceControls(group);
         check(CertifiedDeclarationOrbit.exchangeable(a,b),"typed full orbit");
         CertifiedDeclarationOrbit.requirePermutation(group,new int[]{1,0});
         reject(()->CertifiedDeclarationOrbit.requirePermutation(group,new int[]{1,1}),"duplicate target");
@@ -82,6 +83,36 @@ public final class CertifiedDeclarationOrbitTest {
         var both=new HashSet<Map<Integer,Integer>>();
         CertifiedDeclarationOrbit.forEach(group,group,Map.of(0,0),x->both.add(x.correspondence()),new CertifiedDeclarationOrbit.Budget());
         check(both.size()==4,"both endpoint orbits independently admitted");
+        var keeps=new ArrayList<CertifiedDeclarationOrbit.Choice>();
+        CertifiedDeclarationOrbit.forEach(group,group,Map.of(),Map.of(0,0,1,1),keeps::add,
+                new CertifiedDeclarationOrbit.Budget());
+        check(keeps.size()==2,"equivalent two-sided keep witnesses are quotiented");
+        check(keeps.stream().allMatch(c->c.correspondence().isEmpty()),"zero keeps never become paid updates");
+        check(keeps.stream().anyMatch(c->Arrays.equals(c.left(),new int[]{0,1})
+                &&Arrays.equals(c.right(),new int[]{1,0})),"empty paid map retains nonidentity survivor transport");
+        var six=group(6,"P");var sixLinks=new LinkedHashMap<Integer,Integer>();
+        for(int i=0;i<6;i++)sixLinks.put(i,i);
+        var withDeletion=new ArrayList<>(six);
+        withDeletion.add(binding(6,declaration("SOME","Q",1,0,"ONE",List.of()),0,List.of(6),true));
+        var sixMaps=new HashSet<Map<Integer,Integer>>();
+        CertifiedDeclarationOrbit.forEach(withDeletion,six,Map.of(),sixLinks,c->{
+            CertifiedDeclarationOrbit.requirePermutation(withDeletion,c.left());
+            CertifiedDeclarationOrbit.requirePermutation(six,c.right());
+            var map=new HashMap<Integer,Integer>();
+            for(var e:sixLinks.entrySet())map.put(c.left()[e.getKey()],c.right()[e.getValue()]);
+            sixMaps.add(Map.copyOf(map));
+            check(c.left()[6]==6 && c.correspondence().isEmpty(),"unrelated deletion and zero keeps retained");
+            int[] prior=new int[7];Arrays.fill(prior,-1);map.forEach((i,j)->prior[i]=j);
+            int[] saved=prior.clone();
+            var retained=CertifiedDeclarationOrbit.retainedSourceChoice(withDeletion,six,sixLinks,Map.of(),prior);
+            check(Arrays.equals(prior,saved),"prior map not mutated");
+            if(retained!=null) {
+                check(retained.left()[6]==6 && retained.correspondence().isEmpty(),"retained deletion and no manufactured payment");
+                check(Arrays.equals(retained.right(),CertifiedDeclarationOrbit.identity(6)),"retained target stays fixed");
+                for(int i=0;i<6;i++)check(prior[retained.left()[i]]==i,"same attaining relative map");
+            } else check(Arrays.equals(prior,new int[]{0,1,2,3,4,5,-1}),"only identity duplicate omitted");
+        },new CertifiedDeclarationOrbit.Budget());
+        check(sixMaps.size()==720,"six survivors cover every full map within unchanged budget");
         var priority=new ArrayList<CertifiedDeclarationOrbit.Choice>();
         CertifiedDeclarationOrbit.forEach(group,group,Map.of(1,1),priority::add,new CertifiedDeclarationOrbit.Budget());
         check(priority.get(0).correspondence().equals(Map.of(1,1))
@@ -110,5 +141,42 @@ public final class CertifiedDeclarationOrbitTest {
         CertifiedDeclarationOrbit.forEach(oversized,oversized,Map.of(),x->count[0]++,new CertifiedDeclarationOrbit.Budget(1));
         check(count[0]==1,"no alternatives expanded when no paid coordinate moves");
         System.out.println("CertifiedDeclarationOrbitTest: "+checks+" checks passed");
+    }
+
+    private static void retainedSourceControls(List<Binding> group) {
+        var links=Map.of(0,0,1,1);int[] swapped={1,0};
+        var choice=CertifiedDeclarationOrbit.retainedSourceChoice(group,group,links,Map.of(),swapped);
+        check(choice!=null && Arrays.equals(choice.left(),swapped)
+                && Arrays.equals(choice.right(),new int[]{0,1}),"source-only prior presentation");
+        for(int[] bad:List.of(new int[]{-1,0},new int[]{0,0},new int[]{2,0},new int[]{-2,0},new int[]{1}))
+            check(CertifiedDeclarationOrbit.retainedSourceChoice(group,group,links,Map.of(),bad)==null,
+                    "missing, duplicated or invalid inverse coordinate");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(group,group,Map.of(0,0,1,0),Map.of(),swapped)==null,
+                "noninjective declaration links");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(group,group,links,Map.of(0,1),swapped)==null,
+                "altered paid target");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(group,group,links,Map.of(0,0),swapped)==null,
+                "paid source cannot move");
+        var extra=group(3,"P");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(extra,group,links,Map.of(),new int[]{-1,0,1})==null,
+                "deleted slot cannot become a survivor");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(group,extra,links,Map.of(),new int[]{2,0})==null,
+                "inserted target cannot acquire a source");
+        var a=group.get(0);var b=group.get(1);
+        for(var bad:List.of(
+                binding(1,declaration("ALL","Q",0,0,"ONE",List.of()),0,List.of(0,1),true),
+                binding(1,b.declaration().withObservation(GraphType.typeVariable("P"),StructuralKey.leaf("domain","Q")),0,List.of(0,1),true),
+                binding(1,b.declaration(),1,List.of(0,1),true),
+                binding(1,declaration("ALL","P",0,0,"ONE",List.of(0)),0,List.of(0,1),true),
+                binding(1,b.declaration(),0,List.of(1),true),
+                binding(1,b.declaration(),0,List.of(0,1),false),
+                new Binding(BindingRole.PARAMETER,1,-1,-1,b.declaration(),"source/1",List.of(),false),
+                new Binding(BindingRole.LOCAL_INHERITED,1,0,1,b.declaration(),"source/1","local-owner",List.of(0,1),false)))
+            check(CertifiedDeclarationOrbit.retainedSourceChoice(List.of(a,bad),group,links,Map.of(),swapped)==null,
+                    "retained choice keeps typed, domain, phase, owner, dependency, role and orbit guards");
+        reject(()->new Binding(BindingRole.MATRIX,1,0,1,b.declaration(),"source/1","foreign-owner",List.of(0,1),true),
+                "constructor rejects a foreign local owner on an outer slot");
+        check(CertifiedDeclarationOrbit.retainedSourceChoice(group(65,"P"),group,links,Map.of(),new int[65])==null,
+                "oversized supplementary work unavailable");
     }
 }

@@ -1100,22 +1100,27 @@ public final class QuotientRepairDistance {
         boolean[] bestCanonical = {false};
         boolean[] bestLinked = {false};
         boolean[] bestExisting = {false};
+        // Endpoints, phase payments and capture mode are fixed for this call.
+        // Survivor permutations often repeat the same paid correspondence.
+        MatrixAlignmentResult[] cached = {null};
         quantification.forEachEditAlignment(
                 leftBindings, rightBindings, correspondence -> {
             Consumer<CertifiedDeclarationOrbit.Choice> evaluate = choice -> {
-                int candidate = matrixDistanceForAlignment(
-                        leftBindings, rightBindings, choice.correspondence(), stats);
+                var prior = priorMatrixAlignment(leftBindings,rightBindings,choice.correspondence(),stats,cached);
+                int candidate = prior.cost();
+                stats.candidateMapping = prior.mapping();
+                stats.candidatePhases = prior.phases();
                 boolean canonical = CertifiedDeclarationOrbit.isIdentity(choice);
                 int[] complete=selectedDeclarationMapping(quantification,leftBindings,rightBindings,choice,stats);
                 boolean linked=complete!=null && Arrays.equals(complete,stats.candidateMapping);
                 boolean existing=true;
-                // An edit can merge surviving slots from distinct old blocks.
-                // Retain the old search, and evaluate the full selected path as
-                // a separate candidate. Never retag an old matrix receipt.
+                // A complete authenticated path fixes keeps and one-sided steps
+                // as well as paid updates. An unlinked cheaper map is not a
+                // replay of that path; score its actual constraints instead.
                 if(complete!=null && !linked && left.size()==1 && right.size()==1) {
                     stats.consumeAlphaAlignment();
                     int fixed=globallyMappedMatrixDistance(leftBindings,rightBindings,complete,stats);
-                    if(fixed<=candidate) {
+                    if(quantification.cost!=0 || fixed<=candidate) {
                         candidate=fixed;linked=true;existing=false;
                         if(stats.capture){stats.candidateMapping=complete;stats.candidatePhases=stats.lastPhases;}
                     }
@@ -1141,8 +1146,23 @@ public final class QuotientRepairDistance {
                     bestExisting[0] = existing;
                 }
             };
+            if(left.size()==1 && right.size()==1 && quantification.cost!=0
+                    && leftBindings.bindings.size()<=CertifiedDeclarationOrbit.MAX_BINDINGS
+                    && rightBindings.bindings.size()<=CertifiedDeclarationOrbit.MAX_BINDINGS) {
+                stats.declarationOrbitBudget.spend();
+                var prior=priorMatrixAlignment(leftBindings,rightBindings,correspondence,stats,cached);
+                var retained=CertifiedDeclarationOrbit.retainedSourceChoice(
+                        orbitBindings(leftBindings),orbitBindings(rightBindings),
+                        selectedDeclarationLinks(quantification,leftBindings,rightBindings,stats),
+                        correspondence,prior.mapping());
+                if(retained!=null && Arrays.equals(prior.mapping(),
+                        selectedDeclarationMapping(quantification,leftBindings,rightBindings,retained,stats))) {
+                    evaluate.accept(retained);
+                }
+            }
             if(left.size()==1 && right.size()==1)
-                CertifiedDeclarationOrbit.forEach(orbitBindings(leftBindings),orbitBindings(rightBindings),correspondence,evaluate,
+                CertifiedDeclarationOrbit.forEach(orbitBindings(leftBindings),orbitBindings(rightBindings),correspondence,
+                        quantification.cost==0?correspondence:selectedDeclarationLinks(quantification,leftBindings,rightBindings,stats),evaluate,
                         stats.declarationOrbitBudget);
             else evaluate.accept(new CertifiedDeclarationOrbit.Choice(correspondence,
                     CertifiedDeclarationOrbit.identity(leftBindings.bindings.size()),
@@ -1153,6 +1173,34 @@ public final class QuotientRepairDistance {
                     "No minimum-cost quantifier alignment was evaluated");
         }
         return Math.addExact(fixedUnalignedCost, best[0]);
+    }
+
+    private record MatrixAlignmentResult(Map<Integer, Integer> correspondence, int cost,
+            int[] mapping, List<MatrixDecision<Node>> phases) { }
+
+    private static MatrixAlignmentResult priorMatrixAlignment(GlobalBindingIndex left,
+            GlobalBindingIndex right,Map<Integer,Integer> correspondence,MutableStats stats,
+            MatrixAlignmentResult[] cached) {
+        if(cached[0]==null || !cached[0].correspondence().equals(correspondence)) {
+            int cost=matrixDistanceForAlignment(left,right,correspondence,stats);
+            cached[0]=new MatrixAlignmentResult(Map.copyOf(correspondence),cost,
+                    stats.candidateMapping.clone(),stats.candidatePhases);
+        }
+        return cached[0];
+    }
+
+    /** Zero-cost survivors also support a source-authorized orbit. They never
+     * enter the paid correspondence or acquire a declaration charge. */
+    private static Map<Integer,Integer> selectedDeclarationLinks(QuantificationAlignmentSpace space,
+            GlobalBindingIndex left,GlobalBindingIndex right,MutableStats stats) {
+        var links=new LinkedHashMap<Integer,Integer>();
+        for(int c=0;c<space.components.size();c++) {
+            var component=space.components.get(c);
+            for(var move:stats.activeDeclarationPaths.get(c)) if(move.left()>=0 && move.right()>=0)
+                addInjectiveCorrespondence(links,left.indices.get(component.left.get(move.left()).identity),
+                        right.indices.get(component.right.get(move.right()).identity));
+        }
+        return links;
     }
 
     private static int[] selectedDeclarationMapping(QuantificationAlignmentSpace space,
