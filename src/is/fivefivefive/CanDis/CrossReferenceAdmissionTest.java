@@ -23,6 +23,12 @@ public final class CrossReferenceAdmissionTest {
     }
     public static void main(String[] args) throws Exception {
         String data=args[0];
+        var dependentReference = java.nio.file.Path.of(data,"socialMedia/correct/frYeGpTJ6HqHkkAPG_inv7.als");
+        check(java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+                .digest(java.nio.file.Files.readAllBytes(dependentReference)))
+                .equals("a955443775d28c73d68f7810c618c3cf81995f83c3b882b8ed92467fdea59153"), "Lean source witness hash");
+        LocalBinderTransportTest.run(source(dependentReference.toString(),"inv7").normalizedForms().get(0));
+        LocalBinderTransportTest.publicationControls(source(dependentReference.toString(),"inv7").normalizedForms(), false);
         var regrouped=AlloyUtil.compileAlloyModule(data+"/coursesNew/both/65RDEj22kn4Z3CToj_inv13.als");
         MatrixCaptureTest.run(prepare(regrouped,"inv13"),prepare(regrouped,"inv13c"));
         for(String phase:List.of("", "always ")) {
@@ -91,6 +97,7 @@ public final class CrossReferenceAdmissionTest {
                 "var sig N { var edge:set N } pred specimen { always (no edge and (all disj x,y,z:N | "
                 +"some disj p,q:x.edge | no p.edge & q.edge and y in N and z in N)) }");
         InvocationCopyTest.run(prepare(nested,"specimen"));
+        LocalBinderTransportTest.publicationControls(prepare(nested,"specimen").normalizedForms(), true);
         var local=localSource.normalizedForms().get(0);
         var live=new HashSet<String>();var pending=new ArrayDeque<EGraphNode>();pending.add(local.getCertificationMatrixEGraph());
         while(!pending.isEmpty()){var n=pending.remove();if(n.getOpcode()==EGraphNode.Opcode.VARIABLE)live.add(n.getAlphaName());pending.addAll(n.getChildren());}

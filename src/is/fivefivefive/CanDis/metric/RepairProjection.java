@@ -433,6 +433,7 @@ public final class RepairProjection {
             throw new IllegalStateException(
                     "A projected local binder has uncertified automorphisms");
         }
+        EGraphNode.requireClosedLocalBinder(source, sourceCoordinates.keySet());
 
         List<Node> alternatives = new ArrayList<>();
         Map<String, GraphType> scopedTypes = new LinkedHashMap<>(localTypes);
@@ -447,16 +448,23 @@ public final class RepairProjection {
                     entry.getKey(),
                     descriptor.coordinates().get(coordinate).canonicalSlot().type());
         }
+        Map<String, String> identityAliases = new LinkedHashMap<>(localAliases);
+        sourceCoordinates.forEach((name, coordinate) ->
+                identityAliases.put(name, "@local[" + localDepth + ":" + coordinate + "]"));
+        Node identity = projectOrdinaryNode(source, aliases, aliasTypes, identityAliases, scopedTypes,
+                localDepth + 1, localBinderDescriptors, localBinderSourceCoordinates, containers, chains, true);
         for (TypedPermutation permutation : descriptor.automorphisms().elements()) {
             Map<String, String> scopedAliases = new LinkedHashMap<>(localAliases);
+            Map<String, String> transport = new LinkedHashMap<>();
             for (Map.Entry<String, Integer> entry : sourceCoordinates.entrySet()) {
                 int target = permutedCoordinate(
                         descriptor, permutation, entry.getValue());
                 scopedAliases.put(
                         entry.getKey(),
                         "@local[" + localDepth + ":" + target + "]");
+                transport.put(identityAliases.get(entry.getKey()), scopedAliases.get(entry.getKey()));
             }
-            Node alternative = projectOrdinaryNode(
+            Node alternative = scopedAliases.equals(identityAliases) ? identity : projectOrdinaryNode(
                     source,
                     aliases,
                     aliasTypes,
@@ -468,6 +476,10 @@ public final class RepairProjection {
                     containers,
                     chains,
                     true);
+            // Descriptor dependencies are not source authority. Check the actual
+            // domain/body projection, including every nested selected alternative.
+            is.fivefivefive.CanDis.core.LocalBinderTransport.requireRenamed(
+                    identity, alternative, transport, BINDER_TRANSPORT);
             boolean duplicate = false;
             for (Node retained : alternatives) {
                 if (sameProjectedNode(retained, alternative)) {
@@ -498,6 +510,25 @@ public final class RepairProjection {
                 primary.children(),
                 alternatives).withObservationFrom(primary);
     }
+
+    private static final is.fivefivefive.CanDis.core.LocalBinderTransport.View<Node> BINDER_TRANSPORT =
+            new is.fivefivefive.CanDis.core.LocalBinderTransport.View<>() {
+        public String operator(Node n) { return n.operator(); }
+        public String variable(Node n) { return n.isVariable() ? n.lexicalVariable() : null; }
+        public Object type(Node n) { return n.observationType(); }
+        public List<Node> children(Node n) { return n.children(); }
+        public List<Node> alternatives(Node n) { return n.certifiedAlternatives(); }
+        public boolean sameHead(Node a, Node b) {
+            return a.operator().equals(b.operator()) && Objects.equals(a.payload(), b.payload())
+                    && Objects.equals(a.semanticPayload(), b.semanticPayload()) && a.bindingIndex() == b.bindingIndex()
+                    && a.containerKind() == b.containerKind() && a.orderInsensitive() == b.orderInsensitive()
+                    && Objects.equals(a.observationType(), b.observationType())
+                    && a.observationPhases().equals(b.observationPhases())
+                    && Objects.equals(a.observationTemporalOperator(), b.observationTemporalOperator())
+                    && a.originalSourceOccurrence() == b.originalSourceOccurrence()
+                    && a.originalReferenceOrigin() == b.originalReferenceOrigin();
+        }
+    };
 
     private static int permutedCoordinate(
             BinderBlockDescriptor descriptor,

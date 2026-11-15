@@ -43,6 +43,12 @@ final class FastBinderOrbit {
         var result = new IdentityHashMap<EGraphNode, List<EGraphNode>>();
         var budget = new int[]{MAX_CLONE_BUDGET};
         register(root, byAlpha, result, budget, true);
+        // Admission checks remain valid after alternatives escape through Prepared.
+        for (List<EGraphNode> alternatives : result.values()) {
+            for (EGraphNode alternative : alternatives) {
+                if (!alternative.isFrozenForCertification()) alternative.freezeForCertification();
+            }
+        }
         return result;
     }
 
@@ -154,7 +160,7 @@ final class FastBinderOrbit {
         List<EGraphNode> result = new ArrayList<>(permutations.size() + 1);
         result.add(EGraphNode.comparisonPrimaryMember(owner));
         for (int[] permutation : permutations) {
-            if (!preservesDependencies(bindings, permutation)) continue;
+            if (!preservesDependencies(bindings, permutation, true)) continue;
             Map<String, String> renames = new LinkedHashMap<>();
             boolean valid = true;
             for (int index = 0; index < slots.size(); index++) {
@@ -172,20 +178,31 @@ final class FastBinderOrbit {
             if (!valid) {
                 return List.of();
             }
-            result.add(EGraphNode.comparisonRenameSubtree(owner, renames, budget));
+            EGraphNode alternative = EGraphNode.comparisonRenameSubtree(owner, renames, budget);
+            LocalBinderTransport.requireRenamed(owner, alternative, renames, EGraphNode.BINDER_TRANSPORT);
+            result.add(alternative);
         }
         return List.copyOf(result);
     }
 
-    // Relative domain keys omit dependency identities. Transport those identities
-    // through the whole permutation, including reads by unchanged declarations.
+    // Fixed-frame automorphisms must still preserve dependency identities. Whole
+    // binder transport above instead checks the renamed domains and body together.
     private static boolean preservesDependencies(List<QuantiVar> bindings, int[] permutation) {
+        return preservesDependencies(bindings, permutation, false);
+    }
+
+    private static boolean preservesDependencies(List<QuantiVar> bindings, int[] permutation,
+            boolean wholeBinderTransport) {
         var transport = new IdentityHashMap<QuantiVar, QuantiVar>();
         for (int i = 0; i < bindings.size(); i++) transport.put(bindings.get(i), bindings.get(permutation[i]));
         for (int i = 0; i < bindings.size(); i++) {
             var source = bindings.get(i).getDeclarationFrames().get(0);
             var target = bindings.get(permutation[i]).getDeclarationFrames().get(0);
-            if (source.owner() != target.owner() || source.dependencies().size() != target.dependencies().size()) return false;
+            if (source.owner() != target.owner()) return false;
+            // A fixed slot's domain is transported with its reads, not equated to
+            // its old frame. Moved slots still obey the original orbit partition.
+            if (wholeBinderTransport && permutation[i] == i) continue;
+            if (source.dependencies().size() != target.dependencies().size()) return false;
             for (int j = 0; j < source.dependencies().size(); j++) {
                 var dependency = source.dependencies().get(j);
                 if (transport.getOrDefault(dependency, dependency) != target.dependencies().get(j)) return false;

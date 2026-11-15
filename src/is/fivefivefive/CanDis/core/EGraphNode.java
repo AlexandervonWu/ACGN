@@ -7137,11 +7137,57 @@ public final class EGraphNode {
             children.add(comparisonRenameSubtree(child, renames, budget));
         }
         EGraphNode copy = comparisonCopy(source, children, source.arena, true);
-        if (StructuralDeclarationOrigin.structural(copy)
+        for (int i = 0; i < children.size(); i++) {
+            Map<String, String> slots = LocalBinderTransport.moveInvocation(
+                    source.childClasses.get(i).getSlotMap(), renames);
+            if (!slots.isEmpty()) copy.childClasses.set(i,
+                    new EClassRef(copy.childClasses.get(i).getEClass(), slots));
+        }
+        if (FastComparison.declaration(copy)
                 && source.hasUnchangedComparisonDeclarationInvocations()) {
             copy.sealComparisonDeclarationInvocations();
         }
         return copy;
+    }
+
+    static final LocalBinderTransport.View<EGraphNode> BINDER_TRANSPORT = new LocalBinderTransport.View<>() {
+        public String operator(EGraphNode n) { return n.opcode.name(); }
+        public String variable(EGraphNode n) { return n.opcode == Opcode.VARIABLE ? n.alphaName : null; }
+        public Object type(EGraphNode n) { return n.exactAlloyType; }
+        public List<EGraphNode> children(EGraphNode n) { return n.getChildren(); }
+        public Map<String, String> invocation(EGraphNode n, int i) { return n.childClasses.get(i).getSlotMap(); }
+        public void requireSource(EGraphNode n) {
+            if (n.comparisonDeclarationSource != null && !n.hasUnchangedComparisonDeclarationInvocations())
+                throw new IllegalArgumentException("LOCAL_BINDER_TRANSPORT: stale declaration invocation seal");
+        }
+        public boolean sameHead(EGraphNode a, EGraphNode b) {
+            return a.opcode == b.opcode && a.metatype == b.metatype && a.maxArity == b.maxArity
+                    && a.flexibleArity == b.flexibleArity && a.isCommutative == b.isCommutative
+                    && a.semanticProfile.equals(b.semanticProfile)
+                    && Objects.equals(a.sourceName, b.sourceName) && Objects.equals(a.sourceType, b.sourceType)
+                    && Objects.equals(a.exactAlloyType, b.exactAlloyType)
+                    && Objects.equals(a.semanticIdentity, b.semanticIdentity)
+                    && a.builtinConstantKind == b.builtinConstantKind
+                    && a.parserSignatureEvidence == b.parserSignatureEvidence
+                    && a.sourceOccurrenceLineage == b.sourceOccurrenceLineage
+                    && a.certificationOccurrenceLineage == b.certificationOccurrenceLineage
+                    && a.unusedBindingReduction == b.unusedBindingReduction
+                    && a.domainGuardOrigin == b.domainGuardOrigin && a.domainContextOrigin == b.domainContextOrigin
+                    && a.callOccurrenceId == b.callOccurrenceId && a.callSourceAnchor == b.callSourceAnchor
+                    && a.declaredArity == b.declaredArity && Objects.equals(a.callArityAuthority, b.callArityAuthority)
+                    && a.derivedBooleanRewriteOpcode == b.derivedBooleanRewriteOpcode
+                    && a.temporalReferenceAuthorityId == b.temporalReferenceAuthorityId
+                    && a.temporalSnapshotBinding == b.temporalSnapshotBinding
+                    && a.comparisonLocalCoordinate == b.comparisonLocalCoordinate
+                    && a.comparisonVariableSource == b.comparisonVariableSource
+                    && a.comparisonDeclarationSource == b.comparisonDeclarationSource
+                    && a.comparisonRegisteredBinding == b.comparisonRegisteredBinding
+                    && Objects.equals(a.comparisonTemporalReferenceName, b.comparisonTemporalReferenceName);
+        }
+    };
+
+    public static void requireClosedLocalBinder(EGraphNode source, Set<String> names) {
+        LocalBinderTransport.requireClosed(source, names, BINDER_TRANSPORT);
     }
 
     /**
@@ -7340,7 +7386,7 @@ public final class EGraphNode {
             source.copyPayloadTo(copy);
             if(source.opcode==Opcode.VARIABLE)copy.comparisonVariableSource=source.comparisonVariableSource==null?source:source.comparisonVariableSource;
             if(declaration(source))copy.comparisonDeclarationSource=source.comparisonDeclarationSource==null?source:source.comparisonDeclarationSource;
-            if (StructuralDeclarationOrigin.structural(copy)) copy.sealComparisonDeclarationInvocations();
+            if (declaration(copy)) copy.sealComparisonDeclarationInvocations();
             if (copy.opcode == Opcode.REF && referenceCoordinates.containsKey(copy.temporalReferenceAuthorityId))
                 copy.comparisonTemporalReferenceName = referenceCoordinates.get(copy.temporalReferenceAuthorityId);
             return copy;
