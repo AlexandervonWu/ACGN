@@ -757,6 +757,7 @@ public class NormalForm {
         if (expectedDomain == null || read.getOpcode() != Opcode.VARIABLE
                 || !frame.variable.getName().equals(read.getAlphaName())
                 || read.getExactAlloyType() == null
+                || frame.exactType == null
                 || !frame.exactType.sameOccurrenceEvidenceAs(read.getExactAlloyType())) return false;
         var actualDomain = retainedDomainKey(
                 declarationDomainKey(node.getChildren().get(1), env, dependencies), dependencies);
@@ -2656,13 +2657,22 @@ public class NormalForm {
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
         unusedBindingReductions.clear();
         unusedBindingProjections.clear();
-        stages.onStage("begin-unused-binding-descope", this);
-        matrixEGraphRoot = descopeUnusedBindings(matrixEGraphRoot, "root", false);
+        var snapshotNames = new java.util.HashSet<String>();
+        for (QuantiVar inherited : inheritedBindings.values()) {
+            if (isTemporalSnapshotBinding(inherited)) snapshotNames.add(inherited.getName());
+        }
+        markTemporalSnapshotReads(matrixEGraphRoot, snapshotNames);
+        // Expose checked source constants before liveness and NNF dualization;
+        // ACI still runs after the certification snapshot.
+        matrixEGraphRoot = normalizeGuardedSourceRules(
+                matrixEGraphRoot, Collections.emptyMap());
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
-        stages.onStage("alpha-beta-branch", this);
         stages.onStage("begin-nnf", this);
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
         matrixEGraphRoot = flattenBooleanAssociationForPrenex(matrixEGraphRoot);
+        stages.onStage("begin-unused-binding-descope", this);
+        matrixEGraphRoot = descopeUnusedBindings(matrixEGraphRoot, "root", false);
+        stages.onStage("alpha-beta-branch", this);
         stages.onStage("nnf", this);
         stages.onStage("begin-prenex", this);
         Map<String, QuantiVar> prenexBindings = new HashMap<>(inheritedBindings);
@@ -4090,6 +4100,15 @@ public class NormalForm {
         return false;
     }
 
+    private static void markTemporalSnapshotReads(EGraphNode node, java.util.Set<String> names) {
+        if (names.isEmpty()) return;
+        // Alpha-renamed local declarations cannot alias an imported coordinate.
+        if (node.getOpcode() == Opcode.VARIABLE && names.contains(node.getAlphaName())) {
+            node.markTemporalSnapshotBinding();
+        }
+        for (EGraphNode child : node.getChildren()) markTemporalSnapshotReads(child, names);
+    }
+
     private boolean isTemporalSnapshotBinding(QuantiVar variable) {
         for (QuantiVar inherited : inheritedQuantiVars) {
             if (inherited == variable) {
@@ -4674,8 +4693,12 @@ public class NormalForm {
             return booleanConstant(node, node.getOpcode() == Opcode.NOT_IN);
         }
 
-        EGraphNode emptyRightSubset =
-                EGraphNode.parserCertifiedEmptyRightSubsetExpansion(
+        // Keep variable membership visible until the prefix supplies binding
+        // facts. The checked rule above can then consume ONE/SOME admissions.
+        boolean awaitingBindingFacts = bindings.isEmpty() && rewritten.size() == 2
+                && rewritten.get(0).getOpcode() == Opcode.VARIABLE;
+        EGraphNode emptyRightSubset = awaitingBindingFacts ? null
+                : EGraphNode.parserCertifiedEmptyRightSubsetExpansion(
                         node, node.getChildClasses());
         if (emptyRightSubset != null) {
             return normalizeGuardedSourceRules(emptyRightSubset, bindings);
@@ -4711,7 +4734,7 @@ public class NormalForm {
             }
         }
 
-        if (rewritten.size() == 1 && isNone(rewritten.get(0))) {
+        if (node.hasUnaryCardinalityOperand() && isNone(rewritten.get(0))) {
             switch (node.getOpcode()) {
                 case NO:
                 case LONE:
