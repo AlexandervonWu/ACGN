@@ -56,6 +56,28 @@ final class CertifiedDeclarationOrbit {
         return candidate<incumbent || candidate==incumbent && candidateCanonical && !incumbentCanonical;
     }
 
+    record SelectionKey(int cost, boolean canonical, boolean linked, boolean existing,
+            boolean paidSupported, Map<Integer,Integer> paid, int[] mapping) {
+        SelectionKey {
+            paid = Map.copyOf(paid);
+            mapping = mapping.clone();
+        }
+    }
+
+    static boolean prefer(SelectionKey next, SelectionKey best) {
+        return best == null || prefer(next.cost(),best.cost(),next.canonical(),best.canonical())
+                || next.cost()==best.cost() && next.canonical()==best.canonical() && next.linked()
+                    && (!best.linked() || next.existing() && !best.existing()
+                        || next.existing()==best.existing() && next.paidSupported() && !best.paidSupported()
+                            && next.paid().equals(best.paid()) && Arrays.equals(next.mapping(),best.mapping()));
+    }
+
+    static boolean paidSupported(Collection<Integer> paid, int[] order) {
+        for(int i=0;i<order.length;i++)
+            if(order[i]!=i && !paid.contains(i) && !paid.contains(order[i]))return false;
+        return true;
+    }
+
     static void requirePermutation(List<Binding> bindings,int[] permutation) {
         if(permutation.length!=bindings.size()) throw new IllegalArgumentException("Declaration orbit size");
         boolean[] seen=new boolean[permutation.length];

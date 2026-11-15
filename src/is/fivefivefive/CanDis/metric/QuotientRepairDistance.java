@@ -1097,9 +1097,7 @@ public final class QuotientRepairDistance {
 
         int fixedUnalignedCost = result;
         int[] best = {Integer.MAX_VALUE};
-        boolean[] bestCanonical = {false};
-        boolean[] bestLinked = {false};
-        boolean[] bestExisting = {false};
+        CertifiedDeclarationOrbit.SelectionKey[] bestKey = {null};
         // Endpoints, phase payments and capture mode are fixed for this call.
         // Survivor permutations often repeat the same paid correspondence.
         MatrixAlignmentResult[] cached = {null};
@@ -1122,14 +1120,17 @@ public final class QuotientRepairDistance {
                     int fixed=globallyMappedMatrixDistance(leftBindings,rightBindings,complete,stats);
                     if(quantification.cost!=0 || fixed<=candidate) {
                         candidate=fixed;linked=true;existing=false;
-                        if(stats.capture){stats.candidateMapping=complete;stats.candidatePhases=stats.lastPhases;}
+                        stats.candidateMapping=complete;
+                        if(stats.capture)stats.candidatePhases=stats.lastPhases;
                     }
                 }
                 // An orbit from an early DP path can tie a later canonical path.
                 // Apply witness priority globally, without changing the minimum.
-                if (CertifiedDeclarationOrbit.prefer(candidate,best[0],canonical,bestCanonical[0])
-                        || candidate==best[0] && canonical==bestCanonical[0] && linked
-                            && (!bestLinked[0] || existing && !bestExisting[0])) {
+                boolean paidSupported=CertifiedDeclarationOrbit.paidSupported(correspondence.keySet(),choice.left())
+                        && CertifiedDeclarationOrbit.paidSupported(correspondence.values(),choice.right());
+                var key=new CertifiedDeclarationOrbit.SelectionKey(candidate,canonical,linked,existing,
+                        paidSupported,choice.correspondence(),stats.candidateMapping);
+                if (CertifiedDeclarationOrbit.prefer(key,bestKey[0])) {
                     if (stats.capture) {
                         stats.selectedMapping = stats.candidateMapping.clone();
                         stats.selectedPhases=stats.candidatePhases;
@@ -1141,9 +1142,7 @@ public final class QuotientRepairDistance {
                         stats.selectedDeclarationPaths=List.copyOf(stats.activeDeclarationPaths);
                     }
                     best[0] = candidate;
-                    bestCanonical[0] = canonical;
-                    bestLinked[0] = linked;
-                    bestExisting[0] = existing;
+                    bestKey[0] = key;
                 }
             };
             if(left.size()==1 && right.size()==1 && quantification.cost!=0

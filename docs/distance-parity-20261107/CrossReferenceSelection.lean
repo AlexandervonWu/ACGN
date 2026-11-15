@@ -5,6 +5,7 @@ import GroupedPaidOrbit
 import DisjointGroupPermutation
 import NormalizedDeclarationDomain
 import StructuralDeclarationTyping
+import PaidOrbitTieOrder
 
 namespace CrossReferenceSelection
 open EndpointCanonicalContracts
@@ -699,5 +700,90 @@ theorem changed_invocation_not_resealed :
 theorem substituted_child_not_resealed :
     cloneSeal (· + 4) [⟨0,1,[]⟩,⟨0,9,[]⟩,⟨0,3,[]⟩]
       (some disjointCopyEdges) = none := by decide
+
+-- Both candidates are independently admitted; selection changes no orbit,
+-- payment, map or replay check. The old comparator omits Fast's final priority.
+def courseOrigin : Origin := {branchOrigin with
+  sourceHash := "8abcd0f340cf805d7237e9425b0aeeb1a5c87081929b80e5cd65228044b72f66"
+  predicate := "inv14", occurrence := "root/predicate[0]/decl[0]@pos"}
+def courseX : Binding := ⟨courseOrigin,0,0,0⟩
+def courseY : Binding := ⟨{courseOrigin with occurrence := "root/predicate[0]/decl[1]@pos"},1,1,1⟩
+def courseP : Binding := ⟨{courseOrigin with
+  exactType := "Project"
+  domain := "alloy-binder-domain/Project", occurrence := "root/predicate[0]/decl[2]@pos"},2,2,2⟩
+def courseI : Binding := ⟨{courseP.origin with occurrence := "root/predicate[0]/decl[3]@pos"},3,3,3⟩
+def courseTargetP : Binding := ⟨{courseOrigin with predicate := "inv14c"},0,0,0⟩
+def courseTargetX : Binding := ⟨{courseP.origin with
+  predicate := "inv14c"
+  occurrence := "root/predicate[0]/decl[1]@pos", dependencies := [0]
+  domain := "JOIN(dependency/0:Person,projects:Person->Project)", disjointness := 1},1,1,1⟩
+def courseTargetY : Binding := ⟨courseTargetX.origin,2,2,2⟩
+def courseOldPath : List Step := [.delete courseY,.pair courseX courseTargetP,
+  .pair courseP courseTargetY,.pair courseI courseTargetX]
+def courseNewPath : List Step := [.pair courseX courseTargetP,.delete courseY,
+  .pair courseP courseTargetY,.pair courseI courseTargetX]
+def courseReverseOld : List Step := [.insert courseY,.pair courseTargetP courseX,
+  .pair courseTargetX courseI,.pair courseTargetY courseP]
+def courseReverseNew : List Step := [.pair courseTargetP courseX,.insert courseY,
+  .pair courseTargetX courseI,.pair courseTargetY courseP]
+
+theorem course_actual_programs_replay :
+    replay [courseY,courseX,courseP,courseI] courseOldPath =
+      some ([courseTargetP,courseTargetY,courseTargetX],3) ∧
+    replay [courseX,courseY,courseP,courseI] courseNewPath =
+      some ([courseTargetP,courseTargetY,courseTargetX],3) ∧
+    paid courseOldPath = paid courseNewPath ∧ links courseOldPath = links courseNewPath := by decide
+
+theorem course_reverse_programs_replay :
+    replay [courseTargetP,courseTargetX,courseTargetY] courseReverseOld =
+      some ([courseY,courseX,courseI,courseP],3) ∧
+    replay [courseTargetP,courseTargetX,courseTargetY] courseReverseNew =
+      some ([courseX,courseY,courseI,courseP],3) ∧
+    paid courseReverseOld = paid courseReverseNew ∧
+    links courseReverseOld = links courseReverseNew := by decide
+
+theorem course_source_order_authority : authenticOrbit trainFrames swap := train_source_orbit_authentic
+theorem course_source_typed_premises :
+    courseX.origin.owner = courseY.origin.owner ∧
+    courseX.origin.phase = courseY.origin.phase ∧
+    courseX.origin.exactType = courseY.origin.exactType ∧
+    courseX.origin.domain = courseY.origin.domain ∧
+    courseX.origin.quantifier = "ALL" ∧ courseY.origin.quantifier = "ALL" ∧
+    courseX.origin.cardinality = "ONE" ∧ courseY.origin.cardinality = "ONE" ∧
+    courseX.origin.dependencies = [] ∧ courseY.origin.dependencies = [] ∧
+    courseTargetX.origin.dependencies = [0] ∧ courseTargetY.origin.dependencies = [0] ∧
+    courseTargetX.origin.disjointness = 1 ∧ courseTargetY.origin.disjointness = 1 := by decide
+theorem course_source_body_transport (env : Ref → V) (body : Expr V) :
+    eval (transport 0 swap.backward env) (rename 0 swap.forward body) = eval env body :=
+  body_transport 0 swap env body
+
+def courseOldKey : PaidOrbitTieOrder.Key :=
+  ⟨27,false,true,true,false,[(2,2),(3,1)],[(0,0),(2,2),(3,1)]⟩
+def courseNewKey : PaidOrbitTieOrder.Key := {courseOldKey with paidSupported := true}
+def courseReverseOldKey : PaidOrbitTieOrder.Key :=
+  ⟨27,false,true,true,false,[(1,3),(2,2)],[(0,0),(1,3),(2,2)]⟩
+def courseReverseNewKey : PaidOrbitTieOrder.Key := {courseReverseOldKey with paidSupported := true}
+theorem course_old_priority_rejects_new_choice :
+    PaidOrbitTieOrder.oldPrefer courseOldKey courseNewKey = false ∧
+    PaidOrbitTieOrder.prefer courseOldKey courseNewKey = true ∧
+    PaidOrbitTieOrder.oldPrefer courseReverseOldKey courseReverseNewKey = false ∧
+    PaidOrbitTieOrder.prefer courseReverseOldKey courseReverseNewKey = true := by decide
+
+theorem course_paid_support :
+    ¬ PaidOrbitTieOrder.supported (fun i => i == 2 || i == 3) (PaidOrbitTieOrder.swap 0 1) ∧
+    PaidOrbitTieOrder.supported (fun i => i == 2 || i == 3) id := by
+  constructor
+  · rw [PaidOrbitTieOrder.transposition_supported _ 0 1 (by decide)]; decide
+  · exact PaidOrbitTieOrder.identity_supported _
+
+theorem course_no_unrelated_tie_override :
+    PaidOrbitTieOrder.prefer courseOldKey {courseNewKey with cost := 28} = false ∧
+    PaidOrbitTieOrder.prefer courseOldKey {courseNewKey with linked := false} = false ∧
+    PaidOrbitTieOrder.prefer courseOldKey {courseNewKey with full := [(1,0),(2,2),(3,1)]} = false ∧
+    PaidOrbitTieOrder.prefer courseOldKey {courseNewKey with paid := [(1,2),(3,1)]} = false := by decide
+
+theorem course_deleted_read_absent :
+    (links courseNewPath).all (fun p => p.1.vectorIndex != 1) = true ∧
+    replay [courseX,courseY,courseP,courseI] courseOldPath = none := by decide
 
 end CrossReferenceSelection

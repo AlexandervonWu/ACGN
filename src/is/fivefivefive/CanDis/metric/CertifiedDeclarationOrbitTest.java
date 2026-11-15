@@ -26,6 +26,7 @@ public final class CertifiedDeclarationOrbitTest {
         return result;
     }
     public static void main(String[] args) {
+        selectionControls();
         var group=group(2,"P"); var a=group.get(0); var b=group.get(1);
         retainedSourceControls(group);
         check(CertifiedDeclarationOrbit.exchangeable(a,b),"typed full orbit");
@@ -141,6 +142,38 @@ public final class CertifiedDeclarationOrbitTest {
         CertifiedDeclarationOrbit.forEach(oversized,oversized,Map.of(),x->count[0]++,new CertifiedDeclarationOrbit.Budget(1));
         check(count[0]==1,"no alternatives expanded when no paid coordinate moves");
         System.out.println("CertifiedDeclarationOrbitTest: "+checks+" checks passed");
+    }
+
+    private static void selectionControls() {
+        var paid=Map.of(2,2,3,1);
+        int[] mapping={0,-1,2,1};
+        var old=new CertifiedDeclarationOrbit.SelectionKey(27,false,true,true,false,paid,mapping);
+        var next=new CertifiedDeclarationOrbit.SelectionKey(27,false,true,true,true,paid,mapping);
+        check(!CertifiedDeclarationOrbit.prefer(27,27,false,false),"old priority retains first unsupported tie");
+        check(CertifiedDeclarationOrbit.prefer(next,old),"same-map paid-supported tie selected");
+        check(!CertifiedDeclarationOrbit.prefer(old,next),"no reverse tie demotion");
+        check(!CertifiedDeclarationOrbit.paidSupported(paid.keySet(),new int[]{1,0,2,3}),"unpaid swap unsupported");
+        check(CertifiedDeclarationOrbit.paidSupported(paid.values(),new int[]{0,2,1}),"paid target swap supported");
+        for(int flags=0;flags<32;flags++)for(int cost=26;cost<=28;cost++) {
+            boolean canonical=(flags&1)!=0,linked=(flags&2)!=0,existing=(flags&4)!=0;
+            var candidate=new CertifiedDeclarationOrbit.SelectionKey(cost,canonical,linked,existing,true,
+                    (flags&8)==0?paid:Map.of(1,2,3,1),(flags&16)==0?mapping:new int[]{-1,0,2,1});
+            boolean prior=cost<27 || cost==27 && canonical;
+            boolean tie=cost==27 && !canonical && linked && existing && (flags&24)==0;
+            check(CertifiedDeclarationOrbit.prefer(candidate,old)==(prior||tie),"cost/priority/map negative controls");
+        }
+        for(boolean canonical:List.of(false,true))for(boolean linked:List.of(false,true))
+            for(boolean existing:List.of(false,true)) {
+                var incumbent=new CertifiedDeclarationOrbit.SelectionKey(27,canonical,linked,existing,false,paid,mapping);
+                var candidate=new CertifiedDeclarationOrbit.SelectionKey(27,false,true,false,true,paid,mapping);
+                boolean expected=!canonical && (!linked || !existing);
+                check(CertifiedDeclarationOrbit.prefer(candidate,incumbent)==expected,"higher priorities retained");
+            }
+        var mutable=new HashMap<>(paid);
+        var frozen=new CertifiedDeclarationOrbit.SelectionKey(27,false,true,true,true,mutable,mapping);
+        mutable.clear();mapping[0]=1;
+        check(frozen.paid().equals(paid)&&frozen.mapping()[0]==0&&frozen.mapping()[1]==-1,
+                "winner keys retain owned paid links and one-sided slots");
     }
 
     private static void retainedSourceControls(List<Binding> group) {
