@@ -68,3 +68,20 @@ claims require their separate gates.
 The capability report also classifies the five composed families explicitly;
 the old underscore heuristic omitted `mixed` and counted several simple
 families. The strict 5,500/5,500 closure assertion is unchanged.
+
+## Natural-Corpus Scheduling Interactions
+
+The first full natural run on the capability repair had no native path mismatch,
+but lost six previous zero-distance pairs while gaining three. Five losses were
+one membership-quantifier family: early distribution of `x not in B & C`
+prevented the existing checked single-membership eliminator from recognizing it.
+The sixth exposed a neutral `true` sibling after descoping; that sibling blocked
+the remaining universal from lifting before it was removed later.
+
+The followup applies the unchanged membership eliminator in a linear pre-prenex
+walk before source expansion, and repeats that pre-prenex source cleanup after
+descoping. It never invokes the new walk after declaration ownership is issued.
+There is no new saturation loop or relaxed admission gate. Shared Lean laws cover
+both schedules, carrier premises, neutral quantified restrictions and the SET/LONE
+negative controls. Fresh candidate-specific execution, zero-preservation and
+full-domain results are still required; the first run remains retained evidence.

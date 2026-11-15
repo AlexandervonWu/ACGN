@@ -161,4 +161,58 @@ theorem static_snapshot_absorption_retained :
     TemporalPhaseLocalBinding.carrierAbsorptionAdmitted true false = true :=
   TemporalPhaseLocalBinding.imported_snapshot_retains_static_carrier_absorption
 
+-- Eliminate a checked membership binder before distributing its body. Both
+-- schedules denote the same formula, including when the carrier is empty.
+theorem membership_before_distribution {Atom : Type}
+    (domain left right : Rel Atom) :
+    (∀ candidate, admits .one domain candidate →
+      ¬ subset candidate (intersection left right)) ↔
+      ¬ relNonempty (intersection domain (intersection left right)) :=
+  all_one_negative_membership_iff_intersection_empty domain (intersection left right)
+
+theorem distributed_membership_route {Atom : Type}
+    (domain left right : Rel Atom) :
+    (∀ atom, domain atom → (¬ left atom ∨ ¬ right atom)) ↔
+      ¬ relNonempty (intersection domain (intersection left right)) := by
+  classical
+  constructor
+  · intro allAtoms ⟨atom, inDomain, inLeft, inRight⟩
+    rcases allAtoms atom inDomain with absent | absent
+    · exact absent inLeft
+    · exact absent inRight
+  · intro emptyIntersection atom inDomain
+    by_cases inLeft : left atom
+    · exact Or.inr (fun inRight => emptyIntersection ⟨atom, inDomain, inLeft, inRight⟩)
+    · exact Or.inl inLeft
+
+theorem subcarrier_membership_elimination {Atom : Type}
+    (domain target : Rel Atom) (typedCarrier : subset target domain) :
+    (∀ candidate, admits .one domain candidate → ¬ subset candidate target) ↔
+      ¬ relNonempty target := by
+  rw [all_one_negative_membership_iff_intersection_empty]
+  have same : intersection domain target = target := by
+    funext atom
+    apply propext
+    exact ⟨fun h => h.2, fun h => ⟨typedCarrier atom h, h⟩⟩
+  rw [same]
+
+-- A tautological sibling must be removed before deciding whether its other
+-- sibling can lift. This does not assert that the quantified domain is inhabited.
+theorem restriction_universal_neutral {Value Atom : Type}
+    (domain : Value → Prop) (restrictor : Value → Rel Atom)
+    (target : Rel Atom) (body : Prop) :
+    (body ∧ ∀ value, domain value →
+      subset (unaryDomainRestriction (restrictor value) target) target) ↔ body := by
+  constructor
+  · exact And.left
+  · intro holds
+    exact ⟨holds, fun _ _ _ member => member.2⟩
+
+theorem membership_multiplicity_guards_retained {Atom : Type}
+    (domain target : Rel Atom) :
+    (¬ ∀ candidate, admits .set domain candidate → ¬ subset candidate target) ∧
+    (¬ ∀ candidate, admits .lone domain candidate → ¬ subset candidate target) :=
+  ⟨all_set_negative_membership_is_false domain target,
+    all_lone_negative_membership_is_false domain target⟩
+
 end CapabilitySourceScheduling

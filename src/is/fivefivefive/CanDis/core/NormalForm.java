@@ -2664,14 +2664,14 @@ public class NormalForm {
         markTemporalSnapshotReads(matrixEGraphRoot, snapshotNames);
         // Expose checked source constants before liveness and NNF dualization;
         // ACI still runs after the certification snapshot.
-        matrixEGraphRoot = normalizeGuardedSourceRules(
-                matrixEGraphRoot, Collections.emptyMap());
+        matrixEGraphRoot = normalizePrePrenexSourceRules(matrixEGraphRoot);
         matrixEGraphRoot = removeEndNodes(rewriteBranchConnectives(matrixEGraphRoot));
         stages.onStage("begin-nnf", this);
         matrixEGraphRoot = removeEndNodes(toNNF(matrixEGraphRoot, false));
         matrixEGraphRoot = flattenBooleanAssociationForPrenex(matrixEGraphRoot);
         stages.onStage("begin-unused-binding-descope", this);
         matrixEGraphRoot = descopeUnusedBindings(matrixEGraphRoot, "root", false);
+        matrixEGraphRoot = normalizePrePrenexSourceRules(matrixEGraphRoot);
         stages.onStage("alpha-beta-branch", this);
         stages.onStage("nnf", this);
         stages.onStage("begin-prenex", this);
@@ -4343,6 +4343,27 @@ public class NormalForm {
                 target.putIfAbsent(original, variable);
             }
         }
+    }
+
+    private static EGraphNode normalizePrePrenexSourceRules(EGraphNode node) {
+        return normalizeGuardedSourceRules(
+                eliminatePrePrenexMembership(node), Collections.emptyMap());
+    }
+
+    // Preserve the checked membership shape before source-rule distribution.
+    // This walk is never used after declaration ownership has been issued.
+    @LeanVerifiedRewrite("R0-BIND-002")
+    private static EGraphNode eliminatePrePrenexMembership(EGraphNode node) {
+        if (node == null) return null;
+        EGraphNode eliminated = eliminateSingleMembershipQuantifier(node);
+        if (eliminated != null) node = eliminated;
+        if (node.getChildren().isEmpty()) return node;
+        List<EGraphNode> children = new ArrayList<>();
+        for (EGraphNode child : node.getChildren()) {
+            children.add(eliminatePrePrenexMembership(child));
+        }
+        node.setNormalizedChildren(children);
+        return node;
     }
 
     @LeanVerifiedRewrite({

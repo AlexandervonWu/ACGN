@@ -31,6 +31,10 @@ public final class CapabilitySourceSchedulingTest {
     private static void pair(String left, String right, boolean equivalent) throws Exception {
         String source = "sig A { r: set A } sig B {} pred opaque { some B } "
                 + "pred p {" + left + "} pred q {" + right + "}";
+        sourcePair(source, equivalent);
+    }
+
+    private static void sourcePair(String source, boolean equivalent) throws Exception {
         var module = CompUtil.parseEverything_fromString(A4Reporter.NOP, source);
         var options = new A4Options();
         options.solver = kodkod.engine.satlab.SATFactory.get("sat4j");
@@ -38,7 +42,7 @@ public final class CapabilitySourceSchedulingTest {
                 CompUtil.parseOneExpression_fromString(module, "not (p iff q)"));
         check(TranslateAlloyToKodkod.execute_command(A4Reporter.NOP,
                 module.getAllReachableSigs(), command, options).satisfiable() != equivalent,
-                "independent bounded source check: " + left);
+                "independent bounded source check: " + source);
         nativePair(source, equivalent);
     }
 
@@ -68,6 +72,7 @@ public final class CapabilitySourceSchedulingTest {
 
     public static void main(String[] args) throws Exception {
         interfaceParameters();
+        membershipScheduling();
         pair("(some x:A | x->x in r) and (opaque and no A and some A)",
                 "some x:A | x->x in r and opaque and no A and some A", true);
         pair("(some x,y:A | x->y in r) and (opaque and no A and some A)",
@@ -102,6 +107,31 @@ public final class CapabilitySourceSchedulingTest {
             check(!CapabilityBenchmark.isComposedFamily(family), "simple family " + family);
         }
         System.out.println("CapabilitySourceSchedulingTest: " + checks + " checks passed");
+    }
+
+    private static void membershipScheduling() throws Exception {
+        String scope = "sig A { r: set A, s: set A } sig B, C in A {} ";
+        for (String[] law : List.of(
+                new String[]{"all x:A | x not in B&C", "no B&C"},
+                new String[]{"all x:A | x in B&C", "A in B&C"},
+                new String[]{"no x:A | x not in B&C", "A in B&C"},
+                new String[]{"some x:A | x in B&C", "some B&C"},
+                new String[]{"some x:A | x not in B&C", "some A-(B&C)"},
+                new String[]{"all x,y:A | x in B", "A in B"},
+                new String[]{"(all x:A | x.r in x.s) and (all y:A | y.r<:B in B)",
+                        "all x:A | x.r in x.s"})) {
+            sourcePair(scope + "pred p {" + law[0] + "} pred q {" + law[1] + "}", true);
+        }
+        for (String left : List.of("all disj x,y:A | x in B",
+                "all x:A,y:x.r | y in B", "all x:A | x in x.r")) {
+            sourcePair(scope + "pred p {" + left + "} pred q {A in B}", false);
+        }
+        sourcePair(scope + "pred p {(all x:A | x.r in x.s) and (some y:A | y.r<:B in B)}"
+                + "pred q {all x:A | x.r in x.s}", false);
+        for (String multiplicity : List.of("set", "lone")) {
+            nativePair(scope + "pred p {all x:" + multiplicity
+                    + " A | x not in B&C} pred q {some none}", true);
+        }
     }
 
     private static void interfaceParameters() throws Exception {
