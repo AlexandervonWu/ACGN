@@ -45,3 +45,24 @@ censuses, Lean replays, negative/source mutations and two clean builds must all
 pass before a repaired closure is reported VERIFIED. Historical reports remain
 unchanged. No production source, proof statement, semantic guard, measurement,
 resource guard, or public-certification boundary is changed by this CI repair.
+
+## CALL Lowering Follow-Up
+
+Run `43791759225` subsequently passed bounded-five and next-five, then blocked
+at the third-five CALL source extractor. Paired compiler-token inspection of
+`91825cff` and `8cc55384` isolates one changed tracked method: `buildEGraph`
+now supplies the source node to `isFlexibleArity(node, opcode)`. That existing
+production correction distinguishes unary NO/ONE/LONE syntax from quantifiers.
+CALL is not unary and its declared arity, ordered argument ports, nonflat
+policy, occurrence checks and source certificate path remain unchanged.
+Only this method's exact shape/binding pair is replaced in the extractor and
+replay encoder; a new unit control rejects the superseded pair.
+
+Do not replace other pins from an interactive shell's diagnostic. Javac's
+unnamed-module display name is locale-sensitive. The paired dump produced
+identical old/current tokens for those methods, and the localized module name
+alone accounts for their apparent mismatch. The registered closure runner
+already fixes `LC_ALL=C`; those bindings and the Registry pins are retained.
+No locale normalization or widened fingerprint acceptance is added. Full
+registered CI execution, including source mutations and two clean builds,
+remains necessary; the diagnostic itself is not a closure result.

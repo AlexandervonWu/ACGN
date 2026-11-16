@@ -98,7 +98,7 @@ public final class CallAuthorityTransitionsExtractor {
         Map.entry("counter-step", "12aa5e443728d10bb0a6943e331848d47e2f162bbb42c3a0be1050c7bb9b44f5 3bc21ce8b86aaa8b387bbcf4faff31bf9a2a5f96fc4974d2917ab8b6dc0c1b6f"),
         Map.entry("visit-select", "2ef01c475fafe71a8ef3147e060a39994fb7be4c6fcd5eb7bbd820c6fc1fb749 abb9cbe0df10caeee4054872582cbdb7192462e84e16e9d291f86a9274afda03"),
         Map.entry("visit-validate", "e31285d22293db48dc79371b9a1356921f396fc45d8bdc675331daacdce52c1b f3f9239e2a1cde4517a8b6c7cc752c4cfa4f957441faabcef9241b3df811abde"),
-        Map.entry("ir-build", "208277c8f3a1b5b478af357aec94e025cfaffae629d26804cb245fee19b469a8 9fc429a3d13bba99523297e44d18929bd39093379a9924fb8bd37e1936c0d35a"),
+        Map.entry("ir-build", "cd34ac5be7e7f6e61122d517030dbe346858f4b753f2ed0dd0218bb39c93ce00 118238307d8b3fed045e6ea9408e95259c075a240c222722fd9ffd7a36ecb61e"),
         Map.entry("ir-metadata", "e759a23b19b2202140a66ad981d9eb1939b550619938b85f52eac7aa13c9d66c 076a961620d57ebda4f35a7a329373e3db8f3cdab42ac9a5d29c07379d20a60d"),
         Map.entry("metadata-require", "69401097cfad53a7ec8c5b70ca96194e670b61fcb6202223ecf8f93451c538ec d446b5a1a33b8b09c53c5cb9c736eba858e4984fff54a55a0ce245a63ffbaef3"),
         Map.entry("call-policy", "6c40534b36a68b02d76f2bfb4fe81a34da3476f8bbe5c5a180c2f18e8cd1b908 fe86e671b326be1e6bdac868a85a4bfedc5ac8c3a891081426b7ae4c699b9326"),

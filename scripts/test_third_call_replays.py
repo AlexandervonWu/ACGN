@@ -106,6 +106,14 @@ class CallEncoderTests(unittest.TestCase):
             with self.subTest(field=field), self.assertRaises(Blocked):
                 call_program(self.observed, changed)
 
+    def test_superseded_ir_build_binding_rejected(self):
+        changed = copy.deepcopy(self.extracted)
+        row = next(row for row in changed if row["object"] == "ir-build")
+        row["shapeSha256"] = "208277c8f3a1b5b478af357aec94e025cfaffae629d26804cb245fee19b469a8"
+        row["bindingsSha256"] = "9fc429a3d13bba99523297e44d18929bd39093379a9924fb8bd37e1936c0d35a"
+        with self.assertRaises(Blocked):
+            call_program(self.observed, changed)
+
     def test_bad_tree_grammar(self):
         for syntax in (["atom", True], ["atom", -1], ["atom", 1, 2], ["call", sig(), "bad"],
                        ["set", 0, []], ["call", sig()[:-1], []], ["barrier", "", []], {}):
