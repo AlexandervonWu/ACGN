@@ -1,0 +1,694 @@
+{
+  "schema": "acgn-publication-headlines-v1",
+  "experimentCommit": "2d70f89ab67241cd071387ecedd3b2f432821921",
+  "generatedAt": "2026-11-16T01:34:41.794Z",
+  "corpus": {
+    "originalFiles": 66080,
+    "eligiblePairedRows": 61598,
+    "astIdenticalPairedRows": 4482,
+    "nativeMatched": 61598
+  },
+  "canonicalAudit": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/canonical-audit.json",
+    "sha256": "d6b132759a6393d5031c7dfbec54b7d920fbbca962c77d30b14e1fd3f020ac36"
+  },
+  "augmenter": {
+    "oracleReferences": 181,
+    "uniqueCorrectStudentReferences": 4315,
+    "rankedModels": 42386,
+    "logicalComparedReferences": 1894168,
+    "certificateIntegratedDistanceRecordedZeroPairs": 11607,
+    "fastRewriteCanonicalDistanceRecordedZeroPairs": 11607,
+    "nearest": {
+      "count": 42386,
+      "means": {
+        "levenshteinDistance": 28.054923795592885,
+        "rawAstDistance": 12.267140093427075,
+        "canonicalDistance": 11.50568583966404,
+        "legacyCanonicalDistance": 11.50568583966404
+      }
+    }
+  },
+  "naturalArms": [
+    {
+      "engine": "raw-egraph",
+      "zeroes": 820,
+      "failures": 0,
+      "meanDistance": 16.606172278320724,
+      "wallSeconds": 18.005100997,
+      "engineCpuSeconds": 3.409581211
+    },
+    {
+      "engine": "raw-egraph-debruijn",
+      "zeroes": 2160,
+      "failures": 0,
+      "meanDistance": 16.14534562810481,
+      "wallSeconds": 18.585852696,
+      "engineCpuSeconds": 4.172807773
+    },
+    {
+      "engine": "java-egglog",
+      "zeroes": 820,
+      "failures": 0,
+      "meanDistance": 16.476882366310594,
+      "wallSeconds": 18.106047769,
+      "engineCpuSeconds": 3.100622398
+    },
+    {
+      "engine": "java-egglog-debruijn",
+      "zeroes": 2160,
+      "failures": 0,
+      "meanDistance": 16.01782525406669,
+      "wallSeconds": 18.269973807,
+      "engineCpuSeconds": 3.999183583
+    },
+    {
+      "engine": "slotted-egraph",
+      "zeroes": 2228,
+      "failures": 0,
+      "meanDistance": 16.324296243384527,
+      "wallSeconds": 18.391770668,
+      "engineCpuSeconds": 18.695137652
+    },
+    {
+      "engine": "canonical",
+      "zeroes": 4174,
+      "failures": 0,
+      "meanDistance": 14.01097438228514,
+      "wallSeconds": 25.90435001,
+      "engineCpuSeconds": 148.908012925
+    },
+    {
+      "engine": "typed-slotted-port-egraph",
+      "zeroes": 4174,
+      "failures": 0,
+      "meanDistance": 14.01097438228514,
+      "wallSeconds": 406.821692309,
+      "engineCpuSeconds": 5873.330679241
+    }
+  ],
+  "naturalAudits": [
+    {
+      "engine": "raw-egraph",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 820,
+      "maximumFileSeconds": 0.113513062,
+      "wallSeconds": 18.005100997,
+      "engineCpuSeconds": 3.409581211,
+      "evidence": {
+        "pairs.csv": "f20083da09ff2a3f7ab15638ec7cb47cacb4de561c957e53a4c11a7cae0b23a5",
+        "first-attempts.jsonl": "29abf934a2269b354a71a2b496095ad209158ea61f6da6baea1e2aeffcfb710d",
+        "manifest.json": "177c6b3f688f0336340ec97a65813b4f251787f77a6aff84bc9b5e20760d508d",
+        "execution.json": "1dbdfa2cb2eb6c6d44a264ef8759e5f88555727412dbf92665d1ed44898f49d7"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/raw-egraph/audit.json",
+        "sha256": "dd1e669ce23f467564284c827069e80b03b8582e88654baff6ff1e4d62e0d5b8"
+      }
+    },
+    {
+      "engine": "raw-egraph-debruijn",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 2160,
+      "maximumFileSeconds": 0.134629839,
+      "wallSeconds": 18.585852696,
+      "engineCpuSeconds": 4.172807773,
+      "evidence": {
+        "pairs.csv": "59e70de635510b0a8fde5eb0fe8197f89b400bae2562ff6eac46547024e4cb1e",
+        "first-attempts.jsonl": "15e74f1b11599866df37f6f32256338626158adfa9abe97aa0a7904f8621d162",
+        "manifest.json": "95e95faf8dba9360adf298805f60c9274e8cbbf6e87eca3375d334966fe411cd",
+        "execution.json": "03478e77266d9bc9dafb43886ba73c97ee5ede7ee94e9a461d2e668b952dee86"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/raw-egraph-debruijn/audit.json",
+        "sha256": "fdd4a2b917851cd0c86ae0e2bb92679b904e2671c2004d7e35ef6294a887a454"
+      }
+    },
+    {
+      "engine": "java-egglog",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 820,
+      "maximumFileSeconds": 0.141925274,
+      "wallSeconds": 18.106047769,
+      "engineCpuSeconds": 3.100622398,
+      "evidence": {
+        "pairs.csv": "9339751957f60bf698291274444bac0a8578601a43477d589f927c759fe319a9",
+        "first-attempts.jsonl": "9b4f6bf3d72d9f1461b2edfbf684f0bed5cec29fcbd49171a379dd0f8844e9c4",
+        "manifest.json": "3d1b39e22e885fcb0cf0f27e7c8b8f8265b9f444aca802444f5df8bc845a0742",
+        "execution.json": "95bc1c340bdd48484c4df4c71f08aa72b62f7111131963812b453096cd842d98"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/java-egglog/audit.json",
+        "sha256": "3a1ba0a7ed2110525979d09cf07e071525edd75c199d1abe89a5112164a0ab14"
+      }
+    },
+    {
+      "engine": "java-egglog-debruijn",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 2160,
+      "maximumFileSeconds": 0.128361133,
+      "wallSeconds": 18.269973807,
+      "engineCpuSeconds": 3.999183583,
+      "evidence": {
+        "pairs.csv": "aa2a64864fedaeab80bb5623c68cb0c8fc9624fdc72473df505fd55963f25056",
+        "first-attempts.jsonl": "b879c8883865a329f39f580fbdb771b03aa3383793b3eb2c71d9a5f5ef7e2bff",
+        "manifest.json": "fe407e9f63ded21f7de4d4dfd3ff48d9a31c8b2a188e29ec596a2a12647cf95d",
+        "execution.json": "3b66e421eaef7ff9a7542c66ec10107ad169630043d26a78e82439272b3ad358"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/java-egglog-debruijn/audit.json",
+        "sha256": "c6a33564a4532a4235d235c0a79f851e28c6d29cbb55ffb0e11ed91886049cc4"
+      }
+    },
+    {
+      "engine": "slotted-egraph",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 2228,
+      "maximumFileSeconds": 1.511682905,
+      "wallSeconds": 18.391770668,
+      "engineCpuSeconds": 18.695137652,
+      "evidence": {
+        "pairs.csv": "9d31158454bed7ac2f76b5d5b290df6da93e089670a326eca17c9db35d23add7",
+        "first-attempts.jsonl": "bf40b65dcf291846bf9de06f2c67790b49f9f291df57c54cada7669716ecee85",
+        "manifest.json": "adfad5a4cf709bdd7cc37f44708585f42255b70f5452f0ad80f01e63b6866fda",
+        "execution.json": "b751576c692ed188a134b69e4c62824b88ea266ef3dd99abd50502f145d91413"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/slotted-egraph/audit.json",
+        "sha256": "45a33b43c80856066ca33536efaf9723c7f702eda97fa6d59af56f6142fcba90"
+      }
+    },
+    {
+      "engine": "canonical",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 4174,
+      "maximumFileSeconds": 0.35651931,
+      "wallSeconds": 25.90435001,
+      "engineCpuSeconds": 148.908012925,
+      "evidence": {
+        "pairs.csv": "ea2ede8a2402f21bff0a8b711897d5e80e5c1bf05adfd6ad7f3a8587709b83c8",
+        "first-attempts.jsonl": "87b66f268943182cae2acfc3df51a658a419ec0a28dbc3179b8d8bfca2b00917",
+        "manifest.json": "d55ff2ab3866c05b4096aba41a304b6f6d83c7e4f0d2e5cd845bd88b77e46bdf",
+        "execution.json": "97fe182f5a18587d3e97fbd95bd40e36e19e4530806f6588ec27606c15602d24"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/canonical/audit.json",
+        "sha256": "1b15b6399c9db30224d746c3f264e78b66bccc6162132085562bb1c6383ac0cb"
+      }
+    },
+    {
+      "engine": "typed-slotted-port-egraph",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 4174,
+      "maximumFileSeconds": 4.114355649,
+      "wallSeconds": 406.821692309,
+      "engineCpuSeconds": 5873.330679241,
+      "evidence": {
+        "pairs.csv": "88ac833554f06240a9a6c27615642525490fcdc3e30de51626ee3b9c41b6be38",
+        "first-attempts.jsonl": "19cc2855beea957ca888da67a8304abb65ec00f6618fa590ff222b2e50a671e8",
+        "manifest.json": "b6e4c124cfc59d479afc52bdf911ca269fd12d5e5e5d53f876fe1b130b43044d",
+        "execution.json": "6ef711cc899f3390d87ec62e362caf5cc3daa36110aa1cac2a55fe437ed29a0f"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-ablation/typed-slotted-port-egraph/audit.json",
+        "sha256": "a7281e1be53b09ac9ee9042ca7bad21fa54a293512ee2d0f2aed3cb845f759b9"
+      }
+    }
+  ],
+  "capabilityAudits": [
+    {
+      "engine": "raw-egraph",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 2585,
+      "maximumFileSeconds": 0.111340493,
+      "wallSeconds": 2.479637637,
+      "engineCpuSeconds": 0.996852836,
+      "evidence": {
+        "pairs.csv": "562ce67fbf76f31e79efb33d3e8e5288723495a5408df1e8b1e3e953c9aca74c",
+        "first-attempts.jsonl": "53eb0f5a2914f7f709edee45864d164f2badf80f7e019cbce6493a96dfbff5ac",
+        "manifest.json": "6d30277d7d748b60dc66a374e9451c2e6c8e7e62173f526d100fa23e1602c4e2",
+        "execution.json": "94c22b508760f115b1f42109ae66bbbe51f0a53c9ec9083999dc682b5d197c93"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/raw-egraph/audit.json",
+        "sha256": "83180d2af1ce5578212e27490e37404c6c696db6e4809697f9e298aeaeb7e187"
+      }
+    },
+    {
+      "engine": "raw-egraph-debruijn",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 3628,
+      "maximumFileSeconds": 0.145578603,
+      "wallSeconds": 2.453949862,
+      "engineCpuSeconds": 0.993114627,
+      "evidence": {
+        "pairs.csv": "e0524476a875b24a17dcfcca59f13f21f800232c13484c789f4593c75f075625",
+        "first-attempts.jsonl": "29a7cbde2ac1043f429e6fb1dd7659e1cf58a541b55fbe08b51a3189b68aadb0",
+        "manifest.json": "a6df579f104063dbd621f3782e0c5cf9ecad5ad26f5d7cc6fde32171e4b803d6",
+        "execution.json": "982ddcf9867d5a22ec6dedddc8abc46b8826f486a013c12d570c8c2b081e8b73"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/raw-egraph-debruijn/audit.json",
+        "sha256": "d7eabe50d8b8a2faae00a2d2dd2fa4f928975651889bb7b47a50741c7a07847b"
+      }
+    },
+    {
+      "engine": "java-egglog",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 2585,
+      "maximumFileSeconds": 0.129116857,
+      "wallSeconds": 2.402602622,
+      "engineCpuSeconds": 0.685777242,
+      "evidence": {
+        "pairs.csv": "4d666afbb63a3e97e1f7d31b15523bbe6ff5fc589d5b43a5ca243c98b9d7bc8e",
+        "first-attempts.jsonl": "f4e8e7d1185d181dd9ac9e7a33b678e625731f31496729b2eac6f224c50d0fb1",
+        "manifest.json": "69acbb7171b4b15b935f2d8cca012b2689e716a0f5fbf5c85161812529e64d70",
+        "execution.json": "f82f7aaaa52848275c5875b59d4294cdbda0e7f57f39dc934bd895cc6c4c95b9"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/java-egglog/audit.json",
+        "sha256": "d56e16e2b4f4513233811761935556b86bf2bd4c2937ce14422fbd1fcc8de24b"
+      }
+    },
+    {
+      "engine": "java-egglog-debruijn",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 3628,
+      "maximumFileSeconds": 0.138444838,
+      "wallSeconds": 2.445335585,
+      "engineCpuSeconds": 0.939529057,
+      "evidence": {
+        "pairs.csv": "96e855310f0de6425c66a1c288e8313d476b85f6c61bfb32571e23aa1248eba5",
+        "first-attempts.jsonl": "aa512b652f0231b06254424bca537dfce9b8d85a4e34ddf5f34547c823cd98f3",
+        "manifest.json": "332b8cc801ab899c810e6bb86c78f63608280a598cd06172ad4e2aaadd93dfd9",
+        "execution.json": "71e7d7cf7fe00899095dd2c0e852ab66fab70493edd8eb3bd89e888a1c672641"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/java-egglog-debruijn/audit.json",
+        "sha256": "b93b3475f855ae2b1d6a980fb48abbecf876895a74d0948a1104086e98ffe28f"
+      }
+    },
+    {
+      "engine": "slotted-egraph",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 5500,
+      "maximumFileSeconds": 0.152081102,
+      "wallSeconds": 2.515529915,
+      "engineCpuSeconds": 1.800627689,
+      "evidence": {
+        "pairs.csv": "e941dd0708683fe5f8f5e7d784a7c7d482c8dfd8bc04d961d2977ef12ce40360",
+        "first-attempts.jsonl": "6e4da39716d4d11120726d5407d1fd133380a88c28e6e2403f07c03f7b11bee0",
+        "manifest.json": "0ad89cff6064b93da870e0689b88d49efb30bf7af825c4be55328715c4a28376",
+        "execution.json": "6ccef2835889d8e5db7bc2f53259daa534697f097d14f0aac7df9c64b6507ae3"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/slotted-egraph/audit.json",
+        "sha256": "da8adffa7532d7b0e416ecb94530e2480912ba9e44b9222438fa5f5083739eb6"
+      }
+    },
+    {
+      "engine": "canonical",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 5500,
+      "maximumFileSeconds": 0.322145149,
+      "wallSeconds": 4.052348969,
+      "engineCpuSeconds": 29.132954437,
+      "evidence": {
+        "pairs.csv": "66b93ad6b0fe905ed469a81cad9f6f81d7737450b8a697388466c0cadcbb9c53",
+        "first-attempts.jsonl": "417fc670a60c114d239c19bd01afb165df497d26d41fc09dfbb4c447ecc40714",
+        "manifest.json": "21f01b20605e6af34601fd54d52703b0a666872401ff10bffd02d4e18451ee67",
+        "execution.json": "d0ce1c3a490e2396acf7ba968d0cadb5a2b17164f967d83e2e45f171cf257af2"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/canonical/audit.json",
+        "sha256": "77a7374f6b56f6f70768715b9fddfb06bf7178d91ae111e26416eebdb3fecf53"
+      }
+    },
+    {
+      "engine": "typed-slotted-port-egraph",
+      "status": "PASS",
+      "processed": 5500,
+      "eligible": 5500,
+      "identicalPairedRows": 0,
+      "failures": 0,
+      "zeroDistancePairs": 5500,
+      "maximumFileSeconds": 0.859389636,
+      "wallSeconds": 40.591335174,
+      "engineCpuSeconds": 577.142699716,
+      "evidence": {
+        "pairs.csv": "722fea5d5f79d05ce0d9ee1708d4b2dec50e9276c1afb1740590a57fe9399ab1",
+        "first-attempts.jsonl": "9495fdfabb651e01fd9b787045dca2597d97efd5a7a4558eea520cb2c6a56fce",
+        "manifest.json": "5469e90cd6e757cb1af8c8803aa0b700410dfe2601c2655fff25e934937ba97a",
+        "execution.json": "2d5bf3216d5f03cbf844479e665710bb36661b68f06bb71e95307af784ac519b"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability/arms/typed-slotted-port-egraph/audit.json",
+        "sha256": "20563f6fbbed70d315793d8db926de3d1fddeb1238740cce8d27cb81eaab0cc3"
+      }
+    }
+  ],
+  "typingAudits": [
+    {
+      "engine": "slotted-egraph",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 2228,
+      "maximumFileSeconds": 1.610430916,
+      "wallSeconds": 19.637919179,
+      "engineCpuSeconds": 20.493088608,
+      "evidence": {
+        "pairs.csv": "b341c7d364f23ec48269d0724767c9d3b2e96f8ee23e43448dfe0ed104062f46",
+        "first-attempts.jsonl": "9859c66765d49ececa39266bb265705ec6251a9ed9799e907e4667f4c0452f58",
+        "manifest.json": "e97c5ccb637242bb1f946468e38e0b6262cab0432242cfd7e7b84ece129c6c12",
+        "execution.json": "3248abf83d32fe7c7917239f73fb4d651a9e433fcab6f6344b574534e735b8c3"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-slot-typing/slotted-egraph/audit.json",
+        "sha256": "b0b34b5a77efe3ce87f95008a81250da82ecec0481e4cf0b8d814f1938463786"
+      }
+    },
+    {
+      "engine": "slotted-egraph-typed",
+      "status": "PASS",
+      "processed": 66080,
+      "eligible": 61598,
+      "identicalPairedRows": 4482,
+      "failures": 0,
+      "zeroDistancePairs": 2228,
+      "maximumFileSeconds": 0.154265331,
+      "wallSeconds": 19.61348158,
+      "engineCpuSeconds": 11.028172887,
+      "evidence": {
+        "pairs.csv": "f322481c9bf2c8f878e6ef393b19141db35e8d0f9610c3bbe2221229a11354fa",
+        "first-attempts.jsonl": "8a6fd98a837183c968e256824369144f6016bf1bf9f73aee678e9be894d7d3e3",
+        "manifest.json": "5b1466098d139124c2bda8fffeaa65b463dd4d6f76895a15f8f5037cf4e7a14b",
+        "execution.json": "a03ba2ce71202f7ab2c97ef9ccb7058c4498c3df750cf5b64feca4af54400405"
+      },
+      "publicCertification": "BLOCKED",
+      "audit": {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-slot-typing/slotted-egraph-typed/audit.json",
+        "sha256": "fef86e66570ffdab1840ac6a27473b52309e3f3e26d96b9d17ac5ad491ecc87e"
+      }
+    }
+  ],
+  "ablationTransitions": [
+    {
+      "retained": 820,
+      "noLongerEquivalent": 0,
+      "from": "raw-egraph",
+      "to": "raw-egraph-debruijn",
+      "newlyEquivalent": 1340
+    },
+    {
+      "retained": 820,
+      "noLongerEquivalent": 0,
+      "from": "raw-egraph",
+      "to": "java-egglog",
+      "newlyEquivalent": 0
+    },
+    {
+      "retained": 2160,
+      "noLongerEquivalent": 0,
+      "from": "raw-egraph-debruijn",
+      "to": "java-egglog-debruijn",
+      "newlyEquivalent": 0
+    },
+    {
+      "retained": 820,
+      "noLongerEquivalent": 0,
+      "from": "java-egglog",
+      "to": "java-egglog-debruijn",
+      "newlyEquivalent": 1340
+    },
+    {
+      "retained": 2157,
+      "noLongerEquivalent": 3,
+      "from": "java-egglog-debruijn",
+      "to": "slotted-egraph",
+      "newlyEquivalent": 71
+    },
+    {
+      "retained": 2218,
+      "noLongerEquivalent": 10,
+      "from": "slotted-egraph",
+      "to": "canonical",
+      "newlyEquivalent": 1956
+    },
+    {
+      "retained": 4174,
+      "noLongerEquivalent": 0,
+      "from": "canonical",
+      "to": "typed-slotted-port-egraph",
+      "newlyEquivalent": 0
+    }
+  ],
+  "boundedSoundness": {
+    "checkedUniquePairs": 4184,
+    "arms": [
+      {
+        "engine": "raw-egraph",
+        "claims": 820,
+        "counterexamples": 0,
+        "noCounterexample": 820,
+        "errors": 0
+      },
+      {
+        "engine": "raw-egraph-debruijn",
+        "claims": 2160,
+        "counterexamples": 0,
+        "noCounterexample": 2160,
+        "errors": 0
+      },
+      {
+        "engine": "java-egglog",
+        "claims": 820,
+        "counterexamples": 0,
+        "noCounterexample": 820,
+        "errors": 0
+      },
+      {
+        "engine": "java-egglog-debruijn",
+        "claims": 2160,
+        "counterexamples": 0,
+        "noCounterexample": 2160,
+        "errors": 0
+      },
+      {
+        "engine": "slotted-egraph",
+        "claims": 2228,
+        "counterexamples": 0,
+        "noCounterexample": 2228,
+        "errors": 0
+      },
+      {
+        "engine": "canonical",
+        "claims": 4174,
+        "counterexamples": 0,
+        "noCounterexample": 4174,
+        "errors": 0
+      },
+      {
+        "engine": "typed-slotted-port-egraph",
+        "claims": 4174,
+        "counterexamples": 0,
+        "noCounterexample": 4174,
+        "errors": 0
+      }
+    ],
+    "negativeProbes": 4
+  },
+  "naturalSlotTyping": [
+    {
+      "engine": "slotted-egraph",
+      "zeroes": 2228,
+      "failures": 0,
+      "meanDistance": 16.324296243384527,
+      "processWallSeconds": 20.2,
+      "engineCpuSeconds": 20.493088608
+    },
+    {
+      "engine": "slotted-egraph-typed",
+      "zeroes": 2228,
+      "failures": 0,
+      "meanDistance": 16.421442254618658,
+      "processWallSeconds": 20.18,
+      "engineCpuSeconds": 11.028172887
+    }
+  ],
+  "synthetic": {
+    "audit": {
+      "status": "PASS",
+      "trials": 1080,
+      "predicates": 540,
+      "pairs": 270,
+      "outcomes": {
+        "typed": {
+          "SUCCESS": 530,
+          "TIMEOUT": 10
+        },
+        "untyped": {
+          "SUCCESS": 442,
+          "TIMEOUT": 98
+        }
+      },
+      "timing": "Elapsed runtime, not CPU time; timeout observations remain censored",
+      "publicCertification": "BLOCKED"
+    },
+    "all": {
+      "typed": {
+        "engineSecondsSuccessful": {
+          "median": 0.0264766185,
+          "p95": 1.776174493
+        },
+        "failures": 10,
+        "notCompleted": 0,
+        "predicates": 540,
+        "runtimeSecondsSuccessful": {
+          "median": 0.16605395101942122,
+          "p95": 2.3653748410288244
+        },
+        "statuses": {
+          "SUCCESS": 530,
+          "TIMEOUT": 10
+        },
+        "successRate": 0.9814814814814815,
+        "successes": 530
+      },
+      "untyped": {
+        "engineSecondsSuccessful": {
+          "median": 0.6700258729999999,
+          "p95": 43.589610767
+        },
+        "failures": 98,
+        "notCompleted": 0,
+        "predicates": 540,
+        "runtimeSecondsSuccessful": {
+          "median": 0.849457253003493,
+          "p95": 43.72856822196627
+        },
+        "statuses": {
+          "SUCCESS": 442,
+          "TIMEOUT": 98
+        },
+        "successRate": 0.8185185185185185,
+        "successes": 442
+      }
+    },
+    "matchedSuccessful": {
+      "typed": {
+        "engineSecondsSuccessful": {
+          "median": 0.02516863,
+          "p95": 1.071005456
+        },
+        "failures": 0,
+        "notCompleted": 0,
+        "predicates": 442,
+        "runtimeSecondsSuccessful": {
+          "median": 0.1660208954999689,
+          "p95": 1.9658359719906002
+        },
+        "statuses": {
+          "SUCCESS": 442
+        },
+        "successRate": 1,
+        "successes": 442
+      },
+      "untyped": {
+        "engineSecondsSuccessful": {
+          "median": 0.6700258729999999,
+          "p95": 43.589610767
+        },
+        "failures": 0,
+        "notCompleted": 0,
+        "predicates": 442,
+        "runtimeSecondsSuccessful": {
+          "median": 0.849457253003493,
+          "p95": 43.72856822196627
+        },
+        "statuses": {
+          "SUCCESS": 442
+        },
+        "successRate": 1,
+        "successes": 442
+      }
+    }
+  },
+  "publicCertification": "BLOCKED",
+  "limits": [
+    "No universal source equivalence or full cross-reference native-action closure is inferred from scalar/rank agreement, bounded controls or prior canonical paired results. Nonzero correct-pool comparisons not individually serialized remain outside the auditor's recorded-evidence coverage.",
+    "Original 66080 predicate obligations and original construction evidence remain preserved. Historical paired AST-identical omissions and raw-AST cross-file omissions are accounting conventions, not semantic exemptions or fresh per-predicate certification.",
+    "The auditor's sameSupportContext observations do not establish semantic equivalence for omitted comparisons. Unsupported, ambiguous and unverified results remain obligations, not passing rows or exclusions.",
+    "Whole-file wall timing remains unavailable; aggregate guard success and recorded component timings do not establish a total-file 60-second invariant.",
+    "Historical text-assertion, source-wire/general Java-Lean correspondence, prior cross-reference native-ledger and public-certification scopes remain OPEN/BLOCKED. Later studies/publication need their separate prerequisites."
+  ]
+}

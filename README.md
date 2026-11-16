@@ -146,7 +146,43 @@ snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 
-The checked-in experimental snapshot was regenerated on September 8, 2026. It
+The latest frozen experiment ran on November 15-16, 2026, using commit
+`2d70f89ab67241cd071387ecedd3b2f432821921`. The
+[current report](docs/experimental-results/2026-11-16/README.md) includes the
+full paired corpus, full-reference Augmenter, seven ablation and capability
+arms, natural slot typing, and all 1,080 synthetic runtime trials.
+
+- Native replay: **61,598/61,598 eligible pair comparisons matched**, with zero
+  unchecked, invalid, discrepant or error outcomes. All 66,080 source files are
+  accounted for; the original 4,482 AST-identical paired rows remain separate.
+- Capability: **5,500/5,500** equivalences recovered by both Fast Rewrite and
+  Certificate-Integrated IR on the unchanged generated cohort. The shared
+  normalization-order regression that reduced both to 5,160 is repaired.
+- Natural canonical zeroes: **4,174** distinct-AST student/oracle pairs in each
+  canonical path; no incorrect paired zeroes and no lost old canonical zeroes.
+- Full-reference ranking: **42,386** incorrect predicates, **1,894,168** recorded
+  comparisons, no recorded Fast/certified distance discrepancies, and **11,607**
+  unordered distinct-AST zero pairs in each correct truth pool calculation.
+  Mean nearest raw-AST distance is **12.267140**, versus **11.505686** for either
+  canonical path.
+- Natural-study maximum measured file time: **0.357 s Fast Rewrite**, **4.115 s
+  Certificate-Integrated**. Both complete all eligible files below 60 seconds
+  in this study; this is not a retrospective whole-file timing claim for the
+  separate CanonicalBatch or Augmenter runners.
+- Synthetic typed slots: **530/540 successes**, versus **442/540 untyped**;
+  **10/98** respective timeouts are retained. On the same 442 jointly successful
+  predicates, the ratios of untyped/typed medians are **26.62x engine elapsed**
+  and **5.12x total elapsed**. These are not CPU-time or timeout-inclusive ratios.
+
+These are revision-bound empirical results, not public certification. The
+AST-identical predicates are not semantic exemptions, and the remaining
+source-wire and cross-reference native-action obligations stay open. The
+[evidence index](docs/experimental-results/2026-11-16/evidence-index.json) binds
+the reports to their candidate, execution receipts and retained bulk evidence.
+
+## Historical Snapshot
+
+The following snapshot was regenerated on September 8, 2026. It
 contains all seven ablation arms over the same 61,598 nontrivial corpus pairs,
 a 5,500-pair capability matrix, the paired student-oracle evaluation, and the
 augmented nearest-correct evaluation. Per-problem and per-status tables are in

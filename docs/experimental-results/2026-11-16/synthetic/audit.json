@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "trials": 1080,
+  "predicates": 540,
+  "pairs": 270,
+  "outcomes": {
+    "typed": {
+      "SUCCESS": 530,
+      "TIMEOUT": 10
+    },
+    "untyped": {
+      "SUCCESS": 442,
+      "TIMEOUT": 98
+    }
+  },
+  "timing": "Elapsed runtime, not CPU time; timeout observations remain censored",
+  "publicCertification": "BLOCKED"
+}
