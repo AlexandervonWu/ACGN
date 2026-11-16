@@ -23,6 +23,35 @@ def observations():
 
 
 class SourceBindingsReplayTest(unittest.TestCase):
+    def test_pre_publication_bindings_are_not_accepted_as_alternatives(self):
+        import fourth_container_replays as containers
+        import fifth_flat_container_replays as records
+        old = {
+            "CertificateVerificationScope": "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805",
+            "CertificateVerifier": "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654",
+            "TheoryAlloyAdapter": "34fab8469ffe44905c7aedb253c0bb27b40257987281bfc61536c2550c23d86f 65675f4936fbd2b8f5a2e056c752d728be467f4d574096863252da0939580b25",
+            "EGraphNode": "ee8a3ff167b38878bffa8429c7735de618a19f5832d23abaa518d61be39b7b54 ce15aa5eb135475c10b7890732c2a94ff367edfb4a94f2e45305f14d27cb446b",
+            "NormalForm": "ea74cf5d68c587d1bfd0848a3b3630400e2062a083d48754696865d2620c8412 7a162a721d2710f615cd1309aae94a245a9e92600ef78e8a4dbc5ea530a7912b",
+        }
+        for name, pins in old.items():
+            changed = sources()
+            row = next(s for s in changed if s["object"] == name)
+            row["shapeSha256"], row["bindingsSha256"] = pins.split()
+            with self.subTest(name=name), self.assertRaises(Blocked):
+                r.validate_sources(changed)
+        for module in (containers, records):
+            for name, pins in old.items():
+                if name not in module.SOURCE_PINS:
+                    continue
+                changed = [dict(object=n, owner=("org.acgn.cert." if n == "SemanticEvidenceVerifier"
+                           else "is.fivefivefive.CanDis.theory.") + n,
+                           shapeSha256=p.split()[0], bindingsSha256=p.split()[1])
+                           for n, p in module.SOURCE_PINS.items()]
+                row = next(s for s in changed if s["object"] == name)
+                row["shapeSha256"], row["bindingsSha256"] = pins.split()
+                with self.subTest(module=module.__name__, name=name), self.assertRaises(Blocked):
+                    module.source_census(changed)
+
     def test_pre_parity_source_pins_are_rejected(self):
         old = {
             "EGraphNode": "a3dcefcf9f13b10cf7883954a822a3d01d2a975d953214550eeb454958296a39 17723240dfec4fb1add3566251897704133d13eb339d0d7b5862cb5fa54aa637",

@@ -21,11 +21,11 @@ public final class SourceOccurrenceBindingsExtractor {
             "StructuralKey", P + "StructuralKey",
             "DependentChainCertificate", P + "DependentChainCertificate");
     private static final Map<String, String> EXPECTED = Map.of(
-            "CertificateVerificationScope", "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805",
-            "CertificateVerifier", "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654",
-            "TheoryAlloyAdapter", "34fab8469ffe44905c7aedb253c0bb27b40257987281bfc61536c2550c23d86f 65675f4936fbd2b8f5a2e056c752d728be467f4d574096863252da0939580b25",
-            "EGraphNode", "ee8a3ff167b38878bffa8429c7735de618a19f5832d23abaa518d61be39b7b54 ce15aa5eb135475c10b7890732c2a94ff367edfb4a94f2e45305f14d27cb446b",
-            "NormalForm", "ea74cf5d68c587d1bfd0848a3b3630400e2062a083d48754696865d2620c8412 7a162a721d2710f615cd1309aae94a245a9e92600ef78e8a4dbc5ea530a7912b",
+            "CertificateVerificationScope", "96cbb043b0b01bba17d547f3048e1fb93b4c4cf53553a4840c4c783b763deea4 40e9edc6e7d3909ffa2a28b08367c3c0850a8d5bc50aacb0df43e6d69674af32",
+            "CertificateVerifier", "3d6c3503df22ddfb41c12c61916d90ef9c40efaa31ef4079510e99c5fc949d04 bffa5b50b8e99dca4b4dd59288a0d4d0fd0253d3145cad4816913efa22e5f8b8",
+            "TheoryAlloyAdapter", "b583b8d4c87dc505d5391eafeffa3e2927c504dd29836a4a185481eb77f9e7c5 c7e96284672950a308c81ed1e6741ba5b626e0988cf58aa2dc9854b290500fec",
+            "EGraphNode", "1d2be2e4e27d13be711cf92589564f6d0c6664b326bad2e405bd8250c5c0a561 011ba3078eff66a3e5efd116a1e2cd92dae8e4f4621f87c1802d483af873d4a7",
+            "NormalForm", "db00a8a9b8a5bbe7a6b12f455b570774b1b7a6416df1042c8747dc1efeb60ad6 cb766573b1d9443941a6d6d77ed92189c2f90cb416c2d994e36869f04315ec7c",
             "StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f",
             "DependentChainCertificate", "800b128e0f225b68f242d201009689bb5eeded3391250ef4259378dce034c35f 123b6c433070bf4455f1a888010e09bd51b45b584833ff884c6d71d48f0978e4");
 

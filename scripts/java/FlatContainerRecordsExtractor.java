@@ -13,10 +13,10 @@ import javax.tools.*;
 public final class FlatContainerRecordsExtractor {
     private static final String P = "is.fivefivefive.CanDis.theory.";
     private static final Map<String, String> EXPECTED = Map.ofEntries(
-            Map.entry("CertificateVerificationScope", "b756bbdfe372252e690bb2811a56e671e199ae5cda83c1fe4f42f0b12d24822a 986c75b0fef819e817dfb1cf29590e7d2c553fdc0b3f2ad48189403c171b4805"),
+            Map.entry("CertificateVerificationScope", "96cbb043b0b01bba17d547f3048e1fb93b4c4cf53553a4840c4c783b763deea4 40e9edc6e7d3909ffa2a28b08367c3c0850a8d5bc50aacb0df43e6d69674af32"),
             Map.entry("AlloyLawRegistry", "272257f8d03588e9cd009512c35a32a18c5194b5f74044c87a2716081690fb7b 9cad15d627e624d2998e965e86e8f5b52868552ca5c2d0015e12fb2fecebd041"),
             Map.entry("CertificateBundleWriter", "b30d10623694288f274a1fc26b6f92dc6b00ecc6264a58a54e5f01b3a35e7e46 0807ef1b7acdba3a1c72c6f339a02ede7d8beebc969500c4e66de3c5983b1d21"),
-            Map.entry("CertificateVerifier", "368b02d882d4bcf7395cfc0dc76ccf1c0140b91bac7881340966e3594d393146 c4917a8b2603d5b8d751c0c881dede3c6de748875d447cf1d22566d15b7cd654"),
+            Map.entry("CertificateVerifier", "3d6c3503df22ddfb41c12c61916d90ef9c40efaa31ef4079510e99c5fc949d04 bffa5b50b8e99dca4b4dd59288a0d4d0fd0253d3145cad4816913efa22e5f8b8"),
             Map.entry("ContainerApplicationTrace", "38cca38c37ca76f05b9c5d08f85adb69c65b2f0fed8719c891b05e3d2d52db8b fe99c389770466e820400d38e0ff8d81b86bf258d5cb994f8e66314966a45f1d"),
             Map.entry("ContainerConstructionCertificate", "55e8e7749ca80eb280bf17b7e93bdfe065e5f0701fbe957a91587dc1ea44922b de3134e92cead0a801f768498d3fe76d5ac8df926af55b61ad01023f3cb3de0d"),
             Map.entry("ContainerLawCertificate", "b058b18d175022e193564a5e93c254fbd48924e82de99820daf6ad7142cdc0f2 d952931af1f841172ecdef2d6d04e8f94279d45869f97b0e5e0de49d4cea049e"),
@@ -25,7 +25,7 @@ public final class FlatContainerRecordsExtractor {
             Map.entry("FlatConstructionCertificate", "fddb9145978709c2881df347a902401fb1cc51ced2ac375aeb8e5d1413a97c9a 1de9f3d0ef542c59dc12a3bc379a5dd527330e103312940db1eca53e5a883aa2"),
             Map.entry("SemanticEvidenceVerifier", "bff2c3471c7fc123e9752ce4a70a964811382f52df9d6e5475b6854a10df03bc cd2fe91218d45a6eaebc03233f04d8119c8a23064ab520a3f7657e3ee54755cd"),
             Map.entry("StructuralKey", "62183e7e02a6c3cb416290405dea37ea44a00d9cfe662b74e1c04ccc7e91ba96 63f1e1524ff3c28e48a3991dccdbeeee7e9319f5b5bf47dc03523bfd8392386f"),
-            Map.entry("TheoryAlloyAdapter", "34fab8469ffe44905c7aedb253c0bb27b40257987281bfc61536c2550c23d86f 65675f4936fbd2b8f5a2e056c752d728be467f4d574096863252da0939580b25"),
+            Map.entry("TheoryAlloyAdapter", "b583b8d4c87dc505d5391eafeffa3e2927c504dd29836a4a185481eb77f9e7c5 c7e96284672950a308c81ed1e6741ba5b626e0988cf58aa2dc9854b290500fec"),
             Map.entry("TypedENode", "b70e73eaabd850acf69575e9e134f165dbc8a60dc1790e816b7aaa6d65e18cc1 ef393be4a64e937af202fa7ca18d9858f6aa0afe0faa6c113b8155223a767a2b"));
 
     private static void require(boolean value, String message) {
