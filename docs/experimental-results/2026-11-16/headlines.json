@@ -681,6 +681,89 @@
         "successRate": 1,
         "successes": 442
       }
+    },
+    "timeoutAnalysis": {
+      "source": "synthetic/trials.jsonl",
+      "sourceSha256": "f1ee772dcf0668059bed2b4ebccc877603d0b53fb8507a2f5ade536e51861256",
+      "timeoutCells": [
+        {
+          "arm": "typed",
+          "bindings": 10,
+          "types": 1,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 1,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 2,
+          "count": 8
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 3,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 4,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 5,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 6,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 7,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 8,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 9,
+          "count": 10
+        },
+        {
+          "arm": "untyped",
+          "bindings": 10,
+          "types": 10,
+          "count": 10
+        }
+      ],
+      "multiTypeTyped": {
+        "trials": 450,
+        "successes": 450,
+        "timeouts": 0
+      },
+      "tenBindingsMultiTypeTyped": {
+        "trials": 90,
+        "successes": 90,
+        "timeouts": 0
+      },
+      "interpretation": "Expected synthetic scaling limits: every timeout is at ten bindings; all typed timeouts have one type, where type partitioning cannot reduce the type-unrestricted permutation space. Timeouts remain censored observations, not semantic failures or omitted inputs."
     }
   },
   "publicCertification": "BLOCKED",

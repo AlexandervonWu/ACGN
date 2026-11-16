@@ -28,7 +28,16 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
-### Final experimental results (2026-11-07)
+### v3 Research Release
+
+The [v3 release record](docs/release-v3.md) summarizes the completed November
+15-16 experiments: the full natural corpus and reference-pool evaluation,
+ablation and capability studies, and synthetic typed-slot runtime grid.
+See [Headline Results](#headline-results) below, the
+[complete report](docs/experimental-results/2026-11-16/README.md), and the
+[machine-readable data](docs/experimental-results/2026-11-16/headlines.json).
+
+### Retained Experimental Results (2026-11-07)
 
 The [final natural-corpus report](docs/experimental-results/2026-11-07/README.md)
 retains the completed 66,080-file evaluation and all original evidence. The
@@ -170,7 +179,11 @@ arms, natural slot typing, and all 1,080 synthetic runtime trials.
   in this study; this is not a retrospective whole-file timing claim for the
   separate CanonicalBatch or Augmenter runners.
 - Synthetic typed slots: **530/540 successes**, versus **442/540 untyped**;
-  **10/98** respective timeouts are retained. On the same 442 jointly successful
+  **10/98** respective timeouts are retained. All ten typed timeouts are at
+  **10 bindings / one type**, where type partitioning offers no reduction of
+  the slot-permutation space. All **450/450 multi-type typed trials complete**.
+  These are expected synthetic scaling limits, not invalid-replay results.
+  On the same 442 jointly successful
   predicates, the ratios of untyped/typed medians are **26.62x engine elapsed**
   and **5.12x total elapsed**. These are not CPU-time or timeout-inclusive ratios.
 
@@ -179,6 +192,10 @@ AST-identical predicates are not semantic exemptions, and the remaining
 source-wire and cross-reference native-action obligations stay open. The
 [evidence index](docs/experimental-results/2026-11-16/evidence-index.json) binds
 the reports to their candidate, execution receipts and retained bulk evidence.
+Here, **public certification** means the separate end-to-end, independently
+checkable source/implementation/proof claim, not permission to publish research
+results or a software release. Its unresolved scope is explained in the
+[v3 assurance boundary](docs/release-v3.md#assurance-boundary).
 
 ## Historical Snapshot
 

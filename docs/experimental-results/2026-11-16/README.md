@@ -134,6 +134,16 @@ typed/untyped trials. It uses eight workers, 768 MiB per JVM and the pre-existin
 | Typed | 530 / 540 | 10 | 0 / 0 |
 | Untyped | 442 / 540 | 98 | 0 / 0 |
 
+All ten typed timeouts occur at **10 bindings / one type**. The untyped arm's
+98 timeouts also all occur at ten bindings. All **450 typed trials with more
+than one type succeed**, including all 90 at ten bindings / multiple types.
+This is the intended scaling contrast: type-compatible slot partitions reduce
+the renaming search, but a single type leaves the same type-unrestricted
+permutation space. These expected benchmark timeouts remain censored runtime
+observations, not invalid replays, semantic failures, or omitted inputs. The
+derived breakdown is in `synthetic.timeoutAnalysis` in [headlines.json](headlines.json);
+the original trial rows and generated summary are unchanged.
+
 On the **same 442 jointly successful predicates**, median engine elapsed time
 is **0.025169 s typed versus 0.670026 s untyped**; total elapsed medians are
 **0.166021 s versus 0.849457 s**. The respective ratios of medians are **26.62x**
@@ -164,3 +174,9 @@ native-action ledger are not discharged by this publication. Unsupported or
 unverified predicates remain obligations, never permanent exclusions. Earlier
 snapshots and failed-candidate evidence remain retained; this report does not
 overwrite their observations.
+
+This is an assurance status, not a publication ban or a claim that the measured
+comparisons failed. In particular, native action comparison authenticates its
+`FROZEN_NORMALIZED_IR` boundary; it does not establish a general proof of the
+parser/normalizer, source-certificate wire replay, or the separately exported
+public repair sequence. See the [v3 assurance boundary](../../release-v3.md#assurance-boundary).
