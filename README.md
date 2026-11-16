@@ -28,23 +28,47 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
-### Final experimental results (2026-11-07)
+### Final experimental results (2026-11-16)
 
-The [final natural-corpus report](docs/experimental-results/2026-11-07/README.md)
-retains the completed 66,080-file evaluation and all original evidence. The
-[bounded synthetic slot-typing report](docs/experimental-results/2026-11-07/synthetic-grid/RESULTS.md)
-covers every 2..10-variable / 1..N-type combination with balanced, seeded type
-assignments, eight workers, and five-minute deadlines. It includes measured
-log-speedup surfaces, success rates, median/P95 runtimes, timeout coverage, and
-the documented resource-guard continuation. These reports are separate from
-historical release measurements below.
+The latest completed evaluation is published in
+[ACGN / CanDis v3](https://github.com/AlexandervonWu/ACGN/releases/tag/v3).
+The [full research report](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md)
+and [structured headline data](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/headlines.json)
+cover the full paired corpus, full-reference Augmenter, all seven ablation and
+capability arms, natural slot typing, and the complete synthetic runtime grid.
+These results use frozen experiment commit
+`2d70f89ab67241cd071387ecedd3b2f432821921`; they do not describe the older
+implementation or measurement snapshots retained elsewhere in this branch.
 
-The subsequent [distance-parity audit](docs/distance-parity-20261107/README.md)
-identifies per-instance disagreements in both directions. Fast comparison now
-includes exact result types in node-update costs and removes the documented
-ACI/local-binder presentation mismatches. These are post-run changes, not new
-full-corpus measurements. Common representation coverage and minimum-distance
-parity remain explicit implementation targets.
+- **Natural corpus:** all 66,080 files accounted for; 61,598/61,598 eligible
+  native comparisons matched, with zero unchecked, invalid, discrepant, or
+  error outcomes. The 4,482 AST-identical paired rows are accounted separately,
+  not exempted from canonical-form obligations.
+- **Canonical equality and capability:** both paths find 4,174 distinct-AST
+  student/oracle zero pairs and recover 5,500/5,500 capability pairs. No old
+  canonical zeroes were lost, and no incorrect paired zeroes were observed.
+- **Full-reference Augmenter:** 42,386 incorrect predicates and 1,894,168
+  recorded comparisons; zero recorded cross-path distance discrepancies.
+  Mean nearest distance is 12.267140 raw AST versus 11.505686 canonical.
+  Both paths find 11,607 unordered distinct-AST truth-pool zero pairs.
+- **Natural-study runtime:** maximum measured file time is 0.356519 seconds
+  for Fast Rewrite and 4.114356 seconds for Certificate-Integrated. These
+  timings belong to the natural study, not the separate CanonicalBatch or
+  Augmenter runners, which did not record whole-file wall time.
+- **Synthetic typed slots:** 530/540 typed and 442/540 untyped trials complete.
+  All 450 multi-type typed trials succeed. All ten typed timeouts are at ten
+  bindings / one type, where typing cannot reduce the permutation space;
+  all 98 untyped timeouts are also at ten bindings. These expected scaling
+  outcomes remain in the data. Across 442 jointly successful predicates,
+  ratios of untyped/typed medians are 26.62x engine elapsed and 5.12x total
+  elapsed, excluding censored runtimes.
+
+The [v3 research summary and assurance boundary](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/release-v3.md)
+explain the ablations, bounded semantic checks, reproducibility, and remaining
+end-to-end certification obligations. The
+[November 7 natural report](docs/experimental-results/2026-11-07/README.md) and
+[November 7 synthetic report](docs/experimental-results/2026-11-07/synthetic-grid/RESULTS.md)
+remain historical evidence; they are not the latest results.
 
 ### Assurance status
 
@@ -144,9 +168,9 @@ integration failures are documented. All 898 existing experimental JAR classes
 remain byte-identical; this proof/test-only release retains the empirical
 snapshot below and the separate v2.16 validation run.
 
-## Headline Results
+## Historical Results (September 2026)
 
-The checked-in experimental snapshot was regenerated on September 8, 2026. It
+The following historical snapshot was regenerated on September 8, 2026. It
 contains all seven ablation arms over the same 61,598 nontrivial corpus pairs,
 a 5,500-pair capability matrix, the paired student-oracle evaluation, and the
 augmented nearest-correct evaluation. Per-problem and per-status tables are in

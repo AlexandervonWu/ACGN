@@ -14,6 +14,16 @@ notes are supporting evidence, not additional installation steps.
 
 ## Experimental Evidence
 
+- [Latest final results: November 16, 2026](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md).
+- [v3 research summary and assurance boundary](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/release-v3.md).
+- [Structured headline data](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/headlines.json).
+- [v3 release and downloadable research data](https://github.com/AlexandervonWu/ACGN/releases/tag/v3).
+
+These links identify the frozen v3 experiment. Earlier reports below retain
+their own source and run identities and are not the latest headline results.
+
+### Earlier Experiments
+
 - [Paired-oracle results](../distance_results/summary.md).
 - [Nearest-correct-pool results](../alloy4fun-augmented/summary.md).
 - [Ablation results](../egraph_ablation/summary.md).
