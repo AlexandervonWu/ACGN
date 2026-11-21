@@ -145,7 +145,7 @@ theorem parent_pin_cannot_authorize_another_input :
     verify (some fixtureParentPin)
       { parentFixture with input := 14 }
       .completeAndValid = .rejected := by
-  native_decide
+  decide
 
 theorem parent_pin_cannot_authorize_another_ground_equation :
     verify (some fixtureParentPin)

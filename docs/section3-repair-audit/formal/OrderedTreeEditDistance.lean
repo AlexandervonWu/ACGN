@@ -106,10 +106,10 @@ def internalDeletionRight : Tree Nat :=
 
 theorem deleting_internal_unary_node_costs_one :
     treeDistance internalDeletionLeft internalDeletionRight = 1 := by
-  native_decide
+  cbv
 
 theorem inserting_internal_unary_node_costs_one :
     treeDistance internalDeletionRight internalDeletionLeft = 1 := by
-  native_decide
+  cbv
 
 end Section3.OrderedTreeEdit
