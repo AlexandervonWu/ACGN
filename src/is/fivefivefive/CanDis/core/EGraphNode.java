@@ -2807,11 +2807,15 @@ public final class EGraphNode {
                         owner.exactAlloyType);
             }
 
-            if (leftRestriction != null
-                    && (leftRestriction.opcode == Opcode.RANGE
-                            || (leftRestriction.opcode == Opcode.DOMAIN
-                                    && exactRelationArity(
-                                            leftRestriction.relation) == 1))) {
+            if (rightRestriction != null && rightRestriction.opcode == Opcode.DOMAIN
+                    && exactRelationArity(left) == 1 && exactRelationArity(rightRestriction.relation) >= 2) {
+                EClassRef filtered = buildDerivedRelationLattice(owner, Opcode.INTERSECT,
+                        List.of(rightRestriction.restrictor, left));
+                return buildDerivedJoin(owner, owner, filtered, rightRestriction.relation, owner.exactAlloyType);
+            }
+
+            if (leftRestriction != null && leftRestriction.opcode == Opcode.RANGE
+                    && exactRelationArity(leftRestriction.relation) >= 2) {
                 EGraphNode restrictedRight = buildDerivedRestriction(
                         owner,
                         owner,
@@ -3425,7 +3429,7 @@ public final class EGraphNode {
         }
     }
 
-    private static boolean hasParserQuantifierSourceAuthority(
+    static boolean hasParserQuantifierSourceAuthority(
             EGraphNode owner,
             Opcode quantifier) {
         String prefix;
@@ -3663,6 +3667,21 @@ public final class EGraphNode {
         return coordinates == null ? null : coordinates.left;
     }
 
+    /** Closed, current-state filters only: a signature or a difference of two
+        signatures. In particular a captured variable or prime is not a carrier. */
+    static boolean isClosedSignatureSubdomain(EGraphNode filter, EGraphNode domain) {
+        var carrier = domain.authenticatedSignature();
+        if (carrier == null || filter.arena != domain.arena) return false;
+        var sig = filter.authenticatedSignature();
+        if (sig != null) return sig.isParserCertifiedSubsignatureOf(carrier);
+        var parts = filter.getChildren();
+        if (filter.opcode != Opcode.MINUS || parts.size() != 2
+                || parts.get(0).authenticatedSignature() == null
+                || parts.get(1).authenticatedSignature() == null) return false;
+        return parserCertifiedDifferenceBase(filter.getEClassRef()) != null
+                && parts.get(0).authenticatedSignature().isSameParserSignatureAs(carrier);
+    }
+
     private static DifferenceCoordinates parserCertifiedDifferenceCoordinates(
             EClassRef invocation) {
         EClassRef canonical = invocation.canonical();
@@ -3769,7 +3788,7 @@ public final class EGraphNode {
         return result;
     }
 
-    /** Unary restriction has only one coordinate; orient RANGE to DOMAIN. */
+    /** Unary restriction filters its only coordinate, exactly as intersection does. */
     @LeanVerifiedRewrite("R0-REL-029")
     static EGraphNode parserCertifiedUnaryRestrictionOrientation(
             EGraphNode owner,
@@ -3777,18 +3796,14 @@ public final class EGraphNode {
         RestrictionCoordinates restriction =
                 parserCertifiedRestrictionCoordinates(restrictionInvocation);
         if (owner == null || restriction == null
-                || restriction.opcode != Opcode.RANGE
                 || exactRelationArity(restriction.relation) != 1) {
             return null;
         }
         try {
-            return buildDerivedRestriction(
-                    owner,
-                    restriction.template,
-                    Opcode.DOMAIN,
-                    restriction.restrictor,
-                    restriction.relation,
-                    owner.exactAlloyType);
+            EGraphNode result = newDerivedRelationLattice(owner, Opcode.INTERSECT,
+                    List.of(restriction.restrictor, restriction.relation));
+            return result.exactAlloyType.sameOccurrenceEvidenceAs(owner.exactAlloyType)
+                    ? result : null;
         } catch (IllegalArgumentException | IllegalStateException rejected) {
             return null;
         }

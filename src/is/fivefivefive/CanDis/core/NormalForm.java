@@ -3,6 +3,8 @@ package is.fivefivefive.CanDis.core;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicLong;
@@ -2646,6 +2648,13 @@ public class NormalForm {
         inheritedQuantiVars.sort(java.util.Comparator.comparingInt(QuantiVar::getId));
         nextDisjointnessClass = 1;
         matrixEGraphRoot = removeEndNodes(matrixEGraphRoot);
+        if (temporalChildren.stream().anyMatch(child ->
+                child.temporalOp == TemporalOp.ALWAYS || child.temporalOp == TemporalOp.AFTER)) {
+            var seen = new java.util.HashSet<Long>();
+            var shared = new java.util.HashSet<Long>();
+            collectSharedPhaseReads(matrixEGraphRoot, seen, shared);
+            matrixEGraphRoot = normalizeSourcePhases(matrixEGraphRoot, shared, null);
+        }
         Map<String, String> inheritedAlphaNames = new HashMap<>();
         for (Map.Entry<String, QuantiVar> entry : inheritedBindings.entrySet()) {
             inheritedAlphaNames.put(entry.getKey(), entry.getValue().getName());
@@ -3499,20 +3508,37 @@ public class NormalForm {
                 || isDisj(declaration.getOpcode())
                 || declaration.getChildren().size() != 2
                 || declaration.getChildren().get(1).getOpcode()
-                        != Opcode.VARIABLE
-                || (body.getOpcode() != Opcode.IN
-                        && body.getOpcode() != Opcode.NOT_IN)
-                || body.getChildren().size() != 2) {
-            return null;
-        }
-        String expectedComparisonName = body.getOpcode() == Opcode.IN
-                ? "BOP_IN" : "BOP_NOT_IN";
-        if (!expectedComparisonName.equals(body.getSourceName())
-                || !("MIDDLENODE_" + expectedComparisonName).equals(
-                        body.getSourceType())) {
-            return null;
-        }
+                        != Opcode.VARIABLE) return null;
         EGraphNode binder = declaration.getChildren().get(1);
+        DomainDescriptor domain = domainDescriptor(declaration.getChildren().get(0));
+        if (domain.domain == null) return null;
+        EGraphNode effectiveDomain = domain.domain;
+        // all x:D | x in S implies P(x) ranges over S when the parser proves S in D.
+        if (quantifierOpcode == Opcode.FORALL && domain.cardinality == Cardinality.ONE
+                && body.getChildren().size() == 2 && EGraphNode.hasBooleanRewriteAuthority(body)
+                && (body.getOpcode() == Opcode.IMPLIES || body.getOpcode() == Opcode.OR)) {
+            var terms = body.getChildren();
+            for (int g = 0; g < (body.getOpcode() == Opcode.IMPLIES ? 1 : 2); g++) {
+                var guard = terms.get(g);
+                var observation = terms.get(1-g);
+                var op = body.getOpcode() == Opcode.IMPLIES ? Opcode.IN : Opcode.NOT_IN;
+                if (guard.getOpcode() != op || !isSourceMembership(guard)
+                        || observation.getChildren().size() != 2
+                        || observation.getChildren().get(1).getOpcode() != Opcode.PRIME
+                        || !Objects.equals(bindingKey(binder), bindingKey(guard.getChildren().get(0)))
+                        || guard.getChildren().get(0).getOpcode() != Opcode.VARIABLE) continue;
+                var filter = guard.getChildren().get(1);
+                if (!EGraphNode.isClosedSignatureSubdomain(filter, domain.domain)) continue;
+                effectiveDomain = filter;
+                body = observation;
+                break;
+            }
+        }
+        if ((body.getOpcode() != Opcode.IN
+                        && body.getOpcode() != Opcode.NOT_IN)
+                || !isSourceMembership(body)) {
+            return null;
+        }
         EGraphNode compared = body.getChildren().get(0);
         EGraphNode memberSet = body.getChildren().get(1);
         String binderKey = bindingKey(binder);
@@ -3523,19 +3549,20 @@ public class NormalForm {
                 || containsBindingReference(memberSet, binderKey)) {
             return null;
         }
-        DomainDescriptor domain = domainDescriptor(
-                declaration.getChildren().get(0));
-        if (domain.domain == null) {
-            return null;
-        }
         return EGraphNode.parserCertifiedMembershipQuantifierElimination(
                 quantifier,
                 quantifierOpcode,
                 domain.cardinality,
                 compared.getEClassRef(),
-                domain.domain.getEClassRef(),
+                effectiveDomain.getEClassRef(),
                 memberSet.getEClassRef(),
                 body.getOpcode() == Opcode.IN);
+    }
+
+    private static boolean isSourceMembership(EGraphNode node) {
+        String name = node.getOpcode() == Opcode.IN ? "BOP_IN" : "BOP_NOT_IN";
+        return node.getChildren().size() == 2 && name.equals(node.getSourceName())
+                && ("MIDDLENODE_" + name).equals(node.getSourceType());
     }
 
     private static boolean containsBindingReference(
@@ -5289,6 +5316,120 @@ public class NormalForm {
         String primitiveDomain = primitiveDomainName(domain);
         return primitiveDomain != null
                 && normalizeType(primitiveDomain).equals(normalizeType(primitiveType));
+    }
+
+    private static void collectSharedPhaseReads(EGraphNode node, Set<Long> seen, Set<Long> shared) {
+        long ref = node.temporalReferenceAuthorityId();
+        if (ref > 0 && !seen.add(ref)) shared.add(ref);
+        for (var child : node.getChildren()) collectSharedPhaseReads(child, seen, shared);
+    }
+
+    private EGraphNode normalizeSourcePhases(EGraphNode node, Set<Long> shared, EGraphNode binder) {
+        if (node.getOpcode() == Opcode.REF) return shared.contains(node.temporalReferenceAuthorityId())
+                ? node : normalizeNextObservation(node, binder);
+        List<EGraphNode> children = node.getChildren();
+        EGraphNode copy = null;
+        for (int i = 0; i < children.size(); i++) {
+            var child = children.get(i);
+            var normalized = normalizeSourcePhases(child, shared,
+                    i == children.size() - 1 && isQuantifierNode(node) ? node
+                            : EGraphNode.hasBooleanRewriteAuthority(node) ? binder : null);
+            if (child != normalized && copy == null) {
+                copy = copyShallow(node, node.getOpcode());
+                children.subList(0, i).forEach(copy::addNormalizedChild);
+            }
+            if (copy != null) copy.addNormalizedChild(normalized);
+        }
+        return moveStaticUniversals(copy != null ? copy : node, shared);
+    }
+
+    @LeanVerifiedRewrite("R0-TEMP-001")
+    private EGraphNode normalizeNextObservation(EGraphNode ref, EGraphNode binder) {
+        var authority = temporalReferenceAuthorities.get(ref.temporalReferenceAuthorityId());
+        if (authority == null || authority.children.size() != 1
+                || authority.children.get(0).temporalOp != TemporalOp.AFTER) return ref;
+        var root = authority.children.get(0).matrixEGraphRoot;
+        if (root.getOpcode() != Opcode.TEMPORALROOT || root.getChildren().size() != 1) return ref;
+        var test = root.getChildren().get(0);
+        if (!EGraphNode.hasBooleanFormulaType(test)) return ref;
+        var operands = test.getChildren();
+        int receiver = switch (test.getOpcode()) {
+            case SOME, NO, ONE, LONE -> 0;
+            case IN, NOT_IN -> 1;
+            default -> -1;
+        };
+        if (receiver < 0 || operands.size() != receiver + 1) return ref;
+        if (receiver == 0) {
+            String spelling = "UNOPF_" + test.getOpcode().name();
+            if (!spelling.equals(test.getSourceName()) || !("MIDDLENODE_" + spelling).equals(test.getSourceType()))
+                return ref;
+        } else if (!isSourceMembership(test) || !isDirectCapturedVariable(operands.get(0), binder)) return ref;
+        var relation = operands.get(receiver);
+        var signature = relation.authenticatedSignature();
+        // Do not introduce a primed leaf for a state-independent signature.
+        if (signature == null || !signature.isParserVariableSignature()) return ref;
+        var prime = EGraphNode.inOwningArena(ref, ref.getId(), Opcode.PRIME, List.of(),
+                false, 1, false, Metatype.SET, ref.getSemanticProfile());
+        prime.setSourceName("UNOPE_PRIME");
+        prime.setSourceType("MIDDLENODE_UNOPE_PRIME");
+        prime.setExactAlloyType(relation.getExactAlloyType());
+        prime.preserveSourceOccurrenceLineageFrom(ref);
+        prime.addNormalizedChild(relation);
+        var result = copyShallow(test, test.getOpcode());
+        if (receiver == 1) result.addNormalizedChild(operands.get(0));
+        result.addNormalizedChild(prime);
+        return result;
+    }
+
+    private static boolean isDirectCapturedVariable(EGraphNode read, EGraphNode binder) {
+        if (binder == null || read.getOpcode() != Opcode.VARIABLE || !read.getChildren().isEmpty()
+                || read.getSemanticIdentity() == null || !read.getSemanticIdentity().equals(read.getAlphaName())
+                || read.getExactAlloyType() == null || !read.getExactAlloyType().hasParserAuthenticatedAncestry())
+            return false;
+        for (var decl : binder.getChildren()) {
+            if (!isRelDecl(decl.getOpcode())) continue;
+            var parts = decl.getChildren();
+            for (int i = 1; i < parts.size(); i++) {
+                var binding = parts.get(i);
+                if (binding.getOpcode() == Opcode.VARIABLE
+                        && read.getSemanticIdentity().equals(binding.getSemanticIdentity())
+                        && read.getExactAlloyType().sameOccurrenceEvidenceAs(binding.getExactAlloyType())) return true;
+            }
+        }
+        return false;
+    }
+
+    /** Move the original declarations before alpha-renaming. Never mutate a phase
+        reached by another occurrence (for example, a substituted let). */
+    @LeanVerifiedRewrite("R0-BIND-003")
+    private EGraphNode moveStaticUniversals(EGraphNode node, Set<Long> shared) {
+        var parts = node.getChildren();
+        if (node.getOpcode() != Opcode.FORALL || parts.size() < 2
+                || !EGraphNode.hasBooleanFormulaType(node)
+                || !EGraphNode.hasParserQuantifierSourceAuthority(node, Opcode.FORALL)) return node;
+        int body = parts.size() - 1;
+        var ref = parts.get(body);
+        var authority = temporalReferenceAuthorities.get(ref.temporalReferenceAuthorityId());
+        if (authority == null || shared.contains(ref.temporalReferenceAuthorityId())
+                || authority.children.size() != 1 || authority.children.get(0).temporalOp != TemporalOp.ALWAYS)
+            return node;
+        for (var decl : parts.subList(0, body)) {
+            if ((decl.getOpcode() != Opcode.GENERICRELDECL && decl.getOpcode() != Opcode.DISJ)
+                    || decl.getChildren().size() < 2
+                    || decl.getChildren().stream().skip(1).anyMatch(v -> v.getOpcode() != Opcode.VARIABLE)) return node;
+            var domain = domainDescriptor(decl.getChildren().get(0));
+            var sig = domain.domain == null ? null : domain.domain.authenticatedSignature();
+            if (domain.cardinality != Cardinality.ONE || sig == null || sig.isParserVariableSignature()) return node;
+        }
+        var phase = authority.children.get(0);
+        phase.requireMutable();
+        var root = phase.matrixEGraphRoot;
+        if (root.getOpcode() != Opcode.TEMPORALROOT || root.getChildren().size() != 1) return node;
+        var moved = copyShallow(node, Opcode.FORALL);
+        parts.subList(0, body).forEach(moved::addNormalizedChild);
+        moved.addNormalizedChild(root.getChildren().get(0));
+        root.setNormalizedChildren(List.of(moved));
+        return ref;
     }
 
     private static DomainDescriptor domainDescriptor(EGraphNode typeEGraph) {

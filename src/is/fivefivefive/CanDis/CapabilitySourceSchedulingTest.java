@@ -73,6 +73,7 @@ public final class CapabilitySourceSchedulingTest {
     public static void main(String[] args) throws Exception {
         interfaceParameters();
         membershipScheduling();
+        unaryFiltersAndStaticPhases();
         pair("(some x:A | x->x in r) and (opaque and no A and some A)",
                 "some x:A | x->x in r and opaque and no A and some A", true);
         pair("(some x,y:A | x->y in r) and (opaque and no A and some A)",
@@ -107,6 +108,49 @@ public final class CapabilitySourceSchedulingTest {
             check(!CapabilityBenchmark.isComposedFamily(family), "simple family " + family);
         }
         System.out.println("CapabilitySourceSchedulingTest: " + checks + " checks passed");
+    }
+
+    private static void unaryFiltersAndStaticPhases() throws Exception {
+        String scope = "sig A {var r: set A} var sig B in A {} ";
+        nativePair(scope + "pred p {all x:A | lone (x.r :> B)}"
+                + "pred q {all x:A | lone (B & x.r)}", true);
+        nativePair(scope + "pred p {all x:A | always some x.r}"
+                + "pred q {always (all x:A | some x.r)}", true);
+        nativePair(scope + "pred p {all x:B | always some x.r}"
+                + "pred q {always (all x:B | some x.r)}", false);
+        nativePair(scope + "pred p {some x:A | always some x.r}"
+                + "pred q {always (some x:A | some x.r)}", false);
+        nativePair(scope + "pred p {some B <: r} pred q {some r :> B}", false);
+        for (String observation : List.of("some", "one", "lone", "no")) {
+            nativePair(scope + "pred p {after " + observation + " B}"
+                    + "pred q {" + observation + " B'}", true);
+        }
+        nativePair(scope + "pred p {always (historically no B)} pred q {no B}", false);
+        nativePair(scope + "pred p {after some B} pred q {some B}", false);
+        nativePair(scope + "pred p {always (all f:A | after f not in B)}"
+                + "pred q {always (all f:A | f not in B')}", true);
+        nativePair(scope + "pred p {all f:A | after f in B} pred q {all f:A | f in B'}", true);
+        nativePair(scope + "pred p {all f:A | f in B implies after f not in B}"
+                + "pred q {all g:B | g not in B'}", true);
+        nativePair(scope + "sig C in A {} pred p {all f:C | f in B implies after f not in B}"
+                + "pred q {all g:B | g not in B'}", false);
+        nativePair(scope + "pred p {all f:A | f in A-B implies after f in B}"
+                + "pred q {all g:A-B | g in B'}", true);
+        nativePair(scope + "pred p {all f:A | f in A-f implies after f in B}"
+                + "pred q {all g:A | g in B'}", false);
+        nativePair(scope + "pred p {all f:B | after f in B} pred q {all f:B | f in B}", false);
+        nativePair(scope + "var sig C in A {} pred p {after B in C} pred q {B in C'}", false);
+        nativePair("sig A {t:A->A} sig B,C in A {} pred p {some ((B <: C).t)}"
+                + "pred q {some (C.(B <: t))}", true);
+        var owner = UnusedBindingDescopeTest.prepare(scope + "pred p {after some B}", "p")
+                .normalizedForms().get(0);
+        owner.requireAdmittedTemporalTree();
+        var projections = owner.getTemporalReferenceProjections();
+        check(owner.getTemporalChildren().isEmpty() && owner.getSourceTemporalChildren().size() == 1
+                        && projections.size() == 1 && projections.get(0).sourceSlot() == 0
+                        && projections.get(0).normalizedSlot() == -1
+                        && projections.get(0).branches().get(0) == owner.getSourceTemporalChildren().get(0),
+                "prime projection retains its exact source AFTER owner");
     }
 
     private static void membershipScheduling() throws Exception {
