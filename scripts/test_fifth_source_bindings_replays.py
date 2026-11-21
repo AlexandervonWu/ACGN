@@ -64,6 +64,22 @@ class SourceBindingsReplayTest(unittest.TestCase):
             with self.subTest(name=name), self.assertRaises(Blocked):
                 r.program(observations(), changed)
 
+    def test_pre_source_scheduling_pins_are_rejected(self):
+        old = {
+            "EGraphNode": "1d2be2e4e27d13be711cf92589564f6d0c6664b326bad2e405bd8250c5c0a561 011ba3078eff66a3e5efd116a1e2cd92dae8e4f4621f87c1802d483af873d4a7",
+            "NormalForm": "db00a8a9b8a5bbe7a6b12f455b570774b1b7a6416df1042c8747dc1efeb60ad6 cb766573b1d9443941a6d6d77ed92189c2f90cb416c2d994e36869f04315ec7c",
+        }
+        for name, pins in old.items():
+            shape, bindings = pins.split()
+            for stale in ({"shapeSha256": shape}, {"bindingsSha256": bindings},
+                          {"shapeSha256": shape, "bindingsSha256": bindings}):
+                changed = sources()
+                row = next(s for s in changed if s["object"] == name)
+                row.update(stale)
+                with self.subTest(name=name, fields=tuple(stale)), self.assertRaisesRegex(
+                        Blocked, "source-bindings: source pin/census"):
+                    r.validate_sources(changed)
+
     def test_independent_census(self):
         rows = observations()
         self.assertEqual(len(rows), 171)
