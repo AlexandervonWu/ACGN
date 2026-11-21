@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "positive": "identical tagged solver outcomes, per-arm summaries and four probes",
+  "controls": [
+    "counterexample stops",
+    "missing claim stops",
+    "never-submitted counted",
+    "fresh root",
+    "existing report preserved"
+  ]
+}

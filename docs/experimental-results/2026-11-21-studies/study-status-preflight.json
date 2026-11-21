@@ -1,0 +1,68 @@
+{
+  "experimentTag": "v3.1",
+  "releaseCommit": "d71cd1c2343b9fdb61d311331feafbe14bea2925",
+  "compiledAt": "6648d7bd4148e6374a5446eaf12a3f1d7633db52",
+  "scope": "supplemental arms only; not the completed paired and full-reference experiments",
+  "status": "BLOCKED_BEFORE_FIRST_ARM",
+  "studyResults": [],
+  "unattempted": {
+    "naturalAblationEngines": 7,
+    "capabilityEngines": 7,
+    "naturalSlotTypingEngines": 2,
+    "syntheticPredicates": 540,
+    "syntheticTrials": 1080
+  },
+  "preflight": {
+    "initial": "class not present in runtime or empty helper overlay; no files processed",
+    "recovery": "PASS",
+    "naturalFiles": 66080,
+    "capabilityCases": 5500,
+    "correctedGuardReceiptSha256": "2905c1f00998cdc7f3370fd066b389b7d9c23ae5f589c53afbc11a397f3e6464",
+    "helperClassSha256": "c8b2ca6275742523b109de6022640f24c9db66fa0228a043d4d1b94b622d6ec7"
+  },
+  "reviewer": "01a1b7ca-e043-7ad0-8162-0de59a5feda6",
+  "launchDecisions": [
+    {
+      "name": "terra-answer.json",
+      "sha256": "7a563827edbd6f61ef45c9f2e2cd9ad7617e204155ebf6ed62fa6555f9fbbb1a",
+      "decision": "BLOCKED",
+      "issues": [
+        "STUDIES-1",
+        "STUDIES-2",
+        "STUDIES-3",
+        "STUDIES-4",
+        "STUDIES-5"
+      ]
+    },
+    {
+      "name": "terra-answer-v2.json",
+      "sha256": "a34781575ea69ad360953a35f65c6ce26e21c2c1caeb57d42aa1d240a7bd80a8",
+      "decision": "BLOCKED",
+      "issues": [
+        "STUDIES-V2-1",
+        "STUDIES-V2-2",
+        "STUDIES-V2-3"
+      ]
+    },
+    {
+      "name": "phase-a-answer.json",
+      "sha256": "eaec0b119037d633cd033da66740825887f169215891a034ea2a38ad3801508b",
+      "decision": "BLOCKED",
+      "issues": [
+        "PHASE-A-1",
+        "PHASE-A-2"
+      ]
+    }
+  ],
+  "remaining": [
+    "Pin accepted predecessor receipt digests and their approval and terminal identity",
+    "Independently bind the child digest at guarded completion",
+    "Stop natural bounded soundness verification on the first disallowed result",
+    "Prevent report overwrites"
+  ],
+  "checkpoint": {
+    "name": "CHECKPOINT.md",
+    "sha256": "2c600df1bdcbb93d4326555df0e488b60e14420b7ab254c53ee4753aed039982"
+  },
+  "publicCertification": "BLOCKED"
+}

@@ -1,0 +1,2830 @@
+{
+  "schema": "publication-data-stage-v2",
+  "stage": "natural-raw-egraph",
+  "checkout": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN",
+  "commit": "d71cd1c2343b9fdb61d311331feafbe14bea2925",
+  "dataset": "/home/augustus/ACGN/classified-data",
+  "datasetInventory": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/nested-phase-declaration-selection-v1/full-launch-b/dataset.json",
+    "sha256": "fb93ff9b256b7c33a61c58d407bd153721314cd20cffd9ee25c2887621681337"
+  },
+  "runtimeConfig": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/runtime.json",
+    "sha256": "2c565a3baaf969656f89387c2d58f9f1c01d02c440bd1361954e165d1f9e4ba2"
+  },
+  "priorDatasetLedger": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/nested-phase-declaration-selection-v1/full-launch-b/completion.json",
+    "sha256": "e18d2f7709d5fc0155e0df95f70d17714bab1368be212784fe3794b840e28ebc"
+  },
+  "cacheReview": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/capability-repair-v1/followup-integration-review.json",
+    "sha256": "33f0bc89f30eba4389bc731593e08e57b1a720753191a9f75f25807697f6a58b"
+  },
+  "schedule": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/metadata-cache-race-v1/PUBLICATION_PIPELINE_NEXT_ITERATION.md",
+    "sha256": "f7bf1810c9739da7908b29bcd23acc391ed635c3fe4cf0336623c71750069639"
+  },
+  "files": [
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/AAME.java",
+      "sha256": "e0be422ffec590b73862c3d1ff1c6d9683179c421355e6e856aeaa04234205a5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/AbstractSymbol.java",
+      "sha256": "e1c3d3190299e23dabdf6f8ecfcacfa25963a70a9c78c73e05336609fe1a3214"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/AlloyLibraryCallableLedger.java",
+      "sha256": "4238cb04cab230dbd0e1c96d173e7943101e0f3c2c50a84b40ca0294acd23037"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/AssertSymbol.java",
+      "sha256": "24de87fd74c874d9eccd2fffdaf17dac90be0988387d12be735d43a7159b97ac"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/CallableTargetSymbol.java",
+      "sha256": "809a5a6661de0b294950d54de8540aae50f0b26f8f05641d6ab179a4d7ad07e6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/CallSymbol.java",
+      "sha256": "88ff43e75372cb3e5c88a9b164e5282896bc6fb3ff116d213d3c856472325365"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/ConstSymbol.java",
+      "sha256": "6de468e3fa257fd482646b582e91ce2bfcd1ae29ddd4f9a2fbc156a697b041cb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/DeclRootSymbol.java",
+      "sha256": "835e048781f4e2015d510cf5401aae6ac1654ac1825af2502c3bffa3d6f62a66"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/DummySymbol.java",
+      "sha256": "50705758801a88c205f16e3eb0059547c61fd11bd32187615b2274894fde622f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/EndSymbol.java",
+      "sha256": "c5b327b96de7ea7d70d8d89aadeadd9aa8cbaa24f8674c1204b9d6d187051a9b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/ExactAlloyType.java",
+      "sha256": "1fbee4ee5b4a9c34fbc538b96dc6a2b055f76d618c9f790511d3e74e446e1d9f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/ExtFact.java",
+      "sha256": "c2e0c26d47824421018aaa3d3ea7a586a8616ba3572ceb6fabf11bff6d23d620"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/FieldConfiner.java",
+      "sha256": "021ffcffcd6201f4dea8b276963ba0071bc7731726bd8b88a1a084ed5f3056b7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/FieldRelation.java",
+      "sha256": "939f7a98c14863c2754320492808ccfc05315b40b66cf63eec414679cc6e835a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/LetSymbol.java",
+      "sha256": "b708cef4f38b95f21820715e2cc21af0a00c28f8f1b7c92b416dc74860eea951"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/MiddleSymbol.java",
+      "sha256": "e94be99c4c6db9c194c56023a46dbf475274f9bcbe50510e15068c5b69c9b05d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/PredRootSymbol.java",
+      "sha256": "46e42cec94125338def87bcda3aa964b9eb0be1e96f9d3cc22d6970415cb2416"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/RefSymbol.java",
+      "sha256": "97f9bdde510ac902493e15d4c99d0abab4765281ce17598d332bbf7f382da034"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/RelationSet.java",
+      "sha256": "6d551b0ffd07992b9fd7fe9369f6f61ceb0c80ea3c880a3ce558e776b79aa0bd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/SetSymbol.java",
+      "sha256": "42e2f4e3dcc64506d06500975656f903ff70c20b270a55df4c703b650a7ab305"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/ShadowSymbol.java",
+      "sha256": "ec947ad9245e9363787b556b7e467f48ec4c1782b1e84bae319ff5e5ffd4bafc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/SigSymbol.java",
+      "sha256": "e8b28f829055f8cbd5ba87861b011c9f50fd022f19e7b7660d06dc89756c250b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/SubsetRelation.java",
+      "sha256": "97a2329bcad31b85143f0cc3934835e19d0cfc49dc22d62c723359e6b59ab0c4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/Symbol.java",
+      "sha256": "555a72171e15b467472b1ed920bd9dbc2250cc8654d476862f6ddf8a7c03271c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/alloy/VarSymbol.java",
+      "sha256": "4f0665d97fddb315149accf67d7a8e8f95ca7e4dd8e86f305dce1dab8ad6cad1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/asg/AugmentedNode.java",
+      "sha256": "6382ae89443ba41296e9f4ac1e0189f0f8772c478a14f429f003f9dbf1fc5e5c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/asg/MASGEdge.java",
+      "sha256": "2ceb5815b403c808ac6d78c8ed4f51e70010f79394d6f57b9ac9c5d941f18ff2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/asg/Multigraph.java",
+      "sha256": "d8c3b31479ae962838fd4cbde53e1811e8b64c4e769e35cafabac58e1a5f942b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/codegen/Generator.java",
+      "sha256": "eb003440ec5dd3cf297f3ff353f15b079cc5fc80d0ab58a88a07df472661b720"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/etc/BiMap.java",
+      "sha256": "cc1abcb6d354b2fff3de7076f14dd621f7fb23ac0de5c0a2ad4a123deaf8e5cc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/etc/Triple.java",
+      "sha256": "13984085c857fffad26825c9b28fdfb2dd833e6b7c70a7583ea146d3b000bf57"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/exceptions/ExceedMaxStepException.java",
+      "sha256": "e8f7cb7ee819d0d479cde81784c1e8f7b56bdd23fe5899e48ff359d4a5f94da6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/exceptions/ScopeNotReadyException.java",
+      "sha256": "d7bdce9a3b0c96394f3aefbacfa3b6c134f98dac7d5e7a227687d57d0e511250"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/CodeGenAgent.java",
+      "sha256": "90758d905df5496aa6b6116c9da479d01ca0df9e81a06c93b55c806a77bea030"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/Distribution.java",
+      "sha256": "680eb505c8a0bfbac99409f58b40e810ff97cd440935a630decf06184ec062b8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/Hyperparams.java",
+      "sha256": "4acfaee5e6f9cc41f088cc9a476b0f043ee9bdf863f02af2138a1aed71e91b91"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/Rewarder.java",
+      "sha256": "e86c4c9eac5a1e64bc2a1b1a2d56e61e44eb8a9eb6e354029ff0c3d2c8673645"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/RewarderConcurrencyTest.java",
+      "sha256": "5ed0663e75293198180e355f9d504fce9bed78f4027a2eaf2a0ce48c545989e2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/RLAgentFrame.java",
+      "sha256": "1875f0ebceb0bf663e1790bd0cf009f8d5ab39cfcc1cdb5283fbbad46937e287"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/learn/Trainer.java",
+      "sha256": "f14fe8a8f73f0054ce0cd1dd3ca87bd8bb25cf219aecd07ed553af1f9b5dcaa9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackActions.java",
+      "sha256": "64cd36cb9945256da6341e2ba836336fa4a2b20e5e6e7beda1599ebd3ab97ab5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackCanonicalGraph.java",
+      "sha256": "ff84dd5cf2faffe788d5aef6c0115419ee044af5717fd9ee8022bbe100cf2917"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackDraft.java",
+      "sha256": "619d91cd439e706ddfcbd95bfabd87da10494d77473a01d269388a6c51c44393"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackRepairSession.java",
+      "sha256": "18d95987c72e83ed564c72c20d05939d9fc8292dda58f579f901dc46adab051f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackRepairTest.java",
+      "sha256": "28601d18cb79565f25c1538fe7e9c989d4f3c5270b9e61b52758ea7dd53b69b1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackRepairWorker.java",
+      "sha256": "14a70efa6b32d9db7c6a7d770c4ce094205d181202078a679518210f801b5086"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackSourceGraph.java",
+      "sha256": "c10a8e28d18e55f2d7a316879ffdd2dd9d28af85c61744d9132deae476fd4cf3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackSourceSpans.java",
+      "sha256": "2dfd1de2ffbc69e986b221e65de77fd858dbb8d2c429b4e9e66964dce4f3b530"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackTeacherMain.java",
+      "sha256": "4be6941151c5a8662c5a33a19f58b56927693f35d931ae9a585e764c6cdfe14a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/FeedbackWorldTables.java",
+      "sha256": "b4670ec5e7211c9e10e4161e82e95e0ceb5fad5e19b4f1627955b43531839445"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/HybridCorpusWorker.java",
+      "sha256": "a08cb427554b0c9ed7448b76d9a274e3091e270bdf6b28e71a174163a1b3f39d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/LocalFeedbackRepairTest.java",
+      "sha256": "71441149454f50dff19a095b3f1c43c2f4426c03f59af613c21a20e0a8fd6063"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/LocalFeedbackTeacherMain.java",
+      "sha256": "69ca845494b203203467ef0e6848994be0a3148271791c12fc808b25d70cd21f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairAction.java",
+      "sha256": "60763816c16778d10ec8f02d09851eb1b530af2936ce7f94f16065e77d53cd53"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairActionEnumerator.java",
+      "sha256": "f11d938809135e47721c9bb9ff43e1cf8a63fbf902800b4403dec00ebe1851cf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairEnvironment.java",
+      "sha256": "7f620e30d69eb4d95a6fe7b0872a8b22d66e40fc9a860f4ac23f22bc3ef40d71"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairEnvironmentTest.java",
+      "sha256": "e1fcba31e6209d4a80ecf6e93d1bcd198cd0f3ff5ea1817343056de0e66d92df"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairEvaluator.java",
+      "sha256": "8cb60986703f535d1a5a5d635d7f4a99c90a83fdaf9c7c192386be10dbe1683d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairExplorer.java",
+      "sha256": "cc1676e3b08bd013d19a23187386e9735ba11290a17d0529ee68f9a39a2dc700"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairFeedback.java",
+      "sha256": "1e4c3308f8f60e892b89e0a075c8210ec5d0088458af5a8d31e4a3483f54c303"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairKernel.java",
+      "sha256": "df4f7bf57d19c93201df8dbad6bc28d36b442f60ba24b91a8ec9dfc3ce9d3c45"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairLearningTest.java",
+      "sha256": "a6afe676baee2be43bba89ca142f9a4ec6adfabaab88b1cc899f1b9aa1980cad"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairObservation.java",
+      "sha256": "133ff1a84ff0abfee9eda7a887af676ac6528226b970b0c6848c6fd0b2dbd1ca"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairSearch.java",
+      "sha256": "53d140ef1dda51c489e4a54e529c2bd90de4a188a1eeb238881efd5e87fb9206"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairStudyWorker.java",
+      "sha256": "3d2ed216944b155a824054f9e45387aafb2b556fbdc9081684c3867fcd47eb4c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairTask.java",
+      "sha256": "35b5d3749b31f07da486fdb3aaca079c629f27ac32d695a7d0df10b0aebd8952"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/repair/RepairWorkerMain.java",
+      "sha256": "afd4559149fad8527b8358de44a764e74640b4993c2a3d4f03b405392a1ac0ae"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/structure/RLScopeTreeNode.java",
+      "sha256": "16b10b0c927fc82e1946eda5907721c3b9d74b3a4d12e36ecaa777a0d8bf1459"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/structure/ScopeTreeNode.java",
+      "sha256": "ba04ad35623c7e6af6cf5cfdfa7789d0fe96ff6a7579378766e7f6365edb1ff8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/test/Playground.java",
+      "sha256": "a13001f5de6bfa546fd8b1330220578fc305766da479e6a10142b4de19691ea7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/test/RLTest.java",
+      "sha256": "53fc4ff75d86377cbb25d4f0b64552324643eb640f2596379356fa8b056ffba9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/test/SGDEdgeTrainer.java",
+      "sha256": "e8555c4b15481fc99c7ab131ed457080f5fb20ac001e85997fe51032e8a8475e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/test/TrainGround.java",
+      "sha256": "2484e1bcfe494645d757271ae3a3a2b027cf62fc34afb3ba374d25659a26e0dd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/util/GlobalVariables.java",
+      "sha256": "2fbf05c86f10a79f21174e0148579b2bcc188bbbb45d63f6a64f39ebfb6fc3a8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/util/Hasher.java",
+      "sha256": "726a22109ae057b2f69ef4d38e3c18fdb19766ab88290279fab77ed1da2d5fc4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/util/InstancePool.java",
+      "sha256": "0e57022d6380871899fc85005d9c4d826a51e7b5563464eea624a78f62de7796"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/util/Probability.java",
+      "sha256": "306ebd34ebd0f04fb6f64360bbf9ca70b72fb244aacb23b12dd5e5ce064e15e4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/ACGN/visitor/MASGVisitor.java",
+      "sha256": "2a3338ccb5d5cf65625ea0bd665cf9d879d23e1af0ff83a865ccf7fabf6476f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/AlloyEnumeration.java",
+      "sha256": "7564f827c4f57c216b267f0941a83de41eabaa724097c8134cab2128b578eb49"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/ASGOutputer.java",
+      "sha256": "99b8b5c661e56814fc1ef28d1800033c67841e95241adbce4214782944d4263a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/CommandScript.java",
+      "sha256": "091bbdd0266407a7a236506b8d46c985cc04987d6981879c50a27df169883e11"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/DataClassify.java",
+      "sha256": "2cf53e3c66d1718790952fcd00935adbff2e5518f28aa255f9353c5698ffcf81"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/EdgeCounter.java",
+      "sha256": "3feb343845578bec6266752f7f3470c5e445ed8847ee577952edc6c0083c8ed9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/AlloyDataProcessor/SyntacticFilter.java",
+      "sha256": "f0f537a817721da0aecc30ba73cd1593c1d9fb862fece877c7cbe0ede3f28c85"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ablation/EGraphAblationTest.java",
+      "sha256": "f800ecbe02092b9f5cc7d33724438059c31af6e924fb61945afd3e1384512d9d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ablation/SlotCensus.java",
+      "sha256": "92211c6d8b0183aac37186af11d8fe0eb19b9b20604ccd7dd7d2167c7564cc02"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ablation/SlotTypingAblationTest.java",
+      "sha256": "24de87b879554443ab3916e718dced31460378c9de9f7f587af89d2a6364085f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ablation/SlotTypingSyntheticTest.java",
+      "sha256": "86b85c55eaa565da117d1c0c816b3a2e197bdb7677a6c0003ce50e76ea2f45f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AblationParallelism.java",
+      "sha256": "86ef68f37223da825bf9ece68b522022f33ba6354fa435198525a7ef5de562ed"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AblationRunManifest.java",
+      "sha256": "ada9580a957ed2d9dd5854d8a062aa04d1a96eeb7c90862b60fa944215ce9e20"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AbsentLocalPaidAdmissionTest.java",
+      "sha256": "1a9d65f1bd4c5e57c4da33d459c5ccc9af1ba019b633e42e191550a16e0398d2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/adapter/AlloyAstTermAdapter.java",
+      "sha256": "5f90d3505e038b52a4daf6d30da914f7f4aa1bf129e22f06b975acf8e00a1fc8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AlignedPhaseReadCensusTest.java",
+      "sha256": "831b0b94b58cc91d078b739d3fd2c6cdbe2e0e7bf5290d26ea74fe6f4433db61"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/Alloy4FunAugmenter.java",
+      "sha256": "038b4b640fee2ecad19670c168f6dff9385a531392e44ffba935767a069a601e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AlloySourceRuleRegressionTest.java",
+      "sha256": "45cb341e4df887aa0471fedd52fe39a2a11c9f767deb7e06ce571bbe389ba4a9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/assurance/ContractDecomposition.java",
+      "sha256": "eff7def816a6ad96ba4cf0e3086a81bad7f7dd1ff835ae75dc452dd44d3ffcb8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/assurance/ContractDecompositionTest.java",
+      "sha256": "2fd02a1411a80fca9b35998e194c255ac583a6e712519be4cce3fc4d3177b6c9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AssuranceTestExecutionCoverageTest.java",
+      "sha256": "df99079edecc7d765930912ee01b9217731d8310605066e4aa0cd22baf97828a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AstWrapperErasureTest.java",
+      "sha256": "477dc5ec8259d82b1034450250e9058e3351f532a6989464a3d6114c35b9e657"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/AlloyBooleanSchema.java",
+      "sha256": "4d274c71e3319b7def9be24d2a1feedafee46b24eb34813c798be13362ca1206"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/AlloyEquivalenceValidator.java",
+      "sha256": "1b1ba39e7c33edcd8886ef471f21304b9428c13651df9eb9559c4c6bdba71e36"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/AlloyModuleClosureAuthority.java",
+      "sha256": "069a3d1a518f1f516243d63ab80027521e89001b965269a55c2d5f9fbdd3891d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/AugmentationDigests.java",
+      "sha256": "a924a4f3b5af8836e0e93d3b3b29fa91a6f29462f8eb4c09df02ba724a114a66"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/BootstrapTheoryR0.java",
+      "sha256": "6b2259276247b16239cde69b08bfff71f9d77091e7b3fcc87fd3dbc24f8967f9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmentationLedger.java",
+      "sha256": "52920788bc8b741e77c2a2c53dacd0352f9e7b9d0c51d24435a76e8a0ca7e7e9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenter.java",
+      "sha256": "f263b05dc52205ec698307eec61e03aded27b86ed29d0793c61ee83183ab2dc8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/EquivalenceAugmenterTest.java",
+      "sha256": "0d5b2e6bb52e5a76d6b2300a2ff57162839538efa4834303e1ac85de01cd5f7e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/LeanSchemaProofValidator.java",
+      "sha256": "094dad26a9c210a374b44587b6fab169b022f8349e98a65a44a49ae3d017fbaa"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/SourceEndpointCorrespondence.java",
+      "sha256": "28d0fdb38f31c53b28218cfbd21ee18fa97d7f6ba4f4f41998b68d87878d4417"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/augmentation/StructuralAntiUnifier.java",
+      "sha256": "4a92127eba83179383712e63cbcfc5ea20fd64851c99e5124a0527e30def396d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AugmentedPrelude.java",
+      "sha256": "be35307b0ae41355c41dde54edde48d5f1c204c0254c462982c46ef60e386b18"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AugmentedPreludeTest.java",
+      "sha256": "1ed4b15fb4f213026ffc41aa7f2c765ef15abc44d08b7731b69e18d79cb7554c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AuthenticatedOccurrenceTest.java",
+      "sha256": "dc4834c89f130a998b927d3fa49b7afbc62fb4211aec440f9af3a5b50fb5522b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/AuthenticatedPhaseTransportTest.java",
+      "sha256": "b4871051c55667b9ed5ceeb2a2e600f81f8b3bb400648ac810827673958f052f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BatchOperationFailureTest.java",
+      "sha256": "62e0cd790635a9aa3d63a0164e654d0893418d89bd3c21c960564d64dc30e3d8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BatchParityGate.java",
+      "sha256": "58f441731fa3cb8145a65bd9d9dd22607841b649c851e1706b79e7d541b0d22f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BatchParityGateTest.java",
+      "sha256": "65e2fb759c349238c327c726e3450f02e52b61a51e3b9c7d126ff422a5613fb9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BinaryPhaseEnumerationTest.java",
+      "sha256": "e6566925c6975425c2dfdc5add8ca594ba176fabb33293f0d78500094249e1ff"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BothLocalPaidReplayTest.java",
+      "sha256": "d8b6c1676709e895ad0ef42fe132fa62934c4567a797f5bd09c359bfad74d1a3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BoundCallPaidReplayTest.java",
+      "sha256": "b84a6910512b354bb9a13bf94dad24ca91e61c8a6fcbeeb8300ff1d7ca299b00"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BoundVariableShorterReplayTest.java",
+      "sha256": "f1b01c5d407dbb74f4e77b2dc9ff79f288fbc734c784b745a622026894a43b99"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/BuiltinIdentityRegressionTest.java",
+      "sha256": "10da5b7ea6a68d5ddd304e8865ee2d43ffd3949addd066ccb724789d04a8ac55"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CallAuthorityTransitionsRegressionTest.java",
+      "sha256": "fcb0ab6ebbc091afaeeaa8f2442d86b1e76c3cfe5aea5273c9a85914ce7ee21e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CallExtractionRegressionTest.java",
+      "sha256": "23091de9f2be9a020d6eb5c59445c9fe4f4e0585e7157db1e22f991a12ee3328"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/Canonical.java",
+      "sha256": "a34bdf239f344b8fd57da9f0adb3e350873e4b8999cd22f08b059ef2f07f10ca"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/canonical/CanonicalObservation.java",
+      "sha256": "aff0c80360ef12ec8fcbf8450cde38589a3188f5e11516d9473d085bd5ea8d8d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/canonical/CanonicalRepresentativeTreeDistance.java",
+      "sha256": "ee086d4c41357545ff227229a8d317712b790e00a91bad4241d6d7f446f603cf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/canonical/package-info.java",
+      "sha256": "dd614fd6299d88831199dc852ca85ea193dab987825c63a3e4cc9ed0a085b80a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalAlloyPipeline.java",
+      "sha256": "ac535c7ad2f5f7cd343fd113d58cd6bac80557104dc61169989a226462c0065b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalAlloyPipelineTest.java",
+      "sha256": "e0b531919abf25d024d59845e81c8f92b689446aa07fff09025e4f6aacbfe156"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalBacktranslationEquivalenceTest.java",
+      "sha256": "2b099371d31c5f253465b30b82a4389f440942a8497ce4b701d4a173096bc500"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalBacktranslator.java",
+      "sha256": "dd8bb253f4c9e8b1379b35dce8fe36af1a25105a1d4e32954094a246cab7de39"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalBacktranslatorTest.java",
+      "sha256": "dbadf3e5e62bce2123083fa38ba5e55b794c8ec782149379737998d869f129c6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalBatchConcurrencyTest.java",
+      "sha256": "1df347fd3d3a6145e7a7672f39670290ceb7a7bcf7d3a4125ee4d62183eed2ed"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalBatchTest.java",
+      "sha256": "89e14a68e99fc3f9624d2f555993f8bddcd2d9f83d9e87d9fbfe3b3de2befeaa"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalMemoryAttribution.java",
+      "sha256": "df9881069d469889695cb9e782bd7fb0ee5c71f2b16b4e594c91ad00c9b726e7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalPairExport.java",
+      "sha256": "9821ca96beaf4816456cec12e3c5a0a538361933703ca7f15d4be40971e96b67"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CanonicalRepairTraces.java",
+      "sha256": "a64e818b97e64a4a0dd567cf0d402ca37b2f2bd34815d875b66cefb9cdbae2dd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CapabilityBenchmark.java",
+      "sha256": "43df0259faaff1443b170bdd2185f72ebed9e35f3063c5b75d81ac304907f2dc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CapabilitySoundnessCheck.java",
+      "sha256": "a144bbce3bba4b5f42de6ad93afef69ab54d87118c31f1518c829cf674ad730c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CapabilitySoundnessCheckTest.java",
+      "sha256": "71500c9dbc269a4ccef3eb1d916597606ae5ab114b2cc3fdc0b1629ebdb0f81c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CapabilitySourceSchedulingTest.java",
+      "sha256": "97ac865b17f5cca3a4450878859b959d518e8111c2687f715fb9826c284aab11"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CapturedSelectionAuthorityTest.java",
+      "sha256": "1d231db32e0c060d2aa9e4e9c13453cd1632b9cc64de2dc727d1475975cfb017"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CarrierFrameMultiplicityTest.java",
+      "sha256": "9fa35571d80e5ddaf3d06c1e993f40db5d19d12b60450a4d03df06ea1d30d4f6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CertificateVerifierExportSmoke.java",
+      "sha256": "5cbc7d05f2ae3d2c6bb52820df65c912143e72e1a35e2107f7fcf43564963a21"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CertifiedSetEncounterOrderReplayTest.java",
+      "sha256": "b2c65ae8865763e28eae70af6dbe51d5f36a3bd9ea1bf163423ff48004da3313"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CertifiedSingletonCompositionTest.java",
+      "sha256": "7f8dff81bcc5bd83c2a9ea5b237a36fddba5db847fa54aeab8b5bd3c3ea1591d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ClosedCallPaidReplayTest.java",
+      "sha256": "c73d27f04aaafeac0b0a25c741712457b2e8c6f87cdf3903945acb3ceb556b83"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ClosedSourceCensusTest.java",
+      "sha256": "c91b39c72c09d4d28c1ed83f18a4bdb5f9d8e01d19b6dd04f10a05751728d898"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/AlloyOperatorPolicy.java",
+      "sha256": "7c82611c58950f459dcaeb1785a38912edf83bff4090c2b44ddc828af3f99110"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/BoundCallEvidence.java",
+      "sha256": "67adcf73416d0b99bb298f5007ae8145403408f32a9e3fe161f13e8371885894"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/BoundVariableCostTest.java",
+      "sha256": "e4b9a6c0454954a57cd859881be748dda9c5fba7eb60d3841de7fdaf178591be"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/CallMetadata.java",
+      "sha256": "e6545555d4f09f91e5ec2e16b98cc4cd2b649f682ce3e59dfa41e081f980f339"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/CanonicalDistance.java",
+      "sha256": "0bac9738024c21f47a4fd7d4f4dfde0f3ac91de616f0fd3652c5447608cc1ff1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/ClosedCallEvidence.java",
+      "sha256": "26d48a190366b2dcff5ebdff5ef3b8401a1c90777eb7cc67bcafc1c0763045fc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/ClosedTemporalPhaseTest.java",
+      "sha256": "c655add38f40758f27b8e4aea4d8025395659ffd0c5dca05e4a41b3746ef52d9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/DeclarationOrbitShorterReplayTest.java",
+      "sha256": "41c4c3f7d12bdd91f8b2c89ef621711fed02a89cd5975df4da80a3e76f547d7a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/DeclaredSlotReplayTest.java",
+      "sha256": "2bffbbcda0cf10770e7c9f72ccca7d282075c24ffb7fe3c3a806c924753b36e2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/AblationEngine.java",
+      "sha256": "dca84343359330fdce3e52d0f8db692c19f800d73477c87dcf858f8a1da473bb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/AlloyRewriteSystem.java",
+      "sha256": "3c477b697421d9dae52475d02dc4a7f9b25771b6c086f958afd1a070d7cb14e9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/AlloyTerm.java",
+      "sha256": "e8527baab7e7c83d3b24cf53dabd0d5467632a15235398b4215e1cbb0e8c1455"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/DeBruijnVariables.java",
+      "sha256": "d3a2b652af3f31f87b405db66dd0dbbd6ca0f46773f6048f2379a1d4094dbfe8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/EGraphEditDistance.java",
+      "sha256": "0d2ec6697076e0d636ff4d52804cc0b4da1b1ea26421aa9bcdd659dd369c2f7d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/EGraphStats.java",
+      "sha256": "9803a1ebcd701b08dc8846140a9028a26de0fdb51302c520b1da2689d2aa481c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/IntEGraph.java",
+      "sha256": "0770a2e97aa05a1a1c966a1e367269608d3f032922cd1f5cbc165cd325e28863"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/JavaEgglog.java",
+      "sha256": "07567217f85df2f87e2b1423abe24a824dfc62d48d328d89d24ef1c90f923705"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/JavaEgglogDeBruijn.java",
+      "sha256": "549162c4d8e84618918d2d52f044805dc8aa98a43cd677805f5a25c63e7a750d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/package-info.java",
+      "sha256": "724e5b1bee0dd3c572aed098bd34af9bde4b743e15ce5864e2519048ec198bf9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/RawDeBruijnEGraph.java",
+      "sha256": "81e3b940ce2fc15f3421c646b5d33bd6c6f9cd54738f048f7a093b143bcff1f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/RawEGraph.java",
+      "sha256": "a1d359f1875df89e8139671c5c008461d59ff6e000efd9caf239579d98978b9c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotBindingBlocks.java",
+      "sha256": "d9d7a122eeea66ce4532dbe0e05c841d383a9e56ec8cdacd7df31db8f88d3527"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotBindingBlocksTest.java",
+      "sha256": "9384f570f93c7d58d1dc8cc9b24af2a84261ebe8974318428ade3a78adc2ab14"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotCanonicalizer.java",
+      "sha256": "5c13aa4995cb083d0c8fb004c29a77999f827bae52842c2caea16001ae382774"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotPermutationSearch.java",
+      "sha256": "8d8eee047eee56e090c961fccc09ce839c788f4f681dc00787d2f4fc944f53a4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotPermutationSearchTest.java",
+      "sha256": "72cad68d7cf26f6de9960ad827cef92f87ee31bce494d26bbaf83c9971df07ee"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlotRewriteOrderTest.java",
+      "sha256": "5cd88b64206ed7d5ffbb7af396d41a5963092ad5dae5caf2b4baf7d159f87c37"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/egraph/SlottedEGraph.java",
+      "sha256": "5d9f24f768f6d5ae48965461e7513d80ed8dcf16e5a0452a44c072a6ff6a2f6b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/EGraphNode.java",
+      "sha256": "c067b9596e5f1276b18e3884599a3714b6d38b46f6a39c2d00492777df91650f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastBinderOrbit.java",
+      "sha256": "d282e04868e680d2767d5b7f25928a50d299f799ce59198976163f731e4aadc3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastChainGeometry.java",
+      "sha256": "aac9075ea9a9b4a137b505b2175cdd068254e560dca70d35dc0293d5051aed9a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastDeclarationPermutation.java",
+      "sha256": "f1136804b0bccb11b32acc4d9a78872ea92c9462a4051ee8bf02804838ac23ae"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastGroupedDeclarationOrbit.java",
+      "sha256": "2d96a45d1017b0054dcc94d871a82ed342d077a22e5e1a3e7e6d6bd2b206d4af"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastLocalPaidScope.java",
+      "sha256": "a5fc457e22f1092120c794b131511abbd4520f33e79d7e1f84ece1e19cb64f92"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastLocalPaidScopeTest.java",
+      "sha256": "9f097c6b67d008ea3a15f7acdcc2758d6428caa145fd5c897ca207230360e6f1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastNestedPaidScope.java",
+      "sha256": "fae21204b2c72d6fbc1e12cbfb98b532a26efe241b7f06d8653bf7954d4ed688"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastNestedPaidScopeTest.java",
+      "sha256": "99b443d0c3e84f4c78007c728528952a51a9677adeff1724920d50f9bd9ad490"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastPaidDeclarationAlignment.java",
+      "sha256": "fb803d8a7d431a4b2a15808a78f560b6a8eb274e952f4aba75551a618d795621"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastPaidDeclarationAlignmentTest.java",
+      "sha256": "a02c77dc70ee84ee4cb831ef8d88bd0482d78d59e849dce0502c5d9a4838bb98"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastPrefixSource.java",
+      "sha256": "f1eeda5e352fbdec43de372bf2ff27d709936a0eb7fdcb08e8e1283c1af4b236"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastPrefixSourceTest.java",
+      "sha256": "2a5e8885437a9d9f3eb3b8084c67e6b2e1a486eda4ee5638f2450296025d12bb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastRetainedDeclarationCompletion.java",
+      "sha256": "d5c2ce43e676055ebda66b37bf9a97db5aa9ea9f959f85c2c3aa16fd21c17884"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastSamePhasePrefix.java",
+      "sha256": "5625304b65e7b171a7b215bc49c3fac6fbe4ad08c68562a30c203e966a09d8f1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/FastSetDedup.java",
+      "sha256": "95e09bed702edfd09f93484d1de258f55a0cd3a73e1dcd09bbaababd34fa595a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/GroupedPaidDeclarationAlignmentTest.java",
+      "sha256": "c6e0a4331cbee47eae881af5afb8409407f1f42eb67ad5640d696aafa52786f4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/InjectiveVariableFallbackTest.java",
+      "sha256": "ecad1e637af90f5770a9059822916ff09681fc978c6278908b3ed46267a8cd1a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/InjectiveVariableReplayTest.java",
+      "sha256": "b5535d3e3e121a3c5c7b2730dba7c8c0f2bf88d26755365fb9d5c0a54b4b1d74"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/JoinSegmentation.java",
+      "sha256": "0b4cd1b244868c2f51593f0a8342ab9f3e7905a7a65720046ded95867d511c05"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/LocalBinderTransport.java",
+      "sha256": "0a0885b656603ccbd01d9e6fabb8783fd855472b8ff1ee31c280ad5d07285f6f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/LocalBinderTransportTest.java",
+      "sha256": "f1b01174d8e3182c5446bf8afeb3160bfde628aa2469292e3ddfc68319f35d93"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/LonePaidDeclarationAlignmentTest.java",
+      "sha256": "94265bfb0d481d551f74cc833270d6500a4d82298f7cd3916b3145d66fa56e75"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/NormalForm.java",
+      "sha256": "a522c2dec9a912e7f2ff35792b73c38cc8d250f7295c7968b66450ae540e2ae9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/OnePaidDeclarationAlignmentTest.java",
+      "sha256": "98da0d9a1468eddcdbb507dcfe1bc7d08ee082f47d06271e723bf0cfffe9ca00"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/OrderedTreeEditDistance.java",
+      "sha256": "d50a8032ccbdae714cee4c0412f1618f79dbc739d2201b5509d3802a27897ac7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/package-info.java",
+      "sha256": "6fad44c4f9012124682146d38f01b6aa0a799368f3c312b0b759e1b66ac0fe2a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/PreparedOrbitCacheTest.java",
+      "sha256": "5db5f2bc449d13edcce2c47b0a79608e21716edf012eb5082db752d49adf15f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/QuantiVar.java",
+      "sha256": "0fe487ea7a71b0e9b0c694cd8b7e27801b2597fe2c59cd24465cdaa77f74f2cd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/RenamedIdUnionFind.java",
+      "sha256": "a0ac31dc82d8889701bddf3e66b27fd87a2d468b8b50f61964eba03468c9f151"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/RetainedExistentialAdmissionTest.java",
+      "sha256": "684eb690515f1d3e4b43e1b1bd994e93abe335c0e4a7c6d31827ec2d7c59e1b6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/RetainedPaidCompletionTest.java",
+      "sha256": "574720a4db93500b03035cbd42632d3a0a4fe15ba90bfe33faa2a5a25904de20"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/ScopedPaidAdmissionTest.java",
+      "sha256": "cee3a2a95d619753332872efe76ee3a153d036567643dd4621f5815118e6954e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/ScopedTemporalShorterReplayTest.java",
+      "sha256": "e938b60374e1213ddeee73055b93d1fe6fdeb0c9e5ccf54e574ec24e820a4c7d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/SlotPermutationGroup.java",
+      "sha256": "95db42194d614b7f716f708c9bac999932f8fb7cc7ed66f3729d2990d626efa8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/StructuralDeclarationOrigin.java",
+      "sha256": "fe5eb84ce9f8ef52ec08856205f89008ad8f33c3065b4ee86c44b047951afa29"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/TemporalOccurrenceAccountingTest.java",
+      "sha256": "a2badd3cff51a0730bef51ef2e75d0b0f4c4420669c459ba496ce7e7b8cdc844"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/TemporalReachabilityTest.java",
+      "sha256": "7a269ceb5bbd22e3e096d5dcecce0fc9c77b56a402d4ef6c2d07b03c9fd1f1b5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/core/UnusedBindingEvidenceTest.java",
+      "sha256": "53d1020d4030cf1a588d4c5cdcba2de0ac7723262bfcd0c1187c919c52d82083"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/CrossReferenceAdmissionTest.java",
+      "sha256": "062c0a86bd6b5a27c20efc9a372de31b6136a38e9df2da816840ef7d20ac3c47"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DatasetConventions.java",
+      "sha256": "6b64af3ca3f90dcc8c68acd9f4c7f93c3467c2b75be7b2bf3f1a2e16c4b94f65"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DeclarationKeepTransportTest.java",
+      "sha256": "cbb740f173bb348fd740e1190b0d0f82c5f54efefc031c76cdf3d974df0808f7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DeclarationOrbitSourceTest.java",
+      "sha256": "1e5ce292c53aaf25a03db359647cbe6ad9ed18f1c7758c680459b1f9dbb820bd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DependencyCompatibilityTest.java",
+      "sha256": "34f2cad9e620a5e76ca95bddaa5cc18d4a056a49a3b53a2fb88af5857a74d902"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DependencyOrbitTest.java",
+      "sha256": "2e8d5feb4bb0f87e1675ac23425f12bc7225e43d504def21c55850cfc534d5f9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DependentDeclarationExtractionRegressionTest.java",
+      "sha256": "0467e3d94531d260783808ff31cb9d0a0823bfc62899fbdf25b6a439e338ec46"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DisjointGroupPermutationTest.java",
+      "sha256": "05561271d4a4a5083c1025bd8fe7a4038333960a298ec523c16556096b54521c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DisjointPaidDeclarationReplayTest.java",
+      "sha256": "a350bf1dd8eaed1abeb90d01f574272cbc26fc7bb23aefa9ea532ce785871ccf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DisjointPrefixSelectionTest.java",
+      "sha256": "efb03daa1d3f0ddacd0ba5632886b849a11120ebef2fbaf94ca637de93548a1a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DistanceDerivedTraceTest.java",
+      "sha256": "6a6ca4f569434998dc83cca3922f6103c0c8d2df9a51c799220ae78a0fe43cea"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DistanceReplayDiagnostics.java",
+      "sha256": "cd7e2da9b010af74c76a77333f1e356f31fcaba2ce6f240c0d3846afa9de5393"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DistanceReplayDiagnosticsTest.java",
+      "sha256": "56f3a27c599866eb39f47f5afa546fbeb25b37d059fb75385620eced7eae1705"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/DistinctLocalOwnersTest.java",
+      "sha256": "0f802903770f3d3e142b3c8ab42a75e6c90fdab90aa7ce9e4949af22c2fbad89"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EGraphAblationInspector.java",
+      "sha256": "e40eb594d992ecb8233d226fb7ab75f856dcdfbd18624285384bb4041db53023"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EGraphAblationStudy.java",
+      "sha256": "2e5d99aad8fff1f8632a36fed8ba4d3c78ac65a6c6470a078f0f49e66663a9ee"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EGraphAblationSuite.java",
+      "sha256": "d00bf2365cdd4e1a3c0e7593098d33e3513d7dc961827e5bf061b2f3caec811a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EGraphSaturationTest.java",
+      "sha256": "e84ec5c9466e7aaca4a1700c018486f38664c87e1a5afd2359d46f742938584a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EGraphSemanticSoundnessCheck.java",
+      "sha256": "fda2d199360a83958dd685c1a2d00aaab8573e7fd20ca29fa3109a86db1f0954"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EmptyBindingEvidenceReplayTest.java",
+      "sha256": "a1edae81507304045b5b8e7d03a26ced1f46b7a4fa662b88291340599e3b46c6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/EmptyCallArgumentPaidReplayTest.java",
+      "sha256": "c79614b716b53b6b884c7b6357169f71562c069d5393cda93d7f383ff07da4fb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ExperimentMemoryBudget.java",
+      "sha256": "63d70b358693c30bd63164f56ee171db47ef6a920af81e1b8cb79133dde7944e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ExperimentProgress.java",
+      "sha256": "ca6abaf272fb5d573ed4d7590cbab50f7cfc0918f2da28da58131ce187770928"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastChainGeometryTest.java",
+      "sha256": "60d7667635d75152f96c269555b3525ea4c5d72909d0cb909e13b5e6348bbcd0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastOrbitCorrespondenceTest.java",
+      "sha256": "cf6eca6f18b7d1b9d130e631b2004b905e8aaf07872e41d69e3cc2c0f694deb4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastProductGeometryTest.java",
+      "sha256": "d3a190ab2e0e4220807f8e0ce9e6f3036b4be4c89772e28325c0356e42cd5920"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastRepresentativeAuthentication.java",
+      "sha256": "ceb54aad29508624931ef5a341968783613f046ac08fa6b0d2e83ebbe14b9554"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastResultTypeCostTest.java",
+      "sha256": "6971d008e3fc7b795b0d05a9993d56384ca89f92a6d226ba954c4b3eb8ee0847"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastRewriteParityTest.java",
+      "sha256": "39b0ef88160b0f321daa5ba8dfefc17500aca80aef7c418f7d62f616958e0e24"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FastTemporalReferenceTest.java",
+      "sha256": "5cb165063088d0036205810487a256be229b664f820e383ea48d8b23e12f085c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FirstIncidentReplayTest.java",
+      "sha256": "f602b5cf054c9c7980c0ee22c9913f465b059838573cf299d7407ee76e61fed8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FixedDeclarationProgramTest.java",
+      "sha256": "e225426f42c4d8fc054dab95bb38eee025009aef0d269c3814d5801d0d627cb3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FormulaCallReplayTest.java",
+      "sha256": "0747962b5270f3b77e6fb1c4c7eea1d814b9ae08c8ca88d69cc1657c7e46fcc2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/FullCorpusNonTemporalP0RegressionTest.java",
+      "sha256": "b82905e10073a2ce60fbc3734f5459d24188689de8cb8ac158aebb34c5b020ca"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GroupedDomainEvidenceReplayTest.java",
+      "sha256": "7729980d4f129742e0db37c45fbc72d28a0848b031c6976b46ea853652955559"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GroupedOnePaidReplayTest.java",
+      "sha256": "6feb5a230985b986c6a73f1d5b2dba7d8bdbb6eb77efcb7b39c186f8da60748a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GroupedPaidDeclarationShorterReplayTest.java",
+      "sha256": "160d9cfdc5ed7a8d387da78c690fc3ce028f2d63361bc2cd5f21903f83be8621"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GroupedPaidOrbitReplayTest.java",
+      "sha256": "dfceb317397e7201d39b39cb58e93f300bddb427cfd585e9b9ab43968733b86e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GroupedRetainedScopeReplayTest.java",
+      "sha256": "0ff7c1000bdc4c98ffbf7d43c33bdb2a248ed3f18623c9b32f1d480a44f1a0b4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedDomainProjectionTest.java",
+      "sha256": "5aa5a1851aed36beb1f3fe39eb03e5dd27d74b2ebef8dae5fb332fc15c0c50ba"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedJoinDuplicateReplayTest.java",
+      "sha256": "4544128feb6b69fd3ab0079ed477ee14dd67a195322e8c1eb5ba6ee6660a1887"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedJoinErasureReplayTest.java",
+      "sha256": "902bbc8ad93f13df86aa7fa8c6aca777902d73f865e5f146616957c27f47d816"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedJoinFactoringTest.java",
+      "sha256": "c965406e32482e64afdcfc58d987a8c413208a7cb9702be260a4d772e3c577c4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedJoinOccurrenceReplayTest.java",
+      "sha256": "6dfed22caa429acb91cebe631ad85506afa45f8191659e5c828905751aab6421"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/GuardedJoinRelationalDuplicateTest.java",
+      "sha256": "c55707eb2803e93d1c5f0f798f94084148895380fc1abf8d45e3b27d5a2d64f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/HeterogeneousPrefixReplayTest.java",
+      "sha256": "195cd3975a3a14bdd40578bcc46749bc03238de808b120b3b80f7a46f1feff14"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ImportedAciPatternTest.java",
+      "sha256": "ce1c3a6fcde314631620a100de3bc9217d3fae95f8190ef2effed5b05c239c60"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ImportedBoundCallPaidReplayTest.java",
+      "sha256": "372da576219c8e1a32b54e1d79112b8be7d796a1ede6a8615318b576930ec5cd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ImportedPhaseScopeTest.java",
+      "sha256": "50701b9a6f29a201c24561ebedcabd5df2ab1d7b8d1b15fb8bd1da8a9b4a991a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ImportedSingleUseBindingTest.java",
+      "sha256": "391e09c45c1beb893b940990c4c5aaa495753456af7ce84e95f4b4ea9aa3f02a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/InheritedTemporalPhaseTest.java",
+      "sha256": "c54130b0c5fdd1232f5ffcc6eea54dbd3987c0aeb07e2f36f2f90afd701d0877"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/InvocationCopyTest.java",
+      "sha256": "c24160db0235c9e019b9c86c24e0396113eb69a80300320abd6c15b3f86e69d5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ir/IRAgent.java",
+      "sha256": "cd67492fc8e7e77937e3e34e5650e91a75a2994cc7282895e217c0d23c48c112"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/JoinSegmentationTest.java",
+      "sha256": "8d7a92aef5e32e9d457cc54f1b8ac1a30b1cea6328f4626613e14f4cc7cee79d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/JoinSeqRepairTest.java",
+      "sha256": "735226e4f5d7796dd68507b53d9ead3a230681136cfc80fcb11de6fa7c8c4dbc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/JointDeclarationMinimumTest.java",
+      "sha256": "210de87efee96fcc763aa48637f2645b22ce16e118413a92e66cd362786f2558"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/JointDeclarationTieReplayTest.java",
+      "sha256": "80b921f1e5dc1b79adaae5ec97dd07f542a890889f3ea4177b30b5e7d692aceb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LivePhaseSupportTest.java",
+      "sha256": "2e139c10d46d1e87ff1e8775fed5b1f95896a0bd824ab6da51da37c99c5aaaea"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LiveReadMapTest.java",
+      "sha256": "5d7adf06cbe5d01131258b1f8f06c10edd9184e8f871ae53ea8bef47b66223c0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalDeclarationProjectionTest.java",
+      "sha256": "919df3f6a1266e2dc8ce8f601a75fa2eafc8bab6493ca30264a42939f28dc2a9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalDomainPortSharingTest.java",
+      "sha256": "5733dfeeeb8c1c8c053fec11ae03beb23ad0d2cccc209ca34182571fec5d7275"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalDomainSingletonTest.java",
+      "sha256": "496dba3ec78a71287e8ca5ce83f1fed815f6b7b7d93c8a5359bb7240dd771c7f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalFormulaCallReplayTest.java",
+      "sha256": "739e424234eea7a8d724af84778569b3c654ebe3b6c052dcc97ee8caca5b2095"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalOwnerCorrespondence.java",
+      "sha256": "e30046bdb8584daae955c4bd5baea0ad2f676d77280a28369fc25de2ef0a0b86"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalOwnerTraceTest.java",
+      "sha256": "e32142db776dcb15142a338541c3f520ed21e1e073feaccc044d938c5e8aad51"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LocalPaidDeclarationShorterReplayTest.java",
+      "sha256": "1d28aa882f8e0f64d828da976aff3d3a58447b992a4f939397206437e6a41347"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/LonePaidDeclarationShorterReplayTest.java",
+      "sha256": "456ff2214c4f38355e5bc71b7320605a712f16e6c3a962a0d76431acca0e5e51"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/macros/ModelEnv.java",
+      "sha256": "0d9205d9611c50f6412bada6723a6f8c0282a81a8b0ae48ae4fb32c49d68f526"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/MASGVisitorTypeRegressionTest.java",
+      "sha256": "88a01a59b93046982f432a04562c54b5c5558bbc3813077d9958f0351ed6f1c5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/MatrixCaptureTest.java",
+      "sha256": "77f49fc8e5614481e09fcdd1230599e3afa33c67e3a2431d2b8c69a1196ce5a3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/CertifiedDeclarationOrbit.java",
+      "sha256": "cf39ea146bb6bf585d83e042cd7398c3c5ee3775d2b8d0786ad6e4f9affb5356"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/CertifiedDeclarationOrbitTest.java",
+      "sha256": "0110f3cbeb59f36920ac095860981be81da0868247ca5ea4fb65b257f8da2ad0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/ConcreteRepairMetricRefinementTest.java",
+      "sha256": "26a75182530c2f607fd9681d45a34901eff774bc7dc203389498cbaaf9eb3ecb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/DeclarationMatrixLink.java",
+      "sha256": "4311eb87628e3b4c1575985e8538d8b1ea084b34b20bf34fc057801f329d9d28"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/DeclarationOrbitQuotient.java",
+      "sha256": "c10fd7494fb051e5180d03e63f4c2125edf825cef6006be5b57d5cb0ea47007e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/DeclarationPresentation.java",
+      "sha256": "e4c25b35ea7ee1cdbb9acc231f1bb5cbc21a0fb85c68976c1fe65674c50c54bd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/DeclarationReplay.java",
+      "sha256": "b85ccc7750179036ae9a0ad01dba2c948d49ca340352c008425ab1442466de8b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/FastTemporalReferences.java",
+      "sha256": "cc80857ac374b93ab916a5abd7f66f1d2b0127d1b961fca8631ae41aa3af7eb9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/MatrixDecision.java",
+      "sha256": "36c7cd6ab3519e4d3329810484b99452af3276fcfebc5cea5e1fd838e2a6d5b9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/MatrixProgram.java",
+      "sha256": "87bfcfab7c7db9f4eeaefca2ce8c536a71b90e8a8ad432146b5caf7e26bcfa90"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/MatrixReplay.java",
+      "sha256": "f4b5b823592feeac826d8527048d2f00536ef872aa57f020041a2d55ed04e83d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/MatrixReplayTest.java",
+      "sha256": "846b6480a89cf862598afd4439ffd267b1d40640a543ec97d504149b34706daf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/MetricDecisionProgramTest.java",
+      "sha256": "0feccbcbbf27f39aa89fa36aa1a5f51b0ef314db4523048e200c56dbbe2f81cd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/NativeRepairTrace.java",
+      "sha256": "811c1d71cdbb67e10bf3bf6f8ee921ceec81595d1d8dac3bc024b539eb6378bc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/package-info.java",
+      "sha256": "3da4b0a011a3b0a30c239b9386a958eafabe0d0004c83f6a4e5be943abd0d14f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/PaidTemporalRoutingTest.java",
+      "sha256": "ccc8c1eefb866cc1bc6cc324bfb6608e1c61136ca38d169796bbb11ee83e32a2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/PhaseReplay.java",
+      "sha256": "cd70531785ceebf8c80ba5b06aee00f579c06197b73178a065feed3c49009e5a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/PhaseReplayTest.java",
+      "sha256": "a4421698abbf4035b2bcb3c777517740a0a7eb3413136ba535b295e131482434"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/QuotientRepairDistance.java",
+      "sha256": "0d24d10f4e35a6843ab6277483b6d9b073ce456189c4af9b7e501d3f129a4846"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/QuotientRepairDistanceTest.java",
+      "sha256": "b74aab070cbaeb345bc358f93673da071134f2058d6088e5ad068b2a3aa12316"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/RepairProjection.java",
+      "sha256": "236a648de43272ba05980de62ffb1460d7a471d3799d51d028f36fa765a3c87e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/RepairProjectionPermutationTest.java",
+      "sha256": "0d9d3e65541293cdaa20f3e654ed17de7b36f7715955497749124daf31432286"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/RepairView.java",
+      "sha256": "51f85394263c08a4361b72c07b0d954b979a806a5c8f73a9d452218152b73e69"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/ReplayValidationException.java",
+      "sha256": "298cc0d9795ba380f7753d84e3c85152afa6d23b794d2f14eb8c73b0051094da"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/SelectedDeclarationCompletion.java",
+      "sha256": "a50f147a354dfb904238252355aa519eb8efee4f013e6859c804ee5ca47e04cf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/SelectedTemporalPayments.java",
+      "sha256": "39c3b47fae60d5ae209463650ff15bd8dfc5b3b4c69d5a708ee15e7280b0296e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/SelectedTemporalPaymentTest.java",
+      "sha256": "886ff2fd2a3d6656ae6140821e1b207d4787e15d8a808706ad6592c50c1ce8b6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TemporalReferenceChargeTest.java",
+      "sha256": "284851e2059819b7d560b4d09f956645fb6e9bd5121a1f8643dee3a7c8008bef"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TemporalReplay.java",
+      "sha256": "5751e8826400cc8a1facc5e62d2766afb99e79d998ad95219ecb55a01c180b93"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TemporalReplayTest.java",
+      "sha256": "75e23fdf624243675280efd7b134182ae773feb09a3ce479392183f7d78f33c2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TraceResources.java",
+      "sha256": "84f67fe6dd7235ac3b5aeb16f865afd12344c02d1514aca32e3653a72ed26bbe"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TypedTemporalDerivation.java",
+      "sha256": "8b37d70123f7cd6ecd45437ff9f536b67bc2821b7b9af77bf1f96ece21196c87"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/metric/TypedTemporalDerivationTest.java",
+      "sha256": "be1004247f57a5bc2f7f612bd3317efdf6b4e29fcd223e9c4ba66fbf635a03f0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/MixedPaidDeclarationShorterReplayTest.java",
+      "sha256": "dddc188a5a749e927d4db6632c3289e1569aba5cf89ea2e35a57d9356f587493"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/MixedRetainedAdmissionReplayTest.java",
+      "sha256": "389670d9dcfc5f4a78995d1fbd667edd646d5116ad01200fce657214ef61da72"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NativeDeclarationTraceCoherenceTest.java",
+      "sha256": "47f5040df81b9c22566d5563eb8543f75c2e5767aeffbd41ee0aacf3cf1b00b4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NativeOperationComparison.java",
+      "sha256": "183688e9848e9b0e7ac7f1da3fb2d9d54eea9517bd148e87867a4308556abf00"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NativeOperationComparisonTest.java",
+      "sha256": "87aea7978d4cd8d2cf32db71fdbd771e17369b6b98cd1ee6df63af8c45b9e6e7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NativeOperationGateTest.java",
+      "sha256": "8ed817331361ac2b931a463bf2df7125c2d00436a377fd6a7a93d025cba8c74c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NativePhaseReplayTest.java",
+      "sha256": "db659473b3f5cad8d75ac6b8bba132e9edfcd058b3bdecd9d8d77a8195da329c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NestedPaidDeclarationReplayTest.java",
+      "sha256": "7aef527347a0353345b5de7b72d42971607b7a4c78d501455047d53d6431b9ec"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NormalizedDeclarationDomainTest.java",
+      "sha256": "caf983a828820e7499200578752520c09a3be5b7938a7b710353056c157b900f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/NullarySourceCallTest.java",
+      "sha256": "5dbc0c201b47979eecf60e343b4a3f217e2dd383042f18b3dbdd84110904ded5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OnePaidDeclarationShorterReplayTest.java",
+      "sha256": "6a8b4acf8dc7f0d8049ab2106b303978000b0febe012e9c5a23580b53f75ced4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OneSidedDependencyTest.java",
+      "sha256": "a2870a3d911b6c8d14a045e0cec9cb5a63eea996619d1adfd4631c0a473307d0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OrderedCallValidationRegressionTest.java",
+      "sha256": "dfee3577eda3f43e943b2df965430302fd73c8394957846dbd945c654dbbf976"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OrderedLocalPaidAdmissionTest.java",
+      "sha256": "b0295f384d6e74b84ec5457c6cffc9752cb2b604f15adbc7420194b722187223"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OrderedPhaseCorrespondenceTest.java",
+      "sha256": "6bb3c6d8cebb4ea095f161afbfcc9014fa19f09e1a97df552dda1457000ae007"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/OwnerLinkedDeclarationSelectionTest.java",
+      "sha256": "a78b4c2609f31164d14e48777b18c9a9c1bd13e3ad07c7e39bb72f5ed1dea3f9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/P06ShorterReplayTest.java",
+      "sha256": "b76d3454e9f81602eee77fcfa363349b7936ae8f62c94723aa4366e308ee250b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidAlignmentExtensionTest.java",
+      "sha256": "de0cbba3cb3d98affcad2bc43ebc5909f5219043dd40d2ea083a4a6aec559b31"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidBranchRouteTest.java",
+      "sha256": "55365c05fa0333f410540a63df2686cd1f536da2fc5fdafc973aaad66b0a6446"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidDeclarationShorterReplayTest.java",
+      "sha256": "8f2520f316aa099c777b8bcf31d29e203b7099adec4792e749e057e281a7c66e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidGuardEditTest.java",
+      "sha256": "a9342180e51d760b95834b4be72d4a79ceb0b979b91f092bf6b9e6a3f59f27a1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidImportedBindingTest.java",
+      "sha256": "3c7ab3bb19979cebedf8f73b7fdb64eb8104d2ed1c741539e66148af0b2fa859"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidOrbitTieOrderTest.java",
+      "sha256": "89232f8e87c261089ca37b07a6b5fa8945fdd73c993a57b615d668a8472b42c0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PaidSlotTransportTest.java",
+      "sha256": "83f7ffaaf96e3f3bf357397ebe25656b549d3350691d66a6803df66192cd9a1f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PartialCoherentMatchingTest.java",
+      "sha256": "f1bddfa3300620a41af2a5c6d9248f1bab2f26970867b342b071f87aeb8d91bd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PartialJoinCompositionTest.java",
+      "sha256": "e754e15fa5c1500863a11d376eaaafb3d660245943607dde3107e87bcbcefde6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PerformanceRegressionTest.java",
+      "sha256": "7dc62bc0d7dd2c4204d64393b1469b0ac0a0cf604725c6746c94487f9b10b5ed"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PhaseIdentityJoin.java",
+      "sha256": "fbdf07b0c9d52a2a75d7a5782008e2114c7d48f006eabe680a96a15cf31ab10c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PrefixBinderPlanTest.java",
+      "sha256": "f005f22aae44e365bb4c2aadcf873105dea8b2a1c3cef3ceeb190fd10f7fe4ab"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PrefixCallCorrespondenceTest.java",
+      "sha256": "dc057033df8ac8e5f31aa25cb9bfc996d960ecb094b92a6a777f4a051a91c838"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PreparedMetadataConcurrencyTest.java",
+      "sha256": "123accec499a4428d1d971f725a3bdeea0be0206cde9adb1ee09915045849008"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/PrimaryAlternativeCongruenceTest.java",
+      "sha256": "fe31c7c0fe1484681e8769f8f87bb7caab73c28cf323f1053c19c691c105972c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ProductShorterReplayTest.java",
+      "sha256": "8fca0c5a55eec0f3e1de501385f70b66ef93b02068e6bf662d8e9f91614e6f64"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/QueuedPatternReplayTest.java",
+      "sha256": "c0d8eb942cce037050b5b9f9dafb0c4d3320bf5e303a5b4000897a4e7ee75934"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/QueueProbe.java",
+      "sha256": "3afff0d18d6de562cb2a94f6b330c89fa09e280765b15bee90b26aee494df0da"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RepairCorpusSource.java",
+      "sha256": "68a4f6a1173d494a1beec2aeb9dcd5613f1e7c6c12531c8a5643d70a213adbaa"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RepeatedOccurrenceGate.java",
+      "sha256": "f26a0a838519adba4c2f0251be66f033888a182051e5564773e4b318e694ba26"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RequiredPolicyCoverageTest.java",
+      "sha256": "21dcb0f5655c94b3dd439d116b4d9d0baefbca396c45affdd5606dec0b812955"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedComprehensionPaidTest.java",
+      "sha256": "580455e0b7b0ffa31ae6f5b50b78991e56b09fa734b964af65c7a614d051fd77"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedDifferenceDomainReplayTest.java",
+      "sha256": "b104540ac94110ede0a9ff39023a0192a40c853ce772d5e251edb06b9ae2d374"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedExistentialReplayTest.java",
+      "sha256": "3857d6a51d5e6f0b720d85edc98816a0685af6bd5ae2bb56b34b73a2f6da13b1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedLocalPermutationTest.java",
+      "sha256": "47ebe61791473ad7c2fbac6579c4577dfb524d36ba6fd6e06d4cd700b855d8f3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedOwnerAdmissionTest.java",
+      "sha256": "2d492bc791c0554f8b526fcea3a3ad1a97f7176a729efb1f21ef17a118a2fc4b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedPaidCandidateReplayTest.java",
+      "sha256": "b88cde26af90327da2298ec5f86764a460eabb4b6178d7915c7c41cf09d63a42"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedPrefixCandidateTest.java",
+      "sha256": "4e29dfc4be3ed0a03c0ac2601a4487f488fafd9496c45e4050ab523e2bc6aab3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RetainedTupleCallReplayTest.java",
+      "sha256": "defd738d534a9ecd7bc7fd53329841982f23d8a640cfbc4a236deb93e6ce6988"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RewriteRuleTraceability.java",
+      "sha256": "adcb463c0e804f7374f354c15dcb1e2b9a904d40d80393f3055045d5e13bd579"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/RewriteRuleTraceabilityTest.java",
+      "sha256": "874339c6020ae29939bedc7b8cdd68bd20d845232e462adb4fdfdca0b3404e97"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SamePhasePrefixGroupingTest.java",
+      "sha256": "f66c79dd6164246899a57ccc228e8394a605ff8f04e182b72188178200f44be2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ScopeBlockTieReplayTest.java",
+      "sha256": "b13e5620e5463f59f8f5b22f6f574211325ea370ec5899ce7daed94e9c4a544e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ScopedCallCorrespondenceTest.java",
+      "sha256": "56e77c1294a9b7ee04f977b39eccb45a9805f6045cf892f8ee6262bdddc5e1d3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ScopedPaidAdmissionReplayTest.java",
+      "sha256": "0aaa9823dcbdeb94180e251bae203345c3e60c7336aa7d256b9e1c1555f4556c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/Section3AssuranceTraceability.java",
+      "sha256": "d5fcd7fc160fe3f81870ec5756e872b1d6984ec0f8f82fc5a246931237a94438"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/Section3AssuranceTraceabilityTest.java",
+      "sha256": "c695980bdd4b8a734484b81427b708cf93a223f7a66b1ca47b035dfe5a0bfb7f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SelectedDeclarationCompletionTest.java",
+      "sha256": "9395063cfe0bb511a95b31aa8292ce6d42d1aad827ece1e75f6e17c96d95961b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SelectedIdentityAlternativeTest.java",
+      "sha256": "f404e70865b382933b94ef719ad49ac183e05409b4ed199211a1a965289c5b62"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SemanticProfileSourceCommandTest.java",
+      "sha256": "383153def4aac70c0ca7689113954df11eb4ff65e212de2a89c92e6c91145ff8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SeparatePrefixOrbitReplayTest.java",
+      "sha256": "269997aac4f20268669f8fbb44a52406db897a3f00b7227a0bf970d2e39dfc53"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SharedActionBoundaryTest.java",
+      "sha256": "c85ffcbf7e5193e4f4ee9b08e2075e2a4cf31c7736b57e3092c2ce481f03f6b3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SlotBindingDatasetValidator.java",
+      "sha256": "335c6e5282d542f8a046101229d882f55e6c149ec3d0f181948fd45c85ea3fd6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SlotTypingSyntheticWorker.java",
+      "sha256": "41cf4a93be2e469c3a03e1430360977c3176d419d37d285cb07fbe401e873e4f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/SourceOwnedFrameSelectionTest.java",
+      "sha256": "3b531787ef59be1ff3d72b02a13c1efa3473fd30736fa06df2e9d3a1df06fbf8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/StructuralDeclarationTypingTest.java",
+      "sha256": "74fb10deff296ce6c70e72bc4b2357256a56e9029749146e826678d2472aecb7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/StructuralSharingTest.java",
+      "sha256": "c6d22d47deefc5f83d15c2a180fea6261a17f4d0a8575bdb443014ab5ccef495"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/TemporalCorrespondenceTest.java",
+      "sha256": "4ebc4738a43e01a6c67703871cb9d7b90a9049350cee85d0a3f516912f7298df"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/TemporalLocalOwnerTest.java",
+      "sha256": "6ba653409b9afe8bb9670da63b51444ef1fd9d1e0513218230317cc9e5b2c96c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/TemporalOperationCorrespondence.java",
+      "sha256": "5870a66bc15849e46c87e36cda3ecfedc038d9b1db8674c30a16f3c122b459a6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/TemporalReferenceReconstructionTest.java",
+      "sha256": "0d54096969aef9c85e56e09dc354769a66b9a5d63f70388a5b879ec58e637182"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/AlloyLawRegistry.java",
+      "sha256": "45452b6110434d825dfe442b9becef09005e4ad53650b5dc51b73e1f9447aae4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/AlloySemanticProfileFactory.java",
+      "sha256": "ca18929fe4bd0730315ad60f3de73b2e9cae7dafc7453fd15fdee26705b5c459"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/AlloyTypeBridge.java",
+      "sha256": "5e30c9cc91978ca5549c98eac6ac27571e72137d4a14fcbcd790fc2326f5f475"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ArityPolicy.java",
+      "sha256": "f19074047a01ab8c9365ad21c06161ad41080652b9edf4853c76b3bfc2440664"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BagPort.java",
+      "sha256": "5b5aff7a441bcf6882f93c9e0f054c9eb535b369158f75d9222f0c49decc91ec"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BagPortSchema.java",
+      "sha256": "028394dc343fc6c2dcad44d8c0fd97af1b5f6b85d7f3698b1936f8217c67fe79"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BindBlockPort.java",
+      "sha256": "6fb3e08cc5968718c26d6467815db4b2994beeb78794a92b3e8ebfee68b3f223"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BindBlockPortSchema.java",
+      "sha256": "2709b359f559b8fab88e5b8bd45efa5f05dd89882ecebd64ccc659243bf3f0cc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderAutomorphismCertificate.java",
+      "sha256": "cffac38bab07f17ee74db1609b90d31366367b6a4deceed28c9e29fe9e0a39b4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderAutomorphismGroup.java",
+      "sha256": "8472019f3b53db6c92de9f1dde3f1bd3d1c97f57f9f3088d997f14ba88ee46b3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderBlockDescriptor.java",
+      "sha256": "fe3eb94133bc7660b82feba41102b2a79d51440706d75f353606d97dd8ec8def"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderCoordinateDescriptor.java",
+      "sha256": "4088981c63d27f700fbca95b0fe96ca1a85ff023bfd69dc099e61752cd9f81a9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderOccurrenceAutomorphismCertificate.java",
+      "sha256": "9a532f4d59a34dd711647e37cdf6dd479c95089d5a0bc4c60be0fc8a44d99f1b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BinderOccurrenceProofs.java",
+      "sha256": "5ddc3c4b4f2a72b0720152a9b03748ee28196bbeab4a84f0ba317b19df2eb01f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BindPort.java",
+      "sha256": "09936324912a7f4fa35c799f57d1cda3087150ee4a9acd340bf9ff58695f924c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BindPortSchema.java",
+      "sha256": "54292d7f835187ba54ecd6b728fd563f0519e5f11ec64cc8d8c32a73aa5175dd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BooleanConstructionReplayProbe.java",
+      "sha256": "0157f401cc430b4b8355930fda2a05d9c6f194d1f13fb343188a788badedd64b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BooleanSmartConstructionTest.java",
+      "sha256": "117bb4b61e7e0af25c803256b1b0144be0f6853b90dee00bbb52320754b31fc9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/BoundedFiniteUnfoldingOracle.java",
+      "sha256": "b748829e42053e4ba7f51373728c01deb415563674938c5e925e52075e36157f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CallContextWeakeningTest.java",
+      "sha256": "b4705d031ad6208396786bf97edf0e3bd5f92463dcc7540de09d4a628ba46a62"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CallOccurrenceCertificate.java",
+      "sha256": "763556981e6b451e92147ab03a7ef7aeb455a34e3d887a6e0fcc756da4b9b492"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalizationDomainException.java",
+      "sha256": "ba087206ed2219609a55577f3bf828029dd50677e831b7d20fb20836c3e0fe47"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalizationMetrics.java",
+      "sha256": "e138e9639921b76a070fab3607467cda21406de8d6b3d38e03e0def32a818e3a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalizationResult.java",
+      "sha256": "8639d9a1a462d2fe99ee5e140a4dd037935cece53a4e7a1bb0e4c2b87bd3f8d3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalOrbitCertificate.java",
+      "sha256": "1be42a9a91cba4288284df047fb00f5319874d19d27d7dfdb2550f13bef00822"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalPermutationPresentation.java",
+      "sha256": "487cd890f719d6c62558b208722add94671a7fb85efc8ac6a812bb5925c8e668"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalShape.java",
+      "sha256": "5ffd555c7313c980457fa4998ae8f63787c34a85cf931208d8fd3c4e7b2a2632"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalSlotAlphabet.java",
+      "sha256": "35d55a2fa31065be4ee1d18ad62991ef42d1daaf6401230e343fe97d8b84e5f0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CanonicalWireTablesRegressionTest.java",
+      "sha256": "a40e861c12a613cbe5351b5d50fc1dcc93f486054a61e12804ea0c2733c63754"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateBundleWriter.java",
+      "sha256": "38da434a3690f1f0beebad2b066dc05aaa96cca663470a87b95b02c7d9a17bf5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateBundleWriterTest.java",
+      "sha256": "b473bf740fcef48b504689fe149247ff03898404e8b1d84c2308dea48746f517"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateCategory.java",
+      "sha256": "430e7419fb1f7248a468a6d86c6ede77a724d30cdd437d8dd238a77244aaee72"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateExportSession.java",
+      "sha256": "acb072c51cd41490f3c2038bd01a216b3d261f562ea1750f8a9a7774de1e98d5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateOrigin.java",
+      "sha256": "49ba3d3b131f639348f898ba24ffc72e0f1146f25c3546c4b7f116979ed7af41"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateProvenance.java",
+      "sha256": "168b8372064e1dc644a8df0fe61744bcc506440c8ddc39848944d7574e755f1e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateProvenanceTest.java",
+      "sha256": "1b23144c4b9c5e7a44cc3ada279c8dd1c00506949a0d14c8b09d9b2402b04750"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateSort.java",
+      "sha256": "3e27988aad303a06c47d6eee4ee05db6eccfff9ebc74b7da92d44415df9a8a9a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateTheoryManifest.java",
+      "sha256": "25f37ffe4dee60b7463e39f7a5c360a3d9df5b5f5e2396e3ced16e363990be06"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateTraceEvent.java",
+      "sha256": "506cdc92715916e27f8dc4fea1f2f4a616e23321587fce80341c367877dfb913"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateTracePayload.java",
+      "sha256": "311ad88f3b026a384dddb585fa2432b9abc65171ca69cca7530d61a91f04f88c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateTraceSink.java",
+      "sha256": "3e711ceedf9bc973b8e699ed27ef6de8f70bc0ebd61782763d216022d4ea8fb0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateTraceSnapshot.java",
+      "sha256": "0258633a0c269e76879890636eb510e82c1311d3f4d32e6b9c148fa256d7781d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateVerificationScope.java",
+      "sha256": "937dc1a44c1dd1b9a68fe7d485919af5e1db85f2826ed8247ccbca369f76d206"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateVerificationScopeTest.java",
+      "sha256": "5450ad15123c4fcb7fa919d82223ff21747171f05f2583ee7fc2d80fd2daa21d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateVerifier.java",
+      "sha256": "e80eb8a02af5cd06694ecca7239ee1489608334350328a430439ff118598f320"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertificateWriteMetrics.java",
+      "sha256": "00b0bb4219b34f4c71147e5e9693b0c0738676bc52a6779a5d299d1e4c7a8358"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedCanonicalizationResult.java",
+      "sha256": "bfd35f83ab23a42a71a33c12bec5e14e8ab027c97058f23817555104678ec16c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedContainerConstruction.java",
+      "sha256": "5cdd954bddf4e42a384fd09b198f5fcc6dd7f119d7e7ff235422e7665f18e5c5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedDependentChainConstruction.java",
+      "sha256": "dab13788ffa4f209a1f8e63e6a5aebaa201bfe9ab73e39050fe101e0cdbb7483"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedFlatConstruction.java",
+      "sha256": "680b70cc61838a64253e9b8f59a03b6ac539bd9a1831e206a51fdd8eae520cc3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedInsertionResult.java",
+      "sha256": "b215272dc4428310d5418a21015d29c4db7b0cca4a93c8544219b9820e4b5dfc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CertifiedSemanticArtifact.java",
+      "sha256": "569f7f29232a9651954c4445a0e03369be5fa88bad41cac76e8681713654cb44"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CoherentWitnessFamily.java",
+      "sha256": "4892e3e4102ae3cd7172eabd06d0dc06b065e3571d0839c28b65f41bc0b50160"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/CongruenceCertificate.java",
+      "sha256": "a79272373531f9511f8690f66f1cb47487c0531767e1e4ef4d32f49fded6a9d1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ConstructionSourceLedger.java",
+      "sha256": "e72dd4cde39a3b0054e5aa1d2cd109c433f447f863138c392b9987b61eaa3416"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerApplicationTrace.java",
+      "sha256": "04f7413d513ecfebaa3e17d619e942cd8a7594d24d8861784296a8c8b64b8d0a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerConstructionCertificate.java",
+      "sha256": "e1ed1300f5d7b0be362bf8165ae9e988cec2daace4c5057506fbe7018711f2b7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerEmptiness.java",
+      "sha256": "344e99c56427e01ee947fcb583f32461a85a92c7dc27841e95e4dfe6bb0fdf77"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerLawCertificate.java",
+      "sha256": "41b906b95355354d1eb90f958896a3696279cb6a182966dfb6204a814920bdfb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerLawDeclaration.java",
+      "sha256": "06839988d42e2dbbe842d6e180ab41e08afa468e5776357e745cd3267d9f5f0e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerNormalizationCertificate.java",
+      "sha256": "cef9a3ac1fc75b3c7205aa4ced6a8df938a1917696482e291266a0feae6f0fbf"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerNormalizationTrace.java",
+      "sha256": "57535ba323b0c4b83efc1835a8a9f1fd4cfa9d65830c0efde9be6124d6af7b72"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerReplayProbe.java",
+      "sha256": "2127d5c2e0f138b45f69045e7599aec4a925ad8330c749d90d3592533fd43d96"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ContainerWitnessTransitionsRegressionTest.java",
+      "sha256": "00c3075783b82ddc5991fab9387943b2b73c6adaef36d8c87292bc8c264a465b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentBoundaryCorrespondence.java",
+      "sha256": "639ed567cad38cd4a9eb6cb774bafa344f2b73c6b7614996453748b273db91f5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainApplication.java",
+      "sha256": "3b1a801ec0f787aa08e2c5d769f7b789ab70b31997fbdaf819ddf8f04baa9220"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainCertificate.java",
+      "sha256": "f0ecb7f46796cc2009b2e9beea5fdce8c3e4c5637db7dfcf1fb228b995018f30"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainInput.java",
+      "sha256": "7d4be93cfc140bb10ea51908eae2707a5355bb96e632dd65a84f593ec7b24013"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainKind.java",
+      "sha256": "20fe9a6212b2d75681c00c0a5bae1e6ce61ab5e96f118d45960eca1f1df285ec"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainLeaf.java",
+      "sha256": "49f475aff66bfea78d476c5b04438e410ad2f740668c2ed30eaa14852fb97b1f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainSequenceRegressionTest.java",
+      "sha256": "2cf0ad63a96447939efac5b7106baa3253ac87890fad0ed55bf3d336ea136fe1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainTheory.java",
+      "sha256": "acf07fb882785b963efd3429cd23e733b9dd7903833e64b1fb3034713c9456f7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentChainWitnessesRegressionTest.java",
+      "sha256": "6c6e3303b5fada6f642a5dbbf5c81a87b9d4d9298db6accbd0e4947dca5b9e43"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentColumnEvidence.java",
+      "sha256": "2369e4dd79fd77086a6b0e0337446e68207f75936c49e568f140fdec719113e3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentJoinGuardRegressionTest.java",
+      "sha256": "7a8797df7232724bbf848eb5f285e345d07d136b012c6688f1e3ae63436d328c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/DependentTypeDag.java",
+      "sha256": "6bfcc55db74a7861fc3801e749dcae2a42653931667c4b88d1f28d30936e0df5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/EClassId.java",
+      "sha256": "1dc6caa148cb9bd81ef5d8231464dffe6d048f3fe6a2694a31ee5fc585135819"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/EffectiveShapeCollisionCertificate.java",
+      "sha256": "24dbad48112ed0c4035d6905059ec8c927c8e21a28772ffdf17f644e221f36a0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/EqualityCertificates.java",
+      "sha256": "539776de2d71b149735ae4cfdc5607145ad7a53af78358c7e265c54cfda1cb0d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ExactContextRestrictor.java",
+      "sha256": "b2acc6596762286c5c7383944bcd58aaf0dfeb4444e5d071028b15753534f52d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ExhaustiveGraphCanonicalizer.java",
+      "sha256": "8216d0a85ab2adf712897fbc082d4814cf38eeeffeafd7f30b964499b83aee44"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FinitePermutationTraversal.java",
+      "sha256": "fb26c552ceb5b3a83b954ce6e4df0c3ee1f08b8ffefb368a42ebf0f7e7212af7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingBounds.java",
+      "sha256": "e5a70823acd9b8896d3d6316057a3190d36947dd8a0d2e86e14662a437234933"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingCommonWeakening.java",
+      "sha256": "105b3a6982c452c1bdb6e689b45256090ef5854ecc4987cb003e609866b29220"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingConformanceReport.java",
+      "sha256": "32e736f9656dc99bc4dabb7beca3095ecf9c1ae77968aaa7c30fe11f3ccdfde0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingEqualityWitness.java",
+      "sha256": "9fb4511b6cef62dd2469763b7e0aa1a2008761bb97612ecd395d29cc94d85e2d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingIndexTrace.java",
+      "sha256": "e5330efccb6ad2f1574cc311b32141b8a3d92f654070f17540989b004d459c06"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingObserver.java",
+      "sha256": "2cfa104b3ec1764578d5615585e1159ff501979eba7aad810a7a3d26c7532b47"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingStepIndex.java",
+      "sha256": "4c3532fdd18354861f67adf639cd4a70a68335a1a6aa984df6553e64cad134be"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FiniteUnfoldingTree.java",
+      "sha256": "dc347913dd67c7491a76162f3f2f222f8d2ae6c68747d45d82c9b1d261c4b2f7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatApplication.java",
+      "sha256": "7882822fe62c9988ef3e02811c0964fd34d255eebc84546725faf6105c6643f4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatConstructionCertificate.java",
+      "sha256": "ef4fffa44e9832560a1f622fbe5e165218c7075eb0c90b901e135418890375b7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatContainerRecordsRegressionTest.java",
+      "sha256": "af64a1dd7d813a2a3dea29df316e147e79b655b57aa7a921f0fdd552e801f4e3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatInput.java",
+      "sha256": "5038d16dd65e9642cf2e2b8d058b3fd961ad0b7fb3650e4bf05319b18fc53937"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatLeaf.java",
+      "sha256": "d30e91673e6fdc4e22241c97e44f3462ba10390e7786059a570e14dca31a0121"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatLicense.java",
+      "sha256": "06ce545339e48a46a11e70ed0f0f1dcf551d2b4f76b3b0052462e1b19b186d30"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatOperandExposure.java",
+      "sha256": "794ba6390daa3fa6bf1f3bd232e9c622f988bf2c3e14e0beb2971a6d89665133"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatOperandExposureTest.java",
+      "sha256": "cca2124161d412e51b203cfb32c9d0d1ef3f59087f8769b1b79826b48d649a46"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatRootPortRegressionTest.java",
+      "sha256": "5ec0e7379941ef72eef61c44633bb0ac60ec29f5ebf81ff627a828046e732634"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FlatTypeSubstitutionRegressionTest.java",
+      "sha256": "ee51addcd84589d6dd7aa282d3dc78fc00a7bb9286331a516d29da70b569d35e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/FreshWitnessDefinitionCertificate.java",
+      "sha256": "665ca2b7c8e721fa2821a5bd2b548f9b4d54814535ecf111a624554401cfe9f3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GraphCertificateMode.java",
+      "sha256": "2ecbc658197e9c5e2ed7d602c042f11851cb75332884e0317dfef2755d1162c8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GraphStatus.java",
+      "sha256": "23d66921faed3b9897d062aa93c4288ce0908db61cd433cbcac245c9d058dd0d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GraphType.java",
+      "sha256": "73b8ee9091e3afd0aa0c47a0d5976eb54ac68c887cb6390b5b34dd1ce2103726"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinCertificate.java",
+      "sha256": "173ac93fb1a19cde75e02ff98d328ca056b56b7ad42305032057353a570595d7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinChainRegressionTest.java",
+      "sha256": "146fde7d8efe6c315fbf31ee4298dce09c56357628f046787a8ca9a8d78009d4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinDuplicateEvidence.java",
+      "sha256": "a65795238d82ab1ab238d315edcadffd7a29786fea8bba627c4da5c8f378b350"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinErasureEvidence.java",
+      "sha256": "618d4d3d65a614e369dd7a2841fdce58e0537497d7cc671d611241f7c5d22ae9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinFactorEvidence.java",
+      "sha256": "87ccbd5425086f22bed0004db506cd842b71d800f8dfbea62034fced7a1c0b00"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinNodeCertificate.java",
+      "sha256": "2bcd20e55ca766e1ab69635cbfc90c221ef2b8da9a8fb1ae38c9c024d5a3291f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinRotationTest.java",
+      "sha256": "9f2ce701218b8759e5494c01fd8d79c47e780e11e8d9f637df07b0236b011cbd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinSourceFiber.java",
+      "sha256": "c89f77b6ff3e2ca39b70bcc5f36509e7a0617b44bc5218d13694ab54f046067f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/GuardedJoinTree.java",
+      "sha256": "59ca4e5690d335fab7875ef2b34727b6760df9bda7e7062e5133dd93751c88e1"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/HasSlotSupport.java",
+      "sha256": "3d26f47ff009c267c7317eb25c98c58b690c5ab4ec2ed3c7f19e3a1609701203"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/IndependentCertificateVerifier.java",
+      "sha256": "2099e1ee108549a8e475669f14bc7980459b32cdf9277c5324396fc469bd8cdc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/InputEquationCertificate.java",
+      "sha256": "d8ed9b2b83a18a9a8e6dd7531a7989250bb45c07a88fc1d494558a42b4de03bc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/InstantiatedOperator.java",
+      "sha256": "0ac9c332a7bbab4cba4f891919dddea6db8d36279aed26bbe331287431be42ec"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/InterfaceRestrictionCertificate.java",
+      "sha256": "704e10dde95e3d313f9a5fe3baf8c464f88cbcccdbaef4a88a3ab9f009a9ca61"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/InterfaceRestrictionRequiredException.java",
+      "sha256": "a5d3ac6ea05ffe572fedc2a95f2c81b492aa5080b82680a7dc37e0047b7d072f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/InvocationPortLeaf.java",
+      "sha256": "111a83fe5c73a3e8a405bc1aebe783b09079b041640408970ed0d164941b31c6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/KernelReplayCertificate.java",
+      "sha256": "1df7d67414aec0ea6abf2edb34b587c4bfc7e4a1be5db58e3a122afc9de059c8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LawRecordWireRegressionTest.java",
+      "sha256": "6f81ac709282d7371dfada2c7632d9a61dcabba058fa9b785765de9eb07e8a80"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeaderKernelExtractor.java",
+      "sha256": "e7b9ab5feffe3b3883045098be34c9d27bf3a8950e34b9a1e5dad2a551cb4acd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeaderKernelResult.java",
+      "sha256": "b328eaaca934a7b8203ee00d849b7d10aa0ff7d43f75a3f40e67285f3565cdcb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeaderKernelTrace.java",
+      "sha256": "6a3396c31f5b9f19edf3b3b08fae403c2b017f0799bee2ffe590fe566f4f5546"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeaderNormalizer.java",
+      "sha256": "c2039854dc28571eb15e7f4fe20345258dcef8cf0748c9be277bddd782935ae3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeaderPortTrace.java",
+      "sha256": "590e86bc2343cc9e40b3b3cee97fd3319d79c86f079a18b24d40582adef9edd8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeanVerifiedRewrite.java",
+      "sha256": "12b495f3674a5d0ea05bfbe6e289e24f8f70104416280df1b461305e2e7a2fc8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/LeastOption.java",
+      "sha256": "820e78591583d57ca78812bd09450d87e5437946c21e523bc69147137f8a2671"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/NodeSealer.java",
+      "sha256": "6a83842a86acae76c6790858efd28280bf6f760f70e23ae77a67377eb1450c54"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/NoOpCertificateTraceSink.java",
+      "sha256": "83dbf1786faa2f6d62325e62869ed2e4cfa65c5234566466f01bcc06ac542804"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/OnePort.java",
+      "sha256": "9b157444d42617a97b144068ff4a683a7db342f84d7cc6fd4971c68faa147732"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/OnePortSchema.java",
+      "sha256": "05f4aa8525202bb94556fb446458f8acec7103a145a889e1c07d0f350357c306"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/OperatorDeclaration.java",
+      "sha256": "e85dd6f93c09e6f696e732fe885e99ea7c86bc4cde00d2a4dc42f5fc6791f052"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/package-info.java",
+      "sha256": "f268b007a006556c71d68a2db81a1835481501a787871533e66e42c95eb7cc93"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ParentAssignment.java",
+      "sha256": "e581621a1d38c0a1b15490d10d24517fad616d2279ef395d5ecf3835ae0af452"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ParentEdgeCertificate.java",
+      "sha256": "e7014f5add47763a08446add8774ec9c1aef039d8d0de9b4ed9c02392f5b26cc"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ParentPath.java",
+      "sha256": "8c378751446aaecd9624520c51defc5180d8f643123148ca22f326f1e1584dbd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ParentRecordKey.java",
+      "sha256": "e9b449d5d6c0c79afc57740b6227fffa51f5c03c819b0b8574afbb656674e174"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ParentStep.java",
+      "sha256": "4d22b4d6c63b01c336f08cd8c23141616bc9299bb3861fcd22d9656367521b0e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/Phase4ProducerTransitionEvidenceTest.java",
+      "sha256": "964e6fdaceebdc52ebf1ee81e08e693f945b5389c2b31856694f397b9b3ee969"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/Phase6SemanticOrderProducerRegressionTest.java",
+      "sha256": "88293cdf3e320d7ab0021c7d5f076197885dd5b1d34df3dd1d049adec61cbefb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PolicyRepresentationRegressionTest.java",
+      "sha256": "2ff833abac141758f6a0c1a35c66e1501b6bb7e447c319f58939e30b85249a54"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PortLeaf.java",
+      "sha256": "518cec70ce3dd22aa59a3a91bd74278a576b2cde04bb777e2d20d6e91ec830a9"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PortPath.java",
+      "sha256": "177abad62811f0b1975baa4ce56de99b1f6a0ff11d3c8dbfa8a6c4fde11034d3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PortSchema.java",
+      "sha256": "935222fc63741093c216118253dbb1983e0fd8199b54acf812635fcb0c77cf96"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PortValue.java",
+      "sha256": "10b05c807a5ab607b3ef9a375ccaab6a59a7e78f14c6b8b9a40e60123a127924"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/PortValues.java",
+      "sha256": "2a400e28255e0322646f9257edd9c9610ccd018ed0b75715ae022c47b43a7f84"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ProductionGraphCanonicalizer.java",
+      "sha256": "e99696c47fe1570db6042f9ee9ad14ad1d4db1930f2c9a00f253ac2b529c1db8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RebuildCongruenceCertificate.java",
+      "sha256": "ee08a4104425f1415531994e067c60e057682013b9761377ad1bbf56c5656402"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RebuildCongruenceReplayTest.java",
+      "sha256": "cb8ce3dc2bd09fa753f5456726d28a7f322840e15967605c12bf8fa6c2433e3d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RebuildReport.java",
+      "sha256": "701d40a2c76b114a7ef7cc0645215c3184c7144514619601694a96d3ed188fa6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RecordingCertificateTraceSink.java",
+      "sha256": "4098a64e09e36036b9b2f0cd59e6ed722c82e46ade60752e12a4a5fb1cece571"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RegistryAdmissionRegressionTest.java",
+      "sha256": "a7ab6af370d23021f969c17c963de906253bfbbdc3166a43f01c81dbc306958b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/RetiredShapeRecordCertificate.java",
+      "sha256": "a3fcaa159d6ef3012d2d77df35f84306dea206bac5d1c0af5ee3130a0bb445e2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SemanticProfile.java",
+      "sha256": "0ace58a2dcce2eb9a988b07b53cd8a5d85e746be787dc10c84d9f54ce70e4ff2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SemanticProfileWireRegressionTest.java",
+      "sha256": "56c9a0e09915718b68589f160289c1f3e6248259c6cd4aa24bdb0f606a00c08b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SeqPort.java",
+      "sha256": "67a15be38db0efc255c5f30a072c1e4a5ad953d1e7744b61f1b9e6aad7d3930c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SeqPortSchema.java",
+      "sha256": "e24c02883ae6bea3eda4204b89a703f8bef74f0220e0891b700dd8f542363dd8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SetPort.java",
+      "sha256": "ef66b965a15955ec684b1eb06335ccdd7cbcc52aa543f089c31ccdf0d1539e59"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SetPortSchema.java",
+      "sha256": "2be395bfdb393da747632c7a3157919ad5e326e14c4bd1295ffe8af981021cf6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/ShapeWitness.java",
+      "sha256": "138bcf4ca6aa4b5e53613c58077433b3cdcf5e48b2a68115488e36bbc4814da5"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SiblingQuotient.java",
+      "sha256": "043d90f90fd2bc9e5923b7f2f334a227b2866f7f0d16f603bcfe7497f297730d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SlotAlphabet.java",
+      "sha256": "6ec0b7ce15975dc448106c91a6e91a7f7ddd32d0936fe540c2db734ce7357969"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SlotPortLeaf.java",
+      "sha256": "842c09419661d1be2c33df37f803309625515b41154b654ef44aff40489f31f8"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SlotSupport.java",
+      "sha256": "74deebb40099b12b9dcae2d62965a0132a142caf6f5b0e8a8ef992239da09a9f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SourceOccurrenceBindingsRegressionTest.java",
+      "sha256": "00b8196673ae72c3d558777d567d7b67c8433dcee853b3465776ec128a354f43"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/StructuralAlphaCertificate.java",
+      "sha256": "c8fa2b24b0b6b984d90a418548c72789a59a5fc6c6667132a59f91ae547a4e15"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/StructuralKey.java",
+      "sha256": "ceb4fb845d3a06f6f2ee7940d9d547226e726dfa58a198fcfc9f4caf0767ec46"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/StructuralKeyDag.java",
+      "sha256": "c718a1369bbefbc12a38081b8e101d4237eeacb5c8a7448603534153a40ca109"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/SymmetryCertificate.java",
+      "sha256": "cc9226113409a1886da715789d8f56c6adfa95f58c9d3695549be745575ff02c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryAlloyAdapter.java",
+      "sha256": "12990ed5fce6717a72f0fd15f2dc3eb580a4c121acef8cd9360b536e8f14a76a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryCanonicalizationTest.java",
+      "sha256": "7f1a0582f5521bf446f1e197b90f6e942c140ed46d1d3df64a0d5276faf690db"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryCertificatesTest.java",
+      "sha256": "dceb5bc4831566ca0a328574bb7d074d7e05130b441d3da4c333a52007eeec5d"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryCoherentInsertionTest.java",
+      "sha256": "7742c28a280e57856e9c67f2e0766e7bed18e96306f03ad181395b05d41a4bd7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryDependentChainTest.java",
+      "sha256": "0071bb04e62e57c5b99efecfe31e51b11d299fffe25384aa05ab802fca95dcd6"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryDeterminismTest.java",
+      "sha256": "5561db89d308be6e34d60309c5ae8b2c3c50ff4260a708083ad25a1c86e544ae"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryFiniteUnfoldingTest.java",
+      "sha256": "c085065b39f1f829c55581c7db37715e27ed11b53e475909be9da5d5a151d21c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryFoundationsTest.java",
+      "sha256": "46fa0985c1476bc3c94c3ede7e504389df2917f5ecd73b51e6ab7eca44f0daf0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryKeys.java",
+      "sha256": "a95c2b9a5f371eff4297c09d94011565d7e995e987931d70459044b369818d2e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryLeaderKernelTest.java",
+      "sha256": "bdd36ed89e28804a0bc732e218804dc423f14c5391648d79f925e3d6313c6f74"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryPortsTest.java",
+      "sha256": "e3967b6a6280c7b9ec75ab96c6585fd8e20721d4752ed943869559e0cdb1037a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryRebuildTest.java",
+      "sha256": "f219cebc81d3bb26b1006c7c318143a51666e81042e2371fad0e19a4fc8e257e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TheoryStateTest.java",
+      "sha256": "fe6721b811d25fba680fd530d36b4e50444d4934a7eb27d5ec187f44e7daa361"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedAlphaEquivalence.java",
+      "sha256": "e0e61986c5e8a8f03d34303b7155ffe0275ad6eb9016362fa0fd10d20c671c72"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedCertificateEndpoint.java",
+      "sha256": "17e8dae073d537c2ba16b7ffc56bf29465578bbdb7d1e9d95aa1049bab62becd"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedEClassInterface.java",
+      "sha256": "ecd3f18501517bdeb513380a98070f5c2103c1c7a8de2ea918640fec3cd6689a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedEClassRecord.java",
+      "sha256": "83df7593d5fceaa2e1cb3a1db9e772b64d51395d7826d41d3e38ade0643905e0"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedEmbedding.java",
+      "sha256": "512e0c7f5d2ee9849532656f46ed77d16e9dc554054fae65e2d6b88de3a04298"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedENode.java",
+      "sha256": "0aa2cd6ead2ec6a0fde732d2c4ccd886b11479e0e00c8c2201ff31907ef23057"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedEqualityCertificate.java",
+      "sha256": "8dd2b75c0545adcd0e1602033a94a3543cf1fb76848d237285d7b1e6b6715bf3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedFindResult.java",
+      "sha256": "fc5ace3bf63be4879a45a70a40d8580e73e135ece43dc50fdf6919eb32c09841"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedGraphCanonicalizer.java",
+      "sha256": "a5edaf4fb68d7609def03dc47fc8a9a0622aa32e77ef8f6c7c9a94aab4995826"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedInvocation.java",
+      "sha256": "22fa5dfc0c6273c564e498bd497ed5c46600cf2bb47533dc74ed4da0644f3ab4"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedPermutation.java",
+      "sha256": "4a24c291033635ca5c06a92087a7ee800e138a7e46d94984c11ed5a7489ff45e"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedRenamedUnionFind.java",
+      "sha256": "e9d4af6cf9031b39d093ba3c8d008897ea852daa9515334f81c13cc20f20ff52"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedRenaming.java",
+      "sha256": "927ec025b06755ff486a2f49b42c5fa1f93a64888b7362c3ba6934bb1e944eda"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedRenamingEnumerator.java",
+      "sha256": "b5b3880455d0eef8ccf133a3559ea9487599aaa3874dbfabfe907f32ac8caa2c"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedSlot.java",
+      "sha256": "fda45b6a3ef062ef12a4744b5f8eb50e43069518dbdfda68f42cf57e09f9cd0b"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedSlotContext.java",
+      "sha256": "bed93aafc30e59a12be2fb3b882078bfb3bbf0d3d9a48ed9a02c3547eb054730"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedSlottedPortEGraph.java",
+      "sha256": "dbab02ff418accd11390dc5662eb18c935c3a1e0e7ab2f900e8abf23eac50293"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/TypedSymmetryGroup.java",
+      "sha256": "e2c689aa669f820300c50b68abd932c046fcb6c892abed0d38f94a9418f3e630"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/theory/UnitLicense.java",
+      "sha256": "b24e273116e9756c5d40353d8b26306bfd4b8911ed6827dd5b865ff441547eea"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/TheoryLawPolicyRegressionTest.java",
+      "sha256": "e8e78e18b8edd6357c4175095fd73c6604daf405e212cb63e3ca6d67bfaf465a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UnaryPortMetadataTest.java",
+      "sha256": "29887e457be148716cc80dd5db20bf65be845ce8fa092e555e3aa607c7a9beb7"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UniversalDeclarationProjectionTest.java",
+      "sha256": "c408ede351bb512d4af4aa88cd735cc8fda8617a28a350bfcbd8f86fdc8a8687"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UnusedBindingD8Test.java",
+      "sha256": "7d42737f441d68e658c7d29f45f4b88f2064d171a882d61b1715835ad8752504"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UnusedBindingDescopeTest.java",
+      "sha256": "29f88c4ae4a2578f1c9adc052a17141b12f1ef37be975578ef72b7656e7e4de2"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UnusedDeclarationCompletionTest.java",
+      "sha256": "66f7f354097acb90db4fd6c1d075b1d273feb0a2cff83681fd5e64f0f7411521"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/UsedTargetPhaseMappingTest.java",
+      "sha256": "aa7e274d89b6181d048ec25210f5e9ceb928fbd8502e00b93ce45dba3c1baf09"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationAnalysisService.java",
+      "sha256": "c02e37a646255b85867a26c172e9411643ab46869f0f251e744f7a17375b2b10"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationAnalysisServiceTest.java",
+      "sha256": "4de63e29eed3a8283df96ab84fd69b1c0d9eaf904b4356afb8953ed9428084f3"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationProcessRunner.java",
+      "sha256": "accf650ca0883623b225b6fe98741008622300b221734f0f43da225c6f1e2624"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationProcessRunnerTest.java",
+      "sha256": "11d16ca9285b37102dded77ffc42d8e2a8e65858164e2eb0a76b18c2f3e0585a"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationServer.java",
+      "sha256": "e889b6594b80cb83d5a2ef8b2008b64942ff780f85d2c81b729c901bdb67dcfb"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/VisualizationWorker.java",
+      "sha256": "9285d8961379a0d08cdaac6b5f07028a9219ae454ef0ccd701b857d2c9246b72"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/is/fivefivefive/CanDis/ZeroArgumentCallRegressionTest.java",
+      "sha256": "9ffaaba5e41e680556798d1d36a564886cd591d3ea2773130cf0574e951fa96f"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/parser/ast/nodes/ModelUnit.java",
+      "sha256": "c34e54bbd05bfb4f2bee6e9f2aabf60c4feb40fae2da9da0c8ef59d8f108d6da"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/src/parser/util/AlloyUtil.java",
+      "sha256": "0496fe39924cd6b342d05019ca2646ddc407d67c2b73243980f2ec3b7ea73059"
+    }
+  ],
+  "launcherInputs": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/guard.sh",
+      "sha256": "42970d68888cdfeada0e1c9fe2262071dcfa3c468215b616644f91dab87b2cbf"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/service-guard.sh",
+      "sha256": "c5bd8bdd2341c219c6b4a3ddc41ab5cba39c3e4f63d97ee8f8826b297fcb6b70"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/resource-check.sh",
+      "sha256": "c06a0c735f9e1c529093191f9c15203bc4c12544019b80fe87a2a9f887c7aa48"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/resource-policy.mjs",
+      "sha256": "9b3795f6c159b88aaecb9bf95a31b95bfb3f3bb65afff786671d01f8bbe9445d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/cgroup-check.mjs",
+      "sha256": "3cd9561a2748882b1d19163d89fd0049712e7d7ebcf56a04f01fb34886e55270"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/finalize.mjs",
+      "sha256": "b793b5ee5cc29c49caf2bfa8543d19d6ac90a7644e54b00166b8560ca3812cfa"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/terra-review.json",
+      "sha256": "549b3e4e9156fdf332cb6d7c12e6080826b92ac2a9ed6f74044020f5cc9b2f8b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/runner-v3-corpus-window/live-controls-result.json",
+      "sha256": "2beea6c2240eafce23a65953b60de653a4d6e6ea53ac51957867315f4460a1af"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-capability-repair-20261115-v4/runtime.mjs",
+      "sha256": "99f11b181e56f2e9b24aa7dd9bf3c5b91bdf48393230eab68a2a2dbb78084fc6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/full-domain-evidence-v1/full-launcher-v2/runtime.mjs",
+      "sha256": "1dfa0777e5e97b467ae4f187b0d37fee053f847e34da696215b00b6ff2ed6038"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/focused-long-run-launcher-v3/guard-environment.mjs",
+      "sha256": "d263b82d258ee48cda28af630fb5bd04dcbd06d4e2cef64c7621b3758c403a8b"
+    },
+    {
+      "file": "/home/augustus/ACGN/scripts/native_runtime.mjs",
+      "sha256": "2f2594194ce6a56534b748a53b13c3206c1439ccb09dcd16829dfe7372249750"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/service.mjs",
+      "sha256": "bc9e498e7700e799c463aa6496cfea7a407ca4f6c8528d343a5e3b0918058ab7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/receipts.mjs",
+      "sha256": "160bd350ab3fb8e0cf999e236b75e968fa2577050826fdf01916698d357cef62"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate.mjs",
+      "sha256": "7b759cdbf8422198f2ea2023ef97e090775e6145b8b51c27426f55f31216c650"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/prepare.mjs",
+      "sha256": "ffcfc165f7609be2ed7f05aea311994a61b61679359b41dbf358014adb912740"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-job.mjs",
+      "sha256": "426a0510c0886e44dc18d395b1b96808234b657ea6d7afeff5b00086691214f2"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/CheckedClaims.java",
+      "sha256": "b99811ef281c6e4ffabc52e5dce3ccccafe234160a794cf756144c7ec11da117"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-controls.mjs",
+      "sha256": "f27ddc95b7401dc2a98f81d6cc796b7d022ad9e85fe5287cdd423ec3f66fdd3d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-controls.mjs",
+      "sha256": "74daf9a3147b938996056b6d4d0219f26ddf911637b69e992f9054c6f43586a3"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/result.json",
+      "sha256": "c27dca9b7963fbe68d8657a6815a36d4bfdd301733b3295b4ea0d89e55bb97c6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-fixture/result.json",
+      "sha256": "2eeb099e482194dc46188a6bfc7d03a21a4038fec49bdb71e4fe1d0a451928ca"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/common.mjs",
+      "sha256": "2be08733e0d8bb5ca8c039255558bcd70dd4321414a26b63f745f2d0d8f42d39"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/stage-runner.mjs",
+      "sha256": "313c29453898f7b970ac12460c799b2164077e0754e32aa5a24e562a0f8f0c1f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/helper-integrity.mjs",
+      "sha256": "a1f84e20175d81eb39b745edc59a73d7d244dee37135180fe290f2cff32ce693"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/capability-correction.mjs",
+      "sha256": "d11f09b53ea7a1f2b1de27ba020963bc089281ec512107d975a88a41eb2df208"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate-v4b.mjs",
+      "sha256": "60aa5908f2cdb86b64db32c2321730a3c8b9031693233b0991b81c3dff84e9dd"
+    }
+  ],
+  "output": "/home/augustus/.local/state/acgn-v31-studies-d71cd1c2/run-v4/natural-ablation/raw-egraph",
+  "runDir": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/runs/natural-raw-egraph",
+  "profile": "corpus",
+  "timeoutSeconds": 7200,
+  "workers": 16,
+  "heap": "8g",
+  "rewardPool": 100,
+  "limit": 0,
+  "expectedFiles": 66080,
+  "expectedEligible": 61598,
+  "expectedIdentical": 4482,
+  "semanticSourceChanges": true,
+  "publicCertification": "BLOCKED",
+  "noFixturePipeline": true,
+  "command": [
+    "/home/augustus/.local/opt/node-v26.13.0-linux-x64/bin/node",
+    "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/study-job.mjs",
+    "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/plans-v4b/natural-raw-egraph.json"
+  ],
+  "knownCrossReferenceFailures": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/xref-repair-v1/native-e/remaining-ledger.json",
+    "sha256": "19cd51e4065a33d642868635077dd2d8aa0a33e6f55e0df0137a8f968ea374d0"
+  },
+  "knownCrossReferenceFailureCandidate": "Prior v3 history only; no former review or result applies to this revision",
+  "retainedCacheReview": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/xref-repair-v1/dependent-transport-v1/integration-review-v2.json",
+    "sha256": "a08db664b32b7da0f701ef6c006d18d338f87fc178b7cb0b5739a7afa539dbfc"
+  },
+  "referencePool": "ENTIRE_MATCHING_GROUP",
+  "canonicalAudit": {
+    "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/canonical-audit.json",
+    "sha256": "a53b1bf490e9e811b69d235616eb352405846e1d4db28dde5eddec17d32f4e4d"
+  },
+  "canonicalAuditExecution": {
+    "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/focused-long-run-launcher-v3/runs/v31-6648d7bd-canonical-audit/receipt.json",
+    "sha256": "624af97853fbffaa17f943925d03da9bbe737cb218dd2be765efec3bbef0c7b5"
+  },
+  "prerequisiteFiles": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/runs/canonical-batch/receipt.json",
+      "sha256": "b74a5683f1b86605c134a66c4211f716f546e0ebe7d0d3bf2b9a99eabddb6ac9"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/canonical-batch/diagnostic-operations-distances.json",
+      "sha256": "aa79111a8cae647ea510f8b3b756752dfb908af35a5104bbae1ddbaa93425e75"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/canonical-batch/diagnostic-operations-summary.md",
+      "sha256": "f53cc81d17f6abc6c6ed18cb962d15f76de2e004da3c85f578df47fb62ace91f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/audit_canonical.py",
+      "sha256": "4ddfdf8f48512e4b47fbd6ae183a03a3c581290f4f4e4c9328c69a24f83311ed"
+    },
+    {
+      "file": "/home/augustus/.codex/worktrees/v3-1-canonical-rules/ACGN/scripts/audit_fast_certified_distances.py",
+      "sha256": "03f960fc95e74498455cf110adbd7aafd0d96246ca759ebdef91a50f5f268ba0"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/supplement-review.json",
+      "sha256": "ef8de1b5ca21399358faf811086f419b2c1a4dcbecd7611c325421a6b8b11c5b"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/supplement-execution.json",
+      "sha256": "9c79237f8a5266ca3a9b7a7946adef607ee942d267d742714132239ac75ebada"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/supplement-accounting.json",
+      "sha256": "9e457367203463ea801c78e8cf4415e91014318f106abf66cc99fa364683fb52"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/paired-zero-comparison.json",
+      "sha256": "0ee238fb73f68946c27a0fd75933b269179896180c3d82cf7e4ef42b4597dba7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/paired-zero-audit-execution.json",
+      "sha256": "02c6a062bd00121f3da8ebec1996c86d6693aa9ad40e9390a2b86abee7036a0a"
+    }
+  ],
+  "buildCommit": "6648d7bd4148e6374a5446eaf12a3f1d7633db52",
+  "helper": {
+    "root": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/harness-rebuild-classes",
+    "files": [
+      {
+        "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/harness-rebuild-classes/is/fivefivefive/CanDis/PublicationStudyHarness.class",
+        "sha256": "c8b2ca6275742523b109de6022640f24c9db66fa0228a043d4d1b94b622d6ec7"
+      }
+    ]
+  },
+  "tools": {
+    "time": {
+      "file": "/usr/bin/time",
+      "sha256": "3b11dec50514a8473e9f6efa7a34d584d0657538c09988f61b72d38ad4991a10"
+    },
+    "python": {
+      "file": "/usr/bin/python3.12",
+      "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+    }
+  },
+  "job": "arm",
+  "stopFile": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/STOP.json",
+  "extraInputs": [
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/plans/natural-raw-egraph.json",
+      "sha256": "40d4389650fd794fae9fd2f31a2cdaf549e68e6eadc763d5371989cde12778b2"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/harness-rebuild-classes/is/fivefivefive/CanDis/PublicationStudyHarness.class",
+      "sha256": "c8b2ca6275742523b109de6022640f24c9db66fa0228a043d4d1b94b622d6ec7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/contexts-v2.mjs",
+      "sha256": "257fb802dfb256e1191568dd02479ef94ac001bf543683b2a80f6f99f977e478"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/prepare.mjs",
+      "sha256": "52d23f61dad677f91e5376d222fa96a3f33880f92af084df2035372a0d1614be"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/verified-helper.json",
+      "sha256": "69233c07cbad579494fd2efef90beb146f4ba5a70bc252239368f3ea637d5c36"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/natural-context-v2.json",
+      "sha256": "d588f010d30eb97640f197356980a55043ece590da66c5fd7074a3e1c5a1f565"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/capability-context-v2.json",
+      "sha256": "da363634a09de3c19b22138137a80048e9fb178a2aec22d4b46ca339ed14243c"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/batch.mjs",
+      "sha256": "938d4a20f08ac1438686784acc0706e56acac5b6c79586ffd72005b9a0751bc8"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/stage-runner.mjs",
+      "sha256": "313c29453898f7b970ac12460c799b2164077e0754e32aa5a24e562a0f8f0c1f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/study-job.mjs",
+      "sha256": "656e2256a2ba908c937becbd1eee14ac66a11ed537ed3bc7cd7a1f8d50ddf0d7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/final-job.mjs",
+      "sha256": "4b3511d3ff47824e9b587401b2f366e40014bb415a3c1fc58b48f31efe339b35"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/audit-arm.py",
+      "sha256": "6b5b40392f59d5449af3ed55328579bd8e73f203cc13ac1f5ed4ecfc374609ca"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/helper-integrity.mjs",
+      "sha256": "a1f84e20175d81eb39b745edc59a73d7d244dee37135180fe290f2cff32ce693"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/PublicationStudyHarness.java",
+      "sha256": "8490016314cdd268952b0b2320e0219336bb7f77152c2fc1f9224212e3418461"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/harness-rebuild-comparison.json",
+      "sha256": "23e871876c9bf4f529ff2a9a89b8703288643dd48a525a4a9bf0ef04e62094c5"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-identities.json",
+      "sha256": "a2ec6cfb49f0206d2d2f08738a3a3ecdc53c3e037f67a4992c4b005aa50e2e0d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability-identities.json",
+      "sha256": "2dc900865d7c9b80d5edf75d90cade12efe07f49c3e4b3ed7f735cb97c2da5cf"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/controls/result.json",
+      "sha256": "fcaa46d2de6766ca8ad25f7fd39a49040af5b709d22e6678d9ac5bfb5b1f7e67"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/remaining-controls-v2.json",
+      "sha256": "8452c88b22c27d8feae9ae18f3305866f7c9540e016030d6d4d26fea8e2d717e"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/runtime-config.json",
+      "sha256": "80e2dd64d20b08dc901e5545162d941159200ebda67b4acc994c8ff4171be021"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v3-1-rules-20261121T053035Z/release-candidate/augmenter-plan.json",
+      "sha256": "5625dbe7c74cff16e9f5ffcc7f74f975b320c3c7fa2f2996344ea97735ccdff1"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/supervision/dependency-repair-20261110-e4CjEz/focused-long-run-launcher-v3/runs/v31-studies-contexts2-d71cd1c2/receipt.json",
+      "sha256": "2905c1f00998cdc7f3370fd066b389b7d9c23ae5f589c53afbc11a397f3e6464"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/capability-inputs.json",
+      "sha256": "eb8f8f0924c5dbd4d886a1415cfec65a5c08810b38fe2f20c082da08c9e25bac"
+    },
+    {
+      "file": "/usr/bin/time",
+      "sha256": "3b11dec50514a8473e9f6efa7a34d584d0657538c09988f61b72d38ad4991a10"
+    },
+    {
+      "file": "/usr/bin/python3.12",
+      "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/service.mjs",
+      "sha256": "bc9e498e7700e799c463aa6496cfea7a407ca4f6c8528d343a5e3b0918058ab7"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/receipts.mjs",
+      "sha256": "160bd350ab3fb8e0cf999e236b75e968fa2577050826fdf01916698d357cef62"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/coordinate.mjs",
+      "sha256": "7b759cdbf8422198f2ea2023ef97e090775e6145b8b51c27426f55f31216c650"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/prepare.mjs",
+      "sha256": "ffcfc165f7609be2ed7f05aea311994a61b61679359b41dbf358014adb912740"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-job.mjs",
+      "sha256": "426a0510c0886e44dc18d395b1b96808234b657ea6d7afeff5b00086691214f2"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/CheckedClaims.java",
+      "sha256": "b99811ef281c6e4ffabc52e5dce3ccccafe234160a794cf756144c7ec11da117"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-controls.mjs",
+      "sha256": "f27ddc95b7401dc2a98f81d6cc796b7d022ad9e85fe5287cdd423ec3f66fdd3d"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-controls.mjs",
+      "sha256": "74daf9a3147b938996056b6d4d0219f26ddf911637b69e992f9054c6f43586a3"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/seal-fixture/result.json",
+      "sha256": "c27dca9b7963fbe68d8657a6815a36d4bfdd301733b3295b4ea0d89e55bb97c6"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/supervisor-v4/report-fixture/result.json",
+      "sha256": "2eeb099e482194dc46188a6bfc7d03a21a4038fec49bdb71e4fe1d0a451928ca"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/common.mjs",
+      "sha256": "2be08733e0d8bb5ca8c039255558bcd70dd4321414a26b63f745f2d0d8f42d39"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/stage-runner.mjs",
+      "sha256": "313c29453898f7b970ac12460c799b2164077e0754e32aa5a24e562a0f8f0c1f"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/helper-integrity.mjs",
+      "sha256": "a1f84e20175d81eb39b745edc59a73d7d244dee37135180fe290f2cff32ce693"
+    },
+    {
+      "file": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/plans/natural-raw-egraph.json",
+      "sha256": "0707ba69aec26f20820e2032a2b5bbcf0b5a9b0123bbd8cc7bb2a904ba08bbf6"
+    }
+  ],
+  "identities": "/media/augustus/8618-0ED0/ACGN/intermediate/publication-studies-20261115-v3/natural-identities.json",
+  "context": "/media/augustus/8618-0ED0/ACGN/intermediate/v31-publication-studies-20261121T1745Z/natural-context-v2.json",
+  "studyInput": "/home/augustus/ACGN/classified-data",
+  "studyFiles": 66080,
+  "studyEligible": 61598,
+  "studyIdentical": 4482,
+  "engine": "raw-egraph",
+  "predecessors": []
+}

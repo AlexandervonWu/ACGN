@@ -34,7 +34,7 @@ The [v3.1 full-corpus report](docs/experimental-results/2026-11-21/README.md) an
 
 - **Paired corpus:** 61,598/61,598 eligible native comparisons matched; all 4,482 AST-identical paired files were separately replayed both ways. Correct distinct-AST zero pairs rose from 4,174 to **4,413**, with no losses or incorrect merges.
 - **Complete reference pools:** 42,386 incorrect predicates, 1,894,168 recorded comparisons, 21 raw-AST identities with differing support contexts separately accounted and not measured. No incorrect nearest-zero match among the recorded AST-distinct comparisons. Correct pools contained **11,882** distinct-AST zero pairs, up 275 without losing any v3 pair.
-- **Other studies:** ablation, capability and typed/untyped synthetic results remain [v3 measurements](docs/experimental-results/2026-11-16/README.md), not v3.1 reruns. General public certification remains blocked.
+- **[v3.1 supplemental studies](docs/experimental-results/2026-11-21-studies/README.md#supplemental-measurements):** all 20 stages completed. Both canonical paths found 4,413 natural zero pairs and recovered all 5,500 capability pairs. Natural slot typing preserved 2,228 zero pairs with 45.1% less engine CPU. Typed slots finished 530/540 synthetic predicates within 300 s versus 442/540 untyped; on the 442 both finished, the ratio of median elapsed times was 4.31×. General public certification remains blocked.
 
 ### Historical v3 Research Release
 
