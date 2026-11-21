@@ -12,7 +12,8 @@
   "ranked": 42386,
   "nearestMeans": {
     "rawAst": 12.26714,
-    "canonical": 11.505356
+    "canonical": 11.505356,
+    "levenshtein": 28.054924
   },
   "absoluteCoverage": {
     "rawAst": [
@@ -26,6 +27,12 @@
       4410,
       13142,
       25298
+    ],
+    "levenshtein": [
+      434,
+      976,
+      3277,
+      9127
     ]
   },
   "relativeCoverage": {
@@ -40,6 +47,12 @@
       "10": 1174,
       "20": 5069,
       "50": 16066
+    },
+    "levenshtein": {
+      "5": 968,
+      "10": 2822,
+      "20": 8052,
+      "50": 29963
     }
   },
   "poolGroups": 181,

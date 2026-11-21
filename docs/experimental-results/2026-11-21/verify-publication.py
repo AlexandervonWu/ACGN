@@ -36,7 +36,12 @@ files = [paired/'diagnostic-operations-distances.json',augmenter/'index.json',
 for p in files:
     require(sha(p)==bound[p.name if p.parent==augmenter else 'canonical-batch/'+p.name],str(p))
 for p in files[-2:]:
-    require(sha(p)==sha(root/p.name),'figure source')
+    original = p.read_bytes()
+    for old, new in [(b'Incorrect predicates repaired within radius', b'Incorrect predicates with a reference within radius'),
+                     (b'Repair coverage by edit distance', b'Nearest-reference distance coverage'),
+                     (b'Relative repair coverage by metric', b'Nearest-reference coverage by relative distance')]:
+        original = original.replace(old,new)
+    require(original==(root/p.name).read_bytes(),'figure source differs beyond approved labels')
 fields = ['rawAstSize','canonicalFormSize','canonicalRepresentativeTreeSize','predicateBodyLevenshteinDistance',
           'rawAstTreeDistance','distance','canonicalRepresentativeTreeDistance']
 totals = Counter()
@@ -71,7 +76,7 @@ with (root/'question-pools.csv').open() as f:
     expected={(r['question_class'],r['inv_id']):(int(r['#UniqueAST']),int(r['#UniqueCanonical'])) for r in csv.DictReader(f)}
 actual={k:(len(p),len({find(p,x) for x in p})) for k,p in parents.items()}
 require(actual==expected and len(actual)==181,'question table')
-series=['rawAst','canonical']
+series=['rawAst','canonical','levenshtein']
 dist={k:Counter() for k in series}
 relative={k:Counter() for k in series}
 seen=set()
@@ -86,7 +91,7 @@ with files[2].open() as f:
                 relative[k][pct]+=100*value<=pct*size
 require(len(seen)==42386,'nearest cohort')
 nearest={k:round(sum(n*v for n,v in ds.items())/len(seen),6) for k,ds in dist.items()}
-require(nearest=={'rawAst':12.267140,'canonical':11.505356} and dist['canonical'][0]==0,'nearest means')
+require(nearest=={'rawAst':12.267140,'canonical':11.505356,'levenshtein':28.054924} and dist['canonical'][0]==0,'nearest means')
 coverage={k:[sum(v for val,v in ds.items() if val<=i) for i in range(51)] for k,ds in dist.items()}
 figure=ET.parse(files[-2])
 curves=figure.findall('.//{http://www.w3.org/2000/svg}path')
