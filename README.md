@@ -28,47 +28,13 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
-### Final experimental results (2026-11-16)
+### Final experimental results (2026-11-21)
 
-The latest completed evaluation is published in
-[ACGN / CanDis v3](https://github.com/AlexandervonWu/ACGN/releases/tag/v3).
-The [full research report](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md)
-and [structured headline data](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/headlines.json)
-cover the full paired corpus, full-reference Augmenter, all seven ablation and
-capability arms, natural slot typing, and the complete synthetic runtime grid.
-These results use frozen experiment commit
-`2d70f89ab67241cd071387ecedd3b2f432821921`; they do not describe the older
-implementation or measurement snapshots retained elsewhere in this branch.
+The [v3.1 full-corpus report](https://github.com/AlexandervonWu/ACGN/blob/v3.1/docs/experimental-results/2026-11-21/README.md) and [headline data](https://github.com/AlexandervonWu/ACGN/blob/v3.1/docs/experimental-results/2026-11-21/headlines.json) describe frozen experiment `6648d7bd4148e6374a5446eaf12a3f1d7633db52`.
 
-- **Natural corpus:** all 66,080 files accounted for; 61,598/61,598 eligible
-  native comparisons matched, with zero unchecked, invalid, discrepant, or
-  error outcomes. The 4,482 AST-identical paired rows are accounted separately,
-  not exempted from canonical-form obligations.
-- **Canonical equality and capability:** both paths find 4,174 distinct-AST
-  student/oracle zero pairs and recover 5,500/5,500 capability pairs. No old
-  canonical zeroes were lost, and no incorrect paired zeroes were observed.
-- **Full-reference Augmenter:** 42,386 incorrect predicates and 1,894,168
-  recorded comparisons; zero recorded cross-path distance discrepancies.
-  Mean nearest distance is 12.267140 raw AST versus 11.505686 canonical.
-  Both paths find 11,607 unordered distinct-AST truth-pool zero pairs.
-- **Natural-study runtime:** maximum measured file time is 0.356519 seconds
-  for Fast Rewrite and 4.114356 seconds for Certificate-Integrated. These
-  timings belong to the natural study, not the separate CanonicalBatch or
-  Augmenter runners, which did not record whole-file wall time.
-- **Synthetic typed slots:** 530/540 typed and 442/540 untyped trials complete.
-  All 450 multi-type typed trials succeed. All ten typed timeouts are at ten
-  bindings / one type, where typing cannot reduce the permutation space;
-  all 98 untyped timeouts are also at ten bindings. These expected scaling
-  outcomes remain in the data. Across 442 jointly successful predicates,
-  ratios of untyped/typed medians are 26.62x engine elapsed and 5.12x total
-  elapsed, excluding censored runtimes.
-
-The [v3 research summary and assurance boundary](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/release-v3.md)
-explain the ablations, bounded semantic checks, reproducibility, and remaining
-end-to-end certification obligations. The
-[November 7 natural report](docs/experimental-results/2026-11-07/README.md) and
-[November 7 synthetic report](docs/experimental-results/2026-11-07/synthetic-grid/RESULTS.md)
-remain historical evidence; they are not the latest results.
+- **Paired corpus:** 61,598/61,598 eligible native comparisons matched; all 4,482 AST-identical paired files were separately replayed both ways. Correct distinct-AST zero pairs rose from 4,174 to **4,413**, with no losses or incorrect merges.
+- **Complete reference pools:** 42,386 incorrect predicates, 1,894,168 recorded comparisons, 21 raw-AST identities with differing support contexts separately accounted and not measured. No incorrect nearest-zero match among the recorded AST-distinct comparisons. Correct pools contained **11,882** distinct-AST zero pairs, up 275 without losing any v3 pair.
+- **Other studies:** ablation, capability and typed/untyped synthetic results remain [v3 measurements](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md), not v3.1 reruns. General public certification remains blocked.
 
 ### Assurance status
 
