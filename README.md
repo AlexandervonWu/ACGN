@@ -28,7 +28,15 @@ Alloy theorem prover. A canonical distance of zero means equality under the
 implemented rewrite theory. Bounded Alloy checks and dataset labels provide
 separate semantic evidence.
 
-### v3 Research Release
+### Final experimental results (2026-11-21)
+
+The [v3.1 full-corpus report](docs/experimental-results/2026-11-21/README.md) and [headline data](docs/experimental-results/2026-11-21/headlines.json) describe frozen experiment `6648d7bd4148e6374a5446eaf12a3f1d7633db52`.
+
+- **Paired corpus:** 61,598/61,598 eligible native comparisons matched; all 4,482 AST-identical paired files were separately replayed both ways. Correct distinct-AST zero pairs rose from 4,174 to **4,413**, with no losses or incorrect merges.
+- **Complete reference pools:** 42,386 incorrect predicates, 1,894,168 recorded comparisons, 21 raw-AST identities with differing support contexts separately accounted and not measured. No incorrect nearest-zero match among the recorded AST-distinct comparisons. Correct pools contained **11,882** distinct-AST zero pairs, up 275 without losing any v3 pair.
+- **Other studies:** ablation, capability and typed/untyped synthetic results remain [v3 measurements](docs/experimental-results/2026-11-16/README.md), not v3.1 reruns. General public certification remains blocked.
+
+### Historical v3 Research Release
 
 The [v3 release record](docs/release-v3.md) summarizes the completed November
 15-16 experiments: the full natural corpus and reference-pool evaluation,
@@ -155,9 +163,9 @@ snapshot below and the separate v2.16 validation run.
 
 ## Headline Results
 
-The latest frozen experiment ran on November 15-16, 2026, using commit
+For the latest natural-corpus results, see the [v3.1 report](docs/experimental-results/2026-11-21/README.md). The previous full study suite ran on November 15-16, 2026, using commit
 `2d70f89ab67241cd071387ecedd3b2f432821921`. The
-[current report](docs/experimental-results/2026-11-16/README.md) includes the
+[v3 report](docs/experimental-results/2026-11-16/README.md) includes the
 full paired corpus, full-reference Augmenter, seven ablation and capability
 arms, natural slot typing, and all 1,080 synthetic runtime trials.
 
@@ -518,8 +526,8 @@ polarity determine which quantifiers can be moved safely:
 6. Eliminate implication, IFF, and formula ITE before prenexing.
 7. Push explicit and implicit negations to NNF, including quantifier and
    temporal duals.
-8. Prenex only within the current temporal phase; quantifiers never cross a
-   temporal boundary.
+8. Prenex within a temporal phase. A separate source rule commutes `all` with
+   `always` only when its domain is statically invariant and the binding is safe to move.
 9. Store each binding as a primitive carrier, quantifier/cardinality,
    disjointness class, and canonical slot. Move only non-primitive domain
    constraints into the matrix.

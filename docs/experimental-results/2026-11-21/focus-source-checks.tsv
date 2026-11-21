@@ -1,0 +1,115 @@
+question_set	invariant	left	right	scope	result
+trainStationOld	inv2	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv2	inv2_oracle	inv2_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv2	inv2_oracle	inv2_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv2	inv2_oracle	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv2	inv2_correct_0	inv2_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv2	inv2_correct_0	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv2	inv2_correct_1	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv6	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv6	inv6_oracle	inv6_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv6	inv6_oracle	inv6_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv6	inv6_correct_0	inv6_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv8	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv8	inv8_oracle	inv8_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv8	inv8_oracle	inv8_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv8	inv8_correct_0	inv8_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	facts	control	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_oracle	inv10_correct_0	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	inv10_oracle	inv10_correct_1	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_oracle	inv10_correct_2	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	inv10_oracle	inv10_correct_3	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_oracle	inv10_correct_4	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_0	inv10_correct_1	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_0	inv10_correct_2	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	inv10_correct_0	inv10_correct_3	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_0	inv10_correct_4	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_1	inv10_correct_2	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_1	inv10_correct_3	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	inv10_correct_1	inv10_correct_4	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv10	inv10_correct_2	inv10_correct_3	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_2	inv10_correct_4	for 5 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv10	inv10_correct_3	inv10_correct_4	for 5 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv11	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv11	inv11_oracle	inv11_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv11	inv11_oracle	inv11_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv11	inv11_correct_0	inv11_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv13	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv13	inv13_oracle	inv13_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv13	inv13_oracle	inv13_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv13	inv13_correct_0	inv13_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv15	inv15_oracle	inv15_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	inv15_oracle	inv15_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	inv15_oracle	inv15_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	inv15_correct_0	inv15_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	inv15_correct_0	inv15_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv15	inv15_correct_1	inv15_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trainStationOld	inv16	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trainStationOld	inv16	inv16_oracle	inv16_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+coursesNew	inv9	facts	control	for 3 but 4 Int	SAT
+coursesNew	inv9	inv9_oracle	inv9_correct_0	for 3 but 4 Int	UNSAT
+coursesNew	inv9	inv9_oracle	inv9_correct_1	for 3 but 4 Int	UNSAT
+coursesNew	inv9	inv9_oracle	inv9_correct_2	for 3 but 4 Int	UNSAT
+coursesNew	inv9	inv9_correct_0	inv9_correct_1	for 3 but 4 Int	UNSAT
+coursesNew	inv9	inv9_correct_0	inv9_correct_2	for 3 but 4 Int	UNSAT
+coursesNew	inv9	inv9_correct_1	inv9_correct_2	for 3 but 4 Int	UNSAT
+coursesNew	inv13	facts	control	for 3 but 4 Int	SAT
+coursesNew	inv13	inv13_oracle	inv13_correct_0	for 3 but 4 Int	UNSAT
+coursesNew	inv13	inv13_oracle	inv13_correct_1	for 3 but 4 Int	UNSAT
+coursesNew	inv13	inv13_correct_0	inv13_correct_1	for 3 but 4 Int	UNSAT
+coursesOld	inv15	facts	control	for 3 but 4 Int	SAT
+coursesOld	inv15	inv15_oracle	inv15_correct_0	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_oracle	inv15_correct_1	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_oracle	inv15_correct_2	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_oracle	inv15_correct_3	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_0	inv15_correct_1	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_0	inv15_correct_2	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_0	inv15_correct_3	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_1	inv15_correct_2	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_1	inv15_correct_3	for 3 but 4 Int	UNSAT
+coursesOld	inv15	inv15_correct_2	inv15_correct_3	for 3 but 4 Int	UNSAT
+cv_v2	inv4	facts	control	for 3 but 4 Int	SAT
+cv_v2	inv4	inv4_oracle	inv4_correct_0	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_1	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_2	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_3	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_4	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_oracle	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_1	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_2	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_3	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_4	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_0	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_1	inv4_correct_2	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_1	inv4_correct_3	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_1	inv4_correct_4	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_1	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_1	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_2	inv4_correct_3	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_2	inv4_correct_4	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_2	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_2	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_3	inv4_correct_4	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_3	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_3	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_4	inv4_correct_5	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_4	inv4_correct_6	for 3 but 4 Int	UNSAT
+cv_v2	inv4	inv4_correct_5	inv4_correct_6	for 3 but 4 Int	UNSAT
+productionLine_v2	inv10	facts	control	for 3 but 4 Int	SAT
+productionLine_v2	inv10	inv10_oracle	inv10_correct_0	for 3 but 4 Int	UNSAT
+productionLine_v2	inv10	inv10_oracle	inv10_correct_1	for 3 but 4 Int	UNSAT
+productionLine_v2	inv10	inv10_correct_0	inv10_correct_1	for 3 but 4 Int	UNSAT
+productionLineNew	inv10	facts	control	for 3 but 4 Int	SAT
+productionLineNew	inv10	inv10_oracle	inv10_correct_0	for 3 but 4 Int	UNSAT
+trash_ltl	inv2	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trash_ltl	inv2	inv2_oracle	inv2_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv2	inv2_oracle	inv2_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv2	inv2_oracle	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv2	inv2_correct_0	inv2_correct_1	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv2	inv2_correct_0	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv2	inv2_correct_1	inv2_correct_2	for 3 but 4 Int, 1..3 steps	UNSAT
+trash_ltl	inv15	facts	control	for 3 but 4 Int, 1..3 steps	SAT
+trash_ltl	inv15	inv15_oracle	inv15_correct_0	for 3 but 4 Int, 1..3 steps	UNSAT

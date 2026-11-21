@@ -1,0 +1,51 @@
+{
+  "paired": 61598,
+  "pairedMeans": {
+    "rawAstSize": 19.668561,
+    "canonicalFormSize": 17.9656,
+    "canonicalRepresentativeTreeSize": 33.272687,
+    "predicateBodyLevenshteinDistance": 39.261064,
+    "rawAstTreeDistance": 17.086902,
+    "distance": 13.960405,
+    "canonicalRepresentativeTreeDistance": 32.125215
+  },
+  "ranked": 42386,
+  "nearestMeans": {
+    "rawAst": 12.26714,
+    "canonical": 11.505356
+  },
+  "absoluteCoverage": {
+    "rawAst": [
+      3565,
+      5895,
+      12915,
+      23087
+    ],
+    "canonical": [
+      1740,
+      4410,
+      13142,
+      25298
+    ]
+  },
+  "relativeCoverage": {
+    "rawAst": {
+      "5": 906,
+      "10": 3305,
+      "20": 6620,
+      "50": 17088
+    },
+    "canonical": {
+      "5": 237,
+      "10": 1174,
+      "20": 5069,
+      "50": 16066
+    }
+  },
+  "poolGroups": 181,
+  "components": 2028,
+  "uniqueAST": 4496,
+  "correctPoolZeros": 11882,
+  "verifiedSvgCoordinates": 102,
+  "questionTableSha256": "399509b3efe976a7f368289e0fc149a03695765ab136c769ac5eb57f2859451d"
+}
