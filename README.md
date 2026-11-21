@@ -34,7 +34,8 @@ The [v3.1 full-corpus report](https://github.com/AlexandervonWu/ACGN/blob/v3.1/d
 
 - **Paired corpus:** 61,598/61,598 eligible native comparisons matched; all 4,482 AST-identical paired files were separately replayed both ways. Correct distinct-AST zero pairs rose from 4,174 to **4,413**, with no losses or incorrect merges.
 - **Complete reference pools:** 42,386 incorrect predicates, 1,894,168 recorded comparisons, 21 raw-AST identities with differing support contexts separately accounted and not measured. No incorrect nearest-zero match among the recorded AST-distinct comparisons. Correct pools contained **11,882** distinct-AST zero pairs, up 275 without losing any v3 pair.
-- **Other studies:** ablation, capability and typed/untyped synthetic results remain [v3 measurements](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md), not v3.1 reruns. General public certification remains blocked.
+- **Per-invariant reduction:** [Figure, explanation and all 181 rows](https://github.com/AlexandervonWu/ACGN/tree/169dc5dc4a3f7ebed2c59615384382baa363287d/docs/experimental-results/2026-11-21-studies). The same 4,496 correct ASTs produced 2,074 canonical forms in v3 and 2,028 in v3.1: **54.89% fewer than raw ASTs**. Twenty-nine pools improved; none lost a reduction.
+- **Other studies:** the v3.1 supplemental preflight passed, but launch review blocked measurement. Ablation, capability and typed/untyped timing results remain [v3 measurements](https://github.com/AlexandervonWu/ACGN/blob/v3/docs/experimental-results/2026-11-16/README.md). General public certification remains blocked.
 
 ### Assurance status
 
