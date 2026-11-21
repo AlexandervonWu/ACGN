@@ -136,18 +136,18 @@ def endBeforeArgumentsVisit : Visit :=
 theorem missing_end_rejects : Not (ValidVisit missingEndVisit) := by
   intro valid
   have mismatch : missingEndVisit.endOwners ≠ [missingEndVisit.occurrence] := by
-    native_decide
+    decide
   exact mismatch valid.exactTerminator
 theorem foreign_end_rejects : Not (ValidVisit foreignEndVisit) := by
   intro valid
   have mismatch : foreignEndVisit.endOwners ≠ [foreignEndVisit.occurrence] := by
-    native_decide
+    decide
   exact mismatch valid.exactTerminator
 theorem noncontiguous_roles_reject : Not (ValidVisit swappedRoleVisit) := by
   intro valid
   have mismatch :
       argumentRoles swappedRoleVisit ≠ List.range swappedRoleVisit.declaredArity := by
-    native_decide
+    decide
   exact mismatch valid.orderedRoles
 theorem observed_arity_cannot_replace_declared_arity :
     Not (ValidVisit observedInsteadOfDeclaredVisit) := by
@@ -187,7 +187,7 @@ theorem end_before_arguments_rejects : Not (ValidVisit endBeforeArgumentsVisit) 
   have mismatch :
       endBeforeArgumentsVisit.edgeOrder ≠
         none :: (List.range endBeforeArgumentsVisit.declaredArity).map some ++ [none] := by
-    native_decide
+    decide
   exact mismatch valid.exactEdgeOrder
 
 def zeroArgumentVisit : Visit :=

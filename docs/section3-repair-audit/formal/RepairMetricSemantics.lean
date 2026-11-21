@@ -856,7 +856,7 @@ theorem aci_distance_is_exact_minimum_cost_assignment
 theorem exact_minimum_does_not_use_positional_choice :
     exactMinimum [7, 2, 5] = some 2 /\
     exactMinimum [5, 7, 2] = some 2 := by
-  native_decide
+  decide
 
 theorem alpha_minimization_can_choose_a_nonfirst_mapping :
     exactMinimum [9, 3, 8] = some 3 := by
@@ -929,13 +929,13 @@ theorem assignment_minimization_can_choose_crossed_pairs :
     }
     aciDistance problem cost (fun _ => 1) (fun _ => 1)
       [certifiedDirect, certifiedCrossed] = some 2 := by
-  native_decide
+  decide
 
 def javaIntMax : Nat := 2147483647
 
 theorem two_maximum_java_int_costs_do_not_fit_java_int :
     javaIntMax + javaIntMax > javaIntMax := by
-  native_decide
+  decide
 
 theorem checked_assignment_boundary_must_reject_two_maximum_costs
     (result : Nat)
